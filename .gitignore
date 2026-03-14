@@ -1,0 +1,36 @@
+# Media files
+*.mov
+*.mp4
+*.avi
+*.mkv
+*.webm
+*.m4v
+*.mepj
+
+# System
+.DS_Store
+._*
+*.log
+
+# Secrets
+client_secret.json
+youtube_token.json
+*_token.json
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+dist/
+*.egg-info/
+
+# Node
+node_modules/
+
+# Claude worktrees
+.claude/worktrees/
+
+# LessonForge output
+tools/lessonforge/existing_footage/
+tools/lessonforge/output/
+tools/lessonforge/temp/
