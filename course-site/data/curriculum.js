@@ -96,6 +96,7 @@ const CURRICULUM = [
     "steps": [
       {
         "title": "프리퍼런스 세팅",
+        "image": "assets/images/week02/ui-overview.png",
         "copy": "Blender를 처음 열면 옵션이 너무 많아서 압도돼요. 일단 수업과 같은 세팅으로 맞춰두면 헷갈릴 일이 줄어요.",
         "goal": [
           "Preferences 위치를 안다",
@@ -121,10 +122,12 @@ const CURRICULUM = [
             "label": "저장 방식 Preferences에서 확인",
             "detail": "Auto-Save 설정 위치 파악"
           }
-        ]
+        ],
+        "image": "assets/images/week02/ui-overview.png"
       },
       {
         "title": "화면 조작",
+        "image": "assets/images/week02/navigation-gizmo.png",
         "copy": "구글 지도에서 거리뷰를 돌리는 것처럼, Blender 화면도 마우스로 돌리고 확대해요. 처음엔 어색하지만 10분만 하면 익숙해져요.",
         "goal": [
           "Orbit/Pan/Zoom을 자유롭게 쓴다",
@@ -150,10 +153,12 @@ const CURRICULUM = [
             "label": "Middle Mouse로 Orbit 해보기",
             "detail": "없으면 Alt+LMB"
           }
-        ]
+        ],
+        "image": "assets/images/week02/navigation-gizmo.png"
       },
       {
         "title": "기본 변형 (G/R/S)",
+        "image": "assets/images/week02/transform-gizmo.png",
         "copy": "G/R/S 세 글자만 기억하면 돼요. G(잡아서 이동), R(돌리기), S(늘리거나 줄이기). 그 다음에 X/Y/Z를 누르면 방향도 고정할 수 있어요.",
         "goal": [
           "G/R/S 단축키를 손에 익힌다",
@@ -179,10 +184,12 @@ const CURRICULUM = [
             "label": "R → Z → 45 로 45도 회전",
             "detail": ""
           }
-        ]
+        ],
+        "image": "assets/images/week02/transform-gizmo.png"
       },
       {
         "title": "Edit Mode 모델링",
+        "image": "assets/images/week02/editmode-modeling.png",
         "copy": "Tab 키 하나로 '보는 모드'와 '편집 모드'를 오가요. Extrude(E)는 점토를 손으로 당기는 것처럼 면을 뽑아내는 거예요.",
         "goal": [
           "Object/Edit Mode 전환을 안다",
@@ -208,10 +215,12 @@ const CURRICULUM = [
             "label": "Ctrl+R로 Loop Cut 추가해보기",
             "detail": "마우스로 위치 조정 후 클릭"
           }
-        ]
+        ],
+        "image": "assets/images/week02/editmode-modeling.png"
       },
       {
         "title": "Bevel 마무리",
+        "image": "assets/images/week02/bevel-tool.png",
         "copy": "날카로운 모서리를 부드럽게 깎는 거예요. 실제 제품 디자인에서도 안전을 위해 모서리를 깎는데 (Chamfer), 그게 Bevel이에요.",
         "goal": [
           "Bevel의 원리를 이해한다",
@@ -237,7 +246,8 @@ const CURRICULUM = [
             "label": "F12로 렌더 or 스크린샷 저장",
             "detail": ""
           }
-        ]
+        ],
+        "image": "assets/images/week02/bevel-tool.png"
       }
     ],
     "assignment": {
@@ -253,6 +263,20 @@ const CURRICULUM = [
       "탭(Tab) 키 없이 면을 클릭하려고 함 → Object Mode에선 편집이 안 돼요. Tab으로 Edit Mode로 먼저 들어가세요.",
       "새 박스가 이상한 곳에 생겼어요 → 3D Cursor가 이동했을 때 생기는 현상. Shift+C로 원점으로 돌려놓으세요.",
       "화면이 안 돌아가요 → 마우스 휠이 없는 경우, Preferences에서 [Emulate 3 Button Mouse]를 켜세요."
+    ],
+    "videos": [
+      {
+        "title": "Blender Studio - Viewport Navigation",
+        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/viewport-navigation/"
+      },
+      {
+        "title": "Blender Studio - Interface Overview",
+        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/interface-overview/"
+      },
+      {
+        "title": "Blender Studio - Select & Transform",
+        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/select-transform/"
+      }
     ],
     "docs": [
       {
@@ -297,6 +321,7 @@ const CURRICULUM = [
     "steps": [
       {
         "title": "기본형 만들기",
+        "image": "assets/images/week03/base-form.png",
         "copy": "점토를 손으로 만지듯 기본형은 Edit Mode에서 직접 만들어요. 큰 덩어리를 먼저 잡고 세부는 나중에 다듬으면 돼요.",
         "goal": [
           "Edit Mode 도구 흐름을 안다",
@@ -327,10 +352,12 @@ const CURRICULUM = [
             "label": "Inset과 Bevel로 패널과 모서리 다듬기",
             "detail": "I, Ctrl+B 사용"
           }
-        ]
+        ],
+        "image": "assets/images/week03/base-form.png"
       },
       {
         "title": "Mirror Modifier",
+        "image": "assets/images/week03/mirror-modifier.png",
         "copy": "거울처럼 한쪽만 편집하면 반대쪽이 자동으로 따라와요. 로봇처럼 좌우 대칭인 모델에 제일 먼저 떠올리면 좋아요.",
         "goal": [
           "Mirror 역할과 기본 설정을 이해한다"
@@ -360,10 +387,12 @@ const CURRICULUM = [
             "label": "중심선이 벌어지면 S + X + 0 써보기",
             "detail": "X축 0으로 다시 정렬"
           }
-        ]
+        ],
+        "image": "assets/images/week03/mirror-modifier.png"
       },
       {
         "title": "곡면과 두께",
+        "image": "assets/images/week03/subdivision-surface.png",
         "copy": "각진 박스를 더 부드럽게 만들거나 납작한 면에 두께를 줄 수 있어요. 큰 실루엣을 빠르게 다듬을 때 많이 써요.",
         "goal": [
           "Subdivision과 Solidify를 구분해 쓴다",
@@ -389,10 +418,12 @@ const CURRICULUM = [
             "label": "Plane에 Solidify로 두께 주기",
             "detail": "Thickness와 Offset 비교"
           }
-        ]
+        ],
+        "image": "assets/images/week03/subdivision-surface.png"
       },
       {
         "title": "반복과 구멍",
+        "image": "assets/images/week03/array-boolean-detail.png",
         "copy": "도장을 찍듯 같은 부품을 반복하거나, 블록을 빼내듯 구멍을 만들 수 있어요. 디테일을 빠르게 늘릴 때 유용해요.",
         "goal": [
           "Array와 Boolean을 구분해 쓴다"
@@ -417,10 +448,12 @@ const CURRICULUM = [
             "label": "Solidify나 Array를 기존 형태에 추가해보기",
             "detail": "반복이나 패널 중 하나 더 실험"
           }
-        ]
+        ],
+        "image": "assets/images/week03/array-boolean-detail.png"
       },
       {
         "title": "필수 추가 Modifier",
+        "image": "assets/images/week03/bevel-weighted-normal.png",
         "copy": "핵심 5개 다음으로 바로 써먹기 좋은 보조 Modifier예요. `Ctrl+B`는 부분 수정, Bevel Modifier는 전체 정리, Weighted Normal은 음영 정리라고 나눠 생각하면 이해가 쉬워요.",
         "goal": [
           "필수 추가 Modifier를 안다"
@@ -445,7 +478,8 @@ const CURRICULUM = [
             "label": "Ctrl+B와 Bevel Modifier 차이 보기",
             "detail": "부분 수정과 전체 정리 흐름 비교"
           }
-        ]
+        ],
+        "image": "assets/images/week03/bevel-weighted-normal.png"
       }
     ],
     "shortcuts": [
@@ -526,6 +560,32 @@ const CURRICULUM = [
       "Modifier를 너무 일찍 Apply함 → Apply는 마지막에만",
       "Boolean이 이상함 → 커터가 실제로 겹치는지 확인",
       "음영이 지저분함 → Weighted Normal 추가해보기"
+    ],
+    "videos": [
+      {
+        "title": "Blender Studio - Modeling Introduction",
+        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modeling-introduction/"
+      },
+      {
+        "title": "Blender Studio - Object and Edit Mode",
+        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/object-and-edit-mode/"
+      },
+      {
+        "title": "Blender Studio - Mesh Selection Mode",
+        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/mesh-selection-mode/"
+      },
+      {
+        "title": "Blender Studio - Extrude",
+        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/extrude/"
+      },
+      {
+        "title": "Blender Studio - Loop Cut",
+        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/loop-cut/"
+      },
+      {
+        "title": "Blender Studio - Bevel Tool",
+        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/bevel-tool/"
+      }
     ],
     "docs": [
       {
