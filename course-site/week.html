@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Week — RPD</title>
+  <meta name="description" content="Robot Product Design 실습 페이지" />
+  <link rel="stylesheet" href="assets/tokens.css" />
+  <style>
+    /* ── Week-page specific styles ── */
+    .hero {
+      min-height: 72vh; display: grid; place-items: center;
+      padding: 88px 0 48px; text-align: center;
+    }
+    .hero-card { display: grid; gap: 18px; justify-items: center; width: 100%; }
+    .hero h1 {
+      margin: 0; font-family: var(--font-display);
+      font-size: clamp(2.2rem, 5vw, 4.2rem);
+      font-weight: 650; letter-spacing: -.026em; line-height: 1.1;
+    }
+    .hero p {
+      max-width: 720px; margin: 0;
+      color: var(--muted-strong); font-size: clamp(.98rem, 1.6vw, 1.06rem);
+      line-height: 1.8;
+    }
+    .hero-meta { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; }
+    .meta-chip {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 6px 13px; border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.1);
+      background: rgba(23,24,26,.88); color: var(--muted-strong);
+      font-size: .82rem;
+    }
+
+    /* Topic pills */
+    .topic-list { display: flex; flex-wrap: wrap; gap: 9px; }
+    .topic-pill {
+      padding: 6px 12px; border-radius: 999px;
+      background: rgba(255,255,255,.04); border: 1px solid rgba(147,197,253,.11);
+      color: var(--muted-strong); font-size: .82rem;
+    }
+
+    /* Nav between weeks */
+    .week-nav {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 0; border-bottom: 1px solid var(--line); margin-bottom: 48px;
+    }
+    .week-nav a {
+      display: flex; align-items: center; gap: 8px;
+      color: var(--muted-strong); font-size: .88rem;
+      transition: color .14s;
+    }
+    .week-nav a:hover { color: var(--text); }
+
+    /* Lab section */
+    .lab { display: grid; gap: 16px; }
+    .lab-note {
+      display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px;
+      padding: 14px 18px; border-radius: var(--radius-md);
+      border: 1px solid var(--line); background: rgba(23,24,26,.7);
+      color: var(--muted-strong); font-size: .88rem;
+    }
+
+    /* Progress sticky */
+    .progress-widget { min-width: min(380px, 44vw); }
+
+    /* Text accent */
+    .text-key { color: var(--key-soft); }
+
+    /* Responsive */
+    @media (max-width: 720px) {
+      .hero { padding-top: 108px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell" id="pageShell">
+
+    <!-- Topbar (populated by JS) -->
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand">
+          <div class="brand-badge" id="brandBadge">—</div>
+          <div class="brand-copy">
+            <strong id="brandTitle">불러오는 중...</strong>
+            <span>Robot Product Design · 2026</span>
+          </div>
+        </div>
+        <div class="progress-widget">
+          <div class="progress-label">진도</div>
+          <div class="progress-track" aria-hidden="true">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <div class="progress-count" id="progressCount">0 / 0</div>
+          <button class="btn btn-ghost" id="resetBtn" type="button">초기화</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page content = populated by JS -->
+    <div id="pageContent"></div>
+
+    <footer class="page-footer">
+      <div>Robot Product Design 2026 · <a href="index.html" style="color:var(--key-soft)">← 전체 목록</a></div>
+    </footer>
+  </div>
+
+  <script src="data/curriculum.js"></script>
+  <script>
+    // ════════════════════════════════════════════════
+    //  Week page template engine
+    //  URL: week.html?week=2  →  renders Week 02 data
+    // ════════════════════════════════════════════════
+
+    const params   = new URLSearchParams(location.search);
+    const weekNum  = parseInt(params.get("week") || "1", 10);
+    const weekData = CURRICULUM.find(w => w.week === weekNum);
+    const storageKey = `blender2026-week${weekNum}-v1`;
+
+    // ─── Guard ───────────────────────────────────────
+    if (!weekData) {
+      document.getElementById("pageContent").innerHTML = `
+        <section style="padding:80px 0;text-align:center;color:var(--muted)">
+          <p>해당 주차 데이터를 찾을 수 없습니다. <a href="index.html" style="color:var(--key-soft)">← 돌아가기</a></p>
+        </section>`;
+    } else {
+      buildPage(weekData);
+    }
+
+    // ─── Build page ─────────────────────────────────
+    function buildPage(w) {
+      document.title = `Week ${w.week} — ${w.title}`;
+
+      // Topbar
+      document.getElementById("brandBadge").textContent = String(w.week).padStart(2, "0");
+      document.getElementById("brandTitle").textContent = `Week ${String(w.week).padStart(2, "0")} · ${w.title}`;
+
+      // Prev/Next
+      const prev = CURRICULUM.find(x => x.week === w.week - 1);
+      const next = CURRICULUM.find(x => x.week === w.week + 1);
+      const prevLink = prev
+        ? `<a href="week.html?week=${prev.week}">← Week ${prev.week}</a>`
+        : `<a href="index.html">← 홈</a>`;
+      const nextLink = next
+        ? `<a href="week.html?week=${next.week}">Week ${next.week} →</a>`
+        : `<span style="opacity:.4">마지막 주차</span>`;
+
+      // Topics
+      const topicPills = w.topics.map(t => `<span class="topic-pill">${t}</span>`).join("");
+
+      // Steps HTML
+      const stepsHtml = w.steps.map((step, idx) => {
+        const goalLi  = step.goal.map(g => `<li>${g}</li>`).join("");
+        const doneLi  = step.done.map(d => `<li>${d}</li>`).join("");
+        const taskItems = step.tasks.map(t => `
+          <div class="task-item">
+            <input id="${t.id}" type="checkbox" data-task-id="${t.id}" />
+            <label for="${t.id}">
+              <strong>${t.label}</strong>
+              ${t.detail ? `<small>${t.detail}</small>` : ""}
+            </label>
+          </div>`).join("");
+
+        return `
+          <article class="lab-step" data-step-index="${idx}">
+            <div class="step-header">
+              <div class="step-title-group">
+                <div class="step-number">${idx + 1}</div>
+                <div>
+                  <strong>${step.title}</strong>
+                  <p>${step.copy}</p>
+                </div>
+              </div>
+              <div class="status-pill" data-step-status>진행 중</div>
+            </div>
+            <div class="step-info-grid">
+              <div class="step-info-card">
+                <h4>목표</h4>
+                <ul>${goalLi}</ul>
+              </div>
+              <div class="step-info-card">
+                <h4>완료 기준</h4>
+                <ul>${doneLi}</ul>
+              </div>
+            </div>
+            <div class="task-list">${taskItems}</div>
+
+          </article>`;
+      }).join("");
+
+      // Mistakes
+      const mistakesHtml = w.mistakes.length > 0 ? `
+        <section class="content-block">
+          <div class="section-head"><h3>막히는 지점</h3></div>
+          <details class="card mistakes-section" open>
+            <summary>막혔을 때</summary>
+            <ul>${w.mistakes.map(m => `<li>${m}</li>`).join("")}</ul>
+          </details>
+        </section>` : "";
+
+      // Docs
+      const docsHtml = w.docs.length > 0 ? `
+        <section class="content-block">
+          <div class="section-head"><h3>공식 문서</h3></div>
+          <div class="doc-links-row">
+            ${w.docs.map(d => `
+              <a class="doc-link" href="${d.url}" target="_blank" rel="noopener noreferrer">
+                📄 ${d.title} ↗
+              </a>`).join("")}
+          </div>
+        </section>` : "";
+
+      // Assignment
+      const assignmentCheckli = w.assignment.checklist.map(c => `<li>${c}</li>`).join("");
+      const assignmentHtml = `
+        <section class="content-block">
+          <div class="section-head"><h3>과제</h3></div>
+          <div class="card assignment-card">
+            <div class="card-chip">과제</div>
+            <strong>${w.assignment.title}</strong>
+            <p style="color:var(--muted);line-height:1.72;margin:0">${w.assignment.description}</p>
+            <ul>${assignmentCheckli}</ul>
+          </div>
+        </section>`;
+
+      // Shortcuts cheatsheet
+      const shortcutsHtml = (w.shortcuts && w.shortcuts.length > 0) ? `
+        <section class="content-block">
+          <div class="section-head">
+            <h3>단축키 치트시트</h3>
+            <p>이번 주에 쓰는 핵심 단축키입니다. 외우지 말고 반복하세요.</p>
+          </div>
+          <div class="card shortcut-table-wrap">
+            <table class="shortcut-table">
+              <thead><tr><th>단축키</th><th>기능</th></tr></thead>
+              <tbody>
+                ${w.shortcuts.map(s => `<tr><td><kbd class="shortcut-key">${s.keys}</kbd></td><td>${s.action}</td></tr>`).join("")}
+              </tbody>
+            </table>
+          </div>
+        </section>` : "";
+
+      // Explore (더 해보기)
+      const exploreHtml = (w.explore && w.explore.length > 0) ? `
+        <section class="content-block">
+          <div class="section-head">
+            <h3>더 해보기</h3>
+            <p>필수는 아니지만, 도전하면 실력이 빠르게 늡니다.</p>
+          </div>
+          <div class="explore-grid">
+            ${w.explore.map(e => `
+              <div class="explore-card">
+                <strong>${e.title}</strong>
+                <p>${e.hint}</p>
+              </div>`).join("")}
+          </div>
+        </section>` : "";
+
+      // Full page — all data sourced from curriculum.js (trusted, no user input)
+      document.getElementById("pageContent").innerHTML = `
+        <!-- Hero -->
+        <section class="hero">
+          <div class="hero-card">
+            <div class="eyebrow">Week ${String(w.week).padStart(2,"0")} · RPD</div>
+            <h1>${w.title}</h1>
+            <div class="hero-meta">
+              <span class="meta-chip">⏱ ${w.duration}</span>
+              <span class="meta-chip">📋 ${w.steps.length}단계 실습</span>
+              <span class="meta-chip">📄 ${w.docs.length}개 공식 문서</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Topics -->
+        <section class="content-block">
+          <div class="section-head"><h3>이번 주</h3></div>
+          <div class="topic-list">${topicPills}</div>
+        </section>
+
+        <!-- Lab (Steps) -->
+        <section class="content-block" id="practice">
+          <div class="section-head"><h3>실습</h3></div>
+          <div class="lab">
+            ${stepsHtml}
+          </div>
+        </section>
+
+        ${shortcutsHtml}
+        ${exploreHtml}
+        ${mistakesHtml}
+        ${docsHtml}
+        ${assignmentHtml}
+
+        <!-- Week nav -->
+        <section class="content-block">
+          <div class="week-nav">
+            ${prevLink}
+            <a href="index.html" style="color:var(--muted)">목록</a>
+            ${nextLink}
+          </div>
+        </section>
+
+        <div style="height:60px"></div>
+      `;
+
+      // Init progress engine
+      initProgress(w.steps.length);
+    }
+
+    // ─── Progress engine ─────────────────────────────
+    function initProgress(totalSteps) {
+      const steps       = [...document.querySelectorAll(".lab-step")];
+      const progressFill  = document.getElementById("progressFill");
+      const progressCount = document.getElementById("progressCount");
+      const resetBtn      = document.getElementById("resetBtn");
+
+      function readState() {
+        try { return JSON.parse(localStorage.getItem(storageKey) || "{}"); }
+        catch { return {}; }
+      }
+      function writeState(state) {
+        localStorage.setItem(storageKey, JSON.stringify(state));
+      }
+      function getTasks(step) {
+        return [...step.querySelectorAll("input[type='checkbox'][data-task-id]")];
+      }
+      function isComplete(step) {
+        return getTasks(step).every(t => t.checked);
+      }
+
+      function updateStep(step, unlocked) {
+        const pill     = step.querySelector("[data-step-status]");
+        const complete = isComplete(step);
+
+        step.classList.toggle("is-complete", complete);
+        step.classList.toggle("is-locked", !unlocked);
+        getTasks(step).forEach(t => { t.disabled = !unlocked; });
+
+        if (complete)       { pill.textContent = "완료"; pill.className = "status-pill complete"; }
+        else if (unlocked)  { pill.textContent = "진행 중"; pill.className = "status-pill active"; }
+        else                { pill.textContent = "잠금"; pill.className = "status-pill locked"; }
+      }
+
+      function sync() {
+        const completed = steps.filter(isComplete).length;
+        const pct = steps.length ? (completed / steps.length) * 100 : 0;
+        progressFill.style.width  = `${pct}%`;
+        progressCount.textContent = `${completed} / ${steps.length}`;
+
+        let prevOk = true;
+        steps.forEach((step, i) => {
+          const unlocked = i === 0 || prevOk;
+          updateStep(step, unlocked);
+          prevOk = prevOk && isComplete(step);
+        });
+      }
+
+      function loadState() {
+        const state = readState();
+        steps.forEach(step => {
+          getTasks(step).forEach(task => {
+            task.checked = Boolean(state[task.dataset.taskId]);
+            task.addEventListener("change", () => {
+              const s = readState();
+              s[task.dataset.taskId] = task.checked;
+              writeState(s);
+              sync();
+            });
+          });
+        });
+        sync();
+      }
+
+      resetBtn.addEventListener("click", () => {
+        localStorage.removeItem(storageKey);
+        steps.forEach(step => getTasks(step).forEach(t => { t.checked = false; }));
+        sync();
+      });
+
+      loadState();
+    }
+  </script>
+</body>
+</html>

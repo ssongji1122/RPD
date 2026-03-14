@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RPD — Robot Product Design</title>
+  <meta name="description" content="Robot Product Design 15주 수업 자료" />
+  <link rel="stylesheet" href="assets/tokens.css" />
+  <style>
+    /* ── Index-specific styles ── */
+    .hero {
+      min-height: 80vh;
+      display: grid; place-items: center;
+      padding: 96px 0 56px;
+      text-align: center;
+    }
+    .hero-card { display: grid; gap: 20px; justify-items: center; width: 100%; }
+    .hero h1 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 5.5vw, 4.5rem);
+      font-weight: 660; letter-spacing: -.028em; line-height: 1.08;
+    }
+    .hero p {
+      max-width: 680px; margin: 0;
+      color: var(--muted-strong); font-size: clamp(1rem, 1.7vw, 1.07rem);
+      line-height: 1.8;
+    }
+    .hero-cta { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin-top: 4px; }
+
+    /* Week grid */
+    .week-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+    .week-card {
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(23,24,26,.98), rgba(18,18,20,.98));
+      box-shadow: var(--shadow-card);
+      padding: 22px;
+      display: flex; flex-direction: column; gap: 12px;
+      text-decoration: none; color: inherit;
+      transition: border-color .18s, transform .18s;
+      position: relative; overflow: hidden;
+    }
+    .week-card:hover {
+      border-color: rgba(147,197,253,.28);
+      transform: translateY(-2px);
+    }
+    .week-card.is-active { border-color: rgba(10,132,255,.42); }
+    .week-card.is-done   { border-color: rgba(16,185,129,.25); }
+    .week-card.is-exam   { border-color: rgba(245,158,11,.3); }
+
+    .week-card-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .week-num {
+      font-size: .76rem; font-weight: 600; letter-spacing: .06em;
+      color: var(--muted); text-transform: uppercase;
+    }
+    .week-badge {
+      padding: 4px 10px; border-radius: 999px;
+      font-size: .72rem; font-weight: 600;
+    }
+    .badge-done     { background: rgba(16,185,129,.14); color: var(--success-soft); }
+    .badge-active   { background: rgba(10,132,255,.14);  color: var(--key-soft); }
+    .badge-upcoming { background: rgba(255,255,255,.06);  color: var(--muted); }
+    .badge-exam     { background: rgba(245,158,11,.14);   color: #fbbf24; }
+
+    .week-title { font-size: 1.08rem; font-weight: 620; line-height: 1.38; margin: 0; }
+    .week-subtitle { font-size: .84rem; color: var(--muted); margin: 0; line-height: 1.5; }
+
+    .week-topics { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 4px; }
+    .topic-chip {
+      padding: 4px 9px; border-radius: 999px;
+      background: rgba(255,255,255,.04); border: 1px solid rgba(147,197,253,.1);
+      color: var(--muted); font-size: .73rem;
+    }
+    .week-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 4px; padding-top: 12px;
+      border-top: 1px solid rgba(147,197,253,.07);
+    }
+    .week-duration { color: var(--muted); font-size: .8rem; }
+    .go-arrow { color: var(--key-soft); font-size: .9rem; }
+
+    /* Stats bar */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 14px; margin-bottom: 48px;
+    }
+    .stat-box {
+      border-radius: var(--radius-md);
+      border: 1px solid var(--line);
+      background: rgba(23,24,26,.7); padding: 18px 20px;
+    }
+    .stat-box .val { font-size: 2rem; font-weight: 700; color: var(--key-soft); line-height: 1; }
+    .stat-box .lbl { font-size: .82rem; color: var(--muted); margin-top: 4px; }
+
+    /* Responsive */
+    @media (max-width: 720px) {
+      .week-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand">
+          <div class="brand-badge">R</div>
+          <div class="brand-copy">
+            <strong>Robot Product Design</strong>
+            <span>2026 Spring · 15주</span>
+          </div>
+        </div>
+        <a href="#weeks" class="btn btn-ghost">주차 목록 ↓</a>
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-card">
+        <div class="eyebrow">Robot Product Design · 2026 Spring</div>
+        <h1>Robot Product Design</h1>
+      </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="content-block">
+      <div class="stats-bar" id="statsBar">
+        <!-- JS로 채워짐 -->
+      </div>
+
+      <!-- Week grid -->
+      <div class="section-head" id="weeks"><h3>15주</h3></div>
+      <div class="week-grid" id="weekGrid">
+        <!-- JS로 채워짐 -->
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="page-footer">
+      <div>Robot Product Design 2026</div>
+    </footer>
+
+  </div>
+
+  <script src="data/curriculum.js"></script>
+  <script>
+    // ─── Stats bar ──────────────────────────────────────
+    const done     = CURRICULUM.filter(w => w.status === "done").length;
+    const active   = CURRICULUM.filter(w => w.status === "active").length;
+    const upcoming = CURRICULUM.filter(w => w.status === "upcoming").length;
+
+    const statsHtml = `
+      <div class="stat-box"><div class="val">${CURRICULUM.length}</div><div class="lbl">전체</div></div>
+      <div class="stat-box"><div class="val">${done}</div><div class="lbl">완료</div></div>
+      <div class="stat-box"><div class="val">${active || 1}</div><div class="lbl">진행 중</div></div>
+      <div class="stat-box"><div class="val">${upcoming}</div><div class="lbl">예정</div></div>
+    `;
+    document.getElementById("statsBar").innerHTML = statsHtml;
+
+    // ─── Week grid ───────────────────────────────────────
+    function getBadge(w) {
+      if (w.title.includes("⭐")) return ["badge-exam",     "시험 주차"];
+      if (w.status === "done")    return ["badge-done",     "완료"];
+      if (w.status === "active")  return ["badge-active",   "진행 중"];
+      return                             ["badge-upcoming",  "예정"];
+    }
+
+    function getCardClass(w) {
+      if (w.title.includes("⭐")) return "is-exam";
+      if (w.status === "done")    return "is-done";
+      if (w.status === "active")  return "is-active";
+      return "";
+    }
+
+    const grid = document.getElementById("weekGrid");
+    grid.innerHTML = CURRICULUM.map(w => {
+      const [badgeClass, badgeText] = getBadge(w);
+      const topicChips = w.topics.slice(0, 3).map(t =>
+        `<span class="topic-chip">${t}</span>`
+      ).join("") + (w.topics.length > 3 ? `<span class="topic-chip">+${w.topics.length - 3}</span>` : "");
+
+      const pageUrl = `week.html?week=${w.week}`;
+
+      return `
+        <a class="week-card ${getCardClass(w)}" href="${pageUrl}">
+          <div class="week-card-header">
+            <span class="week-num">Week ${String(w.week).padStart(2, "0")}</span>
+            <span class="week-badge ${badgeClass}">${badgeText}</span>
+          </div>
+          <p class="week-title">${w.title}</p>
+          <p class="week-subtitle">${w.subtitle}</p>
+          <div class="week-topics">${topicChips}</div>
+          <div class="week-footer">
+            <span class="week-duration">⏱ ${w.duration}</span>
+            <span class="go-arrow">→</span>
+          </div>
+        </a>
+      `;
+    }).join("");
+  </script>
+</body>
+</html>
