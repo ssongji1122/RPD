@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RPD Admin</title>
+  <meta name="description" content="Robot Product Design 커리큘럼 관리자 페이지" />
+  <link rel="stylesheet" href="assets/tokens.css" />
+  <style>
+    /* ── Admin layout ─────────────────────────────────── */
+    body { overflow: hidden; }
+
+    .admin-shell {
+      display: flex; flex-direction: column;
+      height: 100vh; overflow: hidden;
+    }
+
+    /* ── Topbar override ──────────────────────────────── */
+    .admin-topbar {
+      position: sticky; top: 0; z-index: 40;
+      backdrop-filter: blur(18px);
+      background: rgba(10,10,10,.88);
+      border-bottom: 1px solid rgba(255,255,255,.05);
+      flex-shrink: 0;
+    }
+    .admin-topbar-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 14px; padding: 12px 20px;
+    }
+    .admin-brand { display: flex; align-items: center; gap: 12px; }
+    .admin-brand-badge {
+      width: 36px; height: 36px; display: grid; place-items: center;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(180deg, rgba(10,132,255,.2), rgba(10,132,255,.07));
+      border: 1px solid rgba(255,255,255,.1);
+      color: var(--key-soft); font-weight: 700; font-size: .85rem;
+    }
+    .admin-brand strong { font-size: .92rem; color: var(--text); }
+    .admin-brand span { color: var(--muted); font-size: .78rem; margin-left: 8px; }
+
+    .topbar-actions { display: flex; align-items: center; gap: 10px; }
+    .dirty-indicator {
+      display: none; align-items: center; gap: 6px;
+      padding: 5px 12px; border-radius: 999px;
+      background: rgba(245,158,11,.12); border: 1px solid rgba(245,158,11,.25);
+      color: #fbbf24; font-size: .78rem; font-weight: 600;
+    }
+    .dirty-indicator.visible { display: inline-flex; }
+
+    /* ── Hamburger (mobile) ────────────────────────────── */
+    .hamburger {
+      display: none; align-items: center; justify-content: center;
+      width: 36px; height: 36px; border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.1); background: transparent;
+      color: var(--text); font-size: 1.2rem; cursor: pointer;
+    }
+
+    /* ── Layout body ──────────────────────────────────── */
+    .admin-body {
+      display: flex; flex: 1; overflow: hidden;
+    }
+
+    /* ── Sidebar ──────────────────────────────────────── */
+    .sidebar {
+      width: 260px; flex-shrink: 0;
+      background: var(--bg-soft);
+      border-right: 1px solid rgba(255,255,255,.05);
+      overflow-y: auto; overflow-x: hidden;
+      padding: 14px 0;
+    }
+    .sidebar-label {
+      padding: 8px 18px; font-size: .72rem; font-weight: 600;
+      color: var(--muted); letter-spacing: .06em; text-transform: uppercase;
+    }
+    .sidebar-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 18px; cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: background .12s, border-color .12s;
+      font-size: .88rem; color: var(--muted-strong);
+    }
+    .sidebar-item:hover { background: rgba(255,255,255,.03); }
+    .sidebar-item.active {
+      background: rgba(10,132,255,.06);
+      border-left-color: var(--key);
+      color: var(--text);
+    }
+    .sidebar-dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+    }
+    .sidebar-dot.done     { background: var(--success); }
+    .sidebar-dot.active   { background: var(--key); }
+    .sidebar-dot.upcoming { background: rgba(255,255,255,.2); }
+    .sidebar-week-num {
+      font-size: .72rem; font-weight: 600; color: var(--muted);
+      min-width: 18px;
+    }
+    .sidebar-week-title {
+      flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+
+    /* ── Main editor ──────────────────────────────────── */
+    .editor-pane {
+      flex: 1; overflow-y: auto; overflow-x: hidden;
+      padding: 32px 24px 80px;
+    }
+    .editor-inner {
+      max-width: 900px; margin: 0 auto;
+    }
+
+    /* ── Form fields ──────────────────────────────────── */
+    .field-group {
+      margin-bottom: 28px;
+    }
+    .field-label {
+      display: block; font-size: .78rem; font-weight: 600;
+      color: var(--muted); letter-spacing: .04em; text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .field-input,
+    .field-textarea,
+    .field-select {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      font: inherit; font-size: .92rem;
+      transition: border-color .15s;
+      outline: none;
+    }
+    .field-input:focus,
+    .field-textarea:focus,
+    .field-select:focus {
+      border-color: var(--key);
+    }
+    .field-textarea {
+      resize: vertical; min-height: 70px; line-height: 1.6;
+    }
+    .field-select {
+      cursor: pointer; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1.5l5 5 5-5' stroke='%23a1a1aa' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+    }
+    .field-select option {
+      background: #1c1d20; color: var(--text);
+    }
+
+    .field-row {
+      display: flex; gap: 14px;
+    }
+    .field-row > .field-group { flex: 1; }
+
+    /* ── Section dividers ─────────────────────────────── */
+    .editor-section {
+      margin-top: 40px; padding-top: 28px;
+      border-top: 1px solid rgba(255,255,255,.06);
+    }
+    .editor-section-head {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 18px;
+    }
+    .editor-section-title {
+      font-size: 1.08rem; font-weight: 620; color: var(--text);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .section-count {
+      font-size: .74rem; font-weight: 600; color: var(--muted);
+      padding: 2px 8px; border-radius: 999px;
+      background: rgba(255,255,255,.06);
+    }
+
+    /* ── List editor (topics, goals, etc.) ─────────────── */
+    .list-editor { display: grid; gap: 8px; }
+    .list-editor-row {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .list-editor-row .field-input { flex: 1; }
+    .btn-icon {
+      width: 32px; height: 32px; display: grid; place-items: center;
+      border-radius: 8px; border: 1px solid rgba(255,255,255,.08);
+      background: transparent; color: var(--muted-strong);
+      cursor: pointer; font-size: .9rem; flex-shrink: 0;
+      transition: border-color .15s, color .15s, background .15s;
+    }
+    .btn-icon:hover {
+      border-color: rgba(147,197,253,.3); color: var(--text);
+    }
+    .btn-icon.danger:hover {
+      border-color: rgba(239,68,68,.4); color: #f87171;
+      background: rgba(239,68,68,.08);
+    }
+    .btn-add {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 12px; border-radius: 999px;
+      border: 1px dashed rgba(147,197,253,.2);
+      background: transparent; color: var(--muted-strong);
+      cursor: pointer; font: inherit; font-size: .82rem;
+      transition: border-color .15s, color .15s;
+      margin-top: 6px;
+    }
+    .btn-add:hover {
+      border-color: rgba(147,197,253,.4); color: var(--key-soft);
+    }
+
+    /* ── Step cards (collapsible) ──────────────────────── */
+    .step-card {
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(23,24,26,.98), rgba(18,18,20,.98));
+      box-shadow: var(--shadow-card);
+      margin-bottom: 12px;
+    }
+    .step-card > summary {
+      display: flex; align-items: center; gap: 12px;
+      padding: 16px 20px; cursor: pointer;
+      list-style: none; user-select: none;
+      font-size: .95rem; font-weight: 600; color: var(--text);
+    }
+    .step-card > summary::-webkit-details-marker { display: none; }
+    .step-card > summary::before {
+      content: "";
+      width: 8px; height: 8px;
+      border-right: 2px solid var(--muted);
+      border-bottom: 2px solid var(--muted);
+      transform: rotate(-45deg);
+      transition: transform .15s;
+      flex-shrink: 0;
+    }
+    .step-card[open] > summary::before {
+      transform: rotate(45deg);
+    }
+    .step-card-num {
+      min-width: 30px; height: 30px; display: grid; place-items: center;
+      border-radius: 10px; background: rgba(10,132,255,.1);
+      border: 1px solid rgba(255,255,255,.08);
+      color: var(--key-soft); font-weight: 700; font-size: .82rem;
+    }
+    .step-card-title { flex: 1; }
+    .step-card-actions {
+      display: flex; gap: 4px;
+    }
+    .step-card-body {
+      padding: 0 20px 20px;
+    }
+
+    /* ── Image upload ─────────────────────────────────── */
+    .image-upload-area {
+      display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    }
+    .image-preview {
+      width: 120px; height: 80px; border-radius: 10px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      overflow: hidden; display: grid; place-items: center;
+      color: var(--muted); font-size: .78rem;
+    }
+    .image-preview img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .image-upload-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 14px; border-radius: 999px;
+      border: 1px solid rgba(147,197,253,.18);
+      background: transparent; color: var(--muted-strong);
+      cursor: pointer; font: inherit; font-size: .82rem;
+      transition: border-color .15s, color .15s;
+    }
+    .image-upload-btn:hover {
+      border-color: rgba(147,197,253,.36); color: var(--text);
+    }
+    .image-upload-btn input[type="file"] {
+      display: none;
+    }
+
+    /* ── Table editor (shortcuts, docs) ────────────────── */
+    .table-editor { display: grid; gap: 8px; }
+    .table-editor-row {
+      display: flex; gap: 8px; align-items: center;
+    }
+    .table-editor-row .field-input { flex: 1; }
+    .table-editor-row .field-input.short { max-width: 160px; flex: 0 0 160px; }
+
+    /* ── Task editor ──────────────────────────────────── */
+    .task-editor-row {
+      display: flex; gap: 8px; align-items: start; flex-wrap: wrap;
+    }
+    .task-editor-row .field-group { margin-bottom: 0; }
+    .task-editor-fields { flex: 1; min-width: 200px; display: grid; gap: 6px; }
+
+    /* ── Toast ─────────────────────────────────────────── */
+    .toast-container {
+      position: fixed; bottom: 24px; right: 24px; z-index: 100;
+      display: flex; flex-direction: column; gap: 8px;
+      pointer-events: none;
+    }
+    .toast {
+      padding: 12px 20px; border-radius: var(--radius-sm);
+      font-size: .88rem; font-weight: 500;
+      box-shadow: 0 8px 32px rgba(0,0,0,.4);
+      animation: toastIn .25s ease-out;
+      pointer-events: auto;
+    }
+    .toast.success {
+      background: rgba(16,185,129,.14); border: 1px solid rgba(16,185,129,.3);
+      color: var(--success-soft);
+    }
+    .toast.error {
+      background: rgba(239,68,68,.14); border: 1px solid rgba(239,68,68,.3);
+      color: #fca5a5;
+    }
+    .toast.fadeout {
+      animation: toastOut .2s ease-in forwards;
+    }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes toastOut {
+      from { opacity: 1; transform: translateY(0); }
+      to   { opacity: 0; transform: translateY(12px); }
+    }
+
+    /* ── Auth modal ────────────────────────────────────── */
+    .auth-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,.75);
+      display: grid; place-items: center;
+      backdrop-filter: blur(8px);
+    }
+    .auth-card {
+      width: min(400px, calc(100% - 40px));
+      padding: 32px; border-radius: var(--radius-lg);
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(23,24,26,.98), rgba(18,18,20,.98));
+      box-shadow: var(--shadow-card);
+      text-align: center;
+    }
+    .auth-card h2 {
+      margin: 0 0 8px; font-size: 1.2rem; font-weight: 620;
+    }
+    .auth-card p {
+      margin: 0 0 20px; color: var(--muted); font-size: .88rem;
+    }
+    .auth-card .field-input { margin-bottom: 14px; text-align: center; }
+    .auth-error {
+      color: #f87171; font-size: .82rem; margin-bottom: 10px; min-height: 1.2em;
+    }
+
+    /* ── Responsive ────────────────────────────────────── */
+    @media (max-width: 800px) {
+      .hamburger { display: flex; }
+      .sidebar {
+        position: fixed; left: 0; top: 0; bottom: 0;
+        z-index: 50; width: 280px;
+        transform: translateX(-100%);
+        transition: transform .22s ease;
+      }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-overlay {
+        display: none; position: fixed; inset: 0; z-index: 45;
+        background: rgba(0,0,0,.5);
+      }
+      .sidebar-overlay.visible { display: block; }
+      .editor-pane { padding: 20px 14px 80px; }
+      .field-row { flex-direction: column; gap: 0; }
+      .table-editor-row .field-input.short { max-width: none; flex: 1; }
+      .task-editor-row { flex-direction: column; }
+    }
+
+    /* ── Empty state ──────────────────────────────────── */
+    .empty-state {
+      display: grid; place-items: center; min-height: 300px;
+      color: var(--muted); font-size: .94rem; text-align: center;
+    }
+
+    /* ── Notion sync ─────────────────────────────────── */
+    .notion-sync-group {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .notion-sync-group .btn {
+      font-size: .82rem;
+      padding: 7px 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-shell">
+    <!-- Topbar -->
+    <header class="admin-topbar">
+      <div class="admin-topbar-inner">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <button class="hamburger" id="hamburgerBtn" type="button" aria-label="메뉴 열기">&#9776;</button>
+          <div class="admin-brand">
+            <div class="admin-brand-badge">R</div>
+            <div>
+              <strong>RPD Admin</strong>
+              <span>커리큘럼 관리</span>
+            </div>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <div class="dirty-indicator" id="dirtyIndicator">
+            <span>&#9679;</span> 저장되지 않은 변경
+          </div>
+          <div class="notion-sync-group" id="notionGroup" style="display:none">
+            <button class="btn btn-ghost" id="notionPullBtn" type="button" title="Notion에서 가져오기">&#128229; Notion</button>
+            <button class="btn btn-ghost" id="notionPushBtn" type="button" title="Notion으로 보내기">&#128228; Notion</button>
+          </div>
+          <button class="btn btn-ghost" id="previewBtn" type="button">미리보기 &#8599;</button>
+          <button class="btn btn-primary" id="saveBtn" type="button">&#128190; 저장</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Sidebar overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Body -->
+    <div class="admin-body">
+      <!-- Sidebar -->
+      <nav class="sidebar" id="sidebar" aria-label="주차 목록">
+        <div class="sidebar-label">주차 목록</div>
+        <div id="sidebarList"></div>
+      </nav>
+
+      <!-- Editor -->
+      <main class="editor-pane" id="editorPane">
+        <div class="editor-inner" id="editorInner">
+          <div class="empty-state">불러오는 중...</div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Toast container -->
+    <div class="toast-container" id="toastContainer"></div>
+  </div>
+
+  <!-- Auth modal (hidden by default) -->
+  <div class="auth-overlay" id="authOverlay" style="display:none">
+    <div class="auth-card">
+      <h2>관리자 인증</h2>
+      <p>커리큘럼 편집 권한이 필요합니다.</p>
+      <div class="auth-error" id="authError"></div>
+      <input class="field-input" id="authInput" type="password" placeholder="비밀번호 입력" autocomplete="off" />
+      <button class="btn btn-primary" id="authSubmit" type="button" style="width:100%;justify-content:center;">인증</button>
+    </div>
+  </div>
+
+  <script>
+  // ════════════════════════════════════════════════════════
+  //  RPD Admin — Curriculum Editor
+  //  All rendered content uses esc() for XSS-safe escaping.
+  //  Data source: same-origin admin API (trusted).
+  // ════════════════════════════════════════════════════════
+
+  (function() {
+    "use strict";
+
+    // ─── State ───────────────────────────────────────────
+    var curriculum = [];
+    var selectedIdx = 0;
+    var dirty = false;
+    var authToken = sessionStorage.getItem("rpd-admin-token") || "";
+
+    // ─── DOM refs ────────────────────────────────────────
+    var sidebarList    = document.getElementById("sidebarList");
+    var editorInner    = document.getElementById("editorInner");
+    var dirtyIndicator = document.getElementById("dirtyIndicator");
+    var saveBtn        = document.getElementById("saveBtn");
+    var previewBtn     = document.getElementById("previewBtn");
+    var toastContainer = document.getElementById("toastContainer");
+    var authOverlay    = document.getElementById("authOverlay");
+    var authInput      = document.getElementById("authInput");
+    var authSubmit     = document.getElementById("authSubmit");
+    var authError      = document.getElementById("authError");
+    var hamburgerBtn   = document.getElementById("hamburgerBtn");
+    var sidebarEl      = document.getElementById("sidebar");
+    var sidebarOverlay = document.getElementById("sidebarOverlay");
+    var notionGroup    = document.getElementById("notionGroup");
+    var notionPullBtn  = document.getElementById("notionPullBtn");
+    var notionPushBtn  = document.getElementById("notionPushBtn");
+
+    // ─── Helpers ─────────────────────────────────────────
+
+    /** HTML-escape a string using the DOM textContent trick. */
+    function esc(str) {
+      if (str == null) return "";
+      var d = document.createElement("div");
+      d.textContent = String(str);
+      return d.innerHTML;
+    }
+
+    function markDirty() {
+      dirty = true;
+      dirtyIndicator.classList.add("visible");
+    }
+
+    function clearDirty() {
+      dirty = false;
+      dirtyIndicator.classList.remove("visible");
+    }
+
+    function toast(msg, type) {
+      var el = document.createElement("div");
+      el.className = "toast " + type;
+      el.textContent = msg;
+      toastContainer.appendChild(el);
+      setTimeout(function() { el.classList.add("fadeout"); }, 2200);
+      setTimeout(function() { el.remove(); }, 2500);
+    }
+
+    function apiHeaders() {
+      var h = { "Content-Type": "application/json" };
+      if (authToken) h["Authorization"] = "Bearer " + authToken;
+      return h;
+    }
+
+    function uploadApiHeaders() {
+      var h = {};
+      if (authToken) h["Authorization"] = "Bearer " + authToken;
+      return h;
+    }
+
+    /**
+     * Safe DOM builder — builds HTML strings from escaped values only.
+     * Every dynamic value passes through esc() before insertion.
+     */
+    function buildEditorHTML(w) {
+      var parts = [];
+
+      // Week header eyebrow
+      parts.push(
+        '<div style="margin-bottom:8px">',
+        '<div class="eyebrow" style="margin-bottom:14px;">Week ',
+        esc(String(w.week).padStart(2, "0")),
+        ' 편집</div></div>'
+      );
+
+      // Status + Duration row
+      parts.push(
+        '<div class="field-row">',
+        '<div class="field-group">',
+        '<label class="field-label">상태</label>',
+        '<select class="field-select" data-field="status">',
+        '<option value="done"', (w.status === "done" ? ' selected' : ''), '>done (완료)</option>',
+        '<option value="active"', (w.status === "active" ? ' selected' : ''), '>active (진행 중)</option>',
+        '<option value="upcoming"', (w.status === "upcoming" ? ' selected' : ''), '>upcoming (예정)</option>',
+        '</select></div>',
+        '<div class="field-group">',
+        '<label class="field-label">시간</label>',
+        '<input class="field-input" data-field="duration" value="', esc(w.duration), '" />',
+        '</div></div>'
+      );
+
+      // Title
+      parts.push(
+        '<div class="field-group">',
+        '<label class="field-label">제목</label>',
+        '<input class="field-input" data-field="title" value="', esc(w.title), '" />',
+        '</div>'
+      );
+
+      // Subtitle
+      parts.push(
+        '<div class="field-group">',
+        '<label class="field-label">부제목</label>',
+        '<input class="field-input" data-field="subtitle" value="', esc(w.subtitle), '" />',
+        '</div>'
+      );
+
+      // Summary
+      parts.push(
+        '<div class="field-group">',
+        '<label class="field-label">요약</label>',
+        '<input class="field-input" data-field="summary" value="', esc(w.summary), '" />',
+        '</div>'
+      );
+
+      // Topics
+      parts.push(
+        '<div class="field-group">',
+        '<label class="field-label">주제</label>',
+        '<div class="list-editor" id="topicsList">'
+      );
+      (w.topics || []).forEach(function(t, i) {
+        parts.push(
+          '<div class="list-editor-row">',
+          '<input class="field-input" data-list="topics" data-idx="', i, '" value="', esc(t), '" />',
+          '<button class="btn-icon danger" data-remove="topics" data-idx="', i, '" type="button" aria-label="삭제">&times;</button>',
+          '</div>'
+        );
+      });
+      parts.push(
+        '</div>',
+        '<button class="btn-add" data-add="topics" type="button">+ 주제 추가</button>',
+        '</div>'
+      );
+
+      // Steps section
+      parts.push(
+        '<div class="editor-section">',
+        '<div class="editor-section-head">',
+        '<div class="editor-section-title">실습 단계 <span class="section-count">', w.steps.length, '</span></div>',
+        '</div>',
+        '<div id="stepsList">'
+      );
+      w.steps.forEach(function(step, si) {
+        buildStepCard(parts, step, si, w.week);
+      });
+      parts.push(
+        '</div>',
+        '<button class="btn-add" data-add-step type="button">+ 단계 추가</button>',
+        '</div>'
+      );
+
+      // Shortcuts section
+      var shortcuts = w.shortcuts || [];
+      parts.push(
+        '<div class="editor-section">',
+        '<div class="editor-section-head">',
+        '<div class="editor-section-title">단축키 <span class="section-count">', shortcuts.length, '</span></div>',
+        '</div>',
+        '<div class="table-editor" id="shortcutsList">'
+      );
+      shortcuts.forEach(function(s, i) {
+        parts.push(
+          '<div class="table-editor-row">',
+          '<input class="field-input short" data-shortcut-field="keys" data-idx="', i, '" value="', esc(s.keys), '" placeholder="단축키" />',
+          '<input class="field-input" data-shortcut-field="action" data-idx="', i, '" value="', esc(s.action), '" placeholder="기능 설명" />',
+          '<button class="btn-icon danger" data-remove="shortcuts" data-idx="', i, '" type="button" aria-label="삭제">&times;</button>',
+          '</div>'
+        );
+      });
+      parts.push(
+        '</div>',
+        '<button class="btn-add" data-add="shortcuts" type="button">+ 단축키 추가</button>',
+        '</div>'
+      );
+
+      // Explore section
+      var explore = w.explore || [];
+      parts.push(
+        '<div class="editor-section">',
+        '<div class="editor-section-head">',
+        '<div class="editor-section-title">더 해보기 <span class="section-count">', explore.length, '</span></div>',
+        '</div>',
+        '<div id="exploreList">'
+      );
+      explore.forEach(function(e, i) {
+        parts.push(
+          '<div class="card" style="margin-bottom:10px;padding:16px;">',
+          '<div class="field-group" style="margin-bottom:10px;">',
+          '<label class="field-label">제목</label>',
+          '<input class="field-input" data-explore-field="title" data-idx="', i, '" value="', esc(e.title), '" />',
+          '</div>',
+          '<div class="field-group" style="margin-bottom:0;">',
+          '<label class="field-label">힌트</label>',
+          '<textarea class="field-textarea" data-explore-field="hint" data-idx="', i, '" rows="2">', esc(e.hint), '</textarea>',
+          '</div>',
+          '<div style="text-align:right;margin-top:8px;">',
+          '<button class="btn-icon danger" data-remove="explore" data-idx="', i, '" type="button" aria-label="삭제">&times;</button>',
+          '</div></div>'
+        );
+      });
+      parts.push(
+        '</div>',
+        '<button class="btn-add" data-add="explore" type="button">+ 더 해보기 추가</button>',
+        '</div>'
+      );
+
+      // Assignment section
+      var a = w.assignment || { title: "", description: "", checklist: [] };
+      parts.push(
+        '<div class="editor-section">',
+        '<div class="editor-section-head">',
+        '<div class="editor-section-title">과제</div>',
+        '</div>',
+        '<div class="field-group">',
+        '<label class="field-label">과제 제목</label>',
+        '<input class="field-input" data-assignment="title" value="', esc(a.title), '" />',
+        '</div>',
+        '<div class="field-group">',
+        '<label class="field-label">과제 설명</label>',
+        '<textarea class="field-textarea" data-assignment="description" rows="3">', esc(a.description), '</textarea>',
+        '</div>',
+        '<div class="field-group">',
+        '<label class="field-label">체크리스트</label>',
+        '<div class="list-editor" id="checklistList">'
+      );
+      (a.checklist || []).forEach(function(c, i) {
+        parts.push(
+          '<div class="list-editor-row">',
+          '<input class="field-input" data-list="checklist" data-idx="', i, '" value="', esc(c), '" />',
+          '<button class="btn-icon danger" data-remove="checklist" data-idx="', i, '" type="button" aria-label="삭제">&times;</button>',
+          '</div>'
+        );
+      });
+      parts.push(
+        '</div>',
+        '<button class="btn-add" data-add="checklist" type="button">+ 항목 추가</button>',
+        '</div></div>'
+      );
+
+      // Mistakes section
+      var mistakes = w.mistakes || [];
+      parts.push(
+        '<div class="editor-section">',
+        '<div class="editor-section-head">',
+        '<div class="editor-section-title">막히는 지점 <span class="section-count">', mistakes.length, '</span></div>',
+        '</div>',
+        '<div class="list-editor" id="mistakesList">'
+      );
+      mistakes.forEach(function(m, i) {
+        parts.push(
+          '<div class="list-editor-row">',
+          '<input class="field-input" data-list="mistakes" data-idx="', i, '" value="', esc(m), '" />',
+          '<button class="btn-icon danger" data-remove="mistakes" data-idx="', i, '" type="button" aria-label="삭제">&times;</button>',
+          '</div>'
+        );
+      });
+      parts.push(
+        '</div>',
+        '<button class="btn-add" data-add="mistakes" type="button">+ 항목 추가</button>',
+        '</div>'
+      );
+
+      // Docs section
+      var docs = w.docs || [];
+      parts.push(
+        '<div class="editor-section">',
+        '<div class="editor-section-head">',
+        '<div class="editor-section-title">공식 문서 <span class="section-count">', docs.length, '</span></div>',
+        '</div>',
+        '<div class="table-editor" id="docsList">'
+      );
+      docs.forEach(function(d, i) {
+        parts.push(
+          '<div class="table-editor-row">',
+          '<input class="field-input short" data-doc-field="title" data-idx="', i, '" value="', esc(d.title), '" placeholder="문서 이름" />',
+          '<input class="field-input" data-doc-field="url" data-idx="', i, '" value="', esc(d.url), '" placeholder="URL" />',
+          '<button class="btn-icon danger" data-remove="docs" data-idx="', i, '" type="button" aria-label="삭제">&times;</button>',
+          '</div>'
+        );
+      });
+      parts.push(
+        '</div>',
+        '<button class="btn-add" data-add="docs" type="button">+ 문서 추가</button>',
+        '</div>'
+      );
+
+      return parts.join("");
+    }
+
+    function buildStepCard(parts, step, si, weekNum) {
+      parts.push(
+        '<details class="step-card" data-step-idx="', si, '" open>',
+        '<summary>',
+        '<span class="step-card-num">', (si + 1), '</span>',
+        '<span class="step-card-title">', esc(step.title || "새 단계"), '</span>',
+        '<span class="step-card-actions">',
+        '<button class="btn-icon" data-move-step="up" data-idx="', si, '" type="button" aria-label="위로 이동" title="위로 이동">&#8593;</button>',
+        '<button class="btn-icon" data-move-step="down" data-idx="', si, '" type="button" aria-label="아래로 이동" title="아래로 이동">&#8595;</button>',
+        '<button class="btn-icon danger" data-remove-step="', si, '" type="button" aria-label="단계 삭제" title="단계 삭제">&times;</button>',
+        '</span>',
+        '</summary>',
+        '<div class="step-card-body">'
+      );
+
+      // Title
+      parts.push(
+        '<div class="field-group">',
+        '<label class="field-label">제목</label>',
+        '<input class="field-input" data-step-field="title" data-step="', si, '" value="', esc(step.title), '" />',
+        '</div>'
+      );
+
+      // Copy
+      parts.push(
+        '<div class="field-group">',
+        '<label class="field-label">설명</label>',
+        '<textarea class="field-textarea" data-step-field="copy" data-step="', si, '" rows="3">', esc(step.copy), '</textarea>',
+        '</div>'
+      );
+
+      // Image
+      parts.push(
+        '<div class="field-group">',
+        '<label class="field-label">이미지</label>',
+        '<div class="image-upload-area">',
+        '<div class="image-preview" data-img-preview="', si, '">'
+      );
+      if (step.image) {
+        parts.push('<img src="', esc(step.image), '" alt="Step image" />');
+      } else {
+        parts.push('이미지 없음');
+      }
+      parts.push(
+        '</div>',
+        '<label class="image-upload-btn">',
+        '&#128247; 업로드',
+        '<input type="file" accept="image/*" data-upload-step="', si, '" data-week="', weekNum, '" />',
+        '</label>'
+      );
+      if (step.image) {
+        parts.push('<span style="color:var(--muted);font-size:.78rem;">', esc(step.image), '</span>');
+      }
+      parts.push('</div></div>');
+
+      // Goals
+      parts.push(
+        '<div class="field-group">',
+        '<label class="field-label">목표</label>',
+        '<div class="list-editor">'
+      );
+      (step.goal || []).forEach(function(g, gi) {
+        parts.push(
+          '<div class="list-editor-row">',
+          '<input class="field-input" data-step-list="goal" data-step="', si, '" data-idx="', gi, '" value="', esc(g), '" />',
+          '<button class="btn-icon danger" data-step-list-remove="goal" data-step="', si, '" data-idx="', gi, '" type="button" aria-label="삭제">&times;</button>',
+          '</div>'
+        );
+      });
+      parts.push(
+        '</div>',
+        '<button class="btn-add" data-step-list-add="goal" data-step="', si, '" type="button">+ 목표 추가</button>',
+        '</div>'
+      );
+
+      // Done criteria
+      parts.push(
+        '<div class="field-group">',
+        '<label class="field-label">완료 기준</label>',
+        '<div class="list-editor">'
+      );
+      (step.done || []).forEach(function(d, di) {
+        parts.push(
+          '<div class="list-editor-row">',
+          '<input class="field-input" data-step-list="done" data-step="', si, '" data-idx="', di, '" value="', esc(d), '" />',
+          '<button class="btn-icon danger" data-step-list-remove="done" data-step="', si, '" data-idx="', di, '" type="button" aria-label="삭제">&times;</button>',
+          '</div>'
+        );
+      });
+      parts.push(
+        '</div>',
+        '<button class="btn-add" data-step-list-add="done" data-step="', si, '" type="button">+ 완료 기준 추가</button>',
+        '</div>'
+      );
+
+      // Tasks
+      parts.push(
+        '<div class="field-group">',
+        '<label class="field-label">작업</label>',
+        '<div class="list-editor">'
+      );
+      (step.tasks || []).forEach(function(t, ti) {
+        parts.push(
+          '<div class="task-editor-row">',
+          '<div class="task-editor-fields">',
+          '<input class="field-input" data-task-field="label" data-step="', si, '" data-idx="', ti, '" value="', esc(t.label), '" placeholder="작업 이름" />',
+          '<input class="field-input" data-task-field="detail" data-step="', si, '" data-idx="', ti, '" value="', esc(t.detail || ""), '" placeholder="세부 사항 (선택)" />',
+          '</div>',
+          '<button class="btn-icon danger" data-task-remove data-step="', si, '" data-idx="', ti, '" type="button" aria-label="삭제">&times;</button>',
+          '</div>'
+        );
+      });
+      parts.push(
+        '</div>',
+        '<button class="btn-add" data-task-add data-step="', si, '" type="button">+ 작업 추가</button>',
+        '</div>'
+      );
+
+      parts.push('</div></details>');
+    }
+
+    function buildSidebarHTML() {
+      var parts = [];
+      curriculum.forEach(function(w, i) {
+        var dotClass = w.status === "done" ? "done" : w.status === "active" ? "active" : "upcoming";
+        var activeClass = i === selectedIdx ? " active" : "";
+        parts.push(
+          '<div class="sidebar-item', activeClass, '" data-idx="', i, '">',
+          '<span class="sidebar-dot ', dotClass, '"></span>',
+          '<span class="sidebar-week-num">', String(w.week).padStart(2, "0"), '</span>',
+          '<span class="sidebar-week-title">', esc(w.title), '</span>',
+          '</div>'
+        );
+      });
+      return parts.join("");
+    }
+
+    // ─── Auth ────────────────────────────────────────────
+    function showAuth() {
+      authOverlay.style.display = "";
+      authInput.value = "";
+      authError.textContent = "";
+      authInput.focus();
+    }
+
+    authSubmit.addEventListener("click", async function() {
+      var pw = authInput.value.trim();
+      if (!pw) { authError.textContent = "비밀번호를 입력하세요."; return; }
+      authToken = pw;
+      sessionStorage.setItem("rpd-admin-token", authToken);
+      try {
+        var res = await fetch("/api/curriculum", { headers: apiHeaders() });
+        if (res.status === 401 || res.status === 403) {
+          authError.textContent = "인증 실패. 다시 시도하세요.";
+          authToken = "";
+          sessionStorage.removeItem("rpd-admin-token");
+          return;
+        }
+        authOverlay.style.display = "none";
+        curriculum = await res.json();
+        renderSidebar();
+        selectWeek(0);
+      } catch (e) {
+        authError.textContent = "서버 연결 실패.";
+      }
+    });
+
+    authInput.addEventListener("keydown", function(e) {
+      if (e.key === "Enter") authSubmit.click();
+    });
+
+    // ─── Mobile sidebar ──────────────────────────────────
+    hamburgerBtn.addEventListener("click", function() {
+      sidebarEl.classList.toggle("open");
+      sidebarOverlay.classList.toggle("visible");
+    });
+    sidebarOverlay.addEventListener("click", function() {
+      sidebarEl.classList.remove("open");
+      sidebarOverlay.classList.remove("visible");
+    });
+
+    // ─── Data loading ────────────────────────────────────
+    async function loadCurriculum() {
+      try {
+        var res = await fetch("/api/curriculum", { headers: apiHeaders() });
+        if (res.status === 401 || res.status === 403) {
+          showAuth();
+          return;
+        }
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        curriculum = await res.json();
+        renderSidebar();
+        selectWeek(0);
+      } catch (e) {
+        editorInner.textContent = "";
+        var msg = document.createElement("div");
+        msg.className = "empty-state";
+        msg.textContent = "서버 연결 실패. API 서버가 실행 중인지 확인하세요.";
+        editorInner.appendChild(msg);
+      }
+    }
+
+    // ─── Saving ──────────────────────────────────────────
+    saveBtn.addEventListener("click", async function() {
+      saveBtn.disabled = true;
+      saveBtn.textContent = "저장 중...";
+      try {
+        var res = await fetch("/api/curriculum", {
+          method: "PUT",
+          headers: apiHeaders(),
+          body: JSON.stringify(curriculum),
+        });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        clearDirty();
+        toast("저장 완료", "success");
+      } catch (e) {
+        toast("저장 실패: " + e.message, "error");
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = "\uD83D\uDCBE 저장";
+      }
+    });
+
+    // ─── Preview ─────────────────────────────────────────
+    previewBtn.addEventListener("click", function() {
+      if (!curriculum.length) return;
+      var weekNum = curriculum[selectedIdx].week;
+      window.open("week.html?week=" + weekNum, "_blank");
+    });
+
+    // ─── Unsaved changes warning ─────────────────────────
+    window.addEventListener("beforeunload", function(e) {
+      if (dirty) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    });
+
+    // ─── Sidebar rendering ───────────────────────────────
+    function renderSidebar() {
+      // Safe: buildSidebarHTML uses esc() on all dynamic content
+      sidebarList.innerHTML = buildSidebarHTML();
+    }
+
+    sidebarList.addEventListener("click", function(e) {
+      var item = e.target.closest(".sidebar-item");
+      if (!item) return;
+      selectWeek(parseInt(item.dataset.idx, 10));
+      sidebarEl.classList.remove("open");
+      sidebarOverlay.classList.remove("visible");
+    });
+
+    // ─── Select week ─────────────────────────────────────
+    function selectWeek(idx) {
+      selectedIdx = idx;
+      var items = sidebarList.querySelectorAll(".sidebar-item");
+      for (var i = 0; i < items.length; i++) {
+        items[i].classList.toggle("active", i === idx);
+      }
+      renderEditor();
+    }
+
+    // ─── Editor rendering ────────────────────────────────
+    function renderEditor() {
+      var w = curriculum[selectedIdx];
+      if (!w) {
+        editorInner.textContent = "";
+        var msg = document.createElement("div");
+        msg.className = "empty-state";
+        msg.textContent = "주차를 선택하세요.";
+        editorInner.appendChild(msg);
+        return;
+      }
+      // Safe: buildEditorHTML uses esc() on every dynamic value
+      editorInner.innerHTML = buildEditorHTML(w);
+    }
+
+    // ─── Event delegation ────────────────────────────────
+    editorInner.addEventListener("input", function(e) {
+      var el = e.target;
+      var w = curriculum[selectedIdx];
+
+      // Top-level fields
+      if (el.dataset.field) {
+        w[el.dataset.field] = el.value;
+        markDirty();
+        if (el.dataset.field === "title" || el.dataset.field === "status") {
+          renderSidebar();
+        }
+        return;
+      }
+
+      // Top-level lists (topics, mistakes, checklist)
+      if (el.dataset.list) {
+        var key = el.dataset.list;
+        var idx = parseInt(el.dataset.idx, 10);
+        if (key === "checklist") {
+          w.assignment.checklist[idx] = el.value;
+        } else {
+          w[key][idx] = el.value;
+        }
+        markDirty();
+        return;
+      }
+
+      // Assignment fields
+      if (el.dataset.assignment) {
+        w.assignment = w.assignment || { title: "", description: "", checklist: [] };
+        w.assignment[el.dataset.assignment] = el.value;
+        markDirty();
+        return;
+      }
+
+      // Shortcut fields
+      if (el.dataset.shortcutField) {
+        w.shortcuts = w.shortcuts || [];
+        var sIdx = parseInt(el.dataset.idx, 10);
+        w.shortcuts[sIdx][el.dataset.shortcutField] = el.value;
+        markDirty();
+        return;
+      }
+
+      // Explore fields
+      if (el.dataset.exploreField) {
+        w.explore = w.explore || [];
+        var eIdx = parseInt(el.dataset.idx, 10);
+        w.explore[eIdx][el.dataset.exploreField] = el.value;
+        markDirty();
+        return;
+      }
+
+      // Doc fields
+      if (el.dataset.docField) {
+        w.docs = w.docs || [];
+        var dIdx = parseInt(el.dataset.idx, 10);
+        w.docs[dIdx][el.dataset.docField] = el.value;
+        markDirty();
+        return;
+      }
+
+      // Step fields
+      if (el.dataset.stepField) {
+        var si = parseInt(el.dataset.step, 10);
+        w.steps[si][el.dataset.stepField] = el.value;
+        markDirty();
+        if (el.dataset.stepField === "title") {
+          var card = el.closest(".step-card");
+          if (card) {
+            var titleSpan = card.querySelector(".step-card-title");
+            if (titleSpan) titleSpan.textContent = el.value || "새 단계";
+          }
+        }
+        return;
+      }
+
+      // Step list fields (goal, done)
+      if (el.dataset.stepList) {
+        var stepIdx = parseInt(el.dataset.step, 10);
+        var listIdx = parseInt(el.dataset.idx, 10);
+        w.steps[stepIdx][el.dataset.stepList][listIdx] = el.value;
+        markDirty();
+        return;
+      }
+
+      // Task fields
+      if (el.dataset.taskField) {
+        var tStep = parseInt(el.dataset.step, 10);
+        var tIdx = parseInt(el.dataset.idx, 10);
+        w.steps[tStep].tasks[tIdx][el.dataset.taskField] = el.value;
+        markDirty();
+        return;
+      }
+    });
+
+    editorInner.addEventListener("change", function(e) {
+      var el = e.target;
+      var w = curriculum[selectedIdx];
+
+      // Select fields (status)
+      if (el.dataset.field === "status") {
+        w.status = el.value;
+        markDirty();
+        renderSidebar();
+        return;
+      }
+
+      // Image upload
+      if (el.dataset.uploadStep !== undefined) {
+        var si = parseInt(el.dataset.uploadStep, 10);
+        var weekNum = parseInt(el.dataset.week, 10);
+        var file = el.files[0];
+        if (file) uploadImage(weekNum, si, file);
+        return;
+      }
+    });
+
+    editorInner.addEventListener("click", function(e) {
+      var btn = e.target.closest("button");
+      if (!btn) return;
+      var w = curriculum[selectedIdx];
+
+      // Remove from top-level list
+      if (btn.dataset.remove) {
+        var key = btn.dataset.remove;
+        var idx = parseInt(btn.dataset.idx, 10);
+        if (key === "checklist") {
+          w.assignment.checklist.splice(idx, 1);
+        } else if (key === "shortcuts") {
+          w.shortcuts = w.shortcuts || [];
+          w.shortcuts.splice(idx, 1);
+        } else if (key === "explore") {
+          w.explore = w.explore || [];
+          w.explore.splice(idx, 1);
+        } else if (key === "docs") {
+          w.docs = w.docs || [];
+          w.docs.splice(idx, 1);
+        } else {
+          w[key].splice(idx, 1);
+        }
+        markDirty();
+        renderEditor();
+        return;
+      }
+
+      // Add to top-level list
+      if (btn.dataset.add) {
+        var addKey = btn.dataset.add;
+        if (addKey === "topics") {
+          w.topics = w.topics || [];
+          w.topics.push("");
+        } else if (addKey === "mistakes") {
+          w.mistakes = w.mistakes || [];
+          w.mistakes.push("");
+        } else if (addKey === "checklist") {
+          w.assignment = w.assignment || { title: "", description: "", checklist: [] };
+          w.assignment.checklist.push("");
+        } else if (addKey === "shortcuts") {
+          w.shortcuts = w.shortcuts || [];
+          w.shortcuts.push({ keys: "", action: "" });
+        } else if (addKey === "explore") {
+          w.explore = w.explore || [];
+          w.explore.push({ title: "", hint: "" });
+        } else if (addKey === "docs") {
+          w.docs = w.docs || [];
+          w.docs.push({ title: "", url: "" });
+        }
+        markDirty();
+        renderEditor();
+        requestAnimationFrame(function() {
+          var selectors = {
+            topics: '[data-list="topics"]',
+            mistakes: '[data-list="mistakes"]',
+            checklist: '[data-list="checklist"]',
+            shortcuts: '[data-shortcut-field="keys"]',
+            explore: '[data-explore-field="title"]',
+            docs: '[data-doc-field="title"]'
+          };
+          var inputs = editorInner.querySelectorAll(selectors[addKey]);
+          var last = inputs[inputs.length - 1];
+          if (last) last.focus();
+        });
+        return;
+      }
+
+      // Add step
+      if (btn.hasAttribute("data-add-step")) {
+        var newId = "w" + w.week + "-t" + (Date.now() % 10000);
+        w.steps.push({
+          title: "",
+          copy: "",
+          goal: [],
+          done: [],
+          tasks: [{ id: newId, label: "", detail: "" }],
+        });
+        markDirty();
+        renderEditor();
+        return;
+      }
+
+      // Remove step
+      if (btn.dataset.removeStep !== undefined) {
+        var rsi = parseInt(btn.dataset.removeStep, 10);
+        if (w.steps.length <= 1) {
+          toast("최소 1개의 단계가 필요합니다.", "error");
+          return;
+        }
+        w.steps.splice(rsi, 1);
+        markDirty();
+        renderEditor();
+        return;
+      }
+
+      // Move step
+      if (btn.dataset.moveStep) {
+        var msi = parseInt(btn.dataset.idx, 10);
+        var dir = btn.dataset.moveStep;
+        if (dir === "up" && msi > 0) {
+          var tmp = w.steps[msi - 1];
+          w.steps[msi - 1] = w.steps[msi];
+          w.steps[msi] = tmp;
+          markDirty();
+          renderEditor();
+        } else if (dir === "down" && msi < w.steps.length - 1) {
+          var tmp2 = w.steps[msi];
+          w.steps[msi] = w.steps[msi + 1];
+          w.steps[msi + 1] = tmp2;
+          markDirty();
+          renderEditor();
+        }
+        return;
+      }
+
+      // Step list add (goal, done)
+      if (btn.dataset.stepListAdd) {
+        var slaSi = parseInt(btn.dataset.step, 10);
+        var slaKey = btn.dataset.stepListAdd;
+        w.steps[slaSi][slaKey] = w.steps[slaSi][slaKey] || [];
+        w.steps[slaSi][slaKey].push("");
+        markDirty();
+        renderEditor();
+        return;
+      }
+
+      // Step list remove (goal, done)
+      if (btn.dataset.stepListRemove) {
+        var slrSi = parseInt(btn.dataset.step, 10);
+        var slrIdx = parseInt(btn.dataset.idx, 10);
+        var slrKey = btn.dataset.stepListRemove;
+        w.steps[slrSi][slrKey].splice(slrIdx, 1);
+        markDirty();
+        renderEditor();
+        return;
+      }
+
+      // Task add
+      if (btn.hasAttribute("data-task-add")) {
+        var taSi = parseInt(btn.dataset.step, 10);
+        var taId = "w" + w.week + "-t" + (Date.now() % 10000);
+        w.steps[taSi].tasks = w.steps[taSi].tasks || [];
+        w.steps[taSi].tasks.push({ id: taId, label: "", detail: "" });
+        markDirty();
+        renderEditor();
+        return;
+      }
+
+      // Task remove
+      if (btn.hasAttribute("data-task-remove")) {
+        var trSi = parseInt(btn.dataset.step, 10);
+        var trIdx = parseInt(btn.dataset.idx, 10);
+        w.steps[trSi].tasks.splice(trIdx, 1);
+        markDirty();
+        renderEditor();
+        return;
+      }
+    });
+
+    // ─── Image upload ────────────────────────────────────
+    async function uploadImage(weekNum, stepIdx, file) {
+      var form = new FormData();
+      form.append("image", file);
+      try {
+        var res = await fetch("/api/upload/" + weekNum + "/" + stepIdx, {
+          method: "POST",
+          headers: uploadApiHeaders(),
+          body: form,
+        });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        var data = await res.json();
+        curriculum[selectedIdx].steps[stepIdx].image = data.path;
+        markDirty();
+        // Update preview in-place using safe DOM methods
+        var previewEl = editorInner.querySelector('[data-img-preview="' + stepIdx + '"]');
+        if (previewEl) {
+          previewEl.textContent = "";
+          var img = document.createElement("img");
+          img.src = data.path;
+          img.alt = "Step image";
+          previewEl.appendChild(img);
+        }
+        toast("이미지 업로드 완료", "success");
+      } catch (e) {
+        toast("이미지 업로드 실패: " + e.message, "error");
+      }
+    }
+
+    // ─── Keyboard shortcut: Ctrl/Cmd+S to save ───────────
+    document.addEventListener("keydown", function(e) {
+      if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+        e.preventDefault();
+        saveBtn.click();
+      }
+    });
+
+    // ─── Notion integration ──────────────────────────────
+    async function checkNotionStatus() {
+      try {
+        var res = await fetch("/api/notion-status", { headers: apiHeaders() });
+        var data = await res.json();
+        if (data.configured && data.mapping_loaded) {
+          notionGroup.style.display = "flex";
+        }
+      } catch(e) { /* Notion not available, hide buttons */ }
+    }
+
+    notionPushBtn.addEventListener("click", async function() {
+      if (!curriculum[selectedIdx]) return;
+      var weekNum = curriculum[selectedIdx].week;
+
+      if (!confirm("Week " + weekNum + " \uB0B4\uC6A9\uC744 Notion\uC5D0 \uBC18\uC601\uD558\uC2DC\uACA0\uC2B5\uB2C8\uAE4C?")) return;
+
+      notionPushBtn.disabled = true;
+      notionPushBtn.textContent = "\u23F3 \uC804\uC1A1 \uC911...";
+
+      try {
+        var res = await fetch("/api/notion-push/" + weekNum, {
+          method: "POST",
+          headers: apiHeaders(),
+        });
+        var data = await res.json();
+        if (data.ok) {
+          toast("Notion \uBC18\uC601 \uC644\uB8CC (" + data.blocks_written + "\uAC1C \uBE14\uB85D)", "success");
+        } else {
+          toast("Notion \uBC18\uC601 \uC2E4\uD328: " + data.error, "error");
+        }
+      } catch(e) {
+        toast("Notion \uC5F0\uACB0 \uC2E4\uD328: " + e.message, "error");
+      } finally {
+        notionPushBtn.disabled = false;
+        notionPushBtn.textContent = "\uD83D\uDCE4 Notion";
+      }
+    });
+
+    notionPullBtn.addEventListener("click", async function() {
+      if (!curriculum[selectedIdx]) return;
+      var weekNum = curriculum[selectedIdx].week;
+
+      notionPullBtn.disabled = true;
+      notionPullBtn.textContent = "\u23F3 \uAC00\uC838\uC624\uB294 \uC911...";
+
+      try {
+        var res = await fetch("/api/notion-pull/" + weekNum, {
+          method: "POST",
+          headers: apiHeaders(),
+        });
+        var data = await res.json();
+
+        if (!data.ok) {
+          toast("Notion \uAC00\uC838\uC624\uAE30 \uC2E4\uD328: " + data.error, "error");
+          return;
+        }
+
+        var pulled = data.week;
+        var current = curriculum[selectedIdx];
+
+        // Build a simple diff summary
+        var changes = [];
+        if (pulled.title !== current.title) changes.push("\uC81C\uBAA9: \"" + current.title + "\" \u2192 \"" + pulled.title + "\"");
+        if (JSON.stringify(pulled.shortcuts) !== JSON.stringify(current.shortcuts)) changes.push("\uB2E8\uCD95\uD0A4: " + (pulled.shortcuts || []).length + "\uAC1C");
+        if (JSON.stringify(pulled.mistakes) !== JSON.stringify(current.mistakes)) changes.push("\uB9C9\uD788\uB294 \uC9C0\uC810: " + (pulled.mistakes || []).length + "\uAC1C");
+        if (JSON.stringify(pulled.assignment && pulled.assignment.checklist) !== JSON.stringify(current.assignment && current.assignment.checklist)) changes.push("\uACFC\uC81C \uCCB4\uD06C\uB9AC\uC2A4\uD2B8 \uBCC0\uACBD");
+
+        if (changes.length === 0) {
+          toast("Notion\uACFC \uB3D9\uC77C\uD569\uB2C8\uB2E4. \uBCC0\uACBD\uC0AC\uD56D \uC5C6\uC74C.", "success");
+          return;
+        }
+
+        var msg = "Notion\uC5D0\uC11C \uAC00\uC838\uC628 \uBCC0\uACBD\uC0AC\uD56D:\n\n" + changes.join("\n") + "\n\n\uC801\uC6A9\uD558\uC2DC\uACA0\uC2B5\uB2C8\uAE4C?";
+        if (confirm(msg)) {
+          curriculum[selectedIdx] = pulled;
+          renderEditor();
+          markDirty();
+          toast("Notion \uBCC0\uACBD\uC0AC\uD56D \uC801\uC6A9\uB428 (" + changes.length + "\uAC74). \uC800\uC7A5 \uBC84\uD2BC\uC744 \uB20C\uB7EC \uD655\uC815\uD558\uC138\uC694.", "success");
+        }
+      } catch(e) {
+        toast("Notion \uC5F0\uACB0 \uC2E4\uD328: " + e.message, "error");
+      } finally {
+        notionPullBtn.disabled = false;
+        notionPullBtn.textContent = "\uD83D\uDCE5 Notion";
+      }
+    });
+
+    // ─── Init ────────────────────────────────────────────
+    loadCurriculum();
+    checkNotionStatus();
+
+  })();
+  </script>
+</body>
+</html>

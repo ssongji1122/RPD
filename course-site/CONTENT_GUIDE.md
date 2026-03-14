@@ -227,3 +227,125 @@
   ],
 },
 ```
+
+---
+
+## 9. Admin 페이지 사용법
+
+### 서버 실행
+
+```bash
+cd /Users/ssongji/Developer/Workspace/RPD
+
+# 기본 (인증 없음, 로컬 개발용)
+python3 tools/admin-server.py
+
+# 인증 모드 (외부 접속 시)
+ADMIN_KEY=비밀번호 python3 tools/admin-server.py
+
+# Notion 동기화 포함
+NOTION_TOKEN=ntn_xxxxx python3 tools/admin-server.py
+
+# 전부 켜기
+ADMIN_KEY=비밀번호 NOTION_TOKEN=ntn_xxxxx python3 tools/admin-server.py
+```
+
+접속: **http://localhost:8765/admin.html**
+
+### 기본 편집 흐름
+
+1. 좌측 사이드바에서 주차를 클릭
+2. 우측 편집 영역에서 텍스트 수정
+3. 상단 **💾 저장** 버튼 클릭 (또는 `Ctrl/Cmd+S`)
+4. "저장 완료" 토스트가 뜨면 성공
+
+> 저장하면 `curriculum.js`가 즉시 업데이트됩니다.
+> `week.html?week=N`을 새로고침하면 변경사항이 바로 반영됩니다.
+
+### 주차 상태 변경
+
+상단의 "상태" 드롭다운에서 변경 → 저장:
+
+| 상태 | 의미 | index.html 배지 |
+|------|------|-----------------|
+| `done` | 완료된 주차 | 🟢 녹색 |
+| `active` | 이번 주 진행 중 | 🔵 파란색 |
+| `upcoming` | 아직 안 한 주차 | ⚪ 회색 |
+
+### 이미지 업로드
+
+각 Step의 "📷 업로드" 버튼 → 파일 선택 → 자동 업로드
+저장 위치: `course-site/assets/images/week-NN/step-N.png`
+
+### 미리보기
+
+상단 "미리보기 ↗" 버튼 → 학생용 페이지(`week.html`)가 새 탭에서 열림
+
+---
+
+## 10. 콘텐츠 워크플로우
+
+### 큰 단위 수정 (새 주차 콘텐츠 작성)
+
+```
+Claude Code에서 md 파일 작성/수정
+    ↓
+curriculum.js에 반영 (Claude Code가 직접 편집)
+    ↓
+Admin 페이지에서 미세 조정
+    ↓
+📤 Notion에 푸시 (선택)
+```
+
+### 소규모 수정 (오타, 문구 변경)
+
+```
+Admin 페이지에서 직접 수정 → 저장
+    ↓
+📤 Notion에 푸시 (선택)
+```
+
+### Notion에서 수정한 내용 가져오기
+
+```
+Notion에서 내용 수정 (교수자가 직접)
+    ↓
+Admin 페이지에서 📥 Notion 버튼 클릭
+    ↓
+변경사항 diff 확인 → "적용" 선택
+    ↓
+💾 저장 버튼으로 curriculum.js에 확정
+```
+
+### Notion 동기화 주의사항
+
+- **📤 Push (Admin → Notion)**: Notion 페이지의 기존 내용을 **모두 교체**합니다. Notion에서 직접 꾸민 포맷(색상, 콜아웃 등)은 유실될 수 있으므로, 내용이 확정된 후에만 Push하세요.
+- **📥 Pull (Notion → Admin)**: 비파괴적입니다. 변경사항을 미리보기로 보여주고, 교수자가 확인 후에만 적용됩니다. "저장" 버튼을 눌러야 최종 반영됩니다.
+- Notion 토큰이 없으면 동기화 버튼이 표시되지 않습니다.
+
+### Notion 토큰 설정
+
+1. https://www.notion.so/my-integrations 에서 Internal Integration 생성
+2. RPD 워크스페이스의 "주차별 강의자료 원본" 페이지에 Integration 연결
+3. 토큰을 `NOTION_TOKEN` 환경변수로 전달
+
+---
+
+## 11. 파일 구조 참고
+
+```
+course-site/
+├── index.html          # 메인 페이지 (15주차 카드 그리드)
+├── week.html           # 주차별 상세 페이지 (?week=N)
+├── admin.html          # 관리자 편집 페이지
+├── data/
+│   └── curriculum.js   # ★ 단일 소스 오브 트루스
+├── assets/
+│   ├── tokens.css      # 공통 디자인 토큰
+│   └── images/         # 스텝별 스크린샷
+│       ├── week-03/
+│       └── week-04/
+tools/
+├── admin-server.py     # Admin 서버 (Python stdlib)
+└── notion-mapping.json # Week ↔ Notion 페이지 ID 매핑
+```
