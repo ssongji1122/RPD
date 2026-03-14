@@ -32,12 +32,41 @@
       font-size: .82rem;
     }
 
-    /* Topic pills */
-    .topic-list { display: flex; flex-wrap: wrap; gap: 9px; }
-    .topic-pill {
-      padding: 6px 12px; border-radius: 999px;
-      background: rgba(255,255,255,.04); border: 1px solid rgba(147,197,253,.11);
-      color: var(--muted-strong); font-size: .82rem;
+    /* Topic checklist */
+    .topic-progress { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .topic-progress-bar { flex: 1; height: 4px; border-radius: 2px; background: rgba(255,255,255,.08); }
+    .topic-progress-fill { height: 100%; border-radius: 2px; background: var(--key-soft); transition: width .35s ease; width: 0%; }
+    .topic-progress-label { font-size: .78rem; color: var(--muted); white-space: nowrap; }
+
+    .topic-check-list { display: flex; flex-direction: column; gap: 7px; }
+    .topic-check-item { position: relative; }
+    .topic-check-item input[type="checkbox"] { position: absolute; opacity: 0; width: 0; height: 0; }
+    .topic-check-item label {
+      display: flex; align-items: center; gap: 11px;
+      padding: 9px 16px; border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.1);
+      background: rgba(255,255,255,.04);
+      color: var(--muted-strong); font-size: .87rem;
+      cursor: pointer;
+      transition: background .22s, border-color .22s, color .22s;
+      user-select: none;
+    }
+    .topic-check-item label::before {
+      content: ""; flex-shrink: 0;
+      width: 14px; height: 14px; border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,.22);
+      transition: background .22s, border-color .22s;
+    }
+    .topic-check-item input:checked + label {
+      background: rgba(10,132,255,.14);
+      border-color: rgba(10,132,255,.4);
+      color: #dbeafe;
+    }
+    .topic-check-item input:checked + label::before {
+      background: var(--key-soft);
+      border-color: var(--key-soft);
+      background-image: url("data:image/svg+xml,%3Csvg width='9' height='7' viewBox='0 0 9 7' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 3.5L3.2 5.8L8 1' stroke='white' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: center;
     }
 
     /* Nav between weeks */
@@ -145,8 +174,27 @@
         ? `<a href="week.html?week=${next.week}">Week ${next.week} →</a>`
         : `<span style="opacity:.4">마지막 주차</span>`;
 
-      // Topics
-      const topicPills = w.topics.map(t => `<span class="topic-pill">${t}</span>`).join("");
+      const videos = w.videos || [];
+      const docs = w.docs || [];
+
+      // Topics (checkable pills with localStorage persistence)
+      const topicStorageKey = storageKey + "-topics";
+      const savedTopics = JSON.parse(localStorage.getItem(topicStorageKey) || "{}");
+      const topicTotal = w.topics.length;
+      const topicCheckedInit = w.topics.filter((_, i) => savedTopics["t" + i]).length;
+
+      const topicPills =
+        "<div class=\"topic-progress\">" +
+          "<div class=\"topic-progress-bar\"><div class=\"topic-progress-fill\" id=\"topicFill\" style=\"width:" + Math.round(topicCheckedInit / topicTotal * 100) + "%\"></div></div>" +
+          "<div class=\"topic-progress-label\" id=\"topicCount\">" + topicCheckedInit + " / " + topicTotal + "</div>" +
+        "</div>" +
+        "<div class=\"topic-check-list\">" +
+        w.topics.map((t, i) => {
+          const id = "tc-" + weekNum + "-" + i;
+          const chk = savedTopics["t" + i] ? " checked" : "";
+          return "<div class=\"topic-check-item\"><input type=\"checkbox\" id=\"" + id + "\"" + chk + " data-ti=\"" + i + "\" /><label for=\"" + id + "\">" + t + "</label></div>";
+        }).join("") +
+        "</div>";
 
       // Steps HTML
       const stepsHtml = w.steps.map((step, idx) => {
@@ -199,17 +247,20 @@
           </details>
         </section>` : "";
 
-      // Docs
-      const docsHtml = w.docs.length > 0 ? `
+      const renderResourceSection = (title, icon, items) => items.length > 0 ? `
         <section class="content-block">
-          <div class="section-head"><h3>공식 문서</h3></div>
+          <div class="section-head"><h3>${title}</h3></div>
           <div class="doc-links-row">
-            ${w.docs.map(d => `
+            ${items.map(d => `
               <a class="doc-link" href="${d.url}" target="_blank" rel="noopener noreferrer">
-                📄 ${d.title} ↗
+                ${icon} ${d.title} ↗
               </a>`).join("")}
           </div>
         </section>` : "";
+
+      // Videos / Docs
+      const videosHtml = renderResourceSection("공식 영상 튜토리얼", "▶", videos);
+      const docsHtml = renderResourceSection("공식 문서", "📄", docs);
 
       // Assignment
       const assignmentCheckli = w.assignment.checklist.map(c => `<li>${c}</li>`).join("");
@@ -267,7 +318,8 @@
             <div class="hero-meta">
               <span class="meta-chip">⏱ ${w.duration}</span>
               <span class="meta-chip">📋 ${w.steps.length}단계 실습</span>
-              <span class="meta-chip">📄 ${w.docs.length}개 공식 문서</span>
+              ${videos.length ? `<span class="meta-chip">▶ ${videos.length}개 공식 영상</span>` : ""}
+              ${docs.length ? `<span class="meta-chip">📄 ${docs.length}개 공식 문서</span>` : ""}
             </div>
           </div>
         </section>
@@ -289,6 +341,7 @@
         ${shortcutsHtml}
         ${exploreHtml}
         ${mistakesHtml}
+        ${videosHtml}
         ${docsHtml}
         ${assignmentHtml}
 
@@ -306,6 +359,29 @@
 
       // Init progress engine
       initProgress(w.steps.length);
+      initTopicChecks(w.topics.length, topicStorageKey);
+    }
+
+    // ─── Topic check engine ──────────────────────────
+    function initTopicChecks(total, key) {
+      const fill  = document.getElementById("topicFill");
+      const count = document.getElementById("topicCount");
+      if (!fill || !count) return;
+
+      function updateTopicProgress() {
+        const all     = [...document.querySelectorAll(".topic-check-list input[type='checkbox']")];
+        const checked = all.filter(c => c.checked).length;
+        const pct     = total > 0 ? Math.round(checked / total * 100) : 0;
+        fill.style.width  = pct + "%";
+        count.textContent = checked + " / " + total;
+        const state = {};
+        all.forEach((c, i) => { state["t" + i] = c.checked; });
+        localStorage.setItem(key, JSON.stringify(state));
+      }
+
+      document.querySelectorAll(".topic-check-list input[type='checkbox']").forEach(cb => {
+        cb.addEventListener("change", updateTopicProgress);
+      });
     }
 
     // ─── Progress engine ─────────────────────────────
