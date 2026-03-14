@@ -1,203 +1,349 @@
-# Week 03: 기초 모델링 1 - Edit Mode
+# Week 03: 기초 모델링 1 - Edit Mode + Modifier
 
 ## 학습 목표
 
-- [ ] Edit Mode의 3가지 선택 모드를 이해한다
-- [ ] Extrude, Loop Cut, Inset, Bevel 도구를 사용할 수 있다
-- [ ] 기본 도형에서 로봇 형태를 만들 수 있다
+- [ ] Edit Mode의 핵심 도구를 이해한다
+- [ ] Modifier가 무엇인지 쉽게 설명할 수 있다
+- [ ] Mirror, Subdivision Surface, Solidify, Array, Boolean을 사용할 수 있다
+- [ ] Bevel Tool과 Bevel Modifier의 차이를 구분할 수 있다
+- [ ] Weighted Normal, Join/Separate, Apply 타이밍을 작업 흐름 안에서 이해한다
+- [ ] Edit Mode와 Modifier를 조합해 로봇 기본 형태를 만들 수 있다
 
 ## 🔗 이전 주차 복습
 
-- Week 02에서 배운 **Transform (G, R, S)**과 **축 제한**을 Edit Mode에서도 동일하게 사용한다
-- **Apply Transform (Ctrl + A)**을 Edit Mode 진입 전에 반드시 적용했는지 확인
-- **뷰 전환 (Numpad 1, 3, 7)**으로 정면/측면/상면을 오가며 작업하는 습관 유지
-- MCP를 활용하여 기본 도형 배치를 자동화할 수 있음 (복습 겸 활용)
+- Week 02에서 배운 **G / R / S**와 축 제한을 계속 사용한다
+- 작업 전 **Ctrl + A > All Transforms**를 적용하는 습관이 중요하다
+- **Numpad 1 / 3 / 7**로 정면, 측면, 상면을 자주 오가며 형태를 확인한다
+- 파츠가 많아지면 **P (Separate)**, **Ctrl + J (Join)**로 정리할 수 있다
 
 ## 이론 (30분)
 
-### Object Mode vs Edit Mode
+### 이번 주 흐름
 
-- **Object Mode:** 오브젝트 단위로 이동, 회전, 스케일 등을 수행하는 모드
-- **Edit Mode:** 오브젝트 내부의 점, 선, 면을 직접 편집하는 모드
-- **Tab 키**로 두 모드를 전환
-- Edit Mode에서는 메시의 형태를 자유롭게 변경할 수 있음
+- **Edit Mode:** 점, 선, 면을 직접 움직이며 기본형을 만든다
+- **Modifier:** 원본을 바로 깎지 않고 효과를 얹어 더 빠르게 다듬는다
+- **Join / Separate:** 파츠를 나누거나 묶어 작업을 정리한다
+- **Apply 타이밍:** `Ctrl + A`는 중간에도 자주, `Modifier Apply`는 마지막에만
+- 이번 주는 **손으로 형태를 만들고, Modifier로 정리하는 흐름**으로 이해하면 된다
 
-### Primitive 종류
+> 💡 Edit Mode는 손으로 점토를 만지는 단계이고, Modifier는 거울 효과나 두께 효과 같은 필터를 얹는 단계라고 생각하면 쉽다.
 
-Shift + A > Mesh 메뉴에서 기본 도형을 추가할 수 있음
+### 꼭 기억할 Edit Mode 도구 4개
 
-- **Cube:** 정육면체. 가장 기본적인 모델링 출발점
-- **UV Sphere:** 경위도 방식의 구체. 균일한 사각형 면으로 구성
-- **Ico Sphere:** 삼각형 면으로 구성된 구체. 유기적 형태에 적합
-- **Cylinder:** 원기둥. 팔, 다리, 기둥 등에 활용
-- **Cone:** 원뿔. 뿔, 모자 등에 활용
-- **Torus:** 도넛 형태. 바퀴, 링 등에 활용
-- **Plane:** 평면. 바닥, 벽 등에 활용
-- **Circle:** 원. Edge만으로 구성된 형태
+| 도구 | 쉽게 말하면 | 어디에 쓰는지 |
+|------|-------------|----------------|
+| **Extrude (E)** | 점토를 잡아당기기 | 팔, 다리, 안테나, 돌출 |
+| **Loop Cut (Ctrl + R)** | 케이크에 칼집 넣기 | 분할선, 관절 위치 만들기 |
+| **Inset (I)** | 면 안쪽에 작은 면 하나 더 만들기 | 눈, 패널, 버튼 영역 |
+| **Bevel (Ctrl + B)** | 날카로운 모서리를 살짝 깎기 | 부드러운 모서리, 기계 디테일 |
 
-도형 추가 직후 F9 키를 누르면 Segments, Rings 등 생성 옵션을 조절할 수 있음
+### Modifier란?
 
-### 선택 모드
+- Modifier는 **필터처럼 얹는 기능**이라고 생각하면 쉽다
+- 원본 메쉬를 바로 망가뜨리지 않고, 화면에 보이는 결과를 바꿔준다
+- 숫자를 바꾸거나 끄거나 지우면서 실험하기 좋다
+- 위치는 `Properties > Modifier Properties` (렌치 아이콘)
 
-Edit Mode에서 상단 Header 또는 단축키로 전환
+> 💡 **Non-destructive**는 되돌릴 수 있다는 뜻이다. Apply 하기 전까지는 원본을 살려둔 채 실험할 수 있다.
 
-- **1 (Vertex):** 점 선택 모드. 개별 꼭짓점을 선택하고 이동
-- **2 (Edge):** 선 선택 모드. 두 점을 잇는 변을 선택
-- **3 (Face):** 면 선택 모드. 면 전체를 선택하여 조작
+### 자주 쓰는 Modifier 한눈에 보기
 
-#### 선택 방법
+| Modifier | 한 줄 비유 | 주로 하는 일 |
+|----------|------------|---------------|
+| **Mirror** | 거울처럼 반대편이 자동으로 생긴다 | 좌우 대칭 모델링 |
+| **Subdivision Surface** | 스케치를 더 촘촘하게 다시 그린다 | 곡면을 부드럽게 만들기 |
+| **Solidify** | 종이에 두께를 준다 | 외장 패널, 얇은 판 만들기 |
+| **Array** | 도장을 여러 번 찍는다 | 반복 구조 만들기 |
+| **Boolean** | 블록을 붙이거나 뺀다 | 구멍, 홈, 소켓 만들기 |
 
-- Left Click: 단일 선택
-- Shift + Left Click: 복수 선택 (추가/제거)
-- A: 전체 선택
-- Alt + A: 전체 선택 해제
-- L: 연결된 요소 전체 선택 (마우스 커서 위치 기준)
-- Ctrl + Numpad +: 선택 영역 확장
-- Shift로 Vertex/Edge/Face 복수 선택 모드를 동시에 활성화 가능
+### 필수로 알아둘 추가 Modifier
+
+| Modifier | 언제 쓰는지 | 같이 기억할 점 |
+|----------|-------------|----------------|
+| **Bevel Modifier** | 모서리를 비파괴로 둥글게 만들 때 | 하드서피스에서 자주 쓴다 |
+| **Weighted Normal** | 음영이 이상할 때 정리할 때 | Bevel Modifier와 같이 쓰는 경우가 많다 |
+
+### 선택으로 써볼 Modifier
+
+| Modifier | 언제 쓰는지 | 같이 기억할 점 |
+|----------|-------------|----------------|
+| **Simple Deform** | 전체를 휘게, 비틀게, 가늘게 만들 때 | Bend, Twist, Taper를 빠르게 시험할 수 있다 |
+| **Decimate** | 너무 무거운 메쉬를 가볍게 만들 때 | AI 생성 메쉬나 복잡한 모델에서 유용하다 |
+
+### 영상에서 자주 보이는 실전 흐름
+
+1. `G / R / S`로 큰 덩어리 위치를 먼저 맞춘다
+2. `Ctrl + A > All Transforms`로 Scale과 Rotation을 정리한다
+3. Edit Mode에서 `Extrude`, `Loop Cut`, `Inset`, `Bevel`로 기본형을 만든다
+4. `Mirror`, `Subdivision Surface`로 실루엣을 빠르게 정리한다
+5. `Boolean`이나 `Inset`으로 얼굴, 패널, 소켓 디테일을 추가한다
+6. `Bevel Modifier`와 `Weighted Normal`로 표면 느낌과 음영을 정리한다
+7. `Modifier Apply`는 정말 마지막에만 한다
+
+### 헷갈리기 쉬운 차이
+
+| 항목 | 언제 쓰는지 | 기억할 점 |
+|------|-------------|-----------|
+| **Edit Mode Bevel (`Ctrl + B`)** | 특정 모서리만 직접 다듬고 싶을 때 | 지금 선택한 부분만 바로 수정된다 |
+| **Bevel Modifier** | 전체 모서리 느낌을 비파괴로 조절할 때 | 나중에도 값을 바꿀 수 있다 |
+| **Apply Transform (`Ctrl + A`)** | Modifier 전, 비율과 회전을 정리할 때 | 작업 중간에도 자주 확인하는 편이 안전하다 |
+| **Apply Modifier** | 형태를 최종 확정할 때 | 초반에 해버리면 수정 여지가 줄어든다 |
+
+### Modifier Stack
+
+- Modifier는 **위에서 아래로** 순서대로 계산된다
+- 순서가 바뀌면 결과도 달라진다
+- 처음에는 아래 순서를 기준으로 보면 덜 헷갈린다
+
+```plain text
+Mirror
+↓
+Boolean
+↓
+Subdivision Surface
+```
+
+> ⚠️ 같은 Modifier를 써도 순서가 달라지면 전혀 다른 결과가 나온다.
 
 ## 실습 (90분)
 
-### Edit Mode 진입과 선택 연습 (15분)
+### Step 1: Edit Mode로 기본형 만들기 (20분)
 
-1. 기본 Cube 선택 후 Tab 키로 Edit Mode 진입
-2. 1, 2, 3 키로 선택 모드 전환하며 차이 확인
-3. Vertex 모드에서 점 하나를 선택하고 G 키로 이동
-4. Edge 모드에서 변 하나를 선택하고 이동
-5. Face 모드에서 면 하나를 선택하고 이동
-6. Shift + Click으로 여러 요소를 동시에 선택하는 연습
+1. Cube에서 시작
+2. **Extrude (E)**로 머리, 팔, 다리 위치를 만든다
+3. **Loop Cut (Ctrl + R)**로 관절과 분할선을 추가한다
+4. **Inset (I)**으로 눈, 패널, 버튼 영역을 만든다
+5. **Bevel (Ctrl + B)**로 너무 날카로운 모서리를 정리한다
 
-> 💡 **프로 팁:** **Wireframe 모드 (Z > Wireframe)**에서 선택하면 뒷면의 Vertex/Edge/Face도 함께 선택할 수 있다. Solid 모드에서는 보이는 면만 선택되므로, 대칭적인 편집이 필요할 때는 Wireframe 모드를 활용하자.
+> 💡 기본형은 Edit Mode로 먼저 만든다. Modifier는 그다음 속도를 올려주는 도구다.
 
-### Extrude (E) (20분)
+### Step 2: Mirror Modifier - 대칭을 가장 빨리 만드는 방법 (15분)
 
-#### 기본 사용법
+- 로봇처럼 좌우가 비슷한 형태를 만들 때 가장 먼저 떠올리면 좋다
+- 한쪽만 만들면 반대쪽이 자동으로 따라와서 작업 시간이 크게 줄어든다
 
-1. Face 모드(3)로 전환
-2. 돌출할 면을 선택
-3. E 키를 누르면 선택한 면이 돌출됨
-4. 마우스로 돌출 방향과 거리를 조절한 후 Left Click으로 확정
+**실습 순서**
 
-#### Region Extrude vs Individual Faces
+1. Cube를 준비한다
+2. Edit Mode에서 가운데를 기준으로 한쪽 절반을 지운다
+3. `Add Modifier > Mirror`를 추가한다
+4. X축 기준 대칭인지 확인한다
+5. **Clipping**을 켠다
+6. 한쪽만 `Extrude`로 수정하면서 반대쪽이 같이 바뀌는지 확인한다
 
-- **Region Extrude (E):** 선택한 면들을 하나의 영역으로 돌출
-- **Individual Faces (Mesh > Extrude > Extrude Individual Faces):** 각 면이 개별적으로 돌출
+```plain text
+S + X + 0 + Enter
+```
 
-#### 활용
+- 중심선이 틀어졌을 때 중심 Vertex를 X축 0 위치로 정렬할 때 자주 쓴다
 
-- 로봇 머리 위에 안테나 돌출
-- 로봇 얼굴에서 눈 부분 돌출
+> ⚠️ **Clipping은 꼭 켜두기.** 꺼져 있으면 중심선이 벌어질 수 있다.
 
-> 💡 **프로 팁:** Extrude 후 ESC나 Right Click으로 취소하면 겉보기에는 취소된 것 같지만, 실제로는 **중복 Vertex가 생성**되어 있다. 이 경우 즉시 **Ctrl + Z**로 되돌리거나, M 키 > Merge by Distance로 중복 Vertex를 제거해야 한다.
+### Step 3: Subdivision Surface + Solidify (20분)
 
-### Loop Cut (Ctrl + R) (15분)
+#### Subdivision Surface
 
-#### 기본 사용법
+- 메쉬를 더 잘게 나눠서 표면을 부드럽게 보여준다
+- 박스로 시작해도 둥근 몸체 느낌을 만들 수 있다
+- 너무 많이 올리면 무거워지니 작업 중에는 낮게 둔다
 
-1. Ctrl + R을 누르면 마우스 위치에 따라 노란색 Edge Loop 미리보기가 표시됨
-2. Left Click으로 Loop Cut 위치를 확정
-3. 마우스를 움직여 위치를 세밀하게 조정한 후 Left Click으로 완료
-4. 또는 Right Click으로 중앙 위치에 고정
+**기본 설정**
 
-#### 마우스 스크롤로 개수 조절
+- Viewport Level: `1` 또는 `2`
+- Render Level: `2` 또는 `3`
 
-- Ctrl + R 후 스크롤 업: Loop Cut 개수 증가
-- Ctrl + R 후 스크롤 다운: Loop Cut 개수 감소
+```plain text
+Ctrl + 1
+Ctrl + 2
+Ctrl + 3
+```
 
-#### 활용
+- `Shade Smooth`를 함께 쓰면 더 자연스럽게 보인다
+- 날카롭게 유지할 Edge는 `Shift + E`로 **Edge Crease**를 준다
 
-- 로봇 몸체에 분할선을 추가하여 팔, 다리 돌출을 위한 면 생성
-- 디테일을 추가할 영역에 추가적인 Edge Loop 삽입
+#### Solidify
 
-> 💡 **프로 팁:** Loop Cut 후 위치 조정 시 **Right Click**을 누르면 정확히 **중앙에 고정**된다. 균등한 분할이 필요할 때 유용하다. 또한 **Proportional Editing (O키)**을 활성화하면 주변 Vertex가 함께 부드럽게 변형되어, 유기적인 곡면을 만들기 좋다.
+- 납작한 면에 **두께**를 준다
+- 로봇 외장, 갑옷, 날개, 얇은 패널을 만들 때 자주 쓴다
 
-### Inset (I) (10분)
+| 파라미터 | 의미 | 처음 써볼 값 |
+|----------|------|---------------|
+| Thickness | 두께 | `0.01 ~ 0.1` |
+| Offset | 안쪽 / 중앙 / 바깥쪽 방향 | `-1 / 0 / 1` 비교 |
+| Even Thickness | 두께를 균일하게 유지 | 켜두는 편이 좋다 |
 
-#### 기본 사용법
+### Step 4: Array + Boolean (20분)
 
-1. Face 모드(3)에서 면을 선택
-2. I 키를 누르면 선택한 면 안쪽에 새로운 면이 생성됨
-3. 마우스로 크기를 조절한 후 Left Click으로 확정
+#### Array
 
-#### 활용
+- 같은 오브젝트를 규칙적으로 반복한다
+- 손가락 마디, 척추, 볼트 패턴, 계단 구조에 좋다
 
-- 로봇 얼굴에서 눈 영역을 Inset으로 만든 후, 안쪽 면을 Extrude로 움푹하게 처리
-- 가슴 부분에 패널이나 버튼 영역 생성
+**기본 실습**
 
-### Bevel (Ctrl + B) (10분)
+1. Cube에 Array를 추가한다
+2. Count를 `5`로 바꾼다
+3. Relative Offset의 X값을 `1.5`로 바꾼다
+4. Y나 Z로도 바꿔서 가로, 세로, 계단형 반복을 비교한다
 
-#### 기본 사용법
+#### Boolean
 
-1. Edge 모드(2)에서 Edge를 선택
-2. Ctrl + B를 누르면 선택한 Edge가 둥글게 분할됨
-3. 마우스로 Bevel 크기를 조절
-4. 마우스 스크롤로 Segment(분할) 수를 조절하여 부드러움 정도를 결정
-5. Left Click으로 확정
+- 두 오브젝트를 **합치거나**, **빼거나**, **겹치는 부분만 남길 때** 쓴다
+- 구멍, 소켓, 패널 홈을 만들 때 특히 자주 쓴다
 
-#### 활용
+| 연산 | 의미 | 자주 쓰는 상황 |
+|------|------|----------------|
+| Union | 합치기 | 파츠를 하나의 덩어리처럼 만들기 |
+| Difference | 빼기 | 구멍, 소켓, 홈 만들기 |
+| Intersect | 겹친 부분만 남기기 | 특정 교차 형태 추출 |
 
-- 로봇의 날카로운 모서리를 부드럽게 처리
-- 기계적인 느낌에서 약간의 곡면감을 부여
+**기본 실습**
 
-### 로봇 기본 형태 만들기 (20분)
+1. 바디가 될 오브젝트를 준비한다
+2. 커터 역할로 쓸 Cylinder 또는 Cube를 겹치게 놓는다
+3. 바디 오브젝트에 Boolean을 추가한다
+4. Operation을 **Difference**로 바꾼다
+5. Object에서 커터 오브젝트를 지정한다
 
-#### 제작 순서
+### Step 5: 필수 추가 Modifier + 선택 심화 (15분)
 
-1. **몸통:** Cube에서 시작. S + Z로 세로로 약간 늘림
-2. **머리:** 몸통 상단 Face를 선택하고 Extrude로 돌출
-3. **팔:** 몸통 좌우 Face를 선택하고 Extrude로 돌출
-4. **다리:** 몸통 하단 Face를 선택하고 Extrude로 돌출
-5. **디테일:** Loop Cut으로 관절 부분에 Edge Loop 추가
-6. **마무리:** Bevel로 모서리를 부드럽게 처리
+#### 필수로 알아둘 것
 
-#### 팁
+#### Bevel Modifier
 
-- 좌우 대칭을 유지하려면 한쪽만 작업 후 Mirror Modifier를 활용 (다음 주 학습)
-- Apply Transform(Ctrl + A)을 수시로 적용하여 Transform 값 정리
-- Numpad 1, 3으로 정면/측면 뷰를 오가며 형태 확인
+- Edit Mode의 `Ctrl + B`를 전체 모서리에 비파괴로 적용하는 느낌이다
+- 전체적으로 살짝 둥근 하드서피스 느낌을 볼 때 편하다
+- 특정 엣지 몇 개는 `Ctrl + B`, 전체 외장은 `Bevel Modifier`처럼 나눠 생각하면 덜 헷갈린다
+
+#### Weighted Normal
+
+- 형태는 괜찮은데 음영이 지저분해 보일 때 정리한다
+- 특히 Bevel Modifier와 같이 쓰면 로봇 외장이 더 깔끔하게 보인다
+- 쉽게 말하면 **모양을 바꾸기보다 빛이 닿는 느낌을 정리하는 도구**다
+
+#### 선택으로 써볼 것
+
+#### Simple Deform
+
+- 전체를 휘게(Bend), 비틀게(Twist), 가늘게(Taper) 만들 수 있다
+- 안테나, 꼬리, 손잡이, 아치형 구조에 빠르게 변화를 줄 때 좋다
+
+#### Decimate
+
+- 너무 무거운 메쉬를 가볍게 줄인다
+- 지금 주차 필수는 아니지만, 나중에 AI 3D 생성 메쉬를 다룰 때 특히 자주 쓰게 된다
+
+#### Join / Separate
+
+- 로봇 모델은 작업하다 보면 머리, 팔, 안테나, 손 파츠처럼 덩어리가 많아진다
+- 따로 관리할 파츠는 `P > Selection`으로 분리하고, 함께 갈 파츠는 `Ctrl + J`로 합친다
+- 이후 리깅이나 애니메이션까지 생각하면 파츠 정리를 일찍 해두는 편이 편하다
+
+#### Apply 타이밍
+
+- `Ctrl + A > All Transforms`는 Modifier 전, 작업 중간중간 자주 확인한다
+- `Modifier Apply`는 수정 가능성을 거의 다 쓴 뒤 마지막에만 한다
+- 쉽게 말하면 `Ctrl + A`는 **정리**, `Apply Modifier`는 **확정**이다
+
+### Step 6: 종합 실습 - 로봇 기본 형태 완성하기 (20분)
+
+**1. Edit Mode로 기본형 만들기**
+
+- `Extrude`, `Loop Cut`, `Inset`, `Bevel`로 몸통과 머리, 팔, 다리 위치를 잡는다
+
+**2. Mirror로 좌우 대칭 맞추기**
+
+- 절반만 남기고 Mirror를 건다
+- Clipping을 켜고 한쪽만 수정한다
+
+**3. Subdivision Surface로 큰 덩어리 다듬기**
+
+- 몸통과 머리의 큰 곡면을 부드럽게 만든다
+- 필요한 Edge는 `Shift + E`로 너무 둥글어지지 않게 잡는다
+
+**4. Solidify, Array, Boolean으로 디테일 추가**
+
+- 얇은 패널에는 Solidify
+- 반복 파츠에는 Array
+- 눈 구멍이나 환기구에는 Boolean
+
+**5. 필수 추가 Modifier는 꼭 확인하기**
+
+- Bevel Modifier 또는 Weighted Normal은 꼭 한 번 확인한다
+
+**6. Join / Separate와 Apply 타이밍 같이 보기**
+
+- 파츠를 나눌지 묶을지 한 번 정리해본다
+- `Ctrl + A`와 `Modifier Apply`를 다르게 이해한다
+
+**7. 선택 심화 Modifier는 여유 있으면 실험하기**
+
+- Simple Deform, Decimate는 시간이 남으면 시도해본다
+
+> 🔑 이번 주 핵심은 “전부 손으로 만들기”가 아니다. **직접 만들 부분은 Edit Mode로**, **대칭, 반복, 곡면, 두께는 Modifier로** 처리하는 감각을 익히는 것이 중요하다.
 
 ## ⚠️ 흔한 실수와 해결법
 
 | 실수 | 원인 | 해결법 |
 |------|------|--------|
-| Edit Mode에서 일부 Vertex가 선택되지 않음 | H 키로 숨겨놓은 요소가 있음 | **Alt + H**로 모든 숨겨진 요소를 Unhide |
-| Extrude 취소 후 메시가 이상해짐 | ESC/Right Click으로 취소해도 중복 Vertex가 생성됨 | **Ctrl + Z**로 완전히 되돌리거나, **M > Merge by Distance**로 중복 Vertex 정리 |
-| Face의 색이 어둡거나 음영이 이상함 | Face Normal 방향이 뒤집어져 있음 | Edit Mode에서 전체 선택(A) 후 **Shift + N** (Recalculate Outside)으로 Normal 방향 통일 |
-| 선택 모드가 갑자기 바뀜 | 실수로 1, 2, 3 키를 누름 | Header 상단의 선택 모드 아이콘을 확인. Vertex/Edge/Face 중 원하는 모드 클릭 |
-| 도형 추가 후 옵션 패널이 사라짐 | 다른 조작을 먼저 수행함 | 도형 추가 **직후** 바로 **F9**를 눌러야 옵션 조절 가능. 다른 작업 전에 설정 완료하기 |
+| Extrude를 취소했는데 메시가 이상함 | 중복 Vertex가 남음 | **Ctrl + Z** 또는 **M > Merge by Distance** |
+| Mirror 중심선이 벌어짐 | Clipping이 꺼져 있음 | **Clipping 활성화**, 필요하면 **S + X + 0** |
+| Subdivision이 너무 둥글어짐 | 모든 Edge가 같이 부드러워짐 | **Shift + E**로 Crease 주기, Loop Cut 추가 |
+| Boolean 결과가 비거나 이상함 | 겹침이 애매하거나 메쉬 상태가 좋지 않음 | 커터가 실제로 겹치는지 확인, **Non-Manifold** 검사 |
+| 두께나 간격이 이상함 | Scale이 정리되지 않음 | **Ctrl + A > All Transforms** |
+| Modifier를 너무 일찍 확정함 | Apply를 초반에 해버림 | **Modifier Apply는 마지막에만** |
+| 음영이 지저분해 보임 | Normal 정리가 덜 됨 | **Weighted Normal** 또는 Shade 관련 옵션 확인 |
 
 ## 과제
 
-- **제출:** Discord #week03-assignment 채널
-- **내용:** 로봇/캐릭터 기본 형태 스크린샷 3장 + 한줄 코멘트
-  - Front 뷰 (Numpad 1)
-  - Side 뷰 (Numpad 3)
-  - Perspective 뷰 (자유 각도)
+- **제출:** Discord `#week03-assignment` 채널
+- **내용:** Edit Mode와 Modifier를 함께 사용한 로봇 또는 캐릭터 기본 형태 제작
+- **형식:** 스크린샷 3장 + 사용한 Modifier 목록 + 한줄 코멘트
+  - 1장: Edit Mode로 기본형을 잡는 과정 화면
+  - 2장: Modifier Stack이 보이는 화면
+  - 3장: 최종 형태 화면
 - **기한:** 다음 수업 전까지
 
 ## 핵심 정리
 
 | 개념 | 핵심 내용 |
 |------|-----------|
-| Object Mode vs Edit Mode | Object Mode는 오브젝트 단위 조작, Edit Mode (Tab)는 점/선/면 직접 편집 |
-| 선택 모드 | 1 (Vertex), 2 (Edge), 3 (Face). Shift로 복수 모드 동시 활성화 가능 |
-| Extrude (E) | 선택한 면을 돌출. 로봇 팔, 다리, 안테나 등 형태 확장에 핵심 |
-| Loop Cut (Ctrl + R) | Edge Loop 추가로 면을 분할. 스크롤로 개수 조절, Right Click으로 중앙 고정 |
-| Inset (I) | 면 안쪽에 새 면 생성. 눈, 버튼, 패널 영역 만들기에 활용 |
-| Bevel (Ctrl + B) | Edge를 둥글게 분할. 스크롤로 Segment 수 조절, 부드러운 모서리 처리 |
-| Merge by Distance (M) | 중복 Vertex 정리. Extrude 실수 후 필수 점검 |
-
-> Edit Mode의 4대 도구(Extrude, Loop Cut, Inset, Bevel)만 잘 활용해도 대부분의 기본 형태를 만들 수 있다.
+| Edit Mode | 점, 선, 면을 직접 편집하며 기본형을 만든다 |
+| Modifier | 원본을 보존한 채 결과를 바꾸는 비파괴 방식 |
+| Mirror | 대칭 모델링의 기본. Clipping 꼭 켜기 |
+| Subdivision Surface | 표면을 부드럽게 만든다. Ctrl+1/2/3으로 레벨 변경 |
+| Solidify | 납작한 면에 두께를 준다 |
+| Array | 같은 오브젝트를 규칙적으로 반복한다 |
+| Boolean | 합치기, 빼기, 교차로 디테일을 만든다 |
+| Bevel Modifier | 모서리를 비파괴로 둥글게 만든다 |
+| Weighted Normal | 하드서피스 음영을 정리한다 |
+| Join / Separate | 파츠를 묶거나 분리해 관리한다 |
+| Apply Timing | `Ctrl + A`는 정리, `Modifier Apply`는 마지막 확정 |
+| Simple Deform | 전체를 휘게, 비틀게, 가늘게 만든다 |
+| Decimate | 무거운 메쉬를 가볍게 줄인다 |
 
 ## 📋 프로젝트 진행 체크리스트
 
-이번 주차까지 아래 항목이 완료되어야 합니다:
-
-- [ ] 로봇 기본 형태 완성 (머리 + 몸통 + 팔 + 다리)
-- [ ] 정면 뷰 (Numpad 1) 실루엣 확인 - 캐릭터 특징이 드러나는지 점검
-- [ ] 측면 뷰 (Numpad 3) 실루엣 확인 - 두께감과 비율이 적절한지 점검
-- [ ] 불필요한 중복 Vertex 정리 완료
-- [ ] Apply Transform (Ctrl + A) 적용 완료
+- [ ] Edit Mode로 기본 몸체 형태를 만들었다
+- [ ] Mirror Modifier로 좌우 대칭을 맞췄다
+- [ ] Subdivision Surface로 큰 덩어리를 다듬었다
+- [ ] Solidify, Array, Boolean 중 1개 이상 추가로 사용했다
+- [ ] Bevel Modifier 또는 Weighted Normal을 확인했다
+- [ ] Join 또는 Separate로 파츠를 정리해봤다
+- [ ] (선택) Simple Deform 또는 Decimate를 시도했다
+- [ ] Modifier Stack 순서를 정리했다
+- [ ] `Ctrl + A`로 Transform을 정리했다
+- [ ] 결과 스크린샷 3장을 저장했다
 
 ## 참고 자료
 
-- [Blender 단축키 모음](../../resources/blender-shortcuts.md)
+- [Blender Manual - Modifiers Introduction](https://docs.blender.org/manual/en/latest/modeling/modifiers/introduction.html)
+- [Blender Manual - Mirror Modifier](https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html)
+- [Blender Manual - Subdivision Surface Modifier](https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/subdivision_surface.html)
+- [Blender Manual - Solidify Modifier](https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/solidify.html)
+- [Blender Manual - Array Modifier](https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/array.html)
+- [Blender Manual - Boolean Modifier](https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/booleans.html)
+- [Blender Manual - Bevel Modifier](https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/bevel.html)
+- [Blender Manual - Weighted Normal Modifier](https://docs.blender.org/manual/en/latest/modeling/modifiers/modify/weighted_normal.html)
+- [Blender Manual - Simple Deform Modifier](https://docs.blender.org/manual/en/latest/modeling/modifiers/deform/simple_deform.html)
+- [Blender Manual - Decimate Modifier](https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/decimate.html)
