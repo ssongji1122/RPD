@@ -221,7 +221,7 @@
               </div>
               <div class="status-pill" data-step-status>진행 중</div>
             </div>
-            ${step.image ? `<img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" />` : ""}
+            ${step.image ? (step.link ? `<a href="${step.link}" target="_blank" rel="noopener noreferrer"><img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" /></a>` : `<img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" />`) : ""}
             <div class="step-info-grid">
               <div class="step-info-card">
                 <h4>목표</h4>
@@ -405,17 +405,14 @@
         return getTasks(step).every(t => t.checked);
       }
 
-      function updateStep(step, unlocked) {
+      function updateStep(step) {
         const pill     = step.querySelector("[data-step-status]");
         const complete = isComplete(step);
-
         step.classList.toggle("is-complete", complete);
-        step.classList.toggle("is-locked", !unlocked);
-        getTasks(step).forEach(t => { t.disabled = !unlocked; });
-
-        if (complete)       { pill.textContent = "완료"; pill.className = "status-pill complete"; }
-        else if (unlocked)  { pill.textContent = "진행 중"; pill.className = "status-pill active"; }
-        else                { pill.textContent = "잠금"; pill.className = "status-pill locked"; }
+        step.classList.remove("is-locked");
+        getTasks(step).forEach(t => { t.disabled = false; });
+        if (complete) { pill.textContent = "완료"; pill.className = "status-pill complete"; }
+        else          { pill.textContent = "진행 중"; pill.className = "status-pill active"; }
       }
 
       function sync() {
@@ -424,12 +421,7 @@
         progressFill.style.width  = `${pct}%`;
         progressCount.textContent = `${completed} / ${steps.length}`;
 
-        let prevOk = true;
-        steps.forEach((step, i) => {
-          const unlocked = i === 0 || prevOk;
-          updateStep(step, unlocked);
-          prevOk = prevOk && isComplete(step);
-        });
+        steps.forEach(step => updateStep(step));
       }
 
       function loadState() {
