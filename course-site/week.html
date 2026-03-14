@@ -173,6 +173,7 @@
               </div>
               <div class="status-pill" data-step-status>진행 중</div>
             </div>
+            ${step.image ? `<img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" />` : ""}
             <div class="step-info-grid">
               <div class="step-info-card">
                 <h4>목표</h4>

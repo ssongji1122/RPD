@@ -193,6 +193,13 @@ section, .section-inner {
 .step-title-group strong { display: block; font-size: 1.02rem; }
 .step-title-group p { margin: 5px 0 0; color: var(--muted); line-height: 1.66; font-size: .94rem; }
 
+/* Step image */
+.step-image {
+  width: 100%; border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  margin-top: 14px;
+}
+
 /* Status pill */
 .status-pill {
   display: inline-flex; align-items: center; gap: 8px;
