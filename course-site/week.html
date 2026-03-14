@@ -409,8 +409,6 @@
         const pill     = step.querySelector("[data-step-status]");
         const complete = isComplete(step);
         step.classList.toggle("is-complete", complete);
-        step.classList.remove("is-locked");
-        getTasks(step).forEach(t => { t.disabled = false; });
         if (complete) { pill.textContent = "완료"; pill.className = "status-pill complete"; }
         else          { pill.textContent = "진행 중"; pill.className = "status-pill active"; }
       }
