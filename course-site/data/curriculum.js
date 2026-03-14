@@ -643,6 +643,7 @@ const CURRICULUM = [
     "steps": [
       {
         "title": "Transform 정리와 파츠 관리",
+        "image": "assets/images/week04/transform-apply.png",
         "copy": "디테일을 넣기 전에 Scale과 파츠 구성을 먼저 정리해요. 수치가 꼬여 있거나 파츠가 뒤섞여 있으면 그다음 작업이 계속 불편해져요.",
         "goal": [
           "Transform을 정리한다",
@@ -677,6 +678,7 @@ const CURRICULUM = [
       },
       {
         "title": "얼굴과 패널 디테일",
+        "image": "assets/images/week04/inset-panel-detail.png",
         "copy": "큰 덩어리가 잡힌 상태에서 눈, 패널, 관절 라인을 추가하는 단계예요. Inset과 Boolean을 같이 쓰면 디테일을 빠르게 만들 수 있어요.",
         "goal": [
           "Inset과 Boolean으로 디테일을 추가한다"
@@ -705,6 +707,7 @@ const CURRICULUM = [
       },
       {
         "title": "Bevel 두 가지 비교",
+        "image": "assets/images/week04/bevel-modifier.png",
         "copy": "같은 '모서리 정리'라도 손으로 직접 깎는 방법과 Modifier로 전체를 정리하는 방법은 다르게 느껴져요. 둘 다 직접 비교해보는 게 가장 빠릅니다.",
         "goal": [
           "Ctrl+B와 Bevel Modifier를 구분해 쓴다"
@@ -733,6 +736,7 @@ const CURRICULUM = [
       },
       {
         "title": "Weighted Normal과 음영 정리",
+        "image": "assets/images/week04/weighted-normal.png",
         "copy": "형태는 괜찮은데 표면이 울퉁불퉁해 보일 때가 있어요. 이럴 때 음영을 정리해주는 흐름을 익혀두면 결과물이 훨씬 단정해져요.",
         "goal": [
           "Weighted Normal의 역할을 이해한다"
@@ -761,6 +765,7 @@ const CURRICULUM = [
       },
       {
         "title": "Apply 시점과 최종 점검",
+        "image": "assets/images/week04/array-modifier.png",
         "copy": "정리 단계에서 가장 많이 헷갈리는 건 '언제 확정하느냐'예요. 수정 가능성을 남길지, 지금 확정할지를 의식적으로 나눠보면 훨씬 안정적으로 작업할 수 있어요.",
         "goal": [
           "Apply Transform과 Modifier Apply를 구분한다"
@@ -901,6 +906,7 @@ const CURRICULUM = [
       },
       {
         "title": "Sculpt Mode 기초",
+        "image": "assets/images/week05/sculpt-mode.png",
         "copy": "브러시로 메쉬를 직접 주무르는 모드예요. 마우스로 칠하듯이 형태를 만들어요. 점토 조각과 가장 비슷한 방식이에요.",
         "goal": [
           "기본 Sculpt 브러시를 안다"
@@ -961,6 +967,7 @@ const CURRICULUM = [
     "steps": [
       {
         "title": "Material 할당",
+        "image": "assets/images/week06/material-assign.png",
         "copy": "오브젝트에 색이나 재질을 입히는 거예요. 색만 바꿔도 결과물이 완전히 달라 보여요.",
         "goal": [
           "Material 슬롯의 구조를 안다"
@@ -983,6 +990,7 @@ const CURRICULUM = [
       },
       {
         "title": "Principled BSDF 탐색",
+        "image": "assets/images/week06/principled-bsdf.png",
         "copy": "숫자 하나로 금속/유리/플라스틱이 바뀌어요. Metallic을 1로 올리면 금속, Transmission을 1로 올리면 유리처럼 보여요.",
         "goal": [
           "각 파라미터가 보여서 효과를 안다"
@@ -1010,6 +1018,7 @@ const CURRICULUM = [
       },
       {
         "title": "Shader Node Editor",
+        "image": "assets/images/week06/shader-editor.png",
         "copy": "노드는 레고 블록처럼 연결해서 재질을 만들어요. 색을 그라데이션으로 바꾸거나 질감을 섞는 등 복잡한 재질이 가능해요.",
         "goal": [
           "노드 기반 재질 편집 방식을 이해한다"
@@ -1074,6 +1083,7 @@ const CURRICULUM = [
     "steps": [
       {
         "title": "Seam 설정",
+        "image": "assets/images/week07/uv-seam.png",
         "copy": "종이 박스를 펼치면 평평해지죠. UV Unwrap도 3D 메쉬를 종이처럼 바닥에 펼치는 거예요. 그 위에 이미지를 올리면 텍스처가 입혀져요.",
         "goal": [
           "Seam의 역할을 이해한다"
@@ -1096,6 +1106,7 @@ const CURRICULUM = [
       },
       {
         "title": "Unwrap & UV Editor",
+        "image": "assets/images/week07/uv-editor.png",
         "copy": "Seam을 그은 경계선대로 메쉬가 펼쳐져서 UV Editor에 2D로 나와요. 여기 보이는 모양대로 이미지가 입혀져요.",
         "goal": [
           "UV가 어떻게 펼쳐지는지 이해한다"
@@ -1239,6 +1250,7 @@ const CURRICULUM = [
     "steps": [
       {
         "title": "Light 종류 탐색",
+        "image": "assets/images/week09/light-types.png",
         "copy": "요리사 스튜디오에서 조명을 세팅하듯, 어떤 조명을 쓰냐에 따라 분위기가 완전히 달라져요. 동일한 오브젝트라도 조명만 바꾸면 다른 작품처럼 보여요.",
         "goal": [
           "각 Light 타입의 특성을 안다"
@@ -1261,6 +1273,7 @@ const CURRICULUM = [
       },
       {
         "title": "HDRI 환경 조명",
+        "image": "assets/images/week09/hdri-world.png",
         "copy": "360도 파노라마 사진이 전구 역할을 해요. 텍스처 하나로 자연스러운 환경 조명을 만들 수 있어요.",
         "goal": [
           "HDRI의 역할과 장점을 안다"
@@ -1283,6 +1296,7 @@ const CURRICULUM = [
       },
       {
         "title": "3점 조명 세팅",
+        "image": "assets/images/week09/three-point-light.png",
         "copy": "사진 체울린 사진처럼 Key(주), Fill(보조), Rim(윤곽) 세 개만 잘 놓으면 어떤 오브젝트도 입체감 있게 보여요.",
         "goal": [
           "3점 조명의 원리를 이해한다"
@@ -1344,6 +1358,7 @@ const CURRICULUM = [
     "steps": [
       {
         "title": "키프레임 기초",
+        "image": "assets/images/week10/keyframe-intro.png",
         "copy": "A 위치를 1프레임에 사진 찍고, B 위치를 50프레임에 사진 찍으면 Blender가 둘 사이를 자동으로 이어줘요. 그게 키프레임이에요.",
         "goal": [
           "키프레임의 개념을 이해한다"
@@ -1371,6 +1386,7 @@ const CURRICULUM = [
       },
       {
         "title": "Dope Sheet",
+        "image": "assets/images/week10/dope-sheet.png",
         "copy": "키프레임들이 시간 순서대로 나열된 타임라인이에요. 사진들 사이 간격을 늘리거나 줄여서 빠르게/느리게 움직이는 타이밍을 조절해요.",
         "goal": [
           "키프레임 위치를 드래그로 조절한다"
@@ -1426,6 +1442,7 @@ const CURRICULUM = [
     "steps": [
       {
         "title": "Armature 추가",
+        "image": "assets/images/week11/armature-structure.png",
         "copy": "인형에 철사 뼈대를 넣는 것처럼, 메쉬 안에 Bone(뼈)을 만들어요. 뼈를 움직이면 연결된 메쉬도 따라와요.",
         "goal": [
           "Armature 구조를 이해한다"
@@ -1448,6 +1465,7 @@ const CURRICULUM = [
       },
       {
         "title": "메쉬 연결",
+        "image": "assets/images/week11/mesh-skinning.png",
         "copy": "메쉬(피부)와 Armature(뼈대)를 연결하는 거예요. Ctrl+P로 붙여놓으면 본을 움직일 때 메쉬도 따라와요.",
         "goal": [
           "Armature Parent의 개념을 이해한다"
@@ -1535,6 +1553,7 @@ const CURRICULUM = [
       },
       {
         "title": "애니메이션 다운로드 및 임포트",
+        "image": "assets/images/week12/mixamo-import.png",
         "copy": "Mixamo에서 걷기, 달리기, 춤추기 등 애니메이션을 골라서 Blender로 가져와요.",
         "goal": [
           "FBX 임포트 방식을 안다"
@@ -1590,6 +1609,7 @@ const CURRICULUM = [
     "steps": [
       {
         "title": "렌더 엔진 비교",
+        "image": "assets/images/week13/cycles-eevee.png",
         "copy": "Cycles는 사진 인화처럼 정밀하고 느리고, EEVEE는 게임 엔진처럼 빠르지만 덜 사실적이에요. 수정 중엔 EEVEE, 최종 제출엔 Cycles를 써요.",
         "goal": [
           "두 엔진의 차이를 안다"
@@ -1612,6 +1632,7 @@ const CURRICULUM = [
       },
       {
         "title": "출력 설정 및 렌더",
+        "image": "assets/images/week13/render-output.png",
         "copy": "해상도, 파일 형식, 저장 경로를 설정하고 F12로 렌더해요. 한 번 설정해두면 계속 쓸 수 있어요.",
         "goal": [
           "렌더 출력 파이프라인을 이해한다"
