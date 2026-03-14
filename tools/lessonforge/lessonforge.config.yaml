@@ -1,0 +1,62 @@
+## LessonForge Configuration
+## RPD (Robot Product Design) 2026 Spring
+
+project:
+  name: "로봇프러덕트 디자인 (RPD)"
+  professor: "송지희"
+  university: "인하대학교"
+  semester: "2026 Spring"
+  lectures_root: "../../weeks"
+  output_root: "./output"
+
+video:
+  resolution: [1920, 1080]
+  fps: 30
+  target_segment_minutes: [20, 30]
+  segments_per_week: [2, 3]
+
+tts:
+  engine: "edge_tts"
+  voice: "ko-KR-SunHiNeural"
+  rate: "+5%"
+  pitch: "+0Hz"
+
+  ## ElevenLabs (유료 업그레이드 시 engine: "elevenlabs"로 변경)
+  # elevenlabs:
+  #   voice_id: "your-voice-id"
+  #   model: "eleven_multilingual_v2"
+
+recording:
+  display: "1"
+  blender:
+    executable: "/Applications/Blender.app/Contents/MacOS/Blender"
+  browser:
+    headless: false
+    viewport: [1920, 1080]
+
+remotion:
+  template: "lesson"
+  theme:
+    background: "#1a1a2e"
+    surface: "#2d2d44"
+    accent: "#00d4ff"
+    emphasis: "#ff6b6b"
+    text: "#eaeaea"
+    text_muted: "#aaaaaa"
+    font_body: "Pretendard, -apple-system, sans-serif"
+    font_code: "JetBrains Mono, SF Mono, monospace"
+
+youtube:
+  playlist: "RPD 2026 Spring"
+  category: "27"
+  language: "ko"
+  privacy: "unlisted"
+  tags_base:
+    - "블렌더"
+    - "Blender"
+    - "Blender 5.0"
+    - "3D모델링"
+    - "로봇디자인"
+    - "인하대학교"
+    - "AI"
+    - "MCP"

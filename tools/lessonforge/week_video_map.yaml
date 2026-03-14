@@ -1,0 +1,318 @@
+# RPD 2026 Spring - 기존 영상 재활용 매핑 테이블
+# 판정: reuse(재활용), partial(부분재활용), new(신규촬영필요)
+# 외장하드 경로: /Volumes/PortableSSD/Blender_Class101/tutorial/
+# 로컬 미러:     /Users/ssongji/Developer/Workspace/RPD/Blender_Class101/tutorial/
+
+weeks:
+  week01:
+    title: "오리엔테이션 + AI 무드보드 (Mixboard)"
+    status: partial
+    actual_content: "실제 수업에서 Mixboard 실습만 진행됨. Blender 설치는 week02로 이동."
+    existing_videos:
+      - file: "006.Cute_Robot_reference.mp4"
+        size_mb: 283
+        covers: "레퍼런스 수집 + 무드보드 컨셉"
+        local_path: "/Users/ssongji/Developer/Workspace/RPD/Blender_Class101/tutorial/006.Cute_Robot_reference.mp4"
+        ssd_path: "/Volumes/PortableSSD/Blender_Class101/tutorial/006.Cute_Robot_reference.mp4"
+        reuse: true
+        notes: "컨셉 설명 부분 재활용 가능"
+    new_recordings_needed:
+      - step: "Mixboard AI 무드보드 실습"
+        duration_min: 20
+        tool: screen_record
+        notes: "labs.google/mixboard 브라우저 녹화. 프롬프트 입력→이미지 생성→배치 흐름"
+    scripts_dir: "tools/lessonforge/scripts/week01/"
+
+  week02:
+    title: "Blender 5.0 설치 & 기초 조작"
+    status: new
+    existing_videos: []
+    segments:
+      - id: segA
+        title: "설치 & 환경설정"
+        duration_min: 7
+        tool: screen_record
+        script: "tools/lessonforge/scripts/week02/segA-install-prefs.md"
+        references:
+          - "차녹 CHANOK 0:00~0:42"
+          - "Blender Guru Part 1 도입 + preferences"
+        notes: "브라우저 녹화 + Preferences 화면. Mac·Windows 양쪽 캡처 필요"
+
+      - id: segB
+        title: "화면 구조 & 뷰포트 조작"
+        duration_min: 10
+        tool: blender-mcp
+        script: "tools/lessonforge/scripts/week02/segB-ui-viewport.md"
+        references:
+          - "차녹 CHANOK 1:31~6:03 인터페이스 + 화면조작"
+          - "Blender Guru Part 1 interface + navigation"
+          - "Ryan King Art Quick Start Guide 스타일"
+        notes: "Screencast Keys 필수. Emulate Numpad 상태 촬영. 각 UI 영역 컬러 하이라이트"
+
+      - id: segC
+        title: "Transform & Apply Transform"
+        duration_min: 11
+        tool: blender-mcp
+        script: "tools/lessonforge/scripts/week02/segC-transform-apply.md"
+        references:
+          - "차녹 CHANOK 6:03~8:30 오브젝트조작 + 변형"
+          - "Blender Guru 문제 시연 먼저 원칙"
+        notes: "Screencast Keys 필수. Subdivision 왜곡 시연 명확히. Scale (2,2,2)→(1,1,1) 클로즈업"
+
+      - id: seg06
+        title: "Apply Transform & Origin"
+        duration_min: 7
+        tool: blender-mcp
+        script: "tools/lessonforge/scripts/week02/seg06-apply-transform-origin.md"
+        references:
+          - "Blender Guru 도넛 시리즈 모디파이어 전 주의사항"
+        notes: "문제 시연(Subdivision 왜곡) → 해결책 순서 유지"
+
+    total_duration_min: 50
+    blender5_critical: true
+    references_channels:
+      - name: "차녹 CHANOK"
+        url: "https://www.youtube.com/watch?v=gVteZaQGry0"
+        style: "효율적 순서, 한국어, 핵심만"
+      - name: "Blender Guru (Andrew Price)"
+        url: "https://www.youtube.com/@blenderguru"
+        style: "이유 먼저 설명, 단계적 빌드업, 3.4M 구독자"
+      - name: "Ryan King Art"
+        url: "https://www.youtube.com/@RyanKingArt"
+        style: "Quick Start Guide 포맷, 5-10분 단위 세그먼트"
+    notes: "MCP 설정은 Week 03으로 분리. 설치부터 조작까지 6개 영상으로 완결"
+    scripts_dir: "tools/lessonforge/scripts/week02/"
+
+  week03:
+    title: "기초 모델링 1 (Edit Mode)"
+    status: reuse
+    existing_videos:
+      - file: "007.Cute Robot_head.mp4"
+        size_mb: 503
+        covers: "Step 1-3: 머리 모델링 (Edit Mode 기초)"
+        local_path: "/Users/ssongji/Developer/Workspace/RPD/Blender_Class101/tutorial/007.Cute Robot_head.mp4"
+        ssd_path: "/Volumes/PortableSSD/Blender_Class101/tutorial/007.Cute Robot_head.mp4"
+        reuse: true
+        notes: "편집 모드, Loop Cut, Extrude 등 - Blender 5.0에서도 동일"
+      - file: "007.Cute_robot_body.mp4"
+        size_mb: 725
+        covers: "Step 4-5: 몸통 모델링"
+        local_path: "/Users/ssongji/Developer/Workspace/RPD/Blender_Class101/tutorial/007.Cute_robot_body.mp4"
+        ssd_path: "/Volumes/PortableSSD/Blender_Class101/tutorial/007.Cute_robot_body.mp4"
+        reuse: true
+    new_recordings_needed:
+      - step: "Blender 5.0 UI 차이점 브리지 클립"
+        duration_min: 5
+        tool: blender-mcp
+        notes: "5.0에서 달라진 Edit Mode 진입 방법 등 짧은 안내 클립"
+
+  week04:
+    title: "기초 모델링 2 (모디파이어)"
+    status: partial
+    existing_videos:
+      - file: "008.Cute_robot_arm.mp4"
+        size_mb: 1000
+        covers: "팔 모델링 (Mirror 모디파이어 활용)"
+        local_path: "/Users/ssongji/Developer/Workspace/RPD/Blender_Class101/tutorial/008.Cute_robot_arm.mp4"
+        ssd_path: "/Volumes/PortableSSD/Blender_Class101/tutorial/008.Cute_robot_arm.mp4"
+        reuse: true
+      - file: "009.Cute_robot_legs.mp4"
+        size_mb: 1900
+        covers: "다리 모델링 (Array, Subdivision)"
+        local_path: "/Users/ssongji/Developer/Workspace/RPD/Blender_Class101/tutorial/009.Cute_robot_legs.mp4"
+        ssd_path: "/Volumes/PortableSSD/Blender_Class101/tutorial/009.Cute_robot_legs.mp4"
+        reuse: true
+      - file: "0011.Cute_robot_touchup_details.mp4"
+        size_mb: 687
+        covers: "디테일 보완 (Bevel, Inset)"
+        local_path: "/Users/ssongji/Developer/Workspace/RPD/Blender_Class101/tutorial/0011.Cute_robot_touchup_details.mp4"
+        ssd_path: "/Volumes/PortableSSD/Blender_Class101/tutorial/0011.Cute_robot_touchup_details.mp4"
+        reuse: true
+    new_recordings_needed:
+      - step: "Subdivision Surface + Boolean 모디파이어 설명"
+        duration_min: 15
+        tool: blender-mcp
+        notes: "Blender 5.0 모디파이어 스택 UI 변경사항 포함"
+
+  week05:
+    title: "AI 3D 생성 + 스컬핑"
+    status: new
+    existing_videos:
+      - file: "009.cute_robot_body_detail.mov"
+        size_mb: 559
+        covers: "스컬핑 참고 (부분 재활용 가능)"
+        local_path: "/Users/ssongji/Developer/Workspace/RPD/Blender_Class101/tutorial/009.cute_robot_body_detail.mov"
+        ssd_path: "/Volumes/PortableSSD/Blender_Class101/tutorial/009.cute_robot_body_detail.mov"
+        reuse: false
+        notes: "스컬핑 장면만 타임스탬프 추출 필요"
+    new_recordings_needed:
+      - step: "Meshy AI - 텍스트→3D 생성"
+        duration_min: 20
+        tool: screen_record
+        notes: "웹 브라우저 녹화 (Meshy.ai 사이트)"
+      - step: "Tripo AI 대안 시연"
+        duration_min: 10
+        tool: screen_record
+        notes: "Tripo3d.ai 워크플로우"
+      - step: "AI 생성 모델 Blender 임포트"
+        duration_min: 15
+        tool: blender-mcp
+        notes: "GLB 파일 임포트 + 정리"
+      - step: "Sculpt Mode 기초"
+        duration_min: 25
+        tool: blender-mcp
+        notes: "Dyntopo, Grab/Draw 브러시, Multiresolution"
+    blender5_critical: true
+
+  week06:
+    title: "머티리얼 & Shader Nodes"
+    status: reuse
+    existing_videos:
+      - file: "0012.Cute_Robot_materialsetting.mp4"
+        size_mb: 25
+        covers: "기본 머티리얼 설정"
+        local_path: "/Users/ssongji/Developer/Workspace/RPD/Blender_Class101/tutorial/0012.Cute_Robot_materialsetting.mp4"
+        ssd_path: "/Volumes/PortableSSD/Blender_Class101/tutorial/0012.Cute_Robot_materialsetting.mp4"
+        reuse: true
+      - file: "robot_material.mp4"
+        size_mb: 28
+        covers: "Shader Node 워크플로우"
+        local_path: "/Users/ssongji/Developer/Workspace/RPD/Blender_Class101/tutorial/robot_material.mp4"
+        ssd_path: "/Volumes/PortableSSD/Blender_Class101/tutorial/robot_material.mp4"
+        reuse: true
+    new_recordings_needed:
+      - step: "Principled BSDF 노드 상세 설명"
+        duration_min: 10
+        tool: blender-mcp
+        notes: "Blender 5.0 Principled BSDF 개선사항"
+
+  week07:
+    title: "UV 언래핑 + AI 텍스처"
+    status: new
+    existing_videos: []
+    new_recordings_needed:
+      - step: "UV 심 생성 (Mark Seam)"
+        duration_min: 15
+        tool: blender-mcp
+        notes: "합리적인 심 위치 선택 시연"
+      - step: "UV Unwrap + UV Editor"
+        duration_min: 20
+        tool: blender-mcp
+        notes: "언래핑 + UV 에디터 조작"
+      - step: "Checker Texture로 왜곡 확인"
+        duration_min: 10
+        tool: blender-mcp
+        notes: "UV 품질 검증 방법"
+      - step: "Poly Haven 텍스처 적용"
+        duration_min: 15
+        tool: screen_record
+        notes: "polyhaven.com 다운로드 + Blender 적용"
+      - step: "AI 텍스처 생성 (Stable Diffusion / 텍스처 AI)"
+        duration_min: 20
+        tool: screen_record
+        notes: "AI 텍스처 생성 도구 시연"
+    blender5_critical: false
+
+  week09:
+    title: "라이팅 기초"
+    status: new
+    existing_videos: []
+    new_recordings_needed:
+      - step: "3점 조명 세팅 (Key/Fill/Back)"
+        duration_min: 25
+        tool: blender-mcp
+      - step: "HDRI 라이팅"
+        duration_min: 20
+        tool: blender-mcp
+        notes: "Poly Haven HDRI 활용"
+      - step: "Light 타입별 특성 (Point/Sun/Spot/Area)"
+        duration_min: 15
+        tool: blender-mcp
+
+  week10:
+    title: "애니메이션 기초"
+    status: partial
+    existing_videos:
+      - file: "animation/cat_dancing_final0001-0100.mp4"
+        size_mb: 1
+        covers: "애니메이션 결과물 예시"
+        local_path: "/Users/ssongji/Developer/Workspace/RPD/Blender_Class101/animation/cat_dancing_final0001-0100.mp4"
+        reuse: true
+        notes: "결과 예시로만 사용, 제작 과정 영상은 없음"
+    new_recordings_needed:
+      - step: "키프레임 삽입 (I 키)"
+        duration_min: 20
+        tool: blender-mcp
+      - step: "Graph Editor 조작"
+        duration_min: 15
+        tool: blender-mcp
+      - step: "NLA Editor 기초"
+        duration_min: 15
+        tool: blender-mcp
+
+  week11:
+    title: "리깅 기초"
+    status: new
+    existing_videos: []
+    new_recordings_needed:
+      - step: "Armature 생성 및 Edit Mode"
+        duration_min: 25
+        tool: blender-mcp
+      - step: "뼈대 구조 설계 (Bone 계층)"
+        duration_min: 20
+        tool: blender-mcp
+      - step: "Weight Painting 기초"
+        duration_min: 30
+        tool: blender-mcp
+    blender5_critical: true
+    notes: "Blender 5.0 Weight Painting 도구 개선"
+
+  week12:
+    title: "Mixamo AI 리깅"
+    status: new
+    existing_videos: []
+    new_recordings_needed:
+      - step: "Mixamo 계정 및 캐릭터 업로드"
+        duration_min: 15
+        tool: screen_record
+        notes: "브라우저 녹화 - mixamo.com"
+      - step: "자동 리깅 설정"
+        duration_min: 20
+        tool: screen_record
+      - step: "애니메이션 다운로드 + Blender 임포트"
+        duration_min: 20
+        tool: blender-mcp
+
+  week13:
+    title: "렌더링 + AI 영상/사운드"
+    status: new
+    existing_videos: []
+    new_recordings_needed:
+      - step: "카메라 설정 및 구도"
+        duration_min: 20
+        tool: blender-mcp
+      - step: "Eevee vs Cycles 비교"
+        duration_min: 20
+        tool: blender-mcp
+      - step: "렌더 출력 설정"
+        duration_min: 15
+        tool: blender-mcp
+      - step: "ElevenLabs 음성 생성"
+        duration_min: 15
+        tool: screen_record
+      - step: "Kling AI 영상 생성"
+        duration_min: 15
+        tool: screen_record
+    blender5_critical: true
+
+# 외장하드 기준 경로
+ssd_base: "/Volumes/PortableSSD/Blender_Class101"
+local_base: "/Users/ssongji/Developer/Workspace/RPD/Blender_Class101"
+
+# 통계
+summary:
+  total_weeks: 13
+  reuse: 2        # week01, week06
+  partial: 3      # week03, week04, week10
+  new_required: 8 # week02, 05, 07, 09, 11, 12, 13 + 부분
+  blender5_critical_weeks: [2, 5, 11, 13]
