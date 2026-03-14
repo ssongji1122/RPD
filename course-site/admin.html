@@ -276,7 +276,7 @@
       display: none;
     }
 
-    /* ── Table editor (shortcuts, docs) ────────────────── */
+    /* ── Table editor (shortcuts, docs, videos) ───────── */
     .table-editor { display: grid; gap: 8px; }
     .table-editor-row {
       display: flex; gap: 8px; align-items: center;
@@ -349,6 +349,94 @@
     .auth-error {
       color: #f87171; font-size: .82rem; margin-bottom: 10px; min-height: 1.2em;
     }
+    .sync-review-card {
+      width: min(760px, calc(100% - 40px));
+      max-height: min(86vh, 920px);
+      overflow: auto;
+      padding: 28px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(23,24,26,.98), rgba(18,18,20,.98));
+      box-shadow: var(--shadow-card);
+    }
+    .sync-review-card h2 {
+      margin: 0 0 8px;
+      font-size: 1.2rem;
+      font-weight: 620;
+    }
+    .sync-review-card > p {
+      margin: 0;
+      color: var(--muted);
+      font-size: .9rem;
+      line-height: 1.6;
+    }
+    .sync-review-body {
+      display: grid;
+      gap: 14px;
+      margin-top: 18px;
+    }
+    .sync-review-week {
+      padding: 16px 18px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+    }
+    .sync-review-week-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .sync-review-week-title {
+      font-size: .96rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .sync-review-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: .75rem;
+      font-weight: 600;
+      color: var(--muted-strong);
+      background: rgba(255,255,255,.06);
+      white-space: nowrap;
+    }
+    .sync-review-note {
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: .84rem;
+      line-height: 1.6;
+      color: var(--muted-strong);
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.06);
+    }
+    .sync-review-note.warn {
+      color: #fde68a;
+      background: rgba(245,158,11,.12);
+      border-color: rgba(245,158,11,.26);
+    }
+    .sync-review-note.error {
+      color: #fca5a5;
+      background: rgba(239,68,68,.12);
+      border-color: rgba(239,68,68,.22);
+    }
+    .sync-review-list {
+      margin: 10px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: .84rem;
+      line-height: 1.8;
+    }
+    .sync-review-actions {
+      display: flex;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+    }
 
     /* ── Responsive ────────────────────────────────────── */
     @media (max-width: 800px) {
@@ -369,6 +457,8 @@
       .field-row { flex-direction: column; gap: 0; }
       .table-editor-row .field-input.short { max-width: none; flex: 1; }
       .task-editor-row { flex-direction: column; }
+      .sync-review-week-head { flex-direction: column; align-items: start; }
+      .sync-review-actions .btn { width: 100%; justify-content: center; }
     }
 
     /* ── Empty state ──────────────────────────────────── */
@@ -387,6 +477,152 @@
       font-size: .82rem;
       padding: 7px 12px;
     }
+    .sync-toggle {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: .82rem;
+      white-space: nowrap;
+    }
+    .sync-toggle input {
+      margin: 0;
+    }
+
+    /* ── WYSIWYG Preview Styles ───────────────────────── */
+    .preview-page { }
+
+    /* Admin control bar */
+    .admin-ctrl-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 12px; margin-bottom: 20px;
+      border-radius: var(--radius-sm);
+      background: rgba(10,132,255,.06);
+      border: 1px dashed rgba(10,132,255,.2);
+    }
+    .admin-ctrl-badge {
+      font-size: .78rem; font-weight: 600;
+      color: var(--key-soft); letter-spacing: .04em; text-transform: uppercase;
+    }
+
+    /* Hero preview */
+    .preview-hero {
+      padding: 40px 0 24px; text-align: center; margin-bottom: 8px;
+    }
+    .preview-hero-card { display: grid; gap: 12px; justify-items: center; }
+    .preview-hero-meta {
+      display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; align-items: center;
+    }
+
+    /* Inline editable fields — transparent, only show border on hover/focus */
+    .edit-inline {
+      border: none; background: transparent; color: inherit;
+      font: inherit; outline: none;
+      border-bottom: 1px dashed transparent;
+      transition: border-color .15s; padding: 0;
+      min-width: 60px;
+    }
+    .edit-inline:hover  { border-bottom-color: rgba(10,132,255,.3); }
+    .edit-inline:focus  { border-bottom-color: var(--key); outline: none; }
+
+    textarea.edit-inline { resize: none; vertical-align: top; }
+
+    .edit-h1 {
+      border: none; background: transparent; color: inherit;
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 650; letter-spacing: -.026em; line-height: 1.1;
+      text-align: center; width: 100%; outline: none;
+      border-bottom: 1px dashed transparent; transition: border-color .15s;
+    }
+    .edit-h1:hover { border-bottom-color: rgba(10,132,255,.3); }
+    .edit-h1:focus { border-bottom-color: var(--key); }
+
+    .edit-p {
+      border: none; background: transparent;
+      color: var(--muted-strong); font: inherit; outline: none;
+      resize: none; width: 100%; line-height: 1.8; text-align: center;
+      border-bottom: 1px dashed transparent; transition: border-color .15s;
+    }
+    .edit-p:hover { border-bottom-color: rgba(10,132,255,.3); }
+    .edit-p:focus { border-bottom-color: var(--key); }
+
+    .edit-chip {
+      border: none; background: transparent; color: inherit;
+      font: inherit; outline: none; width: 72px;
+    }
+
+    /* Topic pills */
+    .preview-topic-pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 5px 6px 5px 12px; border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.1);
+      background: rgba(255,255,255,.04);
+    }
+    .preview-topic-pill input {
+      border: none; background: transparent; color: var(--muted-strong);
+      font: inherit; font-size: .87rem; outline: none; width: 120px;
+    }
+    .pill-remove {
+      width: 18px; height: 18px; display: grid; place-items: center;
+      border-radius: 50%; border: none;
+      background: rgba(255,255,255,.08); color: var(--muted);
+      cursor: pointer; font-size: .72rem; line-height: 1;
+    }
+    .pill-remove:hover { background: rgba(239,68,68,.2); color: #f87171; }
+
+    /* Step admin header controls */
+    .step-header-admin {
+      display: flex; gap: 4px; align-items: center; flex-shrink: 0;
+    }
+
+    /* No image placeholder */
+    .preview-no-image {
+      width: 100%; height: 72px; border-radius: var(--radius-md);
+      border: 1px dashed rgba(255,255,255,.1);
+      display: grid; place-items: center;
+      color: var(--muted); font-size: .82rem; margin: 12px 0;
+    }
+
+    /* Image + link admin row */
+    .preview-admin-row {
+      display: flex; align-items: center; gap: 10px;
+      margin: 6px 0 12px; flex-wrap: wrap;
+      padding: 8px; border-radius: 8px;
+      background: rgba(10,132,255,.04); border: 1px dashed rgba(10,132,255,.14);
+    }
+
+    /* Step edit list rows (goal/done/task) */
+    .edit-list-row {
+      display: flex; align-items: center; gap: 6px; margin: 4px 0;
+    }
+    .edit-list-row input, .edit-list-row textarea {
+      flex: 1;
+    }
+
+    /* Task edit row */
+    .admin-task-edit {
+      display: flex; align-items: start; gap: 10px;
+      padding: 10px 12px; border-radius: var(--radius-md);
+      background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.04);
+    }
+    .admin-task-fields { flex: 1; display: grid; gap: 4px; }
+
+    /* Link editor row */
+    .preview-link-edit {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 12px; border-radius: var(--radius-md);
+      border: 1px solid rgba(255,255,255,.06);
+      background: rgba(255,255,255,.02);
+    }
+    .preview-link-edit .link-fields { flex: 1; display: grid; gap: 3px; }
+
+    /* Preview section spacing */
+    .preview-section {
+      padding: 24px 0 32px;
+      border-top: 1px solid rgba(255,255,255,.06);
+    }
+    .preview-section:first-of-type { border-top: none; }
   </style>
 </head>
 <body>
@@ -403,6 +639,7 @@
               <span>커리큘럼 관리</span>
             </div>
           </div>
+          <select class="field-select" id="weekSelectTopbar" style="width:160px;font-size:.84rem;padding:6px 30px 6px 10px;display:none" title="주차 선택"></select>
         </div>
         <div class="topbar-actions">
           <div class="dirty-indicator" id="dirtyIndicator">
@@ -412,6 +649,10 @@
             <button class="btn btn-ghost" id="notionPullBtn" type="button" title="Notion에서 가져오기">&#128229; Notion</button>
             <button class="btn btn-ghost" id="notionPushBtn" type="button" title="Notion으로 보내기">&#128228; Notion</button>
           </div>
+          <label class="sync-toggle" id="notionAutoSyncWrap">
+            <input id="notionAutoSync" type="checkbox" />
+            <span>저장 기본값: Notion 반영</span>
+          </label>
           <button class="btn btn-ghost" id="previewBtn" type="button">미리보기 &#8599;</button>
           <button class="btn btn-primary" id="saveBtn" type="button">&#128190; 저장</button>
         </div>
@@ -452,6 +693,20 @@
     </div>
   </div>
 
+  <div class="auth-overlay" id="syncReviewOverlay" style="display:none">
+    <div class="sync-review-card">
+      <h2>저장 전 확인</h2>
+      <p id="syncReviewLead"></p>
+      <div class="sync-review-body" id="syncReviewBody"></div>
+      <div class="sync-review-actions">
+        <button class="btn btn-ghost" id="syncReviewCancel" type="button">취소</button>
+        <button class="btn btn-ghost" id="syncReviewPull" type="button" style="display:none">Notion 변경 먼저 가져오기</button>
+        <button class="btn btn-ghost" id="syncReviewLocal" type="button">웹 + 강의노트만 저장</button>
+        <button class="btn btn-primary" id="syncReviewPush" type="button" style="display:none">웹 + 강의노트 + Notion 저장</button>
+      </div>
+    </div>
+  </div>
+
   <script>
   // ════════════════════════════════════════════════════════
   //  RPD Admin — Curriculum Editor
@@ -466,7 +721,10 @@
     var curriculum = [];
     var selectedIdx = 0;
     var dirty = false;
+    var dirtyWeeks = {};
     var authToken = sessionStorage.getItem("rpd-admin-token") || "";
+    var notionConfigured = false;
+    var autoNotionSync = localStorage.getItem("rpd-admin-auto-notion-sync") !== "0";
 
     // ─── DOM refs ────────────────────────────────────────
     var sidebarList    = document.getElementById("sidebarList");
@@ -485,6 +743,17 @@
     var notionGroup    = document.getElementById("notionGroup");
     var notionPullBtn  = document.getElementById("notionPullBtn");
     var notionPushBtn  = document.getElementById("notionPushBtn");
+    var notionAutoSyncWrap = document.getElementById("notionAutoSyncWrap");
+    var notionAutoSync = document.getElementById("notionAutoSync");
+    var syncReviewOverlay = document.getElementById("syncReviewOverlay");
+    var syncReviewLead = document.getElementById("syncReviewLead");
+    var syncReviewBody = document.getElementById("syncReviewBody");
+    var syncReviewCancel = document.getElementById("syncReviewCancel");
+    var syncReviewPull = document.getElementById("syncReviewPull");
+    var syncReviewLocal = document.getElementById("syncReviewLocal");
+    var syncReviewPush = document.getElementById("syncReviewPush");
+    var pendingSaveReview = null;
+    var pendingSaveResolver = null;
 
     // ─── Helpers ─────────────────────────────────────────
 
@@ -496,13 +765,20 @@
       return d.innerHTML;
     }
 
-    function markDirty() {
+    function markDirty(weekNum) {
       dirty = true;
+      if (weekNum == null && curriculum[selectedIdx]) {
+        weekNum = curriculum[selectedIdx].week;
+      }
+      if (weekNum != null) {
+        dirtyWeeks[String(weekNum)] = true;
+      }
       dirtyIndicator.classList.add("visible");
     }
 
     function clearDirty() {
       dirty = false;
+      dirtyWeeks = {};
       dirtyIndicator.classList.remove("visible");
     }
 
@@ -527,230 +803,538 @@
       return h;
     }
 
+    notionAutoSync.checked = autoNotionSync;
+    notionAutoSync.addEventListener("change", function() {
+      autoNotionSync = notionAutoSync.checked;
+      localStorage.setItem("rpd-admin-auto-notion-sync", autoNotionSync ? "1" : "0");
+    });
+
+    function findWeekIndex(weekNum) {
+      for (var i = 0; i < curriculum.length; i++) {
+        if (String(curriculum[i].week) === String(weekNum)) return i;
+      }
+      return -1;
+    }
+
+    function getWeekByNumber(weekNum) {
+      var idx = findWeekIndex(weekNum);
+      return idx === -1 ? null : curriculum[idx];
+    }
+
+    function normalizeStringList(items) {
+      return (items || []).map(function(item) {
+        return String(item == null ? "" : item).trim();
+      }).filter(function(item) {
+        return item.length > 0;
+      });
+    }
+
+    function normalizeLinks(items) {
+      return (items || []).map(function(item) {
+        return {
+          title: String(item && item.title || "").trim(),
+          url: String(item && item.url || "").trim(),
+        };
+      }).filter(function(item) {
+        return item.title && item.url;
+      });
+    }
+
+    function normalizeTasks(tasks) {
+      return (tasks || []).map(function(task) {
+        return {
+          label: String(task && task.label || "").trim(),
+          detail: String(task && task.detail || "").trim(),
+        };
+      }).filter(function(task) {
+        return task.label || task.detail;
+      });
+    }
+
+    function normalizeSteps(steps) {
+      return (steps || []).map(function(step) {
+        return {
+          title: String(step && step.title || "").trim(),
+          copy: String(step && step.copy || "").trim(),
+          goal: normalizeStringList(step && step.goal),
+          tasks: normalizeTasks(step && step.tasks),
+        };
+      }).filter(function(step) {
+        return step.title || step.copy || step.goal.length || step.tasks.length;
+      });
+    }
+
+    function normalizeShortcuts(shortcuts) {
+      return (shortcuts || []).map(function(shortcut) {
+        return {
+          keys: String(shortcut && shortcut.keys || "").trim(),
+          action: String(shortcut && shortcut.action || "").trim(),
+        };
+      }).filter(function(shortcut) {
+        return shortcut.keys || shortcut.action;
+      });
+    }
+
+    function normalizeAssignment(assignment) {
+      return {
+        title: String(assignment && assignment.title || "").trim(),
+        description: String(assignment && assignment.description || "").trim(),
+        checklist: normalizeStringList(assignment && assignment.checklist),
+      };
+    }
+
+    function summarizeNotionDiffs(localWeek, notionWeek) {
+      var diffs = [];
+      if (!localWeek || !notionWeek) return diffs;
+
+      if (String(localWeek.title || "").trim() !== String(notionWeek.title || "").trim()) {
+        diffs.push("제목");
+      }
+      if (JSON.stringify(normalizeSteps(localWeek.steps)) !== JSON.stringify(normalizeSteps(notionWeek.steps))) {
+        diffs.push("실습 단계");
+      }
+      if (JSON.stringify(normalizeShortcuts(localWeek.shortcuts)) !== JSON.stringify(normalizeShortcuts(notionWeek.shortcuts))) {
+        diffs.push("단축키");
+      }
+      if (JSON.stringify(normalizeAssignment(localWeek.assignment)) !== JSON.stringify(normalizeAssignment(notionWeek.assignment))) {
+        diffs.push("과제");
+      }
+      if (JSON.stringify(normalizeStringList(localWeek.mistakes)) !== JSON.stringify(normalizeStringList(notionWeek.mistakes))) {
+        diffs.push("막히는 지점");
+      }
+      if (JSON.stringify(normalizeLinks(localWeek.videos)) !== JSON.stringify(normalizeLinks(notionWeek.videos))) {
+        diffs.push("공식 영상");
+      }
+      if (JSON.stringify(normalizeLinks(localWeek.docs)) !== JSON.stringify(normalizeLinks(notionWeek.docs))) {
+        diffs.push("공식 문서");
+      }
+      return diffs;
+    }
+
+    async function fetchNotionPreview(weekNum) {
+      var res = await fetch("/api/notion-pull/" + weekNum, {
+        method: "POST",
+        headers: apiHeaders(),
+      });
+      var data = await res.json();
+      if (!res.ok || !data.ok) {
+        return { ok: false, error: data && data.error ? data.error : "비교 실패" };
+      }
+      return { ok: true, week: data.week };
+    }
+
+    async function buildSaveReview(weeksToSync) {
+      var weeks = await Promise.all(weeksToSync.map(async function(weekNum) {
+        var localWeek = getWeekByNumber(weekNum);
+        var item = {
+          weekNum: String(weekNum),
+          title: localWeek ? localWeek.title : "",
+          notion: { status: "disabled", diffs: [], week: null, error: "" },
+        };
+
+        if (!notionConfigured) return item;
+
+        try {
+          var preview = await fetchNotionPreview(weekNum);
+          if (!preview.ok) {
+            item.notion = { status: "error", diffs: [], week: null, error: preview.error || "비교 실패" };
+            return item;
+          }
+
+          var diffs = summarizeNotionDiffs(localWeek, preview.week);
+          item.notion = {
+            status: diffs.length ? "different" : "same",
+            diffs: diffs,
+            week: preview.week,
+            error: "",
+          };
+          return item;
+        } catch (err) {
+          item.notion = { status: "error", diffs: [], week: null, error: err.message || "비교 실패" };
+          return item;
+        }
+      }));
+
+      return {
+        weeks: weeks,
+        notionConfigured: notionConfigured,
+        hasNotionConflicts: weeks.some(function(item) { return item.notion.status === "different"; }),
+        hasNotionErrors: weeks.some(function(item) { return item.notion.status === "error"; }),
+      };
+    }
+
+    function setReviewButtonStyle(button, primary) {
+      button.className = primary ? "btn btn-primary" : "btn btn-ghost";
+    }
+
+    function buildSaveReviewHTML(review) {
+      var parts = [];
+      review.weeks.forEach(function(item) {
+        parts.push(
+          '<div class="sync-review-week">',
+          '<div class="sync-review-week-head">',
+          '<div class="sync-review-week-title">Week ', esc(String(item.weekNum).padStart(2, "0")), ' · ', esc(item.title || "제목 없음"), '</div>',
+          '<span class="sync-review-chip">웹 + 강의노트 저장 예정</span>',
+          '</div>'
+        );
+
+        if (!review.notionConfigured) {
+          parts.push('<div class="sync-review-note">Notion 연결이 없어 이번 저장은 웹과 강의노트만 반영됩니다.</div>');
+        } else if (item.notion.status === "same") {
+          parts.push('<div class="sync-review-note">Notion과 비교한 결과, 지금 편집본과 차이가 없습니다.</div>');
+        } else if (item.notion.status === "different") {
+          parts.push(
+            '<div class="sync-review-note warn">Notion에도 다른 변경이 있습니다. 현재 편집본으로 저장하면 Notion 내용을 덮어쓸 수 있어요.</div>',
+            '<ul class="sync-review-list">'
+          );
+          item.notion.diffs.forEach(function(diff) {
+            parts.push('<li>', esc(diff), ' 항목이 다릅니다.</li>');
+          });
+          parts.push('</ul>');
+        } else {
+          parts.push(
+            '<div class="sync-review-note error">Notion 비교에 실패했습니다. 오늘은 로컬 저장만 하거나 수동 확인이 안전합니다.<br />',
+            esc(item.notion.error || "비교 실패"),
+            '</div>'
+          );
+        }
+
+        parts.push('</div>');
+      });
+      return parts.join("");
+    }
+
+    function openSaveReview(review) {
+      pendingSaveReview = review;
+
+      if (!review.notionConfigured) {
+        syncReviewLead.textContent = "저장하면 웹과 강의노트에 반영됩니다. 저장 방향을 한 번 더 확인하세요.";
+      } else if (review.hasNotionConflicts) {
+        syncReviewLead.textContent = "Notion에도 변경이 보여서 저장 방향을 먼저 정하는 게 안전합니다.";
+      } else if (review.hasNotionErrors) {
+        syncReviewLead.textContent = "일부 주차는 Notion 비교가 실패했습니다. 로컬 저장은 가능하지만 Notion 반영은 신중히 선택하세요.";
+      } else {
+        syncReviewLead.textContent = "저장 범위를 확인한 뒤 진행하세요. 필요하면 Notion까지 같이 반영할 수 있습니다.";
+      }
+
+      syncReviewBody.innerHTML = buildSaveReviewHTML(review);
+      syncReviewPull.style.display = review.hasNotionConflicts ? "" : "none";
+      syncReviewPush.style.display = review.notionConfigured ? "" : "none";
+      syncReviewPull.textContent = "Notion 변경 먼저 가져오기 (현재 편집 덮어씀)";
+      syncReviewLocal.textContent = review.notionConfigured ? "웹 + 강의노트만 저장" : "저장";
+
+      var preferPush = review.notionConfigured && autoNotionSync && !review.hasNotionErrors;
+      setReviewButtonStyle(syncReviewLocal, !preferPush);
+      setReviewButtonStyle(syncReviewPush, preferPush);
+
+      syncReviewOverlay.style.display = "";
+
+      return new Promise(function(resolve) {
+        pendingSaveResolver = resolve;
+      });
+    }
+
+    function closeSaveReview(action) {
+      syncReviewOverlay.style.display = "none";
+      pendingSaveReview = null;
+      if (pendingSaveResolver) {
+        var resolve = pendingSaveResolver;
+        pendingSaveResolver = null;
+        resolve(action);
+      }
+    }
+
+    function applyPulledWeeks(review) {
+      var applied = [];
+
+      review.weeks.forEach(function(item) {
+        if (item.notion.status !== "different" || !item.notion.week) return;
+        var idx = findWeekIndex(item.weekNum);
+        if (idx === -1) return;
+        curriculum[idx] = item.notion.week;
+        applied.push("Week " + item.weekNum);
+        markDirty(item.weekNum);
+      });
+
+      if (!applied.length) {
+        toast("가져올 Notion 변경이 없습니다.", "success");
+        return;
+      }
+
+      renderSidebar();
+      renderEditor();
+      toast("Notion 변경을 편집기에 가져왔습니다. 내용 확인 후 저장해 주세요.", "success");
+    }
+
+    async function performCurriculumSave(pushToNotion, weeksToSync) {
+      var shouldPush = pushToNotion && notionConfigured && weeksToSync.length > 0;
+
+      saveBtn.disabled = true;
+      saveBtn.textContent = shouldPush ? "저장 + Notion 반영 중..." : "저장 중...";
+      try {
+        var res = await fetch("/api/curriculum", {
+          method: "PUT",
+          headers: apiHeaders(),
+          body: JSON.stringify(curriculum),
+        });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        clearDirty();
+
+        if (!shouldPush) {
+          toast("저장 완료 (웹 + 강의노트 반영)", "success");
+          return;
+        }
+
+        var synced = [];
+        var failed = [];
+        for (var i = 0; i < weeksToSync.length; i++) {
+          var weekNum = weeksToSync[i];
+          try {
+            var notionRes = await fetch("/api/notion-push/" + weekNum, {
+              method: "POST",
+              headers: apiHeaders(),
+            });
+            var notionData = await notionRes.json();
+            if (!notionRes.ok || !notionData.ok) {
+              failed.push("Week " + weekNum + (notionData && notionData.error ? " (" + notionData.error + ")" : ""));
+            } else {
+              synced.push("Week " + weekNum);
+            }
+          } catch (syncErr) {
+            failed.push("Week " + weekNum + " (" + syncErr.message + ")");
+          }
+        }
+
+        if (failed.length) {
+          toast("저장 완료 (웹 + 강의노트 반영), Notion 일부 실패: " + failed.join(", "), "error");
+        } else {
+          toast("저장 + 강의노트 + Notion 반영 완료 (" + synced.join(", ") + ")", "success");
+        }
+      } catch (e) {
+        toast("저장 실패: " + e.message, "error");
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = "\uD83D\uDCBE 저장";
+      }
+    }
+
     /**
      * Safe DOM builder — builds HTML strings from escaped values only.
      * Every dynamic value passes through esc() before insertion.
+     * Layout mirrors week.html so edits are WYSIWYG.
      */
     function buildEditorHTML(w) {
       var parts = [];
 
-      // Week header eyebrow
+      // ── Admin control bar (status selector, admin-only) ──
       parts.push(
-        '<div style="margin-bottom:8px">',
-        '<div class="eyebrow" style="margin-bottom:14px;">Week ',
-        esc(String(w.week).padStart(2, "0")),
-        ' 편집</div></div>'
-      );
-
-      // Status + Duration row
-      parts.push(
-        '<div class="field-row">',
-        '<div class="field-group">',
-        '<label class="field-label">상태</label>',
-        '<select class="field-select" data-field="status">',
-        '<option value="done"', (w.status === "done" ? ' selected' : ''), '>done (완료)</option>',
-        '<option value="active"', (w.status === "active" ? ' selected' : ''), '>active (진행 중)</option>',
-        '<option value="upcoming"', (w.status === "upcoming" ? ' selected' : ''), '>upcoming (예정)</option>',
-        '</select></div>',
-        '<div class="field-group">',
-        '<label class="field-label">시간</label>',
-        '<input class="field-input" data-field="duration" value="', esc(w.duration), '" />',
-        '</div></div>'
-      );
-
-      // Title
-      parts.push(
-        '<div class="field-group">',
-        '<label class="field-label">제목</label>',
-        '<input class="field-input" data-field="title" value="', esc(w.title), '" />',
+        '<div class="admin-ctrl-bar">',
+        '<span class="admin-ctrl-badge">Week ', esc(String(w.week).padStart(2,"0")), ' · 편집 모드</span>',
+        '<select class="field-select" data-field="status" style="width:140px;font-size:.82rem;padding:6px 12px">',
+        '<option value="done"',   (w.status === "done"     ? " selected" : ""), '>done (완료)</option>',
+        '<option value="active"', (w.status === "active"   ? " selected" : ""), '>active (진행 중)</option>',
+        '<option value="upcoming"',(w.status === "upcoming" ? " selected" : ""), '>upcoming (예정)</option>',
+        '</select>',
         '</div>'
       );
 
-      // Subtitle
+      // ── HERO ────────────────────────────────────────────
       parts.push(
-        '<div class="field-group">',
-        '<label class="field-label">부제목</label>',
-        '<input class="field-input" data-field="subtitle" value="', esc(w.subtitle), '" />',
-        '</div>'
+        '<section class="preview-hero">',
+        '<div class="preview-hero-card">',
+        '<div class="eyebrow">Week ', esc(String(w.week).padStart(2,"0")), ' · RPD</div>',
+        '<h1 style="margin:0"><input class="edit-h1" data-field="title" value="', esc(w.title), '" placeholder="주차 제목" /></h1>',
+        '<p style="max-width:640px;margin:0">',
+        '<textarea class="edit-p" data-field="subtitle" rows="2" placeholder="부제목 (선택)">', esc(w.subtitle || ""), '</textarea>',
+        '</p>',
+        '<div class="preview-hero-meta">',
+        '<span class="meta-chip">⏱ <input class="edit-chip" data-field="duration" value="', esc(w.duration), '" placeholder="시간" /></span>',
+        '<span class="meta-chip">📋 ', w.steps.length, '단계 실습</span>',
+        '</div>',
+        '</div>',
+        '</section>'
       );
 
-      // Summary
+      // ── TOPICS ──────────────────────────────────────────
       parts.push(
-        '<div class="field-group">',
-        '<label class="field-label">요약</label>',
-        '<input class="field-input" data-field="summary" value="', esc(w.summary), '" />',
-        '</div>'
-      );
-
-      // Topics
-      parts.push(
-        '<div class="field-group">',
-        '<label class="field-label">주제</label>',
-        '<div class="list-editor" id="topicsList">'
+        '<div class="preview-section">',
+        '<div class="section-head"><h3>이번 주</h3></div>',
+        '<div id="topicsList" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">'
       );
       (w.topics || []).forEach(function(t, i) {
         parts.push(
-          '<div class="list-editor-row">',
-          '<input class="field-input" data-list="topics" data-idx="', i, '" value="', esc(t), '" />',
-          '<button class="btn-icon danger" data-remove="topics" data-idx="', i, '" type="button" aria-label="삭제">&times;</button>',
+          '<div class="preview-topic-pill">',
+          '<input data-list="topics" data-idx="', i, '" value="', esc(t), '" />',
+          '<button class="pill-remove" data-remove="topics" data-idx="', i, '" type="button" title="삭제">&times;</button>',
           '</div>'
         );
       });
       parts.push(
         '</div>',
-        '<button class="btn-add" data-add="topics" type="button">+ 주제 추가</button>',
+        '<button class="btn-add" data-add="topics" type="button" style="margin-top:10px">+ 주제 추가</button>',
         '</div>'
       );
 
-      // Steps section
+      // ── STEPS ───────────────────────────────────────────
       parts.push(
-        '<div class="editor-section">',
-        '<div class="editor-section-head">',
-        '<div class="editor-section-title">실습 단계 <span class="section-count">', w.steps.length, '</span></div>',
-        '</div>',
-        '<div id="stepsList">'
+        '<div class="preview-section">',
+        '<div class="section-head"><h3>실습</h3></div>',
+        '<div class="lab" id="stepsList">'
       );
       w.steps.forEach(function(step, si) {
         buildStepCard(parts, step, si, w.week);
       });
       parts.push(
         '</div>',
-        '<button class="btn-add" data-add-step type="button">+ 단계 추가</button>',
+        '<button class="btn-add" data-add-step type="button" style="margin-top:4px">+ 단계 추가</button>',
         '</div>'
       );
 
-      // Shortcuts section
+      // ── SHORTCUTS ───────────────────────────────────────
       var shortcuts = w.shortcuts || [];
       parts.push(
-        '<div class="editor-section">',
-        '<div class="editor-section-head">',
-        '<div class="editor-section-title">단축키 <span class="section-count">', shortcuts.length, '</span></div>',
-        '</div>',
-        '<div class="table-editor" id="shortcutsList">'
+        '<div class="preview-section">',
+        '<div class="section-head"><h3>단축키 치트시트</h3></div>',
+        '<div class="card shortcut-table-wrap">',
+        '<table class="shortcut-table" style="width:100%">',
+        '<thead><tr><th>단축키</th><th>기능</th><th style="width:36px"></th></tr></thead>',
+        '<tbody id="shortcutsList">'
       );
       shortcuts.forEach(function(s, i) {
         parts.push(
-          '<div class="table-editor-row">',
-          '<input class="field-input short" data-shortcut-field="keys" data-idx="', i, '" value="', esc(s.keys), '" placeholder="단축키" />',
-          '<input class="field-input" data-shortcut-field="action" data-idx="', i, '" value="', esc(s.action), '" placeholder="기능 설명" />',
-          '<button class="btn-icon danger" data-remove="shortcuts" data-idx="', i, '" type="button" aria-label="삭제">&times;</button>',
-          '</div>'
+          '<tr>',
+          '<td><kbd class="shortcut-key" style="display:block"><input class="edit-inline" data-shortcut-field="keys" data-idx="', i, '" value="', esc(s.keys), '" placeholder="단축키" style="width:100%" /></kbd></td>',
+          '<td><input class="edit-inline" data-shortcut-field="action" data-idx="', i, '" value="', esc(s.action), '" placeholder="기능 설명" style="width:100%" /></td>',
+          '<td><button class="btn-icon danger" data-remove="shortcuts" data-idx="', i, '" type="button">&times;</button></td>',
+          '</tr>'
         );
       });
       parts.push(
+        '</tbody></table>',
         '</div>',
-        '<button class="btn-add" data-add="shortcuts" type="button">+ 단축키 추가</button>',
+        '<button class="btn-add" data-add="shortcuts" type="button" style="margin-top:10px">+ 단축키 추가</button>',
         '</div>'
       );
 
-      // Explore section
+      // ── EXPLORE ─────────────────────────────────────────
       var explore = w.explore || [];
       parts.push(
-        '<div class="editor-section">',
-        '<div class="editor-section-head">',
-        '<div class="editor-section-title">더 해보기 <span class="section-count">', explore.length, '</span></div>',
-        '</div>',
-        '<div id="exploreList">'
+        '<div class="preview-section">',
+        '<div class="section-head"><h3>더 해보기</h3></div>',
+        '<div class="explore-grid" id="exploreList">'
       );
       explore.forEach(function(e, i) {
         parts.push(
-          '<div class="card" style="margin-bottom:10px;padding:16px;">',
-          '<div class="field-group" style="margin-bottom:10px;">',
-          '<label class="field-label">제목</label>',
-          '<input class="field-input" data-explore-field="title" data-idx="', i, '" value="', esc(e.title), '" />',
-          '</div>',
-          '<div class="field-group" style="margin-bottom:0;">',
-          '<label class="field-label">힌트</label>',
-          '<textarea class="field-textarea" data-explore-field="hint" data-idx="', i, '" rows="2">', esc(e.hint), '</textarea>',
-          '</div>',
-          '<div style="text-align:right;margin-top:8px;">',
-          '<button class="btn-icon danger" data-remove="explore" data-idx="', i, '" type="button" aria-label="삭제">&times;</button>',
-          '</div></div>'
-        );
-      });
-      parts.push(
-        '</div>',
-        '<button class="btn-add" data-add="explore" type="button">+ 더 해보기 추가</button>',
-        '</div>'
-      );
-
-      // Assignment section
-      var a = w.assignment || { title: "", description: "", checklist: [] };
-      parts.push(
-        '<div class="editor-section">',
-        '<div class="editor-section-head">',
-        '<div class="editor-section-title">과제</div>',
-        '</div>',
-        '<div class="field-group">',
-        '<label class="field-label">과제 제목</label>',
-        '<input class="field-input" data-assignment="title" value="', esc(a.title), '" />',
-        '</div>',
-        '<div class="field-group">',
-        '<label class="field-label">과제 설명</label>',
-        '<textarea class="field-textarea" data-assignment="description" rows="3">', esc(a.description), '</textarea>',
-        '</div>',
-        '<div class="field-group">',
-        '<label class="field-label">체크리스트</label>',
-        '<div class="list-editor" id="checklistList">'
-      );
-      (a.checklist || []).forEach(function(c, i) {
-        parts.push(
-          '<div class="list-editor-row">',
-          '<input class="field-input" data-list="checklist" data-idx="', i, '" value="', esc(c), '" />',
-          '<button class="btn-icon danger" data-remove="checklist" data-idx="', i, '" type="button" aria-label="삭제">&times;</button>',
+          '<div class="explore-card" style="position:relative">',
+          '<button class="btn-icon danger" data-remove="explore" data-idx="', i, '" type="button" style="position:absolute;top:8px;right:8px">&times;</button>',
+          '<strong><input class="edit-inline" data-explore-field="title" data-idx="', i, '" value="', esc(e.title), '" placeholder="제목" style="font-size:.96rem;font-weight:600;color:var(--key-soft);width:calc(100% - 30px)" /></strong>',
+          '<p style="margin:8px 0 0"><textarea class="edit-inline" data-explore-field="hint" data-idx="', i, '" rows="2" placeholder="힌트" style="color:var(--muted);font-size:.88rem;line-height:1.7;width:100%">', esc(e.hint), '</textarea></p>',
           '</div>'
         );
       });
       parts.push(
         '</div>',
-        '<button class="btn-add" data-add="checklist" type="button">+ 항목 추가</button>',
-        '</div></div>'
+        '<button class="btn-add" data-add="explore" type="button" style="margin-top:10px">+ 더 해보기 추가</button>',
+        '</div>'
       );
 
-      // Mistakes section
+      // ── MISTAKES ────────────────────────────────────────
       var mistakes = w.mistakes || [];
       parts.push(
-        '<div class="editor-section">',
-        '<div class="editor-section-head">',
-        '<div class="editor-section-title">막히는 지점 <span class="section-count">', mistakes.length, '</span></div>',
-        '</div>',
-        '<div class="list-editor" id="mistakesList">'
+        '<div class="preview-section">',
+        '<div class="section-head"><h3>막히는 지점</h3></div>',
+        '<details class="card mistakes-section" open>',
+        '<summary>막혔을 때</summary>',
+        '<ul id="mistakesList" style="padding-left:0;margin:6px 0 4px;list-style:none">'
       );
       mistakes.forEach(function(m, i) {
         parts.push(
-          '<div class="list-editor-row">',
-          '<input class="field-input" data-list="mistakes" data-idx="', i, '" value="', esc(m), '" />',
-          '<button class="btn-icon danger" data-remove="mistakes" data-idx="', i, '" type="button" aria-label="삭제">&times;</button>',
-          '</div>'
+          '<li class="edit-list-row">',
+          '<input class="edit-inline" data-list="mistakes" data-idx="', i, '" value="', esc(m), '" style="flex:1" />',
+          '<button class="btn-icon danger" data-remove="mistakes" data-idx="', i, '" type="button">&times;</button>',
+          '</li>'
         );
       });
       parts.push(
-        '</div>',
-        '<button class="btn-add" data-add="mistakes" type="button">+ 항목 추가</button>',
+        '</ul>',
+        '<button class="btn-add" data-add="mistakes" type="button" style="margin-top:4px">+ 항목 추가</button>',
+        '</details>',
         '</div>'
       );
 
-      // Docs section
-      var docs = w.docs || [];
+      // ── VIDEOS ──────────────────────────────────────────
+      var videos = w.videos || [];
       parts.push(
-        '<div class="editor-section">',
-        '<div class="editor-section-head">',
-        '<div class="editor-section-title">공식 문서 <span class="section-count">', docs.length, '</span></div>',
-        '</div>',
-        '<div class="table-editor" id="docsList">'
+        '<div class="preview-section">',
+        '<div class="section-head"><h3>공식 영상 튜토리얼</h3></div>',
+        '<div id="videosList" style="display:grid;gap:8px">'
       );
-      docs.forEach(function(d, i) {
+      videos.forEach(function(v, i) {
         parts.push(
-          '<div class="table-editor-row">',
-          '<input class="field-input short" data-doc-field="title" data-idx="', i, '" value="', esc(d.title), '" placeholder="문서 이름" />',
-          '<input class="field-input" data-doc-field="url" data-idx="', i, '" value="', esc(d.url), '" placeholder="URL" />',
-          '<button class="btn-icon danger" data-remove="docs" data-idx="', i, '" type="button" aria-label="삭제">&times;</button>',
+          '<div class="preview-link-edit">',
+          '<div class="link-fields">',
+          '<input class="edit-inline" data-video-field="title" data-idx="', i, '" value="', esc(v.title), '" placeholder="영상 제목" style="font-size:.88rem" />',
+          '<input class="edit-inline" data-video-field="url" data-idx="', i, '" value="', esc(v.url), '" placeholder="URL" style="font-size:.78rem;color:var(--muted)" />',
+          '</div>',
+          '<button class="btn-icon danger" data-remove="videos" data-idx="', i, '" type="button">&times;</button>',
           '</div>'
         );
       });
       parts.push(
         '</div>',
-        '<button class="btn-add" data-add="docs" type="button">+ 문서 추가</button>',
+        '<button class="btn-add" data-add="videos" type="button" style="margin-top:8px">+ 영상 추가</button>',
+        '</div>'
+      );
+
+      // ── DOCS ────────────────────────────────────────────
+      var docs = w.docs || [];
+      parts.push(
+        '<div class="preview-section">',
+        '<div class="section-head"><h3>공식 문서</h3></div>',
+        '<div id="docsList" style="display:grid;gap:8px">'
+      );
+      docs.forEach(function(d, i) {
+        parts.push(
+          '<div class="preview-link-edit">',
+          '<div class="link-fields">',
+          '<input class="edit-inline" data-doc-field="title" data-idx="', i, '" value="', esc(d.title), '" placeholder="문서 이름" style="font-size:.88rem" />',
+          '<input class="edit-inline" data-doc-field="url" data-idx="', i, '" value="', esc(d.url), '" placeholder="URL" style="font-size:.78rem;color:var(--muted)" />',
+          '</div>',
+          '<button class="btn-icon danger" data-remove="docs" data-idx="', i, '" type="button">&times;</button>',
+          '</div>'
+        );
+      });
+      parts.push(
+        '</div>',
+        '<button class="btn-add" data-add="docs" type="button" style="margin-top:8px">+ 문서 추가</button>',
+        '</div>'
+      );
+
+      // ── ASSIGNMENT ──────────────────────────────────────
+      var a = w.assignment || { title: "", description: "", checklist: [] };
+      parts.push(
+        '<div class="preview-section">',
+        '<div class="section-head"><h3>과제</h3></div>',
+        '<div class="card assignment-card">',
+        '<div class="card-chip">과제</div>',
+        '<strong><input class="edit-inline" data-assignment="title" value="', esc(a.title), '" placeholder="과제 제목" style="font-size:1rem;font-weight:600;width:100%" /></strong>',
+        '<p style="color:var(--muted);line-height:1.72;margin:8px 0 0">',
+        '<textarea class="edit-inline" data-assignment="description" rows="3" placeholder="과제 설명" style="width:100%;line-height:1.72">', esc(a.description), '</textarea>',
+        '</p>',
+        '<ul id="checklistList" style="padding-left:0;margin:10px 0 4px;list-style:none">'
+      );
+      (a.checklist || []).forEach(function(c, i) {
+        parts.push(
+          '<li class="edit-list-row">',
+          '<input class="edit-inline" data-list="checklist" data-idx="', i, '" value="', esc(c), '" style="flex:1;color:var(--muted-strong)" />',
+          '<button class="btn-icon danger" data-remove="checklist" data-idx="', i, '" type="button">&times;</button>',
+          '</li>'
+        );
+      });
+      parts.push(
+        '</ul>',
+        '<button class="btn-add" data-add="checklist" type="button" style="margin-top:4px">+ 항목 추가</button>',
+        '</div>',
         '</div>'
       );
 
@@ -758,124 +1342,67 @@
     }
 
     function buildStepCard(parts, step, si, weekNum) {
+      // Render each step as a visual lab-step card (matching week.html layout)
       parts.push(
-        '<details class="step-card" data-step-idx="', si, '" open>',
-        '<summary>',
-        '<span class="step-card-num">', (si + 1), '</span>',
-        '<span class="step-card-title">', esc(step.title || "새 단계"), '</span>',
-        '<span class="step-card-actions">',
-        '<button class="btn-icon" data-move-step="up" data-idx="', si, '" type="button" aria-label="위로 이동" title="위로 이동">&#8593;</button>',
-        '<button class="btn-icon" data-move-step="down" data-idx="', si, '" type="button" aria-label="아래로 이동" title="아래로 이동">&#8595;</button>',
-        '<button class="btn-icon danger" data-remove-step="', si, '" type="button" aria-label="단계 삭제" title="단계 삭제">&times;</button>',
-        '</span>',
-        '</summary>',
-        '<div class="step-card-body">'
-      );
+        '<article class="lab-step" data-step-idx="', si, '">',
 
-      // Title
-      parts.push(
-        '<div class="field-group">',
-        '<label class="field-label">제목</label>',
-        '<input class="field-input" data-step-field="title" data-step="', si, '" value="', esc(step.title), '" />',
+        // Step header: number + title/copy (editable) + admin move/delete
+        '<div class="step-header">',
+        '<div class="step-title-group">',
+        '<div class="step-number">', (si + 1), '</div>',
+        '<div style="flex:1;min-width:0">',
+        '<strong style="display:block"><input class="edit-inline" data-step-field="title" data-step="', si, '" value="', esc(step.title || ""), '" placeholder="단계 제목" style="width:100%;font-size:1.02rem;font-weight:600" /></strong>',
+        '<p style="margin:5px 0 0"><textarea class="edit-inline" data-step-field="copy" data-step="', si, '" rows="2" placeholder="단계 설명" style="width:100%;color:var(--muted);line-height:1.66;font-size:.94rem">', esc(step.copy || ""), '</textarea></p>',
+        '</div>',
+        '</div>',
+        '<div class="step-header-admin">',
+        '<button class="btn-icon" data-move-step="up" data-idx="', si, '" type="button" title="위로">&#8593;</button>',
+        '<button class="btn-icon" data-move-step="down" data-idx="', si, '" type="button" title="아래로">&#8595;</button>',
+        '<button class="btn-icon danger" data-remove-step="', si, '" type="button" title="삭제">&times;</button>',
+        '</div>',
         '</div>'
       );
 
-      // Copy
-      parts.push(
-        '<div class="field-group">',
-        '<label class="field-label">설명</label>',
-        '<textarea class="field-textarea" data-step-field="copy" data-step="', si, '" rows="3">', esc(step.copy), '</textarea>',
-        '</div>'
-      );
-
-      // Image
-      parts.push(
-        '<div class="field-group">',
-        '<label class="field-label">이미지</label>',
-        '<div class="image-upload-area">',
-        '<div class="image-preview" data-img-preview="', si, '">'
-      );
+      // Step image (shown like student page + click shows link)
       if (step.image) {
-        parts.push('<img src="', esc(step.image), '" alt="Step image" />');
+        parts.push(
+          step.link ? '<a href="' + esc(step.link) + '" target="_blank" rel="noopener noreferrer">' : '',
+          '<img src="', esc(step.image), '" alt="', esc(step.title || ""), '" class="step-image" loading="lazy" />',
+          step.link ? '</a>' : ''
+        );
       } else {
-        parts.push('이미지 없음');
+        parts.push('<div class="preview-no-image">이미지 없음</div>');
       }
+
+      // Admin row: image upload + link URL
       parts.push(
-        '</div>',
+        '<div class="preview-admin-row">',
         '<label class="image-upload-btn">',
-        '&#128247; 업로드',
+        '&#128247; 이미지 업로드',
         '<input type="file" accept="image/*" data-upload-step="', si, '" data-week="', weekNum, '" />',
-        '</label>'
-      );
-      if (step.image) {
-        parts.push('<span style="color:var(--muted);font-size:.78rem;">', esc(step.image), '</span>');
-      }
-      parts.push('</div></div>');
-
-      // Goals
-      parts.push(
-        '<div class="field-group">',
-        '<label class="field-label">목표</label>',
-        '<div class="list-editor">'
-      );
-      (step.goal || []).forEach(function(g, gi) {
-        parts.push(
-          '<div class="list-editor-row">',
-          '<input class="field-input" data-step-list="goal" data-step="', si, '" data-idx="', gi, '" value="', esc(g), '" />',
-          '<button class="btn-icon danger" data-step-list-remove="goal" data-step="', si, '" data-idx="', gi, '" type="button" aria-label="삭제">&times;</button>',
-          '</div>'
-        );
-      });
-      parts.push(
-        '</div>',
-        '<button class="btn-add" data-step-list-add="goal" data-step="', si, '" type="button">+ 목표 추가</button>',
-        '</div>'
-      );
-
-      // Done criteria
-      parts.push(
-        '<div class="field-group">',
-        '<label class="field-label">완료 기준</label>',
-        '<div class="list-editor">'
-      );
-      (step.done || []).forEach(function(d, di) {
-        parts.push(
-          '<div class="list-editor-row">',
-          '<input class="field-input" data-step-list="done" data-step="', si, '" data-idx="', di, '" value="', esc(d), '" />',
-          '<button class="btn-icon danger" data-step-list-remove="done" data-step="', si, '" data-idx="', di, '" type="button" aria-label="삭제">&times;</button>',
-          '</div>'
-        );
-      });
-      parts.push(
-        '</div>',
-        '<button class="btn-add" data-step-list-add="done" data-step="', si, '" type="button">+ 완료 기준 추가</button>',
+        '</label>',
+        '<input class="edit-inline" data-step-field="link" data-step="', si, '" value="', esc(step.link || ""), '" placeholder="공식 페이지 URL (이미지 클릭 링크)" style="flex:1;font-size:.82rem;color:var(--muted);min-width:180px" />',
         '</div>'
       );
 
       // Tasks
-      parts.push(
-        '<div class="field-group">',
-        '<label class="field-label">작업</label>',
-        '<div class="list-editor">'
-      );
+      parts.push('<div class="task-list" style="gap:8px">');
       (step.tasks || []).forEach(function(t, ti) {
         parts.push(
-          '<div class="task-editor-row">',
-          '<div class="task-editor-fields">',
-          '<input class="field-input" data-task-field="label" data-step="', si, '" data-idx="', ti, '" value="', esc(t.label), '" placeholder="작업 이름" />',
-          '<input class="field-input" data-task-field="detail" data-step="', si, '" data-idx="', ti, '" value="', esc(t.detail || ""), '" placeholder="세부 사항 (선택)" />',
+          '<div class="admin-task-edit">',
+          '<div class="admin-task-fields">',
+          '<input class="edit-inline" data-task-field="label" data-step="', si, '" data-idx="', ti, '" value="', esc(t.label), '" placeholder="작업 이름" style="font-size:.94rem;font-weight:600;width:100%" />',
+          '<input class="edit-inline" data-task-field="detail" data-step="', si, '" data-idx="', ti, '" value="', esc(t.detail || ""), '" placeholder="세부 사항 (선택)" style="font-size:.82rem;color:var(--muted);width:100%" />',
           '</div>',
-          '<button class="btn-icon danger" data-task-remove data-step="', si, '" data-idx="', ti, '" type="button" aria-label="삭제">&times;</button>',
+          '<button class="btn-icon danger" data-task-remove data-step="', si, '" data-idx="', ti, '" type="button">&times;</button>',
           '</div>'
         );
       });
       parts.push(
         '</div>',
-        '<button class="btn-add" data-task-add data-step="', si, '" type="button">+ 작업 추가</button>',
-        '</div>'
+        '<button class="btn-add" data-task-add data-step="', si, '" type="button" style="margin-top:6px">+ 작업 추가</button>',
+        '</article>'
       );
-
-      parts.push('</div></details>');
     }
 
     function buildSidebarHTML() {
@@ -928,6 +1455,22 @@
       if (e.key === "Enter") authSubmit.click();
     });
 
+    syncReviewCancel.addEventListener("click", function() {
+      closeSaveReview("cancel");
+    });
+    syncReviewLocal.addEventListener("click", function() {
+      closeSaveReview("local");
+    });
+    syncReviewPush.addEventListener("click", function() {
+      closeSaveReview("push");
+    });
+    syncReviewPull.addEventListener("click", function() {
+      closeSaveReview("pull");
+    });
+    syncReviewOverlay.addEventListener("click", function(e) {
+      if (e.target === syncReviewOverlay) closeSaveReview("cancel");
+    });
+
     // ─── Mobile sidebar ──────────────────────────────────
     hamburgerBtn.addEventListener("click", function() {
       sidebarEl.classList.toggle("open");
@@ -961,20 +1504,37 @@
 
     // ─── Saving ──────────────────────────────────────────
     saveBtn.addEventListener("click", async function() {
+      if (!dirty) {
+        toast("변경사항이 없습니다.", "success");
+        return;
+      }
+
+      var weeksToSync = Object.keys(dirtyWeeks);
+
       saveBtn.disabled = true;
-      saveBtn.textContent = "저장 중...";
+      saveBtn.textContent = notionConfigured ? "저장 전 비교 중..." : "저장 전 확인 중...";
       try {
-        var res = await fetch("/api/curriculum", {
-          method: "PUT",
-          headers: apiHeaders(),
-          body: JSON.stringify(curriculum),
-        });
-        if (!res.ok) throw new Error("HTTP " + res.status);
-        clearDirty();
-        toast("저장 완료", "success");
+        var review = await buildSaveReview(weeksToSync);
+        var action = await openSaveReview(review);
+
+        if (action === "pull") {
+          applyPulledWeeks(review);
+          return;
+        }
+
+        if (action === "local") {
+          await performCurriculumSave(false, weeksToSync);
+          return;
+        }
+
+        if (action === "push") {
+          await performCurriculumSave(true, weeksToSync);
+          return;
+        }
       } catch (e) {
-        toast("저장 실패: " + e.message, "error");
+        toast("저장 전 비교 실패: " + e.message, "error");
       } finally {
+        if (!saveBtn.disabled) return;
         saveBtn.disabled = false;
         saveBtn.textContent = "\uD83D\uDCBE 저장";
       }
@@ -996,10 +1556,27 @@
     });
 
     // ─── Sidebar rendering ───────────────────────────────
+    var weekSelectTopbar = document.getElementById("weekSelectTopbar");
+
     function renderSidebar() {
       // Safe: buildSidebarHTML uses esc() on all dynamic content
       sidebarList.innerHTML = buildSidebarHTML();
+      // Sync topbar week selector
+      var opts = [];
+      curriculum.forEach(function(w, i) {
+        opts.push(
+          '<option value="', i, '"', (i === selectedIdx ? ' selected' : ''), '>',
+          'Week ', esc(String(w.week).padStart(2,"0")), ' · ', esc(w.title),
+          '</option>'
+        );
+      });
+      weekSelectTopbar.innerHTML = opts.join("");
+      weekSelectTopbar.style.display = curriculum.length ? "" : "none";
     }
+
+    weekSelectTopbar.addEventListener("change", function() {
+      selectWeek(parseInt(this.value, 10));
+    });
 
     sidebarList.addEventListener("click", function(e) {
       var item = e.target.closest(".sidebar-item");
@@ -1016,6 +1593,7 @@
       for (var i = 0; i < items.length; i++) {
         items[i].classList.toggle("active", i === idx);
       }
+      weekSelectTopbar.value = String(idx);
       renderEditor();
     }
 
@@ -1088,6 +1666,15 @@
         return;
       }
 
+      // Video fields
+      if (el.dataset.videoField) {
+        w.videos = w.videos || [];
+        var vIdx = parseInt(el.dataset.idx, 10);
+        w.videos[vIdx][el.dataset.videoField] = el.value;
+        markDirty();
+        return;
+      }
+
       // Doc fields
       if (el.dataset.docField) {
         w.docs = w.docs || [];
@@ -1109,15 +1696,6 @@
             if (titleSpan) titleSpan.textContent = el.value || "새 단계";
           }
         }
-        return;
-      }
-
-      // Step list fields (goal, done)
-      if (el.dataset.stepList) {
-        var stepIdx = parseInt(el.dataset.step, 10);
-        var listIdx = parseInt(el.dataset.idx, 10);
-        w.steps[stepIdx][el.dataset.stepList][listIdx] = el.value;
-        markDirty();
         return;
       }
 
@@ -1170,6 +1748,9 @@
         } else if (key === "explore") {
           w.explore = w.explore || [];
           w.explore.splice(idx, 1);
+        } else if (key === "videos") {
+          w.videos = w.videos || [];
+          w.videos.splice(idx, 1);
         } else if (key === "docs") {
           w.docs = w.docs || [];
           w.docs.splice(idx, 1);
@@ -1199,6 +1780,9 @@
         } else if (addKey === "explore") {
           w.explore = w.explore || [];
           w.explore.push({ title: "", hint: "" });
+        } else if (addKey === "videos") {
+          w.videos = w.videos || [];
+          w.videos.push({ title: "", url: "" });
         } else if (addKey === "docs") {
           w.docs = w.docs || [];
           w.docs.push({ title: "", url: "" });
@@ -1212,6 +1796,7 @@
             checklist: '[data-list="checklist"]',
             shortcuts: '[data-shortcut-field="keys"]',
             explore: '[data-explore-field="title"]',
+            videos: '[data-video-field="title"]',
             docs: '[data-doc-field="title"]'
           };
           var inputs = editorInner.querySelectorAll(selectors[addKey]);
@@ -1227,8 +1812,6 @@
         w.steps.push({
           title: "",
           copy: "",
-          goal: [],
-          done: [],
           tasks: [{ id: newId, label: "", detail: "" }],
         });
         markDirty();
@@ -1269,28 +1852,6 @@
         return;
       }
 
-      // Step list add (goal, done)
-      if (btn.dataset.stepListAdd) {
-        var slaSi = parseInt(btn.dataset.step, 10);
-        var slaKey = btn.dataset.stepListAdd;
-        w.steps[slaSi][slaKey] = w.steps[slaSi][slaKey] || [];
-        w.steps[slaSi][slaKey].push("");
-        markDirty();
-        renderEditor();
-        return;
-      }
-
-      // Step list remove (goal, done)
-      if (btn.dataset.stepListRemove) {
-        var slrSi = parseInt(btn.dataset.step, 10);
-        var slrIdx = parseInt(btn.dataset.idx, 10);
-        var slrKey = btn.dataset.stepListRemove;
-        w.steps[slrSi][slrKey].splice(slrIdx, 1);
-        markDirty();
-        renderEditor();
-        return;
-      }
-
       // Task add
       if (btn.hasAttribute("data-task-add")) {
         var taSi = parseInt(btn.dataset.step, 10);
@@ -1327,15 +1888,7 @@
         var data = await res.json();
         curriculum[selectedIdx].steps[stepIdx].image = data.path;
         markDirty();
-        // Update preview in-place using safe DOM methods
-        var previewEl = editorInner.querySelector('[data-img-preview="' + stepIdx + '"]');
-        if (previewEl) {
-          previewEl.textContent = "";
-          var img = document.createElement("img");
-          img.src = data.path;
-          img.alt = "Step image";
-          previewEl.appendChild(img);
-        }
+        renderEditor();
         toast("이미지 업로드 완료", "success");
       } catch (e) {
         toast("이미지 업로드 실패: " + e.message, "error");
@@ -1344,6 +1897,10 @@
 
     // ─── Keyboard shortcut: Ctrl/Cmd+S to save ───────────
     document.addEventListener("keydown", function(e) {
+      if (e.key === "Escape" && syncReviewOverlay.style.display !== "none") {
+        closeSaveReview("cancel");
+        return;
+      }
       if ((e.ctrlKey || e.metaKey) && e.key === "s") {
         e.preventDefault();
         saveBtn.click();
@@ -1355,10 +1912,19 @@
       try {
         var res = await fetch("/api/notion-status", { headers: apiHeaders() });
         var data = await res.json();
-        if (data.configured && data.mapping_loaded) {
+        notionConfigured = !!(data.configured && data.mapping_loaded);
+        if (notionConfigured) {
           notionGroup.style.display = "flex";
+          notionAutoSyncWrap.style.display = "flex";
+        } else {
+          notionGroup.style.display = "none";
+          notionAutoSyncWrap.style.display = "none";
         }
-      } catch(e) { /* Notion not available, hide buttons */ }
+      } catch(e) {
+        notionConfigured = false;
+        notionGroup.style.display = "none";
+        notionAutoSyncWrap.style.display = "none";
+      }
     }
 
     notionPushBtn.addEventListener("click", async function() {
@@ -1397,38 +1963,29 @@
       notionPullBtn.textContent = "\u23F3 \uAC00\uC838\uC624\uB294 \uC911...";
 
       try {
-        var res = await fetch("/api/notion-pull/" + weekNum, {
-          method: "POST",
-          headers: apiHeaders(),
-        });
-        var data = await res.json();
-
-        if (!data.ok) {
-          toast("Notion \uAC00\uC838\uC624\uAE30 \uC2E4\uD328: " + data.error, "error");
+        var preview = await fetchNotionPreview(weekNum);
+        if (!preview.ok) {
+          toast("Notion \uAC00\uC838\uC624\uAE30 \uC2E4\uD328: " + preview.error, "error");
           return;
         }
 
-        var pulled = data.week;
+        var pulled = preview.week;
         var current = curriculum[selectedIdx];
-
-        // Build a simple diff summary
-        var changes = [];
-        if (pulled.title !== current.title) changes.push("\uC81C\uBAA9: \"" + current.title + "\" \u2192 \"" + pulled.title + "\"");
-        if (JSON.stringify(pulled.shortcuts) !== JSON.stringify(current.shortcuts)) changes.push("\uB2E8\uCD95\uD0A4: " + (pulled.shortcuts || []).length + "\uAC1C");
-        if (JSON.stringify(pulled.mistakes) !== JSON.stringify(current.mistakes)) changes.push("\uB9C9\uD788\uB294 \uC9C0\uC810: " + (pulled.mistakes || []).length + "\uAC1C");
-        if (JSON.stringify(pulled.assignment && pulled.assignment.checklist) !== JSON.stringify(current.assignment && current.assignment.checklist)) changes.push("\uACFC\uC81C \uCCB4\uD06C\uB9AC\uC2A4\uD2B8 \uBCC0\uACBD");
+        var changes = summarizeNotionDiffs(current, pulled);
 
         if (changes.length === 0) {
           toast("Notion\uACFC \uB3D9\uC77C\uD569\uB2C8\uB2E4. \uBCC0\uACBD\uC0AC\uD56D \uC5C6\uC74C.", "success");
           return;
         }
 
-        var msg = "Notion\uC5D0\uC11C \uAC00\uC838\uC628 \uBCC0\uACBD\uC0AC\uD56D:\n\n" + changes.join("\n") + "\n\n\uC801\uC6A9\uD558\uC2DC\uACA0\uC2B5\uB2C8\uAE4C?";
+        var msg = "Notion\uC5D0\uC11C \uAC00\uC838\uC628 \uBCC0\uACBD\uC0AC\uD56D:\n\n- " + changes.join("\n- ") + "\n\n\uD604\uC7AC \uD3B8\uC9D1 \uB0B4\uC6A9\uC744 \uB36E\uC5B4\uC4F0\uACE0 \uC801\uC6A9\uD560\uAE4C\uC694?";
         if (confirm(msg)) {
-          curriculum[selectedIdx] = pulled;
-          renderEditor();
-          markDirty();
-          toast("Notion \uBCC0\uACBD\uC0AC\uD56D \uC801\uC6A9\uB428 (" + changes.length + "\uAC74). \uC800\uC7A5 \uBC84\uD2BC\uC744 \uB20C\uB7EC \uD655\uC815\uD558\uC138\uC694.", "success");
+          applyPulledWeeks({
+            weeks: [{
+              weekNum: String(weekNum),
+              notion: { status: "different", week: pulled }
+            }]
+          });
         }
       } catch(e) {
         toast("Notion \uC5F0\uACB0 \uC2E4\uD328: " + e.message, "error");
