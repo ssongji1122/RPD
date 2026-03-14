@@ -301,7 +301,7 @@
 
       // Mistakes
       const mistakesHtml = w.mistakes.length > 0 ? `
-        <section class="content-block">
+        <section class="content-block" id="section-mistakes">
           <div class="section-head"><h3>막히는 지점</h3></div>
           <details class="card mistakes-section" open>
             <summary>막혔을 때</summary>
@@ -327,7 +327,7 @@
       // Assignment
       const assignmentCheckli = w.assignment.checklist.map(c => `<li>${c}</li>`).join("");
       const assignmentHtml = `
-        <section class="content-block">
+        <section class="content-block" id="section-assignment">
           <div class="section-head"><h3>과제</h3></div>
           <div class="card assignment-card">
             <div class="card-chip">과제</div>
@@ -339,7 +339,7 @@
 
       // Shortcuts cheatsheet
       const shortcutsHtml = (w.shortcuts && w.shortcuts.length > 0) ? `
-        <section class="content-block">
+        <section class="content-block" id="section-shortcuts">
           <div class="section-head">
             <h3>단축키 치트시트</h3>
             <p>이번 주에 쓰는 핵심 단축키입니다. 외우지 말고 반복하세요.</p>
@@ -356,7 +356,7 @@
 
       // Explore (더 해보기)
       const exploreHtml = (w.explore && w.explore.length > 0) ? `
-        <section class="content-block">
+        <section class="content-block" id="section-explore">
           <div class="section-head">
             <h3>더 해보기</h3>
             <p>필수는 아니지만, 도전하면 실력이 빠르게 늡니다.</p>
@@ -373,7 +373,7 @@
       // Full page — all data sourced from curriculum.js (trusted, no user input)
       document.getElementById("pageContent").innerHTML = `
         <!-- Hero -->
-        <section class="hero">
+        <section class="hero" id="hero-section">
           <div class="hero-card">
             <div class="eyebrow">Week ${String(w.week).padStart(2,"0")} · RPD</div>
             <h1>${w.title}</h1>
@@ -422,6 +422,7 @@
       // Init progress engine
       initProgress(w.steps.length);
       initTopicChecks(w.topics.length, topicStorageKey);
+      initSidebar(w);
     }
 
     // ─── Topic check engine ──────────────────────────
@@ -507,6 +508,70 @@
       });
 
       loadState();
+    }
+
+    // ─── Sidebar ────────────────────────────────────
+    function initSidebar(w) {
+      var sidebar   = document.getElementById("sidebar");
+      var overlay   = document.getElementById("sidebarOverlay");
+      var toggleBtn = document.getElementById("sidebarToggle");
+      var navList   = document.getElementById("sidebarNav");
+
+      if (!sidebar || !overlay || !toggleBtn || !navList) return;
+
+      // Build section list
+      var sections = [{ id: "hero-section", label: "개요", group: null }];
+      w.steps.forEach(function(step, idx) {
+        sections.push({ id: "step-" + idx, label: step.title, group: idx === 0 ? "실습" : null });
+      });
+      if (w.shortcuts && w.shortcuts.length)  sections.push({ id: "section-shortcuts",  label: "단축키",      group: "참고" });
+      if (w.explore   && w.explore.length)    sections.push({ id: "section-explore",    label: "더 해보기",   group: null });
+      if (w.mistakes  && w.mistakes.length)   sections.push({ id: "section-mistakes",   label: "막히는 지점", group: null });
+      if (w.assignment)                        sections.push({ id: "section-assignment", label: "과제",        group: null });
+
+      // Render nav (curriculum.js = trusted developer data, not user input)
+      var navHtml = sections.map(function(s) {
+        var g = s.group ? "<li><span class=\"nav-section-label\">" + s.group + "</span></li>" : "";
+        return g + "<li data-nav-id=\"" + s.id + "\"><a href=\"#" + s.id + "\">" + s.label + "</a></li>";
+      }).join("");
+      navList.innerHTML = navHtml; // trusted static curriculum data
+
+      // Open / close
+      function openSidebar() {
+        sidebar.classList.add("is-open");
+        overlay.classList.add("is-visible");
+        sidebar.removeAttribute("aria-hidden");
+      }
+      function closeSidebar() {
+        sidebar.classList.remove("is-open");
+        overlay.classList.remove("is-visible");
+        sidebar.setAttribute("aria-hidden", "true");
+      }
+
+      toggleBtn.addEventListener("click", function() {
+        sidebar.classList.contains("is-open") ? closeSidebar() : openSidebar();
+      });
+      overlay.addEventListener("click", closeSidebar);
+      document.addEventListener("keydown", function(e) {
+        if (e.key === "Escape") closeSidebar();
+      });
+
+      // IntersectionObserver: highlight current section
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (!entry.isIntersecting) return;
+          navList.querySelectorAll("li[data-nav-id]").forEach(function(li) {
+            li.classList.remove("is-active");
+          });
+          var active = navList.querySelector("li[data-nav-id=\"" + entry.target.id + "\"]");
+          if (active) active.classList.add("is-active");
+        });
+      }, { rootMargin: "-20% 0px -70% 0px", threshold: 0 });
+
+      sections.forEach(function(s) {
+        var el = document.getElementById(s.id);
+        if (el) observer.observe(el);
+      });
     }
   </script>
 </body>
