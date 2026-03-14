@@ -436,6 +436,113 @@ def record(ctx: click.Context, week: str, segment: int | None, dry_run: bool) ->
 
 
 @cli.command()
+@click.argument("source", type=click.Path(exists=True, path_type=Path))
+@click.option(
+    "--notes",
+    type=click.Path(exists=True, dir_okay=False, path_type=Path),
+    default=None,
+    help="Optional video_notes.md file to guide subtitle text",
+)
+@click.option(
+    "--output-dir",
+    type=click.Path(file_okay=False, path_type=Path),
+    default=None,
+    help="Directory for generated subtitle assets",
+)
+@click.option("--burn-in", is_flag=True, help="Also render subtitle-burned MP4 files")
+@click.option("--limit", type=int, default=None, help="Only process the first N videos")
+def subtitle_clips(
+    source: Path,
+    notes: Path | None,
+    output_dir: Path | None,
+    burn_in: bool,
+    limit: int | None,
+) -> None:
+    """Generate draft subtitles for silent tutorial clips."""
+    from .subtitles import (
+        burn_in_subtitles,
+        discover_videos,
+        generate_subtitle_draft,
+        infer_default_notes_paths,
+        merge_note_libraries,
+        parse_clip_notes,
+        parse_week_video_map,
+        write_manifest,
+        write_srt,
+    )
+
+    videos = discover_videos(source)
+    if not videos:
+        console.print(f"[red]No video files found in {source}[/red]")
+        sys.exit(1)
+
+    if limit is not None:
+        videos = videos[:limit]
+
+    note_paths = [notes] if notes else infer_default_notes_paths(source)
+    note_libraries = []
+    used_note_paths = []
+    for note_path in note_paths:
+        if note_path is None or not note_path.exists():
+            continue
+        if note_path.suffix.lower() == ".md":
+            note_libraries.append(parse_clip_notes(note_path))
+            used_note_paths.append(note_path)
+        elif note_path.suffix.lower() in {".yaml", ".yml"}:
+            note_libraries.append(parse_week_video_map(note_path))
+            used_note_paths.append(note_path)
+
+    notes_library = merge_note_libraries(*note_libraries) if note_libraries else None
+    if used_note_paths:
+        console.print("[cyan]Using notes:[/cyan]")
+        for note_path in used_note_paths:
+            console.print(f"  {note_path}")
+    else:
+        console.print("[yellow]No notes file found - falling back to filename-based captions.[/yellow]")
+
+    base_dir = source.parent if source.is_file() else source
+    root_dir = output_dir or (base_dir / "subtitles")
+    srt_dir = root_dir / "srt"
+    burned_dir = root_dir / "burned"
+
+    drafts = []
+    table = Table(title="Draft Subtitle Output", show_lines=True)
+    table.add_column("File", style="cyan", width=28)
+    table.add_column("Title", width=28)
+    table.add_column("Sec", justify="right", width=7)
+    table.add_column("Cues", justify="right", width=6)
+    table.add_column("Source", width=10)
+
+    for video_path in videos:
+        draft = generate_subtitle_draft(video_path, notes_library)
+        drafts.append(draft)
+
+        srt_path = srt_dir / f"{video_path.stem}.srt"
+        write_srt(draft, srt_path)
+
+        if burn_in:
+            burn_path = burned_dir / f"{video_path.stem}-subtitled.mp4"
+            burn_in_subtitles(video_path, srt_path, burn_path)
+
+        table.add_row(
+            video_path.name[:28],
+            draft.title[:28],
+            f"{draft.duration_seconds:.1f}",
+            str(len(draft.cues)),
+            draft.cue_source,
+        )
+
+    manifest_path = write_manifest(drafts, root_dir / "subtitle_manifest.json")
+
+    console.print()
+    console.print(table)
+    console.print(f"\n[green]✓[/green] SRT output: {srt_dir}")
+    if burn_in:
+        console.print(f"[green]✓[/green] Burned videos: {burned_dir}")
+    console.print(f"[green]✓[/green] Manifest: {manifest_path}")
+
+
+@cli.command()
 @click.argument("week")
 @click.option("--segments", "-s", default=None, help="Comma-separated segment numbers")
 @click.option("--privacy", type=click.Choice(["unlisted", "private", "public"]), default=None)
