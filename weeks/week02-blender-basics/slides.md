@@ -173,8 +173,9 @@ Header 바에서 변경 가능
 
 ## 다음 주 예고
 
-**Week 03: 기초 모델링 1 - Edit Mode**
+**Week 03: 기초 모델링 1 - Edit Mode + Modifier**
 
 - Object Mode vs Edit Mode
 - Extrude, Loop Cut, Inset, Bevel 도구
+- Mirror, Subdivision, Solidify, Array, Boolean
 - 기본 도형에서 로봇 형태 만들기

@@ -1,194 +1,145 @@
-# Week 04: 기초 모델링 2 - Modifier
+# Week 04: 기초 모델링 2 - 하드서피스 디테일 & 정리
 
 ## 학습 목표
 
-- [ ] Modifier의 개념과 Non-destructive 워크플로우를 이해한다
-- [ ] Subdivision Surface, Mirror, Solidify, Array Modifier를 사용할 수 있다
-- [ ] Boolean 연산을 활용할 수 있다
+- [ ] `Ctrl + B`와 `Bevel Modifier`의 차이를 설명할 수 있다
+- [ ] `Weighted Normal`이 어떤 문제를 해결하는지 이해한다
+- [ ] `Apply Transform`과 `Modifier Apply`의 시점을 구분할 수 있다
+- [ ] 로봇 모델의 얼굴, 관절, 패널 디테일을 더 깔끔하게 정리할 수 있다
 
 ## 🔗 이전 주차 복습
 
-- Week 03에서 배운 **Extrude (E)**, **Loop Cut (Ctrl + R)**, **Bevel (Ctrl + B)**를 활용하여 기본 형태를 잡은 상태
-- Edit Mode에서의 선택 모드 (Vertex/Edge/Face)와 각종 선택 방법 복습
-- Extrude 취소 시 중복 Vertex 문제 → **M > Merge by Distance**로 정리하는 습관
-- 이번 주에는 Modifier를 사용하므로, 작업 전 **Apply Transform (Ctrl + A)**이 되어 있는지 반드시 확인
+- Week 03에서 **기본형 + Mirror + Subdivision + Bevel/Weighted Normal + Join/Separate + Apply 타이밍**까지 한 번 경험했다
+- 이번 주는 큰 덩어리를 새로 만드는 시간보다, **이미 만든 형태를 더 좋아 보이게 정리하는 시간**이다
+- 계속해서 **G / R / S**, 축 제한, `Ctrl + A`를 사용한다
 
 ## 이론 (30분)
 
-### Modifier란?
+### 이번 주 흐름
 
-- Non-destructive 워크플로우의 핵심
-  - 원본 메쉬를 변경하지 않고 효과를 적용
-  - 언제든 파라미터 조절/삭제 가능
-  - Properties > Modifier Properties (렌치 아이콘)
-- Modifier를 추가하면 원본 데이터는 그대로 유지하면서 결과물만 변경됨
-- 최종 확정 전까지 자유롭게 실험 가능
+- 지난주에는 로봇의 **큰 덩어리**를 만들었다
+- 이번 주에는 얼굴, 관절, 패널 같은 **디테일**을 더한다
+- 그리고 마지막에 **음영 정리**와 **Apply 타이밍**을 구분한다
 
-### Modifier Stack
+> 💡 실제 로봇 모델링 영상도 대부분 `기본형 → 디테일 추가 → 음영 정리 → 마지막에만 확정` 흐름으로 진행된다.
 
-- Modifier는 위에서 아래로 순서대로 적용됨
-- Stack 순서가 결과에 영향을 미침
-  - 예: Mirror 다음 Subdivision vs Subdivision 다음 Mirror은 결과가 다름
-- 드래그로 순서 변경 가능
-- 일반적인 권장 순서: Mirror > Subdivision Surface > 기타 Modifier
+### 디테일에서 자주 쓰는 도구
 
-> 💡 **프로 팁:** Modifier Stack의 순서는 결과에 큰 영향을 미친다. **Mirror를 항상 가장 위에**, Subdivision Surface는 그 아래에 배치하는 것이 일반적이다. 순서를 바꿔가며 결과를 비교해보면 차이를 체감할 수 있다.
+| 도구 | 언제 쓰는지 | 기억할 점 |
+|------|-------------|-----------|
+| **Inset (I)** | 버튼, 눈, 패널 영역을 안쪽으로 한 번 더 잡을 때 | 디테일 시작점을 만들기 좋다 |
+| **Boolean** | 구멍, 소켓, 홈을 빠르게 만들 때 | 커터가 실제로 겹쳐 있어야 한다 |
+| **Bevel (`Ctrl + B`)** | 특정 모서리만 직접 깎을 때 | 손으로 직접 다듬는 느낌 |
+| **Bevel Modifier** | 전체 외장 모서리 느낌을 비파괴로 정리할 때 | 나중에도 값을 조절할 수 있다 |
+| **Weighted Normal** | 형태는 괜찮은데 음영이 울퉁불퉁해 보일 때 | Bevel Modifier와 함께 볼 때 차이가 잘 보인다 |
+
+### 헷갈리기 쉬운 Apply 두 가지
+
+| 항목 | 의미 | 언제 쓰는지 |
+|------|------|-------------|
+| **Apply Transform (`Ctrl + A`)** | 위치/회전/스케일 수치를 정리 | Modifier 전, 작업 중간중간 확인 |
+| **Apply Modifier** | 현재 Modifier 결과를 실제 메쉬로 확정 | 정말 마지막 정리 단계 |
+
+> ⚠️ `Ctrl + A`는 자주 써도 되지만, `Modifier Apply`는 너무 일찍 하면 수정 여지가 줄어든다.
 
 ## 실습 (90분)
 
-### Subdivision Surface Modifier (20분)
+### Step 1: Transform 정리 + 파츠 관리 (20분)
 
-1. 기본 Cube 선택 > Properties > Modifier Properties > Add Modifier > Subdivision Surface
-2. Viewport/Render 레벨 설정
-   - Viewport: 작업 중 미리보기 해상도 (1~2 권장)
-   - Render: 최종 렌더링 해상도 (2~3 권장)
-3. 단축키: Ctrl+1 (레벨 1), Ctrl+2 (레벨 2), Ctrl+3 (레벨 3)
-4. Smooth Shading과 함께 사용
-   - Right-click > Shade Smooth 적용
-   - Subdivision + Smooth Shading으로 부드러운 곡면 생성
-5. Crease로 날카로운 Edge 유지
-   - Edit Mode에서 Edge 선택 > Shift+E로 Crease 값 설정
-   - Crease 값이 높을수록 해당 Edge가 날카롭게 유지됨
-   - Mean Crease 0.0 (부드러움) ~ 1.0 (날카로움)
+1. Week 03에서 만든 로봇 파일을 연다
+2. `N` 패널에서 Scale이 `(1, 1, 1)`인지 확인한다
+3. 이상하면 `Ctrl + A > All Transforms`를 적용한다
+4. 따로 관리할 파츠는 `P > Selection`으로 분리한다
+5. 하나로 묶어도 되는 파츠는 `Ctrl + J`로 합친다
 
-> 💡 **프로 팁:** **Ctrl + 숫자키 (1, 2, 3)**로 Subdivision Surface 레벨을 빠르게 변경할 수 있다. 작업 중에는 레벨 1로 가볍게, 확인 시에만 레벨 2~3으로 올려보자. 또한 **Edge Crease (Shift + E)**는 Subdivision에서 날카로운 모서리를 유지하는 핵심 기법이다. 로봇의 기계적인 엣지를 표현할 때 필수적으로 사용된다.
+> 💡 관절, 안테나, 헤드셋처럼 따로 움직일 수 있는 파츠는 미리 분리해두면 이후 작업이 편하다.
 
-### Mirror Modifier (20분)
+### Step 2: 얼굴 / 패널 / 관절 디테일 만들기 (20분)
 
-1. 대칭 모델링의 핵심 도구
-   - 한쪽만 모델링하면 반대쪽이 자동 생성
-   - 작업 시간 절반으로 단축
-2. 설정 방법
-   - Add Modifier > Mirror
-   - X/Y/Z 축 선택 (기본: X축)
-   - Mirror Object: 대칭 기준이 되는 오브젝트 지정 가능
-3. Clipping 옵션
-   - 활성화하면 Vertex가 중심선을 넘지 않음
-   - 대칭 모델링 시 반드시 켜두는 것을 권장
+1. 얼굴이나 가슴 패널처럼 눈에 잘 보이는 부위를 하나 고른다
+2. `Inset (I)`으로 안쪽 영역을 만든다
+3. 필요하면 `Extrude`로 살짝 들어가거나 나오게 만든다
+4. 구멍이나 소켓이 필요하면 `Boolean Difference`를 사용한다
+5. 디테일을 넣은 뒤 정면, 측면, 투시 뷰에서 다시 확인한다
 
-> 💡 **프로 팁:** Mirror Modifier 사용 시 **Clipping은 반드시 체크**하자. Clipping이 꺼져 있으면 중심선의 Vertex가 반대편으로 넘어가 좌우 대칭이 깨진다. 실수로 깨진 경우, 중심선 Vertex를 선택하고 S + X + 0 + Enter로 X축 위치를 0으로 정렬할 수 있다.
-4. 실습: 로봇 모델링
-   - Cube에서 시작, 한쪽 절반을 삭제 (Edit Mode > X축 기준 한쪽 선택 > Delete)
-   - Mirror Modifier 추가
-   - 한쪽만 Edit Mode에서 모델링 > 자동 대칭 확인
+### Step 3: Bevel 두 가지 비교하기 (20분)
 
-### Solidify Modifier (10분)
+#### `Ctrl + B`
 
-1. 면(Face)에 두께를 추가하는 Modifier
-   - 얇은 Panel, 갑옷, 외장재 표현에 유용
-2. 주요 파라미터
-   - Thickness: 두께 값 설정
-   - Offset: -1 (안쪽) ~ 0 (중앙) ~ 1 (바깥쪽)
-   - Even Thickness: 균일한 두께 유지
-3. 활용 예시
-   - 로봇의 외장 패널
-   - 갑옷이나 보호대
-   - 얇은 구조물 (날개, 안테나 등)
+- 특정 모서리를 직접 골라서 깎는다
+- 얼굴 테두리, 손가락 끝, 패널 라인처럼 **부분 수정**에 좋다
 
-### Array Modifier (10분)
+#### Bevel Modifier
 
-1. 오브젝트를 규칙적으로 복제하는 Modifier
-   - 반복되는 패턴을 효율적으로 생성
-2. Offset 타입
-   - Relative Offset: 오브젝트 크기 기준 상대적 거리
-   - Constant Offset: 절대적 거리값 (미터 단위)
-   - Object Offset: 다른 오브젝트의 Transform을 기준으로 배치
-3. Count: 복제 개수 설정
-4. 활용 예시
-   - 로봇의 관절 마디
-   - 손가락 관절
-   - 척추/등뼈 구조
-   - 반복되는 장식 패턴
+- 오브젝트 전체의 모서리 느낌을 한 번에 조절한다
+- 외장 파츠 전체를 정리할 때 좋다
 
-### Boolean Modifier (15분)
+**실습 포인트**
 
-1. 두 오브젝트 간의 논리 연산
-   - Union (합치기): 두 오브젝트를 하나로 결합
-   - Difference (빼기): 한 오브젝트에서 다른 오브젝트의 형태를 제거
-   - Intersect (교차): 두 오브젝트가 겹치는 부분만 남김
-2. 사용 방법
-   - 대상 오브젝트 선택 > Add Modifier > Boolean
-   - Operation 선택 (Union/Difference/Intersect)
-   - Object에서 연산에 사용할 오브젝트 선택
-3. 활용 예시
-   - Difference: 로봇 바디에 구멍 뚫기, 소켓 만들기
-   - Union: 여러 파츠를 하나로 합치기
-   - Intersect: 특정 형태의 교차 부분만 추출
-4. 주의사항
-   - Boolean 연산 후 메쉬 정리가 필요할 수 있음
-   - Ngon(5각형 이상의 면)이 생성될 수 있음
-   - Apply 후 Edit Mode에서 토폴로지 정리 권장
+1. 작은 파츠 하나는 `Ctrl + B`로 직접 다듬는다
+2. 다른 파츠 하나는 `Bevel Modifier`를 넣어 비교한다
+3. Width와 Segments를 바꾸며 차이를 확인한다
 
-### 종합 실습 (15분)
+### Step 4: Weighted Normal로 음영 정리하기 (15분)
 
-1. Mirror + Subdivision으로 대칭 로봇 바디 만들기
-   - Cube에서 시작
-   - Mirror Modifier 추가 (X축, Clipping 활성화)
-   - Edit Mode에서 바디 형태 잡기
-   - Subdivision Surface 추가 (레벨 2)
-   - Crease로 날카로운 Edge 유지
-2. Boolean으로 디테일 추가
-   - Cylinder로 소켓/구멍 형태 만들기
-   - Boolean Difference로 바디에 구멍 뚫기
-3. Modifier Apply 시점과 순서
-   - 모델링이 완전히 끝난 후 Apply 권장
-   - Apply 순서: Mirror > Boolean > Subdivision Surface (위에서 아래)
-   - Apply 전에 반드시 파일 저장 (되돌릴 수 없음)
+1. `Shade Smooth`를 먼저 적용한다
+2. `Bevel Modifier` 아래에 `Weighted Normal`을 추가한다
+3. 전후를 비교하며 표면이 얼마나 깔끔해졌는지 본다
+4. 특히 평평한 면이 많은 가슴판, 팔 외장, 다리 파츠에서 확인한다
 
-### Blender 5.0 신규 Modifier 참고
+> 💡 `Weighted Normal`은 모양을 바꾸는 도구라기보다 **빛이 닿는 느낌을 정리하는 도구**라고 이해하면 쉽다.
 
-Blender 5.0에서는 기존 Modifier 시스템에 더해 **Geometry Nodes** 기반의 새로운 Modifier가 추가되었다:
+### Step 5: 최종 점검과 Apply 시점 이해하기 (15분)
 
-- **Scatter on Surface:** 메시 표면에 오브젝트를 자동으로 흩뿌리는 Modifier. 로봇 표면의 볼트, 리벳, 장식 패턴 등을 빠르게 배치할 수 있다.
-- **Instance on Elements:** 메시의 특정 요소(Vertex, Edge, Face)에 오브젝트를 인스턴스로 배치. Array Modifier의 확장판으로, 불규칙한 패턴에도 대응 가능하다.
-
-> 이 Modifier들은 Geometry Nodes를 기반으로 동작하며, Add Modifier 메뉴의 Generate 카테고리에서 찾을 수 있다. 이번 주차에서는 기본 Modifier 숙달이 우선이므로, 관심 있는 학생은 자율적으로 실험해보자.
+1. Modifier Stack 순서를 다시 확인한다
+2. 수정할 가능성이 남아 있으면 Apply하지 않는다
+3. 정말 확정할 파츠만 별도 저장 후 Apply를 시험해본다
+4. 스크린샷은 `수정 가능한 상태`와 `최종 확인 화면`을 모두 남긴다
 
 ## ⚠️ 흔한 실수와 해결법
 
 | 실수 | 원인 | 해결법 |
 |------|------|--------|
-| Mirror에서 중심선이 깨짐 | Clipping 옵션을 체크하지 않음 | Mirror Modifier에서 **Clipping** 활성화. 이미 깨진 경우 중심 Vertex 선택 후 S + X + 0 |
-| Subdivision Surface에서 원치 않는 둥글어짐 | 모든 Edge가 부드럽게 처리됨 | **Edge Crease (Shift + E)**로 날카로워야 할 Edge의 Crease 값을 1.0으로 설정 |
-| Boolean 적용 시 오류/빈 결과 | 대상 오브젝트가 Manifold(폐쇄형)가 아님 | Boolean 대상 메시에 구멍이 없는지 확인. **Select > All by Trait > Non-Manifold**로 문제 영역 찾기 |
-| Modifier Apply 후 형태가 다름 | Modifier 적용 순서가 잘못됨 | 반드시 **위에서 아래 순서**로 Apply. Mirror > Boolean > Subdivision 순서 유지 |
-| Scale이 적용된 상태로 Modifier 추가 | Apply Transform을 하지 않음 | Modifier 추가 전 **Ctrl + A > All Transforms**를 적용하여 Scale (1,1,1) 상태 만들기 |
+| Bevel이 너무 두꺼워 보임 | Width가 과함 | 값을 아주 작게 시작하고 천천히 올린다 |
+| Weighted Normal 차이가 잘 안 보임 | 비교 기준이 없음 | Bevel Modifier 전후, Shade Smooth 전후를 같이 본다 |
+| Boolean이 지저분함 | 커터가 애매하게 겹침 | 커터를 더 명확히 겹치고 Scale도 정리한다 |
+| Apply 후 수정이 어려워짐 | Modifier를 너무 일찍 확정함 | **Modifier Apply는 마지막에만** |
+| 파츠 관리가 헷갈림 | 합쳐야 할 것과 분리할 것이 섞여 있음 | 움직일 파츠는 분리, 고정 파츠는 정리해서 묶는다 |
 
 ## 과제
 
-- **제출:** Discord #week04-assignment 채널
-- **내용:** Modifier를 활용한 로봇/캐릭터 형태 제작
-- **형식:** 스크린샷 2장 + 사용한 Modifier 목록 설명 + 한줄 코멘트
+- **제출:** Discord `#week04-assignment` 채널
+- **내용:** Week 03 기본형에 디테일과 음영 정리를 더한 로봇/캐릭터 형태 제작
+- **형식:** 스크린샷 3장 + 사용한 도구/Modifier 목록 + 한줄 코멘트
+  - 1장: 디테일 작업 과정
+  - 2장: Modifier Stack 또는 Transform 확인 화면
+  - 3장: 최종 결과 화면
 - **기한:** 다음 수업 전까지
 
 ## 핵심 정리
 
 | 개념 | 핵심 내용 |
 |------|-----------|
-| Modifier | Non-destructive 워크플로우의 핵심. 원본 메시를 유지하면서 효과 적용 |
-| Modifier Stack | 위에서 아래로 순서대로 적용. 순서가 결과에 영향을 미침 |
-| Subdivision Surface | 메시를 세분화하여 부드러운 곡면 생성. Ctrl+숫자로 레벨 변경 |
-| Edge Crease (Shift+E) | Subdivision에서 날카로운 Edge를 유지하는 핵심 기법 |
-| Mirror | 한쪽만 모델링하면 자동 대칭. Clipping 반드시 활성화 |
-| Solidify | 면에 두께 추가. 패널, 외장재 표현에 활용 |
-| Array | 규칙적 복제. 관절, 손가락, 반복 패턴에 활용 |
-| Boolean | Union(합치기), Difference(빼기), Intersect(교차). 디테일 추가에 핵심 |
-| Apply 순서 | Mirror > Boolean > Subdivision (위에서 아래). Apply 전 반드시 저장 |
-
-> Modifier는 "실험의 자유"를 준다. Apply 전까지는 언제든 되돌릴 수 있으니, 과감하게 여러 조합을 시도해보자.
+| `Ctrl + B` | 특정 모서리를 직접 깎는 수동 Bevel |
+| Bevel Modifier | 전체 외장 모서리를 비파괴로 정리 |
+| Weighted Normal | 하드서피스 음영을 깔끔하게 정리 |
+| Apply Transform | Modifier 전 Scale/Rotation을 정리 |
+| Modifier Apply | 최종 확정 단계에서만 사용 |
+| Join / Separate | 파츠를 묶거나 분리해 관리 |
 
 ## 📋 프로젝트 진행 체크리스트
 
-이번 주차까지 아래 항목이 완료되어야 합니다:
-
-- [ ] Mirror Modifier로 좌우 대칭 완성
-- [ ] Subdivision Surface로 부드러운 형태 확보 (Crease로 날카로운 부분 유지)
-- [ ] Boolean으로 소켓, 구멍 등 디테일 추가
-- [ ] Modifier Stack 순서 정리 완료
-- [ ] 정면/측면/투시 뷰에서 형태 점검 스크린샷 촬영
-- [ ] (선택) Solidify나 Array로 추가 디테일 실험
+- [ ] 얼굴, 패널, 관절 중 한 곳 이상 디테일을 추가했다
+- [ ] `Ctrl + B` 또는 `Bevel Modifier`를 사용했다
+- [ ] `Weighted Normal`을 확인했다
+- [ ] `Ctrl + A`로 Transform을 점검했다
+- [ ] 파츠를 분리하거나 합쳐서 정리했다
+- [ ] 결과 스크린샷 3장을 저장했다
 
 ## 참고 자료
 
 - [Blender 단축키 모음](../../resources/blender-shortcuts.md)
-- [Blender Manual - Modifiers](https://docs.blender.org/manual/en/latest/modeling/modifiers/index.html)
+- [Blender Manual - Bevel Tool](https://docs.blender.org/manual/en/latest/modeling/meshes/tools/bevel.html)
+- [Blender Manual - Bevel Modifier](https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/bevel.html)
+- [Blender Manual - Weighted Normal Modifier](https://docs.blender.org/manual/en/latest/modeling/modifiers/modify/weighted_normal.html)
+- [Blender Manual - Boolean Modifier](https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/booleans.html)

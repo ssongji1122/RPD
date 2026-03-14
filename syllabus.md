@@ -22,8 +22,8 @@
 |:----:|----------|----------|----------|---------|------|------|
 | 01 | 오리엔테이션, Blender 설치, 컨셉 설정 | 수업 목표/평가/일정 안내, 2026 캐릭터 프로덕트 트렌드 분석 | Blender 5.0 설치 및 환경 설정, Mixboard + 나노바나나를 활용한 무드보드 제작 | Mixboard, 나노바나나 | 무드보드 Discord 제출 | |
 | 02 | Blender 인터페이스 및 기초 + MCP 설정 | Blender 5.0 UI (Viewport, Outliner, Properties), 뷰 조작, Transform (G/R/S), Apply Transform (Ctrl+A), Origin 설정, Pivot Point | 기본 도형(Primitive) 배치 연습, Blender MCP + Claude 설치 및 연결 | Blender MCP + Claude | 기본 도형 배치 + MCP 테스트 스크린샷 제출 | |
-| 03 | 기초 모델링 1 - Edit Mode | Primitive 종류, Edit Mode 진입/활용, 선택 모드 (Vertex / Edge / Face) | Extrude (E), Loop Cut (Ctrl+R), Inset (I), Bevel (Ctrl+B) 실습 | - | 로봇/캐릭터 기본 형태 스크린샷 제출 | |
-| 04 | 기초 모델링 2 - Modifier | Modifier 활용 (Subdivision, Mirror, Solidify, Array), Boolean 연산, Non-destructive 워크플로우 | Mirror + Subdivision을 활용한 대칭 로봇 형태 제작 | - | 로봇/캐릭터 형태 다듬기 결과물 제출 | |
+| 03 | 기초 모델링 1 - Edit Mode + Modifier | Edit Mode 핵심 도구, Modifier 개념, Mirror / Subdivision / Solidify / Array / Boolean, Bevel Tool vs Bevel Modifier, Weighted Normal, Join/Separate, Apply 타이밍 | Extrude, Loop Cut, Inset, Bevel로 기본형 제작 후 Mirror + Subdivision + Solidify + Array + Boolean 적용, 파츠 정리와 음영 확인 실습 | - | Edit Mode + Modifier를 함께 사용한 로봇/캐릭터 기본 형태 제출 | |
+| 04 | 기초 모델링 2 - 하드서피스 디테일 & 정리 | 얼굴/관절/패널 디테일 추가, Bevel/Weighted Normal 반복 적용, Boolean/Inset 디테일 심화, 파츠 정리 반복 | Week 03 기본형에 얼굴/관절/패널 디테일 추가, 음영 정리, 파츠 정리 실습 | - | 로봇/캐릭터 디테일 정리 결과물 제출 | |
 | 05 | AI 3D 생성 + Sculpting + MCP | AI 3D 생성 원리 이해, Sculpt Mode 기초 (Draw, Clay Strips, Smooth, Grab) | Meshy AI / Tripo AI로 3D 모델 생성 후 Blender 임포트, Sculpt 수정 작업, MCP 씬 자동 생성 | Meshy AI, Tripo AI, Luma Genie, Blender MCP | AI 3D 생성 + Blender 작업 이미지 제출 | |
 | 06 | Material & Shader Node | Material 생성, Principled BSDF (Base Color, Metallic, Roughness, Specular), Thin Film Iridescence (5.0 신기능), Shader Node Editor | Poly Haven / BlenderKit 텍스처 활용, 로봇에 금속/플라스틱/유리 재질 적용 | - | 로봇/캐릭터 재질 적용 이미지 제출 | |
 | 07 | UV Unwrapping + AI Texture | UV 개념, Seam (Mark Seam), Unwrap 방법, UV Editor 활용 | Texture 이미지 적용, AI 텍스처 생성 및 적용, Texture Painting | Meshy AI Texture, 나노바나나 | 텍스처 적용된 로봇 렌더 이미지 제출 | |
