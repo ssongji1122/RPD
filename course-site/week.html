@@ -197,8 +197,6 @@
 
       // Steps HTML
       const stepsHtml = w.steps.map((step, idx) => {
-        const goalLi  = step.goal.map(g => `<li>${g}</li>`).join("");
-        const doneLi  = step.done.map(d => `<li>${d}</li>`).join("");
         const taskItems = step.tasks.map(t => `
           <div class="task-item">
             <input id="${t.id}" type="checkbox" data-task-id="${t.id}" />
@@ -209,30 +207,19 @@
           </div>`).join("");
 
         return `
-          <article class="lab-step" data-step-index="${idx}">
+          <article class="lab-step" id="step-${idx}" data-step-index="${idx}">
             <div class="step-header">
               <div class="step-title-group">
                 <div class="step-number">${idx + 1}</div>
-                <div>
-                  <strong>${step.title}</strong>
-                  <p>${step.copy}</p>
-                </div>
+                <strong class="step-title-text">${step.title}</strong>
               </div>
               <div class="status-pill" data-step-status>진행 중</div>
             </div>
-            ${step.image ? (step.link ? `<a href="${step.link}" target="_blank" rel="noopener noreferrer"><img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" /></a>` : `<img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" />`) : ""}
-            <div class="step-info-grid">
-              <div class="step-info-card">
-                <h4>목표</h4>
-                <ul>${goalLi}</ul>
-              </div>
-              <div class="step-info-card">
-                <h4>완료 기준</h4>
-                <ul>${doneLi}</ul>
-              </div>
-            </div>
+            ${step.image ? (step.link
+              ? `<a href="${step.link}" target="_blank" rel="noopener noreferrer"><img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" /></a>`
+              : `<img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" />`) : ""}
+            <p class="step-copy">${step.copy}</p>
             <div class="task-list">${taskItems}</div>
-
           </article>`;
       }).join("");
 
