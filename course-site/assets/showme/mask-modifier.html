@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Show Me — Mirror Modifier 이해</title>
+<title>Show Me — Mask Modifier 이해</title>
 <style>
 /* ══════════════════════════════════════════════════
    Show Me Widget — Standalone Dark Theme
@@ -363,8 +363,8 @@ body {
 <!-- Tab Bar -->
 <nav class="tabs" role="tablist">
   <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
-  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
-  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">인터랙티브 데모</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">사용 사례</button>
   <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
 </nav>
 
@@ -372,96 +372,86 @@ body {
 <section class="panel is-active" id="panel-concept" role="tabpanel">
   <div class="concept-grid">
     <div class="concept-card">
-      <h3>Mirror Modifier란?</h3>
-      <p>거울처럼 한쪽만 편집하면 반대쪽이 자동으로 따라오는 Modifier입니다. 좌우 대칭 모델을 만들 때 작업량을 절반으로 줄여줍니다.</p>
-      <div class="analogy">거울 앞에서 한쪽을 바꾸면 반대쪽이 자동으로 따라와요</div>
+      <h3>Mask란?</h3>
+      <p>Vertex Group 또는 Armature Bone 기반으로 메쉬의 일부를 숨기는 모디파이어입니다. 편집 모드뿐 아니라 렌더링에서도 숨겨집니다.</p>
+      <div class="analogy">마스킹 테이프로 특정 부분만 가리는 것과 같아요</div>
     </div>
     <div class="concept-card">
-      <h3>Clipping이란?</h3>
-      <p>중심선을 넘지 못하게 하는 옵션입니다. ON이면 중심 정점이 정확히 중앙에 고정되어, 양쪽이 깔끔하게 이어집니다.</p>
-      <div class="analogy">중심선에 보이지 않는 벽이 생겨서 정점이 넘어가지 못해요</div>
+      <h3>Vertex Group 모드</h3>
+      <p>특정 Vertex Group에 속한 꼭짓점만 표시합니다. Invert 옵션을 사용하면 선택한 그룹을 반전하여 나머지를 표시할 수 있습니다.</p>
     </div>
-  </div>
-
-  <div class="shortcut-list">
-    <h4>주요 단축키</h4>
-    <div class="shortcut-row">
-      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">1</span></span>
-      <span>Modifier 추가 패널</span>
-    </div>
-    <div class="shortcut-row">
-      <span class="shortcut-keys"><span class="kbd">S</span> <span class="kbd">X</span> <span class="kbd">0</span></span>
-      <span>중심선 정렬 (선택한 정점의 X좌표를 0으로)</span>
-    </div>
-    <div class="shortcut-row">
-      <span class="shortcut-keys">Clipping 체크박스</span>
-      <span>Properties &rarr; Modifier tab에서 설정</span>
+    <div class="concept-card">
+      <h3>Armature 모드</h3>
+      <p>선택한 Bone에 가중치가 있는 부분만 표시합니다. 캐릭터 의상 전환 시스템 등에서 부위별로 표시/숨김을 제어할 때 유용합니다.</p>
     </div>
   </div>
 
   <div class="doc-ref">
-    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html" target="_blank" rel="noopener">
-      📖 Blender 공식 문서 — Mirror Modifier
+    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mask.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Mask Modifier
     </a>
   </div>
 </section>
 
-<!-- TAB 2: 시각적 비교 -->
+<!-- TAB 2: 인터랙티브 데모 -->
 <section class="panel" id="panel-visual" role="tabpanel">
   <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    왼쪽 반의 꼭짓점을 드래그하면 오른쪽이 자동으로 미러됩니다.
+    그리드의 셀을 클릭하여 Vertex Group 멤버십을 토글하세요. Mask가 적용되면 선택된 셀만 표시됩니다.
   </p>
   <div class="demo-wrap">
-    <canvas id="demoCanvas" width="680" height="300"></canvas>
+    <canvas id="demoCanvas" width="680" height="360"></canvas>
     <div class="demo-controls">
-      <button class="demo-btn is-active" id="btnClipping">Clipping ON</button>
+      <button class="demo-btn is-active" id="btnMaskOn">Mask ON</button>
+      <button class="demo-btn" id="btnInvert">Invert OFF</button>
       <button class="demo-btn" id="btnReset">초기화</button>
     </div>
   </div>
-  <p class="demo-hint">꼭짓점을 드래그해 보세요. Clipping을 토글하면 중심선 넘기 동작이 달라집니다.</p>
+  <p class="demo-hint">셀을 클릭/터치하여 Vertex Group에 추가/제거하세요. Mask ON이면 그룹에 속한 셀만 보입니다.</p>
 </section>
 
-<!-- TAB 3: 언제 쓰나요? -->
+<!-- TAB 3: 사용 사례 -->
 <section class="panel" id="panel-when" role="tabpanel">
   <div class="usage-grid">
     <div class="usage-card">
-      <h4>Mirror가 필요할 때</h4>
+      <h4>Mask가 필요할 때</h4>
       <ul>
-        <li>좌우 대칭 로봇</li>
-        <li>자동차</li>
-        <li>캐릭터 얼굴</li>
-        <li>가구</li>
+        <li>캐릭터 의상 전환 (Armature로 부위별 표시/숨김)</li>
+        <li>LOD(Level of Detail) 시스템</li>
+        <li>부분 렌더링</li>
+        <li>복잡한 모델의 부분 작업</li>
       </ul>
     </div>
     <div class="usage-card">
-      <h4>Mirror를 안 쓰는 경우</h4>
+      <h4>Mask를 안 쓰는 경우</h4>
       <ul>
-        <li>비대칭 디자인</li>
-        <li>유기적 형태</li>
-        <li>한쪽만 다른 디테일</li>
+        <li>단순 숨기기 (<span class="kbd">H</span>키로 충분)</li>
+        <li>영구적 삭제가 필요한 경우</li>
+        <li>단일 오브젝트를 분리해야 할 때</li>
       </ul>
     </div>
   </div>
-  <div class="tip-box">
-    <strong>팁:</strong> Mirror는 원점(Origin)이 중심에 있어야 해요. <span class="kbd">S</span>+<span class="kbd">X</span>+<span class="kbd">0</span>으로 중심선을 맞추고, 오브젝트를 먼저 중앙에 놓은 뒤 Mirror를 추가하세요.
-  </div>
+
   <div class="combo-section">
     <h4>자주 쓰는 조합</h4>
     <div class="combo-grid">
       <div class="combo-card">
-        <div class="combo-name">Mirror + Subdivision Surface</div>
-        <div class="combo-desc">Mirror로 대칭을 잡고 Subdivision으로 부드럽게. Mirror가 위, Subdivision이 아래 순서로 배치합니다.</div>
+        <div class="combo-name">Mask + Armature</div>
+        <div class="combo-desc">캐릭터 의상 시스템에서 Bone 선택에 따라 의상 파츠를 표시/숨김 합니다.</div>
       </div>
       <div class="combo-card">
-        <div class="combo-name">Mirror + Solidify</div>
-        <div class="combo-desc">대칭 형태에 두께를 추가할 때. 얇은 판이나 갑옷 같은 모델에 유용합니다.</div>
+        <div class="combo-name">Mask + Vertex Group</div>
+        <div class="combo-desc">복잡한 모델에서 작업 중인 부분만 표시하여 편집 효율을 높입니다.</div>
       </div>
     </div>
   </div>
 
+  <div class="tip-box">
+    <strong>팁:</strong> Mask는 비파괴적으로 메쉬 일부를 숨깁니다. <span class="kbd">H</span>키는 편집용 숨기기, Mask는 렌더링에도 적용됩니다.
+  </div>
+
   <div class="doc-ref">
-    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html" target="_blank" rel="noopener">
-      📖 Blender 공식 문서 — Mirror Modifier
+    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mask.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Mask Modifier
     </a>
   </div>
 </section>
@@ -614,33 +604,53 @@ function initQuiz(questions) {
   }
 }
 
-// ── Canvas Mirror Demo ────────────────────────
+// ── Canvas Mask Demo ──────────────────────────
 (function() {
   var canvas = document.getElementById("demoCanvas");
   var ctx = canvas.getContext("2d");
-  var clipping = true;
-  var dragging = -1;
-  var hitRadius = 14;
+  var maskOn = true;
+  var invert = false;
 
-  // Initial left-half vertices (robot torso shape, top-down view)
-  // These are offsets from center — stored as positive X values from center
-  var defaultVerts = [
-    { x: 10,  y: 60  },  // top-center-ish
-    { x: 100, y: 50  },  // top-right shoulder
-    { x: 120, y: 90  },  // right shoulder corner
-    { x: 110, y: 160 },  // right waist
-    { x: 90,  y: 220 },  // right hip
-    { x: 10,  y: 240 },  // bottom-center-ish
-  ];
+  var cols = 6;
+  var rows = 4;
+  var cellPad = 8;
+  var gridPad = 30;
 
-  // Working copy
-  var verts = [];
-  function resetVerts() {
-    verts = defaultVerts.map(function(v) { return { x: v.x, y: v.y }; });
+  // Cell membership in vertex group (true = in group)
+  var cells = [];
+  function resetCells() {
+    cells = [];
+    for (var r = 0; r < rows; r++) {
+      cells[r] = [];
+      for (var c = 0; c < cols; c++) {
+        // Default: some cells in group
+        cells[r][c] = (r + c) % 3 === 0;
+      }
+    }
   }
-  resetVerts();
+  resetCells();
 
-  var centerX = canvas.width / 2;
+  function getCellSize() {
+    var availW = canvas.width - gridPad * 2 - cellPad * (cols - 1);
+    var availH = canvas.height - gridPad * 2 - cellPad * (rows - 1) - 30;
+    var cw = Math.floor(availW / cols);
+    var ch = Math.floor(availH / rows);
+    return Math.min(cw, ch);
+  }
+
+  function getCellRect(r, c) {
+    var size = getCellSize();
+    var totalW = cols * size + (cols - 1) * cellPad;
+    var totalH = rows * size + (rows - 1) * cellPad;
+    var startX = (canvas.width - totalW) / 2;
+    var startY = (canvas.height - totalH) / 2 + 10;
+    return {
+      x: startX + c * (size + cellPad),
+      y: startY + r * (size + cellPad),
+      w: size,
+      h: size
+    };
+  }
 
   function draw() {
     var w = canvas.width;
@@ -651,92 +661,105 @@ function initQuiz(questions) {
     ctx.fillStyle = "#17181a";
     ctx.fillRect(0, 0, w, h);
 
-    // Grid lines (subtle)
-    ctx.strokeStyle = "rgba(255,255,255,.04)";
-    ctx.lineWidth = 1;
-    var step = 40;
-    for (var gx = step; gx < w; gx += step) {
-      ctx.beginPath();
-      ctx.moveTo(gx, 0);
-      ctx.lineTo(gx, h);
-      ctx.stroke();
-    }
-    for (var gy = step; gy < h; gy += step) {
-      ctx.beginPath();
-      ctx.moveTo(0, gy);
-      ctx.lineTo(w, gy);
-      ctx.stroke();
+    // Title
+    ctx.fillStyle = "rgba(255,255,255,.6)";
+    ctx.font = "bold 13px sans-serif";
+    ctx.textAlign = "center";
+    var title = maskOn ? (invert ? "Mask ON + Invert" : "Mask ON") : "Mask OFF (\uBAA8\uB450 \uD45C\uC2DC)";
+    ctx.fillText(title, w / 2, 22);
+
+    // Draw cells
+    for (var r = 0; r < rows; r++) {
+      for (var c = 0; c < cols; c++) {
+        var rect = getCellRect(r, c);
+        var inGroup = cells[r][c];
+        var visible;
+
+        if (!maskOn) {
+          visible = true;
+        } else {
+          visible = invert ? !inGroup : inGroup;
+        }
+
+        // Cell background
+        if (visible) {
+          // Visible cell — colored based on group membership
+          if (inGroup) {
+            ctx.fillStyle = "rgba(10,132,255,.35)";
+          } else {
+            ctx.fillStyle = "rgba(16,185,129,.25)";
+          }
+          ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
+
+          // Border
+          ctx.strokeStyle = inGroup ? "rgba(10,132,255,.6)" : "rgba(16,185,129,.5)";
+          ctx.lineWidth = 2;
+          ctx.strokeRect(rect.x, rect.y, rect.w, rect.h);
+
+          // Dot pattern to represent mesh
+          var dotSpacing = 16;
+          for (var dx = dotSpacing; dx < rect.w; dx += dotSpacing) {
+            for (var dy = dotSpacing; dy < rect.h; dy += dotSpacing) {
+              ctx.beginPath();
+              ctx.arc(rect.x + dx, rect.y + dy, 2, 0, Math.PI * 2);
+              ctx.fillStyle = inGroup ? "rgba(10,132,255,.5)" : "rgba(16,185,129,.4)";
+              ctx.fill();
+            }
+          }
+        } else {
+          // Hidden cell — dashed outline only
+          ctx.setLineDash([4, 4]);
+          ctx.strokeStyle = "rgba(255,255,255,.1)";
+          ctx.lineWidth = 1;
+          ctx.strokeRect(rect.x, rect.y, rect.w, rect.h);
+          ctx.setLineDash([]);
+
+          // X mark
+          ctx.strokeStyle = "rgba(239,68,68,.3)";
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(rect.x + 8, rect.y + 8);
+          ctx.lineTo(rect.x + rect.w - 8, rect.y + rect.h - 8);
+          ctx.moveTo(rect.x + rect.w - 8, rect.y + 8);
+          ctx.lineTo(rect.x + 8, rect.y + rect.h - 8);
+          ctx.stroke();
+        }
+      }
     }
 
-    // Center mirror axis — dashed line
-    ctx.strokeStyle = "rgba(245,158,11,.5)";
-    ctx.lineWidth = 2;
-    ctx.setLineDash([8, 6]);
-    ctx.beginPath();
-    ctx.moveTo(centerX, 0);
-    ctx.lineTo(centerX, h);
-    ctx.stroke();
-    ctx.setLineDash([]);
-
-    // Axis label
-    ctx.fillStyle = "rgba(245,158,11,.7)";
+    // Legend
+    var legendY = h - 14;
     ctx.font = "11px sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("Mirror Axis (X=0)", centerX, 18);
 
-    // Draw left half polygon (original)
-    drawPolygon(verts, -1, "rgba(10,132,255,.25)", "rgba(10,132,255,.7)");
-
-    // Draw right half polygon (mirrored)
-    var mirrored = verts.map(function(v) {
-      return { x: v.x, y: v.y };
-    });
-    drawPolygon(mirrored, 1, "rgba(16,185,129,.15)", "rgba(16,185,129,.5)");
-
-    // Labels
-    ctx.font = "bold 12px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillStyle = "rgba(10,132,255,.8)";
-    ctx.fillText("Original (Edit)", centerX - 80, h - 14);
-    ctx.fillStyle = "rgba(16,185,129,.6)";
-    ctx.fillText("Mirrored (Auto)", centerX + 80, h - 14);
-
-    // Draw vertex handles on left side
-    verts.forEach(function(v, i) {
-      var sx = centerX - v.x;
-      var sy = v.y;
-      ctx.beginPath();
-      ctx.arc(sx, sy, 6, 0, Math.PI * 2);
-      ctx.fillStyle = (dragging === i) ? "#0a84ff" : "rgba(10,132,255,.9)";
-      ctx.fill();
-      ctx.strokeStyle = "#fff";
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-    });
-
-    // Clipping indicator
-    ctx.fillStyle = clipping ? "rgba(16,185,129,.7)" : "rgba(239,68,68,.7)";
-    ctx.font = "bold 11px sans-serif";
+    // Blue = in group
+    ctx.fillStyle = "rgba(10,132,255,.7)";
+    ctx.fillRect(w / 2 - 120, legendY - 8, 10, 10);
+    ctx.fillStyle = "rgba(255,255,255,.5)";
     ctx.textAlign = "left";
-    ctx.fillText("Clipping: " + (clipping ? "ON" : "OFF"), 12, 18);
+    ctx.fillText("Vertex Group", w / 2 - 106, legendY);
+
+    // Dashed = hidden
+    ctx.strokeStyle = "rgba(255,255,255,.3)";
+    ctx.setLineDash([3, 3]);
+    ctx.lineWidth = 1;
+    ctx.strokeRect(w / 2 + 20, legendY - 8, 10, 10);
+    ctx.setLineDash([]);
+    ctx.fillText("\uC228\uACA8\uC9C4 \uC601\uC5ED", w / 2 + 36, legendY);
   }
 
-  function drawPolygon(pts, side, fillColor, strokeColor) {
-    // side: -1 = left of center, +1 = right of center
-    if (pts.length < 2) return;
-    ctx.beginPath();
-    pts.forEach(function(v, i) {
-      var sx = (side === -1) ? (centerX - v.x) : (centerX + v.x);
-      var sy = v.y;
-      if (i === 0) ctx.moveTo(sx, sy);
-      else ctx.lineTo(sx, sy);
-    });
-    ctx.closePath();
-    ctx.fillStyle = fillColor;
-    ctx.fill();
-    ctx.strokeStyle = strokeColor;
-    ctx.lineWidth = 2;
-    ctx.stroke();
+  // Click/touch to toggle cell membership
+  function hitTest(pos) {
+    for (var r = 0; r < rows; r++) {
+      for (var c = 0; c < cols; c++) {
+        var rect = getCellRect(r, c);
+        if (pos.x >= rect.x && pos.x <= rect.x + rect.w &&
+            pos.y >= rect.y && pos.y <= rect.y + rect.h) {
+          return { r: r, c: c };
+        }
+      }
+    }
+    return null;
   }
 
   function getEventPos(e) {
@@ -757,95 +780,74 @@ function initQuiz(questions) {
     };
   }
 
-  function findVertex(pos) {
-    var best = -1;
-    var bestDist = hitRadius * hitRadius;
-    verts.forEach(function(v, i) {
-      var sx = centerX - v.x;
-      var sy = v.y;
-      var dx = pos.x - sx;
-      var dy = pos.y - sy;
-      var d2 = dx * dx + dy * dy;
-      if (d2 < bestDist) {
-        bestDist = d2;
-        best = i;
-      }
-    });
-    return best;
-  }
-
-  function onDown(e) {
+  function onClick(e) {
     e.preventDefault();
     var pos = getEventPos(e);
-    dragging = findVertex(pos);
-    if (dragging >= 0) draw();
-  }
-
-  function onMove(e) {
-    if (dragging < 0) return;
-    e.preventDefault();
-    var pos = getEventPos(e);
-    // Convert screen position to vertex coords (offset from center)
-    var newX = centerX - pos.x;
-    var newY = pos.y;
-
-    // Clamp Y
-    if (newY < 10) newY = 10;
-    if (newY > canvas.height - 10) newY = canvas.height - 10;
-
-    // Clipping: prevent crossing center line (x must stay >= 0)
-    if (clipping) {
-      if (newX < 0) newX = 0;
-    }
-    // Even without clipping, don't go too far right
-    if (newX > centerX - 10) newX = centerX - 10;
-
-    verts[dragging].x = newX;
-    verts[dragging].y = newY;
-    draw();
-  }
-
-  function onUp(e) {
-    if (dragging >= 0) {
-      dragging = -1;
+    var cell = hitTest(pos);
+    if (cell) {
+      cells[cell.r][cell.c] = !cells[cell.r][cell.c];
       draw();
     }
   }
 
   // Mouse events
-  canvas.addEventListener("mousedown", onDown);
-  canvas.addEventListener("mousemove", onMove);
-  canvas.addEventListener("mouseup", onUp);
-  canvas.addEventListener("mouseleave", onUp);
+  canvas.addEventListener("click", onClick);
 
   // Touch events
-  canvas.addEventListener("touchstart", onDown, { passive: false });
-  canvas.addEventListener("touchmove", onMove, { passive: false });
-  canvas.addEventListener("touchend", onUp);
-  canvas.addEventListener("touchcancel", onUp);
+  canvas.addEventListener("touchstart", function(e) {
+    e.preventDefault();
+    var pos = getEventPos(e);
+    var cell = hitTest(pos);
+    if (cell) {
+      cells[cell.r][cell.c] = !cells[cell.r][cell.c];
+      draw();
+    }
+  }, { passive: false });
 
-  // Clipping toggle
-  var btnClipping = document.getElementById("btnClipping");
-  btnClipping.addEventListener("click", function() {
-    clipping = !clipping;
-    if (clipping) {
-      btnClipping.textContent = "Clipping ON";
-      btnClipping.classList.add("is-active");
-      // Enforce clipping on current verts
-      verts.forEach(function(v) {
-        if (v.x < 0) v.x = 0;
-      });
+  // Button handlers
+  var btnMaskOn = document.getElementById("btnMaskOn");
+  var btnInvert = document.getElementById("btnInvert");
+  var btnReset = document.getElementById("btnReset");
+
+  btnMaskOn.addEventListener("click", function() {
+    maskOn = !maskOn;
+    btnMaskOn.textContent = maskOn ? "Mask ON" : "Mask OFF";
+    if (maskOn) {
+      btnMaskOn.classList.add("is-active");
     } else {
-      btnClipping.textContent = "Clipping OFF";
-      btnClipping.classList.remove("is-active");
+      btnMaskOn.classList.remove("is-active");
     }
     draw();
   });
 
-  // Reset button
-  document.getElementById("btnReset").addEventListener("click", function() {
-    resetVerts();
+  btnInvert.addEventListener("click", function() {
+    invert = !invert;
+    btnInvert.textContent = invert ? "Invert ON" : "Invert OFF";
+    if (invert) {
+      btnInvert.classList.add("is-active");
+    } else {
+      btnInvert.classList.remove("is-active");
+    }
     draw();
+  });
+
+  btnReset.addEventListener("click", function() {
+    resetCells();
+    maskOn = true;
+    invert = false;
+    btnMaskOn.textContent = "Mask ON";
+    btnMaskOn.classList.add("is-active");
+    btnInvert.textContent = "Invert OFF";
+    btnInvert.classList.remove("is-active");
+    draw();
+  });
+
+  // Touch events for buttons
+  [btnMaskOn, btnInvert, btnReset].forEach(function(btn) {
+    btn.addEventListener("touchstart", function(e) {
+      e.preventDefault();
+      btn.click();
+    }, { passive: false });
   });
 
   // Initial draw
@@ -855,48 +857,48 @@ function initQuiz(questions) {
 // ── Quiz Data ─────────────────────────────────
 initQuiz([
   {
-    question: "Mirror Modifier\uB97C \uCD94\uAC00\uD588\uB294\uB370 \uBBF8\uB7EC\uB41C \uBC18\uCABD\uC774 \uC774\uC0C1\uD55C \uACF3\uC5D0 \uB098\uD0C0\uB098\uC694. \uAC00\uC7A5 \uD754\uD55C \uC6D0\uC778\uC740?",
+    question: "Mask Modifier\uC758 \uAE30\uC900\uC740 \uBB34\uC5C7\uC778\uAC00\uC694?",
     options: [
-      "Apply Scale\uC744 \uC548 \uD574\uC11C",
-      "Origin\uC774 \uC624\uBE0C\uC81D\uD2B8 \uC911\uC2EC\uC5D0 \uC788\uC9C0 \uC54A\uC544\uC11C",
-      "Clipping\uC774 \uCF1C\uC838 \uC788\uC5B4\uC11C",
-      "Edit Mode\uAC00 \uC544\uB2C8\uB77C\uC11C"
+      "Face Map \uB610\uB294 UV Map",
+      "Vertex Group \uB610\uB294 Armature",
+      "Material \uB610\uB294 Texture",
+      "Edge Loop \uB610\uB294 Face Loop"
     ],
     answer: 1,
-    explanation: "Mirror\uB294 Origin\uC744 \uAE30\uC900\uC73C\uB85C \uBC18\uC804\uD569\uB2C8\uB2E4. Origin\uC774 \uC624\uBE0C\uC81D\uD2B8 \uC911\uC2EC\uC5D0 \uC788\uC9C0 \uC54A\uC73C\uBA74 \uBBF8\uB7EC\uB41C \uBC18\uCABD\uC774 \uC5C9\uB69A\uD55C \uC704\uCE58\uC5D0 \uC0DD\uAE41\uB2C8\uB2E4."
+    explanation: "Mask Modifier\uB294 Vertex Group \uB610\uB294 Armature Bone\uC744 \uAE30\uC900\uC73C\uB85C \uBA54\uC26C\uC758 \uC77C\uBD80\uB97C \uC228\uAE41\uB2C8\uB2E4."
   },
   {
-    question: "Clipping \uC635\uC158\uC744 \uCF1C\uBA74 \uC5B4\uB5A4 \uD6A8\uACFC\uAC00 \uC788\uB098\uC694?",
+    question: "Invert \uC635\uC158\uC744 \uCF1C\uBA74 \uC5B4\uB5BB\uAC8C \uB418\uB098\uC694?",
     options: [
-      "\uBBF8\uB7EC\uAC00 \uBE44\uD65C\uC131\uD654\uB41C\uB2E4",
-      "\uC790\uB3D9\uC73C\uB85C Apply\uB41C\uB2E4",
-      "\uC911\uC2EC \uC815\uC810\uC774 \uBBF8\uB7EC \uCD95\uC744 \uB118\uC9C0 \uBABB\uD55C\uB2E4",
-      "\uBC18\uB300\uD3B8\uC774 \uC228\uACA8\uC9C4\uB2E4"
+      "Mask\uAC00 \uBE44\uD65C\uC131\uD654\uB41C\uB2E4",
+      "\uC120\uD0DD\uD55C \uADF8\uB8F9\uC744 \uBC18\uC804\uD558\uC5EC \uB098\uBA38\uC9C0\uB97C \uD45C\uC2DC\uD55C\uB2E4",
+      "\uBAA8\uB4E0 \uBA54\uC26C\uAC00 \uC228\uACA8\uC9C4\uB2E4",
+      "\uC0C8\uB85C\uC6B4 Vertex Group\uC774 \uC0DD\uC131\uB41C\uB2E4"
     ],
-    answer: 2,
-    explanation: "Clipping\uC744 \uCF1C\uBA74 \uC815\uC810\uC774 \uBBF8\uB7EC \uCD95\uC744 \uB118\uC5B4\uAC00\uC9C0 \uBABB\uD569\uB2C8\uB2E4. \uC774\uB807\uAC8C \uD558\uBA74 \uC911\uC2EC\uC120\uC5D0\uC11C \uC591\uCABD\uC774 \uAE54\uB054\uD558\uAC8C \uC774\uC5B4\uC9D1\uB2C8\uB2E4."
+    answer: 1,
+    explanation: "Invert \uC635\uC158\uC744 \uCF1C\uBA74 \uC120\uD0DD\uD55C Vertex Group\uC744 \uBC18\uC804\uD558\uC5EC, \uADF8\uB8F9\uC5D0 \uC18D\uD558\uC9C0 \uC54A\uC740 \uBD80\uBD84\uC774 \uD45C\uC2DC\uB429\uB2C8\uB2E4."
   },
   {
-    question: "S \u2192 X \u2192 0\uC744 \uB204\uB974\uBA74 \uC5B4\uB5A4 \uC77C\uC774 \uC77C\uC5B4\uB098\uB098\uC694?",
+    question: "H\uD0A4 \uC228\uAE30\uAE30\uC640 Mask Modifier\uC758 \uCC28\uC774\uC810\uC740?",
     options: [
-      "\uC624\uBE0C\uC81D\uD2B8\uAC00 \uC0AD\uC81C\uB41C\uB2E4",
-      "X\uCD95 \uBBF8\uB7EC\uAC00 \uC801\uC6A9\uB41C\uB2E4",
-      "X\uC88C\uD45C\uAC00 0\uC774 \uB418\uC5B4 \uC911\uC2EC\uC120 \uC815\uB82C",
-      "\uC2A4\uCF00\uC77C\uC774 \uCD08\uAE30\uD654\uB41C\uB2E4"
+      "\uCC28\uC774\uAC00 \uC5C6\uB2E4",
+      "H\uD0A4\uB294 \uC624\uBE0C\uC81D\uD2B8 \uB2E8\uC704\uB85C\uB9CC \uC791\uB3D9\uD55C\uB2E4",
+      "Mask\uB294 \uB80C\uB354\uB9C1\uC5D0\uB3C4 \uC801\uC6A9\uB41C\uB2E4",
+      "Mask\uB294 Edit Mode\uC5D0\uC11C\uB9CC \uC791\uB3D9\uD55C\uB2E4"
     ],
     answer: 2,
-    explanation: "S(Scale) \u2192 X(\uCD95 \uC81C\uD55C) \u2192 0(\uAC12)\uC744 \uB204\uB974\uBA74 \uC120\uD0DD\uD55C \uC815\uC810\uC758 X\uC88C\uD45C\uAC00 0\uC774 \uB418\uC5B4 \uC815\uD655\uD788 \uC911\uC2EC\uC120\uC5D0 \uC815\uB82C\uB429\uB2C8\uB2E4."
+    explanation: "H\uD0A4 \uC228\uAE30\uAE30\uB294 \uD3B8\uC9D1\uC6A9 \uC228\uAE30\uAE30\uC774\uACE0, Mask Modifier\uB294 \uB80C\uB354\uB9C1\uC5D0\uB3C4 \uC801\uC6A9\uB429\uB2C8\uB2E4."
   },
   {
-    question: "Mirror + Subdivision Surface \uC870\uD569\uC5D0\uC11C Modifier \uC21C\uC11C\uB294?",
+    question: "\uCE90\uB9AD\uD130 \uC758\uC0C1 \uC804\uD658\uC5D0 \uC0AC\uC6A9\uD558\uB294 Mask \uBAA8\uB4DC\uB294?",
     options: [
-      "\uC21C\uC11C \uC0C1\uAD00\uC5C6\uB2E4",
-      "Subdivision\uC774 \uC704",
-      "Mirror\uAC00 \uC704",
-      "\uB458 \uB2E4 Apply \uD6C4 \uC0AC\uC6A9"
+      "Vertex Group \uBAA8\uB4DC",
+      "UV Map \uBAA8\uB4DC",
+      "Armature \uBAA8\uB4DC",
+      "Weight Paint \uBAA8\uB4DC"
     ],
     answer: 2,
-    explanation: "Mirror\uAC00 \uC704\uC5D0, Subdivision\uC774 \uC544\uB798\uC5D0 \uC640\uC57C \uD569\uB2C8\uB2E4. \uBA3C\uC800 \uB300\uCE6D\uC744 \uC7A1\uACE0 \uB098\uC11C \uBD80\uB4DC\uB7FD\uAC8C \uB9CC\uB4DC\uB294 \uAC83\uC774 \uC62C\uBC14\uB978 \uC21C\uC11C\uC785\uB2C8\uB2E4."
+    explanation: "Armature \uBAA8\uB4DC\uB97C \uC0AC\uC6A9\uD558\uBA74 Bone \uC120\uD0DD\uC5D0 \uB530\uB77C \uC758\uC0C1 \uD30C\uCE20\uB97C \uD45C\uC2DC/\uC228\uAE40 \uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
   }
 ]);
 </script>
