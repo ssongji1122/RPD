@@ -128,6 +128,7 @@ const CURRICULUM = [
       {
         "title": "화면 조작",
         "image": "assets/images/week02/navigation-gizmo.png",
+        "showme": "viewport-navigation",
         "copy": "구글 지도에서 거리뷰를 돌리는 것처럼, Blender 화면도 마우스로 돌리고 확대해요. 처음엔 어색하지만 10분만 하면 익숙해져요.",
         "goal": [
           "Orbit/Pan/Zoom을 자유롭게 쓴다",
@@ -159,6 +160,7 @@ const CURRICULUM = [
       {
         "title": "기본 변형 (G/R/S)",
         "image": "assets/images/week02/transform-gizmo.png",
+        "showme": "transform-grs",
         "copy": "G/R/S 세 글자만 기억하면 돼요. G(잡아서 이동), R(돌리기), S(늘리거나 줄이기). 그 다음에 X/Y/Z를 누르면 방향도 고정할 수 있어요.",
         "goal": [
           "G/R/S 단축키를 손에 익힌다",
@@ -190,6 +192,7 @@ const CURRICULUM = [
       {
         "title": "Edit Mode 모델링",
         "image": "assets/images/week02/editmode-modeling.png",
+        "showme": ["edit-mode", "extrude", "loop-cut"],
         "copy": "Tab 키 하나로 '보는 모드'와 '편집 모드'를 오가요. Extrude(E)는 점토를 손으로 당기는 것처럼 면을 뽑아내는 거예요.",
         "goal": [
           "Object/Edit Mode 전환을 안다",
@@ -221,6 +224,7 @@ const CURRICULUM = [
       {
         "title": "Bevel 마무리",
         "image": "assets/images/week02/bevel-tool.png",
+        "showme": "bevel-tool",
         "copy": "날카로운 모서리를 부드럽게 깎는 거예요. 실제 제품 디자인에서도 안전을 위해 모서리를 깎는데 (Chamfer), 그게 Bevel이에요.",
         "goal": [
           "Bevel의 원리를 이해한다",
@@ -322,6 +326,7 @@ const CURRICULUM = [
       {
         "title": "기본형 만들기",
         "image": "assets/images/week03/base-form.png",
+        "showme": ["extrude", "loop-cut", "inset", "bevel-tool"],
         "copy": "점토를 손으로 만지듯 기본형은 Edit Mode에서 직접 만들어요. 큰 덩어리를 먼저 잡고 세부는 나중에 다듬으면 돼요.",
         "goal": [
           "Edit Mode 도구 흐름을 안다",
@@ -358,6 +363,7 @@ const CURRICULUM = [
       {
         "title": "Mirror Modifier",
         "image": "assets/images/week03/mirror-modifier.png",
+        "showme": "mirror-modifier",
         "copy": "거울처럼 한쪽만 편집하면 반대쪽이 자동으로 따라와요. 로봇처럼 좌우 대칭인 모델에 제일 먼저 떠올리면 좋아요.",
         "goal": [
           "Mirror 역할과 기본 설정을 이해한다"
@@ -393,6 +399,7 @@ const CURRICULUM = [
       {
         "title": "곡면과 두께",
         "image": "assets/images/week03/subdivision-surface.png",
+        "showme": ["subdivision-surface", "solidify-modifier"],
         "copy": "각진 박스를 더 부드럽게 만들거나 납작한 면에 두께를 줄 수 있어요. 큰 실루엣을 빠르게 다듬을 때 많이 써요.",
         "goal": [
           "Subdivision과 Solidify를 구분해 쓴다",
@@ -424,6 +431,7 @@ const CURRICULUM = [
       {
         "title": "반복과 구멍",
         "image": "assets/images/week03/array-boolean-detail.png",
+        "showme": ["array-modifier", "boolean-modifier"],
         "copy": "도장을 찍듯 같은 부품을 반복하거나, 블록을 빼내듯 구멍을 만들 수 있어요. 디테일을 빠르게 늘릴 때 유용해요.",
         "goal": [
           "Array와 Boolean을 구분해 쓴다"
@@ -454,6 +462,7 @@ const CURRICULUM = [
       {
         "title": "필수 추가 Modifier",
         "image": "assets/images/week03/bevel-weighted-normal.png",
+        "showme": ["bevel-modifier", "weighted-normal"],
         "copy": "핵심 5개 다음으로 바로 써먹기 좋은 보조 Modifier예요. `Ctrl+B`는 부분 수정, Bevel Modifier는 전체 정리, Weighted Normal은 음영 정리라고 나눠 생각하면 이해가 쉬워요.",
         "goal": [
           "필수 추가 Modifier를 안다"

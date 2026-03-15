@@ -9,8 +9,7 @@
   <style>
     /* ── Week-page specific styles ── */
     .hero {
-      min-height: 72vh; display: grid; place-items: center;
-      padding: 88px 0 48px; text-align: center;
+      padding: 100px 0 28px; text-align: center;
     }
     .hero-card { display: grid; gap: 18px; justify-items: center; width: 100%; }
     .hero h1 {
@@ -98,8 +97,210 @@
 
     /* Responsive */
     @media (max-width: 720px) {
-      .hero { padding-top: 108px; }
+      .hero { padding-top: 88px; }
+      .sidebar { width: 80vw; max-width: 300px; }
     }
+
+    /* ── Content layout ── */
+    .content-layout {
+      display: flex; position: relative;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      position: fixed; top: 0; left: 0;
+      width: 240px; height: 100vh;
+      background: rgba(10,10,12,.96);
+      border-right: 1px solid var(--line);
+      backdrop-filter: blur(20px);
+      z-index: 50;
+      padding: 72px 0 24px;
+      overflow-y: auto;
+      transform: translateX(-100%);
+      transition: transform .26s cubic-bezier(.4,0,.2,1);
+    }
+    .sidebar.is-open { transform: translateX(0); }
+
+    .sidebar-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.5); z-index: 49;
+    }
+    .sidebar-overlay.is-visible { display: block; }
+
+    .sidebar-nav { list-style: none; margin: 0; padding: 8px 0; }
+    .sidebar-nav li a {
+      display: block; padding: 8px 20px;
+      font-size: .84rem; color: var(--muted);
+      border-left: 2px solid transparent;
+      transition: color .14s, border-color .14s, background .14s;
+    }
+    .sidebar-nav li a:hover {
+      color: var(--text); background: rgba(255,255,255,.04);
+    }
+    .sidebar-nav li.is-active a {
+      color: var(--key-soft); border-left-color: var(--key-soft);
+      background: rgba(10,132,255,.08);
+    }
+    .sidebar-nav .nav-section-label {
+      display: block; padding: 14px 20px 4px;
+      font-size: .72rem; color: var(--muted);
+      text-transform: uppercase; letter-spacing: .08em; font-weight: 600;
+    }
+
+    /* ── Sidebar toggle button ── */
+    .sidebar-toggle {
+      display: flex; align-items: center; justify-content: center;
+      width: 36px; height: 36px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--muted-strong); cursor: pointer;
+      transition: background .14s, color .14s; flex-shrink: 0;
+    }
+    .sidebar-toggle:hover { background: rgba(255,255,255,.09); color: var(--text); }
+
+    .brand-left { display: flex; align-items: center; gap: 10px; }
+    .main-content { flex: 1; min-width: 0; }
+
+    /* ── Show Me buttons ── */
+    .showme-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .btn-showme {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 14px; border-radius: 999px;
+      border: 1px solid rgba(10,132,255,.3);
+      background: rgba(10,132,255,.08);
+      color: var(--key-soft); font: inherit; font-size: .82rem; font-weight: 500;
+      cursor: pointer;
+      transition: background .18s, border-color .18s, color .18s;
+    }
+    .btn-showme:hover {
+      background: rgba(10,132,255,.16);
+      border-color: rgba(10,132,255,.5);
+      color: #fff;
+    }
+    .btn-showme.is-complete {
+      border-color: rgba(16,185,129,.4);
+      background: rgba(16,185,129,.08);
+      color: #34d399;
+    }
+    .btn-showme.is-complete:hover {
+      background: rgba(16,185,129,.16);
+      border-color: rgba(16,185,129,.6);
+    }
+    .btn-showme.is-complete::before { content: "✅ "; }
+
+    /* ── Show Me Modal ── */
+    .showme-overlay {
+      display: none; position: fixed; inset: 0;
+      z-index: 100;
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(8px);
+      justify-content: center; align-items: center;
+      padding: 20px;
+    }
+    .showme-overlay.is-open { display: flex; }
+
+    .showme-modal {
+      width: min(720px, 100%);
+      height: min(85vh, 640px);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255,255,255,.12);
+      background: var(--surface);
+      box-shadow: 0 24px 80px rgba(0,0,0,.6);
+      display: flex; flex-direction: column;
+      overflow: hidden;
+      animation: showme-in .22s ease;
+    }
+    @keyframes showme-in {
+      from { opacity: 0; transform: scale(.97) translateY(8px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .showme-modal-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--line);
+      flex-shrink: 0;
+    }
+    .showme-modal-title {
+      font-size: .9rem; font-weight: 600; color: var(--text);
+    }
+    .showme-close {
+      display: grid; place-items: center;
+      width: 32px; height: 32px; border-radius: 8px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--muted-strong); cursor: pointer;
+      transition: background .14s, color .14s;
+    }
+    .showme-close:hover {
+      background: rgba(255,255,255,.09); color: var(--text);
+    }
+    .showme-iframe {
+      flex: 1; width: 100%; border: none;
+      background: var(--bg);
+    }
+
+    @media (max-width: 720px) {
+      .showme-overlay { padding: 0; }
+      .showme-modal {
+        width: 100%; height: 100%;
+        border-radius: 0; border: none;
+      }
+    }
+
+    /* ── Student Info Modal ───────────────────────── */
+    .student-modal-overlay {
+      position: fixed; inset: 0; z-index: 110;
+      background: rgba(0,0,0,.65);
+      backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity .2s;
+    }
+    .student-modal-overlay.is-open { opacity: 1; pointer-events: all; }
+    .student-modal {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      padding: 28px 24px;
+      width: min(420px, calc(100vw - 32px));
+      text-align: center;
+      transform: scale(.96);
+      transition: transform .18s;
+    }
+    .student-modal-overlay.is-open .student-modal { transform: scale(1); }
+    .student-modal-icon { font-size: 36px; margin-bottom: 8px; }
+    .student-modal h3 { margin: 0 0 8px; font-size: 1.1rem; }
+    .student-modal p { margin: 0 0 18px; font-size: .88rem; color: var(--muted-strong); }
+    .student-modal small { font-size: .78rem; color: var(--muted); }
+    .student-modal-fields {
+      display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;
+      text-align: left;
+    }
+    .student-modal-fields input,
+    .student-modal-fields select {
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line);
+      background: var(--bg);
+      color: var(--text);
+      font: inherit; font-size: .88rem;
+    }
+    .student-modal-fields input:focus,
+    .student-modal-fields select:focus {
+      outline: none; border-color: var(--key);
+    }
+    .student-modal-btns {
+      display: flex; gap: 8px; justify-content: center;
+    }
+    .student-modal-btns .btn-ghost {
+      background: none; border: 1px solid var(--line);
+      color: var(--muted-strong); padding: 9px 18px;
+      border-radius: 999px; font: inherit; font-size: .86rem;
+      cursor: pointer; transition: border-color .14s;
+    }
+    .student-modal-btns .btn-ghost:hover { border-color: var(--line-strong); }
   </style>
 </head>
 <body>
@@ -108,11 +309,20 @@
     <!-- Topbar (populated by JS) -->
     <header class="topbar">
       <div class="topbar-inner">
-        <div class="brand">
-          <div class="brand-badge" id="brandBadge">—</div>
-          <div class="brand-copy">
-            <strong id="brandTitle">불러오는 중...</strong>
-            <span>Robot Product Design · 2026</span>
+        <div class="brand-left">
+          <button class="sidebar-toggle" id="sidebarToggle" aria-label="목차 열기" type="button">
+            <svg width="18" height="14" viewBox="0 0 18 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect y="0"  width="18" height="1.6" rx="0.8" fill="currentColor"/>
+              <rect y="6"  width="12" height="1.6" rx="0.8" fill="currentColor"/>
+              <rect y="12" width="18" height="1.6" rx="0.8" fill="currentColor"/>
+            </svg>
+          </button>
+          <div class="brand">
+            <div class="brand-badge" id="brandBadge">—</div>
+            <div class="brand-copy">
+              <strong id="brandTitle">불러오는 중...</strong>
+              <span>Robot Product Design · 2026</span>
+            </div>
           </div>
         </div>
         <div class="progress-widget">
@@ -127,13 +337,56 @@
     </header>
 
     <!-- Page content = populated by JS -->
-    <div id="pageContent"></div>
+    <div class="content-layout">
+      <nav class="sidebar" id="sidebar" aria-hidden="true">
+        <ul class="sidebar-nav" id="sidebarNav"></ul>
+      </nav>
+      <div class="sidebar-overlay" id="sidebarOverlay"></div>
+      <main class="main-content" id="pageContent"></main>
+    </div>
 
     <footer class="page-footer">
       <div>Robot Product Design 2026 · <a href="index.html" style="color:var(--key-soft)">← 전체 목록</a></div>
     </footer>
+
+    <!-- Show Me Modal -->
+    <div class="showme-overlay" id="showmeOverlay" aria-hidden="true">
+      <div class="showme-modal">
+        <div class="showme-modal-header">
+          <span class="showme-modal-title" id="showmeTitle"></span>
+          <button class="showme-close" id="showmeClose" aria-label="닫기" type="button">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <iframe class="showme-iframe" id="showmeIframe" sandbox="allow-scripts allow-same-origin" title="Show Me Widget"></iframe>
+      </div>
+    </div>
+
+    <!-- Student Info Modal (shown once on first quiz completion) -->
+    <div class="student-modal-overlay" id="studentModal" aria-hidden="true">
+      <div class="student-modal" role="dialog" aria-labelledby="studentModalTitle">
+        <div class="student-modal-icon">🎉</div>
+        <h3 id="studentModalTitle">퀴즈 완료!</h3>
+        <p>기록을 노션에 자동 저장하려면 정보를 입력하세요<br><small>이후 퀴즈는 자동으로 저장됩니다</small></p>
+        <div class="student-modal-fields">
+          <input type="text" id="studentIdInput" placeholder="학번 (예: 12243798)" maxlength="8" inputmode="numeric">
+          <input type="text" id="studentNameInput" placeholder="이름">
+          <select id="studentClassInput">
+            <option value="1반">1반 (DET3012-001, 화요일)</option>
+            <option value="2반">2반 (DET3012-002, 목요일)</option>
+          </select>
+        </div>
+        <div class="student-modal-btns">
+          <button class="btn btn-primary" type="button" onclick="saveStudentInfo()">저장 후 기록</button>
+          <button class="btn btn-ghost" type="button" onclick="skipStudentInfo()">건너뛰기</button>
+        </div>
+      </div>
+    </div>
   </div>
 
+  <script src="assets/showme/_registry.js"></script>
   <script src="data/curriculum.js"></script>
   <script>
     // ════════════════════════════════════════════════
@@ -154,6 +407,7 @@
         </section>`;
     } else {
       buildPage(weekData);
+      updateShowMeBadges();  // restore completion badges from localStorage
     }
 
     // ─── Build page ─────────────────────────────────
@@ -198,8 +452,6 @@
 
       // Steps HTML
       const stepsHtml = w.steps.map((step, idx) => {
-        const goalLi  = step.goal.map(g => `<li>${g}</li>`).join("");
-        const doneLi  = step.done.map(d => `<li>${d}</li>`).join("");
         const taskItems = step.tasks.map(t => `
           <div class="task-item">
             <input id="${t.id}" type="checkbox" data-task-id="${t.id}" />
@@ -209,37 +461,38 @@
             </label>
           </div>`).join("");
 
+        // Show Me buttons (only if step has showme field)
+        const showmeHtml = (() => {
+          if (!step.showme) return "";
+          const ids = Array.isArray(step.showme) ? step.showme : [step.showme];
+          return `<div class="showme-buttons">${ids.map(id => {
+            const meta = (typeof SHOWME_REGISTRY !== "undefined" && SHOWME_REGISTRY[id])
+              ? SHOWME_REGISTRY[id] : { label: id, icon: "\ud83d\udcd6" };
+            return `<button class="btn btn-showme" type="button" data-widget-id="${id}" onclick="openShowMe('${id}')">${meta.icon} ${meta.label}</button>`;
+          }).join("")}</div>`;
+        })();
+
         return `
-          <article class="lab-step" data-step-index="${idx}">
+          <article class="lab-step" id="step-${idx}" data-step-index="${idx}">
             <div class="step-header">
               <div class="step-title-group">
                 <div class="step-number">${idx + 1}</div>
-                <div>
-                  <strong>${step.title}</strong>
-                  <p>${step.copy}</p>
-                </div>
+                <strong class="step-title-text">${step.title}</strong>
               </div>
               <div class="status-pill" data-step-status>진행 중</div>
             </div>
-            ${step.image ? `<img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" />` : ""}
-            <div class="step-info-grid">
-              <div class="step-info-card">
-                <h4>목표</h4>
-                <ul>${goalLi}</ul>
-              </div>
-              <div class="step-info-card">
-                <h4>완료 기준</h4>
-                <ul>${doneLi}</ul>
-              </div>
-            </div>
+            ${step.image ? (step.link
+              ? `<a href="${step.link}" target="_blank" rel="noopener noreferrer"><img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" /></a>`
+              : `<img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" />`) : ""}
+            <p class="step-copy">${step.copy}</p>
+            ${showmeHtml}
             <div class="task-list">${taskItems}</div>
-
           </article>`;
       }).join("");
 
       // Mistakes
       const mistakesHtml = w.mistakes.length > 0 ? `
-        <section class="content-block">
+        <section class="content-block" id="section-mistakes">
           <div class="section-head"><h3>막히는 지점</h3></div>
           <details class="card mistakes-section" open>
             <summary>막혔을 때</summary>
@@ -265,7 +518,7 @@
       // Assignment
       const assignmentCheckli = w.assignment.checklist.map(c => `<li>${c}</li>`).join("");
       const assignmentHtml = `
-        <section class="content-block">
+        <section class="content-block" id="section-assignment">
           <div class="section-head"><h3>과제</h3></div>
           <div class="card assignment-card">
             <div class="card-chip">과제</div>
@@ -277,7 +530,7 @@
 
       // Shortcuts cheatsheet
       const shortcutsHtml = (w.shortcuts && w.shortcuts.length > 0) ? `
-        <section class="content-block">
+        <section class="content-block" id="section-shortcuts">
           <div class="section-head">
             <h3>단축키 치트시트</h3>
             <p>이번 주에 쓰는 핵심 단축키입니다. 외우지 말고 반복하세요.</p>
@@ -294,7 +547,7 @@
 
       // Explore (더 해보기)
       const exploreHtml = (w.explore && w.explore.length > 0) ? `
-        <section class="content-block">
+        <section class="content-block" id="section-explore">
           <div class="section-head">
             <h3>더 해보기</h3>
             <p>필수는 아니지만, 도전하면 실력이 빠르게 늡니다.</p>
@@ -311,7 +564,7 @@
       // Full page — all data sourced from curriculum.js (trusted, no user input)
       document.getElementById("pageContent").innerHTML = `
         <!-- Hero -->
-        <section class="hero">
+        <section class="hero" id="hero-section">
           <div class="hero-card">
             <div class="eyebrow">Week ${String(w.week).padStart(2,"0")} · RPD</div>
             <h1>${w.title}</h1>
@@ -360,6 +613,7 @@
       // Init progress engine
       initProgress(w.steps.length);
       initTopicChecks(w.topics.length, topicStorageKey);
+      initSidebar(w);
     }
 
     // ─── Topic check engine ──────────────────────────
@@ -405,17 +659,12 @@
         return getTasks(step).every(t => t.checked);
       }
 
-      function updateStep(step, unlocked) {
+      function updateStep(step) {
         const pill     = step.querySelector("[data-step-status]");
         const complete = isComplete(step);
-
         step.classList.toggle("is-complete", complete);
-        step.classList.toggle("is-locked", !unlocked);
-        getTasks(step).forEach(t => { t.disabled = !unlocked; });
-
-        if (complete)       { pill.textContent = "완료"; pill.className = "status-pill complete"; }
-        else if (unlocked)  { pill.textContent = "진행 중"; pill.className = "status-pill active"; }
-        else                { pill.textContent = "잠금"; pill.className = "status-pill locked"; }
+        if (complete) { pill.textContent = "완료"; pill.className = "status-pill complete"; }
+        else          { pill.textContent = "진행 중"; pill.className = "status-pill active"; }
       }
 
       function sync() {
@@ -424,12 +673,7 @@
         progressFill.style.width  = `${pct}%`;
         progressCount.textContent = `${completed} / ${steps.length}`;
 
-        let prevOk = true;
-        steps.forEach((step, i) => {
-          const unlocked = i === 0 || prevOk;
-          updateStep(step, unlocked);
-          prevOk = prevOk && isComplete(step);
-        });
+        steps.forEach(step => updateStep(step));
       }
 
       function loadState() {
@@ -455,6 +699,218 @@
       });
 
       loadState();
+    }
+
+    // ─── Show Me Modal ──────────────────────────────
+    function openShowMe(widgetId) {
+      var overlay = document.getElementById("showmeOverlay");
+      var iframe  = document.getElementById("showmeIframe");
+      var title   = document.getElementById("showmeTitle");
+
+      var meta = (typeof SHOWME_REGISTRY !== "undefined" && SHOWME_REGISTRY[widgetId])
+        ? SHOWME_REGISTRY[widgetId]
+        : { label: widgetId, icon: "\ud83d\udcd6" };
+
+      title.textContent = meta.icon + " " + meta.label;
+      iframe.src = "assets/showme/" + widgetId + ".html?wid=" + widgetId;
+      overlay.classList.add("is-open");
+      overlay.removeAttribute("aria-hidden");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeShowMe() {
+      var overlay = document.getElementById("showmeOverlay");
+      var iframe  = document.getElementById("showmeIframe");
+      overlay.classList.remove("is-open");
+      overlay.setAttribute("aria-hidden", "true");
+      iframe.src = "about:blank";
+      document.body.style.overflow = "";
+    }
+
+    document.getElementById("showmeClose").addEventListener("click", closeShowMe);
+    document.getElementById("showmeOverlay").addEventListener("click", function(e) {
+      if (e.target === this) closeShowMe();
+    });
+    document.addEventListener("keydown", function(e) {
+      if (e.key === "Escape") {
+        var overlay = document.getElementById("showmeOverlay");
+        if (overlay.classList.contains("is-open")) closeShowMe();
+      }
+    });
+
+    // ─── Quiz Completion Tracking ────────────────────
+    var pendingSync = null;
+
+    function updateShowMeBadges() {
+      var quizzes = JSON.parse(localStorage.getItem("rpd_quizzes") || "{}");
+      document.querySelectorAll(".btn-showme").forEach(function(btn) {
+        var wid = btn.dataset.widgetId;
+        if (wid && quizzes[wid] && quizzes[wid].pass) {
+          btn.classList.add("is-complete");
+        }
+      });
+    }
+
+    window.addEventListener("message", function(e) {
+      if (!e.data || e.data.type !== "showme-quiz-complete") return;
+      var d = e.data;
+      // 1. Save to localStorage
+      var quizzes = JSON.parse(localStorage.getItem("rpd_quizzes") || "{}");
+      quizzes[d.widgetId] = {
+        score: d.score, total: d.total, pass: d.pass,
+        completedAt: new Date().toISOString()
+      };
+      localStorage.setItem("rpd_quizzes", JSON.stringify(quizzes));
+      // 2. Update badges
+      updateShowMeBadges();
+      // 3. Sync to Notion (student info required)
+      var student = JSON.parse(localStorage.getItem("rpd_student_info") || "null");
+      if (student) {
+        syncQuizToNotion(d.widgetId, d.score, d.total);
+      } else {
+        pendingSync = d;
+        showStudentInfoModal();
+      }
+    });
+
+    function showStudentInfoModal() {
+      var modal = document.getElementById("studentModal");
+      if (!modal) return;
+      modal.classList.add("is-open");
+      modal.removeAttribute("aria-hidden");
+    }
+
+    function saveStudentInfo() {
+      var idVal   = (document.getElementById("studentIdInput").value || "").trim();
+      var nameVal = (document.getElementById("studentNameInput").value || "").trim();
+      var cls     = document.getElementById("studentClassInput").value;
+      if (!idVal || !nameVal) { alert("학번과 이름을 모두 입력해 주세요."); return; }
+      var info = { studentId: idVal, name: nameVal, class: cls };
+      localStorage.setItem("rpd_student_info", JSON.stringify(info));
+      document.getElementById("studentModal").classList.remove("is-open");
+      document.getElementById("studentModal").setAttribute("aria-hidden", "true");
+      if (pendingSync) {
+        syncQuizToNotion(pendingSync.widgetId, pendingSync.score, pendingSync.total);
+        pendingSync = null;
+      }
+    }
+
+    function skipStudentInfo() {
+      document.getElementById("studentModal").classList.remove("is-open");
+      document.getElementById("studentModal").setAttribute("aria-hidden", "true");
+      pendingSync = null;
+    }
+
+    async function syncQuizToNotion(widgetId, score, total) {
+      var student = JSON.parse(localStorage.getItem("rpd_student_info") || "null");
+      if (!student) return;
+      var meta = (typeof SHOWME_REGISTRY !== "undefined" && SHOWME_REGISTRY[widgetId])
+        ? SHOWME_REGISTRY[widgetId] : { label: widgetId };
+      var weekNum = String(new URLSearchParams(location.search).get("week") || "").padStart(2, "0");
+      try {
+        await fetch("/api/notion-quiz", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            parent: { database_id: "c98f3551-caf9-4549-9388-7d24fd02fcfa" },
+            properties: {
+              "\ud56d\ubaa9\uba85": { title:     [{ text: { content: "Show Me \ud034\uc988: " + meta.label } }] },
+              "\ud559\ubc88":       { rich_text: [{ text: { content: student.studentId } }] },
+              "\ud559\uc0dd\uba85": { rich_text: [{ text: { content: student.name } }] },
+              "\ubc18":             { select:    { name: student.class } },
+              "\uc8fc\ucc28":       { select:    { name: "Week " + weekNum } },
+              "\uc81c\ucd9c\uc0c1\ud0dc": { select: { name: "\uc81c\ucd9c\uc644\ub8cc" } },
+              "\uacf5\uac1c\ud53c\ub4dc\ubc31": { rich_text: [{ text: { content: "\ud034\uc988 \uc810\uc218: " + score + "/" + total } }] },
+              "\uc81c\ucd9c\uac10\uc9c0\uc77c": { date: { start: new Date().toISOString().split("T")[0] } }
+            }
+          })
+        });
+      } catch(e) { console.warn("Notion sync failed:", e); }
+    }
+
+    // ─── Sidebar ────────────────────────────────────
+    function initSidebar(w) {
+      var sidebar   = document.getElementById("sidebar");
+      var overlay   = document.getElementById("sidebarOverlay");
+      var toggleBtn = document.getElementById("sidebarToggle");
+      var navList   = document.getElementById("sidebarNav");
+
+      if (!sidebar || !overlay || !toggleBtn || !navList) return;
+
+      // Build section list
+      var sections = [{ id: "hero-section", label: "개요", group: null }];
+      w.steps.forEach(function(step, idx) {
+        sections.push({ id: "step-" + idx, label: step.title, group: idx === 0 ? "실습" : null });
+      });
+      if (w.shortcuts && w.shortcuts.length)  sections.push({ id: "section-shortcuts",  label: "단축키",      group: "참고" });
+      if (w.explore   && w.explore.length)    sections.push({ id: "section-explore",    label: "더 해보기",   group: null });
+      if (w.mistakes  && w.mistakes.length)   sections.push({ id: "section-mistakes",   label: "막히는 지점", group: null });
+      if (w.assignment)                        sections.push({ id: "section-assignment", label: "과제",        group: null });
+
+      // Collect unique Show Me widgets for this week
+      var showmeSet = {};
+      w.steps.forEach(function(step) {
+        if (!step.showme) return;
+        var ids = Array.isArray(step.showme) ? step.showme : [step.showme];
+        ids.forEach(function(id) { showmeSet[id] = true; });
+      });
+      var showmeIds = Object.keys(showmeSet);
+
+      // Render nav (curriculum.js = trusted developer data, not user input)
+      var navHtml = sections.map(function(s) {
+        var g = s.group ? "<li><span class=\"nav-section-label\">" + s.group + "</span></li>" : "";
+        return g + "<li data-nav-id=\"" + s.id + "\"><a href=\"#" + s.id + "\">" + s.label + "</a></li>";
+      }).join("");
+
+      // Add Show Me section to sidebar (data from _registry.js, developer-controlled)
+      if (showmeIds.length > 0) {
+        navHtml += "<li><span class=\"nav-section-label\">Show Me</span></li>";
+        showmeIds.forEach(function(id) {
+          var meta = (typeof SHOWME_REGISTRY !== "undefined" && SHOWME_REGISTRY[id])
+            ? SHOWME_REGISTRY[id] : { label: id, icon: "\ud83d\udcd6" };
+          navHtml += "<li><a href=\"#\" onclick=\"openShowMe('" + id + "');return false;\">" +
+            meta.icon + " " + meta.label + "</a></li>";
+        });
+      }
+
+      navList.innerHTML = navHtml; // trusted static curriculum + registry data
+
+      // Open / close
+      function openSidebar() {
+        sidebar.classList.add("is-open");
+        overlay.classList.add("is-visible");
+        sidebar.removeAttribute("aria-hidden");
+      }
+      function closeSidebar() {
+        sidebar.classList.remove("is-open");
+        overlay.classList.remove("is-visible");
+        sidebar.setAttribute("aria-hidden", "true");
+      }
+
+      toggleBtn.addEventListener("click", function() {
+        sidebar.classList.contains("is-open") ? closeSidebar() : openSidebar();
+      });
+      overlay.addEventListener("click", closeSidebar);
+      document.addEventListener("keydown", function(e) {
+        if (e.key === "Escape") closeSidebar();
+      });
+
+      // IntersectionObserver: highlight current section
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (!entry.isIntersecting) return;
+          navList.querySelectorAll("li[data-nav-id]").forEach(function(li) {
+            li.classList.remove("is-active");
+          });
+          var active = navList.querySelector("li[data-nav-id=\"" + entry.target.id + "\"]");
+          if (active) active.classList.add("is-active");
+        });
+      }, { rootMargin: "-20% 0px -70% 0px", threshold: 0 });
+
+      sections.forEach(function(s) {
+        var el = document.getElementById(s.id);
+        if (el) observer.observe(el);
+      });
     }
   </script>
 </body>

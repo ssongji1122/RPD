@@ -100,6 +100,7 @@
 {
   title: "화면 조작",       // 명사형. 10자 이내.
   copy: "...",              // ★ 비유 포함 2문장 이내. 핵심 규칙.
+  showme: "viewport-navigation",  // (선택) Show Me 위젯 ID. 아래 규칙 참고.
   goal: [],                 // 이 단계에서 배울 것. 2~3개. 명사/동사형.
   done: [],                 // 완료 기준. "~가 됐다" 또는 "~할 수 있다". 2~3개.
   tasks: [                  // 실제 체크리스트 항목
@@ -110,6 +111,43 @@
     }
   ]
 }
+```
+
+### Show Me 위젯 규칙
+
+`showme` 필드는 인터랙티브 시각화 위젯을 스텝카드에 연결한다.
+
+```js
+// 단일 위젯
+showme: "mirror-modifier"
+
+// 복수 위젯 (한 스텝에서 여러 기능을 다룰 때)
+showme: ["extrude", "loop-cut", "inset"]
+```
+
+**위젯 파일 위치**: `course-site/assets/showme/{위젯ID}.html`
+
+**파일 명명 규칙**:
+- kebab-case 사용: `mirror-modifier`, `subdivision-surface`
+- 블렌더 기능명 기준 (주차 번호 X): 여러 주차에서 재사용 가능
+- Modifier는 `-modifier` 접미사: `array-modifier`, `boolean-modifier`
+- Tool은 `-tool` 접미사: `bevel-tool`
+- 비교 위젯은 `-vs-` 사용: `bevel-tool-vs-modifier`
+
+**위젯 생성 방법**:
+1. `_template.html`을 Claude Chat에 보내기
+2. "이 템플릿으로 [기능명] Show Me 위젯 만들어줘" 요청
+3. 생성된 HTML을 `assets/showme/`에 저장
+4. `_registry.js`에 위젯 메타데이터 추가
+5. curriculum.js 해당 스텝에 `showme` 필드 추가
+
+**위젯 구조** (4탭 고정):
+| 탭 | 내용 |
+|---|---|
+| 개념 이해 | 핵심 개념 카드 + 단축키 참조 |
+| 시각적 비교 | Canvas/SVG 인터랙티브 데모 |
+| 언제 쓰나요? | 사용 사례 + 팁 |
+| 퀴즈 | 3~4문항 객관식 |
 ```
 
 ### Step 수 기준
