@@ -1,9 +1,4 @@
-// ============================================================
-// 15주 블렌더 수업 커리큘럼 데이터
-// 이 파일만 수정하면 메인 페이지와 각 주차 페이지가 자동 반영됨
-// ============================================================
-
-const CURRICULUM = [
+[
   {
     "week": 1,
     "title": "수업 시작 준비",
@@ -33,10 +28,6 @@ const CURRICULUM = [
             "label": "Blender 처음 실행 완료",
             "detail": "Welcome Screen이 보이는지 확인"
           }
-        ],
-        "done": [
-          "Blender가 정상적으로 열린다",
-          "버전 번호를 확인했다"
         ]
       },
       {
@@ -57,10 +48,6 @@ const CURRICULUM = [
             "label": "Mixboard 보드 캡처해서 저장",
             "detail": ""
           }
-        ],
-        "done": [
-          "Mixboard에 적어도 3개 이상 이미지가 있다",
-          "어떤 걸 만들지 한 문장으로 설명할 수 있다"
         ]
       }
     ],
@@ -81,9 +68,7 @@ const CURRICULUM = [
         "title": "Blender 설치 가이드",
         "url": "https://docs.blender.org/manual/en/latest/getting_started/installing/index.html"
       }
-    ],
-    "status": "done",
-    "summary": "Blender 설치, Mixboard로 컨셉 설정."
+    ]
   },
   {
     "week": 2,
@@ -120,11 +105,6 @@ const CURRICULUM = [
             "label": "저장 방식 Preferences에서 확인",
             "detail": "Auto-Save 설정 위치 파악"
           }
-        ],
-        "image": "assets/images/week02/ui-overview.png",
-        "done": [
-          "Preferences를 직접 열 수 있다",
-          "필요 시 Emulate 설정을 켰다"
         ]
       },
       {
@@ -150,13 +130,7 @@ const CURRICULUM = [
             "label": "Middle Mouse로 Orbit 해보기",
             "detail": "없으면 Alt+LMB"
           }
-        ],
-        "image": "assets/images/week02/navigation-gizmo.png",
-        "done": [
-          "Numpad 1/3/7로 뷰 전환 가능",
-          "마우스를 잃지 않고 오브젝트를 따라다닐 수 있다"
-        ],
-        "showme": "viewport-navigation"
+        ]
       },
       {
         "title": "기본 변형 (G/R/S)",
@@ -181,13 +155,7 @@ const CURRICULUM = [
             "label": "R → Z → 45 로 45도 회전",
             "detail": ""
           }
-        ],
-        "image": "assets/images/week02/transform-gizmo.png",
-        "done": [
-          "G → X 처럼 축 고정 이동이 된다",
-          "숫자 입력으로 정확한 값 이동이 된다"
-        ],
-        "showme": "transform-grs"
+        ]
       },
       {
         "title": "Edit Mode 모델링",
@@ -212,16 +180,6 @@ const CURRICULUM = [
             "label": "Ctrl+R로 Loop Cut 추가해보기",
             "detail": "마우스로 위치 조정 후 클릭"
           }
-        ],
-        "image": "assets/images/week02/editmode-modeling.png",
-        "done": [
-          "Tab 키로 모드 전환이 된다",
-          "단순한 상자형 구조를 만들었다"
-        ],
-        "showme": [
-          "edit-mode",
-          "extrude",
-          "loop-cut"
         ]
       },
       {
@@ -247,13 +205,7 @@ const CURRICULUM = [
             "label": "F12로 렌더 or 스크린샷 저장",
             "detail": ""
           }
-        ],
-        "image": "assets/images/week02/bevel-tool.png",
-        "done": [
-          "Ctrl+B로 Bevel이 됐다",
-          "결과물을 스크린샷으로 저장했다"
-        ],
-        "showme": "bevel-tool"
+        ]
       }
     ],
     "assignment": {
@@ -321,22 +273,6 @@ const CURRICULUM = [
         "keys": "Tab",
         "action": "Object ↔ Edit Mode 전환"
       }
-    ],
-    "status": "done",
-    "summary": "Blender 인터페이스, 화면 조작, G/R/S 변형, Extrude/Bevel/LoopCut 실습.",
-    "videos": [
-      {
-        "title": "Blender Studio - Viewport Navigation",
-        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/viewport-navigation/"
-      },
-      {
-        "title": "Blender Studio - Interface Overview",
-        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/interface-overview/"
-      },
-      {
-        "title": "Blender Studio - Select & Transform",
-        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/select-transform/"
-      }
     ]
   },
   {
@@ -383,13 +319,7 @@ const CURRICULUM = [
             "label": "Inset과 Bevel로 패널과 모서리 다듬기",
             "detail": "I, Ctrl+B 사용"
           }
-        ],
-        "image": "assets/images/week03/base-form.png",
-        "done": [
-          "몸통과 주요 덩어리가 잡혔다",
-          "도구를 바꿔가며 형태를 만들 수 있다"
-        ],
-        "showme": "edit-mode-tools"
+        ]
       },
       {
         "title": "Mirror Modifier",
@@ -418,13 +348,7 @@ const CURRICULUM = [
             "label": "중심선이 벌어지면 S + X + 0 써보기",
             "detail": "X축 0으로 다시 정렬"
           }
-        ],
-        "image": "assets/images/week03/mirror-modifier.png",
-        "done": [
-          "한쪽을 움직이면 반대쪽도 같이 바뀐다",
-          "Clipping으로 중심선이 벌어지지 않는다"
-        ],
-        "showme": "mirror-modifier"
+        ]
       },
       {
         "title": "곡면과 두께",
@@ -449,15 +373,6 @@ const CURRICULUM = [
             "label": "Plane에 Solidify로 두께 주기",
             "detail": "Thickness와 Offset 비교"
           }
-        ],
-        "image": "assets/images/week03/subdivision-surface.png",
-        "done": [
-          "큰 덩어리가 부드러워졌다",
-          "패널에 두께가 생겼다"
-        ],
-        "showme": [
-          "subdivision-surface",
-          "solidify-modifier"
         ]
       },
       {
@@ -482,15 +397,6 @@ const CURRICULUM = [
             "label": "Solidify나 Array를 기존 형태에 추가해보기",
             "detail": "반복이나 패널 중 하나 더 실험"
           }
-        ],
-        "image": "assets/images/week03/array-boolean-detail.png",
-        "done": [
-          "반복 구조가 생겼다",
-          "구멍이나 홈이 하나 이상 만들어졌다"
-        ],
-        "showme": [
-          "array-modifier",
-          "boolean-modifier"
         ]
       },
       {
@@ -515,13 +421,7 @@ const CURRICULUM = [
             "label": "Ctrl+B와 Bevel Modifier 차이 보기",
             "detail": "부분 수정과 전체 정리 흐름 비교"
           }
-        ],
-        "image": "assets/images/week03/bevel-weighted-normal.png",
-        "done": [
-          "Bevel Modifier나 Weighted Normal을 확인했다",
-          "언제 쓰는지 말할 수 있다"
-        ],
-        "showme": "bevel-modifier"
+        ]
       }
     ],
     "shortcuts": [
@@ -614,60 +514,6 @@ const CURRICULUM = [
         "title": "Decimate",
         "url": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/decimate.html"
       }
-    ],
-    "status": "active",
-    "summary": "Edit Mode로 기본형을 만들고 Modifier로 더 빠르게 다듬는 흐름을 익힙니다.",
-    "videos": [
-      {
-        "title": "Blender Studio - Modeling Introduction",
-        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modeling-introduction/"
-      },
-      {
-        "title": "Blender Studio - Object and Edit Mode",
-        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/object-and-edit-mode/"
-      },
-      {
-        "title": "Blender Studio - Mesh Selection Mode",
-        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/mesh-selection-mode/"
-      },
-      {
-        "title": "Blender Studio - Extrude",
-        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/extrude/"
-      },
-      {
-        "title": "Blender Studio - Loop Cut",
-        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/loop-cut/"
-      },
-      {
-        "title": "Blender Studio - Bevel Tool",
-        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/bevel-tool/"
-      }
-    ],
-    "explore": [
-      {
-        "title": "로봇 몸체 만들기",
-        "hint": "큐브 → Edit Mode로 기본형 → Mirror → Subdivision으로 부드럽게"
-      },
-      {
-        "title": "패널 구조 만들기",
-        "hint": "Plane → Solidify → Boolean으로 홈 추가"
-      },
-      {
-        "title": "반복 파츠 만들기",
-        "hint": "Cube 또는 Cylinder → Array로 6~10개 반복"
-      },
-      {
-        "title": "하드서피스 음영 정리",
-        "hint": "Bevel Modifier → Weighted Normal 순서로 넣어 차이 비교"
-      },
-      {
-        "title": "형태 휘기 실험",
-        "hint": "Simple Deform의 Bend나 Twist로 안테나, 손잡이 같은 형태를 휘어보기"
-      },
-      {
-        "title": "무거운 메쉬 가볍게 만들기",
-        "hint": "Decimate로 Polygon 수를 줄였을 때 형태가 얼마나 유지되는지 비교해보기"
-      }
     ]
   },
   {
@@ -711,13 +557,7 @@ const CURRICULUM = [
             "label": "Ctrl+J로 함께 갈 파츠 묶기",
             "detail": "고정 파츠끼리 정리"
           }
-        ],
-        "image": "assets/images/week04/transform-apply.png",
-        "done": [
-          "Scale이 안정적으로 정리됐다",
-          "움직일 파츠와 고정 파츠를 구분할 수 있다"
-        ],
-        "showme": "transform-apply"
+        ]
       },
       {
         "title": "얼굴과 패널 디테일",
@@ -741,13 +581,7 @@ const CURRICULUM = [
             "label": "Boolean Difference로 홈 또는 소켓 만들기",
             "detail": "커터가 실제로 겹치는지 확인"
           }
-        ],
-        "image": "assets/images/week04/inset-panel-detail.png",
-        "done": [
-          "얼굴이나 가슴판에 디테일이 생겼다",
-          "구멍이나 홈이 한 곳 이상 만들어졌다"
-        ],
-        "showme": "boolean-modifier"
+        ]
       },
       {
         "title": "Bevel 두 가지 비교",
@@ -771,13 +605,7 @@ const CURRICULUM = [
             "label": "두 방식의 결과를 나란히 비교하기",
             "detail": "부분 수정 vs 전체 정리"
           }
-        ],
-        "image": "assets/images/week04/bevel-modifier.png",
-        "done": [
-          "부분 수정과 전체 정리의 차이를 알게 됐다",
-          "모서리 느낌을 더 의도적으로 조절할 수 있다"
-        ],
-        "showme": "bevel-modifier"
+        ]
       },
       {
         "title": "Weighted Normal과 음영 정리",
@@ -801,13 +629,7 @@ const CURRICULUM = [
             "label": "전후 화면 비교하기",
             "detail": "가슴판, 팔 외장, 다리 파츠에서 확인"
           }
-        ],
-        "image": "assets/images/week04/weighted-normal.png",
-        "done": [
-          "평평한 외장 면이 더 깔끔하게 보인다",
-          "언제 넣는지 설명할 수 있다"
-        ],
-        "showme": "weighted-normal"
+        ]
       },
       {
         "title": "Apply 시점과 최종 점검",
@@ -831,13 +653,7 @@ const CURRICULUM = [
             "label": "Transform 또는 Modifier 화면 포함해 스크린샷 저장",
             "detail": "작업 흐름 증거 남기기"
           }
-        ],
-        "image": "assets/images/week04/array-modifier.png",
-        "done": [
-          "언제 Ctrl+A를 쓰는지 안다",
-          "Modifier Apply는 마지막에만 하는 흐름을 이해한다"
-        ],
-        "showme": "join-separate"
+        ]
       }
     ],
     "shortcuts": [
@@ -896,26 +712,6 @@ const CURRICULUM = [
         "title": "Boolean",
         "url": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/booleans.html"
       }
-    ],
-    "status": "upcoming",
-    "summary": "지난 주 배운 흐름을 바탕으로 디테일 추가와 음영 정리를 더 안정적으로 반복합니다.",
-    "explore": [
-      {
-        "title": "얼굴 패널 디테일",
-        "hint": "Inset → Extrude 또는 Boolean으로 눈/패널 라인 만들기"
-      },
-      {
-        "title": "관절 음영 정리",
-        "hint": "Bevel Modifier → Weighted Normal로 팔/다리 파츠 음영 비교"
-      },
-      {
-        "title": "파츠 관리 정리",
-        "hint": "헤드셋, 안테나, 손 파츠를 분리/합치며 구조 정리"
-      },
-      {
-        "title": "Apply 타이밍 비교",
-        "hint": "같은 파일을 복제해 Apply 전과 후의 수정 난이도 비교"
-      }
     ]
   },
   {
@@ -946,10 +742,6 @@ const CURRICULUM = [
             "label": ".glb 파일 Blender에서 Import",
             "detail": "File → Import → glTF"
           }
-        ],
-        "image": "assets/images/week05/ai-3d-generation.png",
-        "done": [
-          "AI 생성 메쉬를 Blender에서 열었다"
         ]
       },
       {
@@ -974,12 +766,7 @@ const CURRICULUM = [
             "label": "Draw/Grab/Smooth 각각 사용해보기",
             "detail": ""
           }
-        ],
-        "image": "assets/images/week05/sculpt-mode.png",
-        "done": [
-          "Sphere에서 커스텀 형태를 만들었다"
-        ],
-        "showme": "sculpt-basics"
+        ]
       }
     ],
     "assignment": {
@@ -1024,9 +811,7 @@ const CURRICULUM = [
         "title": "Sculpt Mode",
         "url": "https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/introduction/index.html"
       }
-    ],
-    "status": "upcoming",
-    "summary": "AI 기반 3D 생성 툴을 경험하고, Sculpt Mode로 유기적인 형태를 만듭니다. MCP 연동을 실습합니다."
+    ]
   },
   {
     "week": 6,
@@ -1057,12 +842,7 @@ const CURRICULUM = [
             "label": "Base Color 바꿔보기",
             "detail": ""
           }
-        ],
-        "image": "assets/images/week06/material-assign.png",
-        "done": [
-          "오브젝트 색이 바뀌었다"
-        ],
-        "showme": "material-basics"
+        ]
       },
       {
         "title": "Principled BSDF 탐색",
@@ -1086,12 +866,7 @@ const CURRICULUM = [
             "label": "Roughness 0 vs 1 비교",
             "detail": ""
           }
-        ],
-        "image": "assets/images/week06/principled-bsdf.png",
-        "done": [
-          "유리/금속/플라스틱 재질을 각각 흉내냈다"
-        ],
-        "showme": "principled-bsdf"
+        ]
       },
       {
         "title": "Shader Node Editor",
@@ -1115,12 +890,7 @@ const CURRICULUM = [
             "label": "Color Ramp → Base Color 연결",
             "detail": ""
           }
-        ],
-        "image": "assets/images/week06/shader-editor.png",
-        "done": [
-          "ColorRamp를 Principled BSDF에 연결했다"
-        ],
-        "showme": "shader-editor"
+        ]
       }
     ],
     "assignment": {
@@ -1177,9 +947,7 @@ const CURRICULUM = [
         "title": "Texture Nodes",
         "url": "https://docs.blender.org/manual/en/latest/render/shader_nodes/textures/index.html"
       }
-    ],
-    "status": "upcoming",
-    "summary": "Material의 원리와 Shader Editor(Node 기반)를 이해하고 Principled BSDF로 다양한 재질을 표현합니다."
+    ]
   },
   {
     "week": 7,
@@ -1210,12 +978,7 @@ const CURRICULUM = [
             "label": "Edge 선택 후 Ctrl+E → Mark Seam",
             "detail": ""
           }
-        ],
-        "image": "assets/images/week07/uv-seam.png",
-        "done": [
-          "빨간 Seam 선이 표시됐다"
-        ],
-        "showme": "uv-unwrapping"
+        ]
       },
       {
         "title": "Unwrap & UV Editor",
@@ -1239,12 +1002,7 @@ const CURRICULUM = [
             "label": "UV 섬 이동/크기 조절해보기",
             "detail": ""
           }
-        ],
-        "image": "assets/images/week07/uv-editor.png",
-        "done": [
-          "UV Editor에서 메쉬가 2D로 보인다"
-        ],
-        "showme": "uv-editor"
+        ]
       },
       {
         "title": "AI Texture 적용",
@@ -1268,10 +1026,6 @@ const CURRICULUM = [
             "label": "이미지 파일 연결 후 Base Color에 연결",
             "detail": ""
           }
-        ],
-        "image": "assets/images/week07/ai-texture.png",
-        "done": [
-          "메쉬에 텍스처가 입혀졌다"
         ]
       }
     ],
@@ -1327,9 +1081,7 @@ const CURRICULUM = [
         "title": "Texture Painting",
         "url": "https://docs.blender.org/manual/en/latest/sculpt_paint/texture_paint/index.html"
       }
-    ],
-    "status": "upcoming",
-    "summary": "UV Unwrapping으로 메쉬를 펼치고 AI 텍스처 생성 툴로 만든 이미지를 입힙니다."
+    ]
   },
   {
     "week": 8,
@@ -1364,10 +1116,6 @@ const CURRICULUM = [
             "label": ".blend 파일 이름 정리 후 제출 폴더에 넣기",
             "detail": ""
           }
-        ],
-        "done": [
-          "렌더 이미지 3장 이상",
-          ".blend 파일 깔끔하게 정리"
         ]
       }
     ],
@@ -1381,9 +1129,7 @@ const CURRICULUM = [
       ]
     },
     "mistakes": [],
-    "docs": [],
-    "status": "upcoming",
-    "summary": "Week 01~07에서 배운 모델링·재질·텍스처를 활용한 개인 프로젝트를 발표합니다."
+    "docs": []
   },
   {
     "week": 9,
@@ -1414,12 +1160,7 @@ const CURRICULUM = [
             "label": "Energy/Color 값 조절해보기",
             "detail": ""
           }
-        ],
-        "image": "assets/images/week09/light-types.png",
-        "done": [
-          "4가지 Light를 각각 테스트해봤다"
-        ],
-        "showme": "light-types"
+        ]
       },
       {
         "title": "HDRI 환경 조명",
@@ -1438,12 +1179,7 @@ const CURRICULUM = [
             "label": "HDRI 이미지 파일 연결 (Poly Haven 등)",
             "detail": ""
           }
-        ],
-        "image": "assets/images/week09/hdri-world.png",
-        "done": [
-          "HDRI로 씬 분위기가 바뀌었다"
-        ],
-        "showme": "hdri-lighting"
+        ]
       },
       {
         "title": "3점 조명 세팅",
@@ -1467,12 +1203,7 @@ const CURRICULUM = [
             "label": "Rim Light (윤곽 광원) 배치",
             "detail": "뒤쪽에서 윤곽 강조"
           }
-        ],
-        "image": "assets/images/week09/three-point-light.png",
-        "done": [
-          "오브젝트가 입체감 있게 보인다"
-        ],
-        "showme": "three-point-light"
+        ]
       }
     ],
     "assignment": {
@@ -1514,9 +1245,7 @@ const CURRICULUM = [
         "title": "Lighting",
         "url": "https://docs.blender.org/manual/en/latest/render/lights/light_object.html"
       }
-    ],
-    "status": "upcoming",
-    "summary": "Point/Sun/Area/Spot Light의 특성과 HDRI 환경 조명을 이해하고 씬 분위기를 연출합니다."
+    ]
   },
   {
     "week": 10,
@@ -1552,12 +1281,7 @@ const CURRICULUM = [
             "label": "Space로 재생해서 이동 확인",
             "detail": ""
           }
-        ],
-        "image": "assets/images/week10/keyframe-intro.png",
-        "done": [
-          "오브젝트가 A에서 B로 이동하는 애니메이션이 됐다"
-        ],
-        "showme": "keyframe-basics"
+        ]
       },
       {
         "title": "Dope Sheet",
@@ -1576,12 +1300,7 @@ const CURRICULUM = [
             "label": "키프레임 선택 후 G로 이동",
             "detail": ""
           }
-        ],
-        "image": "assets/images/week10/dope-sheet.png",
-        "done": [
-          "빠르게/느리게 달라지는 걸 확인했다"
-        ],
-        "showme": "graph-editor"
+        ]
       }
     ],
     "assignment": {
@@ -1634,9 +1353,7 @@ const CURRICULUM = [
         "title": "Graph Editor",
         "url": "https://docs.blender.org/manual/en/latest/editors/graph_editor/introduction.html"
       }
-    ],
-    "status": "upcoming",
-    "summary": "키프레임의 개념과 Dope Sheet, Graph Editor를 사용해 기초 애니메이션을 만듭니다."
+    ]
   },
   {
     "week": 11,
@@ -1667,12 +1384,7 @@ const CURRICULUM = [
             "label": "Edit Mode로 본 추가 (E로 Extrude)",
             "detail": ""
           }
-        ],
-        "image": "assets/images/week11/armature-structure.png",
-        "done": [
-          "두 개 이상의 본이 연결된 구조가 있다"
-        ],
-        "showme": "armature-basics"
+        ]
       },
       {
         "title": "메쉬 연결",
@@ -1696,12 +1408,7 @@ const CURRICULUM = [
             "label": "Pose Mode에서 본 회전해보기 (R키)",
             "detail": ""
           }
-        ],
-        "image": "assets/images/week11/mesh-skinning.png",
-        "done": [
-          "본을 움직이면 메쉬도 따라온다"
-        ],
-        "showme": "weight-paint"
+        ]
       }
     ],
     "assignment": {
@@ -1750,9 +1457,7 @@ const CURRICULUM = [
         "title": "Weight Paint",
         "url": "https://docs.blender.org/manual/en/latest/sculpt_paint/weight_paint/index.html"
       }
-    ],
-    "status": "upcoming",
-    "summary": "Armature(뼈대)를 세팅하고 메쉬에 연결(Parent)해 캐릭터 리깅의 기초를 실습합니다."
+    ]
   },
   {
     "week": 12,
@@ -1788,10 +1493,6 @@ const CURRICULUM = [
             "label": "자동 리깅 후 확인",
             "detail": ""
           }
-        ],
-        "image": "assets/images/week12/mixamo-upload.png",
-        "done": [
-          "Mixamo에서 캐릭터가 리깅됐다"
         ]
       },
       {
@@ -1816,10 +1517,6 @@ const CURRICULUM = [
             "label": "Dope Sheet에서 애니메이션 재생 확인",
             "detail": ""
           }
-        ],
-        "image": "assets/images/week12/mixamo-import.png",
-        "done": [
-          "캐릭터가 걷거나 뛰는 애니메이션이 재생된다"
         ]
       }
     ],
@@ -1857,9 +1554,7 @@ const CURRICULUM = [
         "title": "NLA Editor",
         "url": "https://docs.blender.org/manual/en/latest/editors/nla/index.html"
       }
-    ],
-    "status": "upcoming",
-    "summary": "Mixamo를 사용해 자동으로 리깅하고 무료 애니메이션을 Blender에 임포트합니다."
+    ]
   },
   {
     "week": 13,
@@ -1890,12 +1585,7 @@ const CURRICULUM = [
             "label": "EEVEE로 전환 후 속도 차이 비교",
             "detail": ""
           }
-        ],
-        "image": "assets/images/week13/cycles-eevee.png",
-        "done": [
-          "용도에 따라 어떤 엔진을 쓸지 선택할 수 있다"
-        ],
-        "showme": "render-settings"
+        ]
       },
       {
         "title": "출력 설정 및 렌더",
@@ -1919,12 +1609,7 @@ const CURRICULUM = [
             "label": "F12로 단일 프레임 렌더 확인",
             "detail": ""
           }
-        ],
-        "image": "assets/images/week13/render-output.png",
-        "done": [
-          "Output Properties에서 파일 형식과 경로를 설정했다"
-        ],
-        "showme": "compositing-basics"
+        ]
       }
     ],
     "assignment": {
@@ -1977,9 +1662,7 @@ const CURRICULUM = [
         "title": "Compositing",
         "url": "https://docs.blender.org/manual/en/latest/compositing/index.html"
       }
-    ],
-    "status": "upcoming",
-    "summary": "Cycles와 EEVEE의 차이를 이해하고 렌더 설정을 최적화합니다. AI 영상/사운드 연동을 실습합니다."
+    ]
   },
   {
     "week": 14,
@@ -2014,10 +1697,6 @@ const CURRICULUM = [
             "label": "최종 렌더 5장 이상 저장",
             "detail": ""
           }
-        ],
-        "done": [
-          "렌더 이미지 5장 이상",
-          ".blend 파일 정리 완료"
         ]
       }
     ],
@@ -2030,9 +1709,7 @@ const CURRICULUM = [
       ]
     },
     "mistakes": [],
-    "docs": [],
-    "status": "upcoming",
-    "summary": "학기 전체에서 배운 기술을 종합해 최종 프로젝트를 완성합니다. 교수 피드백 세션."
+    "docs": []
   },
   {
     "week": 15,
@@ -2067,9 +1744,6 @@ const CURRICULUM = [
             "label": "5분 발표 연습 1회 이상",
             "detail": ""
           }
-        ],
-        "done": [
-          "5분 발표 연습 완료"
         ]
       }
     ],
@@ -2082,11 +1756,6 @@ const CURRICULUM = [
       ]
     },
     "mistakes": [],
-    "docs": [],
-    "status": "upcoming",
-    "summary": "학기 내내 만들어온 최종 작품을 발표합니다. 5분 내외, 제작 과정과 사용 기술 설명 포함."
+    "docs": []
   }
-];
-
-// Node.js 환경 대응
-if (typeof module !== "undefined") module.exports = CURRICULUM;
+]
