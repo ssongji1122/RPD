@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — Simple Deform 모디파이어</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Tab Navigation ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+
+/* ── Tab Panels ── */
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+
+/* ── Concept Cards ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card h3 {
+  margin: 0 0 8px; font-size: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.concept-card p {
+  margin: 0; color: var(--muted-strong);
+  font-size: .88rem; line-height: 1.7;
+}
+.concept-card ul {
+  margin: 8px 0 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
+}
+
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: .72rem; font-weight: 600;
+}
+.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: #fbbf24; }
+
+/* ── Keyboard Shortcut ── */
+.kbd {
+  display: inline-block;
+  padding: 3px 8px; border-radius: 6px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  color: var(--key-soft);
+  font-size: .82rem; font-weight: 600;
+  font-family: var(--font);
+}
+
+/* ── Canvas / Demo ── */
+.demo-wrap {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+  margin: 14px 0;
+}
+.demo-wrap canvas {
+  display: block; width: 100%;
+}
+.demo-controls {
+  display: flex; gap: 8px; padding: 12px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.demo-hint {
+  font-size: .78rem; color: var(--muted);
+  text-align: center; padding: 6px 0 0;
+}
+.demo-btn {
+  padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .82rem;
+  cursor: pointer;
+  transition: background .14s, color .14s;
+}
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active {
+  background: rgba(10,132,255,.14);
+  color: var(--key-soft);
+  border-color: rgba(10,132,255,.3);
+}
+
+/* ── Usage Grid ── */
+.usage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.usage-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 16px;
+}
+.usage-card h4 {
+  margin: 0 0 8px; font-size: .92rem;
+  color: var(--key-soft);
+}
+.usage-card ul {
+  margin: 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem;
+  line-height: 1.8;
+}
+
+/* ── Tip Box ── */
+.tip-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(10,132,255,.2);
+  background: rgba(10,132,255,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+}
+.tip-box strong { color: var(--key-soft); }
+
+/* ── Combo Section ── */
+.combo-section {
+  margin-top: 18px;
+}
+.combo-section h4 {
+  margin: 0 0 10px;
+  font-size: .92rem;
+  color: var(--text);
+}
+.combo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.combo-card {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 12px 14px;
+}
+.combo-card .combo-name {
+  font-size: .86rem;
+  font-weight: 600;
+  color: var(--key-soft);
+  margin-bottom: 4px;
+}
+.combo-card .combo-desc {
+  font-size: .8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ── Shortcut Reference ── */
+.shortcut-list {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.shortcut-list h4 {
+  margin: 0 0 10px;
+  font-size: .9rem;
+  color: var(--text);
+}
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: .84rem;
+  color: var(--muted-strong);
+}
+.shortcut-row + .shortcut-row {
+  border-top: 1px solid var(--line);
+}
+.shortcut-keys {
+  flex-shrink: 0;
+}
+.analogy {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(245,158,11,.06);
+  border: 1px solid rgba(245,158,11,.15);
+  font-size: .82rem;
+  color: #fbbf24;
+  font-style: italic;
+}
+
+/* ── Quiz ── */
+.quiz-progress {
+  font-size: .78rem; color: var(--muted);
+  margin-bottom: 12px;
+}
+.quiz-question {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.quiz-question h4 {
+  margin: 0 0 12px; font-size: .94rem;
+}
+.quiz-option {
+  display: block; width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.025);
+  color: var(--text);
+  font: inherit; font-size: .86rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background .14s, border-color .14s;
+}
+.quiz-option:hover {
+  background: rgba(255,255,255,.06);
+  border-color: var(--line-strong);
+}
+.quiz-option.correct {
+  background: rgba(16,185,129,.12);
+  border-color: rgba(16,185,129,.4);
+  color: var(--success-soft);
+}
+.quiz-option.wrong {
+  background: rgba(239,68,68,.1);
+  border-color: rgba(239,68,68,.3);
+  color: #fca5a5;
+}
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback {
+  margin-top: 8px; padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: .84rem;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: #fca5a5; }
+
+.quiz-score {
+  text-align: center; padding: 20px;
+  font-size: 1.1rem; font-weight: 600;
+}
+.quiz-retry {
+  display: block; margin: 12px auto;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--key);
+  background: rgba(10,132,255,.12);
+  color: var(--key-soft);
+  font: inherit; font-size: .88rem;
+  cursor: pointer;
+  transition: background .14s;
+}
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+
+/* ── Official Doc Reference ── */
+.doc-ref {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(10,132,255,.15);
+  background: rgba(10,132,255,.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-ref a {
+  color: var(--key-soft);
+  font-size: .84rem;
+  text-decoration: none;
+  line-height: 1.5;
+}
+.doc-ref a:hover { text-decoration: underline; }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Tab Bar -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+</nav>
+
+<!-- TAB 1: 개념 이해 -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3>Simple Deform이란? <span class="badge badge-blue">Modifier</span></h3>
+      <p>메쉬를 간단한 수학적 변형으로 왜곡하는 Modifier입니다. 4가지 모드가 있으며, 각각 다른 방식으로 오브젝트를 변형합니다.</p>
+      <div class="analogy">점토를 손으로 비틀고, 구부리고, 늘리는 것과 같아요</div>
+    </div>
+    <div class="concept-card">
+      <h3>4가지 모드 <span class="badge badge-green">핵심</span></h3>
+      <ul>
+        <li><strong>Twist</strong> — 축을 중심으로 비틀기 (나선형)</li>
+        <li><strong>Bend</strong> — 축을 기준으로 구부리기 (아치형)</li>
+        <li><strong>Taper</strong> — 한쪽 끝을 좁히기 (뾰족하게)</li>
+        <li><strong>Stretch</strong> — 축 방향으로 늘리기/압축</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="shortcut-list">
+    <h4>주요 단축키</h4>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">1</span></span>
+      <span>Modifier 추가 패널</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys">Properties &rarr; Modifier</span>
+      <span>Angle/Factor 슬라이더로 변형 강도 조절</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys">Origin 오브젝트</span>
+      <span>Empty를 Axis Origin으로 지정해 변형 기준점 변경</span>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/deform/simple_deform.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Simple Deform Modifier
+    </a>
+  </div>
+</section>
+
+<!-- TAB 2: 시각적 비교 -->
+<section class="panel" id="panel-visual" role="tabpanel">
+  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
+    실린더에 4가지 Simple Deform 모드를 적용한 결과를 비교합니다.
+  </p>
+  <div class="demo-wrap">
+    <canvas id="demoCanvas" width="680" height="300"></canvas>
+    <div class="demo-controls">
+      <button class="demo-btn is-active" id="btnTwist">Twist</button>
+      <button class="demo-btn" id="btnBend">Bend</button>
+      <button class="demo-btn" id="btnTaper">Taper</button>
+      <button class="demo-btn" id="btnStretch">Stretch</button>
+    </div>
+  </div>
+  <p class="demo-hint">버튼을 눌러 각 모드의 변형 효과를 확인하세요. 왼쪽이 원본, 오른쪽이 변형 결과입니다.</p>
+</section>
+
+<!-- TAB 3: 언제 쓰나요? -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>Simple Deform이 유용할 때</h4>
+      <ul>
+        <li>나선형 기둥/계단 (Twist)</li>
+        <li>아치/다리/터널 (Bend)</li>
+        <li>뿔/송곳/탄환 (Taper)</li>
+        <li>카툰 스타일 늘리기 (Stretch)</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>다른 방법이 나을 때</h4>
+      <ul>
+        <li>복잡한 유기체 변형 &rarr; Sculpt</li>
+        <li>경로 따라 변형 &rarr; Curve Modifier</li>
+        <li>정밀한 로컬 변형 &rarr; Lattice</li>
+      </ul>
+    </div>
+  </div>
+  <div class="tip-box">
+    <strong>팁:</strong> Simple Deform은 세분화(Subdivision)가 충분해야 부드럽게 변형됩니다. 실린더라면 최소 32개 이상의 세그먼트를 권장합니다. 변형 축은 Axis Origin (Empty)으로 자유롭게 조절할 수 있어요.
+  </div>
+  <div class="combo-section">
+    <h4>자주 쓰는 조합</h4>
+    <div class="combo-grid">
+      <div class="combo-card">
+        <div class="combo-name">Simple Deform + Array</div>
+        <div class="combo-desc">Twist로 나선을 만들고 Array로 반복하면 스프링이나 DNA 구조를 쉽게 만들 수 있습니다.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Simple Deform + Subdivision</div>
+        <div class="combo-desc">Subdivision으로 메쉬를 촘촘하게 한 뒤 Bend를 적용하면 더 부드러운 곡선이 됩니다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/deform/simple_deform.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Simple Deform Modifier
+    </a>
+  </div>
+</section>
+
+<!-- TAB 4: 퀴즈 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+// ── Tab Switching ──────────────────────────────
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(t) {
+      t.classList.remove("is-active");
+      t.setAttribute("aria-selected", "false");
+    });
+    document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("is-active"); });
+    tab.classList.add("is-active");
+    tab.setAttribute("aria-selected", "true");
+    document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+  });
+});
+
+// ── Quiz Engine (Safe DOM methods) ────────────
+function initQuiz(questions) {
+  var container = document.getElementById("quizArea");
+  var score = 0, answered = 0;
+  var scoreDiv = null;
+
+  var progress = document.createElement("div");
+  progress.className = "quiz-progress";
+  progress.textContent = "\uBB38\uC81C 0 / " + questions.length + " \u00b7 \uC810\uC218 0\uC810";
+  container.appendChild(progress);
+
+  questions.forEach(function(q, qi) {
+    var div = document.createElement("div");
+    div.className = "quiz-question";
+
+    var heading = document.createElement("h4");
+    heading.textContent = "Q" + (qi + 1) + ". " + q.question;
+    div.appendChild(heading);
+
+    var fb = document.createElement("div");
+    fb.className = "quiz-feedback";
+
+    q.options.forEach(function(opt, oi) {
+      var btn = document.createElement("button");
+      btn.className = "quiz-option";
+      btn.textContent = opt;
+      btn.addEventListener("click", function() {
+        if (btn.disabled) return;
+        div.querySelectorAll(".quiz-option").forEach(function(b) { b.disabled = true; });
+        answered++;
+        if (oi === q.answer) {
+          btn.classList.add("correct");
+          fb.className = "quiz-feedback show correct-fb";
+          fb.textContent = "\u2705 " + q.explanation;
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
+          fb.className = "quiz-feedback show wrong-fb";
+          fb.textContent = "\u274c " + q.explanation;
+
+          var retryBtn = document.createElement("button");
+          retryBtn.className = "quiz-retry";
+          retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
+          retryBtn.textContent = "\uB2E4\uC2DC \uD480\uAE30";
+          retryBtn.addEventListener("click", function() {
+            answered--;
+            div.querySelectorAll(".quiz-option").forEach(function(b) {
+              b.disabled = false;
+              b.classList.remove("wrong", "correct");
+            });
+            fb.className = "quiz-feedback";
+            fb.textContent = "";
+            retryBtn.remove();
+            if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+            progress.textContent = "\uBB38\uC81C " + answered + " / " + questions.length + " \u00b7 \uC810\uC218 " + score + "\uC810";
+          });
+          fb.appendChild(retryBtn);
+        }
+        progress.textContent = "\uBB38\uC81C " + answered + " / " + questions.length + " \u00b7 \uC810\uC218 " + score + "\uC810";
+        if (answered === questions.length) showScore();
+      });
+      div.appendChild(btn);
+    });
+
+    div.appendChild(fb);
+    container.appendChild(div);
+  });
+
+  function showScore() {
+    if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+
+    scoreDiv = document.createElement("div");
+    scoreDiv.className = "quiz-score";
+
+    var emoji = document.createElement("div");
+    emoji.style.cssText = "font-size:36px;margin-bottom:8px";
+    emoji.textContent = score === questions.length ? "\ud83c\udf89" : score >= Math.ceil(questions.length / 2) ? "\ud83d\udc4d" : "\ud83d\udcda";
+    scoreDiv.appendChild(emoji);
+
+    var result = document.createElement("div");
+    result.style.cssText = "font-size:18px;font-weight:500;margin-bottom:6px";
+    result.textContent = score + " / " + questions.length + " \uC815\uB2F5";
+    scoreDiv.appendChild(result);
+
+    var msg = document.createElement("div");
+    msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
+    msg.textContent = score === questions.length ? "\uC644\uBCBD\uD569\uB2C8\uB2E4!" : "\uC870\uAE08 \uB354 \uC5F0\uC2B5\uD558\uBA74 \uC644\uBCBD\uD574\uC9C8 \uAC70\uC608\uC694!";
+    scoreDiv.appendChild(msg);
+
+    var saveBtn = document.createElement("button");
+    saveBtn.className = "quiz-retry";
+    saveBtn.style.cssText = "background:rgba(10,132,255,.18);border-color:var(--key);margin-bottom:8px";
+    saveBtn.textContent = "\uAE30\uB85D \uC800\uC7A5\uD558\uAE30";
+    saveBtn.addEventListener("click", function() {
+      try {
+        var wid = new URLSearchParams(location.search).get("wid")
+               || location.pathname.split("/").pop().replace(".html", "");
+        window.parent.postMessage({
+          type: "showme-quiz-complete",
+          widgetId: wid,
+          score: score,
+          total: questions.length,
+          pass: score >= Math.ceil(questions.length * 0.75)
+        }, "*");
+      } catch(e) {}
+      saveBtn.textContent = "\uC800\uC7A5 \uC644\uB8CC!";
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = ".5";
+    });
+    scoreDiv.appendChild(saveBtn);
+
+    var retry = document.createElement("button");
+    retry.className = "quiz-retry";
+    retry.textContent = "\uCC98\uC74C\uBD80\uD130 \uB2E4\uC2DC";
+    retry.addEventListener("click", function() { location.reload(); });
+    scoreDiv.appendChild(retry);
+
+    container.appendChild(scoreDiv);
+  }
+}
+
+// ── Canvas Simple Deform Demo ─────────────────
+(function() {
+  var canvas = document.getElementById("demoCanvas");
+  var ctx = canvas.getContext("2d");
+  var mode = "twist";
+  var animT = 0;
+  var segments = 20;
+
+  function drawGrid() {
+    var w = canvas.width, h = canvas.height;
+    ctx.strokeStyle = "rgba(255,255,255,.04)";
+    ctx.lineWidth = 1;
+    for (var gx = 40; gx < w; gx += 40) {
+      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
+    }
+    for (var gy = 40; gy < h; gy += 40) {
+      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
+    }
+  }
+
+  function drawCylinder(cx, cy, w, h, color, transform) {
+    var halfW = w / 2;
+    var segH = h / segments;
+
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.5;
+
+    for (var i = 0; i <= segments; i++) {
+      var t = i / segments; // 0..1
+      var y = cy - h / 2 + i * segH;
+      var leftX = cx - halfW;
+      var rightX = cx + halfW;
+
+      if (transform) {
+        var result = transform(t, leftX, rightX, y, cx, cy, halfW);
+        leftX = result.leftX;
+        rightX = result.rightX;
+        y = result.y;
+      }
+
+      // Horizontal segment lines
+      ctx.beginPath();
+      ctx.moveTo(leftX, y);
+      ctx.lineTo(rightX, y);
+      ctx.stroke();
+
+      // Vertical edge lines
+      if (i < segments) {
+        var nextT = (i + 1) / segments;
+        var nextY = cy - h / 2 + (i + 1) * segH;
+        var nextLeftX = cx - halfW;
+        var nextRightX = cx + halfW;
+        if (transform) {
+          var nextResult = transform(nextT, nextLeftX, nextRightX, nextY, cx, cy, halfW);
+          nextLeftX = nextResult.leftX;
+          nextRightX = nextResult.rightX;
+          nextY = nextResult.y;
+        }
+        ctx.beginPath(); ctx.moveTo(leftX, y); ctx.lineTo(nextLeftX, nextY); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(rightX, y); ctx.lineTo(nextRightX, nextY); ctx.stroke();
+      }
+    }
+  }
+
+  function getTransform(modeName) {
+    var angle = (Math.sin(animT * 0.02) * 0.5 + 0.5) * Math.PI * 1.5;
+    var factor = Math.sin(animT * 0.02) * 0.5 + 0.5;
+
+    switch (modeName) {
+      case "twist":
+        return function(t, lx, rx, y, cx, cy, halfW) {
+          var rot = t * angle;
+          var cosR = Math.cos(rot);
+          var offset = halfW * Math.sin(rot) * 0.4;
+          return {
+            leftX: cx - halfW * Math.abs(cosR) - offset * 0.3,
+            rightX: cx + halfW * Math.abs(cosR) + offset * 0.3,
+            y: y
+          };
+        };
+      case "bend":
+        return function(t, lx, rx, y, cx, cy, halfW) {
+          var bendAmt = angle * 0.7;
+          var a = (t - 0.5) * bendAmt;
+          var radius = 150;
+          var offX = Math.sin(a) * radius - Math.sin(-0.5 * bendAmt) * radius;
+          var offY = Math.cos(a) * radius - Math.cos(-0.5 * bendAmt) * radius;
+          return {
+            leftX: cx + offX - halfW * Math.cos(a),
+            rightX: cx + offX + halfW * Math.cos(a),
+            y: cy - 100 + t * 200 - offY * 0.5 + Math.sin(a) * halfW * 0.2
+          };
+        };
+      case "taper":
+        return function(t, lx, rx, y, cx, cy, halfW) {
+          var taper = 1 - t * factor * 0.85;
+          return {
+            leftX: cx - halfW * taper,
+            rightX: cx + halfW * taper,
+            y: y
+          };
+        };
+      case "stretch":
+        return function(t, lx, rx, y, cx, cy, halfW) {
+          var str = 1 + factor * 0.6;
+          var squeeze = 1 / Math.sqrt(str);
+          var newY = cy + (t - 0.5) * 200 * str;
+          return {
+            leftX: cx - halfW * squeeze,
+            rightX: cx + halfW * squeeze,
+            y: newY
+          };
+        };
+      default:
+        return null;
+    }
+  }
+
+  var modeLabels = {
+    twist: "Twist — 비틀기",
+    bend: "Bend — 구부리기",
+    taper: "Taper — 뾰족하게",
+    stretch: "Stretch — 늘리기"
+  };
+
+  function draw() {
+    var w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = "#17181a";
+    ctx.fillRect(0, 0, w, h);
+    drawGrid();
+
+    var leftCx = w * 0.28;
+    var rightCx = w * 0.72;
+    var cy = h * 0.5;
+
+    // Divider
+    ctx.strokeStyle = "rgba(255,255,255,.1)";
+    ctx.lineWidth = 1;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath(); ctx.moveTo(w / 2, 0); ctx.lineTo(w / 2, h); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Labels
+    ctx.fillStyle = "rgba(10,132,255,.8)";
+    ctx.font = "bold 12px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("원본 실린더", leftCx, 22);
+
+    ctx.fillStyle = "rgba(16,185,129,.8)";
+    ctx.fillText(modeLabels[mode] || mode, rightCx, 22);
+
+    // Original cylinder
+    drawCylinder(leftCx, cy, 60, 200, "rgba(10,132,255,.6)", null);
+
+    // Deformed cylinder
+    drawCylinder(rightCx, cy, 60, 200, "rgba(16,185,129,.7)", getTransform(mode));
+
+    animT++;
+    requestAnimationFrame(draw);
+  }
+
+  // Button handlers
+  ["Twist", "Bend", "Taper", "Stretch"].forEach(function(name) {
+    var btn = document.getElementById("btn" + name);
+    btn.addEventListener("click", function() {
+      mode = name.toLowerCase();
+      document.querySelectorAll(".demo-btn").forEach(function(b) { b.classList.remove("is-active"); });
+      btn.classList.add("is-active");
+    });
+    btn.addEventListener("touchend", function(e) {
+      e.preventDefault(); btn.click();
+    });
+  });
+
+  draw();
+})();
+
+// ── Quiz Data ─────────────────────────────────
+initQuiz([
+  {
+    question: "Simple Deform\uC758 Twist \uBAA8\uB4DC\uB294 \uC5B4\uB5A4 \uBCC0\uD615\uC744 \uD558\uB098\uC694?",
+    options: [
+      "\uD55C\uCABD \uB05D\uC744 \uC881\uD600\uC11C \uBFB0\uC871\uD558\uAC8C \uB9CC\uB4E0\uB2E4",
+      "\uCD95\uC744 \uC911\uC2EC\uC73C\uB85C \uBE44\uD2C0\uC5B4 \uB098\uC120\uD615\uC73C\uB85C \uB9CC\uB4E0\uB2E4",
+      "\uCD95 \uBC29\uD5A5\uC73C\uB85C \uB298\uB9AC\uAC70\uB098 \uC555\uCD95\uD55C\uB2E4",
+      "\uCD95\uC744 \uAE30\uC900\uC73C\uB85C \uAD6C\uBD80\uB9B0\uB2E4"
+    ],
+    answer: 1,
+    explanation: "Twist\uB294 \uCD95\uC744 \uC911\uC2EC\uC73C\uB85C \uBA54\uC26C\uB97C \uBE44\uD2C0\uC5B4 \uB098\uC120\uD615\uC744 \uB9CC\uB4ED\uB2C8\uB2E4. \uB098\uC120\uD615 \uAE30\uB465/\uACC4\uB2E8 \uB4F1\uC5D0 \uC720\uC6A9\uD569\uB2C8\uB2E4."
+  },
+  {
+    question: "Simple Deform\uC73C\uB85C \uC544\uCE58 \uBAA8\uC591\uC744 \uB9CC\uB4E4\uB824\uBA74 \uC5B4\uB5A4 \uBAA8\uB4DC\uB97C \uC368\uC57C \uD558\uB098\uC694?",
+    options: [
+      "Twist",
+      "Taper",
+      "Bend",
+      "Stretch"
+    ],
+    answer: 2,
+    explanation: "Bend \uBAA8\uB4DC\uB294 \uBA54\uC26C\uB97C \uAD6C\uBD80\uB824\uC11C \uC544\uCE58, \uB2E4\uB9AC, \uD130\uB110 \uAC19\uC740 \uD615\uD0DC\uB97C \uB9CC\uB4E4 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
+  },
+  {
+    question: "Simple Deform\uC774 \uBD80\uB4DC\uB7FD\uAC8C \uC801\uC6A9\uB418\uB824\uBA74 \uC5B4\uB5BB\uAC8C \uD574\uC57C \uD558\uB098\uC694?",
+    options: [
+      "Apply Scale\uC744 \uBA3C\uC800 \uC801\uC6A9\uD55C\uB2E4",
+      "\uBA54\uC26C\uC758 \uC138\uBD84\uD654(Segment)\uB97C \uCDA9\uBD84\uD788 \uB192\uC778\uB2E4",
+      "Smooth Shading\uC744 \uCF1C\uB2E4",
+      "Modifier \uC21C\uC11C\uB97C \uBCC0\uACBD\uD55C\uB2E4"
+    ],
+    answer: 1,
+    explanation: "\uC138\uBD84\uD654\uAC00 \uBD80\uC871\uD558\uBA74 \uBCC0\uD615\uC774 \uAC01\uC838 \uBCF4\uC785\uB2C8\uB2E4. \uCD5C\uC18C 32\uAC1C \uC774\uC0C1\uC758 \uC138\uADF8\uBA3C\uD2B8\uAC00 \uAD8C\uC7A5\uB429\uB2C8\uB2E4."
+  },
+  {
+    question: "Simple Deform\uC758 \uBCC0\uD615 \uAE30\uC900\uC810\uC744 \uBCC0\uACBD\uD558\uB824\uBA74 \uC5B4\uB5BB\uAC8C \uD558\uB098\uC694?",
+    options: [
+      "\uC624\uBE0C\uC81D\uD2B8\uC758 Origin\uC744 \uC774\uB3D9\uD55C\uB2E4",
+      "Empty\uB97C Axis Origin\uC73C\uB85C \uC9C0\uC815\uD55C\uB2E4",
+      "Edit Mode\uC5D0\uC11C \uC815\uC810\uC744 \uC774\uB3D9\uD55C\uB2E4",
+      "\uB2E4\uB978 \uCD95\uC744 \uC120\uD0DD\uD55C\uB2E4"
+    ],
+    answer: 1,
+    explanation: "Empty \uC624\uBE0C\uC81D\uD2B8\uB97C Axis Origin\uC73C\uB85C \uC9C0\uC815\uD558\uBA74 \uBCC0\uD615\uC758 \uAE30\uC900\uC810\uC744 \uC790\uC720\uB86D\uAC8C \uC870\uC808\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
+  }
+]);
+</script>
+
+</body>
+</html>

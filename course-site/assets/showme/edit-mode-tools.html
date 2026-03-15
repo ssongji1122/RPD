@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — Edit Mode Tools 이해</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Tab Navigation ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+
+/* ── Tab Panels ── */
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+
+/* ── Concept Cards ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card h3 {
+  margin: 0 0 8px; font-size: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.concept-card p {
+  margin: 0; color: var(--muted-strong);
+  font-size: .88rem; line-height: 1.7;
+}
+.concept-card ul {
+  margin: 8px 0 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
+}
+
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: .72rem; font-weight: 600;
+}
+.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: #fbbf24; }
+.badge-red   { background: rgba(239,68,68,.15);   color: #fca5a5; }
+.badge-purple{ background: rgba(168,85,247,.15);  color: #c4b5fd; }
+
+/* ── Keyboard Shortcut ── */
+.kbd {
+  display: inline-block;
+  padding: 3px 8px; border-radius: 6px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  color: var(--key-soft);
+  font-size: .82rem; font-weight: 600;
+  font-family: var(--font);
+}
+
+/* ── Canvas / Demo ── */
+.demo-wrap {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+  margin: 14px 0;
+}
+.demo-wrap canvas {
+  display: block; width: 100%;
+}
+.demo-controls {
+  display: flex; gap: 8px; padding: 12px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.demo-hint {
+  font-size: .78rem; color: var(--muted);
+  text-align: center; padding: 6px 0 0;
+}
+.demo-btn {
+  padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .82rem;
+  cursor: pointer;
+  transition: background .14s, color .14s;
+}
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active {
+  background: rgba(10,132,255,.14);
+  color: var(--key-soft);
+  border-color: rgba(10,132,255,.3);
+}
+
+/* ── Usage Grid ── */
+.usage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.usage-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 16px;
+}
+.usage-card h4 {
+  margin: 0 0 8px; font-size: .92rem;
+  color: var(--key-soft);
+}
+.usage-card ul {
+  margin: 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem;
+  line-height: 1.8;
+}
+
+/* ── Tip Box ── */
+.tip-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(10,132,255,.2);
+  background: rgba(10,132,255,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+}
+.tip-box strong { color: var(--key-soft); }
+
+/* ── Combo Section ── */
+.combo-section {
+  margin-top: 18px;
+}
+.combo-section h4 {
+  margin: 0 0 10px;
+  font-size: .92rem;
+  color: var(--text);
+}
+.combo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.combo-card {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 12px 14px;
+}
+.combo-card .combo-name {
+  font-size: .86rem;
+  font-weight: 600;
+  color: var(--key-soft);
+  margin-bottom: 4px;
+}
+.combo-card .combo-desc {
+  font-size: .8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ── Shortcut Reference ── */
+.shortcut-list {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.shortcut-list h4 {
+  margin: 0 0 10px;
+  font-size: .9rem;
+  color: var(--text);
+}
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: .84rem;
+  color: var(--muted-strong);
+}
+.shortcut-row + .shortcut-row {
+  border-top: 1px solid var(--line);
+}
+.shortcut-keys {
+  flex-shrink: 0;
+}
+.analogy {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(245,158,11,.06);
+  border: 1px solid rgba(245,158,11,.15);
+  font-size: .82rem;
+  color: #fbbf24;
+  font-style: italic;
+}
+
+/* ── Quiz ── */
+.quiz-progress {
+  font-size: .78rem; color: var(--muted);
+  margin-bottom: 12px;
+}
+.quiz-question {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.quiz-question h4 {
+  margin: 0 0 12px; font-size: .94rem;
+}
+.quiz-option {
+  display: block; width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.025);
+  color: var(--text);
+  font: inherit; font-size: .86rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background .14s, border-color .14s;
+}
+.quiz-option:hover {
+  background: rgba(255,255,255,.06);
+  border-color: var(--line-strong);
+}
+.quiz-option.correct {
+  background: rgba(16,185,129,.12);
+  border-color: rgba(16,185,129,.4);
+  color: var(--success-soft);
+}
+.quiz-option.wrong {
+  background: rgba(239,68,68,.1);
+  border-color: rgba(239,68,68,.3);
+  color: #fca5a5;
+}
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback {
+  margin-top: 8px; padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: .84rem;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: #fca5a5; }
+
+.quiz-score {
+  text-align: center; padding: 20px;
+  font-size: 1.1rem; font-weight: 600;
+}
+.quiz-retry {
+  display: block; margin: 12px auto;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--key);
+  background: rgba(10,132,255,.12);
+  color: var(--key-soft);
+  font: inherit; font-size: .88rem;
+  cursor: pointer;
+  transition: background .14s;
+}
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+
+/* ── Official Doc Reference ── */
+.doc-ref {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(10,132,255,.15);
+  background: rgba(10,132,255,.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-ref a {
+  color: var(--key-soft);
+  font-size: .84rem;
+  text-decoration: none;
+  line-height: 1.5;
+}
+.doc-ref a:hover { text-decoration: underline; }
+.doc-ref-list {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.doc-ref-list .doc-ref { margin-top: 0; }
+
+/* ── Comparison Table ── */
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 14px;
+  font-size: .84rem;
+}
+.compare-table thead { background: rgba(10,132,255,.06); }
+.compare-table th {
+  padding: 10px 14px; text-align: left;
+  color: var(--muted-strong); font-weight: 600;
+  font-size: .78rem; letter-spacing: .03em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--line-strong);
+}
+.compare-table td {
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted-strong); line-height: 1.6;
+}
+.compare-table tr:last-child td { border-bottom: none; }
+.compare-table tr:hover td { background: rgba(255,255,255,.02); }
+
+/* ── Section Divider ── */
+.section-divider {
+  margin: 20px 0 16px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--line);
+  font-size: .92rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+  .compare-table { font-size: .78rem; }
+  .compare-table th, .compare-table td { padding: 6px 10px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Tab Bar -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+</nav>
+
+<!-- ═══════════════════════════════════════════════
+     TAB 1: 개념 이해
+     ═══════════════════════════════════════════════ -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <p style="font-size:.9rem; color:var(--muted-strong); margin:0 0 14px;">
+    Edit Mode에서 메시를 변형하는 핵심 도구 5가지 계열을 알아봅니다. 각 도구의 역할과 변형을 이해하면 모델링 속도가 크게 빨라집니다.
+  </p>
+
+  <!-- ── 1. Extrude 계열 ── -->
+  <div class="section-divider">1. Extrude 계열</div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">핵심</span> Extrude Region</h3>
+      <p>면/변/점을 법선 방향으로 밀어냅니다. Edit Mode에서 가장 많이 쓰는 기본 Extrude입니다.</p>
+      <div class="analogy">점토를 손가락으로 눌러 밀어내는 것처럼, 선택한 면이 바깥으로 튀어나옵니다</div>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">핵심</span> Extrude Along Normals</h3>
+      <p>각 면의 개별 법선(Normal) 방향으로 돌출합니다. 곡면에서 균일한 두께로 돌출할 때 유용합니다.</p>
+      <div class="analogy">각 면이 자기만의 방향을 알고, 그 방향으로 정확히 밀려 나갑니다</div>
+    </div>
+    <div class="concept-card">
+      <h3>Extrude Individual Faces</h3>
+      <p>선택된 각 면이 개별적으로 돌출됩니다. 여러 면을 동시에 선택해도 각각 독립적으로 움직입니다.</p>
+    </div>
+    <div class="concept-card">
+      <h3>Extrude Manifold</h3>
+      <p>인접 면과 자동 병합되는 Extrude입니다. Boolean 없이도 깔끔하게 형태를 파고 들어갈 수 있습니다.</p>
+    </div>
+    <div class="concept-card">
+      <h3>Extrude Edges / Vertices</h3>
+      <p>모서리(Edge)만 또는 꼭짓점(Vertex)만 돌출합니다. 면이 아닌 선이나 점에서 새로운 지오메트리를 만듭니다.</p>
+    </div>
+    <div class="concept-card">
+      <h3>Extrude to Cursor</h3>
+      <p>마우스 위치로 직접 돌출합니다. 빠르게 점/면을 원하는 곳에 뻗어나갈 때 사용합니다.</p>
+    </div>
+    <div class="concept-card">
+      <h3>Extrude Repeat / Spin</h3>
+      <p><strong>Repeat:</strong> 마지막 Extrude를 반복합니다.<br><strong>Spin:</strong> 축을 기준으로 회전 돌출하여 선반(Lathe) 효과를 만듭니다.</p>
+    </div>
+  </div>
+
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>도구</th>
+        <th>단축키</th>
+        <th>핵심 차이</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Extrude Region</td><td><span class="kbd">E</span></td><td>선택 영역 전체를 하나로 밀어냄</td></tr>
+      <tr><td>Extrude Along Normals</td><td><span class="kbd">Alt</span>+<span class="kbd">E</span> &rarr; Along Normals</td><td>각 면의 개별 법선 방향으로</td></tr>
+      <tr><td>Extrude Individual</td><td>메뉴</td><td>각 면이 독립적으로 돌출</td></tr>
+      <tr><td>Extrude Manifold</td><td>메뉴</td><td>인접 면 자동 병합</td></tr>
+      <tr><td>Extrude Edges</td><td>메뉴</td><td>모서리만 돌출</td></tr>
+      <tr><td>Extrude Vertices</td><td>메뉴</td><td>꼭짓점만 돌출</td></tr>
+      <tr><td>Extrude to Cursor</td><td><span class="kbd">Ctrl</span>+<span class="kbd">RMB</span></td><td>마우스 위치로 직접 돌출</td></tr>
+      <tr><td>Extrude to Cursor or Add</td><td>메뉴</td><td>돌출 또는 새 꼭짓점 추가</td></tr>
+      <tr><td>Extrude Repeat</td><td>메뉴</td><td>마지막 Extrude 반복</td></tr>
+      <tr><td>Spin</td><td>메뉴 / Toolbar</td><td>축 기준 회전 돌출 (선반 효과)</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ── 2. Loop Cut 계열 ── -->
+  <div class="section-divider">2. Loop Cut 계열</div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3><span class="badge badge-green">필수</span> Loop Cut &amp; Slide</h3>
+      <p>메시에 루프 컷을 삽입하고, 마우스로 위치를 슬라이드할 수 있습니다. 디테일 추가의 기본입니다.</p>
+      <div class="analogy">빵을 칼로 한 줄 쭉 자르는 것처럼, 메시를 깔끔하게 분할합니다</div>
+    </div>
+    <div class="concept-card">
+      <h3>Offset Edge Loop Cut</h3>
+      <p>기존 에지 루프 양쪽에 오프셋된 루프 2개를 동시에 생성합니다. 하드서페이스 모델링에서 날카로운 모서리를 만들 때 유용합니다.</p>
+    </div>
+    <div class="concept-card">
+      <h3>Edge Slide</h3>
+      <p>기존 에지 루프를 모서리를 따라 슬라이드합니다. 토폴로지를 바꾸지 않으면서 루프 위치만 조정할 수 있습니다.</p>
+    </div>
+  </div>
+
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>도구</th>
+        <th>단축키</th>
+        <th>핵심 차이</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Loop Cut &amp; Slide</td><td><span class="kbd">Ctrl</span>+<span class="kbd">R</span></td><td>새 루프 삽입 + 슬라이드</td></tr>
+      <tr><td>Offset Edge Loop Cut</td><td><span class="kbd">Shift</span>+<span class="kbd">Ctrl</span>+<span class="kbd">R</span></td><td>기존 루프 양쪽에 오프셋 루프 2개</td></tr>
+      <tr><td>Edge Slide</td><td><span class="kbd">G</span><span class="kbd">G</span></td><td>기존 루프를 모서리 따라 이동</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ── 3. Knife 계열 ── -->
+  <div class="section-divider">3. Knife 계열</div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3><span class="badge badge-amber">다용도</span> Knife Tool</h3>
+      <p>면 위에 자유롭게 선을 그어 커팅합니다. 마우스로 시작점과 끝점을 찍어 원하는 형태로 면을 분할합니다.</p>
+      <div class="analogy">실제 칼로 종이를 자르듯, 원하는 경로를 자유롭게 그어 자를 수 있습니다</div>
+    </div>
+    <div class="concept-card">
+      <h3>Knife Topology</h3>
+      <p>기존 메시 구조(토폴로지)를 기반으로 커팅합니다. 기존 꼭짓점과 모서리를 따라 정확하게 분할합니다.</p>
+    </div>
+    <div class="concept-card">
+      <h3>Knife Project</h3>
+      <p>다른 오브젝트의 윤곽을 투영하여 커팅합니다. 글자나 로고 모양을 메시에 새길 때 유용합니다.</p>
+    </div>
+    <div class="concept-card">
+      <h3>Bisect</h3>
+      <p>평면으로 메시를 반분할합니다. 한쪽을 삭제하거나 채울 수 있어 정확한 절단에 유용합니다.</p>
+    </div>
+    <div class="concept-card">
+      <h3>Intersect (Knife / Boolean)</h3>
+      <p><strong>Intersect Knife:</strong> 면의 교차 부분을 따라 커팅합니다.<br><strong>Intersect Boolean:</strong> 면의 교차 부분에 Boolean 연산을 적용합니다.</p>
+    </div>
+  </div>
+
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>도구</th>
+        <th>단축키</th>
+        <th>핵심 차이</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Knife</td><td><span class="kbd">K</span></td><td>자유 경로로 커팅</td></tr>
+      <tr><td>Knife Topology</td><td>메뉴</td><td>기존 구조 기반 커팅</td></tr>
+      <tr><td>Knife Project</td><td>메뉴</td><td>다른 오브젝트 윤곽 투영</td></tr>
+      <tr><td>Bisect</td><td>메뉴 / Toolbar</td><td>평면으로 반분할</td></tr>
+      <tr><td>Intersect Knife</td><td><span class="kbd">Ctrl</span>+<span class="kbd">F</span> &rarr; <span class="kbd">K</span></td><td>면 교차 부분 커팅</td></tr>
+      <tr><td>Intersect Boolean</td><td><span class="kbd">Ctrl</span>+<span class="kbd">F</span> &rarr; <span class="kbd">B</span></td><td>면 교차 부분 Boolean</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ── 4. Inset Faces ── -->
+  <div class="section-divider">4. Inset Faces</div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3><span class="badge badge-green">필수</span> Inset Faces</h3>
+      <p>면 안쪽에 새로운 면을 삽입합니다. 창문 프레임, 패널 라인 등 면 내부에 디테일을 추가할 때 핵심 도구입니다. <span class="kbd">I</span>를 누른 뒤 <span class="kbd">I</span>를 한 번 더 누르면 Individual 모드로 전환되어 각 면이 개별적으로 Inset됩니다.</p>
+      <div class="analogy">액자 틀처럼, 면 안쪽에 한 겹 더 작은 면이 생깁니다</div>
+    </div>
+  </div>
+
+  <!-- ── 5. Bevel Tool ── -->
+  <div class="section-divider">5. Bevel Tool</div>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3><span class="badge badge-green">필수</span> Bevel Tool</h3>
+      <p>모서리 또는 꼭짓점을 깎아 둥근 모서리를 만듭니다. 현실 세계에서 완벽히 날카로운 모서리는 없으므로, 사실적인 모델링에 필수입니다. 스크롤 휠로 세그먼트 수를 조절할 수 있습니다.</p>
+      <ul>
+        <li><span class="kbd">Ctrl</span>+<span class="kbd">B</span> &mdash; 모서리(Edge) 베벨</li>
+        <li><span class="kbd">Ctrl</span>+<span class="kbd">Shift</span>+<span class="kbd">B</span> &mdash; 꼭짓점(Vertex) 베벨</li>
+      </ul>
+      <div class="analogy">각진 나무 모서리를 사포로 둥글게 다듬는 것과 같습니다</div>
+    </div>
+  </div>
+
+  <!-- ── 주요 단축키 ── -->
+  <div class="shortcut-list">
+    <h4>핵심 단축키 5선</h4>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">E</span></span>
+      <span>Extrude Region &mdash; 면/변/점 돌출</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span>+<span class="kbd">R</span></span>
+      <span>Loop Cut &amp; Slide &mdash; 루프 컷 삽입</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">K</span></span>
+      <span>Knife Tool &mdash; 자유 커팅</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">I</span></span>
+      <span>Inset Faces &mdash; 면 안쪽에 새 면 삽입</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span>+<span class="kbd">B</span></span>
+      <span>Bevel Tool &mdash; 모서리 깎기</span>
+    </div>
+  </div>
+
+  <!-- ── 공식 문서 링크 ── -->
+  <div class="doc-ref-list">
+    <div class="doc-ref">
+      <a href="https://docs.blender.org/manual/en/latest/modeling/meshes/tools/extrude_region.html" target="_blank" rel="noopener">Blender Docs &mdash; Extrude Region</a>
+    </div>
+    <div class="doc-ref">
+      <a href="https://docs.blender.org/manual/en/latest/modeling/meshes/tools/extrude_manifold.html" target="_blank" rel="noopener">Blender Docs &mdash; Extrude Manifold</a>
+    </div>
+    <div class="doc-ref">
+      <a href="https://docs.blender.org/manual/en/latest/modeling/meshes/editing/edge/loopcut_slide.html" target="_blank" rel="noopener">Blender Docs &mdash; Loop Cut &amp; Slide</a>
+    </div>
+    <div class="doc-ref">
+      <a href="https://docs.blender.org/manual/en/latest/modeling/meshes/editing/edge/offset_edge_slide.html" target="_blank" rel="noopener">Blender Docs &mdash; Offset Edge Slide</a>
+    </div>
+    <div class="doc-ref">
+      <a href="https://docs.blender.org/manual/en/latest/modeling/meshes/tools/knife.html" target="_blank" rel="noopener">Blender Docs &mdash; Knife Tool</a>
+    </div>
+    <div class="doc-ref">
+      <a href="https://docs.blender.org/manual/en/latest/modeling/meshes/editing/mesh/bisect.html" target="_blank" rel="noopener">Blender Docs &mdash; Bisect</a>
+    </div>
+    <div class="doc-ref">
+      <a href="https://docs.blender.org/manual/en/latest/modeling/meshes/tools/inset_faces.html" target="_blank" rel="noopener">Blender Docs &mdash; Inset Faces</a>
+    </div>
+    <div class="doc-ref">
+      <a href="https://docs.blender.org/manual/en/latest/modeling/meshes/tools/bevel.html" target="_blank" rel="noopener">Blender Docs &mdash; Bevel Tool</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     TAB 2: 시각적 비교
+     ═══════════════════════════════════════════════ -->
+<section class="panel" id="panel-visual" role="tabpanel">
+  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
+    버튼을 클릭하면 각 Extrude 방식의 차이를 애니메이션으로 확인할 수 있습니다.
+  </p>
+  <div class="demo-wrap">
+    <canvas id="demoCanvas" width="680" height="360"></canvas>
+    <div class="demo-controls">
+      <button class="demo-btn is-active" id="btnRegion">Extrude Region</button>
+      <button class="demo-btn" id="btnNormals">Extrude Along Normals</button>
+      <button class="demo-btn" id="btnIndividual">Extrude Individual</button>
+    </div>
+  </div>
+  <p class="demo-hint">버튼을 눌러 각 Extrude 방식의 차이를 확인하세요. 터치 기기에서도 동작합니다.</p>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     TAB 3: 언제 쓰나요?
+     ═══════════════════════════════════════════════ -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>이런 모양을 만들 때</h4>
+      <ul>
+        <li><strong>돌출 (Extrude)</strong> &mdash; 벽, 기둥, 돌출부</li>
+        <li><strong>분할 (Loop Cut / Knife)</strong> &mdash; 세부 디테일 추가</li>
+        <li><strong>삽입 (Inset)</strong> &mdash; 창문 프레임, 패널 라인</li>
+        <li><strong>깎기 (Bevel)</strong> &mdash; 부드러운 모서리, 하이라이트</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>도구 선택 가이드</h4>
+      <ul>
+        <li><strong>직선 컷</strong> &rarr; Loop Cut <span class="kbd">Ctrl</span>+<span class="kbd">R</span></li>
+        <li><strong>자유 컷</strong> &rarr; Knife <span class="kbd">K</span></li>
+        <li><strong>면 돌출</strong> &rarr; Extrude <span class="kbd">E</span></li>
+        <li><strong>면 삽입</strong> &rarr; Inset <span class="kbd">I</span></li>
+        <li><strong>모서리 둥글게</strong> &rarr; Bevel <span class="kbd">Ctrl</span>+<span class="kbd">B</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="combo-section">
+    <h4>추천 도구 조합</h4>
+    <div class="combo-grid">
+      <div class="combo-card">
+        <div class="combo-name">Extrude + Loop Cut</div>
+        <div class="combo-desc">기본 모델링 워크플로우. Extrude로 형태를 만들고 Loop Cut으로 디테일을 추가합니다.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Inset + Extrude</div>
+        <div class="combo-desc">창문, 환기구 만들기. Inset으로 면을 삽입한 뒤 Extrude로 안쪽으로 밀어 구멍을 만듭니다.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Loop Cut + Bevel</div>
+        <div class="combo-desc">하드서페이스 디테일. Loop Cut으로 에지를 추가하고 Bevel로 모서리를 다듬어 사실적인 형태를 만듭니다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>팁:</strong> <span class="kbd">Tab</span> 키로 Object Mode와 Edit Mode를 전환합니다. Edit Mode에 진입해야 위 도구들을 사용할 수 있습니다. 메시 오브젝트를 선택한 상태에서 <span class="kbd">Tab</span>을 누르세요.
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/modeling/meshes/tools/index.html" target="_blank" rel="noopener">
+      Blender Docs &mdash; Mesh Tools 전체 목록
+    </a>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     TAB 4: 퀴즈
+     ═══════════════════════════════════════════════ -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+// ── Tab Switching ──────────────────────────────
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(t) {
+      t.classList.remove("is-active");
+      t.setAttribute("aria-selected", "false");
+    });
+    document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("is-active"); });
+    tab.classList.add("is-active");
+    tab.setAttribute("aria-selected", "true");
+    document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+  });
+});
+
+// ── Quiz Engine (Safe DOM methods) ────────────
+function initQuiz(questions) {
+  var container = document.getElementById("quizArea");
+  var score = 0, answered = 0;
+  var scoreDiv = null; // track score section for updates
+
+  // Progress indicator
+  var progress = document.createElement("div");
+  progress.className = "quiz-progress";
+  progress.textContent = "문제 0 / " + questions.length + " \u00b7 점수 0점";
+  container.appendChild(progress);
+
+  questions.forEach(function(q, qi) {
+    var div = document.createElement("div");
+    div.className = "quiz-question";
+
+    var heading = document.createElement("h4");
+    heading.textContent = "Q" + (qi + 1) + ". " + q.question;
+    div.appendChild(heading);
+
+    var fb = document.createElement("div");
+    fb.className = "quiz-feedback";
+
+    q.options.forEach(function(opt, oi) {
+      var btn = document.createElement("button");
+      btn.className = "quiz-option";
+      btn.textContent = opt;
+      btn.addEventListener("click", function() {
+        if (btn.disabled) return;
+        div.querySelectorAll(".quiz-option").forEach(function(b) { b.disabled = true; });
+        answered++;
+        if (oi === q.answer) {
+          btn.classList.add("correct");
+          fb.className = "quiz-feedback show correct-fb";
+          fb.textContent = "\u2705 " + q.explanation;
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
+          fb.className = "quiz-feedback show wrong-fb";
+          fb.textContent = "\u274c " + q.explanation;
+
+          // Add retry button for wrong answers
+          var retryBtn = document.createElement("button");
+          retryBtn.className = "quiz-retry";
+          retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
+          retryBtn.textContent = "다시 풀기";
+          retryBtn.addEventListener("click", function() {
+            // Reset this question
+            answered--;
+            div.querySelectorAll(".quiz-option").forEach(function(b) {
+              b.disabled = false;
+              b.classList.remove("wrong", "correct");
+            });
+            fb.className = "quiz-feedback";
+            fb.textContent = "";
+            retryBtn.remove();
+            // Remove score section if it was shown
+            if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+            progress.textContent = "문제 " + answered + " / " + questions.length + " \u00b7 점수 " + score + "점";
+          });
+          fb.appendChild(retryBtn);
+        }
+        progress.textContent = "문제 " + answered + " / " + questions.length + " \u00b7 점수 " + score + "점";
+        if (answered === questions.length) showScore();
+      });
+      div.appendChild(btn);
+    });
+
+    div.appendChild(fb);
+    container.appendChild(div);
+  });
+
+  function showScore() {
+    // Remove previous score section if exists (e.g. after retry)
+    if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+
+    scoreDiv = document.createElement("div");
+    scoreDiv.className = "quiz-score";
+
+    var emoji = document.createElement("div");
+    emoji.style.cssText = "font-size:36px;margin-bottom:8px";
+    emoji.textContent = score === questions.length ? "\ud83c\udf89" : score >= Math.ceil(questions.length / 2) ? "\ud83d\udc4d" : "\ud83d\udcda";
+    scoreDiv.appendChild(emoji);
+
+    var result = document.createElement("div");
+    result.style.cssText = "font-size:18px;font-weight:500;margin-bottom:6px";
+    result.textContent = score + " / " + questions.length + " 정답";
+    scoreDiv.appendChild(result);
+
+    var msg = document.createElement("div");
+    msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
+    msg.textContent = score === questions.length ? "완벽합니다!" : "조금 더 연습하면 완벽해질 거예요!";
+    scoreDiv.appendChild(msg);
+
+    // Save button — sends result to parent for Notion sync
+    var saveBtn = document.createElement("button");
+    saveBtn.className = "quiz-retry";
+    saveBtn.style.cssText = "background:rgba(10,132,255,.18);border-color:var(--key);margin-bottom:8px";
+    saveBtn.textContent = "기록 저장하기";
+    saveBtn.addEventListener("click", function() {
+      try {
+        var wid = new URLSearchParams(location.search).get("wid")
+               || location.pathname.split("/").pop().replace(".html", "");
+        window.parent.postMessage({
+          type: "showme-quiz-complete",
+          widgetId: wid,
+          score: score,
+          total: questions.length,
+          pass: score >= Math.ceil(questions.length * 0.75)
+        }, "*");
+      } catch(e) {}
+      saveBtn.textContent = "저장 완료!";
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = ".5";
+    });
+    scoreDiv.appendChild(saveBtn);
+
+    var retry = document.createElement("button");
+    retry.className = "quiz-retry";
+    retry.textContent = "처음부터 다시";
+    retry.addEventListener("click", function() { location.reload(); });
+    scoreDiv.appendChild(retry);
+
+    container.appendChild(scoreDiv);
+  }
+}
+
+// ── Canvas Extrude Demo ──────────────────────────
+(function() {
+  var canvas = document.getElementById("demoCanvas");
+  var ctx = canvas.getContext("2d");
+  var W = canvas.width;
+  var H = canvas.height;
+  var mode = "region"; // "region" | "normals" | "individual"
+  var animProgress = 0;
+  var animating = false;
+  var animId = null;
+
+  // 3D-perspective box parameters
+  var boxCenterX = W / 2;
+  var boxCenterY = H / 2 + 10;
+  var boxW = 120;
+  var boxH = 100;
+  var depth = 60;
+  var dx = 40; // perspective offset x
+  var dy = -30; // perspective offset y
+
+  // Face definitions relative to box center (2D projected)
+  // Front face: the face we'll extrude from
+  // We'll show 3 top faces for the "normals" and "individual" modes
+
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  function easeInOut(t) {
+    return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+  }
+
+  function drawScene(progress) {
+    ctx.clearRect(0, 0, W, H);
+
+    // Background
+    ctx.fillStyle = "#17181a";
+    ctx.fillRect(0, 0, W, H);
+
+    // Subtle grid
+    ctx.strokeStyle = "rgba(255,255,255,.03)";
+    ctx.lineWidth = 1;
+    for (var gx = 40; gx < W; gx += 40) {
+      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke();
+    }
+    for (var gy = 40; gy < H; gy += 40) {
+      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke();
+    }
+
+    var t = easeInOut(progress);
+    var extrudeLen = 70 * t;
+
+    // Box vertices (front face)
+    var fl = { x: boxCenterX - boxW / 2, y: boxCenterY - boxH / 2 }; // front-left-top
+    var fr = { x: boxCenterX + boxW / 2, y: boxCenterY - boxH / 2 }; // front-right-top
+    var fbr = { x: boxCenterX + boxW / 2, y: boxCenterY + boxH / 2 }; // front-right-bottom
+    var fbl = { x: boxCenterX - boxW / 2, y: boxCenterY + boxH / 2 }; // front-left-bottom
+
+    // Back face (perspective offset)
+    var bl = { x: fl.x + dx, y: fl.y + dy };
+    var br = { x: fr.x + dx, y: fr.y + dy };
+    var bbr = { x: fbr.x + dx, y: fbr.y + dy };
+
+    if (mode === "region") {
+      // One top face moves upward uniformly
+      var topFL = { x: fl.x, y: fl.y };
+      var topFR = { x: fr.x, y: fr.y };
+      var topBR = { x: br.x, y: br.y };
+      var topBL = { x: bl.x, y: bl.y };
+
+      // Extrude direction: up (negative Y)
+      var eTopFL = { x: topFL.x, y: topFL.y - extrudeLen };
+      var eTopFR = { x: topFR.x, y: topFR.y - extrudeLen };
+      var eTopBR = { x: topBR.x, y: topBR.y - extrudeLen };
+      var eTopBL = { x: topBL.x, y: topBL.y - extrudeLen };
+
+      // Draw back edges
+      drawLine(bl, br, "rgba(255,255,255,.15)");
+      drawLine(br, bbr, "rgba(255,255,255,.15)");
+
+      // Draw right side face
+      drawQuad([fr, fbr, bbr, br], "rgba(10,132,255,.08)", "rgba(10,132,255,.3)");
+
+      // Draw front face
+      drawQuad([fl, fr, fbr, fbl], "rgba(10,132,255,.12)", "rgba(10,132,255,.4)");
+
+      // Draw top face (original position)
+      drawQuad([topFL, topFR, topBR, topBL], "rgba(10,132,255,.06)", "rgba(10,132,255,.2)");
+
+      if (progress > 0) {
+        // Side walls of extrusion
+        drawQuad([topFL, eTopFL, eTopFR, topFR], "rgba(16,185,129,.1)", "rgba(16,185,129,.4)");
+        drawQuad([topFR, eTopFR, eTopBR, topBR], "rgba(16,185,129,.08)", "rgba(16,185,129,.35)");
+        drawQuad([topBL, eTopBL, eTopBR, topBR], "rgba(16,185,129,.06)", "rgba(16,185,129,.3)");
+        drawQuad([topFL, eTopFL, eTopBL, topBL], "rgba(16,185,129,.07)", "rgba(16,185,129,.3)");
+
+        // Extruded top face
+        drawQuad([eTopFL, eTopFR, eTopBR, eTopBL], "rgba(16,185,129,.2)", "rgba(16,185,129,.6)");
+      }
+
+      // Label
+      drawLabel("Extrude Region", W / 2, H - 20, "rgba(16,185,129,.9)");
+      drawLabel("하나의 면이 균일하게 위로 돌출", W / 2, H - 4, "rgba(255,255,255,.4)", 11);
+
+    } else if (mode === "normals") {
+      // Three top sub-faces, each moves along its own normal
+      // Split the top face into 3 sections
+      var thirdW = boxW / 3;
+
+      // Draw base box first
+      drawLine(bl, br, "rgba(255,255,255,.15)");
+      drawLine(br, bbr, "rgba(255,255,255,.15)");
+      drawQuad([fr, fbr, bbr, br], "rgba(10,132,255,.08)", "rgba(10,132,255,.3)");
+      drawQuad([fl, fr, fbr, fbl], "rgba(10,132,255,.12)", "rgba(10,132,255,.4)");
+
+      // Three sub-faces on top with different normal angles
+      var normals = [
+        { angle: -0.3, color: "rgba(245,158,11," },  // left section tilted
+        { angle: 0, color: "rgba(16,185,129," },       // center section straight up
+        { angle: 0.25, color: "rgba(168,85,247," }     // right section tilted other way
+      ];
+
+      for (var i = 0; i < 3; i++) {
+        var secFL = { x: fl.x + thirdW * i, y: fl.y };
+        var secFR = { x: fl.x + thirdW * (i + 1), y: fl.y };
+        var secBR = { x: bl.x + (dx > 0 ? thirdW * (i + 1) * (1 + dx / boxW) : thirdW * (i + 1)), y: bl.y };
+        var secBL = { x: bl.x + (dx > 0 ? thirdW * i * (1 + dx / boxW) : thirdW * i), y: bl.y };
+
+        // Recalculate back positions properly
+        var frac_l = i / 3;
+        var frac_r = (i + 1) / 3;
+        secBL = { x: lerp(bl.x, br.x, frac_l), y: lerp(bl.y, br.y, frac_l) };
+        secBR = { x: lerp(bl.x, br.x, frac_r), y: lerp(bl.y, br.y, frac_r) };
+        secFL = { x: lerp(fl.x, fr.x, frac_l), y: fl.y };
+        secFR = { x: lerp(fl.x, fr.x, frac_r), y: fl.y };
+
+        // Original top section
+        drawQuad([secFL, secFR, secBR, secBL], normals[i].color + ".06)", normals[i].color + ".2)");
+
+        if (progress > 0) {
+          var ang = normals[i].angle;
+          var nx = Math.sin(ang) * extrudeLen;
+          var ny = -Math.cos(ang) * extrudeLen;
+          var eFL = { x: secFL.x + nx, y: secFL.y + ny };
+          var eFR = { x: secFR.x + nx, y: secFR.y + ny };
+          var eBR = { x: secBR.x + nx, y: secBR.y + ny };
+          var eBL = { x: secBL.x + nx, y: secBL.y + ny };
+
+          // Side walls
+          drawQuad([secFL, eFL, eFR, secFR], normals[i].color + ".1)", normals[i].color + ".4)");
+          drawQuad([secFR, eFR, eBR, secBR], normals[i].color + ".08)", normals[i].color + ".35)");
+          drawQuad([secBL, eBL, eBR, secBR], normals[i].color + ".06)", normals[i].color + ".3)");
+          drawQuad([secFL, eFL, eBL, secBL], normals[i].color + ".07)", normals[i].color + ".3)");
+
+          // Extruded top
+          drawQuad([eFL, eFR, eBR, eBL], normals[i].color + ".2)", normals[i].color + ".6)");
+
+          // Normal direction arrow
+          var arrowX = (secFL.x + secFR.x + secBR.x + secBL.x) / 4;
+          var arrowY = (secFL.y + secFR.y + secBR.y + secBL.y) / 4;
+          drawArrow(arrowX, arrowY, arrowX + nx * 0.6, arrowY + ny * 0.6, normals[i].color + ".7)");
+        }
+      }
+
+      drawLabel("Extrude Along Normals", W / 2, H - 20, "rgba(16,185,129,.9)");
+      drawLabel("각 면이 자기 법선 방향으로 돌출 (방향이 다름)", W / 2, H - 4, "rgba(255,255,255,.4)", 11);
+
+    } else if (mode === "individual") {
+      // Three top sub-faces, each separates independently
+      var thirdW2 = boxW / 3;
+      var gap = 8 * t; // faces separate with gap
+
+      // Draw base box
+      drawLine(bl, br, "rgba(255,255,255,.15)");
+      drawLine(br, bbr, "rgba(255,255,255,.15)");
+      drawQuad([fr, fbr, bbr, br], "rgba(10,132,255,.08)", "rgba(10,132,255,.3)");
+      drawQuad([fl, fr, fbr, fbl], "rgba(10,132,255,.12)", "rgba(10,132,255,.4)");
+
+      var indColors = [
+        "rgba(239,68,68,",
+        "rgba(16,185,129,",
+        "rgba(10,132,255,"
+      ];
+
+      for (var j = 0; j < 3; j++) {
+        var frac_l2 = j / 3;
+        var frac_r2 = (j + 1) / 3;
+        var sFL = { x: lerp(fl.x, fr.x, frac_l2), y: fl.y };
+        var sFR = { x: lerp(fl.x, fr.x, frac_r2), y: fl.y };
+        var sBR = { x: lerp(bl.x, br.x, frac_r2), y: lerp(bl.y, br.y, frac_r2) };
+        var sBL = { x: lerp(bl.x, br.x, frac_l2), y: lerp(bl.y, br.y, frac_l2) };
+
+        // Original top section
+        drawQuad([sFL, sFR, sBR, sBL], indColors[j] + ".06)", indColors[j] + ".2)");
+
+        if (progress > 0) {
+          // Each face goes straight up but with lateral offset (separation)
+          var lateralOff = (j - 1) * gap;
+          var eFL2 = { x: sFL.x + lateralOff, y: sFL.y - extrudeLen };
+          var eFR2 = { x: sFR.x + lateralOff, y: sFR.y - extrudeLen };
+          var eBR2 = { x: sBR.x + lateralOff, y: sBR.y - extrudeLen };
+          var eBL2 = { x: sBL.x + lateralOff, y: sBL.y - extrudeLen };
+
+          // Side walls
+          drawQuad([sFL, eFL2, eFR2, sFR], indColors[j] + ".1)", indColors[j] + ".4)");
+          drawQuad([sFR, eFR2, eBR2, sBR], indColors[j] + ".08)", indColors[j] + ".35)");
+          drawQuad([sBL, eBL2, eBR2, sBR], indColors[j] + ".06)", indColors[j] + ".3)");
+          drawQuad([sFL, eFL2, eBL2, sBL], indColors[j] + ".07)", indColors[j] + ".3)");
+
+          // Extruded top
+          drawQuad([eFL2, eFR2, eBR2, eBL2], indColors[j] + ".2)", indColors[j] + ".6)");
+        }
+      }
+
+      drawLabel("Extrude Individual", W / 2, H - 20, "rgba(10,132,255,.9)");
+      drawLabel("각 면이 독립적으로 분리되어 돌출", W / 2, H - 4, "rgba(255,255,255,.4)", 11);
+    }
+
+    // Mode indicator
+    ctx.fillStyle = "rgba(255,255,255,.5)";
+    ctx.font = "bold 12px sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("Edit Mode", 14, 22);
+  }
+
+  function drawQuad(pts, fillColor, strokeColor) {
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pts[0].y);
+    for (var i = 1; i < pts.length; i++) {
+      ctx.lineTo(pts[i].x, pts[i].y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = fillColor;
+    ctx.fill();
+    ctx.strokeStyle = strokeColor;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+
+  function drawLine(a, b, color) {
+    ctx.beginPath();
+    ctx.moveTo(a.x, a.y);
+    ctx.lineTo(b.x, b.y);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+
+  function drawArrow(x1, y1, x2, y2, color) {
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Arrowhead
+    var angle = Math.atan2(y2 - y1, x2 - x1);
+    var headLen = 8;
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - headLen * Math.cos(angle - 0.4), y2 - headLen * Math.sin(angle - 0.4));
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - headLen * Math.cos(angle + 0.4), y2 - headLen * Math.sin(angle + 0.4));
+    ctx.stroke();
+  }
+
+  function drawLabel(text, x, y, color, size) {
+    ctx.fillStyle = color || "rgba(255,255,255,.7)";
+    ctx.font = (size ? size : 13) + "px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(text, x, y);
+  }
+
+  function startAnimation() {
+    if (animId) cancelAnimationFrame(animId);
+    animProgress = 0;
+    animating = true;
+    var startTime = null;
+    var duration = 1200; // ms
+
+    function tick(timestamp) {
+      if (!startTime) startTime = timestamp;
+      var elapsed = timestamp - startTime;
+      animProgress = Math.min(elapsed / duration, 1);
+      drawScene(animProgress);
+      if (animProgress < 1) {
+        animId = requestAnimationFrame(tick);
+      } else {
+        animating = false;
+      }
+    }
+    animId = requestAnimationFrame(tick);
+  }
+
+  // Button handlers
+  var btnRegion = document.getElementById("btnRegion");
+  var btnNormals = document.getElementById("btnNormals");
+  var btnIndividual = document.getElementById("btnIndividual");
+  var allBtns = [btnRegion, btnNormals, btnIndividual];
+
+  function setMode(newMode, activeBtn) {
+    mode = newMode;
+    allBtns.forEach(function(b) { b.classList.remove("is-active"); });
+    activeBtn.classList.add("is-active");
+    startAnimation();
+  }
+
+  btnRegion.addEventListener("click", function() { setMode("region", btnRegion); });
+  btnNormals.addEventListener("click", function() { setMode("normals", btnNormals); });
+  btnIndividual.addEventListener("click", function() { setMode("individual", btnIndividual); });
+
+  // Touch support for buttons
+  btnRegion.addEventListener("touchend", function(e) { e.preventDefault(); setMode("region", btnRegion); });
+  btnNormals.addEventListener("touchend", function(e) { e.preventDefault(); setMode("normals", btnNormals); });
+  btnIndividual.addEventListener("touchend", function(e) { e.preventDefault(); setMode("individual", btnIndividual); });
+
+  // Initial draw
+  startAnimation();
+})();
+
+// ── Quiz Data ─────────────────────────────────
+initQuiz([
+  {
+    question: "Extrude Region\uACFC Extrude Along Normals\uC758 \uCC28\uC774\uC810\uC740 \uBB34\uC5C7\uC778\uAC00\uC694?",
+    options: [
+      "Region\uC740 \uBA74\uB9CC, Along Normals\uB294 \uC120\uB9CC \uB3CC\uCD9C\uD55C\uB2E4",
+      "Along Normals\uB294 \uAC01 \uBA74\uC758 \uAC1C\uBCC4 \uBC95\uC120 \uBC29\uD5A5\uC73C\uB85C \uB3CC\uCD9C\uD55C\uB2E4",
+      "Region\uC740 \uB290\uB9AC\uACE0 Along Normals\uB294 \uBE60\uB974\uB2E4",
+      "\uCC28\uC774\uAC00 \uC5C6\uB2E4"
+    ],
+    answer: 1,
+    explanation: "Extrude Region\uC740 \uC120\uD0DD \uC601\uC5ED \uC804\uCCB4\uB97C \uD558\uB098\uB85C \uBC00\uC5B4\uB0B4\uACE0, Along Normals\uB294 \uAC01 \uBA74\uC758 \uAC1C\uBCC4 \uBC95\uC120(\uC218\uC9C1) \uBC29\uD5A5\uC73C\uB85C \uB3CC\uCD9C\uD558\uC5EC \uACE1\uBA74\uC5D0\uC11C \uADE0\uC77C\uD55C \uB450\uAED8\uB97C \uB9CC\uB4ED\uB2C8\uB2E4."
+  },
+  {
+    question: "Loop Cut & Slide\uC758 \uB2E8\uCD95\uD0A4\uB294 \uBB34\uC5C7\uC778\uAC00\uC694?",
+    options: [
+      "K",
+      "Ctrl+R",
+      "I",
+      "Ctrl+B"
+    ],
+    answer: 1,
+    explanation: "Ctrl+R\uC744 \uB204\uB974\uBA74 \uB8E8\uD504 \uCEF7\uC774 \uBBF8\uB9AC\uBCF4\uAE30\uB85C \uD45C\uC2DC\uB418\uACE0, \uD074\uB9AD\uC73C\uB85C \uD655\uC815\uD55C \uB4A4 \uB9C8\uC6B0\uC2A4\uB85C \uC2AC\uB77C\uC774\uB4DC\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
+  },
+  {
+    question: "\uBA74 \uC548\uCABD\uC5D0 \uC0C8\uB85C\uC6B4 \uBA74\uC744 \uB9CC\uB4DC\uB294 \uB3C4\uAD6C\uB294 \uBB34\uC5C7\uC778\uAC00\uC694?",
+    options: [
+      "Extrude Region",
+      "Bevel Tool",
+      "Inset Faces",
+      "Loop Cut"
+    ],
+    answer: 2,
+    explanation: "Inset Faces(I)\uB294 \uC120\uD0DD\uD55C \uBA74 \uC548\uCABD\uC5D0 \uC0C8\uB85C\uC6B4 \uBA74\uC744 \uC0BD\uC785\uD569\uB2C8\uB2E4. \uCC3D\uBB38 \uD504\uB808\uC784\uC774\uB098 \uD328\uB110 \uB77C\uC778\uC744 \uB9CC\uB4E4 \uB54C \uD544\uC218\uC801\uC785\uB2C8\uB2E4."
+  },
+  {
+    question: "Knife Tool\uC758 \uB2E8\uCD95\uD0A4\uB294 \uBB34\uC5C7\uC778\uAC00\uC694?",
+    options: [
+      "Ctrl+K",
+      "Shift+K",
+      "K",
+      "Alt+K"
+    ],
+    answer: 2,
+    explanation: "K\uB97C \uB204\uB974\uBA74 Knife Tool\uC774 \uD65C\uC131\uD654\uB418\uACE0, \uBA74 \uC704\uC5D0 \uC790\uC720\uB86D\uAC8C \uC120\uC744 \uADF8\uC5B4 \uCEE4\uD305\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
+  },
+  {
+    question: "\uBAA8\uC11C\uB9AC\uB97C \uB465\uAE00\uAC8C \uAE4E\uB294 \uB3C4\uAD6C\uB294 \uBB34\uC5C7\uC778\uAC00\uC694?",
+    options: [
+      "Extrude Region",
+      "Inset Faces",
+      "Loop Cut",
+      "Bevel Tool"
+    ],
+    answer: 3,
+    explanation: "Bevel Tool(Ctrl+B)\uC740 \uBAA8\uC11C\uB9AC\uB97C \uAE4E\uC544 \uB465\uAE00\uAC8C \uB9CC\uB4ED\uB2C8\uB2E4. \uC2A4\uD06C\uB864 \uD720\uB85C \uC138\uADF8\uBA3C\uD2B8 \uC218\uB97C \uC870\uC808\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
+  }
+]);
+</script>
+
+</body>
+</html>

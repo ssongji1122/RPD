@@ -3,11 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Show Me — Mirror Modifier 이해</title>
+<title>Show Me — Shader Editor 이해</title>
 <style>
 /* ══════════════════════════════════════════════════
    Show Me Widget — Standalone Dark Theme
-   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
    ══════════════════════════════════════════════════ */
 :root {
   --bg:            #0a0a0a;
@@ -31,8 +30,6 @@
   --radius-lg:     24px;
   --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
 }
-
-/* ── Reset ── */
 *, *::before, *::after { box-sizing: border-box; }
 body {
   margin: 0; padding: 0;
@@ -42,8 +39,6 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
-
-/* ── Tab Navigation ── */
 .tabs {
   display: flex; gap: 0;
   border-bottom: 1px solid var(--line);
@@ -69,12 +64,8 @@ body {
   color: var(--key-soft);
   border-bottom-color: var(--key);
 }
-
-/* ── Tab Panels ── */
 .panel { display: none; padding: 20px 16px; }
 .panel.is-active { display: block; }
-
-/* ── Concept Cards ── */
 .concept-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -86,10 +77,7 @@ body {
   background: var(--surface);
   padding: 18px;
 }
-.concept-card h3 {
-  margin: 0 0 8px; font-size: 1rem;
-  display: flex; align-items: center; gap: 8px;
-}
+.concept-card h3 { margin: 0 0 8px; font-size: 1rem; }
 .concept-card p {
   margin: 0; color: var(--muted-strong);
   font-size: .88rem; line-height: 1.7;
@@ -98,8 +86,6 @@ body {
   margin: 8px 0 0; padding-left: 16px;
   color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
 }
-
-/* ── Badge ── */
 .badge {
   display: inline-block;
   padding: 3px 9px; border-radius: 999px;
@@ -108,8 +94,6 @@ body {
 .badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
 .badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
 .badge-amber { background: rgba(245,158,11,.15);  color: #fbbf24; }
-
-/* ── Keyboard Shortcut ── */
 .kbd {
   display: inline-block;
   padding: 3px 8px; border-radius: 6px;
@@ -119,8 +103,6 @@ body {
   font-size: .82rem; font-weight: 600;
   font-family: var(--font);
 }
-
-/* ── Canvas / Demo ── */
 .demo-wrap {
   border-radius: var(--radius-md);
   border: 1px solid var(--line);
@@ -128,9 +110,7 @@ body {
   overflow: hidden;
   margin: 14px 0;
 }
-.demo-wrap canvas {
-  display: block; width: 100%;
-}
+.demo-wrap canvas { display: block; width: 100%; }
 .demo-controls {
   display: flex; gap: 8px; padding: 12px;
   border-top: 1px solid var(--line);
@@ -155,8 +135,6 @@ body {
   color: var(--key-soft);
   border-color: rgba(10,132,255,.3);
 }
-
-/* ── Usage Grid ── */
 .usage-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -177,8 +155,6 @@ body {
   color: var(--muted-strong); font-size: .85rem;
   line-height: 1.8;
 }
-
-/* ── Tip Box ── */
 .tip-box {
   border-radius: var(--radius-md);
   border: 1px solid rgba(10,132,255,.2);
@@ -189,16 +165,8 @@ body {
   color: var(--muted-strong);
 }
 .tip-box strong { color: var(--key-soft); }
-
-/* ── Combo Section ── */
-.combo-section {
-  margin-top: 18px;
-}
-.combo-section h4 {
-  margin: 0 0 10px;
-  font-size: .92rem;
-  color: var(--text);
-}
+.combo-section { margin-top: 18px; }
+.combo-section h4 { margin: 0 0 10px; font-size: .92rem; color: var(--text); }
 .combo-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -211,18 +179,12 @@ body {
   padding: 12px 14px;
 }
 .combo-card .combo-name {
-  font-size: .86rem;
-  font-weight: 600;
-  color: var(--key-soft);
-  margin-bottom: 4px;
+  font-size: .86rem; font-weight: 600;
+  color: var(--key-soft); margin-bottom: 4px;
 }
 .combo-card .combo-desc {
-  font-size: .8rem;
-  color: var(--muted);
-  line-height: 1.5;
+  font-size: .8rem; color: var(--muted); line-height: 1.5;
 }
-
-/* ── Shortcut Reference ── */
 .shortcut-list {
   margin-top: 16px;
   padding: 14px 16px;
@@ -230,62 +192,40 @@ body {
   border: 1px solid var(--line);
   background: var(--surface);
 }
-.shortcut-list h4 {
-  margin: 0 0 10px;
-  font-size: .9rem;
-  color: var(--text);
-}
+.shortcut-list h4 { margin: 0 0 10px; font-size: .9rem; color: var(--text); }
 .shortcut-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  display: flex; align-items: center; gap: 10px;
   padding: 6px 0;
-  font-size: .84rem;
-  color: var(--muted-strong);
+  font-size: .84rem; color: var(--muted-strong);
 }
-.shortcut-row + .shortcut-row {
-  border-top: 1px solid var(--line);
-}
-.shortcut-keys {
-  flex-shrink: 0;
-}
+.shortcut-row + .shortcut-row { border-top: 1px solid var(--line); }
+.shortcut-keys { flex-shrink: 0; }
 .analogy {
   margin-top: 8px;
   padding: 10px 14px;
   border-radius: var(--radius-sm);
   background: rgba(245,158,11,.06);
   border: 1px solid rgba(245,158,11,.15);
-  font-size: .82rem;
-  color: #fbbf24;
+  font-size: .82rem; color: #fbbf24;
   font-style: italic;
 }
-
-/* ── Quiz ── */
-.quiz-progress {
-  font-size: .78rem; color: var(--muted);
-  margin-bottom: 12px;
-}
+.quiz-progress { font-size: .78rem; color: var(--muted); margin-bottom: 12px; }
 .quiz-question {
-  margin-bottom: 20px;
-  padding: 16px;
+  margin-bottom: 20px; padding: 16px;
   border-radius: var(--radius-md);
   border: 1px solid var(--line);
   background: var(--surface);
 }
-.quiz-question h4 {
-  margin: 0 0 12px; font-size: .94rem;
-}
+.quiz-question h4 { margin: 0 0 12px; font-size: .94rem; }
 .quiz-option {
   display: block; width: 100%;
-  padding: 10px 14px;
-  margin-bottom: 6px;
+  padding: 10px 14px; margin-bottom: 6px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--line);
   background: rgba(255,255,255,.025);
   color: var(--text);
   font: inherit; font-size: .86rem;
-  cursor: pointer;
-  text-align: left;
+  cursor: pointer; text-align: left;
   transition: background .14s, border-color .14s;
 }
 .quiz-option:hover {
@@ -306,50 +246,39 @@ body {
 .quiz-feedback {
   margin-top: 8px; padding: 10px 14px;
   border-radius: var(--radius-sm);
-  font-size: .84rem;
-  display: none;
+  font-size: .84rem; display: none;
 }
 .quiz-feedback.show { display: block; }
 .quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
 .quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: #fca5a5; }
-
 .quiz-score {
   text-align: center; padding: 20px;
   font-size: 1.1rem; font-weight: 600;
 }
 .quiz-retry {
   display: block; margin: 12px auto;
-  padding: 10px 24px;
-  border-radius: 999px;
+  padding: 10px 24px; border-radius: 999px;
   border: 1px solid var(--key);
   background: rgba(10,132,255,.12);
   color: var(--key-soft);
   font: inherit; font-size: .88rem;
-  cursor: pointer;
-  transition: background .14s;
+  cursor: pointer; transition: background .14s;
 }
 .quiz-retry:hover { background: rgba(10,132,255,.22); }
-
-/* ── Official Doc Reference ── */
 .doc-ref {
   margin-top: 16px;
   padding: 10px 14px;
   border-radius: var(--radius-sm);
   border: 1px solid rgba(10,132,255,.15);
   background: rgba(10,132,255,.04);
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  display: flex; align-items: center; gap: 8px;
 }
 .doc-ref a {
   color: var(--key-soft);
   font-size: .84rem;
-  text-decoration: none;
-  line-height: 1.5;
+  text-decoration: none; line-height: 1.5;
 }
 .doc-ref a:hover { text-decoration: underline; }
-
-/* ── Responsive ── */
 @media (max-width: 600px) {
   .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
   .tabs { padding: 0 8px; }
@@ -360,7 +289,6 @@ body {
 </head>
 <body>
 
-<!-- Tab Bar -->
 <nav class="tabs" role="tablist">
   <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
   <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
@@ -372,36 +300,47 @@ body {
 <section class="panel is-active" id="panel-concept" role="tabpanel">
   <div class="concept-grid">
     <div class="concept-card">
-      <h3>Mirror Modifier란?</h3>
-      <p>거울처럼 한쪽만 편집하면 반대쪽이 자동으로 따라오는 Modifier입니다. 좌우 대칭 모델을 만들 때 작업량을 절반으로 줄여줍니다.</p>
-      <div class="analogy">거울 앞에서 한쪽을 바꾸면 반대쪽이 자동으로 따라와요</div>
+      <h3>Shader Editor란?</h3>
+      <p>노드를 연결해서 재질을 만드는 비주얼 에디터예요. 레고 블록처럼 각 노드가 하나의 기능을 담당하고, 선으로 연결하면 복잡한 재질이 완성됩니다.</p>
+      <div class="analogy">레고 블록을 연결하듯 — 색상 블록 + 텍스처 블록 + 출력 블록을 이어서 재질을 조립해요</div>
     </div>
     <div class="concept-card">
-      <h3>Clipping이란?</h3>
-      <p>중심선을 넘지 못하게 하는 옵션입니다. ON이면 중심 정점이 정확히 중앙에 고정되어, 양쪽이 깔끔하게 이어집니다.</p>
-      <div class="analogy">중심선에 보이지 않는 벽이 생겨서 정점이 넘어가지 못해요</div>
+      <h3>핵심 노드 3가지</h3>
+      <ul>
+        <li><strong>Principled BSDF</strong> — 재질의 핵심 엔진 (색, 금속, 거칠기 등)</li>
+        <li><strong>Image Texture</strong> — 이미지 파일을 재질에 입히기</li>
+        <li><strong>Material Output</strong> — 최종 출력 (반드시 필요)</li>
+      </ul>
     </div>
   </div>
 
   <div class="shortcut-list">
     <h4>주요 단축키</h4>
     <div class="shortcut-row">
-      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">1</span></span>
-      <span>Modifier 추가 패널</span>
+      <span class="shortcut-keys"><span class="kbd">Shift</span> + <span class="kbd">A</span></span>
+      <span>노드 추가 메뉴</span>
     </div>
     <div class="shortcut-row">
-      <span class="shortcut-keys"><span class="kbd">S</span> <span class="kbd">X</span> <span class="kbd">0</span></span>
-      <span>중심선 정렬 (선택한 정점의 X좌표를 0으로)</span>
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">Shift</span> + <span class="kbd">Click</span></span>
+      <span>Viewer Node 연결 (노드 출력 미리보기)</span>
     </div>
     <div class="shortcut-row">
-      <span class="shortcut-keys">Clipping 체크박스</span>
-      <span>Properties &rarr; Modifier tab에서 설정</span>
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">T</span></span>
+      <span>Texture Mapping 노드 자동 연결</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">M</span></span>
+      <span>선택한 노드를 Frame으로 묶기</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">H</span></span>
+      <span>노드 숨기기/접기</span>
     </div>
   </div>
 
   <div class="doc-ref">
-    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html" target="_blank" rel="noopener">
-      📖 Blender 공식 문서 — Mirror Modifier
+    <a href="https://docs.blender.org/manual/en/latest/editors/shader_editor.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Shader Editor
     </a>
   </div>
 </section>
@@ -409,59 +348,61 @@ body {
 <!-- TAB 2: 시각적 비교 -->
 <section class="panel" id="panel-visual" role="tabpanel">
   <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    왼쪽 반의 꼭짓점을 드래그하면 오른쪽이 자동으로 미러됩니다.
+    노드를 드래그하여 연결 관계를 확인해보세요. 선을 따라가면 데이터 흐름을 이해할 수 있어요.
   </p>
   <div class="demo-wrap">
-    <canvas id="demoCanvas" width="680" height="300"></canvas>
+    <canvas id="demoCanvas" width="680" height="360"></canvas>
     <div class="demo-controls">
-      <button class="demo-btn is-active" id="btnClipping">Clipping ON</button>
+      <button class="demo-btn is-active" id="btnBasic">기본 구성</button>
+      <button class="demo-btn" id="btnTexture">텍스처 연결</button>
+      <button class="demo-btn" id="btnMix">Mix Shader</button>
       <button class="demo-btn" id="btnReset">초기화</button>
     </div>
   </div>
-  <p class="demo-hint">꼭짓점을 드래그해 보세요. Clipping을 토글하면 중심선 넘기 동작이 달라집니다.</p>
+  <p class="demo-hint">노드를 드래그해서 위치를 변경할 수 있어요. 각 구성 버튼으로 다른 노드 연결 패턴을 확인하세요.</p>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->
 <section class="panel" id="panel-when" role="tabpanel">
   <div class="usage-grid">
     <div class="usage-card">
-      <h4>Mirror가 필요할 때</h4>
+      <h4>Shader Editor가 필요할 때</h4>
       <ul>
-        <li>좌우 대칭 로봇</li>
-        <li>자동차</li>
-        <li>캐릭터 얼굴</li>
-        <li>가구</li>
+        <li>텍스처 이미지를 재질에 입힐 때</li>
+        <li>복잡한 그라데이션/패턴 재질</li>
+        <li>투명, 발광, 유리 등 특수 재질</li>
+        <li>여러 재질을 섞을 때 (Mix Shader)</li>
       </ul>
     </div>
     <div class="usage-card">
-      <h4>Mirror를 안 쓰는 경우</h4>
+      <h4>안 써도 되는 경우</h4>
       <ul>
-        <li>비대칭 디자인</li>
-        <li>유기적 형태</li>
-        <li>한쪽만 다른 디테일</li>
+        <li>단색 Base Color만 바꾸는 경우</li>
+        <li>기본 Metallic/Roughness 조절</li>
+        <li>Properties 패널에서 충분한 경우</li>
       </ul>
     </div>
   </div>
   <div class="tip-box">
-    <strong>팁:</strong> Mirror는 원점(Origin)이 중심에 있어야 해요. <span class="kbd">S</span>+<span class="kbd">X</span>+<span class="kbd">0</span>으로 중심선을 맞추고, 오브젝트를 먼저 중앙에 놓은 뒤 Mirror를 추가하세요.
+    <strong>팁:</strong> <span class="kbd">Ctrl</span>+<span class="kbd">Shift</span>+<span class="kbd">Click</span>으로 아무 노드나 클릭하면 그 노드의 출력만 미리 볼 수 있어요. 복잡한 노드 트리를 디버깅할 때 필수입니다.
   </div>
   <div class="combo-section">
-    <h4>자주 쓰는 조합</h4>
+    <h4>자주 쓰는 노드 조합</h4>
     <div class="combo-grid">
       <div class="combo-card">
-        <div class="combo-name">Mirror + Subdivision Surface</div>
-        <div class="combo-desc">Mirror로 대칭을 잡고 Subdivision으로 부드럽게. Mirror가 위, Subdivision이 아래 순서로 배치합니다.</div>
+        <div class="combo-name">Image Texture + Mapping + Tex Coord</div>
+        <div class="combo-desc">Ctrl+T로 한 번에 자동 연결. UV 기반 텍스처 매핑의 기본 세트.</div>
       </div>
       <div class="combo-card">
-        <div class="combo-name">Mirror + Solidify</div>
-        <div class="combo-desc">대칭 형태에 두께를 추가할 때. 얇은 판이나 갑옷 같은 모델에 유용합니다.</div>
+        <div class="combo-name">ColorRamp + Noise Texture</div>
+        <div class="combo-desc">절차적 패턴 생성. 나무결, 대리석, 녹 등 자연스러운 재질 표현.</div>
       </div>
     </div>
   </div>
 
   <div class="doc-ref">
-    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html" target="_blank" rel="noopener">
-      📖 Blender 공식 문서 — Mirror Modifier
+    <a href="https://docs.blender.org/manual/en/latest/editors/shader_editor.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Shader Editor
     </a>
   </div>
 </section>
@@ -486,16 +427,15 @@ document.querySelectorAll(".tab").forEach(function(tab) {
   });
 });
 
-// ── Quiz Engine (Safe DOM methods) ────────────
+// ── Quiz Engine ────────────────────────────────
 function initQuiz(questions) {
   var container = document.getElementById("quizArea");
   var score = 0, answered = 0;
-  var scoreDiv = null; // track score section for updates
+  var scoreDiv = null;
 
-  // Progress indicator
   var progress = document.createElement("div");
   progress.className = "quiz-progress";
-  progress.textContent = "문제 0 / " + questions.length + " \u00b7 점수 0점";
+  progress.textContent = "\uBB38\uC81C 0 / " + questions.length + " \u00b7 \uC810\uC218 0\uC810";
   container.appendChild(progress);
 
   questions.forEach(function(q, qi) {
@@ -528,13 +468,11 @@ function initQuiz(questions) {
           fb.className = "quiz-feedback show wrong-fb";
           fb.textContent = "\u274c " + q.explanation;
 
-          // Add retry button for wrong answers
           var retryBtn = document.createElement("button");
           retryBtn.className = "quiz-retry";
           retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
-          retryBtn.textContent = "다시 풀기";
+          retryBtn.textContent = "\uB2E4\uC2DC \uD480\uAE30";
           retryBtn.addEventListener("click", function() {
-            // Reset this question
             answered--;
             div.querySelectorAll(".quiz-option").forEach(function(b) {
               b.disabled = false;
@@ -543,13 +481,12 @@ function initQuiz(questions) {
             fb.className = "quiz-feedback";
             fb.textContent = "";
             retryBtn.remove();
-            // Remove score section if it was shown
             if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
-            progress.textContent = "문제 " + answered + " / " + questions.length + " \u00b7 점수 " + score + "점";
+            progress.textContent = "\uBB38\uC81C " + answered + " / " + questions.length + " \u00b7 \uC810\uC218 " + score + "\uC810";
           });
           fb.appendChild(retryBtn);
         }
-        progress.textContent = "문제 " + answered + " / " + questions.length + " \u00b7 점수 " + score + "점";
+        progress.textContent = "\uBB38\uC81C " + answered + " / " + questions.length + " \u00b7 \uC810\uC218 " + score + "\uC810";
         if (answered === questions.length) showScore();
       });
       div.appendChild(btn);
@@ -560,9 +497,7 @@ function initQuiz(questions) {
   });
 
   function showScore() {
-    // Remove previous score section if exists (e.g. after retry)
     if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
-
     scoreDiv = document.createElement("div");
     scoreDiv.className = "quiz-score";
 
@@ -573,19 +508,18 @@ function initQuiz(questions) {
 
     var result = document.createElement("div");
     result.style.cssText = "font-size:18px;font-weight:500;margin-bottom:6px";
-    result.textContent = score + " / " + questions.length + " 정답";
+    result.textContent = score + " / " + questions.length + " \uC815\uB2F5";
     scoreDiv.appendChild(result);
 
     var msg = document.createElement("div");
     msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
-    msg.textContent = score === questions.length ? "완벽합니다!" : "조금 더 연습하면 완벽해질 거예요!";
+    msg.textContent = score === questions.length ? "\uC644\uBCBD\uD569\uB2C8\uB2E4!" : "\uC870\uAE08 \uB354 \uC5F0\uC2B5\uD558\uBA74 \uC644\uBCBD\uD574\uC9C8 \uAC70\uC608\uC694!";
     scoreDiv.appendChild(msg);
 
-    // Save button — sends result to parent for Notion sync
     var saveBtn = document.createElement("button");
     saveBtn.className = "quiz-retry";
     saveBtn.style.cssText = "background:rgba(10,132,255,.18);border-color:var(--key);margin-bottom:8px";
-    saveBtn.textContent = "기록 저장하기";
+    saveBtn.textContent = "\uAE30\uB85D \uC800\uC7A5\uD558\uAE30";
     saveBtn.addEventListener("click", function() {
       try {
         var wid = new URLSearchParams(location.search).get("wid")
@@ -598,7 +532,7 @@ function initQuiz(questions) {
           pass: score >= Math.ceil(questions.length * 0.75)
         }, "*");
       } catch(e) {}
-      saveBtn.textContent = "저장 완료!";
+      saveBtn.textContent = "\uC800\uC7A5 \uC644\uB8CC!";
       saveBtn.disabled = true;
       saveBtn.style.opacity = ".5";
     });
@@ -606,7 +540,7 @@ function initQuiz(questions) {
 
     var retry = document.createElement("button");
     retry.className = "quiz-retry";
-    retry.textContent = "처음부터 다시";
+    retry.textContent = "\uCC98\uC74C\uBD80\uD130 \uB2E4\uC2DC";
     retry.addEventListener("click", function() { location.reload(); });
     scoreDiv.appendChild(retry);
 
@@ -614,129 +548,173 @@ function initQuiz(questions) {
   }
 }
 
-// ── Canvas Mirror Demo ────────────────────────
+// ── Canvas Node Editor Demo ────────────────────
 (function() {
   var canvas = document.getElementById("demoCanvas");
   var ctx = canvas.getContext("2d");
-  var clipping = true;
   var dragging = -1;
-  var hitRadius = 14;
+  var dragOffX = 0, dragOffY = 0;
 
-  // Initial left-half vertices (robot torso shape, top-down view)
-  // These are offsets from center — stored as positive X values from center
-  var defaultVerts = [
-    { x: 10,  y: 60  },  // top-center-ish
-    { x: 100, y: 50  },  // top-right shoulder
-    { x: 120, y: 90  },  // right shoulder corner
-    { x: 110, y: 160 },  // right waist
-    { x: 90,  y: 220 },  // right hip
-    { x: 10,  y: 240 },  // bottom-center-ish
-  ];
+  // Node definitions
+  var presets = {
+    basic: [
+      { id: "pbsdf", label: "Principled BSDF", x: 100, y: 100, w: 180, h: 80, color: "rgba(10,132,255,.3)", inputs: ["Base Color", "Metallic", "Roughness"], outputs: ["BSDF"] },
+      { id: "output", label: "Material Output", x: 420, y: 120, w: 160, h: 60, color: "rgba(16,185,129,.3)", inputs: ["Surface"], outputs: [] }
+    ],
+    texture: [
+      { id: "texcoord", label: "Tex Coordinate", x: 20, y: 40, w: 150, h: 60, color: "rgba(245,158,11,.25)", inputs: [], outputs: ["UV"] },
+      { id: "mapping", label: "Mapping", x: 30, y: 160, w: 140, h: 60, color: "rgba(245,158,11,.25)", inputs: ["Vector"], outputs: ["Vector"] },
+      { id: "imgtex", label: "Image Texture", x: 230, y: 60, w: 160, h: 70, color: "rgba(168,85,247,.3)", inputs: ["Vector"], outputs: ["Color"] },
+      { id: "pbsdf", label: "Principled BSDF", x: 230, y: 200, w: 180, h: 80, color: "rgba(10,132,255,.3)", inputs: ["Base Color", "Metallic", "Roughness"], outputs: ["BSDF"] },
+      { id: "output", label: "Material Output", x: 500, y: 180, w: 160, h: 60, color: "rgba(16,185,129,.3)", inputs: ["Surface"], outputs: [] }
+    ],
+    mix: [
+      { id: "pbsdf1", label: "Principled BSDF", x: 30, y: 30, w: 170, h: 70, color: "rgba(10,132,255,.3)", inputs: ["Base Color"], outputs: ["BSDF"] },
+      { id: "pbsdf2", label: "Principled BSDF", x: 30, y: 200, w: 170, h: 70, color: "rgba(10,132,255,.3)", inputs: ["Base Color"], outputs: ["BSDF"] },
+      { id: "mix", label: "Mix Shader", x: 300, y: 110, w: 150, h: 80, color: "rgba(239,68,68,.25)", inputs: ["Fac", "Shader", "Shader"], outputs: ["Shader"] },
+      { id: "output", label: "Material Output", x: 520, y: 130, w: 160, h: 60, color: "rgba(16,185,129,.3)", inputs: ["Surface"], outputs: [] }
+    ]
+  };
 
-  // Working copy
-  var verts = [];
-  function resetVerts() {
-    verts = defaultVerts.map(function(v) { return { x: v.x, y: v.y }; });
+  var connections = {
+    basic: [
+      { from: "pbsdf", fromIdx: 0, to: "output", toIdx: 0 }
+    ],
+    texture: [
+      { from: "texcoord", fromIdx: 0, to: "mapping", toIdx: 0 },
+      { from: "mapping", fromIdx: 0, to: "imgtex", toIdx: 0 },
+      { from: "imgtex", fromIdx: 0, to: "pbsdf", toIdx: 0 },
+      { from: "pbsdf", fromIdx: 0, to: "output", toIdx: 0 }
+    ],
+    mix: [
+      { from: "pbsdf1", fromIdx: 0, to: "mix", toIdx: 1 },
+      { from: "pbsdf2", fromIdx: 0, to: "mix", toIdx: 2 },
+      { from: "mix", fromIdx: 0, to: "output", toIdx: 0 }
+    ]
+  };
+
+  var currentPreset = "basic";
+  var nodes = [];
+
+  function loadPreset(name) {
+    currentPreset = name;
+    nodes = presets[name].map(function(n) {
+      return { id: n.id, label: n.label, x: n.x, y: n.y, w: n.w, h: n.h, color: n.color, inputs: n.inputs.slice(), outputs: n.outputs.slice() };
+    });
+    draw();
   }
-  resetVerts();
 
-  var centerX = canvas.width / 2;
+  function getNodeById(id) {
+    for (var i = 0; i < nodes.length; i++) {
+      if (nodes[i].id === id) return nodes[i];
+    }
+    return null;
+  }
 
   function draw() {
-    var w = canvas.width;
-    var h = canvas.height;
-    ctx.clearRect(0, 0, w, h);
-
-    // Background
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "#17181a";
-    ctx.fillRect(0, 0, w, h);
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Grid lines (subtle)
-    ctx.strokeStyle = "rgba(255,255,255,.04)";
+    // Grid
+    ctx.strokeStyle = "rgba(255,255,255,.03)";
     ctx.lineWidth = 1;
-    var step = 40;
-    for (var gx = step; gx < w; gx += step) {
-      ctx.beginPath();
-      ctx.moveTo(gx, 0);
-      ctx.lineTo(gx, h);
-      ctx.stroke();
+    for (var gx = 20; gx < canvas.width; gx += 20) {
+      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, canvas.height); ctx.stroke();
     }
-    for (var gy = step; gy < h; gy += step) {
-      ctx.beginPath();
-      ctx.moveTo(0, gy);
-      ctx.lineTo(w, gy);
-      ctx.stroke();
+    for (var gy = 20; gy < canvas.height; gy += 20) {
+      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(canvas.width, gy); ctx.stroke();
     }
 
-    // Center mirror axis — dashed line
-    ctx.strokeStyle = "rgba(245,158,11,.5)";
-    ctx.lineWidth = 2;
-    ctx.setLineDash([8, 6]);
-    ctx.beginPath();
-    ctx.moveTo(centerX, 0);
-    ctx.lineTo(centerX, h);
-    ctx.stroke();
-    ctx.setLineDash([]);
+    // Draw connections
+    var conns = connections[currentPreset] || [];
+    conns.forEach(function(c) {
+      var fromNode = getNodeById(c.from);
+      var toNode = getNodeById(c.to);
+      if (fromNode === null || toNode === null) return;
 
-    // Axis label
-    ctx.fillStyle = "rgba(245,158,11,.7)";
+      var fx = fromNode.x + fromNode.w;
+      var fy = fromNode.y + 30 + c.fromIdx * 18;
+      var tx = toNode.x;
+      var ty = toNode.y + 30 + c.toIdx * 18;
+
+      ctx.beginPath();
+      ctx.moveTo(fx, fy);
+      var cx1 = fx + 60;
+      var cx2 = tx - 60;
+      ctx.bezierCurveTo(cx1, fy, cx2, ty, tx, ty);
+      ctx.strokeStyle = "rgba(10,132,255,.6)";
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      // Arrow dot at end
+      ctx.beginPath();
+      ctx.arc(tx, ty, 4, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(10,132,255,.8)";
+      ctx.fill();
+    });
+
+    // Draw nodes
+    nodes.forEach(function(n, i) {
+      // Shadow
+      ctx.fillStyle = "rgba(0,0,0,.3)";
+      ctx.fillRect(n.x + 3, n.y + 3, n.w, n.h);
+
+      // Node body
+      ctx.fillStyle = n.color;
+      ctx.fillRect(n.x, n.y, n.w, n.h);
+      ctx.strokeStyle = (dragging === i) ? "rgba(10,132,255,.8)" : "rgba(255,255,255,.15)";
+      ctx.lineWidth = (dragging === i) ? 2 : 1;
+      ctx.strokeRect(n.x, n.y, n.w, n.h);
+
+      // Title bar
+      ctx.fillStyle = "rgba(0,0,0,.3)";
+      ctx.fillRect(n.x, n.y, n.w, 22);
+
+      // Title text
+      ctx.fillStyle = "#f5f5f7";
+      ctx.font = "bold 11px sans-serif";
+      ctx.textAlign = "left";
+      ctx.fillText(n.label, n.x + 8, n.y + 15);
+
+      // Input ports
+      ctx.font = "10px sans-serif";
+      ctx.fillStyle = "rgba(255,255,255,.6)";
+      n.inputs.forEach(function(inp, ii) {
+        var py = n.y + 30 + ii * 18;
+        ctx.beginPath();
+        ctx.arc(n.x, py, 5, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(255,255,255,.2)";
+        ctx.fill();
+        ctx.strokeStyle = "rgba(255,255,255,.3)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.fillStyle = "rgba(255,255,255,.6)";
+        ctx.textAlign = "left";
+        ctx.fillText(inp, n.x + 10, py + 4);
+      });
+
+      // Output ports
+      n.outputs.forEach(function(out, oi) {
+        var py = n.y + 30 + oi * 18;
+        ctx.beginPath();
+        ctx.arc(n.x + n.w, py, 5, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(10,132,255,.4)";
+        ctx.fill();
+        ctx.strokeStyle = "rgba(10,132,255,.5)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.fillStyle = "rgba(255,255,255,.6)";
+        ctx.textAlign = "right";
+        ctx.fillText(out, n.x + n.w - 10, py + 4);
+      });
+    });
+
+    // Data flow label
+    ctx.fillStyle = "rgba(255,255,255,.3)";
     ctx.font = "11px sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("Mirror Axis (X=0)", centerX, 18);
-
-    // Draw left half polygon (original)
-    drawPolygon(verts, -1, "rgba(10,132,255,.25)", "rgba(10,132,255,.7)");
-
-    // Draw right half polygon (mirrored)
-    var mirrored = verts.map(function(v) {
-      return { x: v.x, y: v.y };
-    });
-    drawPolygon(mirrored, 1, "rgba(16,185,129,.15)", "rgba(16,185,129,.5)");
-
-    // Labels
-    ctx.font = "bold 12px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillStyle = "rgba(10,132,255,.8)";
-    ctx.fillText("Original (Edit)", centerX - 80, h - 14);
-    ctx.fillStyle = "rgba(16,185,129,.6)";
-    ctx.fillText("Mirrored (Auto)", centerX + 80, h - 14);
-
-    // Draw vertex handles on left side
-    verts.forEach(function(v, i) {
-      var sx = centerX - v.x;
-      var sy = v.y;
-      ctx.beginPath();
-      ctx.arc(sx, sy, 6, 0, Math.PI * 2);
-      ctx.fillStyle = (dragging === i) ? "#0a84ff" : "rgba(10,132,255,.9)";
-      ctx.fill();
-      ctx.strokeStyle = "#fff";
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-    });
-
-    // Clipping indicator
-    ctx.fillStyle = clipping ? "rgba(16,185,129,.7)" : "rgba(239,68,68,.7)";
-    ctx.font = "bold 11px sans-serif";
-    ctx.textAlign = "left";
-    ctx.fillText("Clipping: " + (clipping ? "ON" : "OFF"), 12, 18);
-  }
-
-  function drawPolygon(pts, side, fillColor, strokeColor) {
-    // side: -1 = left of center, +1 = right of center
-    if (pts.length < 2) return;
-    ctx.beginPath();
-    pts.forEach(function(v, i) {
-      var sx = (side === -1) ? (centerX - v.x) : (centerX + v.x);
-      var sy = v.y;
-      if (i === 0) ctx.moveTo(sx, sy);
-      else ctx.lineTo(sx, sy);
-    });
-    ctx.closePath();
-    ctx.fillStyle = fillColor;
-    ctx.fill();
-    ctx.strokeStyle = strokeColor;
-    ctx.lineWidth = 2;
-    ctx.stroke();
+    ctx.fillText("\u2192 \uB370\uC774\uD130 \uD750\uB984 \u2192", canvas.width / 2, canvas.height - 12);
   }
 
   function getEventPos(e) {
@@ -757,146 +735,120 @@ function initQuiz(questions) {
     };
   }
 
-  function findVertex(pos) {
-    var best = -1;
-    var bestDist = hitRadius * hitRadius;
-    verts.forEach(function(v, i) {
-      var sx = centerX - v.x;
-      var sy = v.y;
-      var dx = pos.x - sx;
-      var dy = pos.y - sy;
-      var d2 = dx * dx + dy * dy;
-      if (d2 < bestDist) {
-        bestDist = d2;
-        best = i;
+  function findNode(pos) {
+    for (var i = nodes.length - 1; i >= 0; i--) {
+      var n = nodes[i];
+      if (pos.x >= n.x && pos.x <= n.x + n.w && pos.y >= n.y && pos.y <= n.y + n.h) {
+        return i;
       }
-    });
-    return best;
+    }
+    return -1;
   }
 
   function onDown(e) {
     e.preventDefault();
     var pos = getEventPos(e);
-    dragging = findVertex(pos);
-    if (dragging >= 0) draw();
+    dragging = findNode(pos);
+    if (dragging >= 0) {
+      dragOffX = pos.x - nodes[dragging].x;
+      dragOffY = pos.y - nodes[dragging].y;
+      draw();
+    }
   }
 
   function onMove(e) {
     if (dragging < 0) return;
     e.preventDefault();
     var pos = getEventPos(e);
-    // Convert screen position to vertex coords (offset from center)
-    var newX = centerX - pos.x;
-    var newY = pos.y;
-
-    // Clamp Y
-    if (newY < 10) newY = 10;
-    if (newY > canvas.height - 10) newY = canvas.height - 10;
-
-    // Clipping: prevent crossing center line (x must stay >= 0)
-    if (clipping) {
-      if (newX < 0) newX = 0;
-    }
-    // Even without clipping, don't go too far right
-    if (newX > centerX - 10) newX = centerX - 10;
-
-    verts[dragging].x = newX;
-    verts[dragging].y = newY;
+    nodes[dragging].x = Math.max(0, Math.min(canvas.width - nodes[dragging].w, pos.x - dragOffX));
+    nodes[dragging].y = Math.max(0, Math.min(canvas.height - nodes[dragging].h, pos.y - dragOffY));
     draw();
   }
 
-  function onUp(e) {
+  function onUp() {
     if (dragging >= 0) {
       dragging = -1;
       draw();
     }
   }
 
-  // Mouse events
   canvas.addEventListener("mousedown", onDown);
   canvas.addEventListener("mousemove", onMove);
   canvas.addEventListener("mouseup", onUp);
   canvas.addEventListener("mouseleave", onUp);
-
-  // Touch events
   canvas.addEventListener("touchstart", onDown, { passive: false });
   canvas.addEventListener("touchmove", onMove, { passive: false });
   canvas.addEventListener("touchend", onUp);
   canvas.addEventListener("touchcancel", onUp);
 
-  // Clipping toggle
-  var btnClipping = document.getElementById("btnClipping");
-  btnClipping.addEventListener("click", function() {
-    clipping = !clipping;
-    if (clipping) {
-      btnClipping.textContent = "Clipping ON";
-      btnClipping.classList.add("is-active");
-      // Enforce clipping on current verts
-      verts.forEach(function(v) {
-        if (v.x < 0) v.x = 0;
-      });
-    } else {
-      btnClipping.textContent = "Clipping OFF";
-      btnClipping.classList.remove("is-active");
-    }
-    draw();
+  // Preset buttons
+  document.getElementById("btnBasic").addEventListener("click", function() {
+    loadPreset("basic");
+    document.querySelectorAll(".demo-controls .demo-btn").forEach(function(b) { b.classList.remove("is-active"); });
+    this.classList.add("is-active");
   });
-
-  // Reset button
+  document.getElementById("btnTexture").addEventListener("click", function() {
+    loadPreset("texture");
+    document.querySelectorAll(".demo-controls .demo-btn").forEach(function(b) { b.classList.remove("is-active"); });
+    this.classList.add("is-active");
+  });
+  document.getElementById("btnMix").addEventListener("click", function() {
+    loadPreset("mix");
+    document.querySelectorAll(".demo-controls .demo-btn").forEach(function(b) { b.classList.remove("is-active"); });
+    this.classList.add("is-active");
+  });
   document.getElementById("btnReset").addEventListener("click", function() {
-    resetVerts();
-    draw();
+    loadPreset(currentPreset);
   });
 
-  // Initial draw
-  draw();
+  loadPreset("basic");
 })();
 
 // ── Quiz Data ─────────────────────────────────
 initQuiz([
   {
-    question: "Mirror Modifier\uB97C \uCD94\uAC00\uD588\uB294\uB370 \uBBF8\uB7EC\uB41C \uBC18\uCABD\uC774 \uC774\uC0C1\uD55C \uACF3\uC5D0 \uB098\uD0C0\uB098\uC694. \uAC00\uC7A5 \uD754\uD55C \uC6D0\uC778\uC740?",
+    question: "Shader Editor\uC5D0\uC11C \uB178\uB4DC\uB97C \uCD94\uAC00\uD558\uB294 \uB2E8\uCD95\uD0A4\uB294?",
     options: [
-      "Apply Scale\uC744 \uC548 \uD574\uC11C",
-      "Origin\uC774 \uC624\uBE0C\uC81D\uD2B8 \uC911\uC2EC\uC5D0 \uC788\uC9C0 \uC54A\uC544\uC11C",
-      "Clipping\uC774 \uCF1C\uC838 \uC788\uC5B4\uC11C",
-      "Edit Mode\uAC00 \uC544\uB2C8\uB77C\uC11C"
+      "Ctrl + A",
+      "Shift + A",
+      "Alt + A",
+      "Ctrl + N"
     ],
     answer: 1,
-    explanation: "Mirror\uB294 Origin\uC744 \uAE30\uC900\uC73C\uB85C \uBC18\uC804\uD569\uB2C8\uB2E4. Origin\uC774 \uC624\uBE0C\uC81D\uD2B8 \uC911\uC2EC\uC5D0 \uC788\uC9C0 \uC54A\uC73C\uBA74 \uBBF8\uB7EC\uB41C \uBC18\uCABD\uC774 \uC5C9\uB69A\uD55C \uC704\uCE58\uC5D0 \uC0DD\uAE41\uB2C8\uB2E4."
+    explanation: "Shift + A\uB97C \uB204\uB974\uBA74 Add \uBA54\uB274\uAC00 \uC5F4\uB9AC\uACE0 \uC6D0\uD558\uB294 \uB178\uB4DC\uB97C \uAC80\uC0C9/\uCD94\uAC00\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
   },
   {
-    question: "Clipping \uC635\uC158\uC744 \uCF1C\uBA74 \uC5B4\uB5A4 \uD6A8\uACFC\uAC00 \uC788\uB098\uC694?",
+    question: "Material Output \uB178\uB4DC\uC758 \uC5ED\uD560\uC740?",
     options: [
-      "\uBBF8\uB7EC\uAC00 \uBE44\uD65C\uC131\uD654\uB41C\uB2E4",
-      "\uC790\uB3D9\uC73C\uB85C Apply\uB41C\uB2E4",
-      "\uC911\uC2EC \uC815\uC810\uC774 \uBBF8\uB7EC \uCD95\uC744 \uB118\uC9C0 \uBABB\uD55C\uB2E4",
-      "\uBC18\uB300\uD3B8\uC774 \uC228\uACA8\uC9C4\uB2E4"
+      "\uC0C9\uC0C1\uC744 \uC12D\uB294 \uAC83",
+      "\uD14D\uC2A4\uCC98\uB97C \uBD88\uB7EC\uC624\uB294 \uAC83",
+      "\uCD5C\uC885 \uC7AC\uC9C8 \uACB0\uACFC\uB97C \uCD9C\uB825\uD558\uB294 \uAC83",
+      "\uBE5B\uC744 \uCD94\uAC00\uD558\uB294 \uAC83"
     ],
     answer: 2,
-    explanation: "Clipping\uC744 \uCF1C\uBA74 \uC815\uC810\uC774 \uBBF8\uB7EC \uCD95\uC744 \uB118\uC5B4\uAC00\uC9C0 \uBABB\uD569\uB2C8\uB2E4. \uC774\uB807\uAC8C \uD558\uBA74 \uC911\uC2EC\uC120\uC5D0\uC11C \uC591\uCABD\uC774 \uAE54\uB054\uD558\uAC8C \uC774\uC5B4\uC9D1\uB2C8\uB2E4."
+    explanation: "Material Output\uC740 \uB178\uB4DC \uD2B8\uB9AC\uC758 \uCD5C\uC885 \uCD9C\uB825\uC810\uC785\uB2C8\uB2E4. \uC774 \uB178\uB4DC\uAC00 \uC5C6\uC73C\uBA74 \uC7AC\uC9C8\uC774 \uD45C\uC2DC\uB418\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4."
   },
   {
-    question: "S \u2192 X \u2192 0\uC744 \uB204\uB974\uBA74 \uC5B4\uB5A4 \uC77C\uC774 \uC77C\uC5B4\uB098\uB098\uC694?",
+    question: "Ctrl + T\uB97C \uB204\uB974\uBA74 \uC5B4\uB5A4 \uB178\uB4DC\uB4E4\uC774 \uC790\uB3D9 \uC5F0\uACB0\uB418\uB098\uC694?",
     options: [
-      "\uC624\uBE0C\uC81D\uD2B8\uAC00 \uC0AD\uC81C\uB41C\uB2E4",
-      "X\uCD95 \uBBF8\uB7EC\uAC00 \uC801\uC6A9\uB41C\uB2E4",
-      "X\uC88C\uD45C\uAC00 0\uC774 \uB418\uC5B4 \uC911\uC2EC\uC120 \uC815\uB82C",
-      "\uC2A4\uCF00\uC77C\uC774 \uCD08\uAE30\uD654\uB41C\uB2E4"
+      "ColorRamp + MixRGB",
+      "Texture Coordinate + Mapping",
+      "Normal Map + Bump",
+      "Emission + Volume"
     ],
-    answer: 2,
-    explanation: "S(Scale) \u2192 X(\uCD95 \uC81C\uD55C) \u2192 0(\uAC12)\uC744 \uB204\uB974\uBA74 \uC120\uD0DD\uD55C \uC815\uC810\uC758 X\uC88C\uD45C\uAC00 0\uC774 \uB418\uC5B4 \uC815\uD655\uD788 \uC911\uC2EC\uC120\uC5D0 \uC815\uB82C\uB429\uB2C8\uB2E4."
+    answer: 1,
+    explanation: "Ctrl + T\uB294 Texture Coordinate\uC640 Mapping \uB178\uB4DC\uB97C \uC790\uB3D9\uC73C\uB85C \uCD94\uAC00\uD558\uACE0 \uC5F0\uACB0\uD574\uC90D\uB2C8\uB2E4. \uD14D\uC2A4\uCC98 \uB9E4\uD551\uC758 \uAE30\uBCF8 \uC138\uD2B8\uC785\uB2C8\uB2E4."
   },
   {
-    question: "Mirror + Subdivision Surface \uC870\uD569\uC5D0\uC11C Modifier \uC21C\uC11C\uB294?",
+    question: "Ctrl + Shift + Click\uC73C\uB85C \uB178\uB4DC\uB97C \uD074\uB9AD\uD558\uBA74?",
     options: [
-      "\uC21C\uC11C \uC0C1\uAD00\uC5C6\uB2E4",
-      "Subdivision\uC774 \uC704",
-      "Mirror\uAC00 \uC704",
-      "\uB458 \uB2E4 Apply \uD6C4 \uC0AC\uC6A9"
+      "\uB178\uB4DC\uAC00 \uC0AD\uC81C\uB41C\uB2E4",
+      "\uB178\uB4DC\uAC00 \uBCF5\uC81C\uB41C\uB2E4",
+      "Viewer Node\uAC00 \uC5F0\uACB0\uB418\uC5B4 \uCD9C\uB825\uC744 \uBBF8\uB9AC\uBCFC \uC218 \uC788\uB2E4",
+      "\uB178\uB4DC\uAC00 Frame\uC73C\uB85C \uBB36\uC778\uB2E4"
     ],
     answer: 2,
-    explanation: "Mirror\uAC00 \uC704\uC5D0, Subdivision\uC774 \uC544\uB798\uC5D0 \uC640\uC57C \uD569\uB2C8\uB2E4. \uBA3C\uC800 \uB300\uCE6D\uC744 \uC7A1\uACE0 \uB098\uC11C \uBD80\uB4DC\uB7FD\uAC8C \uB9CC\uB4DC\uB294 \uAC83\uC774 \uC62C\uBC14\uB978 \uC21C\uC11C\uC785\uB2C8\uB2E4."
+    explanation: "Ctrl + Shift + Click\uC740 Viewer Node\uB97C \uC790\uB3D9\uC73C\uB85C \uC5F0\uACB0\uD574\uC11C \uD574\uB2F9 \uB178\uB4DC\uC758 \uCD9C\uB825\uB9CC \uBBF8\uB9AC\uBCFC \uC218 \uC788\uAC8C \uD569\uB2C8\uB2E4."
   }
 ]);
 </script>

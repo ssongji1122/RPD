@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — Apply Scale/Rotation 이해</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Tab Navigation ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+
+/* ── Tab Panels ── */
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+
+/* ── Concept Cards ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card h3 {
+  margin: 0 0 8px; font-size: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.concept-card p {
+  margin: 0; color: var(--muted-strong);
+  font-size: .88rem; line-height: 1.7;
+}
+.concept-card ul {
+  margin: 8px 0 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
+}
+
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: .72rem; font-weight: 600;
+}
+.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: #fbbf24; }
+
+/* ── Keyboard Shortcut ── */
+.kbd {
+  display: inline-block;
+  padding: 3px 8px; border-radius: 6px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  color: var(--key-soft);
+  font-size: .82rem; font-weight: 600;
+  font-family: var(--font);
+}
+
+/* ── Canvas / Demo ── */
+.demo-wrap {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+  margin: 14px 0;
+}
+.demo-wrap canvas {
+  display: block; width: 100%;
+}
+.demo-controls {
+  display: flex; gap: 8px; padding: 12px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.demo-hint {
+  font-size: .78rem; color: var(--muted);
+  text-align: center; padding: 6px 0 0;
+}
+.demo-btn {
+  padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .82rem;
+  cursor: pointer;
+  transition: background .14s, color .14s;
+}
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active {
+  background: rgba(10,132,255,.14);
+  color: var(--key-soft);
+  border-color: rgba(10,132,255,.3);
+}
+
+/* ── Usage Grid ── */
+.usage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.usage-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 16px;
+}
+.usage-card h4 {
+  margin: 0 0 8px; font-size: .92rem;
+  color: var(--key-soft);
+}
+.usage-card ul {
+  margin: 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem;
+  line-height: 1.8;
+}
+
+/* ── Tip Box ── */
+.tip-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(10,132,255,.2);
+  background: rgba(10,132,255,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+}
+.tip-box strong { color: var(--key-soft); }
+
+/* ── Combo Section ── */
+.combo-section {
+  margin-top: 18px;
+}
+.combo-section h4 {
+  margin: 0 0 10px;
+  font-size: .92rem;
+  color: var(--text);
+}
+.combo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.combo-card {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 12px 14px;
+}
+.combo-card .combo-name {
+  font-size: .86rem;
+  font-weight: 600;
+  color: var(--key-soft);
+  margin-bottom: 4px;
+}
+.combo-card .combo-desc {
+  font-size: .8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ── Shortcut Reference ── */
+.shortcut-list {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.shortcut-list h4 {
+  margin: 0 0 10px;
+  font-size: .9rem;
+  color: var(--text);
+}
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: .84rem;
+  color: var(--muted-strong);
+}
+.shortcut-row + .shortcut-row {
+  border-top: 1px solid var(--line);
+}
+.shortcut-keys {
+  flex-shrink: 0;
+}
+.analogy {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(245,158,11,.06);
+  border: 1px solid rgba(245,158,11,.15);
+  font-size: .82rem;
+  color: #fbbf24;
+  font-style: italic;
+}
+
+/* ── Quiz ── */
+.quiz-progress {
+  font-size: .78rem; color: var(--muted);
+  margin-bottom: 12px;
+}
+.quiz-question {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.quiz-question h4 {
+  margin: 0 0 12px; font-size: .94rem;
+}
+.quiz-option {
+  display: block; width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.025);
+  color: var(--text);
+  font: inherit; font-size: .86rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background .14s, border-color .14s;
+}
+.quiz-option:hover {
+  background: rgba(255,255,255,.06);
+  border-color: var(--line-strong);
+}
+.quiz-option.correct {
+  background: rgba(16,185,129,.12);
+  border-color: rgba(16,185,129,.4);
+  color: var(--success-soft);
+}
+.quiz-option.wrong {
+  background: rgba(239,68,68,.1);
+  border-color: rgba(239,68,68,.3);
+  color: #fca5a5;
+}
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback {
+  margin-top: 8px; padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: .84rem;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: #fca5a5; }
+
+.quiz-score {
+  text-align: center; padding: 20px;
+  font-size: 1.1rem; font-weight: 600;
+}
+.quiz-retry {
+  display: block; margin: 12px auto;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--key);
+  background: rgba(10,132,255,.12);
+  color: var(--key-soft);
+  font: inherit; font-size: .88rem;
+  cursor: pointer;
+  transition: background .14s;
+}
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+
+/* ── Official Doc Reference ── */
+.doc-ref {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(10,132,255,.15);
+  background: rgba(10,132,255,.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-ref a {
+  color: var(--key-soft);
+  font-size: .84rem;
+  text-decoration: none;
+  line-height: 1.5;
+}
+.doc-ref a:hover { text-decoration: underline; }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Tab Bar -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+</nav>
+
+<!-- TAB 1: 개념 이해 -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3>Apply Transform이란? <span class="badge badge-blue">필수</span></h3>
+      <p><span class="kbd">Ctrl</span>+<span class="kbd">A</span>로 오브젝트의 Transform 값을 "기본값"으로 초기화합니다. Scale이 (2, 1, 1)인 박스에 Apply Scale을 하면, 현재 크기가 그대로 유지되면서 Scale 값이 (1, 1, 1)로 리셋됩니다.</p>
+      <div class="analogy">줄자의 눈금을 현재 위치에서 0으로 다시 세팅하는 것과 같아요</div>
+    </div>
+    <div class="concept-card">
+      <h3>왜 Apply해야 하나요? <span class="badge badge-amber">주의</span></h3>
+      <p>Scale이 1이 아닌 상태에서 Modifier를 적용하면 예상치 못한 결과가 나옵니다.</p>
+      <ul>
+        <li>Bevel이 한쪽으로 찌그러짐</li>
+        <li>Array가 비균일하게 복제됨</li>
+        <li>Subdivision Surface가 비대칭으로 부풀어 오름</li>
+        <li>물리 시뮬레이션의 크기가 엉뚱해짐</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="shortcut-list">
+    <h4>주요 단축키</h4>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">A</span></span>
+      <span>Apply 메뉴 열기</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">A</span> &rarr; <span class="kbd">S</span></span>
+      <span>Apply Scale만 적용</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">A</span> &rarr; <span class="kbd">R</span></span>
+      <span>Apply Rotation만 적용</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">N</span></span>
+      <span>N-패널에서 현재 Transform 값 확인</span>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/scene_layout/object/editing/apply.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Apply Object Transformations
+    </a>
+  </div>
+</section>
+
+<!-- TAB 2: 시각적 비교 -->
+<section class="panel" id="panel-visual" role="tabpanel">
+  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
+    Scale이 적용되지 않은 박스 vs Apply 후 박스에 동일한 Bevel Modifier를 적용한 비교입니다.
+  </p>
+  <div class="demo-wrap">
+    <canvas id="demoCanvas" width="680" height="300"></canvas>
+    <div class="demo-controls">
+      <button class="demo-btn is-active" id="btnBevel">Bevel 비교</button>
+      <button class="demo-btn" id="btnArray">Array 비교</button>
+      <button class="demo-btn" id="btnReset">초기화</button>
+    </div>
+  </div>
+  <p class="demo-hint">좌: Scale(2,1,1) 미적용 / 우: Apply Scale 후 — 같은 Modifier인데 결과가 다릅니다.</p>
+</section>
+
+<!-- TAB 3: 언제 쓰나요? -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>반드시 Apply해야 할 때</h4>
+      <ul>
+        <li>Modifier 추가 전 (Bevel, Array 등)</li>
+        <li>물리 시뮬레이션 적용 전</li>
+        <li>UV Unwrap 전</li>
+        <li>다른 파일로 Export 할 때</li>
+        <li>Boolean 연산 전</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>Apply 안 해도 되는 경우</h4>
+      <ul>
+        <li>단순 렌더링만 할 때</li>
+        <li>아직 모델링 초기 단계</li>
+        <li>Linked/Instanced 오브젝트</li>
+      </ul>
+    </div>
+  </div>
+  <div class="tip-box">
+    <strong>팁:</strong> 모델링을 시작하기 전에 습관적으로 <span class="kbd">Ctrl</span>+<span class="kbd">A</span> &rarr; All Transforms를 적용하세요. N-패널에서 Scale이 (1, 1, 1), Rotation이 (0, 0, 0)인지 항상 확인하는 것이 좋습니다.
+  </div>
+  <div class="combo-section">
+    <h4>Apply와 관련된 흔한 실수</h4>
+    <div class="combo-grid">
+      <div class="combo-card">
+        <div class="combo-name">Bevel이 찌그러진다</div>
+        <div class="combo-desc">비균일 Scale(예: 2,1,1) 상태에서 Bevel을 추가하면 한쪽만 넓게 깎입니다. Apply Scale로 해결됩니다.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Array 간격이 다르다</div>
+        <div class="combo-desc">Scale이 1이 아닌 축 방향으로 Array하면 간격이 비균일해집니다. Apply 후 다시 설정하세요.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/scene_layout/object/editing/apply.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Apply Object Transformations
+    </a>
+  </div>
+</section>
+
+<!-- TAB 4: 퀴즈 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+// ── Tab Switching ──────────────────────────────
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(t) {
+      t.classList.remove("is-active");
+      t.setAttribute("aria-selected", "false");
+    });
+    document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("is-active"); });
+    tab.classList.add("is-active");
+    tab.setAttribute("aria-selected", "true");
+    document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+  });
+});
+
+// ── Quiz Engine (Safe DOM methods) ────────────
+function initQuiz(questions) {
+  var container = document.getElementById("quizArea");
+  var score = 0, answered = 0;
+  var scoreDiv = null;
+
+  var progress = document.createElement("div");
+  progress.className = "quiz-progress";
+  progress.textContent = "\uBB38\uC81C 0 / " + questions.length + " \u00b7 \uC810\uC218 0\uC810";
+  container.appendChild(progress);
+
+  questions.forEach(function(q, qi) {
+    var div = document.createElement("div");
+    div.className = "quiz-question";
+
+    var heading = document.createElement("h4");
+    heading.textContent = "Q" + (qi + 1) + ". " + q.question;
+    div.appendChild(heading);
+
+    var fb = document.createElement("div");
+    fb.className = "quiz-feedback";
+
+    q.options.forEach(function(opt, oi) {
+      var btn = document.createElement("button");
+      btn.className = "quiz-option";
+      btn.textContent = opt;
+      btn.addEventListener("click", function() {
+        if (btn.disabled) return;
+        div.querySelectorAll(".quiz-option").forEach(function(b) { b.disabled = true; });
+        answered++;
+        if (oi === q.answer) {
+          btn.classList.add("correct");
+          fb.className = "quiz-feedback show correct-fb";
+          fb.textContent = "\u2705 " + q.explanation;
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
+          fb.className = "quiz-feedback show wrong-fb";
+          fb.textContent = "\u274c " + q.explanation;
+
+          var retryBtn = document.createElement("button");
+          retryBtn.className = "quiz-retry";
+          retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
+          retryBtn.textContent = "\uB2E4\uC2DC \uD480\uAE30";
+          retryBtn.addEventListener("click", function() {
+            answered--;
+            div.querySelectorAll(".quiz-option").forEach(function(b) {
+              b.disabled = false;
+              b.classList.remove("wrong", "correct");
+            });
+            fb.className = "quiz-feedback";
+            fb.textContent = "";
+            retryBtn.remove();
+            if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+            progress.textContent = "\uBB38\uC81C " + answered + " / " + questions.length + " \u00b7 \uC810\uC218 " + score + "\uC810";
+          });
+          fb.appendChild(retryBtn);
+        }
+        progress.textContent = "\uBB38\uC81C " + answered + " / " + questions.length + " \u00b7 \uC810\uC218 " + score + "\uC810";
+        if (answered === questions.length) showScore();
+      });
+      div.appendChild(btn);
+    });
+
+    div.appendChild(fb);
+    container.appendChild(div);
+  });
+
+  function showScore() {
+    if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+
+    scoreDiv = document.createElement("div");
+    scoreDiv.className = "quiz-score";
+
+    var emoji = document.createElement("div");
+    emoji.style.cssText = "font-size:36px;margin-bottom:8px";
+    emoji.textContent = score === questions.length ? "\ud83c\udf89" : score >= Math.ceil(questions.length / 2) ? "\ud83d\udc4d" : "\ud83d\udcda";
+    scoreDiv.appendChild(emoji);
+
+    var result = document.createElement("div");
+    result.style.cssText = "font-size:18px;font-weight:500;margin-bottom:6px";
+    result.textContent = score + " / " + questions.length + " \uC815\uB2F5";
+    scoreDiv.appendChild(result);
+
+    var msg = document.createElement("div");
+    msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
+    msg.textContent = score === questions.length ? "\uC644\uBCBD\uD569\uB2C8\uB2E4!" : "\uC870\uAE08 \uB354 \uC5F0\uC2B5\uD558\uBA74 \uC644\uBCBD\uD574\uC9C8 \uAC70\uC608\uC694!";
+    scoreDiv.appendChild(msg);
+
+    var saveBtn = document.createElement("button");
+    saveBtn.className = "quiz-retry";
+    saveBtn.style.cssText = "background:rgba(10,132,255,.18);border-color:var(--key);margin-bottom:8px";
+    saveBtn.textContent = "\uAE30\uB85D \uC800\uC7A5\uD558\uAE30";
+    saveBtn.addEventListener("click", function() {
+      try {
+        var wid = new URLSearchParams(location.search).get("wid")
+               || location.pathname.split("/").pop().replace(".html", "");
+        window.parent.postMessage({
+          type: "showme-quiz-complete",
+          widgetId: wid,
+          score: score,
+          total: questions.length,
+          pass: score >= Math.ceil(questions.length * 0.75)
+        }, "*");
+      } catch(e) {}
+      saveBtn.textContent = "\uC800\uC7A5 \uC644\uB8CC!";
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = ".5";
+    });
+    scoreDiv.appendChild(saveBtn);
+
+    var retry = document.createElement("button");
+    retry.className = "quiz-retry";
+    retry.textContent = "\uCC98\uC74C\uBD80\uD130 \uB2E4\uC2DC";
+    retry.addEventListener("click", function() { location.reload(); });
+    scoreDiv.appendChild(retry);
+
+    container.appendChild(scoreDiv);
+  }
+}
+
+// ── Canvas Apply Transform Demo ────────────────
+(function() {
+  var canvas = document.getElementById("demoCanvas");
+  var ctx = canvas.getContext("2d");
+  var mode = "bevel"; // "bevel" or "array"
+  var animT = 0;
+  var animId = null;
+
+  function drawGrid() {
+    var w = canvas.width, h = canvas.height;
+    ctx.strokeStyle = "rgba(255,255,255,.04)";
+    ctx.lineWidth = 1;
+    for (var gx = 40; gx < w; gx += 40) {
+      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
+    }
+    for (var gy = 40; gy < h; gy += 40) {
+      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
+    }
+  }
+
+  function drawBox(cx, cy, w, h, color, label) {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.fillStyle = color.replace(")", ",.15)").replace("rgb", "rgba");
+    ctx.beginPath();
+    ctx.rect(cx - w / 2, cy - h / 2, w, h);
+    ctx.fill();
+    ctx.stroke();
+
+    if (label) {
+      ctx.fillStyle = color;
+      ctx.font = "bold 11px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(label, cx, cy - h / 2 - 8);
+    }
+  }
+
+  function drawBevelCorners(cx, cy, w, h, bevelSize, color) {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.fillStyle = color.replace(")", ",.1)").replace("rgb", "rgba");
+    var x1 = cx - w / 2, y1 = cy - h / 2;
+    var x2 = cx + w / 2, y2 = cy + h / 2;
+    var b = bevelSize;
+    ctx.beginPath();
+    ctx.moveTo(x1 + b, y1);
+    ctx.lineTo(x2 - b, y1);
+    ctx.quadraticCurveTo(x2, y1, x2, y1 + b);
+    ctx.lineTo(x2, y2 - b);
+    ctx.quadraticCurveTo(x2, y2, x2 - b, y2);
+    ctx.lineTo(x1 + b, y2);
+    ctx.quadraticCurveTo(x1, y2, x1, y2 - b);
+    ctx.lineTo(x1, y1 + b);
+    ctx.quadraticCurveTo(x1, y1, x1 + b, y1);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+  }
+
+  function drawScaleLabel(cx, cy, scaleX, scaleY, scaleZ) {
+    ctx.fillStyle = "rgba(255,255,255,.5)";
+    ctx.font = "10px monospace";
+    ctx.textAlign = "center";
+    ctx.fillText("Scale: (" + scaleX + ", " + scaleY + ", " + scaleZ + ")", cx, cy + 60);
+  }
+
+  function draw() {
+    var w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = "#17181a";
+    ctx.fillRect(0, 0, w, h);
+    drawGrid();
+
+    var leftCx = w * 0.25;
+    var rightCx = w * 0.75;
+    var cy = h * 0.45;
+
+    // Divider
+    ctx.strokeStyle = "rgba(255,255,255,.1)";
+    ctx.lineWidth = 1;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath(); ctx.moveTo(w / 2, 0); ctx.lineTo(w / 2, h); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Labels
+    ctx.fillStyle = "rgba(239,68,68,.8)";
+    ctx.font = "bold 12px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Scale(2,1,1) — Apply 안 함", leftCx, 22);
+
+    ctx.fillStyle = "rgba(16,185,129,.8)";
+    ctx.fillText("Apply Scale 후 (1,1,1)", rightCx, 22);
+
+    var pulse = Math.sin(animT * 0.03) * 0.5 + 0.5;
+
+    if (mode === "bevel") {
+      // Left: non-uniform scale, bevel distorted
+      var bevelAmt = 8 + pulse * 12;
+      drawBevelCorners(leftCx, cy, 160, 80, bevelAmt * 2, "rgb(239,68,68)"); // X bevel is 2x
+      drawScaleLabel(leftCx, cy, 2, 1, 1);
+
+      // Annotation
+      ctx.fillStyle = "rgba(239,68,68,.6)";
+      ctx.font = "11px sans-serif";
+      ctx.fillText("Bevel이 X축으로 찌그러짐", leftCx, cy + 75);
+
+      // Right: uniform scale, bevel correct
+      drawBevelCorners(rightCx, cy, 160, 80, bevelAmt, "rgb(16,185,129)");
+      drawScaleLabel(rightCx, cy, 1, 1, 1);
+
+      ctx.fillStyle = "rgba(16,185,129,.6)";
+      ctx.font = "11px sans-serif";
+      ctx.fillText("Bevel이 균일하게 적용됨", rightCx, cy + 75);
+    } else {
+      // Array mode
+      var count = 3;
+      var spacingL = 70; // stretched because scale X=2
+      var spacingR = 55;
+      for (var i = 0; i < count; i++) {
+        var alpha = 1 - i * 0.2;
+        // Left: non-uniform spacing
+        var lx = leftCx - (count - 1) * spacingL / 2 + i * spacingL;
+        ctx.globalAlpha = alpha;
+        drawBox(lx, cy, 50, 70, "rgb(239,68,68)", i === 0 ? "원본" : "복제 " + i);
+        ctx.globalAlpha = 1;
+
+        // Right: uniform spacing
+        var rx = rightCx - (count - 1) * spacingR / 2 + i * spacingR;
+        ctx.globalAlpha = alpha;
+        drawBox(rx, cy, 50, 70, "rgb(16,185,129)", i === 0 ? "원본" : "복제 " + i);
+        ctx.globalAlpha = 1;
+      }
+      drawScaleLabel(leftCx, cy + 10, 2, 1, 1);
+      drawScaleLabel(rightCx, cy + 10, 1, 1, 1);
+
+      ctx.fillStyle = "rgba(239,68,68,.6)";
+      ctx.font = "11px sans-serif";
+      ctx.fillText("Array 간격 비균일", leftCx, cy + 85);
+
+      ctx.fillStyle = "rgba(16,185,129,.6)";
+      ctx.fillText("Array 간격 균일", rightCx, cy + 85);
+    }
+
+    animT++;
+    animId = requestAnimationFrame(draw);
+  }
+
+  // Demo controls
+  document.getElementById("btnBevel").addEventListener("click", function() {
+    mode = "bevel";
+    document.querySelectorAll(".demo-btn").forEach(function(b) { b.classList.remove("is-active"); });
+    this.classList.add("is-active");
+  });
+  // Touch
+  document.getElementById("btnBevel").addEventListener("touchend", function(e) {
+    e.preventDefault(); this.click();
+  });
+
+  document.getElementById("btnArray").addEventListener("click", function() {
+    mode = "array";
+    document.querySelectorAll(".demo-btn").forEach(function(b) { b.classList.remove("is-active"); });
+    this.classList.add("is-active");
+  });
+  document.getElementById("btnArray").addEventListener("touchend", function(e) {
+    e.preventDefault(); this.click();
+  });
+
+  document.getElementById("btnReset").addEventListener("click", function() {
+    mode = "bevel";
+    animT = 0;
+    document.querySelectorAll(".demo-btn").forEach(function(b) { b.classList.remove("is-active"); });
+    document.getElementById("btnBevel").classList.add("is-active");
+  });
+  document.getElementById("btnReset").addEventListener("touchend", function(e) {
+    e.preventDefault(); this.click();
+  });
+
+  draw();
+})();
+
+// ── Quiz Data ─────────────────────────────────
+initQuiz([
+  {
+    question: "Ctrl+A \u2192 Apply Scale\uC744 \uD558\uBA74 \uC5B4\uB5A4 \uBCC0\uD654\uAC00 \uC0DD\uAE30\uB098\uC694?",
+    options: [
+      "\uC624\uBE0C\uC81D\uD2B8 \uD06C\uAE30\uAC00 1\uB85C \uC904\uC5B4\uB4E0\uB2E4",
+      "\uD604\uC7AC \uD06C\uAE30\uB294 \uC720\uC9C0\uB418\uBA70 Scale \uAC12\uC774 (1,1,1)\uB85C \uB9AC\uC14B\uB41C\uB2E4",
+      "\uC624\uBE0C\uC81D\uD2B8\uAC00 \uC6D0\uC810\uC73C\uB85C \uC774\uB3D9\uD55C\uB2E4",
+      "\uBAA8\uB4E0 Modifier\uAC00 \uC0AD\uC81C\uB41C\uB2E4"
+    ],
+    answer: 1,
+    explanation: "Apply Scale\uC740 \uD604\uC7AC \uBAA8\uC591\uC744 \uADF8\uB300\uB85C \uC720\uC9C0\uD558\uBA74\uC11C Scale \uAC12\uB9CC (1,1,1)\uB85C \uCD08\uAE30\uD654\uD569\uB2C8\uB2E4. \uD06C\uAE30 \uC790\uCCB4\uB294 \uBCC0\uD558\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4."
+  },
+  {
+    question: "Scale\uC774 (2,1,1)\uC778 \uC0C1\uD0DC\uC5D0\uC11C Bevel Modifier\uB97C \uCD94\uAC00\uD558\uBA74?",
+    options: [
+      "Bevel\uC774 \uBAA8\uB4E0 \uBAA8\uC11C\uB9AC\uC5D0 \uADE0\uC77C\uD558\uAC8C \uC801\uC6A9\uB41C\uB2E4",
+      "Bevel\uC774 X\uCD95\uC73C\uB85C \uB298\uC5B4\uB098 \uBE44\uADE0\uC77C\uD558\uAC8C \uC801\uC6A9\uB41C\uB2E4",
+      "Bevel\uC774 \uC801\uC6A9\uB418\uC9C0 \uC54A\uB294\uB2E4",
+      "\uC624\uBE0C\uC81D\uD2B8\uAC00 \uC0AC\uB77C\uC9C4\uB2E4"
+    ],
+    answer: 1,
+    explanation: "\uBE44\uADE0\uC77C Scale \uC0C1\uD0DC\uC5D0\uC11C\uB294 Bevel\uC774 Scale\uC774 \uD070 \uCD95 \uBC29\uD5A5\uC73C\uB85C \uB354 \uB113\uAC8C \uAE4E\uC5EC \uBE44\uB300\uCE6D\uC801\uC73C\uB85C \uBCF4\uC785\uB2C8\uB2E4."
+  },
+  {
+    question: "\uB2E4\uC74C \uC911 Apply Transform\uC774 \uD544\uC218\uAC00 \uC544\uB2CC \uACBD\uC6B0\uB294?",
+    options: [
+      "Bevel Modifier \uCD94\uAC00 \uC804",
+      "UV Unwrap \uC804",
+      "\uB2E8\uC21C \uB80C\uB354\uB9C1\uB9CC \uD560 \uB54C",
+      "Boolean \uC5F0\uC0B0 \uC804"
+    ],
+    answer: 2,
+    explanation: "\uB2E8\uC21C\uD788 \uB80C\uB354\uB9C1\uB9CC \uD560 \uACBD\uC6B0\uC5D0\uB294 Scale \uAC12\uC774 1\uC774 \uC544\uB2C8\uC5B4\uB3C4 \uC2DC\uAC01\uC801 \uACB0\uACFC\uC5D0 \uD070 \uBB38\uC81C\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4."
+  },
+  {
+    question: "N-\uD328\uB110\uC5D0\uC11C Scale \uAC12\uC744 \uD655\uC778\uD588\uB354\uB2C8 (1, 1, 1)\uC774 \uC544\uB2C8\uC5C8\uC2B5\uB2C8\uB2E4. \uC5B4\uB5BB\uAC8C \uD574\uC57C \uD558\uB098\uC694?",
+    options: [
+      "Edit Mode\uC5D0\uC11C \uD06C\uAE30\uB97C \uC218\uB3D9\uC73C\uB85C \uC870\uC808\uD55C\uB2E4",
+      "Ctrl+A \u2192 All Transforms\uB97C \uC801\uC6A9\uD55C\uB2E4",
+      "\uC624\uBE0C\uC81D\uD2B8\uB97C \uC0AD\uC81C\uD558\uACE0 \uB2E4\uC2DC \uB9CC\uB4E0\uB2E4",
+      "\uBB34\uC2DC\uD558\uACE0 \uACC4\uC18D \uC791\uC5C5\uD55C\uB2E4"
+    ],
+    answer: 1,
+    explanation: "Ctrl+A \u2192 All Transforms\uB97C \uC801\uC6A9\uD558\uBA74 Scale, Rotation, Location \uBAA8\uB450 \uCD08\uAE30\uD654\uB429\uB2C8\uB2E4. \uAC00\uC7A5 \uAE30\uBCF8\uC801\uC774\uACE0 \uD655\uC2E4\uD55C \uBC29\uBC95\uC785\uB2C8\uB2E4."
+  }
+]);
+</script>
+
+</body>
+</html>

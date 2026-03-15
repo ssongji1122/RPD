@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Show Me — Mirror Modifier 이해</title>
+<title>Show Me — Build Modifier 이해</title>
 <style>
 /* ══════════════════════════════════════════════════
    Show Me Widget — Standalone Dark Theme
@@ -372,36 +372,35 @@ body {
 <section class="panel is-active" id="panel-concept" role="tabpanel">
   <div class="concept-grid">
     <div class="concept-card">
-      <h3>Mirror Modifier란?</h3>
-      <p>거울처럼 한쪽만 편집하면 반대쪽이 자동으로 따라오는 Modifier입니다. 좌우 대칭 모델을 만들 때 작업량을 절반으로 줄여줍니다.</p>
-      <div class="analogy">거울 앞에서 한쪽을 바꾸면 반대쪽이 자동으로 따라와요</div>
+      <h3>Build Modifier란?</h3>
+      <p>메쉬의 면을 순서대로 나타나게 하거나 사라지게 하는 애니메이션 모디파이어입니다. 건물이 지어지듯 면이 하나씩 추가되어 완성됩니다.</p>
+      <div class="analogy">레고 블록을 하나씩 쌓아 올리는 타임랩스</div>
     </div>
     <div class="concept-card">
-      <h3>Clipping이란?</h3>
-      <p>중심선을 넘지 못하게 하는 옵션입니다. ON이면 중심 정점이 정확히 중앙에 고정되어, 양쪽이 깔끔하게 이어집니다.</p>
-      <div class="analogy">중심선에 보이지 않는 벽이 생겨서 정점이 넘어가지 못해요</div>
+      <h3>Start / Length</h3>
+      <p><strong>Start</strong>: 애니메이션이 시작되는 프레임입니다. <strong>Length</strong>: 전체 면이 나타나는 데 걸리는 프레임 수입니다. Reversed 옵션을 켜면 면이 하나씩 사라지는 분해 효과를 만들 수 있습니다.</p>
+    </div>
+    <div class="concept-card">
+      <h3>Seed</h3>
+      <p>면이 나타나는 순서를 랜덤화합니다. 같은 Seed 값을 사용하면 항상 같은 순서로 면이 나타납니다.</p>
     </div>
   </div>
 
   <div class="shortcut-list">
-    <h4>주요 단축키</h4>
+    <h4>참고 사항</h4>
     <div class="shortcut-row">
-      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">1</span></span>
-      <span>Modifier 추가 패널</span>
+      <span class="shortcut-keys"><span class="kbd">Space</span></span>
+      <span>타임라인 재생 — Build 효과를 확인하는 기본 방법</span>
     </div>
     <div class="shortcut-row">
-      <span class="shortcut-keys"><span class="kbd">S</span> <span class="kbd">X</span> <span class="kbd">0</span></span>
-      <span>중심선 정렬 (선택한 정점의 X좌표를 0으로)</span>
-    </div>
-    <div class="shortcut-row">
-      <span class="shortcut-keys">Clipping 체크박스</span>
-      <span>Properties &rarr; Modifier tab에서 설정</span>
+      <span class="shortcut-keys">Properties 패널</span>
+      <span>Modifier 탭에서 Start, Length, Seed 값을 설정</span>
     </div>
   </div>
 
   <div class="doc-ref">
-    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html" target="_blank" rel="noopener">
-      📖 Blender 공식 문서 — Mirror Modifier
+    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/build.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Build Modifier
     </a>
   </div>
 </section>
@@ -409,59 +408,61 @@ body {
 <!-- TAB 2: 시각적 비교 -->
 <section class="panel" id="panel-visual" role="tabpanel">
   <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    왼쪽 반의 꼭짓점을 드래그하면 오른쪽이 자동으로 미러됩니다.
+    4×4 그리드가 순서대로 나타납니다. 버튼으로 재생, 역재생, 랜덤 순서를 실험하세요.
   </p>
   <div class="demo-wrap">
     <canvas id="demoCanvas" width="680" height="300"></canvas>
     <div class="demo-controls">
-      <button class="demo-btn is-active" id="btnClipping">Clipping ON</button>
+      <button class="demo-btn is-active" id="btnPlay">재생</button>
+      <button class="demo-btn" id="btnReverse">역재생</button>
+      <button class="demo-btn" id="btnRandom">랜덤 순서</button>
       <button class="demo-btn" id="btnReset">초기화</button>
     </div>
   </div>
-  <p class="demo-hint">꼭짓점을 드래그해 보세요. Clipping을 토글하면 중심선 넘기 동작이 달라집니다.</p>
+  <p class="demo-hint">재생 버튼을 눌러 Build Modifier 효과를 확인하세요. 랜덤 순서로 Seed 변경 효과를 볼 수 있습니다.</p>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->
 <section class="panel" id="panel-when" role="tabpanel">
   <div class="usage-grid">
     <div class="usage-card">
-      <h4>Mirror가 필요할 때</h4>
+      <h4>Build가 필요할 때</h4>
       <ul>
-        <li>좌우 대칭 로봇</li>
-        <li>자동차</li>
-        <li>캐릭터 얼굴</li>
-        <li>가구</li>
+        <li>모션 그래픽 (건물 조립 애니메이션)</li>
+        <li>타이틀 시퀀스</li>
+        <li>데이터 시각화</li>
+        <li>파괴 효과 (Reversed)</li>
       </ul>
     </div>
     <div class="usage-card">
-      <h4>Mirror를 안 쓰는 경우</h4>
+      <h4>Build를 안 쓰는 경우</h4>
       <ul>
-        <li>비대칭 디자인</li>
-        <li>유기적 형태</li>
-        <li>한쪽만 다른 디테일</li>
+        <li>정적 모델 (애니메이션 불필요)</li>
+        <li>실시간 렌더링</li>
+        <li>정밀한 면 단위 제어가 필요할 때</li>
       </ul>
     </div>
   </div>
   <div class="tip-box">
-    <strong>팁:</strong> Mirror는 원점(Origin)이 중심에 있어야 해요. <span class="kbd">S</span>+<span class="kbd">X</span>+<span class="kbd">0</span>으로 중심선을 맞추고, 오브젝트를 먼저 중앙에 놓은 뒤 Mirror를 추가하세요.
+    <strong>팁:</strong> Build는 애니메이션 모디파이어입니다. 타임라인 재생(<span class="kbd">Space</span>)으로 효과를 확인하세요!
   </div>
   <div class="combo-section">
     <h4>자주 쓰는 조합</h4>
     <div class="combo-grid">
       <div class="combo-card">
-        <div class="combo-name">Mirror + Subdivision Surface</div>
-        <div class="combo-desc">Mirror로 대칭을 잡고 Subdivision으로 부드럽게. Mirror가 위, Subdivision이 아래 순서로 배치합니다.</div>
+        <div class="combo-name">Build + Particle System</div>
+        <div class="combo-desc">면이 나타나거나 사라질 때 파편이 흩어지는 효과를 만들 수 있습니다. 분해 장면에 효과적입니다.</div>
       </div>
       <div class="combo-card">
-        <div class="combo-name">Mirror + Solidify</div>
-        <div class="combo-desc">대칭 형태에 두께를 추가할 때. 얇은 판이나 갑옷 같은 모델에 유용합니다.</div>
+        <div class="combo-name">Build + Wireframe</div>
+        <div class="combo-desc">와이어프레임이 조립되는 테크니컬한 모션 그래픽 효과를 만들 수 있습니다.</div>
       </div>
     </div>
   </div>
 
   <div class="doc-ref">
-    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html" target="_blank" rel="noopener">
-      📖 Blender 공식 문서 — Mirror Modifier
+    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/build.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Build Modifier
     </a>
   </div>
 </section>
@@ -614,33 +615,58 @@ function initQuiz(questions) {
   }
 }
 
-// ── Canvas Mirror Demo ────────────────────────
+// ── Canvas Build Demo ─────────────────────────
 (function() {
   var canvas = document.getElementById("demoCanvas");
   var ctx = canvas.getContext("2d");
-  var clipping = true;
-  var dragging = -1;
-  var hitRadius = 14;
 
-  // Initial left-half vertices (robot torso shape, top-down view)
-  // These are offsets from center — stored as positive X values from center
-  var defaultVerts = [
-    { x: 10,  y: 60  },  // top-center-ish
-    { x: 100, y: 50  },  // top-right shoulder
-    { x: 120, y: 90  },  // right shoulder corner
-    { x: 110, y: 160 },  // right waist
-    { x: 90,  y: 220 },  // right hip
-    { x: 10,  y: 240 },  // bottom-center-ish
-  ];
+  var cols = 4, rows = 4;
+  var totalCells = cols * rows;
+  var cellPad = 6;
 
-  // Working copy
-  var verts = [];
-  function resetVerts() {
-    verts = defaultVerts.map(function(v) { return { x: v.x, y: v.y }; });
+  // Calculate grid layout centered on canvas
+  var gridW = 280, gridH = 220;
+  var offsetX = (canvas.width - gridW) / 2;
+  var offsetY = (canvas.height - gridH) / 2;
+  var cellW = (gridW - (cols - 1) * cellPad) / cols;
+  var cellH = (gridH - (rows - 1) * cellPad) / rows;
+
+  // Order arrays
+  var sequentialOrder = [];
+  for (var i = 0; i < totalCells; i++) sequentialOrder.push(i);
+
+  var randomOrder = [];
+  var isRandom = false;
+  var isReversed = false;
+  var isPlaying = false;
+  var animFrame = null;
+
+  // Current state: how many cells are visible
+  var visibleCount = 0;
+  var animSpeed = 120; // ms per cell
+  var lastStepTime = 0;
+
+  function shuffleArray(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a;
   }
-  resetVerts();
 
-  var centerX = canvas.width / 2;
+  function getCurrentOrder() {
+    return isRandom ? randomOrder : sequentialOrder;
+  }
+
+  function getCellPos(index) {
+    var col = index % cols;
+    var row = Math.floor(index / cols);
+    return {
+      x: offsetX + col * (cellW + cellPad),
+      y: offsetY + row * (cellH + cellPad)
+    };
+  }
 
   function draw() {
     var w = canvas.width;
@@ -668,235 +694,209 @@ function initQuiz(questions) {
       ctx.stroke();
     }
 
-    // Center mirror axis — dashed line
-    ctx.strokeStyle = "rgba(245,158,11,.5)";
-    ctx.lineWidth = 2;
-    ctx.setLineDash([8, 6]);
-    ctx.beginPath();
-    ctx.moveTo(centerX, 0);
-    ctx.lineTo(centerX, h);
-    ctx.stroke();
-    ctx.setLineDash([]);
+    var order = getCurrentOrder();
 
-    // Axis label
-    ctx.fillStyle = "rgba(245,158,11,.7)";
-    ctx.font = "11px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("Mirror Axis (X=0)", centerX, 18);
+    // Draw all cells
+    for (var c = 0; c < totalCells; c++) {
+      var pos = getCellPos(c);
 
-    // Draw left half polygon (original)
-    drawPolygon(verts, -1, "rgba(10,132,255,.25)", "rgba(10,132,255,.7)");
-
-    // Draw right half polygon (mirrored)
-    var mirrored = verts.map(function(v) {
-      return { x: v.x, y: v.y };
-    });
-    drawPolygon(mirrored, 1, "rgba(16,185,129,.15)", "rgba(16,185,129,.5)");
-
-    // Labels
-    ctx.font = "bold 12px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillStyle = "rgba(10,132,255,.8)";
-    ctx.fillText("Original (Edit)", centerX - 80, h - 14);
-    ctx.fillStyle = "rgba(16,185,129,.6)";
-    ctx.fillText("Mirrored (Auto)", centerX + 80, h - 14);
-
-    // Draw vertex handles on left side
-    verts.forEach(function(v, i) {
-      var sx = centerX - v.x;
-      var sy = v.y;
-      ctx.beginPath();
-      ctx.arc(sx, sy, 6, 0, Math.PI * 2);
-      ctx.fillStyle = (dragging === i) ? "#0a84ff" : "rgba(10,132,255,.9)";
-      ctx.fill();
-      ctx.strokeStyle = "#fff";
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-    });
-
-    // Clipping indicator
-    ctx.fillStyle = clipping ? "rgba(16,185,129,.7)" : "rgba(239,68,68,.7)";
-    ctx.font = "bold 11px sans-serif";
-    ctx.textAlign = "left";
-    ctx.fillText("Clipping: " + (clipping ? "ON" : "OFF"), 12, 18);
-  }
-
-  function drawPolygon(pts, side, fillColor, strokeColor) {
-    // side: -1 = left of center, +1 = right of center
-    if (pts.length < 2) return;
-    ctx.beginPath();
-    pts.forEach(function(v, i) {
-      var sx = (side === -1) ? (centerX - v.x) : (centerX + v.x);
-      var sy = v.y;
-      if (i === 0) ctx.moveTo(sx, sy);
-      else ctx.lineTo(sx, sy);
-    });
-    ctx.closePath();
-    ctx.fillStyle = fillColor;
-    ctx.fill();
-    ctx.strokeStyle = strokeColor;
-    ctx.lineWidth = 2;
-    ctx.stroke();
-  }
-
-  function getEventPos(e) {
-    var rect = canvas.getBoundingClientRect();
-    var scaleX = canvas.width / rect.width;
-    var scaleY = canvas.height / rect.height;
-    var clientX, clientY;
-    if (e.touches && e.touches.length > 0) {
-      clientX = e.touches[0].clientX;
-      clientY = e.touches[0].clientY;
-    } else {
-      clientX = e.clientX;
-      clientY = e.clientY;
+      // Ghost cell (outline only)
+      ctx.strokeStyle = "rgba(255,255,255,.08)";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(pos.x, pos.y, cellW, cellH);
     }
-    return {
-      x: (clientX - rect.left) * scaleX,
-      y: (clientY - rect.top) * scaleY
-    };
-  }
 
-  function findVertex(pos) {
-    var best = -1;
-    var bestDist = hitRadius * hitRadius;
-    verts.forEach(function(v, i) {
-      var sx = centerX - v.x;
-      var sy = v.y;
-      var dx = pos.x - sx;
-      var dy = pos.y - sy;
-      var d2 = dx * dx + dy * dy;
-      if (d2 < bestDist) {
-        bestDist = d2;
-        best = i;
+    // Draw visible cells
+    var visibleSet = {};
+    var count = isReversed ? (totalCells - visibleCount) : visibleCount;
+    for (var v = 0; v < count && v < totalCells; v++) {
+      visibleSet[order[v]] = true;
+    }
+
+    for (var c = 0; c < totalCells; c++) {
+      if (!visibleSet[c]) continue;
+      var pos = getCellPos(c);
+
+      // Determine color based on order index
+      var orderIdx = -1;
+      for (var oi = 0; oi < order.length; oi++) {
+        if (order[oi] === c) { orderIdx = oi; break; }
       }
-    });
-    return best;
-  }
+      var t = orderIdx / (totalCells - 1);
+      var r = Math.round(10 + t * 6);
+      var g = Math.round(132 - t * 50);
+      var b = Math.round(255 - t * 60);
+      ctx.fillStyle = "rgba(" + r + "," + g + "," + b + ",.6)";
+      ctx.fillRect(pos.x, pos.y, cellW, cellH);
 
-  function onDown(e) {
-    e.preventDefault();
-    var pos = getEventPos(e);
-    dragging = findVertex(pos);
-    if (dragging >= 0) draw();
-  }
+      ctx.strokeStyle = "rgba(" + r + "," + g + "," + b + ",.9)";
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(pos.x, pos.y, cellW, cellH);
 
-  function onMove(e) {
-    if (dragging < 0) return;
-    e.preventDefault();
-    var pos = getEventPos(e);
-    // Convert screen position to vertex coords (offset from center)
-    var newX = centerX - pos.x;
-    var newY = pos.y;
-
-    // Clamp Y
-    if (newY < 10) newY = 10;
-    if (newY > canvas.height - 10) newY = canvas.height - 10;
-
-    // Clipping: prevent crossing center line (x must stay >= 0)
-    if (clipping) {
-      if (newX < 0) newX = 0;
+      // Cell number
+      ctx.fillStyle = "rgba(255,255,255,.7)";
+      ctx.font = "bold 13px sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(orderIdx + 1, pos.x + cellW / 2, pos.y + cellH / 2);
     }
-    // Even without clipping, don't go too far right
-    if (newX > centerX - 10) newX = centerX - 10;
 
-    verts[dragging].x = newX;
-    verts[dragging].y = newY;
-    draw();
+    // Status text
+    ctx.fillStyle = "rgba(255,255,255,.5)";
+    ctx.font = "12px sans-serif";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    var modeText = isReversed ? "Reversed (분해)" : "Build (조립)";
+    ctx.fillText("Mode: " + modeText, 14, 14);
+
+    ctx.fillText("Faces: " + (isReversed ? (totalCells - visibleCount) : visibleCount) + " / " + totalCells, 14, 32);
+
+    if (isRandom) {
+      ctx.fillStyle = "rgba(245,158,11,.7)";
+      ctx.fillText("Random Seed 활성", 14, 50);
+    }
+
+    // Frame indicator
+    ctx.fillStyle = "rgba(255,255,255,.4)";
+    ctx.textAlign = "right";
+    ctx.fillText("Frame: " + visibleCount, canvas.width - 14, 14);
   }
 
-  function onUp(e) {
-    if (dragging >= 0) {
-      dragging = -1;
+  function animate(timestamp) {
+    if (!isPlaying) return;
+
+    if (!lastStepTime) lastStepTime = timestamp;
+
+    if (timestamp - lastStepTime >= animSpeed) {
+      lastStepTime = timestamp;
+      visibleCount++;
+
+      if (visibleCount > totalCells) {
+        isPlaying = false;
+        visibleCount = totalCells;
+        updateButtons();
+        draw();
+        return;
+      }
       draw();
     }
+
+    animFrame = requestAnimationFrame(animate);
   }
 
-  // Mouse events
-  canvas.addEventListener("mousedown", onDown);
-  canvas.addEventListener("mousemove", onMove);
-  canvas.addEventListener("mouseup", onUp);
-  canvas.addEventListener("mouseleave", onUp);
+  function startPlay(reversed) {
+    stopPlay();
+    isReversed = reversed;
+    visibleCount = 0;
+    isPlaying = true;
+    lastStepTime = 0;
+    updateButtons();
+    draw();
+    animFrame = requestAnimationFrame(animate);
+  }
 
-  // Touch events
-  canvas.addEventListener("touchstart", onDown, { passive: false });
-  canvas.addEventListener("touchmove", onMove, { passive: false });
-  canvas.addEventListener("touchend", onUp);
-  canvas.addEventListener("touchcancel", onUp);
-
-  // Clipping toggle
-  var btnClipping = document.getElementById("btnClipping");
-  btnClipping.addEventListener("click", function() {
-    clipping = !clipping;
-    if (clipping) {
-      btnClipping.textContent = "Clipping ON";
-      btnClipping.classList.add("is-active");
-      // Enforce clipping on current verts
-      verts.forEach(function(v) {
-        if (v.x < 0) v.x = 0;
-      });
-    } else {
-      btnClipping.textContent = "Clipping OFF";
-      btnClipping.classList.remove("is-active");
+  function stopPlay() {
+    isPlaying = false;
+    if (animFrame) {
+      cancelAnimationFrame(animFrame);
+      animFrame = null;
     }
+  }
+
+  function updateButtons() {
+    var btnPlay = document.getElementById("btnPlay");
+    var btnReverse = document.getElementById("btnReverse");
+    var btnRandomEl = document.getElementById("btnRandom");
+
+    btnPlay.classList.toggle("is-active", isPlaying && !isReversed);
+    btnReverse.classList.toggle("is-active", isPlaying && isReversed);
+    btnRandomEl.classList.toggle("is-active", isRandom);
+  }
+
+  // Button handlers
+  document.getElementById("btnPlay").addEventListener("click", function() {
+    startPlay(false);
+  });
+
+  document.getElementById("btnReverse").addEventListener("click", function() {
+    startPlay(true);
+  });
+
+  document.getElementById("btnRandom").addEventListener("click", function() {
+    isRandom = !isRandom;
+    if (isRandom) {
+      randomOrder = shuffleArray(sequentialOrder);
+    }
+    updateButtons();
     draw();
   });
 
-  // Reset button
   document.getElementById("btnReset").addEventListener("click", function() {
-    resetVerts();
+    stopPlay();
+    isReversed = false;
+    visibleCount = 0;
+    updateButtons();
     draw();
+  });
+
+  // Touch support for buttons (prevent double-tap zoom)
+  ["btnPlay", "btnReverse", "btnRandom", "btnReset"].forEach(function(id) {
+    document.getElementById(id).addEventListener("touchend", function(e) {
+      e.preventDefault();
+      this.click();
+    }, { passive: false });
   });
 
   // Initial draw
+  randomOrder = shuffleArray(sequentialOrder);
   draw();
 })();
 
 // ── Quiz Data ─────────────────────────────────
 initQuiz([
   {
-    question: "Mirror Modifier\uB97C \uCD94\uAC00\uD588\uB294\uB370 \uBBF8\uB7EC\uB41C \uBC18\uCABD\uC774 \uC774\uC0C1\uD55C \uACF3\uC5D0 \uB098\uD0C0\uB098\uC694. \uAC00\uC7A5 \uD754\uD55C \uC6D0\uC778\uC740?",
+    question: "Build Modifier\uC758 \uC8FC\uC694 \uC6A9\uB3C4\uB294 \uBB34\uC5C7\uC778\uAC00\uC694?",
     options: [
-      "Apply Scale\uC744 \uC548 \uD574\uC11C",
-      "Origin\uC774 \uC624\uBE0C\uC81D\uD2B8 \uC911\uC2EC\uC5D0 \uC788\uC9C0 \uC54A\uC544\uC11C",
-      "Clipping\uC774 \uCF1C\uC838 \uC788\uC5B4\uC11C",
-      "Edit Mode\uAC00 \uC544\uB2C8\uB77C\uC11C"
+      "\uBA54\uC26C\uC758 \uD06C\uAE30\uB97C \uBCC0\uACBD\uD558\uB294 \uAC83",
+      "\uBA54\uC26C\uC758 \uBA74\uC744 \uC21C\uC11C\uB300\uB85C \uB098\uD0C0\uB098\uAC8C \uD558\uB294 \uC560\uB2C8\uBA54\uC774\uC158",
+      "\uBA54\uC26C\uB97C \uBD80\uB4DC\uB7FD\uAC8C \uB9CC\uB4DC\uB294 \uAC83",
+      "\uBA54\uC26C\uB97C \uB300\uCE6D\uC73C\uB85C \uBCF5\uC0AC\uD558\uB294 \uAC83"
     ],
     answer: 1,
-    explanation: "Mirror\uB294 Origin\uC744 \uAE30\uC900\uC73C\uB85C \uBC18\uC804\uD569\uB2C8\uB2E4. Origin\uC774 \uC624\uBE0C\uC81D\uD2B8 \uC911\uC2EC\uC5D0 \uC788\uC9C0 \uC54A\uC73C\uBA74 \uBBF8\uB7EC\uB41C \uBC18\uCABD\uC774 \uC5C9\uB69A\uD55C \uC704\uCE58\uC5D0 \uC0DD\uAE41\uB2C8\uB2E4."
+    explanation: "Build Modifier\uB294 \uBA54\uC26C\uC758 \uBA74\uC744 \uC21C\uC11C\uB300\uB85C \uB098\uD0C0\uB098\uAC8C \uD558\uAC70\uB098 \uC0AC\uB77C\uC9C0\uAC8C \uD558\uB294 \uC560\uB2C8\uBA54\uC774\uC158 \uBAA8\uB514\uD30C\uC774\uC5B4\uC785\uB2C8\uB2E4."
   },
   {
-    question: "Clipping \uC635\uC158\uC744 \uCF1C\uBA74 \uC5B4\uB5A4 \uD6A8\uACFC\uAC00 \uC788\uB098\uC694?",
+    question: "Reversed \uC635\uC158\uC744 \uCF1C\uBA74 \uC5B4\uB5A4 \uD6A8\uACFC\uAC00 \uC788\uB098\uC694?",
     options: [
-      "\uBBF8\uB7EC\uAC00 \uBE44\uD65C\uC131\uD654\uB41C\uB2E4",
-      "\uC790\uB3D9\uC73C\uB85C Apply\uB41C\uB2E4",
-      "\uC911\uC2EC \uC815\uC810\uC774 \uBBF8\uB7EC \uCD95\uC744 \uB118\uC9C0 \uBABB\uD55C\uB2E4",
-      "\uBC18\uB300\uD3B8\uC774 \uC228\uACA8\uC9C4\uB2E4"
+      "\uC560\uB2C8\uBA54\uC774\uC158 \uC18D\uB3C4\uAC00 \uBE68\uB77C\uC9C4\uB2E4",
+      "\uBA74\uC774 \uB354 \uCE5C\uCC9C\uD788 \uB098\uD0C0\uB09C\uB2E4",
+      "\uBA74\uC774 \uD558\uB098\uC529 \uC0AC\uB77C\uC9C0\uB294 \uBD84\uD574 \uD6A8\uACFC",
+      "\uBA74\uC774 \uD55C\uAEF4\uBC88\uC5D0 \uBAA8\uB450 \uB098\uD0C0\uB09C\uB2E4"
     ],
     answer: 2,
-    explanation: "Clipping\uC744 \uCF1C\uBA74 \uC815\uC810\uC774 \uBBF8\uB7EC \uCD95\uC744 \uB118\uC5B4\uAC00\uC9C0 \uBABB\uD569\uB2C8\uB2E4. \uC774\uB807\uAC8C \uD558\uBA74 \uC911\uC2EC\uC120\uC5D0\uC11C \uC591\uCABD\uC774 \uAE54\uB054\uD558\uAC8C \uC774\uC5B4\uC9D1\uB2C8\uB2E4."
+    explanation: "Reversed\uB97C \uCF1C\uBA74 \uBA74\uC774 \uD558\uB098\uC529 \uC0AC\uB77C\uC9C0\uB294 \uBD84\uD574 \uD6A8\uACFC\uB97C \uB9CC\uB4E4 \uC218 \uC788\uC2B5\uB2C8\uB2E4. \uD30C\uAD34 \uC7A5\uBA74\uC5D0 \uC720\uC6A9\uD569\uB2C8\uB2E4."
   },
   {
-    question: "S \u2192 X \u2192 0\uC744 \uB204\uB974\uBA74 \uC5B4\uB5A4 \uC77C\uC774 \uC77C\uC5B4\uB098\uB098\uC694?",
+    question: "Seed \uAC12\uC744 \uBC14\uAFB8\uBA74 \uC5B4\uB5BB\uAC8C \uB418\uB098\uC694?",
     options: [
-      "\uC624\uBE0C\uC81D\uD2B8\uAC00 \uC0AD\uC81C\uB41C\uB2E4",
-      "X\uCD95 \uBBF8\uB7EC\uAC00 \uC801\uC6A9\uB41C\uB2E4",
-      "X\uC88C\uD45C\uAC00 0\uC774 \uB418\uC5B4 \uC911\uC2EC\uC120 \uC815\uB82C",
-      "\uC2A4\uCF00\uC77C\uC774 \uCD08\uAE30\uD654\uB41C\uB2E4"
+      "\uBA74\uC758 \uC0C9\uC0C1\uC774 \uBCC0\uACBD\uB41C\uB2E4",
+      "\uBA74\uC774 \uB098\uD0C0\uB098\uB294 \uC21C\uC11C\uAC00 \uBCC0\uACBD\uB41C\uB2E4",
+      "\uC560\uB2C8\uBA54\uC774\uC158\uC774 \uC815\uC9C0\uB41C\uB2E4",
+      "\uBA74\uC758 \uAC1C\uC218\uAC00 \uB2EC\uB77C\uC9C4\uB2E4"
     ],
-    answer: 2,
-    explanation: "S(Scale) \u2192 X(\uCD95 \uC81C\uD55C) \u2192 0(\uAC12)\uC744 \uB204\uB974\uBA74 \uC120\uD0DD\uD55C \uC815\uC810\uC758 X\uC88C\uD45C\uAC00 0\uC774 \uB418\uC5B4 \uC815\uD655\uD788 \uC911\uC2EC\uC120\uC5D0 \uC815\uB82C\uB429\uB2C8\uB2E4."
+    answer: 1,
+    explanation: "Seed \uAC12\uC744 \uBCC0\uACBD\uD558\uBA74 \uBA74\uC774 \uB098\uD0C0\uB098\uB294 \uC21C\uC11C\uAC00 \uB2EC\uB77C\uC9D1\uB2C8\uB2E4. \uAC19\uC740 Seed\uB97C \uC0AC\uC6A9\uD558\uBA74 \uD56D\uC0C1 \uAC19\uC740 \uC21C\uC11C\uB85C \uC7AC\uC0DD\uB429\uB2C8\uB2E4."
   },
   {
-    question: "Mirror + Subdivision Surface \uC870\uD569\uC5D0\uC11C Modifier \uC21C\uC11C\uB294?",
+    question: "Length \uAC12\uC744 \uB298\uB9AC\uBA74 \uC5B4\uB5BB\uAC8C \uB418\uB098\uC694?",
     options: [
-      "\uC21C\uC11C \uC0C1\uAD00\uC5C6\uB2E4",
-      "Subdivision\uC774 \uC704",
-      "Mirror\uAC00 \uC704",
-      "\uB458 \uB2E4 Apply \uD6C4 \uC0AC\uC6A9"
+      "\uBA74\uC758 \uD06C\uAE30\uAC00 \uCEE4\uC9C4\uB2E4",
+      "\uC560\uB2C8\uBA54\uC774\uC158\uC774 \uB354 \uBE68\uB9AC \uB05D\uB09C\uB2E4",
+      "\uC804\uCCB4 \uBA74\uC774 \uB098\uD0C0\uB098\uB294 \uC2DC\uAC04\uC774 \uAE38\uC5B4\uC9C4\uB2E4",
+      "\uBA74\uC758 \uAC1C\uC218\uAC00 \uC99D\uAC00\uD55C\uB2E4"
     ],
     answer: 2,
-    explanation: "Mirror\uAC00 \uC704\uC5D0, Subdivision\uC774 \uC544\uB798\uC5D0 \uC640\uC57C \uD569\uB2C8\uB2E4. \uBA3C\uC800 \uB300\uCE6D\uC744 \uC7A1\uACE0 \uB098\uC11C \uBD80\uB4DC\uB7FD\uAC8C \uB9CC\uB4DC\uB294 \uAC83\uC774 \uC62C\uBC14\uB978 \uC21C\uC11C\uC785\uB2C8\uB2E4."
+    explanation: "Length\uB294 \uC804\uCCB4 \uBA74\uC774 \uB098\uD0C0\uB098\uB294 \uB370 \uAC78\uB9AC\uB294 \uD504\uB808\uC784 \uC218\uC785\uB2C8\uB2E4. Length\uB97C \uB298\uB9AC\uBA74 \uB354 \uCC9C\uCC9C\uD788, \uC904\uC774\uBA74 \uB354 \uBE60\uB974\uAC8C \uC644\uC131\uB429\uB2C8\uB2E4."
   }
 ]);
 </script>
