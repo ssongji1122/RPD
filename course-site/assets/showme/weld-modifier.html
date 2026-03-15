@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Show Me — Mirror Modifier 이해</title>
+<title>Show Me — Weld Modifier 이해</title>
 <style>
 /* ══════════════════════════════════════════════════
    Show Me Widget — Standalone Dark Theme
@@ -135,6 +135,7 @@ body {
   display: flex; gap: 8px; padding: 12px;
   border-top: 1px solid var(--line);
   flex-wrap: wrap;
+  align-items: center;
 }
 .demo-hint {
   font-size: .78rem; color: var(--muted);
@@ -154,6 +155,20 @@ body {
   background: rgba(10,132,255,.14);
   color: var(--key-soft);
   border-color: rgba(10,132,255,.3);
+}
+
+/* ── Slider ── */
+.slider-group {
+  display: flex; align-items: center; gap: 10px; flex: 1; min-width: 180px;
+}
+.slider-group label {
+  font-size: .82rem; color: var(--muted-strong); white-space: nowrap;
+}
+.slider-group input[type="range"] {
+  flex: 1; accent-color: var(--key);
+}
+.slider-group .slider-val {
+  font-size: .8rem; color: var(--key-soft); min-width: 36px; text-align: right;
 }
 
 /* ── Usage Grid ── */
@@ -363,8 +378,8 @@ body {
 <!-- Tab Bar -->
 <nav class="tabs" role="tablist">
   <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
-  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
-  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">인터랙티브 데모</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">사용 사례</button>
   <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
 </nav>
 
@@ -372,96 +387,105 @@ body {
 <section class="panel is-active" id="panel-concept" role="tabpanel">
   <div class="concept-grid">
     <div class="concept-card">
-      <h3>Mirror Modifier란?</h3>
-      <p>거울처럼 한쪽만 편집하면 반대쪽이 자동으로 따라오는 Modifier입니다. 좌우 대칭 모델을 만들 때 작업량을 절반으로 줄여줍니다.</p>
-      <div class="analogy">거울 앞에서 한쪽을 바꾸면 반대쪽이 자동으로 따라와요</div>
+      <h3><span class="badge badge-blue">Core</span> Weld란?</h3>
+      <p>가까운 꼭짓점들을 자동으로 병합하는 모디파이어입니다. 중복 정점 제거, 이음새 연결에 사용합니다.</p>
+      <div class="analogy">가까이 있는 점들을 자석처럼 합치는 것</div>
     </div>
     <div class="concept-card">
-      <h3>Clipping이란?</h3>
-      <p>중심선을 넘지 못하게 하는 옵션입니다. ON이면 중심 정점이 정확히 중앙에 고정되어, 양쪽이 깔끔하게 이어집니다.</p>
-      <div class="analogy">중심선에 보이지 않는 벽이 생겨서 정점이 넘어가지 못해요</div>
+      <h3><span class="badge badge-green">Setting</span> Distance</h3>
+      <p>이 거리 이내의 꼭짓점들이 하나로 병합됩니다. 너무 크게 설정하면 의도치 않게 형태가 무너질 수 있습니다.</p>
+      <ul>
+        <li>Distance 작음 → 아주 가까운 점만 병합</li>
+        <li>Distance 큼 → 더 먼 점까지 병합 (주의!)</li>
+      </ul>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-amber">Option</span> Vertex Group</h3>
+      <p>특정 Vertex Group의 꼭짓점만 Weld를 적용할 수 있습니다. 부분적으로 중복 정점을 정리할 때 유용합니다.</p>
     </div>
   </div>
 
   <div class="shortcut-list">
-    <h4>주요 단축키</h4>
+    <h4>관련 단축키</h4>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">M</span> → <span class="kbd">D</span></span>
+      <span>Merge by Distance (파괴적 방식)</span>
+    </div>
     <div class="shortcut-row">
       <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">1</span></span>
       <span>Modifier 추가 패널</span>
     </div>
-    <div class="shortcut-row">
-      <span class="shortcut-keys"><span class="kbd">S</span> <span class="kbd">X</span> <span class="kbd">0</span></span>
-      <span>중심선 정렬 (선택한 정점의 X좌표를 0으로)</span>
-    </div>
-    <div class="shortcut-row">
-      <span class="shortcut-keys">Clipping 체크박스</span>
-      <span>Properties &rarr; Modifier tab에서 설정</span>
-    </div>
   </div>
 
   <div class="doc-ref">
-    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html" target="_blank" rel="noopener">
-      📖 Blender 공식 문서 — Mirror Modifier
+    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/weld.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Weld Modifier
     </a>
   </div>
 </section>
 
-<!-- TAB 2: 시각적 비교 -->
+<!-- TAB 2: 인터랙티브 데모 -->
 <section class="panel" id="panel-visual" role="tabpanel">
   <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    왼쪽 반의 꼭짓점을 드래그하면 오른쪽이 자동으로 미러됩니다.
+    Distance 슬라이더를 조절하면 병합되는 꼭짓점 쌍이 달라집니다. 가까운 점들이 하나로 합쳐지는 과정을 확인하세요.
   </p>
   <div class="demo-wrap">
     <canvas id="demoCanvas" width="680" height="300"></canvas>
     <div class="demo-controls">
-      <button class="demo-btn is-active" id="btnClipping">Clipping ON</button>
+      <div class="slider-group">
+        <label>Distance</label>
+        <input type="range" id="distSlider" min="0" max="100" value="25">
+        <span class="slider-val" id="distVal">0.25</span>
+      </div>
       <button class="demo-btn" id="btnReset">초기화</button>
     </div>
   </div>
-  <p class="demo-hint">꼭짓점을 드래그해 보세요. Clipping을 토글하면 중심선 넘기 동작이 달라집니다.</p>
+  <p class="demo-hint">Distance를 키우면 더 먼 점들도 병합됩니다. 너무 크면 형태가 무너져요!</p>
 </section>
 
-<!-- TAB 3: 언제 쓰나요? -->
+<!-- TAB 3: 사용 사례 -->
 <section class="panel" id="panel-when" role="tabpanel">
   <div class="usage-grid">
     <div class="usage-card">
-      <h4>Mirror가 필요할 때</h4>
+      <h4>Weld가 필요할 때</h4>
       <ul>
-        <li>좌우 대칭 로봇</li>
-        <li>자동차</li>
-        <li>캐릭터 얼굴</li>
-        <li>가구</li>
+        <li>Mirror 이음새 정리</li>
+        <li>Boolean 후 중복 정점 제거</li>
+        <li>Import 모델 정리</li>
+        <li>Array 연결부 병합</li>
       </ul>
     </div>
     <div class="usage-card">
-      <h4>Mirror를 안 쓰는 경우</h4>
+      <h4>Weld를 안 쓰는 경우</h4>
       <ul>
-        <li>비대칭 디자인</li>
-        <li>유기적 형태</li>
-        <li>한쪽만 다른 디테일</li>
+        <li>의도적으로 분리된 메쉬</li>
+        <li>거리 설정 실수 시 형태 붕괴 위험</li>
+        <li>이미 깨끗한 토폴로지</li>
       </ul>
     </div>
   </div>
-  <div class="tip-box">
-    <strong>팁:</strong> Mirror는 원점(Origin)이 중심에 있어야 해요. <span class="kbd">S</span>+<span class="kbd">X</span>+<span class="kbd">0</span>으로 중심선을 맞추고, 오브젝트를 먼저 중앙에 놓은 뒤 Mirror를 추가하세요.
-  </div>
+
   <div class="combo-section">
     <h4>자주 쓰는 조합</h4>
     <div class="combo-grid">
       <div class="combo-card">
-        <div class="combo-name">Mirror + Subdivision Surface</div>
-        <div class="combo-desc">Mirror로 대칭을 잡고 Subdivision으로 부드럽게. Mirror가 위, Subdivision이 아래 순서로 배치합니다.</div>
+        <div class="combo-name">Boolean → Weld</div>
+        <div class="combo-desc">Boolean 연산 후 교차 부분에 생기는 중복 정점과 이음새를 Weld로 정리합니다.</div>
       </div>
       <div class="combo-card">
-        <div class="combo-name">Mirror + Solidify</div>
-        <div class="combo-desc">대칭 형태에 두께를 추가할 때. 얇은 판이나 갑옷 같은 모델에 유용합니다.</div>
+        <div class="combo-name">Array → Weld</div>
+        <div class="combo-desc">Array로 반복 생성된 오브젝트의 연결부에서 겹치는 꼭짓점을 병합합니다.</div>
       </div>
     </div>
   </div>
 
+  <div class="tip-box">
+    <strong>팁:</strong> Merge by Distance(<span class="kbd">M</span>→<span class="kbd">D</span>)와 비슷하지만, Weld는 비파괴적! 언제든 Distance를 조절할 수 있어요.
+  </div>
+
   <div class="doc-ref">
-    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html" target="_blank" rel="noopener">
-      📖 Blender 공식 문서 — Mirror Modifier
+    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/weld.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Weld Modifier
     </a>
   </div>
 </section>
@@ -614,33 +638,47 @@ function initQuiz(questions) {
   }
 }
 
-// ── Canvas Mirror Demo ────────────────────────
+// ── Canvas Weld Demo ──────────────────────────
 (function() {
   var canvas = document.getElementById("demoCanvas");
   var ctx = canvas.getContext("2d");
-  var clipping = true;
-  var dragging = -1;
-  var hitRadius = 14;
+  var weldDist = 25; // pixels
 
-  // Initial left-half vertices (robot torso shape, top-down view)
-  // These are offsets from center — stored as positive X values from center
-  var defaultVerts = [
-    { x: 10,  y: 60  },  // top-center-ish
-    { x: 100, y: 50  },  // top-right shoulder
-    { x: 120, y: 90  },  // right shoulder corner
-    { x: 110, y: 160 },  // right waist
-    { x: 90,  y: 220 },  // right hip
-    { x: 10,  y: 240 },  // bottom-center-ish
-  ];
+  var slider = document.getElementById("distSlider");
+  var valLabel = document.getElementById("distVal");
 
-  // Working copy
-  var verts = [];
-  function resetVerts() {
-    verts = defaultVerts.map(function(v) { return { x: v.x, y: v.y }; });
+  // Generate pairs of close vertices scattered across canvas
+  var defaultPoints = [];
+  var seed = 42;
+  function pseudoRandom() {
+    seed = (seed * 16807 + 0) % 2147483647;
+    return (seed - 1) / 2147483646;
   }
-  resetVerts();
 
-  var centerX = canvas.width / 2;
+  function generatePoints() {
+    seed = 42;
+    defaultPoints = [];
+    var count = 18;
+    for (var i = 0; i < count; i++) {
+      var bx = 60 + pseudoRandom() * (canvas.width - 120);
+      var by = 40 + pseudoRandom() * (canvas.height - 80);
+      defaultPoints.push({ x: bx, y: by });
+      // Add a close neighbor
+      var angle = pseudoRandom() * Math.PI * 2;
+      var dist = 8 + pseudoRandom() * 35;
+      defaultPoints.push({
+        x: bx + Math.cos(angle) * dist,
+        y: by + Math.sin(angle) * dist
+      });
+    }
+  }
+  generatePoints();
+
+  var points = [];
+  function resetPoints() {
+    points = defaultPoints.map(function(p) { return { x: p.x, y: p.y }; });
+  }
+  resetPoints();
 
   function draw() {
     var w = canvas.width;
@@ -651,252 +689,193 @@ function initQuiz(questions) {
     ctx.fillStyle = "#17181a";
     ctx.fillRect(0, 0, w, h);
 
-    // Grid lines (subtle)
+    // Grid
     ctx.strokeStyle = "rgba(255,255,255,.04)";
     ctx.lineWidth = 1;
     var step = 40;
     for (var gx = step; gx < w; gx += step) {
-      ctx.beginPath();
-      ctx.moveTo(gx, 0);
-      ctx.lineTo(gx, h);
-      ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
     }
     for (var gy = step; gy < h; gy += step) {
-      ctx.beginPath();
-      ctx.moveTo(0, gy);
-      ctx.lineTo(w, gy);
-      ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
     }
 
-    // Center mirror axis — dashed line
-    ctx.strokeStyle = "rgba(245,158,11,.5)";
-    ctx.lineWidth = 2;
-    ctx.setLineDash([8, 6]);
-    ctx.beginPath();
-    ctx.moveTo(centerX, 0);
-    ctx.lineTo(centerX, h);
-    ctx.stroke();
-    ctx.setLineDash([]);
+    // Find welded groups
+    var merged = new Array(points.length);
+    for (var i = 0; i < points.length; i++) merged[i] = i;
 
-    // Axis label
-    ctx.fillStyle = "rgba(245,158,11,.7)";
-    ctx.font = "11px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("Mirror Axis (X=0)", centerX, 18);
+    function find(a) {
+      while (merged[a] !== a) { merged[a] = merged[merged[a]]; a = merged[a]; }
+      return a;
+    }
+    function union(a, b) {
+      var ra = find(a), rb = find(b);
+      if (ra !== rb) merged[ra] = rb;
+    }
 
-    // Draw left half polygon (original)
-    drawPolygon(verts, -1, "rgba(10,132,255,.25)", "rgba(10,132,255,.7)");
+    var pairLines = [];
+    for (var i = 0; i < points.length; i++) {
+      for (var j = i + 1; j < points.length; j++) {
+        var dx = points[i].x - points[j].x;
+        var dy = points[i].y - points[j].y;
+        var d = Math.sqrt(dx * dx + dy * dy);
+        if (d <= weldDist) {
+          union(i, j);
+          pairLines.push({ a: i, b: j, dist: d });
+        }
+      }
+    }
 
-    // Draw right half polygon (mirrored)
-    var mirrored = verts.map(function(v) {
-      return { x: v.x, y: v.y };
-    });
-    drawPolygon(mirrored, 1, "rgba(16,185,129,.15)", "rgba(16,185,129,.5)");
-
-    // Labels
-    ctx.font = "bold 12px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillStyle = "rgba(10,132,255,.8)";
-    ctx.fillText("Original (Edit)", centerX - 80, h - 14);
-    ctx.fillStyle = "rgba(16,185,129,.6)";
-    ctx.fillText("Mirrored (Auto)", centerX + 80, h - 14);
-
-    // Draw vertex handles on left side
-    verts.forEach(function(v, i) {
-      var sx = centerX - v.x;
-      var sy = v.y;
+    // Draw connection lines for pairs within distance
+    pairLines.forEach(function(pair) {
       ctx.beginPath();
-      ctx.arc(sx, sy, 6, 0, Math.PI * 2);
-      ctx.fillStyle = (dragging === i) ? "#0a84ff" : "rgba(10,132,255,.9)";
-      ctx.fill();
-      ctx.strokeStyle = "#fff";
+      ctx.moveTo(points[pair.a].x, points[pair.a].y);
+      ctx.lineTo(points[pair.b].x, points[pair.b].y);
+      ctx.strokeStyle = "rgba(245,158,11,.4)";
       ctx.lineWidth = 1.5;
       ctx.stroke();
     });
 
-    // Clipping indicator
-    ctx.fillStyle = clipping ? "rgba(16,185,129,.7)" : "rgba(239,68,68,.7)";
-    ctx.font = "bold 11px sans-serif";
-    ctx.textAlign = "left";
-    ctx.fillText("Clipping: " + (clipping ? "ON" : "OFF"), 12, 18);
-  }
-
-  function drawPolygon(pts, side, fillColor, strokeColor) {
-    // side: -1 = left of center, +1 = right of center
-    if (pts.length < 2) return;
-    ctx.beginPath();
-    pts.forEach(function(v, i) {
-      var sx = (side === -1) ? (centerX - v.x) : (centerX + v.x);
-      var sy = v.y;
-      if (i === 0) ctx.moveTo(sx, sy);
-      else ctx.lineTo(sx, sy);
-    });
-    ctx.closePath();
-    ctx.fillStyle = fillColor;
-    ctx.fill();
-    ctx.strokeStyle = strokeColor;
-    ctx.lineWidth = 2;
-    ctx.stroke();
-  }
-
-  function getEventPos(e) {
-    var rect = canvas.getBoundingClientRect();
-    var scaleX = canvas.width / rect.width;
-    var scaleY = canvas.height / rect.height;
-    var clientX, clientY;
-    if (e.touches && e.touches.length > 0) {
-      clientX = e.touches[0].clientX;
-      clientY = e.touches[0].clientY;
-    } else {
-      clientX = e.clientX;
-      clientY = e.clientY;
+    // Group merged vertices
+    var groups = {};
+    for (var i = 0; i < points.length; i++) {
+      var root = find(i);
+      if (!groups[root]) groups[root] = [];
+      groups[root].push(i);
     }
-    return {
-      x: (clientX - rect.left) * scaleX,
-      y: (clientY - rect.top) * scaleY
-    };
-  }
 
-  function findVertex(pos) {
-    var best = -1;
-    var bestDist = hitRadius * hitRadius;
-    verts.forEach(function(v, i) {
-      var sx = centerX - v.x;
-      var sy = v.y;
-      var dx = pos.x - sx;
-      var dy = pos.y - sy;
-      var d2 = dx * dx + dy * dy;
-      if (d2 < bestDist) {
-        bestDist = d2;
-        best = i;
+    // Draw original points (faded if merged)
+    var mergedCount = 0;
+    var resultCount = Object.keys(groups).length;
+
+    for (var i = 0; i < points.length; i++) {
+      var group = groups[find(i)];
+      var isMerged = group.length > 1;
+
+      ctx.beginPath();
+      ctx.arc(points[i].x, points[i].y, 5, 0, Math.PI * 2);
+
+      if (isMerged) {
+        ctx.fillStyle = "rgba(245,158,11,.3)";
+        ctx.strokeStyle = "rgba(245,158,11,.5)";
+      } else {
+        ctx.fillStyle = "rgba(10,132,255,.7)";
+        ctx.strokeStyle = "rgba(10,132,255,.9)";
+      }
+      ctx.fill();
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+
+    // Draw merged result points (center of each group)
+    Object.keys(groups).forEach(function(root) {
+      var group = groups[root];
+      if (group.length > 1) {
+        mergedCount += group.length - 1;
+        var cx = 0, cy = 0;
+        group.forEach(function(idx) { cx += points[idx].x; cy += points[idx].y; });
+        cx /= group.length;
+        cy /= group.length;
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, 7, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(16,185,129,.8)";
+        ctx.fill();
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Draw weld radius circle
+        ctx.beginPath();
+        ctx.arc(cx, cy, weldDist, 0, Math.PI * 2);
+        ctx.strokeStyle = "rgba(16,185,129,.15)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
       }
     });
-    return best;
+
+    // Stats
+    ctx.font = "bold 12px sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillStyle = "rgba(10,132,255,.8)";
+    ctx.fillText("Before: " + points.length + " vertices", 12, 22);
+    ctx.fillStyle = "rgba(16,185,129,.8)";
+    ctx.fillText("After: " + resultCount + " vertices", 12, 40);
+    ctx.fillStyle = "rgba(245,158,11,.7)";
+    ctx.fillText("Merged: " + mergedCount + " vertices", 12, 58);
+
+    // Legend
+    ctx.textAlign = "right";
+    ctx.fillStyle = "rgba(255,255,255,.4)";
+    ctx.font = "11px sans-serif";
+    ctx.fillText("Distance = " + (weldDist / 100).toFixed(2), w - 12, 22);
   }
 
-  function onDown(e) {
-    e.preventDefault();
-    var pos = getEventPos(e);
-    dragging = findVertex(pos);
-    if (dragging >= 0) draw();
-  }
-
-  function onMove(e) {
-    if (dragging < 0) return;
-    e.preventDefault();
-    var pos = getEventPos(e);
-    // Convert screen position to vertex coords (offset from center)
-    var newX = centerX - pos.x;
-    var newY = pos.y;
-
-    // Clamp Y
-    if (newY < 10) newY = 10;
-    if (newY > canvas.height - 10) newY = canvas.height - 10;
-
-    // Clipping: prevent crossing center line (x must stay >= 0)
-    if (clipping) {
-      if (newX < 0) newX = 0;
-    }
-    // Even without clipping, don't go too far right
-    if (newX > centerX - 10) newX = centerX - 10;
-
-    verts[dragging].x = newX;
-    verts[dragging].y = newY;
-    draw();
-  }
-
-  function onUp(e) {
-    if (dragging >= 0) {
-      dragging = -1;
-      draw();
-    }
-  }
-
-  // Mouse events
-  canvas.addEventListener("mousedown", onDown);
-  canvas.addEventListener("mousemove", onMove);
-  canvas.addEventListener("mouseup", onUp);
-  canvas.addEventListener("mouseleave", onUp);
-
-  // Touch events
-  canvas.addEventListener("touchstart", onDown, { passive: false });
-  canvas.addEventListener("touchmove", onMove, { passive: false });
-  canvas.addEventListener("touchend", onUp);
-  canvas.addEventListener("touchcancel", onUp);
-
-  // Clipping toggle
-  var btnClipping = document.getElementById("btnClipping");
-  btnClipping.addEventListener("click", function() {
-    clipping = !clipping;
-    if (clipping) {
-      btnClipping.textContent = "Clipping ON";
-      btnClipping.classList.add("is-active");
-      // Enforce clipping on current verts
-      verts.forEach(function(v) {
-        if (v.x < 0) v.x = 0;
-      });
-    } else {
-      btnClipping.textContent = "Clipping OFF";
-      btnClipping.classList.remove("is-active");
-    }
+  slider.addEventListener("input", function() {
+    weldDist = parseInt(slider.value);
+    valLabel.textContent = (weldDist / 100).toFixed(2);
     draw();
   });
 
-  // Reset button
+  slider.addEventListener("touchstart", function(e) { e.stopPropagation(); }, { passive: true });
+  slider.addEventListener("touchmove", function(e) { e.stopPropagation(); }, { passive: true });
+
   document.getElementById("btnReset").addEventListener("click", function() {
-    resetVerts();
+    weldDist = 25;
+    slider.value = 25;
+    valLabel.textContent = "0.25";
+    resetPoints();
     draw();
   });
 
-  // Initial draw
   draw();
 })();
 
 // ── Quiz Data ─────────────────────────────────
 initQuiz([
   {
-    question: "Mirror Modifier\uB97C \uCD94\uAC00\uD588\uB294\uB370 \uBBF8\uB7EC\uB41C \uBC18\uCABD\uC774 \uC774\uC0C1\uD55C \uACF3\uC5D0 \uB098\uD0C0\uB098\uC694. \uAC00\uC7A5 \uD754\uD55C \uC6D0\uC778\uC740?",
+    question: "Weld Modifier\uC758 \uC5ED\uD560\uC740 \uBB34\uC5C7\uC778\uAC00\uC694?",
     options: [
-      "Apply Scale\uC744 \uC548 \uD574\uC11C",
-      "Origin\uC774 \uC624\uBE0C\uC81D\uD2B8 \uC911\uC2EC\uC5D0 \uC788\uC9C0 \uC54A\uC544\uC11C",
-      "Clipping\uC774 \uCF1C\uC838 \uC788\uC5B4\uC11C",
-      "Edit Mode\uAC00 \uC544\uB2C8\uB77C\uC11C"
+      "\uBA54\uC26C\uB97C \uBD84\uB9AC\uD558\uB294 \uAC83",
+      "\uAC00\uAE4C\uC6B4 \uAF2D\uC9D3\uC810\uC744 \uC790\uB3D9\uC73C\uB85C \uBCD1\uD569",
+      "\uBA54\uC26C\uC5D0 \uB450\uAED8\uB97C \uCD94\uAC00",
+      "\uBBF8\uB7EC \uBCF5\uC0AC\uB97C \uB9CC\uB4DC\uB294 \uAC83"
     ],
     answer: 1,
-    explanation: "Mirror\uB294 Origin\uC744 \uAE30\uC900\uC73C\uB85C \uBC18\uC804\uD569\uB2C8\uB2E4. Origin\uC774 \uC624\uBE0C\uC81D\uD2B8 \uC911\uC2EC\uC5D0 \uC788\uC9C0 \uC54A\uC73C\uBA74 \uBBF8\uB7EC\uB41C \uBC18\uCABD\uC774 \uC5C9\uB69A\uD55C \uC704\uCE58\uC5D0 \uC0DD\uAE41\uB2C8\uB2E4."
+    explanation: "Weld\uB294 \uC124\uC815\uD55C Distance \uC774\uB0B4\uC5D0 \uC788\uB294 \uAF2D\uC9D3\uC810\uB4E4\uC744 \uC790\uB3D9\uC73C\uB85C \uD558\uB098\uB85C \uBCD1\uD569\uD569\uB2C8\uB2E4."
   },
   {
-    question: "Clipping \uC635\uC158\uC744 \uCF1C\uBA74 \uC5B4\uB5A4 \uD6A8\uACFC\uAC00 \uC788\uB098\uC694?",
+    question: "Distance\uB97C \uB108\uBB34 \uD06C\uAC8C \uC124\uC815\uD558\uBA74?",
     options: [
-      "\uBBF8\uB7EC\uAC00 \uBE44\uD65C\uC131\uD654\uB41C\uB2E4",
-      "\uC790\uB3D9\uC73C\uB85C Apply\uB41C\uB2E4",
-      "\uC911\uC2EC \uC815\uC810\uC774 \uBBF8\uB7EC \uCD95\uC744 \uB118\uC9C0 \uBABB\uD55C\uB2E4",
-      "\uBC18\uB300\uD3B8\uC774 \uC228\uACA8\uC9C4\uB2E4"
+      "\uB354 \uC815\uBC00\uD574\uC9C4\uB2E4",
+      "\uC544\uBB34 \uBCC0\uD654\uAC00 \uC5C6\uB2E4",
+      "\uD615\uD0DC\uAC00 \uBB34\uB108\uC9C8 \uC218 \uC788\uB2E4",
+      "\uBAA8\uB514\uD30C\uC774\uC5B4\uAC00 \uC0AD\uC81C\uB41C\uB2E4"
     ],
     answer: 2,
-    explanation: "Clipping\uC744 \uCF1C\uBA74 \uC815\uC810\uC774 \uBBF8\uB7EC \uCD95\uC744 \uB118\uC5B4\uAC00\uC9C0 \uBABB\uD569\uB2C8\uB2E4. \uC774\uB807\uAC8C \uD558\uBA74 \uC911\uC2EC\uC120\uC5D0\uC11C \uC591\uCABD\uC774 \uAE54\uB054\uD558\uAC8C \uC774\uC5B4\uC9D1\uB2C8\uB2E4."
+    explanation: "Distance\uAC00 \uB108\uBB34 \uD06C\uBA74 \uBA40\uB9AC \uB5A8\uC5B4\uC9C4 \uAF2D\uC9D3\uC810\uAE4C\uC9C0 \uBCD1\uD569\uB418\uC5B4 \uD615\uD0DC\uAC00 \uBB34\uB108\uC9C8 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
   },
   {
-    question: "S \u2192 X \u2192 0\uC744 \uB204\uB974\uBA74 \uC5B4\uB5A4 \uC77C\uC774 \uC77C\uC5B4\uB098\uB098\uC694?",
+    question: "Merge by Distance\uC640 Weld\uC758 \uCC28\uC774\uB294?",
     options: [
-      "\uC624\uBE0C\uC81D\uD2B8\uAC00 \uC0AD\uC81C\uB41C\uB2E4",
-      "X\uCD95 \uBBF8\uB7EC\uAC00 \uC801\uC6A9\uB41C\uB2E4",
-      "X\uC88C\uD45C\uAC00 0\uC774 \uB418\uC5B4 \uC911\uC2EC\uC120 \uC815\uB82C",
-      "\uC2A4\uCF00\uC77C\uC774 \uCD08\uAE30\uD654\uB41C\uB2E4"
+      "\uAE30\uB2A5\uC774 \uC644\uC804\uD788 \uB2E4\uB974\uB2E4",
+      "Weld\uAC00 \uB354 \uBE60\uB974\uB2E4",
+      "Weld\uB294 \uBE44\uD30C\uAD34\uC801 \uBAA8\uB514\uD30C\uC774\uC5B4\uC774\uB2E4",
+      "Merge by Distance\uAC00 \uBE44\uD30C\uAD34\uC801\uC774\uB2E4"
     ],
     answer: 2,
-    explanation: "S(Scale) \u2192 X(\uCD95 \uC81C\uD55C) \u2192 0(\uAC12)\uC744 \uB204\uB974\uBA74 \uC120\uD0DD\uD55C \uC815\uC810\uC758 X\uC88C\uD45C\uAC00 0\uC774 \uB418\uC5B4 \uC815\uD655\uD788 \uC911\uC2EC\uC120\uC5D0 \uC815\uB82C\uB429\uB2C8\uB2E4."
+    explanation: "Weld\uB294 \uBAA8\uB514\uD30C\uC774\uC5B4\uB85C \uBE44\uD30C\uAD34\uC801\uC73C\uB85C \uC791\uB3D9\uD569\uB2C8\uB2E4. \uC5B8\uC81C\uB4E0 Distance\uB97C \uC870\uC808\uD558\uAC70\uB098 \uC81C\uAC70\uD560 \uC218 \uC788\uC5B4\uC694."
   },
   {
-    question: "Mirror + Subdivision Surface \uC870\uD569\uC5D0\uC11C Modifier \uC21C\uC11C\uB294?",
+    question: "Boolean \uD6C4 Weld\uB97C \uC4F0\uB294 \uC774\uC720\uB294?",
     options: [
-      "\uC21C\uC11C \uC0C1\uAD00\uC5C6\uB2E4",
-      "Subdivision\uC774 \uC704",
-      "Mirror\uAC00 \uC704",
-      "\uB458 \uB2E4 Apply \uD6C4 \uC0AC\uC6A9"
+      "Boolean \uACB0\uACFC\uB97C \uCDE8\uC18C\uD558\uAE30 \uC704\uD574",
+      "\uAD50\uCC28 \uBD80\uBD84\uC758 \uC911\uBCF5 \uC815\uC810\uC744 \uC815\uB9AC\uD558\uAE30 \uC704\uD574",
+      "\uC0C9\uC0C1\uC744 \uBCC0\uACBD\uD558\uAE30 \uC704\uD574",
+      "\uD06C\uAE30\uB97C \uC870\uC808\uD558\uAE30 \uC704\uD574"
     ],
-    answer: 2,
-    explanation: "Mirror\uAC00 \uC704\uC5D0, Subdivision\uC774 \uC544\uB798\uC5D0 \uC640\uC57C \uD569\uB2C8\uB2E4. \uBA3C\uC800 \uB300\uCE6D\uC744 \uC7A1\uACE0 \uB098\uC11C \uBD80\uB4DC\uB7FD\uAC8C \uB9CC\uB4DC\uB294 \uAC83\uC774 \uC62C\uBC14\uB978 \uC21C\uC11C\uC785\uB2C8\uB2E4."
+    answer: 1,
+    explanation: "Boolean \uC5F0\uC0B0 \uD6C4 \uAD50\uCC28 \uBD80\uBD84\uC5D0 \uC911\uBCF5 \uC815\uC810\uC774 \uC0DD\uAE38 \uC218 \uC788\uC5B4, Weld\uB85C \uAE54\uB054\uD558\uAC8C \uC815\uB9AC\uD569\uB2C8\uB2E4."
   }
 ]);
 </script>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Show Me — Mirror Modifier 이해</title>
+<title>Show Me — Remesh Modifier 이해</title>
 <style>
 /* ══════════════════════════════════════════════════
    Show Me Widget — Standalone Dark Theme
@@ -108,6 +108,7 @@ body {
 .badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
 .badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
 .badge-amber { background: rgba(245,158,11,.15);  color: #fbbf24; }
+.badge-red   { background: rgba(239,68,68,.15);   color: #fca5a5; }
 
 /* ── Keyboard Shortcut ── */
 .kbd {
@@ -135,6 +136,7 @@ body {
   display: flex; gap: 8px; padding: 12px;
   border-top: 1px solid var(--line);
   flex-wrap: wrap;
+  align-items: center;
 }
 .demo-hint {
   font-size: .78rem; color: var(--muted);
@@ -154,6 +156,22 @@ body {
   background: rgba(10,132,255,.14);
   color: var(--key-soft);
   border-color: rgba(10,132,255,.3);
+}
+.demo-slider-wrap {
+  display: flex; align-items: center; gap: 8px;
+  margin-left: auto;
+}
+.demo-slider-wrap label {
+  font-size: .78rem; color: var(--muted);
+  white-space: nowrap;
+}
+.demo-slider-wrap input[type="range"] {
+  width: 100px;
+  accent-color: var(--key);
+}
+.demo-slider-wrap .slider-val {
+  font-size: .78rem; color: var(--key-soft);
+  min-width: 28px; text-align: center;
 }
 
 /* ── Usage Grid ── */
@@ -181,14 +199,14 @@ body {
 /* ── Tip Box ── */
 .tip-box {
   border-radius: var(--radius-md);
-  border: 1px solid rgba(10,132,255,.2);
-  background: rgba(10,132,255,.06);
+  border: 1px solid rgba(239,68,68,.2);
+  background: rgba(239,68,68,.06);
   padding: 14px 16px;
   margin-top: 14px;
   font-size: .86rem;
   color: var(--muted-strong);
 }
-.tip-box strong { color: var(--key-soft); }
+.tip-box strong { color: #fca5a5; }
 
 /* ── Combo Section ── */
 .combo-section {
@@ -355,6 +373,7 @@ body {
   .tabs { padding: 0 8px; }
   .tab { padding: 10px 12px; font-size: .8rem; }
   .panel { padding: 16px 12px; }
+  .demo-slider-wrap { margin-left: 0; width: 100%; }
 }
 </style>
 </head>
@@ -363,7 +382,7 @@ body {
 <!-- Tab Bar -->
 <nav class="tabs" role="tablist">
   <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
-  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">모드 데모</button>
   <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
   <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
 </nav>
@@ -372,96 +391,102 @@ body {
 <section class="panel is-active" id="panel-concept" role="tabpanel">
   <div class="concept-grid">
     <div class="concept-card">
-      <h3>Mirror Modifier란?</h3>
-      <p>거울처럼 한쪽만 편집하면 반대쪽이 자동으로 따라오는 Modifier입니다. 좌우 대칭 모델을 만들 때 작업량을 절반으로 줄여줍니다.</p>
-      <div class="analogy">거울 앞에서 한쪽을 바꾸면 반대쪽이 자동으로 따라와요</div>
+      <h3><span class="badge badge-blue">Core</span> Remesh란?</h3>
+      <p>메쉬의 토폴로지를 완전히 재구성하는 모디파이어입니다. 지저분한 메쉬를 균일한 사각형 또는 삼각형 그리드로 바꿔줍니다.</p>
+      <div class="analogy">구겨진 종이를 펴서 새 격자무늬 종이로 바꾸는 것과 같습니다</div>
     </div>
     <div class="concept-card">
-      <h3>Clipping이란?</h3>
-      <p>중심선을 넘지 못하게 하는 옵션입니다. ON이면 중심 정점이 정확히 중앙에 고정되어, 양쪽이 깔끔하게 이어집니다.</p>
-      <div class="analogy">중심선에 보이지 않는 벽이 생겨서 정점이 넘어가지 못해요</div>
+      <h3><span class="badge badge-green">Modes</span> 4가지 모드</h3>
+      <ul>
+        <li><strong>Voxel</strong> — 가장 많이 사용. 균일한 복셀 크기로 재구성</li>
+        <li><strong>Smooth</strong> — 부드럽게 재구성, 형태 유지</li>
+        <li><strong>Sharp</strong> — 날카로운 모서리를 유지하며 재구성</li>
+        <li><strong>Blocks</strong> — 마인크래프트 스타일 복셀화</li>
+      </ul>
     </div>
-  </div>
-
-  <div class="shortcut-list">
-    <h4>주요 단축키</h4>
-    <div class="shortcut-row">
-      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">1</span></span>
-      <span>Modifier 추가 패널</span>
-    </div>
-    <div class="shortcut-row">
-      <span class="shortcut-keys"><span class="kbd">S</span> <span class="kbd">X</span> <span class="kbd">0</span></span>
-      <span>중심선 정렬 (선택한 정점의 X좌표를 0으로)</span>
-    </div>
-    <div class="shortcut-row">
-      <span class="shortcut-keys">Clipping 체크박스</span>
-      <span>Properties &rarr; Modifier tab에서 설정</span>
+    <div class="concept-card">
+      <h3><span class="badge badge-amber">Setting</span> Voxel Size</h3>
+      <p>Voxel 크기가 작을수록 원본 디테일을 더 잘 보존하지만, 면 수가 크게 증가합니다. 클수록 단순화됩니다.</p>
+      <ul>
+        <li><strong>작은 값</strong> — 디테일 보존, 면 수 증가</li>
+        <li><strong>큰 값</strong> — 단순화, 면 수 감소</li>
+      </ul>
     </div>
   </div>
 
   <div class="doc-ref">
-    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html" target="_blank" rel="noopener">
-      📖 Blender 공식 문서 — Mirror Modifier
+    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/remesh.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Remesh Modifier
     </a>
   </div>
 </section>
 
-<!-- TAB 2: 시각적 비교 -->
+<!-- TAB 2: 모드 데모 -->
 <section class="panel" id="panel-visual" role="tabpanel">
   <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    왼쪽 반의 꼭짓점을 드래그하면 오른쪽이 자동으로 미러됩니다.
+    모드를 전환하고 해상도 슬라이더를 조절하여 Remesh 효과를 확인하세요.
   </p>
   <div class="demo-wrap">
-    <canvas id="demoCanvas" width="680" height="300"></canvas>
+    <canvas id="demoCanvas" width="680" height="380"></canvas>
     <div class="demo-controls">
-      <button class="demo-btn is-active" id="btnClipping">Clipping ON</button>
-      <button class="demo-btn" id="btnReset">초기화</button>
+      <button class="demo-btn is-active" id="btnVoxel">Voxel</button>
+      <button class="demo-btn" id="btnSmooth">Smooth</button>
+      <button class="demo-btn" id="btnSharp">Sharp</button>
+      <button class="demo-btn" id="btnBlocks">Blocks</button>
+      <div class="demo-slider-wrap">
+        <label>해상도:</label>
+        <input type="range" id="resSlider" min="1" max="5" value="3" step="1">
+        <span class="slider-val" id="resVal">3</span>
+      </div>
     </div>
   </div>
-  <p class="demo-hint">꼭짓점을 드래그해 보세요. Clipping을 토글하면 중심선 넘기 동작이 달라집니다.</p>
+  <p class="demo-hint">왼쪽: 원본 메쉬 (지저분한 토폴로지) → 오른쪽: Remesh 결과 (깨끗한 토폴로지)</p>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->
 <section class="panel" id="panel-when" role="tabpanel">
   <div class="usage-grid">
     <div class="usage-card">
-      <h4>Mirror가 필요할 때</h4>
+      <h4>Remesh가 필요할 때</h4>
       <ul>
-        <li>좌우 대칭 로봇</li>
-        <li>자동차</li>
-        <li>캐릭터 얼굴</li>
-        <li>가구</li>
+        <li>Sculpt 후 리토폴로지</li>
+        <li>Boolean 연산 후 메쉬 정리</li>
+        <li>AI 생성 모델 토폴로지 정리</li>
+        <li>3D 스캔 데이터 정리</li>
       </ul>
     </div>
     <div class="usage-card">
-      <h4>Mirror를 안 쓰는 경우</h4>
+      <h4>Remesh를 안 쓰는 경우</h4>
       <ul>
-        <li>비대칭 디자인</li>
-        <li>유기적 형태</li>
-        <li>한쪽만 다른 디테일</li>
+        <li>이미 깨끗한 토폴로지</li>
+        <li>UV가 필요한 모델 (UV 파괴됨)</li>
+        <li>정밀한 Edge Flow가 필요할 때</li>
+        <li>애니메이션용 토폴로지</li>
       </ul>
     </div>
   </div>
+
   <div class="tip-box">
-    <strong>팁:</strong> Mirror는 원점(Origin)이 중심에 있어야 해요. <span class="kbd">S</span>+<span class="kbd">X</span>+<span class="kbd">0</span>으로 중심선을 맞추고, 오브젝트를 먼저 중앙에 놓은 뒤 Mirror를 추가하세요.
+    <strong>주의:</strong> Remesh는 UV 맵을 파괴합니다! UV 작업 전에 사용하세요. Remesh 후에는 반드시 UV를 새로 펴야 합니다.
   </div>
+
   <div class="combo-section">
     <h4>자주 쓰는 조합</h4>
     <div class="combo-grid">
       <div class="combo-card">
-        <div class="combo-name">Mirror + Subdivision Surface</div>
-        <div class="combo-desc">Mirror로 대칭을 잡고 Subdivision으로 부드럽게. Mirror가 위, Subdivision이 아래 순서로 배치합니다.</div>
+        <div class="combo-name">Boolean → Remesh</div>
+        <div class="combo-desc">Boolean 연산 후 지저분해진 메쉬를 Remesh로 깨끗하게 정리합니다.</div>
       </div>
       <div class="combo-card">
-        <div class="combo-name">Mirror + Solidify</div>
-        <div class="combo-desc">대칭 형태에 두께를 추가할 때. 얇은 판이나 갑옷 같은 모델에 유용합니다.</div>
+        <div class="combo-name">Sculpt → Remesh → Decimate</div>
+        <div class="combo-desc">Sculpt 결과를 균일하게 정리한 뒤 Decimate로 면 수를 줄여 최적화합니다.</div>
       </div>
     </div>
   </div>
 
   <div class="doc-ref">
-    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html" target="_blank" rel="noopener">
-      📖 Blender 공식 문서 — Mirror Modifier
+    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/remesh.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Remesh Modifier
     </a>
   </div>
 </section>
@@ -614,239 +639,308 @@ function initQuiz(questions) {
   }
 }
 
-// ── Canvas Mirror Demo ────────────────────────
+// ── Canvas Remesh Demo ────────────────────────
 (function() {
   var canvas = document.getElementById("demoCanvas");
   var ctx = canvas.getContext("2d");
-  var clipping = true;
-  var dragging = -1;
-  var hitRadius = 14;
+  var W = canvas.width;
+  var H = canvas.height;
+  var currentMode = "voxel";
+  var resolution = 3;
 
-  // Initial left-half vertices (robot torso shape, top-down view)
-  // These are offsets from center — stored as positive X values from center
-  var defaultVerts = [
-    { x: 10,  y: 60  },  // top-center-ish
-    { x: 100, y: 50  },  // top-right shoulder
-    { x: 120, y: 90  },  // right shoulder corner
-    { x: 110, y: 160 },  // right waist
-    { x: 90,  y: 220 },  // right hip
-    { x: 10,  y: 240 },  // bottom-center-ish
-  ];
-
-  // Working copy
-  var verts = [];
-  function resetVerts() {
-    verts = defaultVerts.map(function(v) { return { x: v.x, y: v.y }; });
+  // Generate a messy original mesh (irregular polygon with random topology)
+  var seed = 42;
+  function seededRandom() {
+    seed = (seed * 16807 + 0) % 2147483647;
+    return (seed - 1) / 2147483646;
   }
-  resetVerts();
 
-  var centerX = canvas.width / 2;
+  // Original messy shape — irregular blob
+  function generateMessyShape() {
+    seed = 42;
+    var pts = [];
+    var numPts = 24;
+    var cx = W * 0.25;
+    var cy = H * 0.5;
+    var baseR = 100;
+    for (var i = 0; i < numPts; i++) {
+      var angle = (i / numPts) * Math.PI * 2;
+      var r = baseR + (seededRandom() - 0.5) * 60;
+      pts.push({
+        x: cx + Math.cos(angle) * r,
+        y: cy + Math.sin(angle) * r
+      });
+    }
+    return pts;
+  }
+
+  // Generate remeshed versions based on mode and resolution
+  function generateRemeshed(mode, res) {
+    var cx = W * 0.72;
+    var cy = H * 0.5;
+    var baseR = 100;
+    var pts = [];
+
+    if (mode === "blocks") {
+      // Blocky voxelized grid
+      var gridSize = 14 - res * 2; // smaller grid = more blocks
+      if (gridSize < 4) gridSize = 4;
+      return { type: "blocks", cx: cx, cy: cy, baseR: baseR, gridSize: gridSize };
+    }
+
+    // For voxel/smooth/sharp: generate clean circular mesh with varying segments
+    var segments = 8 + res * 8;
+
+    for (var i = 0; i <= segments; i++) {
+      var angle = (i / segments) * Math.PI * 2;
+      var r = baseR;
+
+      // Add original shape influence based on resolution
+      seed = 42;
+      var origAngle = 0;
+      for (var j = 0; j < 24; j++) {
+        origAngle = (j / 24) * Math.PI * 2;
+        var origR = 100 + (seededRandom() - 0.5) * 60;
+        if (Math.abs(origAngle - angle) < 0.3) {
+          var blend = res / 5;
+          r = baseR * (1 - blend) + origR * blend;
+        }
+      }
+
+      if (mode === "smooth") {
+        // Smooth: less sharp transitions
+        r = baseR + Math.sin(angle * 3) * (5 + res * 3);
+      } else if (mode === "sharp") {
+        // Sharp: preserve some edges
+        var sharpFactor = Math.round(Math.sin(angle * 4) * 2) / 2;
+        r = baseR + sharpFactor * (8 + res * 4);
+      } else {
+        // Voxel: uniform grid
+        r = baseR + Math.sin(angle * 5) * (3 + res * 2);
+      }
+
+      pts.push({
+        x: cx + Math.cos(angle) * r,
+        y: cy + Math.sin(angle) * r
+      });
+    }
+    return { type: "polygon", pts: pts, segments: segments };
+  }
+
+  // Draw messy wireframe lines (internal edges)
+  function drawMessyWireframe(pts, cx, cy) {
+    seed = 123;
+    ctx.strokeStyle = "rgba(239,68,68,.2)";
+    ctx.lineWidth = 0.5;
+    for (var i = 0; i < pts.length; i++) {
+      for (var j = i + 2; j < pts.length; j++) {
+        if (seededRandom() > 0.65) {
+          ctx.beginPath();
+          ctx.moveTo(pts[i].x, pts[i].y);
+          ctx.lineTo(pts[j].x, pts[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+  }
+
+  // Draw clean wireframe grid
+  function drawCleanWireframe(pts, cx, cy) {
+    if (!pts || pts.length < 3) return;
+    // Radial lines from center
+    ctx.strokeStyle = "rgba(16,185,129,.15)";
+    ctx.lineWidth = 0.5;
+    for (var i = 0; i < pts.length; i += 2) {
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(pts[i].x, pts[i].y);
+      ctx.stroke();
+    }
+  }
+
+  function drawBlocksShape(data) {
+    var gs = data.gridSize;
+    var cx = data.cx;
+    var cy = data.cy;
+    var r = data.baseR;
+    var startX = cx - r;
+    var startY = cy - r;
+    var size = r * 2;
+
+    seed = 42;
+    ctx.fillStyle = "rgba(245,158,11,.15)";
+    ctx.strokeStyle = "rgba(245,158,11,.4)";
+    ctx.lineWidth = 1;
+
+    for (var bx = 0; bx < size; bx += gs) {
+      for (var by = 0; by < size; by += gs) {
+        var px = startX + bx + gs / 2;
+        var py = startY + by + gs / 2;
+        var dx = px - cx;
+        var dy = py - cy;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        // Add irregular shape influence
+        var angle = Math.atan2(dy, dx);
+        var shapeR = r + Math.sin(angle * 3) * 15 + Math.cos(angle * 5) * 10;
+        if (dist < shapeR) {
+          ctx.fillRect(startX + bx, startY + by, gs - 1, gs - 1);
+          ctx.strokeRect(startX + bx, startY + by, gs - 1, gs - 1);
+        }
+      }
+    }
+  }
+
+  var modeColors = {
+    voxel:  { fill: "rgba(10,132,255,.12)",  stroke: "rgba(10,132,255,.6)",  label: "Voxel" },
+    smooth: { fill: "rgba(16,185,129,.12)",  stroke: "rgba(16,185,129,.6)",  label: "Smooth" },
+    sharp:  { fill: "rgba(142,69,255,.12)",  stroke: "rgba(142,69,255,.6)",  label: "Sharp" },
+    blocks: { fill: "rgba(245,158,11,.12)",  stroke: "rgba(245,158,11,.6)",  label: "Blocks" }
+  };
 
   function draw() {
-    var w = canvas.width;
-    var h = canvas.height;
-    ctx.clearRect(0, 0, w, h);
+    ctx.clearRect(0, 0, W, H);
 
     // Background
     ctx.fillStyle = "#17181a";
-    ctx.fillRect(0, 0, w, h);
+    ctx.fillRect(0, 0, W, H);
 
-    // Grid lines (subtle)
+    // Grid
     ctx.strokeStyle = "rgba(255,255,255,.04)";
     ctx.lineWidth = 1;
-    var step = 40;
-    for (var gx = step; gx < w; gx += step) {
-      ctx.beginPath();
-      ctx.moveTo(gx, 0);
-      ctx.lineTo(gx, h);
-      ctx.stroke();
+    for (var gx = 40; gx < W; gx += 40) {
+      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke();
     }
-    for (var gy = step; gy < h; gy += step) {
-      ctx.beginPath();
-      ctx.moveTo(0, gy);
-      ctx.lineTo(w, gy);
-      ctx.stroke();
+    for (var gy = 40; gy < H; gy += 40) {
+      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke();
     }
 
-    // Center mirror axis — dashed line
-    ctx.strokeStyle = "rgba(245,158,11,.5)";
-    ctx.lineWidth = 2;
-    ctx.setLineDash([8, 6]);
-    ctx.beginPath();
-    ctx.moveTo(centerX, 0);
-    ctx.lineTo(centerX, h);
-    ctx.stroke();
-    ctx.setLineDash([]);
-
-    // Axis label
-    ctx.fillStyle = "rgba(245,158,11,.7)";
+    // Arrow in middle
+    ctx.fillStyle = "rgba(255,255,255,.2)";
+    ctx.font = "bold 24px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("\u2192", W * 0.48, H * 0.5 + 8);
     ctx.font = "11px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("Mirror Axis (X=0)", centerX, 18);
+    ctx.fillText("Remesh", W * 0.48, H * 0.5 + 26);
 
-    // Draw left half polygon (original)
-    drawPolygon(verts, -1, "rgba(10,132,255,.25)", "rgba(10,132,255,.7)");
+    // ── Left: Original messy mesh ──
+    var messy = generateMessyShape();
 
-    // Draw right half polygon (mirrored)
-    var mirrored = verts.map(function(v) {
-      return { x: v.x, y: v.y };
-    });
-    drawPolygon(mirrored, 1, "rgba(16,185,129,.15)", "rgba(16,185,129,.5)");
-
-    // Labels
-    ctx.font = "bold 12px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillStyle = "rgba(10,132,255,.8)";
-    ctx.fillText("Original (Edit)", centerX - 80, h - 14);
-    ctx.fillStyle = "rgba(16,185,129,.6)";
-    ctx.fillText("Mirrored (Auto)", centerX + 80, h - 14);
-
-    // Draw vertex handles on left side
-    verts.forEach(function(v, i) {
-      var sx = centerX - v.x;
-      var sy = v.y;
-      ctx.beginPath();
-      ctx.arc(sx, sy, 6, 0, Math.PI * 2);
-      ctx.fillStyle = (dragging === i) ? "#0a84ff" : "rgba(10,132,255,.9)";
-      ctx.fill();
-      ctx.strokeStyle = "#fff";
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-    });
-
-    // Clipping indicator
-    ctx.fillStyle = clipping ? "rgba(16,185,129,.7)" : "rgba(239,68,68,.7)";
-    ctx.font = "bold 11px sans-serif";
-    ctx.textAlign = "left";
-    ctx.fillText("Clipping: " + (clipping ? "ON" : "OFF"), 12, 18);
-  }
-
-  function drawPolygon(pts, side, fillColor, strokeColor) {
-    // side: -1 = left of center, +1 = right of center
-    if (pts.length < 2) return;
+    // Fill
     ctx.beginPath();
-    pts.forEach(function(v, i) {
-      var sx = (side === -1) ? (centerX - v.x) : (centerX + v.x);
-      var sy = v.y;
-      if (i === 0) ctx.moveTo(sx, sy);
-      else ctx.lineTo(sx, sy);
+    messy.forEach(function(p, i) {
+      if (i === 0) ctx.moveTo(p.x, p.y);
+      else ctx.lineTo(p.x, p.y);
     });
     ctx.closePath();
-    ctx.fillStyle = fillColor;
+    ctx.fillStyle = "rgba(239,68,68,.08)";
     ctx.fill();
-    ctx.strokeStyle = strokeColor;
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = "rgba(239,68,68,.5)";
+    ctx.lineWidth = 1.5;
     ctx.stroke();
-  }
 
-  function getEventPos(e) {
-    var rect = canvas.getBoundingClientRect();
-    var scaleX = canvas.width / rect.width;
-    var scaleY = canvas.height / rect.height;
-    var clientX, clientY;
-    if (e.touches && e.touches.length > 0) {
-      clientX = e.touches[0].clientX;
-      clientY = e.touches[0].clientY;
-    } else {
-      clientX = e.clientX;
-      clientY = e.clientY;
-    }
-    return {
-      x: (clientX - rect.left) * scaleX,
-      y: (clientY - rect.top) * scaleY
-    };
-  }
+    // Messy wireframe
+    drawMessyWireframe(messy, W * 0.25, H * 0.5);
 
-  function findVertex(pos) {
-    var best = -1;
-    var bestDist = hitRadius * hitRadius;
-    verts.forEach(function(v, i) {
-      var sx = centerX - v.x;
-      var sy = v.y;
-      var dx = pos.x - sx;
-      var dy = pos.y - sy;
-      var d2 = dx * dx + dy * dy;
-      if (d2 < bestDist) {
-        bestDist = d2;
-        best = i;
-      }
+    // Vertices
+    messy.forEach(function(p) {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(239,68,68,.6)";
+      ctx.fill();
     });
-    return best;
-  }
 
-  function onDown(e) {
-    e.preventDefault();
-    var pos = getEventPos(e);
-    dragging = findVertex(pos);
-    if (dragging >= 0) draw();
-  }
+    // Label
+    ctx.fillStyle = "rgba(239,68,68,.7)";
+    ctx.font = "bold 12px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Original (messy)", W * 0.25, 24);
 
-  function onMove(e) {
-    if (dragging < 0) return;
-    e.preventDefault();
-    var pos = getEventPos(e);
-    // Convert screen position to vertex coords (offset from center)
-    var newX = centerX - pos.x;
-    var newY = pos.y;
+    // ── Right: Remeshed result ──
+    var mc = modeColors[currentMode];
+    var remeshed = generateRemeshed(currentMode, resolution);
 
-    // Clamp Y
-    if (newY < 10) newY = 10;
-    if (newY > canvas.height - 10) newY = canvas.height - 10;
-
-    // Clipping: prevent crossing center line (x must stay >= 0)
-    if (clipping) {
-      if (newX < 0) newX = 0;
-    }
-    // Even without clipping, don't go too far right
-    if (newX > centerX - 10) newX = centerX - 10;
-
-    verts[dragging].x = newX;
-    verts[dragging].y = newY;
-    draw();
-  }
-
-  function onUp(e) {
-    if (dragging >= 0) {
-      dragging = -1;
-      draw();
-    }
-  }
-
-  // Mouse events
-  canvas.addEventListener("mousedown", onDown);
-  canvas.addEventListener("mousemove", onMove);
-  canvas.addEventListener("mouseup", onUp);
-  canvas.addEventListener("mouseleave", onUp);
-
-  // Touch events
-  canvas.addEventListener("touchstart", onDown, { passive: false });
-  canvas.addEventListener("touchmove", onMove, { passive: false });
-  canvas.addEventListener("touchend", onUp);
-  canvas.addEventListener("touchcancel", onUp);
-
-  // Clipping toggle
-  var btnClipping = document.getElementById("btnClipping");
-  btnClipping.addEventListener("click", function() {
-    clipping = !clipping;
-    if (clipping) {
-      btnClipping.textContent = "Clipping ON";
-      btnClipping.classList.add("is-active");
-      // Enforce clipping on current verts
-      verts.forEach(function(v) {
-        if (v.x < 0) v.x = 0;
-      });
+    if (remeshed.type === "blocks") {
+      drawBlocksShape(remeshed);
     } else {
-      btnClipping.textContent = "Clipping OFF";
-      btnClipping.classList.remove("is-active");
+      var rPts = remeshed.pts;
+
+      // Fill
+      ctx.beginPath();
+      rPts.forEach(function(p, i) {
+        if (i === 0) ctx.moveTo(p.x, p.y);
+        else ctx.lineTo(p.x, p.y);
+      });
+      ctx.closePath();
+      ctx.fillStyle = mc.fill;
+      ctx.fill();
+      ctx.strokeStyle = mc.stroke;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Clean wireframe
+      drawCleanWireframe(rPts, W * 0.72, H * 0.5);
+
+      // Vertices
+      rPts.forEach(function(p) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+        ctx.fillStyle = mc.stroke;
+        ctx.fill();
+      });
     }
+
+    // Label
+    ctx.fillStyle = mc.stroke;
+    ctx.font = "bold 12px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(mc.label + " (res: " + resolution + ")", W * 0.72, 24);
+
+    // Face count info
+    ctx.fillStyle = "rgba(255,255,255,.4)";
+    ctx.font = "11px sans-serif";
+    if (remeshed.type === "blocks") {
+      ctx.fillText("\uBCF5\uC140 \uADF8\uB9AC\uB4DC", W * 0.72, 42);
+    } else {
+      ctx.fillText(remeshed.segments + "\uBA74", W * 0.72, 42);
+    }
+    ctx.fillText("24\uBA74 (\uBD88\uADE0\uC77C)", W * 0.25, 42);
+  }
+
+  // Mode buttons
+  var btnVoxel = document.getElementById("btnVoxel");
+  var btnSmooth = document.getElementById("btnSmooth");
+  var btnSharp = document.getElementById("btnSharp");
+  var btnBlocks = document.getElementById("btnBlocks");
+  var modeBtns = [btnVoxel, btnSmooth, btnSharp, btnBlocks];
+  var modeNames = ["voxel", "smooth", "sharp", "blocks"];
+
+  function setMode(mode) {
+    currentMode = mode;
+    modeBtns.forEach(function(b, i) {
+      if (modeNames[i] === mode) b.classList.add("is-active");
+      else b.classList.remove("is-active");
+    });
+    draw();
+  }
+
+  btnVoxel.addEventListener("click", function() { setMode("voxel"); });
+  btnSmooth.addEventListener("click", function() { setMode("smooth"); });
+  btnSharp.addEventListener("click", function() { setMode("sharp"); });
+  btnBlocks.addEventListener("click", function() { setMode("blocks"); });
+
+  // Resolution slider
+  var resSlider = document.getElementById("resSlider");
+  var resVal = document.getElementById("resVal");
+
+  resSlider.addEventListener("input", function() {
+    resolution = parseInt(resSlider.value);
+    resVal.textContent = resolution;
     draw();
   });
 
-  // Reset button
-  document.getElementById("btnReset").addEventListener("click", function() {
-    resetVerts();
-    draw();
-  });
+  // Touch support for slider
+  resSlider.addEventListener("touchstart", function(e) { e.stopPropagation(); }, { passive: true });
+  resSlider.addEventListener("touchmove", function(e) { e.stopPropagation(); }, { passive: true });
 
   // Initial draw
   draw();
@@ -855,48 +949,48 @@ function initQuiz(questions) {
 // ── Quiz Data ─────────────────────────────────
 initQuiz([
   {
-    question: "Mirror Modifier\uB97C \uCD94\uAC00\uD588\uB294\uB370 \uBBF8\uB7EC\uB41C \uBC18\uCABD\uC774 \uC774\uC0C1\uD55C \uACF3\uC5D0 \uB098\uD0C0\uB098\uC694. \uAC00\uC7A5 \uD754\uD55C \uC6D0\uC778\uC740?",
+    question: "Remesh \uBAA8\uB514\uD30C\uC774\uC5B4\uC758 \uC8FC\uC694 \uC5ED\uD560\uC740?",
     options: [
-      "Apply Scale\uC744 \uC548 \uD574\uC11C",
-      "Origin\uC774 \uC624\uBE0C\uC81D\uD2B8 \uC911\uC2EC\uC5D0 \uC788\uC9C0 \uC54A\uC544\uC11C",
-      "Clipping\uC774 \uCF1C\uC838 \uC788\uC5B4\uC11C",
-      "Edit Mode\uAC00 \uC544\uB2C8\uB77C\uC11C"
+      "\uBA54\uC26C\uB97C \uBD80\uB4DC\uB7FD\uAC8C \uB9CC\uB4E0\uB2E4",
+      "\uBA54\uC26C\uC758 \uD1A0\uD3F4\uB85C\uC9C0\uB97C \uC644\uC804\uD788 \uC7AC\uAD6C\uC131\uD55C\uB2E4",
+      "\uBA54\uC26C\uB97C \uBBF8\uB7EC\uD55C\uB2E4",
+      "\uBA54\uC26C\uC5D0 \uB450\uAED8\uB97C \uCD94\uAC00\uD55C\uB2E4"
     ],
     answer: 1,
-    explanation: "Mirror\uB294 Origin\uC744 \uAE30\uC900\uC73C\uB85C \uBC18\uC804\uD569\uB2C8\uB2E4. Origin\uC774 \uC624\uBE0C\uC81D\uD2B8 \uC911\uC2EC\uC5D0 \uC788\uC9C0 \uC54A\uC73C\uBA74 \uBBF8\uB7EC\uB41C \uBC18\uCABD\uC774 \uC5C9\uB69A\uD55C \uC704\uCE58\uC5D0 \uC0DD\uAE41\uB2C8\uB2E4."
+    explanation: "Remesh\uB294 \uBA54\uC26C\uC758 \uD1A0\uD3F4\uB85C\uC9C0\uB97C \uC644\uC804\uD788 \uC7AC\uAD6C\uC131\uD558\uC5EC \uADE0\uC77C\uD55C \uADF8\uB9AC\uB4DC\uB85C \uBC14\uAFF8\uB2C8\uB2E4."
   },
   {
-    question: "Clipping \uC635\uC158\uC744 \uCF1C\uBA74 \uC5B4\uB5A4 \uD6A8\uACFC\uAC00 \uC788\uB098\uC694?",
+    question: "Voxel \uBAA8\uB4DC\uC5D0\uC11C \uBCF5\uC140 \uD06C\uAE30\uB97C \uC904\uC774\uBA74 \uC5B4\uB5BB\uAC8C \uB418\uB098\uC694?",
     options: [
-      "\uBBF8\uB7EC\uAC00 \uBE44\uD65C\uC131\uD654\uB41C\uB2E4",
-      "\uC790\uB3D9\uC73C\uB85C Apply\uB41C\uB2E4",
-      "\uC911\uC2EC \uC815\uC810\uC774 \uBBF8\uB7EC \uCD95\uC744 \uB118\uC9C0 \uBABB\uD55C\uB2E4",
-      "\uBC18\uB300\uD3B8\uC774 \uC228\uACA8\uC9C4\uB2E4"
+      "\uBA54\uC26C\uAC00 \uC0AD\uC81C\uB41C\uB2E4",
+      "\uB514\uD14C\uC77C\uC774 \uC904\uC5B4\uB4E0\uB2E4",
+      "\uB514\uD14C\uC77C\uC774 \uC99D\uAC00\uD558\uACE0 \uBA74 \uC218\uAC00 \uC99D\uAC00\uD55C\uB2E4",
+      "\uBD80\uB4DC\uB7EC\uC6CC\uC9C4\uB2E4"
     ],
     answer: 2,
-    explanation: "Clipping\uC744 \uCF1C\uBA74 \uC815\uC810\uC774 \uBBF8\uB7EC \uCD95\uC744 \uB118\uC5B4\uAC00\uC9C0 \uBABB\uD569\uB2C8\uB2E4. \uC774\uB807\uAC8C \uD558\uBA74 \uC911\uC2EC\uC120\uC5D0\uC11C \uC591\uCABD\uC774 \uAE54\uB054\uD558\uAC8C \uC774\uC5B4\uC9D1\uB2C8\uB2E4."
+    explanation: "Voxel \uD06C\uAE30\uAC00 \uC791\uC744\uC218\uB85D \uB354 \uC791\uC740 \uBCF5\uC140\uB85C \uBD84\uD560\uB418\uC5B4 \uB514\uD14C\uC77C\uC774 \uC99D\uAC00\uD558\uACE0 \uBA74 \uC218\uB3C4 \uD568\uAED8 \uC99D\uAC00\uD569\uB2C8\uB2E4."
   },
   {
-    question: "S \u2192 X \u2192 0\uC744 \uB204\uB974\uBA74 \uC5B4\uB5A4 \uC77C\uC774 \uC77C\uC5B4\uB098\uB098\uC694?",
+    question: "Remesh \uC0AC\uC6A9 \uC2DC \uAC00\uC7A5 \uD070 \uC8FC\uC758\uC810\uC740?",
     options: [
-      "\uC624\uBE0C\uC81D\uD2B8\uAC00 \uC0AD\uC81C\uB41C\uB2E4",
-      "X\uCD95 \uBBF8\uB7EC\uAC00 \uC801\uC6A9\uB41C\uB2E4",
-      "X\uC88C\uD45C\uAC00 0\uC774 \uB418\uC5B4 \uC911\uC2EC\uC120 \uC815\uB82C",
-      "\uC2A4\uCF00\uC77C\uC774 \uCD08\uAE30\uD654\uB41C\uB2E4"
+      "\uBA54\uC26C\uAC00 \uB108\uBB34 \uBD80\uB4DC\uB7EC\uC6CC\uC9C4\uB2E4",
+      "UV \uB9F5\uC774 \uD30C\uAD34\uB41C\uB2E4",
+      "Modifier\uB97C Apply\uD560 \uC218 \uC5C6\uB2E4",
+      "\uC560\uB2C8\uBA54\uC774\uC158\uC774 \uAE68\uC9C4\uB2E4"
     ],
-    answer: 2,
-    explanation: "S(Scale) \u2192 X(\uCD95 \uC81C\uD55C) \u2192 0(\uAC12)\uC744 \uB204\uB974\uBA74 \uC120\uD0DD\uD55C \uC815\uC810\uC758 X\uC88C\uD45C\uAC00 0\uC774 \uB418\uC5B4 \uC815\uD655\uD788 \uC911\uC2EC\uC120\uC5D0 \uC815\uB82C\uB429\uB2C8\uB2E4."
+    answer: 1,
+    explanation: "Remesh\uB294 \uD1A0\uD3F4\uB85C\uC9C0\uB97C \uC644\uC804\uD788 \uC7AC\uAD6C\uC131\uD558\uBBC0\uB85C \uAE30\uC874 UV \uB9F5\uC774 \uD30C\uAD34\uB429\uB2C8\uB2E4. UV \uC791\uC5C5 \uC804\uC5D0 \uC0AC\uC6A9\uD574\uC57C \uD569\uB2C8\uB2E4."
   },
   {
-    question: "Mirror + Subdivision Surface \uC870\uD569\uC5D0\uC11C Modifier \uC21C\uC11C\uB294?",
+    question: "Blocks \uBAA8\uB4DC\uC758 \uD6A8\uACFC\uB294?",
     options: [
-      "\uC21C\uC11C \uC0C1\uAD00\uC5C6\uB2E4",
-      "Subdivision\uC774 \uC704",
-      "Mirror\uAC00 \uC704",
-      "\uB458 \uB2E4 Apply \uD6C4 \uC0AC\uC6A9"
+      "\uBD80\uB4DC\uB7EC\uC6B4 \uACE1\uBA74\uC744 \uB9CC\uB4E0\uB2E4",
+      "\uB0A0\uCE74\uB85C\uC6B4 \uBAA8\uC11C\uB9AC\uB97C \uC720\uC9C0\uD55C\uB2E4",
+      "\uB9C8\uC778\uD06C\uB798\uD504\uD2B8 \uC2A4\uD0C0\uC77C \uBCF5\uC140\uD654",
+      "\uBA54\uC26C\uB97C \uB2E8\uC21C\uD654\uD55C\uB2E4"
     ],
     answer: 2,
-    explanation: "Mirror\uAC00 \uC704\uC5D0, Subdivision\uC774 \uC544\uB798\uC5D0 \uC640\uC57C \uD569\uB2C8\uB2E4. \uBA3C\uC800 \uB300\uCE6D\uC744 \uC7A1\uACE0 \uB098\uC11C \uBD80\uB4DC\uB7FD\uAC8C \uB9CC\uB4DC\uB294 \uAC83\uC774 \uC62C\uBC14\uB978 \uC21C\uC11C\uC785\uB2C8\uB2E4."
+    explanation: "Blocks \uBAA8\uB4DC\uB294 \uBA54\uC26C\uB97C \uB9C8\uC778\uD06C\uB798\uD504\uD2B8\uCC98\uB7FC \uC9C1\uC721\uBA74\uCCB4(Voxel) \uD615\uD0DC\uB85C \uBCC0\uD658\uD569\uB2C8\uB2E4."
   }
 ]);
 </script>

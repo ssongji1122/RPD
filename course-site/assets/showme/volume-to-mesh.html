@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Show Me — Mirror Modifier 이해</title>
+<title>Show Me — Volume to Mesh Modifier 이해</title>
 <style>
 /* ══════════════════════════════════════════════════
    Show Me Widget — Standalone Dark Theme
@@ -135,6 +135,7 @@ body {
   display: flex; gap: 8px; padding: 12px;
   border-top: 1px solid var(--line);
   flex-wrap: wrap;
+  align-items: center;
 }
 .demo-hint {
   font-size: .78rem; color: var(--muted);
@@ -154,6 +155,20 @@ body {
   background: rgba(10,132,255,.14);
   color: var(--key-soft);
   border-color: rgba(10,132,255,.3);
+}
+
+/* ── Slider ── */
+.slider-group {
+  display: flex; align-items: center; gap: 10px; flex: 1; min-width: 180px;
+}
+.slider-group label {
+  font-size: .82rem; color: var(--muted-strong); white-space: nowrap;
+}
+.slider-group input[type="range"] {
+  flex: 1; accent-color: var(--key);
+}
+.slider-group .slider-val {
+  font-size: .8rem; color: var(--key-soft); min-width: 36px; text-align: right;
 }
 
 /* ── Usage Grid ── */
@@ -363,8 +378,8 @@ body {
 <!-- Tab Bar -->
 <nav class="tabs" role="tablist">
   <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
-  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
-  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">인터랙티브 데모</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">사용 사례</button>
   <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
 </nav>
 
@@ -372,96 +387,98 @@ body {
 <section class="panel is-active" id="panel-concept" role="tabpanel">
   <div class="concept-grid">
     <div class="concept-card">
-      <h3>Mirror Modifier란?</h3>
-      <p>거울처럼 한쪽만 편집하면 반대쪽이 자동으로 따라오는 Modifier입니다. 좌우 대칭 모델을 만들 때 작업량을 절반으로 줄여줍니다.</p>
-      <div class="analogy">거울 앞에서 한쪽을 바꾸면 반대쪽이 자동으로 따라와요</div>
+      <h3><span class="badge badge-blue">Core</span> Volume to Mesh란?</h3>
+      <p>OpenVDB 볼륨 데이터를 메쉬로 변환하는 모디파이어입니다. 연기, 구름, 유체 시뮬레이션 결과를 솔리드 메쉬로 바꿀 때 사용합니다.</p>
+      <div class="analogy">안개를 얼려서 고체로 만드는 것</div>
     </div>
     <div class="concept-card">
-      <h3>Clipping이란?</h3>
-      <p>중심선을 넘지 못하게 하는 옵션입니다. ON이면 중심 정점이 정확히 중앙에 고정되어, 양쪽이 깔끔하게 이어집니다.</p>
-      <div class="analogy">중심선에 보이지 않는 벽이 생겨서 정점이 넘어가지 못해요</div>
+      <h3><span class="badge badge-green">Setting</span> Threshold &amp; Resolution</h3>
+      <p>Threshold: 볼륨 밀도 기준값 — 이 값 이상인 부분만 메쉬로 변환됩니다. Resolution Mode는 Grid, Voxel Amount, Voxel Size 중 선택 가능합니다.</p>
+      <ul>
+        <li>Threshold 높음 → 밀도 높은 내부만 메쉬화 (작은 형태)</li>
+        <li>Threshold 낮음 → 외곽까지 메쉬화 (큰 형태)</li>
+      </ul>
     </div>
-  </div>
-
-  <div class="shortcut-list">
-    <h4>주요 단축키</h4>
-    <div class="shortcut-row">
-      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">1</span></span>
-      <span>Modifier 추가 패널</span>
-    </div>
-    <div class="shortcut-row">
-      <span class="shortcut-keys"><span class="kbd">S</span> <span class="kbd">X</span> <span class="kbd">0</span></span>
-      <span>중심선 정렬 (선택한 정점의 X좌표를 0으로)</span>
-    </div>
-    <div class="shortcut-row">
-      <span class="shortcut-keys">Clipping 체크박스</span>
-      <span>Properties &rarr; Modifier tab에서 설정</span>
+    <div class="concept-card">
+      <h3><span class="badge badge-amber">Advanced</span> 활용 범위</h3>
+      <p>볼륨 시뮬레이션 결과를 3D 프린팅용 모델로 변환하거나, 스타일라이즈 효과를 만들거나, 외부 VDB 파일을 활용할 때 유용합니다.</p>
+      <ul>
+        <li>시뮬레이션 → 3D 프린팅</li>
+        <li>스타일라이즈 효과</li>
+        <li>VDB 파일 활용</li>
+      </ul>
     </div>
   </div>
 
   <div class="doc-ref">
-    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html" target="_blank" rel="noopener">
-      📖 Blender 공식 문서 — Mirror Modifier
+    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/volume_to_mesh.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Volume to Mesh Modifier
     </a>
   </div>
 </section>
 
-<!-- TAB 2: 시각적 비교 -->
+<!-- TAB 2: 인터랙티브 데모 -->
 <section class="panel" id="panel-visual" role="tabpanel">
   <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    왼쪽 반의 꼭짓점을 드래그하면 오른쪽이 자동으로 미러됩니다.
+    Threshold 슬라이더를 조절하면 볼륨에서 메쉬로 변환되는 영역이 달라집니다.
   </p>
   <div class="demo-wrap">
     <canvas id="demoCanvas" width="680" height="300"></canvas>
     <div class="demo-controls">
-      <button class="demo-btn is-active" id="btnClipping">Clipping ON</button>
+      <div class="slider-group">
+        <label>Threshold</label>
+        <input type="range" id="thresholdSlider" min="0" max="100" value="40">
+        <span class="slider-val" id="thresholdVal">0.40</span>
+      </div>
       <button class="demo-btn" id="btnReset">초기화</button>
     </div>
   </div>
-  <p class="demo-hint">꼭짓점을 드래그해 보세요. Clipping을 토글하면 중심선 넘기 동작이 달라집니다.</p>
+  <p class="demo-hint">Threshold를 높이면 밀도가 높은 내부만, 낮추면 외곽까지 메쉬화됩니다.</p>
 </section>
 
-<!-- TAB 3: 언제 쓰나요? -->
+<!-- TAB 3: 사용 사례 -->
 <section class="panel" id="panel-when" role="tabpanel">
   <div class="usage-grid">
     <div class="usage-card">
-      <h4>Mirror가 필요할 때</h4>
+      <h4>Volume to Mesh가 필요할 때</h4>
       <ul>
-        <li>좌우 대칭 로봇</li>
-        <li>자동차</li>
-        <li>캐릭터 얼굴</li>
-        <li>가구</li>
+        <li>연기/구름을 솔리드로 변환</li>
+        <li>VDB 파일 메쉬화</li>
+        <li>유체 시뮬레이션 결과 활용</li>
+        <li>스타일라이즈 효과</li>
       </ul>
     </div>
     <div class="usage-card">
-      <h4>Mirror를 안 쓰는 경우</h4>
+      <h4>Volume to Mesh를 안 쓰는 경우</h4>
       <ul>
-        <li>비대칭 디자인</li>
-        <li>유기적 형태</li>
-        <li>한쪽만 다른 디테일</li>
+        <li>일반 모델링 (볼륨 데이터 불필요)</li>
+        <li>볼륨 데이터가 없는 오브젝트</li>
+        <li>이미 메쉬인 오브젝트</li>
       </ul>
     </div>
   </div>
-  <div class="tip-box">
-    <strong>팁:</strong> Mirror는 원점(Origin)이 중심에 있어야 해요. <span class="kbd">S</span>+<span class="kbd">X</span>+<span class="kbd">0</span>으로 중심선을 맞추고, 오브젝트를 먼저 중앙에 놓은 뒤 Mirror를 추가하세요.
-  </div>
+
   <div class="combo-section">
     <h4>자주 쓰는 조합</h4>
     <div class="combo-grid">
       <div class="combo-card">
-        <div class="combo-name">Mirror + Subdivision Surface</div>
-        <div class="combo-desc">Mirror로 대칭을 잡고 Subdivision으로 부드럽게. Mirror가 위, Subdivision이 아래 순서로 배치합니다.</div>
+        <div class="combo-name">Volume to Mesh + Remesh</div>
+        <div class="combo-desc">Volume to Mesh로 변환한 뒤 Remesh로 토폴로지를 정리합니다. 변환 결과가 지저분할 때 필수입니다.</div>
       </div>
       <div class="combo-card">
-        <div class="combo-name">Mirror + Solidify</div>
-        <div class="combo-desc">대칭 형태에 두께를 추가할 때. 얇은 판이나 갑옷 같은 모델에 유용합니다.</div>
+        <div class="combo-name">Fluid Simulation → Volume to Mesh</div>
+        <div class="combo-desc">유체 시뮬레이션 결과를 볼륨으로 캡처한 뒤, 솔리드 메쉬로 변환하여 렌더링이나 3D 프린팅에 활용합니다.</div>
       </div>
     </div>
   </div>
 
+  <div class="tip-box">
+    <strong>팁:</strong> Volume to Mesh는 고급 기능입니다. OpenVDB 볼륨이 있을 때만 작동합니다. 일반 메쉬 오브젝트에는 적용할 수 없어요.
+  </div>
+
   <div class="doc-ref">
-    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html" target="_blank" rel="noopener">
-      📖 Blender 공식 문서 — Mirror Modifier
+    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/volume_to_mesh.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Volume to Mesh Modifier
     </a>
   </div>
 </section>
@@ -614,33 +631,41 @@ function initQuiz(questions) {
   }
 }
 
-// ── Canvas Mirror Demo ────────────────────────
+// ── Canvas Volume-to-Mesh Demo ────────────────
 (function() {
   var canvas = document.getElementById("demoCanvas");
   var ctx = canvas.getContext("2d");
-  var clipping = true;
-  var dragging = -1;
-  var hitRadius = 14;
+  var threshold = 0.4;
 
-  // Initial left-half vertices (robot torso shape, top-down view)
-  // These are offsets from center — stored as positive X values from center
-  var defaultVerts = [
-    { x: 10,  y: 60  },  // top-center-ish
-    { x: 100, y: 50  },  // top-right shoulder
-    { x: 120, y: 90  },  // right shoulder corner
-    { x: 110, y: 160 },  // right waist
-    { x: 90,  y: 220 },  // right hip
-    { x: 10,  y: 240 },  // bottom-center-ish
+  var slider = document.getElementById("thresholdSlider");
+  var valLabel = document.getElementById("thresholdVal");
+
+  // Volume data: radial gradient density field
+  var cx = canvas.width / 2;
+  var cy = canvas.height / 2;
+  var maxRadius = 130;
+
+  // Generate cloud-like density blobs
+  var blobs = [
+    { x: cx, y: cy, r: 130, strength: 1.0 },
+    { x: cx - 70, y: cy - 30, r: 80, strength: 0.7 },
+    { x: cx + 60, y: cy + 20, r: 90, strength: 0.6 },
+    { x: cx - 30, y: cy + 50, r: 60, strength: 0.5 },
+    { x: cx + 90, y: cy - 40, r: 70, strength: 0.55 }
   ];
 
-  // Working copy
-  var verts = [];
-  function resetVerts() {
-    verts = defaultVerts.map(function(v) { return { x: v.x, y: v.y }; });
+  function getDensity(px, py) {
+    var d = 0;
+    for (var i = 0; i < blobs.length; i++) {
+      var b = blobs[i];
+      var dx = px - b.x;
+      var dy = py - b.y;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      var t = 1 - Math.min(dist / b.r, 1);
+      d += t * t * b.strength;
+    }
+    return Math.min(d, 1);
   }
-  resetVerts();
-
-  var centerX = canvas.width / 2;
 
   function draw() {
     var w = canvas.width;
@@ -656,247 +681,141 @@ function initQuiz(questions) {
     ctx.lineWidth = 1;
     var step = 40;
     for (var gx = step; gx < w; gx += step) {
-      ctx.beginPath();
-      ctx.moveTo(gx, 0);
-      ctx.lineTo(gx, h);
-      ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
     }
     for (var gy = step; gy < h; gy += step) {
-      ctx.beginPath();
-      ctx.moveTo(0, gy);
-      ctx.lineTo(w, gy);
-      ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
     }
 
-    // Center mirror axis — dashed line
-    ctx.strokeStyle = "rgba(245,158,11,.5)";
-    ctx.lineWidth = 2;
-    ctx.setLineDash([8, 6]);
-    ctx.beginPath();
-    ctx.moveTo(centerX, 0);
-    ctx.lineTo(centerX, h);
-    ctx.stroke();
-    ctx.setLineDash([]);
+    // Draw volume density field (pixelated for performance)
+    var cellSize = 6;
+    for (var px = 0; px < w; px += cellSize) {
+      for (var py = 0; py < h; py += cellSize) {
+        var d = getDensity(px + cellSize / 2, py + cellSize / 2);
+        if (d > 0.02) {
+          var alpha = d * 0.35;
+          ctx.fillStyle = "rgba(160,120,220," + alpha + ")";
+          ctx.fillRect(px, py, cellSize, cellSize);
+        }
+      }
+    }
 
-    // Axis label
-    ctx.fillStyle = "rgba(245,158,11,.7)";
-    ctx.font = "11px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("Mirror Axis (X=0)", centerX, 18);
+    // Draw threshold contour (mesh boundary)
+    // Use marching squares approach for outline
+    var contourPoints = [];
+    var resolution = 3;
+    for (var angle = 0; angle < Math.PI * 2; angle += 0.02) {
+      // Ray march from each blob center outward
+      for (var r = 0; r < 200; r += resolution) {
+        var testX = cx + Math.cos(angle) * r;
+        var testY = cy + Math.sin(angle) * r;
+        var d1 = getDensity(testX, testY);
+        var d2 = getDensity(testX + Math.cos(angle) * resolution, testY + Math.sin(angle) * resolution);
+        if (d1 >= threshold && d2 < threshold) {
+          contourPoints.push({ x: testX, y: testY, angle: angle });
+          break;
+        }
+      }
+    }
 
-    // Draw left half polygon (original)
-    drawPolygon(verts, -1, "rgba(10,132,255,.25)", "rgba(10,132,255,.7)");
-
-    // Draw right half polygon (mirrored)
-    var mirrored = verts.map(function(v) {
-      return { x: v.x, y: v.y };
-    });
-    drawPolygon(mirrored, 1, "rgba(16,185,129,.15)", "rgba(16,185,129,.5)");
+    // Draw mesh fill
+    if (contourPoints.length > 2) {
+      ctx.beginPath();
+      ctx.moveTo(contourPoints[0].x, contourPoints[0].y);
+      for (var i = 1; i < contourPoints.length; i++) {
+        ctx.lineTo(contourPoints[i].x, contourPoints[i].y);
+      }
+      ctx.closePath();
+      ctx.fillStyle = "rgba(10,132,255,.15)";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(10,132,255,.8)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
 
     // Labels
     ctx.font = "bold 12px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillStyle = "rgba(10,132,255,.8)";
-    ctx.fillText("Original (Edit)", centerX - 80, h - 14);
-    ctx.fillStyle = "rgba(16,185,129,.6)";
-    ctx.fillText("Mirrored (Auto)", centerX + 80, h - 14);
-
-    // Draw vertex handles on left side
-    verts.forEach(function(v, i) {
-      var sx = centerX - v.x;
-      var sy = v.y;
-      ctx.beginPath();
-      ctx.arc(sx, sy, 6, 0, Math.PI * 2);
-      ctx.fillStyle = (dragging === i) ? "#0a84ff" : "rgba(10,132,255,.9)";
-      ctx.fill();
-      ctx.strokeStyle = "#fff";
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-    });
-
-    // Clipping indicator
-    ctx.fillStyle = clipping ? "rgba(16,185,129,.7)" : "rgba(239,68,68,.7)";
-    ctx.font = "bold 11px sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText("Clipping: " + (clipping ? "ON" : "OFF"), 12, 18);
+    ctx.fillStyle = "rgba(160,120,220,.7)";
+    ctx.fillText("Volume (density field)", 12, 22);
+
+    ctx.fillStyle = "rgba(10,132,255,.8)";
+    ctx.fillText("Mesh (threshold = " + threshold.toFixed(2) + ")", 12, 40);
+
+    // Threshold indicator
+    ctx.textAlign = "right";
+    ctx.fillStyle = "var(--muted)";
+    ctx.font = "11px sans-serif";
+    ctx.fillStyle = "rgba(255,255,255,.4)";
+    ctx.fillText("Threshold \u2191 = smaller mesh", w - 12, 22);
+    ctx.fillText("Threshold \u2193 = larger mesh", w - 12, 38);
   }
 
-  function drawPolygon(pts, side, fillColor, strokeColor) {
-    // side: -1 = left of center, +1 = right of center
-    if (pts.length < 2) return;
-    ctx.beginPath();
-    pts.forEach(function(v, i) {
-      var sx = (side === -1) ? (centerX - v.x) : (centerX + v.x);
-      var sy = v.y;
-      if (i === 0) ctx.moveTo(sx, sy);
-      else ctx.lineTo(sx, sy);
-    });
-    ctx.closePath();
-    ctx.fillStyle = fillColor;
-    ctx.fill();
-    ctx.strokeStyle = strokeColor;
-    ctx.lineWidth = 2;
-    ctx.stroke();
-  }
-
-  function getEventPos(e) {
-    var rect = canvas.getBoundingClientRect();
-    var scaleX = canvas.width / rect.width;
-    var scaleY = canvas.height / rect.height;
-    var clientX, clientY;
-    if (e.touches && e.touches.length > 0) {
-      clientX = e.touches[0].clientX;
-      clientY = e.touches[0].clientY;
-    } else {
-      clientX = e.clientX;
-      clientY = e.clientY;
-    }
-    return {
-      x: (clientX - rect.left) * scaleX,
-      y: (clientY - rect.top) * scaleY
-    };
-  }
-
-  function findVertex(pos) {
-    var best = -1;
-    var bestDist = hitRadius * hitRadius;
-    verts.forEach(function(v, i) {
-      var sx = centerX - v.x;
-      var sy = v.y;
-      var dx = pos.x - sx;
-      var dy = pos.y - sy;
-      var d2 = dx * dx + dy * dy;
-      if (d2 < bestDist) {
-        bestDist = d2;
-        best = i;
-      }
-    });
-    return best;
-  }
-
-  function onDown(e) {
-    e.preventDefault();
-    var pos = getEventPos(e);
-    dragging = findVertex(pos);
-    if (dragging >= 0) draw();
-  }
-
-  function onMove(e) {
-    if (dragging < 0) return;
-    e.preventDefault();
-    var pos = getEventPos(e);
-    // Convert screen position to vertex coords (offset from center)
-    var newX = centerX - pos.x;
-    var newY = pos.y;
-
-    // Clamp Y
-    if (newY < 10) newY = 10;
-    if (newY > canvas.height - 10) newY = canvas.height - 10;
-
-    // Clipping: prevent crossing center line (x must stay >= 0)
-    if (clipping) {
-      if (newX < 0) newX = 0;
-    }
-    // Even without clipping, don't go too far right
-    if (newX > centerX - 10) newX = centerX - 10;
-
-    verts[dragging].x = newX;
-    verts[dragging].y = newY;
-    draw();
-  }
-
-  function onUp(e) {
-    if (dragging >= 0) {
-      dragging = -1;
-      draw();
-    }
-  }
-
-  // Mouse events
-  canvas.addEventListener("mousedown", onDown);
-  canvas.addEventListener("mousemove", onMove);
-  canvas.addEventListener("mouseup", onUp);
-  canvas.addEventListener("mouseleave", onUp);
-
-  // Touch events
-  canvas.addEventListener("touchstart", onDown, { passive: false });
-  canvas.addEventListener("touchmove", onMove, { passive: false });
-  canvas.addEventListener("touchend", onUp);
-  canvas.addEventListener("touchcancel", onUp);
-
-  // Clipping toggle
-  var btnClipping = document.getElementById("btnClipping");
-  btnClipping.addEventListener("click", function() {
-    clipping = !clipping;
-    if (clipping) {
-      btnClipping.textContent = "Clipping ON";
-      btnClipping.classList.add("is-active");
-      // Enforce clipping on current verts
-      verts.forEach(function(v) {
-        if (v.x < 0) v.x = 0;
-      });
-    } else {
-      btnClipping.textContent = "Clipping OFF";
-      btnClipping.classList.remove("is-active");
-    }
+  slider.addEventListener("input", function() {
+    threshold = parseInt(slider.value) / 100;
+    valLabel.textContent = threshold.toFixed(2);
     draw();
   });
 
-  // Reset button
+  // Touch support for slider
+  slider.addEventListener("touchstart", function(e) { e.stopPropagation(); }, { passive: true });
+  slider.addEventListener("touchmove", function(e) { e.stopPropagation(); }, { passive: true });
+
   document.getElementById("btnReset").addEventListener("click", function() {
-    resetVerts();
+    threshold = 0.4;
+    slider.value = 40;
+    valLabel.textContent = "0.40";
     draw();
   });
 
-  // Initial draw
   draw();
 })();
 
 // ── Quiz Data ─────────────────────────────────
 initQuiz([
   {
-    question: "Mirror Modifier\uB97C \uCD94\uAC00\uD588\uB294\uB370 \uBBF8\uB7EC\uB41C \uBC18\uCABD\uC774 \uC774\uC0C1\uD55C \uACF3\uC5D0 \uB098\uD0C0\uB098\uC694. \uAC00\uC7A5 \uD754\uD55C \uC6D0\uC778\uC740?",
+    question: "Volume to Mesh\uC758 \uC785\uB825 \uB370\uC774\uD130\uB294 \uBB34\uC5C7\uC778\uAC00\uC694?",
     options: [
-      "Apply Scale\uC744 \uC548 \uD574\uC11C",
-      "Origin\uC774 \uC624\uBE0C\uC81D\uD2B8 \uC911\uC2EC\uC5D0 \uC788\uC9C0 \uC54A\uC544\uC11C",
-      "Clipping\uC774 \uCF1C\uC838 \uC788\uC5B4\uC11C",
-      "Edit Mode\uAC00 \uC544\uB2C8\uB77C\uC11C"
+      "\uC77C\uBC18 \uBA54\uC26C \uC624\uBE0C\uC81D\uD2B8",
+      "OpenVDB \uBCFC\uB968 \uB370\uC774\uD130",
+      "\uCEE4\uBE0C \uC624\uBE0C\uC81D\uD2B8",
+      "\uD14D\uC2A4\uD2B8 \uD30C\uC77C"
     ],
     answer: 1,
-    explanation: "Mirror\uB294 Origin\uC744 \uAE30\uC900\uC73C\uB85C \uBC18\uC804\uD569\uB2C8\uB2E4. Origin\uC774 \uC624\uBE0C\uC81D\uD2B8 \uC911\uC2EC\uC5D0 \uC788\uC9C0 \uC54A\uC73C\uBA74 \uBBF8\uB7EC\uB41C \uBC18\uCABD\uC774 \uC5C9\uB69A\uD55C \uC704\uCE58\uC5D0 \uC0DD\uAE41\uB2C8\uB2E4."
+    explanation: "Volume to Mesh\uB294 OpenVDB \uBCFC\uB968 \uB370\uC774\uD130\uB97C \uC785\uB825\uC73C\uB85C \uBC1B\uC544 \uBA54\uC26C\uB85C \uBCC0\uD658\uD569\uB2C8\uB2E4."
   },
   {
-    question: "Clipping \uC635\uC158\uC744 \uCF1C\uBA74 \uC5B4\uB5A4 \uD6A8\uACFC\uAC00 \uC788\uB098\uC694?",
+    question: "Threshold\uB97C \uB192\uC774\uBA74 \uC5B4\uB5BB\uAC8C \uB418\uB098\uC694?",
     options: [
-      "\uBBF8\uB7EC\uAC00 \uBE44\uD65C\uC131\uD654\uB41C\uB2E4",
-      "\uC790\uB3D9\uC73C\uB85C Apply\uB41C\uB2E4",
-      "\uC911\uC2EC \uC815\uC810\uC774 \uBBF8\uB7EC \uCD95\uC744 \uB118\uC9C0 \uBABB\uD55C\uB2E4",
-      "\uBC18\uB300\uD3B8\uC774 \uC228\uACA8\uC9C4\uB2E4"
+      "\uBA54\uC26C\uAC00 \uB354 \uCEE4\uC9C4\uB2E4",
+      "\uB354 \uBC00\uB3C4 \uB192\uC740 \uBD80\uBD84\uB9CC \uBA54\uC26C\uD654\uB41C\uB2E4",
+      "\uD574\uC0C1\uB3C4\uAC00 \uB192\uC544\uC9C4\uB2E4",
+      "\uBCFC\uB968\uC774 \uC0AD\uC81C\uB41C\uB2E4"
     ],
-    answer: 2,
-    explanation: "Clipping\uC744 \uCF1C\uBA74 \uC815\uC810\uC774 \uBBF8\uB7EC \uCD95\uC744 \uB118\uC5B4\uAC00\uC9C0 \uBABB\uD569\uB2C8\uB2E4. \uC774\uB807\uAC8C \uD558\uBA74 \uC911\uC2EC\uC120\uC5D0\uC11C \uC591\uCABD\uC774 \uAE54\uB054\uD558\uAC8C \uC774\uC5B4\uC9D1\uB2C8\uB2E4."
+    answer: 1,
+    explanation: "Threshold\uB97C \uB192\uC774\uBA74 \uBC00\uB3C4 \uAE30\uC900\uAC12\uC774 \uC62C\uB77C\uAC00\uC11C, \uBC00\uB3C4\uAC00 \uB354 \uB192\uC740 \uBD80\uBD84\uB9CC \uBA54\uC26C\uB85C \uBCC0\uD658\uB429\uB2C8\uB2E4."
   },
   {
-    question: "S \u2192 X \u2192 0\uC744 \uB204\uB974\uBA74 \uC5B4\uB5A4 \uC77C\uC774 \uC77C\uC5B4\uB098\uB098\uC694?",
+    question: "Volume to Mesh\uC758 \uC8FC\uC694 \uD65C\uC6A9\uC740?",
     options: [
-      "\uC624\uBE0C\uC81D\uD2B8\uAC00 \uC0AD\uC81C\uB41C\uB2E4",
-      "X\uCD95 \uBBF8\uB7EC\uAC00 \uC801\uC6A9\uB41C\uB2E4",
-      "X\uC88C\uD45C\uAC00 0\uC774 \uB418\uC5B4 \uC911\uC2EC\uC120 \uC815\uB82C",
-      "\uC2A4\uCF00\uC77C\uC774 \uCD08\uAE30\uD654\uB41C\uB2E4"
+      "\uC77C\uBC18 \uBAA8\uB378\uB9C1 \uC791\uC5C5",
+      "\uD14D\uC2A4\uCCD0 \uD3B8\uC9D1",
+      "\uC2DC\uBBAC\uB808\uC774\uC158 \uACB0\uACFC\uB97C \uC194\uB9AC\uB4DC \uBA54\uC26C\uB85C \uBCC0\uD658",
+      "\uBCF8 \uC2A4\uCF00\uC77C \uC870\uC815"
     ],
     answer: 2,
-    explanation: "S(Scale) \u2192 X(\uCD95 \uC81C\uD55C) \u2192 0(\uAC12)\uC744 \uB204\uB974\uBA74 \uC120\uD0DD\uD55C \uC815\uC810\uC758 X\uC88C\uD45C\uAC00 0\uC774 \uB418\uC5B4 \uC815\uD655\uD788 \uC911\uC2EC\uC120\uC5D0 \uC815\uB82C\uB429\uB2C8\uB2E4."
+    explanation: "\uC5F0\uAE30, \uAD6C\uB984, \uC720\uCCB4 \uB4F1 \uC2DC\uBBAC\uB808\uC774\uC158 \uACB0\uACFC\uB97C \uC194\uB9AC\uB4DC \uBA54\uC26C\uB85C \uBCC0\uD658\uD558\uB294 \uAC83\uC774 \uC8FC\uC694 \uD65C\uC6A9\uC785\uB2C8\uB2E4."
   },
   {
-    question: "Mirror + Subdivision Surface \uC870\uD569\uC5D0\uC11C Modifier \uC21C\uC11C\uB294?",
+    question: "Volume to Mesh + Remesh \uC870\uD569\uC744 \uC4F0\uB294 \uC774\uC720\uB294?",
     options: [
-      "\uC21C\uC11C \uC0C1\uAD00\uC5C6\uB2E4",
-      "Subdivision\uC774 \uC704",
-      "Mirror\uAC00 \uC704",
-      "\uB458 \uB2E4 Apply \uD6C4 \uC0AC\uC6A9"
+      "\uBCFC\uB968\uC744 \uB354 \uD06C\uAC8C \uB9CC\uB4E4\uAE30 \uC704\uD574",
+      "\uBCC0\uD658 \uACB0\uACFC\uC758 \uD1A0\uD3F4\uB85C\uC9C0\uB97C \uC815\uB9AC\uD558\uAE30 \uC704\uD574",
+      "\uC0C9\uC0C1\uC744 \uCD94\uAC00\uD558\uAE30 \uC704\uD574",
+      "\uC560\uB2C8\uBA54\uC774\uC158\uC744 \uC801\uC6A9\uD558\uAE30 \uC704\uD574"
     ],
-    answer: 2,
-    explanation: "Mirror\uAC00 \uC704\uC5D0, Subdivision\uC774 \uC544\uB798\uC5D0 \uC640\uC57C \uD569\uB2C8\uB2E4. \uBA3C\uC800 \uB300\uCE6D\uC744 \uC7A1\uACE0 \uB098\uC11C \uBD80\uB4DC\uB7FD\uAC8C \uB9CC\uB4DC\uB294 \uAC83\uC774 \uC62C\uBC14\uB978 \uC21C\uC11C\uC785\uB2C8\uB2E4."
+    answer: 1,
+    explanation: "Volume to Mesh \uBCC0\uD658 \uACB0\uACFC\uB294 \uD1A0\uD3F4\uB85C\uC9C0\uAC00 \uC9C0\uC800\uBD84\uD560 \uC218 \uC788\uC5B4, Remesh\uB85C \uAE54\uB054\uD558\uAC8C \uC815\uB9AC\uD569\uB2C8\uB2E4."
   }
 ]);
 </script>

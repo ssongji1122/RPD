@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Show Me — Mirror Modifier 이해</title>
+<title>Show Me — Boolean Modifier 이해</title>
 <style>
 /* ══════════════════════════════════════════════════
    Show Me Widget — Standalone Dark Theme
@@ -372,36 +372,43 @@ body {
 <section class="panel is-active" id="panel-concept" role="tabpanel">
   <div class="concept-grid">
     <div class="concept-card">
-      <h3>Mirror Modifier란?</h3>
-      <p>거울처럼 한쪽만 편집하면 반대쪽이 자동으로 따라오는 Modifier입니다. 좌우 대칭 모델을 만들 때 작업량을 절반으로 줄여줍니다.</p>
-      <div class="analogy">거울 앞에서 한쪽을 바꾸면 반대쪽이 자동으로 따라와요</div>
+      <h3>Boolean이란?</h3>
+      <p>두 오브젝트의 겹치는 부분을 이용해 새 형태를 만드는 모디파이어입니다. 3가지 연산을 지원합니다: Union(합), Intersect(교), Difference(차).</p>
+      <div class="analogy">쿠키 커터로 반죽을 찍어내는 것 (Difference), 반죽 두 덩어리를 합치는 것 (Union)</div>
     </div>
     <div class="concept-card">
-      <h3>Clipping이란?</h3>
-      <p>중심선을 넘지 못하게 하는 옵션입니다. ON이면 중심 정점이 정확히 중앙에 고정되어, 양쪽이 깔끔하게 이어집니다.</p>
-      <div class="analogy">중심선에 보이지 않는 벽이 생겨서 정점이 넘어가지 못해요</div>
+      <h3>3가지 연산</h3>
+      <ul>
+        <li><strong>Difference (차)</strong> — 커터 오브젝트 모양을 잘라냄 <span class="badge badge-blue">가장 많이 사용</span></li>
+        <li><strong>Union (합)</strong> — 두 오브젝트를 하나로 합침</li>
+        <li><strong>Intersect (교)</strong> — 겹치는 부분만 남김</li>
+      </ul>
+    </div>
+    <div class="concept-card">
+      <h3>Solver <span class="badge badge-amber">중요</span></h3>
+      <p>Fast vs Exact 두 가지 솔버를 선택할 수 있습니다. Exact가 더 정확하지만 느립니다. Blender 5.0에서는 Exact가 기본값입니다.</p>
     </div>
   </div>
 
   <div class="shortcut-list">
     <h4>주요 단축키</h4>
     <div class="shortcut-row">
-      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">1</span></span>
-      <span>Modifier 추가 패널</span>
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">Shift</span> + <span class="kbd">B</span></span>
+      <span>Boolean 추가 (Quick Boolean 애드온 사용 시)</span>
     </div>
     <div class="shortcut-row">
-      <span class="shortcut-keys"><span class="kbd">S</span> <span class="kbd">X</span> <span class="kbd">0</span></span>
-      <span>중심선 정렬 (선택한 정점의 X좌표를 0으로)</span>
+      <span class="shortcut-keys"><span class="kbd">H</span></span>
+      <span>커터 오브젝트 숨기기 (선택 후)</span>
     </div>
     <div class="shortcut-row">
-      <span class="shortcut-keys">Clipping 체크박스</span>
-      <span>Properties &rarr; Modifier tab에서 설정</span>
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">A</span></span>
+      <span>모디파이어 적용 (Apply)</span>
     </div>
   </div>
 
   <div class="doc-ref">
-    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html" target="_blank" rel="noopener">
-      📖 Blender 공식 문서 — Mirror Modifier
+    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/booleans.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Boolean Modifier
     </a>
   </div>
 </section>
@@ -409,59 +416,62 @@ body {
 <!-- TAB 2: 시각적 비교 -->
 <section class="panel" id="panel-visual" role="tabpanel">
   <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    왼쪽 반의 꼭짓점을 드래그하면 오른쪽이 자동으로 미러됩니다.
+    버튼을 눌러 Boolean 연산 결과를 확인하세요. 파란색은 Shape A, 초록색은 Shape B입니다.
   </p>
   <div class="demo-wrap">
     <canvas id="demoCanvas" width="680" height="300"></canvas>
     <div class="demo-controls">
-      <button class="demo-btn is-active" id="btnClipping">Clipping ON</button>
-      <button class="demo-btn" id="btnReset">초기화</button>
+      <button class="demo-btn is-active" id="btnUnion">Union (합)</button>
+      <button class="demo-btn" id="btnDifference">Difference (차)</button>
+      <button class="demo-btn" id="btnIntersect">Intersect (교)</button>
     </div>
   </div>
-  <p class="demo-hint">꼭짓점을 드래그해 보세요. Clipping을 토글하면 중심선 넘기 동작이 달라집니다.</p>
+  <p class="demo-hint">각 버튼을 눌러 두 오브젝트의 Boolean 연산 결과를 비교해 보세요.</p>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->
 <section class="panel" id="panel-when" role="tabpanel">
   <div class="usage-grid">
     <div class="usage-card">
-      <h4>Mirror가 필요할 때</h4>
+      <h4>Boolean이 필요할 때</h4>
       <ul>
-        <li>좌우 대칭 로봇</li>
-        <li>자동차</li>
-        <li>캐릭터 얼굴</li>
-        <li>가구</li>
+        <li>구멍 뚫기 (볼트홀, 창문)</li>
+        <li>복잡한 형태 합치기</li>
+        <li>교차 부분 추출</li>
+        <li>하드서페이스 디테일</li>
       </ul>
     </div>
     <div class="usage-card">
-      <h4>Mirror를 안 쓰는 경우</h4>
+      <h4>Boolean을 피해야 할 때</h4>
       <ul>
-        <li>비대칭 디자인</li>
-        <li>유기적 형태</li>
-        <li>한쪽만 다른 디테일</li>
+        <li>유기적 형태 (토폴로지 꼬임)</li>
+        <li>지나치게 복잡한 메쉬</li>
+        <li>정확한 토폴로지가 필요할 때</li>
       </ul>
     </div>
   </div>
+
   <div class="tip-box">
-    <strong>팁:</strong> Mirror는 원점(Origin)이 중심에 있어야 해요. <span class="kbd">S</span>+<span class="kbd">X</span>+<span class="kbd">0</span>으로 중심선을 맞추고, 오브젝트를 먼저 중앙에 놓은 뒤 Mirror를 추가하세요.
+    <strong>팁:</strong> Boolean 후 토폴로지가 지저분할 수 있습니다. 중요한 모델이라면 Remesh나 수동 리토폴로지로 정리하세요. Exact Solver를 사용하면 더 깨끗한 결과를 얻을 수 있습니다.
   </div>
+
   <div class="combo-section">
     <h4>자주 쓰는 조합</h4>
     <div class="combo-grid">
       <div class="combo-card">
-        <div class="combo-name">Mirror + Subdivision Surface</div>
-        <div class="combo-desc">Mirror로 대칭을 잡고 Subdivision으로 부드럽게. Mirror가 위, Subdivision이 아래 순서로 배치합니다.</div>
+        <div class="combo-name">Boolean + Array</div>
+        <div class="combo-desc">반복 구멍 패턴을 만들 때 유용합니다. 환기구처럼 일정 간격으로 동일한 구멍을 뚫을 수 있습니다.</div>
       </div>
       <div class="combo-card">
-        <div class="combo-name">Mirror + Solidify</div>
-        <div class="combo-desc">대칭 형태에 두께를 추가할 때. 얇은 판이나 갑옷 같은 모델에 유용합니다.</div>
+        <div class="combo-name">Boolean + Solidify</div>
+        <div class="combo-desc">두께가 있는 구멍을 만들 때 사용합니다. Solidify로 두께를 주고 Boolean으로 구멍을 뚫습니다.</div>
       </div>
     </div>
   </div>
 
   <div class="doc-ref">
-    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html" target="_blank" rel="noopener">
-      📖 Blender 공식 문서 — Mirror Modifier
+    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/booleans.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Boolean Modifier
     </a>
   </div>
 </section>
@@ -614,239 +624,240 @@ function initQuiz(questions) {
   }
 }
 
-// ── Canvas Mirror Demo ────────────────────────
+// ── Canvas Boolean Demo ───────────────────────
 (function() {
   var canvas = document.getElementById("demoCanvas");
   var ctx = canvas.getContext("2d");
-  var clipping = true;
-  var dragging = -1;
-  var hitRadius = 14;
+  var currentMode = "union"; // union, difference, intersect
+  var animProgress = 1; // 0..1 for transition animation
+  var animTarget = 1;
+  var animFrame = null;
 
-  // Initial left-half vertices (robot torso shape, top-down view)
-  // These are offsets from center — stored as positive X values from center
-  var defaultVerts = [
-    { x: 10,  y: 60  },  // top-center-ish
-    { x: 100, y: 50  },  // top-right shoulder
-    { x: 120, y: 90  },  // right shoulder corner
-    { x: 110, y: 160 },  // right waist
-    { x: 90,  y: 220 },  // right hip
-    { x: 10,  y: 240 },  // bottom-center-ish
-  ];
+  // Shape definitions (centered in canvas)
+  var cx = canvas.width / 2;
+  var cy = canvas.height / 2;
 
-  // Working copy
-  var verts = [];
-  function resetVerts() {
-    verts = defaultVerts.map(function(v) { return { x: v.x, y: v.y }; });
-  }
-  resetVerts();
+  // Shape A: rounded rectangle (blue) — left-center
+  var shapeA = { x: cx - 50, y: cy, w: 160, h: 120 };
+  // Shape B: circle (green) — right-center, overlapping
+  var shapeB = { x: cx + 60, y: cy, r: 70 };
 
-  var centerX = canvas.width / 2;
+  // Color palette
+  var colorA = { fill: "rgba(10,132,255,.3)", stroke: "rgba(10,132,255,.7)", label: "#8ec5ff" };
+  var colorB = { fill: "rgba(16,185,129,.3)", stroke: "rgba(16,185,129,.7)", label: "#6ee7b7" };
+  var colorResult = { fill: "rgba(255,255,255,.18)", stroke: "rgba(255,255,255,.6)" };
 
-  function draw() {
-    var w = canvas.width;
-    var h = canvas.height;
-    ctx.clearRect(0, 0, w, h);
-
-    // Background
+  function drawGrid() {
+    var w = canvas.width, h = canvas.height;
     ctx.fillStyle = "#17181a";
     ctx.fillRect(0, 0, w, h);
 
-    // Grid lines (subtle)
     ctx.strokeStyle = "rgba(255,255,255,.04)";
     ctx.lineWidth = 1;
     var step = 40;
     for (var gx = step; gx < w; gx += step) {
-      ctx.beginPath();
-      ctx.moveTo(gx, 0);
-      ctx.lineTo(gx, h);
-      ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
     }
     for (var gy = step; gy < h; gy += step) {
-      ctx.beginPath();
-      ctx.moveTo(0, gy);
-      ctx.lineTo(w, gy);
+      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
+    }
+  }
+
+  function rectPath(shape) {
+    var rx = 12; // rounded corners
+    var x = shape.x - shape.w / 2;
+    var y = shape.y - shape.h / 2;
+    var w = shape.w;
+    var h = shape.h;
+    ctx.beginPath();
+    ctx.moveTo(x + rx, y);
+    ctx.lineTo(x + w - rx, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + rx);
+    ctx.lineTo(x + w, y + h - rx);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - rx, y + h);
+    ctx.lineTo(x + rx, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - rx);
+    ctx.lineTo(x, y + rx);
+    ctx.quadraticCurveTo(x, y, x + rx, y);
+    ctx.closePath();
+  }
+
+  function circlePath(shape) {
+    ctx.beginPath();
+    ctx.arc(shape.x, shape.y, shape.r, 0, Math.PI * 2);
+    ctx.closePath();
+  }
+
+  function drawShapeA(alpha) {
+    rectPath(shapeA);
+    ctx.fillStyle = colorA.fill.replace(/[\d.]+\)$/, (0.3 * alpha) + ")");
+    ctx.fill();
+    ctx.strokeStyle = colorA.stroke.replace(/[\d.]+\)$/, (0.7 * alpha) + ")");
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+
+  function drawShapeB(alpha) {
+    circlePath(shapeB);
+    ctx.fillStyle = colorB.fill.replace(/[\d.]+\)$/, (0.3 * alpha) + ")");
+    ctx.fill();
+    ctx.strokeStyle = colorB.stroke.replace(/[\d.]+\)$/, (0.7 * alpha) + ")");
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+
+  function drawResult() {
+    ctx.save();
+
+    if (currentMode === "union") {
+      // Draw both shapes merged with result color
+      rectPath(shapeA);
+      ctx.fillStyle = colorResult.fill;
+      ctx.fill();
+      circlePath(shapeB);
+      ctx.fillStyle = colorResult.fill;
+      ctx.fill();
+      // Outline both
+      rectPath(shapeA);
+      ctx.strokeStyle = colorResult.stroke;
+      ctx.lineWidth = 2.5;
       ctx.stroke();
+      circlePath(shapeB);
+      ctx.stroke();
+      // Erase inner overlap line by filling overlap area
+      ctx.save();
+      rectPath(shapeA);
+      ctx.clip();
+      circlePath(shapeB);
+      ctx.fillStyle = colorResult.fill;
+      ctx.fill();
+      ctx.restore();
+
+    } else if (currentMode === "difference") {
+      // Rectangle with circle-shaped hole
+      ctx.save();
+      rectPath(shapeA);
+      ctx.clip();
+      // Fill entire clipped area
+      ctx.fillStyle = colorResult.fill;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      // Cut out circle using composite
+      ctx.globalCompositeOperation = "destination-out";
+      circlePath(shapeB);
+      ctx.fillStyle = "rgba(0,0,0,1)";
+      ctx.fill();
+      ctx.restore();
+      // Draw outline of result
+      ctx.save();
+      rectPath(shapeA);
+      ctx.strokeStyle = colorResult.stroke;
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+      // Draw inner arc (the hole edge)
+      ctx.beginPath();
+      // Only the portion of circle inside rect
+      ctx.arc(shapeB.x, shapeB.y, shapeB.r, 0, Math.PI * 2);
+      ctx.strokeStyle = colorResult.stroke;
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+      ctx.restore();
+
+    } else if (currentMode === "intersect") {
+      // Only the overlap region
+      ctx.save();
+      rectPath(shapeA);
+      ctx.clip();
+      circlePath(shapeB);
+      ctx.fillStyle = colorResult.fill;
+      ctx.fill();
+      ctx.strokeStyle = colorResult.stroke;
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+      ctx.restore();
     }
 
-    // Center mirror axis — dashed line
-    ctx.strokeStyle = "rgba(245,158,11,.5)";
-    ctx.lineWidth = 2;
-    ctx.setLineDash([8, 6]);
-    ctx.beginPath();
-    ctx.moveTo(centerX, 0);
-    ctx.lineTo(centerX, h);
-    ctx.stroke();
-    ctx.setLineDash([]);
+    ctx.restore();
+  }
 
-    // Axis label
-    ctx.fillStyle = "rgba(245,158,11,.7)";
-    ctx.font = "11px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("Mirror Axis (X=0)", centerX, 18);
-
-    // Draw left half polygon (original)
-    drawPolygon(verts, -1, "rgba(10,132,255,.25)", "rgba(10,132,255,.7)");
-
-    // Draw right half polygon (mirrored)
-    var mirrored = verts.map(function(v) {
-      return { x: v.x, y: v.y };
-    });
-    drawPolygon(mirrored, 1, "rgba(16,185,129,.15)", "rgba(16,185,129,.5)");
-
-    // Labels
+  function drawLabels() {
+    var w = canvas.width, h = canvas.height;
     ctx.font = "bold 12px sans-serif";
     ctx.textAlign = "center";
-    ctx.fillStyle = "rgba(10,132,255,.8)";
-    ctx.fillText("Original (Edit)", centerX - 80, h - 14);
-    ctx.fillStyle = "rgba(16,185,129,.6)";
-    ctx.fillText("Mirrored (Auto)", centerX + 80, h - 14);
 
-    // Draw vertex handles on left side
-    verts.forEach(function(v, i) {
-      var sx = centerX - v.x;
-      var sy = v.y;
-      ctx.beginPath();
-      ctx.arc(sx, sy, 6, 0, Math.PI * 2);
-      ctx.fillStyle = (dragging === i) ? "#0a84ff" : "rgba(10,132,255,.9)";
-      ctx.fill();
-      ctx.strokeStyle = "#fff";
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-    });
+    // Shape labels
+    ctx.fillStyle = colorA.label;
+    ctx.fillText("Shape A (Rectangle)", shapeA.x, shapeA.y - shapeA.h / 2 - 12);
+    ctx.fillStyle = colorB.label;
+    ctx.fillText("Shape B (Circle)", shapeB.x, shapeB.y - shapeB.r - 12);
 
-    // Clipping indicator
-    ctx.fillStyle = clipping ? "rgba(16,185,129,.7)" : "rgba(239,68,68,.7)";
-    ctx.font = "bold 11px sans-serif";
-    ctx.textAlign = "left";
-    ctx.fillText("Clipping: " + (clipping ? "ON" : "OFF"), 12, 18);
+    // Mode label
+    var modeText = "";
+    if (currentMode === "union") modeText = "Union (합): 두 오브젝트를 하나로";
+    else if (currentMode === "difference") modeText = "Difference (차): A에서 B를 잘라냄";
+    else if (currentMode === "intersect") modeText = "Intersect (교): 겹치는 부분만";
+
+    ctx.fillStyle = "rgba(255,255,255,.7)";
+    ctx.font = "bold 13px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(modeText, cx, h - 16);
   }
 
-  function drawPolygon(pts, side, fillColor, strokeColor) {
-    // side: -1 = left of center, +1 = right of center
-    if (pts.length < 2) return;
-    ctx.beginPath();
-    pts.forEach(function(v, i) {
-      var sx = (side === -1) ? (centerX - v.x) : (centerX + v.x);
-      var sy = v.y;
-      if (i === 0) ctx.moveTo(sx, sy);
-      else ctx.lineTo(sx, sy);
-    });
-    ctx.closePath();
-    ctx.fillStyle = fillColor;
-    ctx.fill();
-    ctx.strokeStyle = strokeColor;
-    ctx.lineWidth = 2;
-    ctx.stroke();
+  function draw() {
+    drawGrid();
+
+    // Ghost shapes (dimmed original shapes)
+    var ghostAlpha = 0.35;
+    drawShapeA(ghostAlpha);
+    drawShapeB(ghostAlpha);
+
+    // Draw Boolean result
+    drawResult();
+
+    // Labels
+    drawLabels();
   }
 
-  function getEventPos(e) {
-    var rect = canvas.getBoundingClientRect();
-    var scaleX = canvas.width / rect.width;
-    var scaleY = canvas.height / rect.height;
-    var clientX, clientY;
-    if (e.touches && e.touches.length > 0) {
-      clientX = e.touches[0].clientX;
-      clientY = e.touches[0].clientY;
-    } else {
-      clientX = e.clientX;
-      clientY = e.clientY;
-    }
-    return {
-      x: (clientX - rect.left) * scaleX,
-      y: (clientY - rect.top) * scaleY
-    };
-  }
+  function animateTo(mode) {
+    currentMode = mode;
+    animProgress = 0;
+    animTarget = 1;
 
-  function findVertex(pos) {
-    var best = -1;
-    var bestDist = hitRadius * hitRadius;
-    verts.forEach(function(v, i) {
-      var sx = centerX - v.x;
-      var sy = v.y;
-      var dx = pos.x - sx;
-      var dy = pos.y - sy;
-      var d2 = dx * dx + dy * dy;
-      if (d2 < bestDist) {
-        bestDist = d2;
-        best = i;
+    if (animFrame) cancelAnimationFrame(animFrame);
+
+    function step() {
+      animProgress += 0.06;
+      if (animProgress >= 1) {
+        animProgress = 1;
+        draw();
+        return;
       }
-    });
-    return best;
-  }
-
-  function onDown(e) {
-    e.preventDefault();
-    var pos = getEventPos(e);
-    dragging = findVertex(pos);
-    if (dragging >= 0) draw();
-  }
-
-  function onMove(e) {
-    if (dragging < 0) return;
-    e.preventDefault();
-    var pos = getEventPos(e);
-    // Convert screen position to vertex coords (offset from center)
-    var newX = centerX - pos.x;
-    var newY = pos.y;
-
-    // Clamp Y
-    if (newY < 10) newY = 10;
-    if (newY > canvas.height - 10) newY = canvas.height - 10;
-
-    // Clipping: prevent crossing center line (x must stay >= 0)
-    if (clipping) {
-      if (newX < 0) newX = 0;
-    }
-    // Even without clipping, don't go too far right
-    if (newX > centerX - 10) newX = centerX - 10;
-
-    verts[dragging].x = newX;
-    verts[dragging].y = newY;
-    draw();
-  }
-
-  function onUp(e) {
-    if (dragging >= 0) {
-      dragging = -1;
       draw();
+      animFrame = requestAnimationFrame(step);
     }
+    animFrame = requestAnimationFrame(step);
   }
 
-  // Mouse events
-  canvas.addEventListener("mousedown", onDown);
-  canvas.addEventListener("mousemove", onMove);
-  canvas.addEventListener("mouseup", onUp);
-  canvas.addEventListener("mouseleave", onUp);
+  // Button handlers
+  var btns = {
+    union: document.getElementById("btnUnion"),
+    difference: document.getElementById("btnDifference"),
+    intersect: document.getElementById("btnIntersect")
+  };
 
-  // Touch events
-  canvas.addEventListener("touchstart", onDown, { passive: false });
-  canvas.addEventListener("touchmove", onMove, { passive: false });
-  canvas.addEventListener("touchend", onUp);
-  canvas.addEventListener("touchcancel", onUp);
+  function setActiveBtn(mode) {
+    Object.keys(btns).forEach(function(k) {
+      btns[k].classList.toggle("is-active", k === mode);
+    });
+  }
 
-  // Clipping toggle
-  var btnClipping = document.getElementById("btnClipping");
-  btnClipping.addEventListener("click", function() {
-    clipping = !clipping;
-    if (clipping) {
-      btnClipping.textContent = "Clipping ON";
-      btnClipping.classList.add("is-active");
-      // Enforce clipping on current verts
-      verts.forEach(function(v) {
-        if (v.x < 0) v.x = 0;
-      });
-    } else {
-      btnClipping.textContent = "Clipping OFF";
-      btnClipping.classList.remove("is-active");
-    }
-    draw();
-  });
+  btns.union.addEventListener("click", function() { setActiveBtn("union"); animateTo("union"); });
+  btns.difference.addEventListener("click", function() { setActiveBtn("difference"); animateTo("difference"); });
+  btns.intersect.addEventListener("click", function() { setActiveBtn("intersect"); animateTo("intersect"); });
 
-  // Reset button
-  document.getElementById("btnReset").addEventListener("click", function() {
-    resetVerts();
-    draw();
-  });
+  // Touch events for mobile
+  btns.union.addEventListener("touchend", function(e) { e.preventDefault(); setActiveBtn("union"); animateTo("union"); });
+  btns.difference.addEventListener("touchend", function(e) { e.preventDefault(); setActiveBtn("difference"); animateTo("difference"); });
+  btns.intersect.addEventListener("touchend", function(e) { e.preventDefault(); setActiveBtn("intersect"); animateTo("intersect"); });
 
   // Initial draw
   draw();
@@ -855,48 +866,48 @@ function initQuiz(questions) {
 // ── Quiz Data ─────────────────────────────────
 initQuiz([
   {
-    question: "Mirror Modifier\uB97C \uCD94\uAC00\uD588\uB294\uB370 \uBBF8\uB7EC\uB41C \uBC18\uCABD\uC774 \uC774\uC0C1\uD55C \uACF3\uC5D0 \uB098\uD0C0\uB098\uC694. \uAC00\uC7A5 \uD754\uD55C \uC6D0\uC778\uC740?",
+    question: "\uC624\uBE0C\uC81D\uD2B8\uC5D0 \uAD6C\uBA4D\uC744 \uB69A\uC73C\uB824\uBA74 \uC5B4\uB5A4 Boolean \uC5F0\uC0B0\uC744 \uC0AC\uC6A9\uD574\uC57C \uD558\uB098\uC694?",
     options: [
-      "Apply Scale\uC744 \uC548 \uD574\uC11C",
-      "Origin\uC774 \uC624\uBE0C\uC81D\uD2B8 \uC911\uC2EC\uC5D0 \uC788\uC9C0 \uC54A\uC544\uC11C",
-      "Clipping\uC774 \uCF1C\uC838 \uC788\uC5B4\uC11C",
-      "Edit Mode\uAC00 \uC544\uB2C8\uB77C\uC11C"
+      "Union (\uD569)",
+      "Intersect (\uAD50)",
+      "Difference (\uCC28)",
+      "Subdivide"
+    ],
+    answer: 2,
+    explanation: "Difference(\uCC28) \uC5F0\uC0B0\uC740 \uCEE4\uD130 \uC624\uBE0C\uC81D\uD2B8 \uBAA8\uC591\uC744 \uC798\uB77C\uB0B4\uC5B4 \uAD6C\uBA4D\uC744 \uB69A\uC744 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
+  },
+  {
+    question: "\uB450 \uC624\uBE0C\uC81D\uD2B8\uC758 \uACA9\uCE58\uB294 \uBD80\uBD84\uB9CC \uB0A8\uAE30\uB824\uBA74 \uC5B4\uB5A4 \uC5F0\uC0B0\uC744 \uC0AC\uC6A9\uD558\uB098\uC694?",
+    options: [
+      "Union (\uD569)",
+      "Difference (\uCC28)",
+      "Intersect (\uAD50)",
+      "Bisect"
+    ],
+    answer: 2,
+    explanation: "Intersect(\uAD50) \uC5F0\uC0B0\uC740 \uB450 \uC624\uBE0C\uC81D\uD2B8\uAC00 \uACA9\uCE58\uB294 \uBD80\uBD84\uB9CC \uB0A8\uAE30\uACE0 \uB098\uBA38\uC9C0\uB97C \uC81C\uAC70\uD569\uB2C8\uB2E4."
+  },
+  {
+    question: "Boolean \uD6C4 \uD1A0\uD3F4\uB85C\uC9C0\uAC00 \uC9C0\uC800\uBD84\uD560 \uB54C \uD574\uACB0\uBC95\uC740?",
+    options: [
+      "Boolean\uC744 \uB2E4\uC2DC \uC801\uC6A9\uD55C\uB2E4",
+      "Smooth Shading\uC744 \uCF1C\uB2E8",
+      "Remesh \uB610\uB294 \uC218\uB3D9 \uB9AC\uD1A0\uD3F4\uB85C\uC9C0",
+      "Undo\uB85C \uB418\uB3CC\uB9B0\uB2E4"
+    ],
+    answer: 2,
+    explanation: "Boolean \uD6C4 \uC9C0\uC800\uBD84\uD55C \uD1A0\uD3F4\uB85C\uC9C0\uB294 Remesh \uB610\uB294 \uC218\uB3D9 \uB9AC\uD1A0\uD3F4\uB85C\uC9C0\uB85C \uC815\uB9AC\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
+  },
+  {
+    question: "Blender 5.0\uC758 \uAE30\uBCF8 Boolean Solver\uB294?",
+    options: [
+      "Fast",
+      "Exact",
+      "Auto",
+      "Legacy"
     ],
     answer: 1,
-    explanation: "Mirror\uB294 Origin\uC744 \uAE30\uC900\uC73C\uB85C \uBC18\uC804\uD569\uB2C8\uB2E4. Origin\uC774 \uC624\uBE0C\uC81D\uD2B8 \uC911\uC2EC\uC5D0 \uC788\uC9C0 \uC54A\uC73C\uBA74 \uBBF8\uB7EC\uB41C \uBC18\uCABD\uC774 \uC5C9\uB69A\uD55C \uC704\uCE58\uC5D0 \uC0DD\uAE41\uB2C8\uB2E4."
-  },
-  {
-    question: "Clipping \uC635\uC158\uC744 \uCF1C\uBA74 \uC5B4\uB5A4 \uD6A8\uACFC\uAC00 \uC788\uB098\uC694?",
-    options: [
-      "\uBBF8\uB7EC\uAC00 \uBE44\uD65C\uC131\uD654\uB41C\uB2E4",
-      "\uC790\uB3D9\uC73C\uB85C Apply\uB41C\uB2E4",
-      "\uC911\uC2EC \uC815\uC810\uC774 \uBBF8\uB7EC \uCD95\uC744 \uB118\uC9C0 \uBABB\uD55C\uB2E4",
-      "\uBC18\uB300\uD3B8\uC774 \uC228\uACA8\uC9C4\uB2E4"
-    ],
-    answer: 2,
-    explanation: "Clipping\uC744 \uCF1C\uBA74 \uC815\uC810\uC774 \uBBF8\uB7EC \uCD95\uC744 \uB118\uC5B4\uAC00\uC9C0 \uBABB\uD569\uB2C8\uB2E4. \uC774\uB807\uAC8C \uD558\uBA74 \uC911\uC2EC\uC120\uC5D0\uC11C \uC591\uCABD\uC774 \uAE54\uB054\uD558\uAC8C \uC774\uC5B4\uC9D1\uB2C8\uB2E4."
-  },
-  {
-    question: "S \u2192 X \u2192 0\uC744 \uB204\uB974\uBA74 \uC5B4\uB5A4 \uC77C\uC774 \uC77C\uC5B4\uB098\uB098\uC694?",
-    options: [
-      "\uC624\uBE0C\uC81D\uD2B8\uAC00 \uC0AD\uC81C\uB41C\uB2E4",
-      "X\uCD95 \uBBF8\uB7EC\uAC00 \uC801\uC6A9\uB41C\uB2E4",
-      "X\uC88C\uD45C\uAC00 0\uC774 \uB418\uC5B4 \uC911\uC2EC\uC120 \uC815\uB82C",
-      "\uC2A4\uCF00\uC77C\uC774 \uCD08\uAE30\uD654\uB41C\uB2E4"
-    ],
-    answer: 2,
-    explanation: "S(Scale) \u2192 X(\uCD95 \uC81C\uD55C) \u2192 0(\uAC12)\uC744 \uB204\uB974\uBA74 \uC120\uD0DD\uD55C \uC815\uC810\uC758 X\uC88C\uD45C\uAC00 0\uC774 \uB418\uC5B4 \uC815\uD655\uD788 \uC911\uC2EC\uC120\uC5D0 \uC815\uB82C\uB429\uB2C8\uB2E4."
-  },
-  {
-    question: "Mirror + Subdivision Surface \uC870\uD569\uC5D0\uC11C Modifier \uC21C\uC11C\uB294?",
-    options: [
-      "\uC21C\uC11C \uC0C1\uAD00\uC5C6\uB2E4",
-      "Subdivision\uC774 \uC704",
-      "Mirror\uAC00 \uC704",
-      "\uB458 \uB2E4 Apply \uD6C4 \uC0AC\uC6A9"
-    ],
-    answer: 2,
-    explanation: "Mirror\uAC00 \uC704\uC5D0, Subdivision\uC774 \uC544\uB798\uC5D0 \uC640\uC57C \uD569\uB2C8\uB2E4. \uBA3C\uC800 \uB300\uCE6D\uC744 \uC7A1\uACE0 \uB098\uC11C \uBD80\uB4DC\uB7FD\uAC8C \uB9CC\uB4DC\uB294 \uAC83\uC774 \uC62C\uBC14\uB978 \uC21C\uC11C\uC785\uB2C8\uB2E4."
+    explanation: "Blender 5.0\uC5D0\uC11C\uB294 \uB354 \uC815\uD655\uD55C Exact Solver\uAC00 \uAE30\uBCF8\uAC12\uC73C\uB85C \uC124\uC815\uB418\uC5B4 \uC788\uC2B5\uB2C8\uB2E4."
   }
 ]);
 </script>
