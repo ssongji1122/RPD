@@ -25,36 +25,19 @@
       line-height: 1.7;
     }
 
-    /* Current week highlight */
-    .current-week-banner {
-      margin-bottom: 32px;
-      padding: 16px 20px;
-      border-radius: var(--radius-lg);
-      border: 1px solid rgba(10,132,255,.35);
-      background: rgba(10,132,255,.07);
-      display: flex; align-items: center; justify-content: space-between; gap: 16px;
-      text-decoration: none; color: inherit;
-      transition: border-color .18s, background .18s;
-    }
-    .current-week-banner:hover { border-color: rgba(10,132,255,.6); background: rgba(10,132,255,.12); }
-    .current-week-banner .cw-label { font-size: .75rem; font-weight: 600; color: var(--key-soft); letter-spacing: .06em; text-transform: uppercase; }
-    .current-week-banner .cw-title { font-size: 1.05rem; font-weight: 620; margin-top: 3px; }
-    .current-week-banner .cw-sub   { font-size: .84rem; color: var(--muted); margin-top: 2px; }
-    .current-week-banner .cw-arrow { color: var(--key-soft); font-size: 1.3rem; flex-shrink: 0; }
-
     /* Week grid */
     .week-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
     }
     .week-card {
       border-radius: var(--radius-lg);
       border: 1px solid var(--line);
       background: linear-gradient(180deg, rgba(23,24,26,.98), rgba(18,18,20,.98));
       box-shadow: var(--shadow-card);
-      padding: 22px;
-      display: flex; flex-direction: column; gap: 12px;
+      padding: 18px 20px;
+      display: flex; flex-direction: column; gap: 10px;
       text-decoration: none; color: inherit;
       transition: border-color .18s, transform .18s;
       position: relative; overflow: hidden;
@@ -63,44 +46,85 @@
       border-color: rgba(147,197,253,.28);
       transform: translateY(-2px);
     }
-    .week-card.is-active { border-color: rgba(10,132,255,.42); }
     .week-card.is-done   { border-color: rgba(16,185,129,.25); }
     .week-card.is-exam   { border-color: rgba(245,158,11,.3); }
 
+    /* ── Featured: active week card ── */
+    .week-card.is-active {
+      grid-column: 1 / -1;
+      order: -1;
+      padding: 28px 32px;
+      gap: 14px;
+      border-color: rgba(10,132,255,.42);
+      background: linear-gradient(180deg, rgba(10,132,255,.07), rgba(18,18,20,.98));
+    }
+    .week-card.is-active:hover {
+      border-color: rgba(10,132,255,.6);
+      background: linear-gradient(180deg, rgba(10,132,255,.11), rgba(18,18,20,.98));
+    }
+    .week-card.is-active .cw-active-label {
+      font-size: .73rem; font-weight: 600; color: var(--key-soft);
+      letter-spacing: .06em; text-transform: uppercase;
+      margin-bottom: -4px;
+    }
+    .week-card.is-active .week-title {
+      font-size: 1.28rem;
+    }
+    .week-card.is-active .week-subtitle {
+      font-size: .92rem;
+    }
+    .week-card.is-active .topic-chip {
+      padding: 5px 11px;
+      font-size: .78rem;
+    }
+    @media (min-width: 721px) {
+      .week-card.is-active .week-card-inner {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 20px;
+        align-items: start;
+      }
+      .week-card.is-active .week-footer {
+        border-top: none; padding-top: 0; margin-top: 0;
+        align-self: end;
+      }
+    }
+
     .week-card-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
     .week-num {
-      font-size: .76rem; font-weight: 600; letter-spacing: .06em;
+      font-size: .73rem; font-weight: 600; letter-spacing: .06em;
       color: var(--muted); text-transform: uppercase;
     }
     .week-badge {
-      padding: 4px 10px; border-radius: 999px;
-      font-size: .72rem; font-weight: 600;
+      padding: 3px 9px; border-radius: 999px;
+      font-size: .7rem; font-weight: 600;
     }
     .badge-done     { background: rgba(16,185,129,.14); color: var(--success-soft); }
     .badge-active   { background: rgba(10,132,255,.14);  color: var(--key-soft); }
     .badge-upcoming { background: rgba(255,255,255,.06);  color: var(--muted); }
     .badge-exam     { background: rgba(245,158,11,.14);   color: #fbbf24; }
 
-    .week-title { font-size: 1.08rem; font-weight: 620; line-height: 1.38; margin: 0; }
-    .week-subtitle { font-size: .84rem; color: var(--muted); margin: 0; line-height: 1.5; }
+    .week-title { font-size: 1rem; font-weight: 620; line-height: 1.38; margin: 0; }
+    .week-subtitle { font-size: .82rem; color: var(--muted); margin: 0; line-height: 1.5; }
 
-    .week-topics { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 4px; }
+    .week-topics { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
     .topic-chip {
-      padding: 4px 9px; border-radius: 999px;
+      padding: 3px 8px; border-radius: 999px;
       background: rgba(255,255,255,.04); border: 1px solid rgba(147,197,253,.1);
-      color: var(--muted); font-size: .73rem;
+      color: var(--muted); font-size: .7rem;
     }
     .week-footer {
       display: flex; align-items: center; justify-content: space-between;
-      margin-top: 4px; padding-top: 12px;
+      margin-top: auto; padding-top: 10px;
       border-top: 1px solid rgba(147,197,253,.07);
     }
-    .week-duration { color: var(--muted); font-size: .8rem; }
+    .week-duration { color: var(--muted); font-size: .78rem; }
     .go-arrow { color: var(--key-soft); font-size: .9rem; }
 
     /* Responsive */
     @media (max-width: 720px) {
       .week-grid { grid-template-columns: 1fr; }
+      .week-card.is-active { padding: 22px; }
     }
   </style>
 </head>
@@ -131,7 +155,6 @@
 
     <!-- Week grid -->
     <section class="content-block">
-      <div id="currentWeekBanner"></div>
       <div class="week-grid" id="weekGrid">
         <!-- JS로 채워짐 -->
       </div>
@@ -147,25 +170,6 @@
   <script src="data/curriculum.js"></script>
   <script>
     // curriculum.js의 CURRICULUM 배열은 정적 파일로 사용자 입력이 없는 신뢰된 소스입니다.
-    // ─── Current week banner ─────────────────────────────
-    const currentWeek = CURRICULUM.find(w => w.status === "active")
-                     || CURRICULUM.find(w => w.status === "upcoming");
-    if (currentWeek) {
-      const isActive = currentWeek.status === "active";
-      const banner = document.getElementById("currentWeekBanner");
-      const a = document.createElement("a");
-      a.className = "current-week-banner";
-      a.href = "week.html?week=" + currentWeek.week;
-      a.innerHTML =
-        "<div>" +
-          "<div class=\"cw-label\">" + (isActive ? "지금 진행 중" : "다음 수업") + " · Week " + String(currentWeek.week).padStart(2, "0") + "</div>" +
-          "<div class=\"cw-title\">" + currentWeek.title + "</div>" +
-          "<div class=\"cw-sub\">" + currentWeek.subtitle + "</div>" +
-        "</div>" +
-        "<div class=\"cw-arrow\">\u2192</div>";
-      banner.appendChild(a);
-    }
-
     // ─── Week grid ───────────────────────────────────────
     function getBadge(w) {
       if (w.title.includes("⭐")) return ["badge-exam",     "시험 주차"];
@@ -182,30 +186,83 @@
     }
 
     const grid = document.getElementById("weekGrid");
-    grid.innerHTML = CURRICULUM.map(w => {
-      const [badgeClass, badgeText] = getBadge(w);
-      const topicChips = w.topics.slice(0, 3).map(t =>
-        `<span class="topic-chip">${t}</span>`
-      ).join("") + (w.topics.length > 3 ? `<span class="topic-chip">+${w.topics.length - 3}</span>` : "");
+    grid.textContent = "";
+    CURRICULUM.forEach(function(w) {
+      var badgeInfo = getBadge(w);
+      var badgeClass = badgeInfo[0];
+      var badgeText = badgeInfo[1];
+      var isActive = w.status === "active";
+      var maxChips = isActive ? 5 : 3;
+      var pageUrl = "week.html?week=" + w.week;
 
-      const pageUrl = `week.html?week=${w.week}`;
+      var a = document.createElement("a");
+      a.className = "week-card " + getCardClass(w);
+      a.href = pageUrl;
 
-      return `
-        <a class="week-card ${getCardClass(w)}" href="${pageUrl}">
-          <div class="week-card-header">
-            <span class="week-num">Week ${String(w.week).padStart(2, "0")}</span>
-            <span class="week-badge ${badgeClass}">${badgeText}</span>
-          </div>
-          <p class="week-title">${w.title}</p>
-          <p class="week-subtitle">${w.subtitle}</p>
-          <div class="week-topics">${topicChips}</div>
-          <div class="week-footer">
-            <span class="week-duration">⏱ ${w.duration}</span>
-            <span class="go-arrow">→</span>
-          </div>
-        </a>
-      `;
-    }).join("");
+      // Active label
+      if (isActive) {
+        var lbl = document.createElement("div");
+        lbl.className = "cw-active-label";
+        lbl.textContent = "지금 진행 중";
+        a.appendChild(lbl);
+      }
+
+      // Header
+      var header = document.createElement("div");
+      header.className = "week-card-header";
+      var num = document.createElement("span");
+      num.className = "week-num";
+      num.textContent = "Week " + String(w.week).padStart(2, "0");
+      var badge = document.createElement("span");
+      badge.className = "week-badge " + badgeClass;
+      badge.textContent = badgeText;
+      header.appendChild(num);
+      header.appendChild(badge);
+      a.appendChild(header);
+
+      // Title & subtitle
+      var title = document.createElement("p");
+      title.className = "week-title";
+      title.textContent = w.title;
+      a.appendChild(title);
+
+      var sub = document.createElement("p");
+      sub.className = "week-subtitle";
+      sub.textContent = w.subtitle;
+      a.appendChild(sub);
+
+      // Topics
+      var topics = document.createElement("div");
+      topics.className = "week-topics";
+      w.topics.slice(0, maxChips).forEach(function(t) {
+        var chip = document.createElement("span");
+        chip.className = "topic-chip";
+        chip.textContent = t;
+        topics.appendChild(chip);
+      });
+      if (w.topics.length > maxChips) {
+        var more = document.createElement("span");
+        more.className = "topic-chip";
+        more.textContent = "+" + (w.topics.length - maxChips);
+        topics.appendChild(more);
+      }
+      a.appendChild(topics);
+
+      // Footer
+      var footer = document.createElement("div");
+      footer.className = "week-footer";
+      var dur = document.createElement("span");
+      dur.className = "week-duration";
+      dur.textContent = "\u23F1 " + w.duration;
+      var arrow = document.createElement("span");
+      arrow.className = "go-arrow";
+      arrow.textContent = "\u2192";
+      footer.appendChild(dur);
+      footer.appendChild(arrow);
+      a.appendChild(footer);
+
+      grid.appendChild(a);
+    });
   </script>
 </body>
 </html>
