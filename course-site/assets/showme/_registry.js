@@ -10,19 +10,36 @@ const SHOWME_REGISTRY = {
   "transform-grs":          { label: "G/R/S 변형 이해",         icon: "↔️" },
   "edit-mode":              { label: "Edit Mode 이해",          icon: "✏️" },
 
-  // ── Week 2-3: Core Editing Tools ──
+  // ── Edit Mode Tools (기능별 라이브러리) ──
+  "edit-mode-tools":        { label: "Edit Mode 도구 전체",     icon: "🛠️" },
   "extrude":                { label: "Extrude 작동 원리",       icon: "📐" },
   "loop-cut":               { label: "Loop Cut 이해",           icon: "🔪" },
   "inset":                  { label: "Inset 작동 원리",         icon: "⬜" },
   "bevel-tool":             { label: "Bevel Tool 이해",         icon: "🔧" },
 
-  // ── Week 3: Modifiers ──
-  "mirror-modifier":        { label: "Mirror Modifier 이해",    icon: "🪞" },
-  "subdivision-surface":    { label: "Subdivision Surface 이해", icon: "🫧" },
-  "solidify-modifier":      { label: "Solidify 이해",           icon: "📦" },
+  // ── Generate Modifiers (기능별 라이브러리) ──
   "array-modifier":         { label: "Array Modifier 이해",     icon: "🔁" },
-  "boolean-modifier":       { label: "Boolean 작동 원리",       icon: "✂️" },
   "bevel-modifier":         { label: "Bevel Modifier 이해",     icon: "🔶" },
+  "boolean-modifier":       { label: "Boolean 작동 원리",       icon: "✂️" },
+  "build-modifier":         { label: "Build Modifier 이해",     icon: "🏗️" },
+  "curve-to-tube":          { label: "Curve to Tube 이해",      icon: "🔄" },
+  "decimate-modifier":      { label: "Decimate 이해",           icon: "📉" },
+  "edge-split-modifier":    { label: "Edge Split 이해",         icon: "🔀" },
+  "mask-modifier":          { label: "Mask Modifier 이해",      icon: "🎭" },
+  "mirror-modifier":        { label: "Mirror Modifier 이해",    icon: "🪞" },
+  "multiresolution-modifier": { label: "Multiresolution 이해",  icon: "🔍" },
+  "remesh-modifier":        { label: "Remesh 이해",             icon: "🔲" },
+  "scatter-on-surface":     { label: "Scatter on Surface 이해", icon: "🌿" },
+  "screw-modifier":         { label: "Screw Modifier 이해",     icon: "🌀" },
+  "skin-modifier":          { label: "Skin Modifier 이해",      icon: "🦠" },
+  "solidify-modifier":      { label: "Solidify 이해",           icon: "📦" },
+  "subdivision-surface":    { label: "Subdivision Surface 이해", icon: "🫧" },
+  "triangulate-modifier":   { label: "Triangulate 이해",        icon: "🔺" },
+  "volume-to-mesh":         { label: "Volume to Mesh 이해",     icon: "💨" },
+  "weld-modifier":          { label: "Weld Modifier 이해",      icon: "⚡" },
+  "wireframe-modifier":     { label: "Wireframe 이해",          icon: "🕸️" },
+
+  // ── Normals ──
   "weighted-normal":        { label: "Weighted Normal 이해",    icon: "💡" },
 
   // ── Week 4: Detail & Cleanup ──
@@ -32,7 +49,6 @@ const SHOWME_REGISTRY = {
 
   // ── Week 5: Sculpting ──
   "sculpt-mode":            { label: "Sculpt Mode 이해",        icon: "🎨" },
-  "remesh":                 { label: "Remesh 이해",             icon: "🔲" },
 
   // ── Week 6: Material & Shader ──
   "principled-bsdf":        { label: "Principled BSDF 이해",    icon: "🎭" },

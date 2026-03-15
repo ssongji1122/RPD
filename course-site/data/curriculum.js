@@ -326,7 +326,7 @@ const CURRICULUM = [
       {
         "title": "기본형 만들기",
         "image": "assets/images/week03/base-form.png",
-        "showme": ["extrude", "loop-cut", "inset", "bevel-tool"],
+        "showme": "edit-mode-tools",
         "copy": "점토를 손으로 만지듯 기본형은 Edit Mode에서 직접 만들어요. 큰 덩어리를 먼저 잡고 세부는 나중에 다듬으면 돼요.",
         "goal": [
           "Edit Mode 도구 흐름을 안다",
@@ -462,7 +462,7 @@ const CURRICULUM = [
       {
         "title": "필수 추가 Modifier",
         "image": "assets/images/week03/bevel-weighted-normal.png",
-        "showme": ["bevel-modifier", "weighted-normal"],
+        "showme": "bevel-modifier",
         "copy": "핵심 5개 다음으로 바로 써먹기 좋은 보조 Modifier예요. `Ctrl+B`는 부분 수정, Bevel Modifier는 전체 정리, Weighted Normal은 음영 정리라고 나눠 생각하면 이해가 쉬워요.",
         "goal": [
           "필수 추가 Modifier를 안다"
