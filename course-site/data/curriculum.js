@@ -760,6 +760,7 @@ const CURRICULUM = [
       {
         "title": "Weighted Normal과 음영 정리",
         "image": "assets/images/week04/weighted-normal.png",
+        "showme": "weighted-normal",
         "copy": "형태는 괜찮은데 표면이 울퉁불퉁해 보일 때가 있어요. 이럴 때 음영을 정리해주는 흐름을 익혀두면 결과물이 훨씬 단정해져요.",
         "goal": [
           "Weighted Normal의 역할을 이해한다"
@@ -789,6 +790,7 @@ const CURRICULUM = [
       {
         "title": "Apply 시점과 최종 점검",
         "image": "assets/images/week04/array-modifier.png",
+        "showme": "join-separate",
         "copy": "정리 단계에서 가장 많이 헷갈리는 건 '언제 확정하느냐'예요. 수정 가능성을 남길지, 지금 확정할지를 의식적으로 나눠보면 훨씬 안정적으로 작업할 수 있어요.",
         "goal": [
           "Apply Transform과 Modifier Apply를 구분한다"
