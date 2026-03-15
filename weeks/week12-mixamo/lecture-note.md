@@ -361,6 +361,57 @@ Mixamo에 업로드하기 위한 FBX Export 설정:
 
 > **기말 프로젝트 연결:** 이번 주 Mixamo 리깅 결과물은 Week 14~15 최종 프로젝트의 핵심 요소가 됩니다. 자신의 로봇 모델로 반드시 실습해두세요.
 
+<!-- AUTO:CURRICULUM-SYNC:START -->
+## 커리큘럼 연동 요약
+
+> 이 섹션은 `course-site/data/curriculum.js` 기준으로 자동 갱신됩니다.
+
+- 핵심 키워드: Mixamo 자동 리깅 · 애니메이션 임포트
+- 예상 시간: ~3시간
+
+### 실습 단계
+
+#### 1. Mixamo 업로드
+
+AI가 파일을 불러와서 자동으로 뼈대를 넣어줘요. 수동으로 본을 하나하나 넣던 시간이 없어져요.
+
+배울 것
+
+- Mixamo 워크플로우를 안다
+
+체크해볼 것
+
+- Blender에서 .obj 또는 .fbx 익스포트
+- Mixamo.com 에 파일 업로드
+- 자동 리깅 후 확인
+
+#### 2. 애니메이션 다운로드 및 임포트
+
+Mixamo에서 걷기, 달리기, 춤추기 등 애니메이션을 골라서 Blender로 가져와요.
+
+배울 것
+
+- FBX 임포트 방식을 안다
+
+체크해볼 것
+
+- Mixamo에서 애니메이션 선택 후 FBX 다운로드
+- Blender → File → Import → FBX
+- Dope Sheet에서 애니메이션 재생 확인
+
+### 과제 한눈에 보기
+
+- 과제명: AI 리깅 캐릭터 애니메이션
+- 설명: Mixamo로 리깅된 캐릭터의 애니메이션이 재생되는 Blender 파일과 렌더 영상.
+- 제출 체크:
+  - 애니메이션 재생 영상 or GIF
+  - .blend 파일
+
+### 자주 막히는 지점
+
+- FBX 임포트가 회전됨 → Import 설정에서 Forward/Up 방향 확인
+<!-- AUTO:CURRICULUM-SYNC:END -->
+
 ## 참고 자료
 
 - [Mixamo](https://www.mixamo.com) - Adobe 자동 리깅 및 애니메이션

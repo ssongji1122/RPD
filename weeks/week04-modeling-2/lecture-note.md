@@ -136,6 +136,122 @@
 - [ ] 파츠를 분리하거나 합쳐서 정리했다
 - [ ] 결과 스크린샷 3장을 저장했다
 
+<!-- AUTO:CURRICULUM-SYNC:START -->
+## 커리큘럼 연동 요약
+
+> 이 섹션은 `course-site/data/curriculum.js` 기준으로 자동 갱신됩니다.
+
+- 핵심 키워드: Bevel · Weighted Normal · Apply
+- 예상 시간: ~3시간
+
+### 실습 단계
+
+#### 1. Transform 정리와 파츠 관리
+
+디테일을 넣기 전에 Scale과 파츠 구성을 먼저 정리해요. 수치가 꼬여 있거나 파츠가 뒤섞여 있으면 그다음 작업이 계속 불편해져요.
+
+배울 것
+
+- Transform을 정리한다
+- 파츠를 분리하거나 합쳐 관리한다
+
+체크해볼 것
+
+- N 패널에서 Scale 값 확인 (1,1,1이 아니면 먼저 정리)
+- Ctrl+A로 All Transforms 적용 (Modifier 전에 수치 정리)
+- P로 움직일 파츠 분리하기 (안테나, 헤드셋, 손 파츠 등)
+- Ctrl+J로 함께 갈 파츠 묶기 (고정 파츠끼리 정리)
+
+#### 2. 얼굴과 패널 디테일
+
+큰 덩어리가 잡힌 상태에서 눈, 패널, 관절 라인을 추가하는 단계예요. Inset과 Boolean을 같이 쓰면 디테일을 빠르게 만들 수 있어요.
+
+배울 것
+
+- Inset과 Boolean으로 디테일을 추가한다
+
+체크해볼 것
+
+- Inset으로 안쪽 영역 만들기 (눈, 버튼, 패널 라인 시작점)
+- Extrude로 살짝 들어가거나 나오게 만들기 (작은 깊이 차이 주기)
+- Boolean Difference로 홈 또는 소켓 만들기 (커터가 실제로 겹치는지 확인)
+
+#### 3. Bevel 두 가지 비교
+
+같은 '모서리 정리'라도 손으로 직접 깎는 방법과 Modifier로 전체를 정리하는 방법은 다르게 느껴져요. 둘 다 직접 비교해보는 게 가장 빠릅니다.
+
+배울 것
+
+- Ctrl+B와 Bevel Modifier를 구분해 쓴다
+
+체크해볼 것
+
+- 특정 모서리에 Ctrl+B 써보기 (부분 디테일 직접 다듬기)
+- 다른 파츠에는 Bevel Modifier 넣기 (Width와 Segments 비교)
+- 두 방식의 결과를 나란히 비교하기 (부분 수정 vs 전체 정리)
+
+#### 4. Weighted Normal과 음영 정리
+
+형태는 괜찮은데 표면이 울퉁불퉁해 보일 때가 있어요. 이럴 때 음영을 정리해주는 흐름을 익혀두면 결과물이 훨씬 단정해져요.
+
+배울 것
+
+- Weighted Normal의 역할을 이해한다
+
+체크해볼 것
+
+- Shade Smooth 적용하기 (음영 비교 준비)
+- Bevel Modifier 아래에 Weighted Normal 추가 (순서 포함해서 확인)
+- 전후 화면 비교하기 (가슴판, 팔 외장, 다리 파츠에서 확인)
+
+#### 5. Apply 시점과 최종 점검
+
+정리 단계에서 가장 많이 헷갈리는 건 '언제 확정하느냐'예요. 수정 가능성을 남길지, 지금 확정할지를 의식적으로 나눠보면 훨씬 안정적으로 작업할 수 있어요.
+
+배울 것
+
+- Apply Transform과 Modifier Apply를 구분한다
+
+체크해볼 것
+
+- Modifier Stack 순서 다시 보기 (수정 가능 상태 유지)
+- 정말 확정할 파츠만 따로 저장 후 Apply 시험 (Apply 전후 수정 차이 느끼기)
+- Transform 또는 Modifier 화면 포함해 스크린샷 저장 (작업 흐름 증거 남기기)
+
+### 핵심 단축키
+
+- `I`: Inset (면 안쪽에 디테일 시작점 만들기)
+- `Ctrl + B`: Bevel (특정 모서리 직접 다듬기)
+- `Ctrl + A`: Apply All Transforms (Modifier 전 수치 정리)
+- `P`: Separate (선택 파츠 분리)
+- `Ctrl + J`: Join (오브젝트 합치기)
+
+### 과제 한눈에 보기
+
+- 과제명: 로봇 디테일 정리
+- 설명: Week 03 기본형에 디테일과 음영 정리를 더한 결과물을 제출하세요.
+- 제출 체크:
+  - 디테일 1곳 이상 추가
+  - Bevel 계열 1회 이상 사용
+  - Weighted Normal 확인
+  - Modifier Stack 또는 Transform 확인 스크린샷
+
+### 자주 막히는 지점
+
+- Bevel이 너무 큼 → Width를 아주 작게 시작
+- Weighted Normal 차이가 안 보임 → Bevel과 Shade Smooth 전후 비교
+- Boolean이 지저분함 → 커터가 실제로 겹치는지 다시 확인
+- Modifier를 너무 일찍 Apply함 → 마지막에만 확정
+- 파츠 관리가 헷갈림 → 움직일 파츠는 분리, 고정 파츠는 정리해서 묶기
+
+### 공식 문서
+
+- [Bevel Tool](https://docs.blender.org/manual/en/latest/modeling/meshes/tools/bevel.html)
+- [Bevel Modifier](https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/bevel.html)
+- [Weighted Normal](https://docs.blender.org/manual/en/latest/modeling/modifiers/modify/weighted_normal.html)
+- [Boolean](https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/booleans.html)
+<!-- AUTO:CURRICULUM-SYNC:END -->
+
 ## 참고 자료
 
 - [Blender 단축키 모음](../../resources/blender-shortcuts.md)

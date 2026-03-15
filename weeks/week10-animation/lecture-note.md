@@ -433,6 +433,60 @@ Timeline은 Blender 하단에 기본으로 표시되는 **시간 제어 패널**
 - 렌더 출력 설정 (해상도, 포맷)
 - 애니메이션 렌더 및 영상 출력
 
+<!-- AUTO:CURRICULUM-SYNC:START -->
+## 커리큘럼 연동 요약
+
+> 이 섹션은 `course-site/data/curriculum.js` 기준으로 자동 갱신됩니다.
+
+- 핵심 키워드: 키프레임 · Dope Sheet · 그래프 편집
+- 예상 시간: ~3시간
+
+### 실습 단계
+
+#### 1. 키프레임 기초
+
+A 위치를 1프레임에 사진 찍고, B 위치를 50프레임에 사진 찍으면 Blender가 둘 사이를 자동으로 이어줘요. 그게 키프레임이에요.
+
+배울 것
+
+- 키프레임의 개념을 이해한다
+
+체크해볼 것
+
+- Frame 1에서 오브젝트 위치 잡기 + I → Location
+- Frame 50으로 이동 후 위치 바꾸고 I → Location
+- Space로 재생해서 이동 확인
+
+#### 2. Dope Sheet
+
+키프레임들이 시간 순서대로 나열된 타임라인이에요. 사진들 사이 간격을 늘리거나 줄여서 빠르게/느리게 움직이는 타이밍을 조절해요.
+
+배울 것
+
+- 키프레임 위치를 드래그로 조절한다
+
+체크해볼 것
+
+- Dope Sheet 열기 (Editor Type 변경)
+- 키프레임 선택 후 G로 이동
+
+### 과제 한눈에 보기
+
+- 과제명: 간단한 움직임 애니메이션
+- 설명: 오브젝트 1개가 이동/회전/크기 변화 중 2가지를 포함한 5초 이상 애니메이션.
+- 제출 체크:
+  - 애니메이션 비디오 파일 or GIF
+  - .blend 파일
+
+### 자주 막히는 지점
+
+- 애니메이션이 끊김 → 보간 방식 Graph Editor에서 확인
+
+### 공식 문서
+
+- [Keyframes](https://docs.blender.org/manual/en/latest/animation/keyframes/introduction.html)
+<!-- AUTO:CURRICULUM-SYNC:END -->
+
 ## 참고 자료
 
 - [Blender Manual: Animation](https://docs.blender.org/manual/en/latest/animation/index.html)

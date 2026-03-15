@@ -381,6 +381,74 @@ Set the background to pure white. Make shadows very soft."
 - Graph Editor로 자연스러운 이징 조절
 - 로봇이 움직이는 3~5초 애니메이션 제작
 
+<!-- AUTO:CURRICULUM-SYNC:START -->
+## 커리큘럼 연동 요약
+
+> 이 섹션은 `course-site/data/curriculum.js` 기준으로 자동 갱신됩니다.
+
+- 핵심 키워드: 빛의 종류 · HDRI · 조명 연출
+- 예상 시간: ~3시간
+
+### 실습 단계
+
+#### 1. Light 종류 탐색
+
+요리사 스튜디오에서 조명을 세팅하듯, 어떤 조명을 쓰냐에 따라 분위기가 완전히 달라져요. 동일한 오브젝트라도 조명만 바꾸면 다른 작품처럼 보여요.
+
+배울 것
+
+- 각 Light 타입의 특성을 안다
+
+체크해볼 것
+
+- Shift+A → Light → 4종류 각각 추가해보기
+- Energy/Color 값 조절해보기
+
+#### 2. HDRI 환경 조명
+
+360도 파노라마 사진이 전구 역할을 해요. 텍스처 하나로 자연스러운 환경 조명을 만들 수 있어요.
+
+배울 것
+
+- HDRI의 역할과 장점을 안다
+
+체크해볼 것
+
+- World Properties → Environment Texture 추가
+- HDRI 이미지 파일 연결 (Poly Haven 등)
+
+#### 3. 3점 조명 세팅
+
+사진 체울린 사진처럼 Key(주), Fill(보조), Rim(윤곽) 세 개만 잘 놓으면 어떤 오브젝트도 입체감 있게 보여요.
+
+배울 것
+
+- 3점 조명의 원리를 이해한다
+
+체크해볼 것
+
+- Key Light (주 광원) 배치 (오브젝트 앞 45도 위치)
+- Fill Light (보조 광원) 배치 (반대편 낮게)
+- Rim Light (윤곽 광원) 배치 (뒤쪽에서 윤곽 강조)
+
+### 과제 한눈에 보기
+
+- 과제명: 조명 포트폴리오
+- 설명: 동일한 오브젝트에 3가지 다른 조명 분위기 렌더 이미지를 제출합니다.
+- 제출 체크:
+  - 낮/저녁/밤 또는 다른 3가지 분위기 렌더
+  - .blend 파일
+
+### 자주 막히는 지점
+
+- 빛이 너무 강함 → Energy 값 줄이기
+- 그림자 없음 → Shadow 설정 확인
+
+### 공식 문서
+
+- [Lighting](https://docs.blender.org/manual/en/latest/render/lights/light_object.html)
+<!-- AUTO:CURRICULUM-SYNC:END -->
+
 ## 참고 자료
 
 - [Blender Manual: Lighting](https://docs.blender.org/manual/en/latest/render/lights/index.html)
