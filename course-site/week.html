@@ -161,6 +161,83 @@
 
     .brand-left { display: flex; align-items: center; gap: 10px; }
     .main-content { flex: 1; min-width: 0; }
+
+    /* ── Show Me buttons ── */
+    .showme-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .btn-showme {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 14px; border-radius: 999px;
+      border: 1px solid rgba(10,132,255,.3);
+      background: rgba(10,132,255,.08);
+      color: var(--key-soft); font: inherit; font-size: .82rem; font-weight: 500;
+      cursor: pointer;
+      transition: background .18s, border-color .18s, color .18s;
+    }
+    .btn-showme:hover {
+      background: rgba(10,132,255,.16);
+      border-color: rgba(10,132,255,.5);
+      color: #fff;
+    }
+
+    /* ── Show Me Modal ── */
+    .showme-overlay {
+      display: none; position: fixed; inset: 0;
+      z-index: 100;
+      background: rgba(0,0,0,.72);
+      backdrop-filter: blur(8px);
+      justify-content: center; align-items: center;
+      padding: 20px;
+    }
+    .showme-overlay.is-open { display: flex; }
+
+    .showme-modal {
+      width: min(720px, 100%);
+      height: min(85vh, 640px);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255,255,255,.12);
+      background: var(--surface);
+      box-shadow: 0 24px 80px rgba(0,0,0,.6);
+      display: flex; flex-direction: column;
+      overflow: hidden;
+      animation: showme-in .22s ease;
+    }
+    @keyframes showme-in {
+      from { opacity: 0; transform: scale(.97) translateY(8px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .showme-modal-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--line);
+      flex-shrink: 0;
+    }
+    .showme-modal-title {
+      font-size: .9rem; font-weight: 600; color: var(--text);
+    }
+    .showme-close {
+      display: grid; place-items: center;
+      width: 32px; height: 32px; border-radius: 8px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--muted-strong); cursor: pointer;
+      transition: background .14s, color .14s;
+    }
+    .showme-close:hover {
+      background: rgba(255,255,255,.09); color: var(--text);
+    }
+    .showme-iframe {
+      flex: 1; width: 100%; border: none;
+      background: var(--bg);
+    }
+
+    @media (max-width: 720px) {
+      .showme-overlay { padding: 0; }
+      .showme-modal {
+        width: 100%; height: 100%;
+        border-radius: 0; border: none;
+      }
+    }
   </style>
 </head>
 <body>
@@ -208,8 +285,24 @@
     <footer class="page-footer">
       <div>Robot Product Design 2026 · <a href="index.html" style="color:var(--key-soft)">← 전체 목록</a></div>
     </footer>
+
+    <!-- Show Me Modal -->
+    <div class="showme-overlay" id="showmeOverlay" aria-hidden="true">
+      <div class="showme-modal">
+        <div class="showme-modal-header">
+          <span class="showme-modal-title" id="showmeTitle"></span>
+          <button class="showme-close" id="showmeClose" aria-label="닫기" type="button">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <iframe class="showme-iframe" id="showmeIframe" sandbox="allow-scripts allow-same-origin" title="Show Me Widget"></iframe>
+      </div>
+    </div>
   </div>
 
+  <script src="assets/showme/_registry.js"></script>
   <script src="data/curriculum.js"></script>
   <script>
     // ════════════════════════════════════════════════
@@ -283,6 +376,17 @@
             </label>
           </div>`).join("");
 
+        // Show Me buttons (only if step has showme field)
+        const showmeHtml = (() => {
+          if (!step.showme) return "";
+          const ids = Array.isArray(step.showme) ? step.showme : [step.showme];
+          return `<div class="showme-buttons">${ids.map(id => {
+            const meta = (typeof SHOWME_REGISTRY !== "undefined" && SHOWME_REGISTRY[id])
+              ? SHOWME_REGISTRY[id] : { label: id, icon: "\ud83d\udcd6" };
+            return `<button class="btn btn-showme" type="button" onclick="openShowMe('${id}')">${meta.icon} ${meta.label}</button>`;
+          }).join("")}</div>`;
+        })();
+
         return `
           <article class="lab-step" id="step-${idx}" data-step-index="${idx}">
             <div class="step-header">
@@ -296,6 +400,7 @@
               ? `<a href="${step.link}" target="_blank" rel="noopener noreferrer"><img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" /></a>`
               : `<img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" />`) : ""}
             <p class="step-copy">${step.copy}</p>
+            ${showmeHtml}
             <div class="task-list">${taskItems}</div>
           </article>`;
       }).join("");
@@ -511,6 +616,43 @@
       loadState();
     }
 
+    // ─── Show Me Modal ──────────────────────────────
+    function openShowMe(widgetId) {
+      var overlay = document.getElementById("showmeOverlay");
+      var iframe  = document.getElementById("showmeIframe");
+      var title   = document.getElementById("showmeTitle");
+
+      var meta = (typeof SHOWME_REGISTRY !== "undefined" && SHOWME_REGISTRY[widgetId])
+        ? SHOWME_REGISTRY[widgetId]
+        : { label: widgetId, icon: "\ud83d\udcd6" };
+
+      title.textContent = meta.icon + " " + meta.label;
+      iframe.src = "assets/showme/" + widgetId + ".html";
+      overlay.classList.add("is-open");
+      overlay.removeAttribute("aria-hidden");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeShowMe() {
+      var overlay = document.getElementById("showmeOverlay");
+      var iframe  = document.getElementById("showmeIframe");
+      overlay.classList.remove("is-open");
+      overlay.setAttribute("aria-hidden", "true");
+      iframe.src = "about:blank";
+      document.body.style.overflow = "";
+    }
+
+    document.getElementById("showmeClose").addEventListener("click", closeShowMe);
+    document.getElementById("showmeOverlay").addEventListener("click", function(e) {
+      if (e.target === this) closeShowMe();
+    });
+    document.addEventListener("keydown", function(e) {
+      if (e.key === "Escape") {
+        var overlay = document.getElementById("showmeOverlay");
+        if (overlay.classList.contains("is-open")) closeShowMe();
+      }
+    });
+
     // ─── Sidebar ────────────────────────────────────
     function initSidebar(w) {
       var sidebar   = document.getElementById("sidebar");
@@ -530,12 +672,33 @@
       if (w.mistakes  && w.mistakes.length)   sections.push({ id: "section-mistakes",   label: "막히는 지점", group: null });
       if (w.assignment)                        sections.push({ id: "section-assignment", label: "과제",        group: null });
 
+      // Collect unique Show Me widgets for this week
+      var showmeSet = {};
+      w.steps.forEach(function(step) {
+        if (!step.showme) return;
+        var ids = Array.isArray(step.showme) ? step.showme : [step.showme];
+        ids.forEach(function(id) { showmeSet[id] = true; });
+      });
+      var showmeIds = Object.keys(showmeSet);
+
       // Render nav (curriculum.js = trusted developer data, not user input)
       var navHtml = sections.map(function(s) {
         var g = s.group ? "<li><span class=\"nav-section-label\">" + s.group + "</span></li>" : "";
         return g + "<li data-nav-id=\"" + s.id + "\"><a href=\"#" + s.id + "\">" + s.label + "</a></li>";
       }).join("");
-      navList.innerHTML = navHtml; // trusted static curriculum data
+
+      // Add Show Me section to sidebar (data from _registry.js, developer-controlled)
+      if (showmeIds.length > 0) {
+        navHtml += "<li><span class=\"nav-section-label\">Show Me</span></li>";
+        showmeIds.forEach(function(id) {
+          var meta = (typeof SHOWME_REGISTRY !== "undefined" && SHOWME_REGISTRY[id])
+            ? SHOWME_REGISTRY[id] : { label: id, icon: "\ud83d\udcd6" };
+          navHtml += "<li><a href=\"#\" onclick=\"openShowMe('" + id + "');return false;\">" +
+            meta.icon + " " + meta.label + "</a></li>";
+        });
+      }
+
+      navList.innerHTML = navHtml; // trusted static curriculum + registry data
 
       // Open / close
       function openSidebar() {

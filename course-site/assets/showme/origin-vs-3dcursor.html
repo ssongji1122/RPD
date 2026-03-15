@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — Origin vs 3D Cursor</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Tab Navigation ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+
+/* ── Tab Panels ── */
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+
+/* ── Concept Cards ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card.accent-amber {
+  border-color: rgba(245,158,11,.25);
+  background: rgba(245,158,11,.06);
+}
+.concept-card.accent-blue {
+  border-color: rgba(10,132,255,.25);
+  background: rgba(10,132,255,.06);
+}
+.concept-card h3 {
+  margin: 0 0 8px; font-size: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.concept-card p {
+  margin: 0; color: var(--muted-strong);
+  font-size: .88rem; line-height: 1.7;
+}
+.concept-card ul {
+  margin: 8px 0 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
+}
+
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: .72rem; font-weight: 600;
+}
+.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: #fbbf24; }
+
+/* ── Keyboard Shortcut ── */
+.kbd {
+  display: inline-block;
+  padding: 3px 8px; border-radius: 6px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  color: var(--key-soft);
+  font-size: .82rem; font-weight: 600;
+  font-family: var(--font);
+}
+
+/* ── Canvas / Demo ── */
+.demo-wrap {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+  margin: 14px 0;
+}
+.demo-wrap canvas {
+  display: block; width: 100%;
+}
+.demo-legend {
+  display: flex; gap: 18px; padding: 10px 14px;
+  font-size: .78rem; color: var(--muted);
+  border-bottom: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.demo-legend-item {
+  display: flex; align-items: center; gap: 6px;
+}
+.demo-hint {
+  font-size: .78rem; color: var(--muted);
+  text-align: center; padding: 6px 0 0;
+}
+
+/* ── Usage Grid ── */
+.usage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.usage-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 16px;
+}
+.usage-card h4 {
+  margin: 0 0 8px; font-size: .92rem;
+  color: var(--key-soft);
+}
+.usage-card.accent-amber h4 { color: #fbbf24; }
+.usage-card.accent-blue h4 { color: var(--key-soft); }
+.usage-card ul {
+  margin: 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem;
+  line-height: 1.8;
+}
+
+/* ── Tip Box ── */
+.tip-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(245,158,11,.2);
+  background: rgba(245,158,11,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+  line-height: 1.8;
+}
+.tip-box strong { color: #fbbf24; }
+
+/* ── Quiz ── */
+.quiz-progress {
+  font-size: .78rem; color: var(--muted);
+  margin-bottom: 12px;
+}
+.quiz-question {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.quiz-question h4 {
+  margin: 0 0 12px; font-size: .94rem;
+}
+.quiz-option {
+  display: block; width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.025);
+  color: var(--text);
+  font: inherit; font-size: .86rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background .14s, border-color .14s;
+}
+.quiz-option:hover {
+  background: rgba(255,255,255,.06);
+  border-color: var(--line-strong);
+}
+.quiz-option.correct {
+  background: rgba(16,185,129,.12);
+  border-color: rgba(16,185,129,.4);
+  color: var(--success-soft);
+}
+.quiz-option.wrong {
+  background: rgba(239,68,68,.1);
+  border-color: rgba(239,68,68,.3);
+  color: #fca5a5;
+}
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback {
+  margin-top: 8px; padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: .84rem;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: #fca5a5; }
+
+.quiz-score {
+  text-align: center; padding: 20px;
+  font-size: 1.1rem; font-weight: 600;
+}
+.quiz-retry {
+  display: block; margin: 12px auto;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--key);
+  background: rgba(10,132,255,.12);
+  color: var(--key-soft);
+  font: inherit; font-size: .88rem;
+  cursor: pointer;
+  transition: background .14s;
+}
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Tab Bar -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab">시각적 비교</button>
+  <button class="tab" data-tab="when" role="tab">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab">퀴즈</button>
+</nav>
+
+<!-- TAB 1: 개념 이해 -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <p style="font-size:.9rem; color:var(--muted-strong); margin:0 0 14px;">
+    Blender에는 위치를 나타내는 두 가지 기준점이 있습니다. 헷갈리기 쉽지만 역할이 완전히 다릅니다.
+  </p>
+  <div class="concept-grid">
+    <div class="concept-card accent-amber">
+      <h3><span class="badge badge-amber">Origin</span> 오리진</h3>
+      <p>오브젝트 자체에 <strong>붙어있는</strong> 기준점.<br>오브젝트를 이동하면 같이 따라다닙니다.<br><br>회전·스케일 변환의 중심이 되고, 오브젝트의 위치 좌표(X, Y, Z)가 이 점을 기준으로 표시됩니다.</p>
+    </div>
+    <div class="concept-card accent-blue">
+      <h3><span class="badge badge-blue">3D Cursor</span> 커서</h3>
+      <p>뷰포트에 <strong>독립적으로</strong> 떠있는 커서.<br>어떤 오브젝트에도 속하지 않습니다.<br><br>새 오브젝트 추가 위치, 스냅 기준점, 피벗 포인트 등으로 활용됩니다.</p>
+    </div>
+  </div>
+  <div class="concept-grid" style="margin-top:14px">
+    <div class="concept-card">
+      <h3><span class="badge badge-amber">Origin</span> 단축키</h3>
+      <ul>
+        <li>우클릭 → <em>Set Origin</em></li>
+        <li><span class="kbd">Ctrl</span>+<span class="kbd">Alt</span>+<span class="kbd">Shift</span>+<span class="kbd">C</span></li>
+        <li>Object > Set Origin 메뉴</li>
+      </ul>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">3D Cursor</span> 단축키</h3>
+      <ul>
+        <li><span class="kbd">Shift</span>+<span class="kbd">RMB</span> — 클릭 위치로 이동</li>
+        <li><span class="kbd">Shift</span>+<span class="kbd">S</span> — Snap 메뉴</li>
+        <li><span class="kbd">Alt</span>+<span class="kbd">G</span> on cursor — 원점 리셋</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- TAB 2: 시각적 비교 -->
+<section class="panel" id="panel-visual" role="tabpanel">
+  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
+    오브젝트를 클릭해서 Origin과 Cursor가 어떻게 다르게 움직이는지 확인하세요!
+  </p>
+  <div class="demo-wrap">
+    <div class="demo-legend" id="demoLegend"></div>
+    <canvas id="demoCanvas" width="600" height="280"></canvas>
+  </div>
+  <p class="demo-hint">좌클릭: 큐브 선택·이동 | 우클릭(터치: 빈 곳 탭): 3D Cursor 이동</p>
+</section>
+
+<!-- TAB 3: 언제 쓰나요? -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="usage-grid">
+    <div class="usage-card accent-amber">
+      <h4>Origin을 쓰는 경우</h4>
+      <ul>
+        <li>오브젝트 기준점을 특정 위치로 변경할 때</li>
+        <li>회전 중심을 바꾸고 싶을 때</li>
+        <li>여러 오브젝트를 Origin 기준으로 정렬</li>
+        <li>부모-자식 관계(Parenting) 설정</li>
+        <li>애니메이션 키프레임 기준 설정</li>
+      </ul>
+    </div>
+    <div class="usage-card accent-blue">
+      <h4>3D Cursor를 쓰는 경우</h4>
+      <ul>
+        <li>새 오브젝트를 원하는 위치에 추가</li>
+        <li>Pivot Point를 3D Cursor로 설정해 회전</li>
+        <li>스냅 기준점으로 사용</li>
+        <li>Origin을 Cursor 위치로 이동</li>
+        <li>정확한 좌표에 커서를 놓고 작업</li>
+      </ul>
+    </div>
+  </div>
+  <div class="tip-box" id="tipBox"></div>
+</section>
+
+<!-- TAB 4: 퀴즈 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+// ── Tab Switching ──────────────────────────────
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(t) { t.classList.remove("is-active"); });
+    document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("is-active"); });
+    tab.classList.add("is-active");
+    var panelId = "panel-" + tab.dataset.tab;
+    document.getElementById(panelId).classList.add("is-active");
+    if (tab.dataset.tab === "visual") { initCanvas(); }
+  });
+});
+
+// ── Build Demo Legend (safe DOM) ───────────────
+(function buildLegend() {
+  var legend = document.getElementById("demoLegend");
+
+  // Origin legend item
+  var item1 = document.createElement("span");
+  item1.className = "demo-legend-item";
+  var svg1 = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg1.setAttribute("width", "12");
+  svg1.setAttribute("height", "12");
+  svg1.setAttribute("viewBox", "0 0 12 12");
+  var circle1 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+  circle1.setAttribute("cx", "6");
+  circle1.setAttribute("cy", "6");
+  circle1.setAttribute("r", "5");
+  circle1.setAttribute("fill", "#FF8C00");
+  svg1.appendChild(circle1);
+  item1.appendChild(svg1);
+  var label1 = document.createElement("span");
+  label1.textContent = "Origin \u2014 \uC624\uBE0C\uC81D\uD2B8\uC5D0 \uACE0\uC815";
+  item1.appendChild(label1);
+  legend.appendChild(item1);
+
+  // 3D Cursor legend item
+  var item2 = document.createElement("span");
+  item2.className = "demo-legend-item";
+  var svg2 = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg2.setAttribute("width", "12");
+  svg2.setAttribute("height", "12");
+  svg2.setAttribute("viewBox", "0 0 12 12");
+  var line1 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  line1.setAttribute("x1", "6"); line1.setAttribute("y1", "1");
+  line1.setAttribute("x2", "6"); line1.setAttribute("y2", "11");
+  line1.setAttribute("stroke", "#5599FF"); line1.setAttribute("stroke-width", "1.5");
+  svg2.appendChild(line1);
+  var line2 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  line2.setAttribute("x1", "1"); line2.setAttribute("y1", "6");
+  line2.setAttribute("x2", "11"); line2.setAttribute("y2", "6");
+  line2.setAttribute("stroke", "#5599FF"); line2.setAttribute("stroke-width", "1.5");
+  svg2.appendChild(line2);
+  var circle2 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+  circle2.setAttribute("cx", "6"); circle2.setAttribute("cy", "6");
+  circle2.setAttribute("r", "3"); circle2.setAttribute("fill", "none");
+  circle2.setAttribute("stroke", "#5599FF"); circle2.setAttribute("stroke-width", "1");
+  svg2.appendChild(circle2);
+  item2.appendChild(svg2);
+  var label2 = document.createElement("span");
+  label2.textContent = "3D Cursor \u2014 \uB3C5\uB9BD\uC801";
+  item2.appendChild(label2);
+  legend.appendChild(item2);
+})();
+
+// ── Build Tip Box (safe DOM) ──────────────────
+(function buildTipBox() {
+  var box = document.getElementById("tipBox");
+
+  var title = document.createElement("strong");
+  title.textContent = "\uD83D\uDCCC \uC790\uC8FC \uC4F0\uB294 \uC870\uD569";
+  box.appendChild(title);
+  box.appendChild(document.createElement("br"));
+  box.appendChild(document.createElement("br"));
+
+  // Line 1
+  var kbd1a = document.createElement("span");
+  kbd1a.className = "kbd";
+  kbd1a.textContent = "Shift";
+  box.appendChild(kbd1a);
+  box.appendChild(document.createTextNode("+"));
+  var kbd1b = document.createElement("span");
+  kbd1b.className = "kbd";
+  kbd1b.textContent = "S";
+  box.appendChild(kbd1b);
+  box.appendChild(document.createTextNode(" \u2192 "));
+  var strong1 = document.createElement("strong");
+  strong1.textContent = "Cursor to Selected";
+  box.appendChild(strong1);
+  box.appendChild(document.createTextNode(": 3D Cursor\uB97C \uC120\uD0DD\uD55C \uC624\uBE0C\uC81D\uD2B8\uC758 Origin \uC704\uCE58\uB85C \uC774\uB3D9"));
+  box.appendChild(document.createElement("br"));
+
+  // Line 2
+  var kbd2a = document.createElement("span");
+  kbd2a.className = "kbd";
+  kbd2a.textContent = "Shift";
+  box.appendChild(kbd2a);
+  box.appendChild(document.createTextNode("+"));
+  var kbd2b = document.createElement("span");
+  kbd2b.className = "kbd";
+  kbd2b.textContent = "S";
+  box.appendChild(kbd2b);
+  box.appendChild(document.createTextNode(" \u2192 "));
+  var strong2 = document.createElement("strong");
+  strong2.textContent = "Origin to Cursor";
+  box.appendChild(strong2);
+  box.appendChild(document.createTextNode(": \uC624\uBE0C\uC81D\uD2B8\uC758 Origin\uC744 3D Cursor \uC704\uCE58\uB85C \uC774\uB3D9"));
+})();
+
+// ── Canvas Demo ───────────────────────────────
+var canvasInited = false;
+var cubeX = 200, cubeY = 140;
+var cursorX = 380, cursorY = 140;
+var dragging = false, startMX, startMY, startCX, startCY;
+var selectedCube = false;
+
+function initCanvas() {
+  if (canvasInited) return;
+  canvasInited = true;
+  var c = document.getElementById("demoCanvas");
+  var ctx = c.getContext("2d");
+
+  function draw() {
+    ctx.clearRect(0, 0, c.width, c.height);
+
+    // background
+    ctx.fillStyle = "#111118";
+    ctx.fillRect(0, 0, c.width, c.height);
+
+    // grid
+    ctx.strokeStyle = "#2a2a3a";
+    ctx.lineWidth = 0.5;
+    var x, y;
+    for (x = 0; x < c.width; x += 40) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, c.height); ctx.stroke();
+    }
+    for (y = 0; y < c.height; y += 40) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(c.width, y); ctx.stroke();
+    }
+
+    // cube
+    var W = 90, H = 70;
+    ctx.fillStyle = selectedCube ? "#4a4aaa" : "#3a3a8a";
+    ctx.strokeStyle = selectedCube ? "#9999ff" : "#6666cc";
+    ctx.lineWidth = selectedCube ? 2 : 1;
+    ctx.beginPath();
+    ctx.roundRect(cubeX - W / 2, cubeY - H / 2, W, H, 4);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = "#ccc";
+    ctx.font = "12px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Cube", cubeX, cubeY);
+
+    // origin dot on cube
+    ctx.beginPath();
+    ctx.arc(cubeX, cubeY, 6, 0, Math.PI * 2);
+    ctx.fillStyle = "#FF8C00";
+    ctx.fill();
+    ctx.strokeStyle = "#fff";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.fillStyle = "#FF8C00";
+    ctx.font = "11px sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("Origin", cubeX + 9, cubeY - 12);
+
+    // 3D cursor
+    var r = 10;
+    ctx.strokeStyle = "#5599FF";
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(cursorX, cursorY - r - 4); ctx.lineTo(cursorX, cursorY + r + 4); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cursorX - r - 4, cursorY); ctx.lineTo(cursorX + r + 4, cursorY); ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(cursorX, cursorY, r, 0, Math.PI * 2);
+    ctx.strokeStyle = "#5599FF";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.fillStyle = "#5599FF";
+    ctx.font = "11px sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("3D Cursor", cursorX + 14, cursorY - 10);
+    ctx.fillStyle = "#4488ee";
+    ctx.font = "10px sans-serif";
+    ctx.fillText("(\uB3C5\uB9BD\uC801 \uC704\uCE58)", cursorX + 14, cursorY + 4);
+  }
+
+  draw();
+
+  function getPos(e) {
+    var rect = c.getBoundingClientRect();
+    var scaleX = c.width / rect.width;
+    var scaleY = c.height / rect.height;
+    return {
+      x: (e.clientX - rect.left) * scaleX,
+      y: (e.clientY - rect.top) * scaleY
+    };
+  }
+
+  c.addEventListener("mousedown", function(e) {
+    var p = getPos(e);
+    if (e.button === 2) {
+      e.preventDefault();
+      cursorX = p.x; cursorY = p.y;
+      draw(); return;
+    }
+    var W = 90, H = 70;
+    if (Math.abs(p.x - cubeX) < W / 2 && Math.abs(p.y - cubeY) < H / 2) {
+      dragging = true; selectedCube = true;
+      startMX = p.x; startMY = p.y;
+      startCX = cubeX; startCY = cubeY;
+    } else {
+      selectedCube = false;
+    }
+    draw();
+  });
+
+  c.addEventListener("mousemove", function(e) {
+    if (!dragging) return;
+    var p = getPos(e);
+    cubeX = startCX + (p.x - startMX);
+    cubeY = startCY + (p.y - startMY);
+    draw();
+  });
+
+  c.addEventListener("mouseup", function() { dragging = false; });
+  c.addEventListener("contextmenu", function(e) { e.preventDefault(); });
+
+  // Touch support
+  c.addEventListener("touchstart", function(e) {
+    e.preventDefault();
+    var t = e.touches[0];
+    var p = getPos(t);
+    var W = 90, H = 70;
+    if (Math.abs(p.x - cubeX) < W / 2 && Math.abs(p.y - cubeY) < H / 2) {
+      dragging = true; selectedCube = true;
+      startMX = p.x; startMY = p.y;
+      startCX = cubeX; startCY = cubeY;
+    } else {
+      cursorX = p.x; cursorY = p.y; draw();
+    }
+  }, { passive: false });
+
+  c.addEventListener("touchmove", function(e) {
+    e.preventDefault();
+    if (!dragging) return;
+    var p = getPos(e.touches[0]);
+    cubeX = startCX + (p.x - startMX);
+    cubeY = startCY + (p.y - startMY);
+    draw();
+  }, { passive: false });
+
+  c.addEventListener("touchend", function() { dragging = false; });
+}
+
+// ── Quiz Engine (Safe DOM methods) ────────────
+function initQuiz(questions) {
+  var container = document.getElementById("quizArea");
+  var score = 0, answered = 0;
+
+  // Progress indicator
+  var progress = document.createElement("div");
+  progress.className = "quiz-progress";
+  progress.textContent = "\uBB38\uC81C 0 / " + questions.length + " \u00b7 \uC810\uC218 0\uC810";
+  container.appendChild(progress);
+
+  questions.forEach(function(q, qi) {
+    var div = document.createElement("div");
+    div.className = "quiz-question";
+
+    var heading = document.createElement("h4");
+    heading.textContent = "Q" + (qi + 1) + ". " + q.question;
+    div.appendChild(heading);
+
+    var fb = document.createElement("div");
+    fb.className = "quiz-feedback";
+
+    q.options.forEach(function(opt, oi) {
+      var btn = document.createElement("button");
+      btn.className = "quiz-option";
+      btn.textContent = opt;
+      btn.addEventListener("click", function() {
+        if (btn.disabled) return;
+        div.querySelectorAll(".quiz-option").forEach(function(b) { b.disabled = true; });
+        answered++;
+        if (oi === q.answer) {
+          btn.classList.add("correct");
+          fb.className = "quiz-feedback show correct-fb";
+          fb.textContent = "\u2705 " + q.explanation;
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
+          fb.className = "quiz-feedback show wrong-fb";
+          fb.textContent = "\u274c " + q.explanation;
+        }
+        progress.textContent = "\uBB38\uC81C " + answered + " / " + questions.length + " \u00b7 \uC810\uC218 " + score + "\uC810";
+        if (answered === questions.length) showScore();
+      });
+      div.appendChild(btn);
+    });
+
+    div.appendChild(fb);
+    container.appendChild(div);
+  });
+
+  function showScore() {
+    var scoreDiv = document.createElement("div");
+    scoreDiv.className = "quiz-score";
+
+    var emoji = document.createElement("div");
+    emoji.style.cssText = "font-size:36px;margin-bottom:8px";
+    emoji.textContent = score === questions.length ? "\uD83C\uDF89" : score >= Math.ceil(questions.length / 2) ? "\uD83D\uDC4D" : "\uD83D\uDCDA";
+    scoreDiv.appendChild(emoji);
+
+    var result = document.createElement("div");
+    result.style.cssText = "font-size:18px;font-weight:500;margin-bottom:6px";
+    result.textContent = score + " / " + questions.length + " \uC815\uB2F5";
+    scoreDiv.appendChild(result);
+
+    var msg = document.createElement("div");
+    msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
+    msg.textContent = score === questions.length ? "\uC644\uBCBD\uD569\uB2C8\uB2E4! Origin\uACFC 3D Cursor\uB97C \uC644\uC804\uD788 \uC774\uD574\uD588\uC5B4\uC694." : "\uC870\uAE08 \uB354 \uC5F0\uC2B5\uD558\uBA74 \uC644\uBCBD\uD574\uC9C8 \uAC70\uC608\uC694!";
+    scoreDiv.appendChild(msg);
+
+    var retry = document.createElement("button");
+    retry.className = "quiz-retry";
+    retry.textContent = "\uCC98\uC74C\uBD80\uD130 \uB2E4\uC2DC";
+    retry.addEventListener("click", function() { location.reload(); });
+    scoreDiv.appendChild(retry);
+
+    container.appendChild(scoreDiv);
+  }
+}
+
+// ── Initialize Quiz ───────────────────────────
+initQuiz([
+  {
+    question: "\uC624\uBE0C\uC81D\uD2B8\uB97C \uC774\uB3D9\uD558\uBA74 \uAC19\uC774 \uB530\uB77C\uB2E4\uB2C8\uB294 \uAE30\uC900\uC810\uC740?",
+    options: ["3D Cursor", "Origin", "\uB458 \uB2E4 \uB530\uB77C\uB2E4\uB2CC\uB2E4", "\uC5B4\uB290 \uAC83\uB3C4 \uB530\uB77C\uB2E4\uB2C8\uC9C0 \uC54A\uB294\uB2E4"],
+    answer: 1,
+    explanation: "Origin\uC740 \uC624\uBE0C\uC81D\uD2B8\uC5D0 \uACE0\uC815\uB418\uC5B4 \uC788\uC5B4 \uC624\uBE0C\uC81D\uD2B8\uB97C \uC774\uB3D9\uD558\uBA74 \uD568\uAED8 \uC6C0\uC9C1\uC785\uB2C8\uB2E4."
+  },
+  {
+    question: "\uC0C8 \uC624\uBE0C\uC81D\uD2B8(Shift+A)\uB97C \uCD94\uAC00\uD558\uBA74 \uC5B4\uB514\uC5D0 \uC0DD\uC131\uB418\uB098\uC694?",
+    options: ["\uD56D\uC0C1 \uC6D4\uB4DC \uC911\uC2EC(0,0,0)", "\uC120\uD0DD\uD55C \uC624\uBE0C\uC81D\uD2B8\uC758 Origin \uC704\uCE58", "3D Cursor\uAC00 \uC788\uB294 \uC704\uCE58", "\uB9C8\uC6B0\uC2A4 \uCEE4\uC11C \uC704\uCE58"],
+    answer: 2,
+    explanation: "Blender\uC5D0\uC11C \uC0C8 \uC624\uBE0C\uC81D\uD2B8\uB294 3D Cursor\uAC00 \uC704\uCE58\uD55C \uACF3\uC5D0 \uC0DD\uC131\uB429\uB2C8\uB2E4."
+  },
+  {
+    question: "Shift+S \uC2A4\uB0C5 \uBA54\uB274\uC5D0\uC11C 'Cursor to Selected'\uB97C \uB204\uB974\uBA74?",
+    options: ["\uC624\uBE0C\uC81D\uD2B8\uAC00 \uCEE4\uC11C \uC704\uCE58\uB85C \uC774\uB3D9", "Origin\uC774 \uCEE4\uC11C \uC704\uCE58\uB85C \uC774\uB3D9", "3D Cursor\uAC00 \uC120\uD0DD\uB41C \uC624\uBE0C\uC81D\uD2B8\uC758 Origin\uC73C\uB85C \uC774\uB3D9", "\uCEE4\uC11C\uAC00 \uC6D4\uB4DC \uC6D0\uC810\uC73C\uB85C \uB9AC\uC14B"],
+    answer: 2,
+    explanation: "'Cursor to Selected'\uB294 3D Cursor\uB97C \uC120\uD0DD\uB41C \uC624\uBE0C\uC81D\uD2B8\uC758 Origin \uC704\uCE58\uB85C \uC774\uB3D9\uC2DC\uD0B5\uB2C8\uB2E4."
+  },
+  {
+    question: "\uC5B4\uB5A4 \uC624\uBE0C\uC81D\uD2B8\uC5D0\uB3C4 \uC18D\uD558\uC9C0 \uC54A\uACE0 \uB3C5\uB9BD\uC801\uC73C\uB85C \uC874\uC7AC\uD558\uB294 \uAC83\uC740?",
+    options: ["Origin", "Pivot Point", "3D Cursor", "Bounding Box"],
+    answer: 2,
+    explanation: "3D Cursor\uB294 \uC5B4\uB5A4 \uC624\uBE0C\uC81D\uD2B8\uC5D0\uB3C4 \uADC0\uC18D\uB418\uC9C0 \uC54A\uC73C\uBA70 \uB3C5\uB9BD\uC801\uC73C\uB85C \uBDF0\uD3EC\uD2B8 \uACF5\uAC04\uC5D0 \uC874\uC7AC\uD569\uB2C8\uB2E4."
+  }
+]);
+</script>
+
+</body>
+</html>
