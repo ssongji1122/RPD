@@ -249,58 +249,63 @@
       }
     }
 
-    /* ── Student Info Modal ───────────────────────── */
-    .student-modal-overlay {
-      position: fixed; inset: 0; z-index: 110;
-      background: rgba(0,0,0,.65);
-      backdrop-filter: blur(6px);
+    /* ── Student Login Overlay ───────────────────── */
+    .student-login-overlay {
+      position: fixed; inset: 0; z-index: 120;
+      background: var(--bg);
       display: flex; align-items: center; justify-content: center;
-      opacity: 0; pointer-events: none;
-      transition: opacity .2s;
     }
-    .student-modal-overlay.is-open { opacity: 1; pointer-events: all; }
-    .student-modal {
+    .student-login-overlay.is-hidden { display: none; }
+    .student-login-card {
       background: var(--surface);
       border: 1px solid var(--line);
       border-radius: var(--radius-lg);
-      padding: 28px 24px;
-      width: min(420px, calc(100vw - 32px));
+      padding: 36px 28px;
+      width: min(380px, 90vw);
       text-align: center;
-      transform: scale(.96);
-      transition: transform .18s;
     }
-    .student-modal-overlay.is-open .student-modal { transform: scale(1); }
-    .student-modal-icon { font-size: 36px; margin-bottom: 8px; }
-    .student-modal h3 { margin: 0 0 8px; font-size: 1.1rem; }
-    .student-modal p { margin: 0 0 18px; font-size: .88rem; color: var(--muted-strong); }
-    .student-modal small { font-size: .78rem; color: var(--muted); }
-    .student-modal-fields {
-      display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;
-      text-align: left;
+    .student-login-card h2 { margin: 0 0 6px; font-size: 1.2rem; }
+    .student-login-card .login-subtitle {
+      margin: 0 0 22px; font-size: .88rem; color: var(--muted-strong);
     }
-    .student-modal-fields input,
-    .student-modal-fields select {
-      padding: 9px 12px;
-      border-radius: var(--radius-sm);
+    .student-login-input {
+      width: 100%; padding: 12px 14px;
+      border-radius: var(--radius);
       border: 1px solid var(--line);
-      background: var(--bg);
-      color: var(--text);
-      font: inherit; font-size: .88rem;
+      background: var(--bg); color: var(--text);
+      font-size: 1.1rem; text-align: center;
+      letter-spacing: .1em; box-sizing: border-box;
+      font-variant-numeric: tabular-nums;
     }
-    .student-modal-fields input:focus,
-    .student-modal-fields select:focus {
-      outline: none; border-color: var(--key);
+    .student-login-input:focus { outline: none; border-color: var(--key); }
+    .student-login-preview {
+      margin: 14px 0 0; min-height: 44px; padding: 10px;
+      border-radius: var(--radius); font-size: .9rem;
     }
-    .student-modal-btns {
-      display: flex; gap: 8px; justify-content: center;
+    .student-login-preview.is-match {
+      background: rgba(16,185,129,.08); border: 1px solid rgba(16,185,129,.25); color: #34d399;
     }
-    .student-modal-btns .btn-ghost {
-      background: none; border: 1px solid var(--line);
-      color: var(--muted-strong); padding: 9px 18px;
-      border-radius: 999px; font: inherit; font-size: .86rem;
-      cursor: pointer; transition: border-color .14s;
+    .student-login-preview.is-nomatch {
+      background: rgba(239,68,68,.06); border: 1px solid rgba(239,68,68,.15); color: #f87171;
+      font-size: .82rem;
     }
-    .student-modal-btns .btn-ghost:hover { border-color: var(--line-strong); }
+    .student-login-preview .login-btn {
+      display: inline-block; margin-top: 10px; padding: 9px 28px;
+      border-radius: 999px; border: none;
+      background: var(--key); color: #fff;
+      font-size: .88rem; font-weight: 600; cursor: pointer;
+    }
+    .student-login-preview .login-btn:hover { filter: brightness(1.1); }
+    /* ── Student badge (topbar) ──────────────────── */
+    .student-badge {
+      display: none; align-items: center; gap: 6px;
+      padding: 4px 10px 4px 8px; border-radius: 999px;
+      background: rgba(10,132,255,.08); border: 1px solid rgba(10,132,255,.2);
+      font-size: .76rem; color: var(--key-soft); cursor: pointer;
+      white-space: nowrap; transition: background .14s;
+    }
+    .student-badge.is-active { display: inline-flex; }
+    .student-badge:hover { background: rgba(10,132,255,.15); }
   </style>
 </head>
 <body>
@@ -325,6 +330,7 @@
             </div>
           </div>
         </div>
+        <span class="student-badge" id="studentBadge" title="학생 변경" onclick="switchStudent()">👤 <span id="studentBadgeName"></span></span>
         <div class="progress-widget">
           <div class="progress-label">진도</div>
           <div class="progress-track" aria-hidden="true">
@@ -364,28 +370,20 @@
       </div>
     </div>
 
-    <!-- Student Info Modal (shown once on first quiz completion) -->
-    <div class="student-modal-overlay" id="studentModal" aria-hidden="true">
-      <div class="student-modal" role="dialog" aria-labelledby="studentModalTitle">
-        <div class="student-modal-icon">🎉</div>
-        <h3 id="studentModalTitle">퀴즈 완료!</h3>
-        <p>기록을 노션에 자동 저장하려면 정보를 입력하세요<br><small>이후 퀴즈는 자동으로 저장됩니다</small></p>
-        <div class="student-modal-fields">
-          <input type="text" id="studentIdInput" placeholder="학번 (예: 12243798)" maxlength="8" inputmode="numeric">
-          <input type="text" id="studentNameInput" placeholder="이름">
-          <select id="studentClassInput">
-            <option value="1반">1반 (DET3012-001, 화요일)</option>
-            <option value="2반">2반 (DET3012-002, 목요일)</option>
-          </select>
-        </div>
-        <div class="student-modal-btns">
-          <button class="btn btn-primary" type="button" onclick="saveStudentInfo()">저장 후 기록</button>
-          <button class="btn btn-ghost" type="button" onclick="skipStudentInfo()">건너뛰기</button>
-        </div>
+    <!-- Student Login (full-page, shown when ?sid= is missing) -->
+    <div class="student-login-overlay" id="studentLoginOverlay">
+      <div class="student-login-card">
+        <h2>👋 학번을 입력하세요</h2>
+        <p class="login-subtitle">퀴즈 기록이 자동으로 저장됩니다</p>
+        <input class="student-login-input" id="studentLoginInput"
+               type="text" placeholder="학번 8자리" maxlength="8" inputmode="numeric"
+               autocomplete="off">
+        <div class="student-login-preview" id="studentLoginPreview"></div>
       </div>
     </div>
   </div>
 
+  <script src="data/students.js"></script>
   <script src="assets/showme/_registry.js"></script>
   <script src="data/curriculum.js"></script>
   <script>
@@ -406,6 +404,7 @@
           <p>해당 주차 데이터를 찾을 수 없습니다. <a href="index.html" style="color:var(--key-soft)">← 돌아가기</a></p>
         </section>`;
     } else {
+      initStudentLogin();    // check ?sid= or show login overlay
       buildPage(weekData);
       updateShowMeBadges();  // restore completion badges from localStorage
     }
@@ -738,11 +737,89 @@
       }
     });
 
-    // ─── Quiz Completion Tracking ────────────────────
-    var pendingSync = null;
+    // ─── Student Identification & Quiz Tracking ────────
+    // URL: week.html?week=3&sid=12243798
+    // localStorage keys are partitioned per student:
+    //   rpd_quizzes_12243798  →  { "mirror-modifier": { score, total, pass, completedAt } }
 
+    function getCurrentSid() {
+      return new URLSearchParams(location.search).get("sid") || "";
+    }
+
+    function getCurrentStudent() {
+      var sid = getCurrentSid();
+      if (!sid || typeof STUDENTS === "undefined" || !STUDENTS[sid]) return null;
+      return { studentId: sid, name: STUDENTS[sid].name, "class": STUDENTS[sid]["class"] };
+    }
+
+    function getQuizKey(sid) { return "rpd_quizzes_" + sid; }
+
+    // ─── Student Login Flow ─────────────────────────
+    function initStudentLogin() {
+      var sid = getCurrentSid();
+      var overlay = document.getElementById("studentLoginOverlay");
+      var badge   = document.getElementById("studentBadge");
+      var nameEl  = document.getElementById("studentBadgeName");
+
+      if (sid && typeof STUDENTS !== "undefined" && STUDENTS[sid]) {
+        // Logged in → hide overlay, show badge
+        overlay.classList.add("is-hidden");
+        badge.classList.add("is-active");
+        nameEl.textContent = STUDENTS[sid].name + " (" + sid + ")";
+        return;
+      }
+
+      // Not logged in → show login overlay
+      overlay.classList.remove("is-hidden");
+      badge.classList.remove("is-active");
+
+      var input   = document.getElementById("studentLoginInput");
+      var preview = document.getElementById("studentLoginPreview");
+
+      input.addEventListener("input", function() {
+        var val = input.value.trim();
+        if (val.length < 8) { preview.className = "student-login-preview"; preview.innerHTML = ""; return; }
+        if (typeof STUDENTS !== "undefined" && STUDENTS[val]) {
+          var s = STUDENTS[val];
+          preview.className = "student-login-preview is-match";
+          preview.innerHTML = "<strong>" + s.name + "</strong> · " + s["class"]
+            + '<br><button class="login-btn" type="button" onclick="loginAsStudent(\'' + val + '\')">시작하기</button>';
+        } else {
+          preview.className = "student-login-preview is-nomatch";
+          preview.innerHTML = "등록되지 않은 학번입니다";
+        }
+      });
+
+      // Enter key = submit if match
+      input.addEventListener("keydown", function(e) {
+        if (e.key === "Enter") {
+          var val = input.value.trim();
+          if (typeof STUDENTS !== "undefined" && STUDENTS[val]) loginAsStudent(val);
+        }
+      });
+
+      input.focus();
+    }
+
+    function loginAsStudent(sid) {
+      // Redirect with sid parameter (preserves week param)
+      var params = new URLSearchParams(location.search);
+      params.set("sid", sid);
+      location.search = params.toString();
+    }
+
+    function switchStudent() {
+      // Remove sid and reload → shows login overlay
+      var params = new URLSearchParams(location.search);
+      params.delete("sid");
+      location.search = params.toString();
+    }
+
+    // ─── Quiz Badge System ──────────────────────────
     function updateShowMeBadges() {
-      var quizzes = JSON.parse(localStorage.getItem("rpd_quizzes") || "{}");
+      var sid = getCurrentSid();
+      if (!sid) return;
+      var quizzes = JSON.parse(localStorage.getItem(getQuizKey(sid)) || "{}");
       document.querySelectorAll(".btn-showme").forEach(function(btn) {
         var wid = btn.dataset.widgetId;
         if (wid && quizzes[wid] && quizzes[wid].pass) {
@@ -751,58 +828,32 @@
       });
     }
 
+    // ─── Quiz Completion Listener ───────────────────
     window.addEventListener("message", function(e) {
       if (!e.data || e.data.type !== "showme-quiz-complete") return;
       var d = e.data;
-      // 1. Save to localStorage
-      var quizzes = JSON.parse(localStorage.getItem("rpd_quizzes") || "{}");
+      var sid = getCurrentSid();
+      if (!sid) return;  // not logged in = no tracking
+
+      // 1. Save to student-specific localStorage
+      var key = getQuizKey(sid);
+      var quizzes = JSON.parse(localStorage.getItem(key) || "{}");
       quizzes[d.widgetId] = {
         score: d.score, total: d.total, pass: d.pass,
         completedAt: new Date().toISOString()
       };
-      localStorage.setItem("rpd_quizzes", JSON.stringify(quizzes));
+      localStorage.setItem(key, JSON.stringify(quizzes));
+
       // 2. Update badges
       updateShowMeBadges();
-      // 3. Sync to Notion (student info required)
-      var student = JSON.parse(localStorage.getItem("rpd_student_info") || "null");
-      if (student) {
-        syncQuizToNotion(d.widgetId, d.score, d.total);
-      } else {
-        pendingSync = d;
-        showStudentInfoModal();
-      }
+
+      // 3. Sync to Notion
+      syncQuizToNotion(d.widgetId, d.score, d.total);
     });
 
-    function showStudentInfoModal() {
-      var modal = document.getElementById("studentModal");
-      if (!modal) return;
-      modal.classList.add("is-open");
-      modal.removeAttribute("aria-hidden");
-    }
-
-    function saveStudentInfo() {
-      var idVal   = (document.getElementById("studentIdInput").value || "").trim();
-      var nameVal = (document.getElementById("studentNameInput").value || "").trim();
-      var cls     = document.getElementById("studentClassInput").value;
-      if (!idVal || !nameVal) { alert("학번과 이름을 모두 입력해 주세요."); return; }
-      var info = { studentId: idVal, name: nameVal, class: cls };
-      localStorage.setItem("rpd_student_info", JSON.stringify(info));
-      document.getElementById("studentModal").classList.remove("is-open");
-      document.getElementById("studentModal").setAttribute("aria-hidden", "true");
-      if (pendingSync) {
-        syncQuizToNotion(pendingSync.widgetId, pendingSync.score, pendingSync.total);
-        pendingSync = null;
-      }
-    }
-
-    function skipStudentInfo() {
-      document.getElementById("studentModal").classList.remove("is-open");
-      document.getElementById("studentModal").setAttribute("aria-hidden", "true");
-      pendingSync = null;
-    }
-
+    // ─── Notion Sync ────────────────────────────────
     async function syncQuizToNotion(widgetId, score, total) {
-      var student = JSON.parse(localStorage.getItem("rpd_student_info") || "null");
+      var student = getCurrentStudent();
       if (!student) return;
       var meta = (typeof SHOWME_REGISTRY !== "undefined" && SHOWME_REGISTRY[widgetId])
         ? SHOWME_REGISTRY[widgetId] : { label: widgetId };
@@ -817,7 +868,7 @@
               "\ud56d\ubaa9\uba85": { title:     [{ text: { content: "Show Me \ud034\uc988: " + meta.label } }] },
               "\ud559\ubc88":       { rich_text: [{ text: { content: student.studentId } }] },
               "\ud559\uc0dd\uba85": { rich_text: [{ text: { content: student.name } }] },
-              "\ubc18":             { select:    { name: student.class } },
+              "\ubc18":             { select:    { name: student["class"] } },
               "\uc8fc\ucc28":       { select:    { name: "Week " + weekNum } },
               "\uc81c\ucd9c\uc0c1\ud0dc": { select: { name: "\uc81c\ucd9c\uc644\ub8cc" } },
               "\uacf5\uac1c\ud53c\ub4dc\ubc31": { rich_text: [{ text: { content: "\ud034\uc988 \uc810\uc218: " + score + "/" + total } }] },
