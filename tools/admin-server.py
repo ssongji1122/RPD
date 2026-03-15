@@ -32,6 +32,7 @@ from urllib.parse import unquote
 # ---------------------------------------------------------------------------
 ROOT = Path(__file__).resolve().parent.parent
 COURSE_SITE = ROOT / "course-site"
+WEEKS_DIR = ROOT / "weeks"
 CURRICULUM_JS = COURSE_SITE / "data" / "curriculum.js"
 IMAGES_DIR = COURSE_SITE / "assets" / "images"
 NOTION_MAPPING = ROOT / "tools" / "notion-mapping.json"
@@ -60,6 +61,9 @@ CURRICULUM_FOOTER = """\
 // Node.js 환경 대응
 if (typeof module !== "undefined") module.exports = CURRICULUM;
 """
+
+LECTURE_SYNC_START = "<!-- AUTO:CURRICULUM-SYNC:START -->"
+LECTURE_SYNC_END = "<!-- AUTO:CURRICULUM-SYNC:END -->"
 
 # ---------------------------------------------------------------------------
 # MIME types (ensure common web types are registered)
@@ -210,6 +214,210 @@ def write_curriculum(data: list[dict]) -> None:
     pretty = json.dumps(data, ensure_ascii=False, indent=2)
     content = CURRICULUM_HEADER + pretty + CURRICULUM_FOOTER
     CURRICULUM_JS.write_text(content, encoding="utf-8")
+    sync_lecture_notes(data)
+
+
+def _find_lecture_note_path(week_num: int) -> Path | None:
+    """Return the lecture note path for a week if it exists."""
+    matches = sorted(WEEKS_DIR.glob(f"week{week_num:02d}-*/lecture-note.md"))
+    return matches[0] if matches else None
+
+
+def _render_link_list(items: list[dict]) -> list[str]:
+    lines: list[str] = []
+    for item in items or []:
+        title = str(item.get("title", "")).strip()
+        url = str(item.get("url", "")).strip()
+        if title and url:
+            lines.append(f"- [{title}]({url})")
+    return lines
+
+
+def _render_curriculum_sync_markdown(week: dict) -> str:
+    """Render the managed lecture-note summary block for a curriculum week."""
+    lines = [
+        "## 커리큘럼 연동 요약",
+        "",
+        "> 이 섹션은 `course-site/data/curriculum.js` 기준으로 자동 갱신됩니다.",
+        "",
+    ]
+
+    meta = []
+    subtitle = str(week.get("subtitle", "")).strip()
+    duration = str(week.get("duration", "")).strip()
+    if subtitle:
+        meta.append(f"- 핵심 키워드: {subtitle}")
+    if duration:
+        meta.append(f"- 예상 시간: {duration}")
+    if meta:
+        lines.extend(meta)
+        lines.append("")
+
+    steps = week.get("steps", []) or []
+    if steps:
+        lines.extend(["### 실습 단계", ""])
+        for idx, step in enumerate(steps, start=1):
+            title = str(step.get("title", "")).strip() or f"Step {idx}"
+            copy = str(step.get("copy", "")).strip()
+            lines.append(f"#### {idx}. {title}")
+            lines.append("")
+            if copy:
+                lines.append(copy)
+                lines.append("")
+
+            image_path = str(step.get("image", "")).strip()
+            if image_path:
+                note_image_path = f"../../course-site/{image_path.lstrip('/')}"
+                lines.append(f"![{title}]({note_image_path})")
+                lines.append("")
+
+            goals = [str(goal).strip() for goal in step.get("goal", []) if str(goal).strip()]
+            if goals:
+                lines.append("배울 것")
+                lines.append("")
+                lines.extend(f"- {goal}" for goal in goals)
+                lines.append("")
+
+            tasks = step.get("tasks", []) or []
+            if tasks:
+                lines.append("체크해볼 것")
+                lines.append("")
+                for task in tasks:
+                    label = str(task.get("label", "")).strip()
+                    detail = str(task.get("detail", "")).strip()
+                    if not label:
+                        continue
+                    task_line = f"- {label}"
+                    if detail:
+                        task_line += f" ({detail})"
+                    lines.append(task_line)
+                lines.append("")
+
+    shortcuts = week.get("shortcuts", []) or []
+    if shortcuts:
+        lines.extend(["### 핵심 단축키", ""])
+        for shortcut in shortcuts:
+            keys = str(shortcut.get("keys", "")).strip()
+            action = str(shortcut.get("action", "")).strip()
+            if keys and action:
+                lines.append(f"- `{keys}`: {action}")
+        lines.append("")
+
+    assignment = week.get("assignment", {}) or {}
+    assignment_title = str(assignment.get("title", "")).strip()
+    assignment_description = str(assignment.get("description", "")).strip()
+    assignment_checklist = [
+        str(item).strip() for item in assignment.get("checklist", []) if str(item).strip()
+    ]
+    if assignment_title or assignment_description or assignment_checklist:
+        lines.extend(["### 과제 한눈에 보기", ""])
+        if assignment_title:
+            lines.append(f"- 과제명: {assignment_title}")
+        if assignment_description:
+            lines.append(f"- 설명: {assignment_description}")
+        if assignment_checklist:
+            lines.append("- 제출 체크:")
+            lines.extend(f"  - {item}" for item in assignment_checklist)
+        lines.append("")
+
+    mistakes = [str(item).strip() for item in week.get("mistakes", []) if str(item).strip()]
+    if mistakes:
+        lines.extend(["### 자주 막히는 지점", ""])
+        lines.extend(f"- {item}" for item in mistakes)
+        lines.append("")
+
+    videos = _render_link_list(week.get("videos", []))
+    if videos:
+        lines.extend(["### 공식 영상 튜토리얼", ""])
+        lines.extend(videos)
+        lines.append("")
+
+    docs = _render_link_list(week.get("docs", []))
+    if docs:
+        lines.extend(["### 공식 문서", ""])
+        lines.extend(docs)
+        lines.append("")
+
+    while lines and lines[-1] == "":
+        lines.pop()
+
+    return "\n".join(lines)
+
+
+def _upsert_lecture_sync_block(text: str, block_markdown: str) -> str:
+    """Insert or replace the managed lecture-note sync block."""
+    managed_block = f"{LECTURE_SYNC_START}\n{block_markdown}\n{LECTURE_SYNC_END}"
+
+    if LECTURE_SYNC_START in text and LECTURE_SYNC_END in text:
+        pattern = re.compile(
+            rf"{re.escape(LECTURE_SYNC_START)}.*?{re.escape(LECTURE_SYNC_END)}",
+            re.DOTALL,
+        )
+        return pattern.sub(managed_block, text, count=1)
+
+    reference_match = re.search(r"^##\s+.*참고\s*자료.*$", text, re.MULTILINE)
+    if reference_match:
+        insert_at = reference_match.start()
+        prefix = text[:insert_at].rstrip()
+        suffix = text[insert_at:].lstrip("\n")
+        return f"{prefix}\n\n{managed_block}\n\n{suffix}"
+
+    return text.rstrip() + f"\n\n{managed_block}\n"
+
+
+def _strip_duplicate_official_reference_sections(text: str) -> str:
+    """Remove manual official resource subsections once the managed block exists."""
+    reference_match = re.search(r"^##\s+.*참고\s*자료.*$", text, re.MULTILINE)
+    if not reference_match:
+        return text
+
+    next_section_match = re.search(r"^##\s+", text[reference_match.end() :], re.MULTILINE)
+    section_start = reference_match.start()
+    section_end = (
+        reference_match.end() + next_section_match.start()
+        if next_section_match
+        else len(text)
+    )
+    section = text[section_start:section_end]
+
+    for heading in ("공식 영상 튜토리얼", "공식 문서"):
+        section = re.sub(
+            rf"\n?^###\s+{heading}\s*$.*?(?=^###\s+|^##\s+|\Z)",
+            "",
+            section,
+            flags=re.MULTILINE | re.DOTALL,
+        )
+
+    section = re.sub(r"\n{3,}", "\n\n", section).rstrip() + "\n"
+
+    if re.fullmatch(r"##\s+.*참고\s*자료.*\n?", section.strip()):
+        return (text[:section_start].rstrip() + "\n") + text[section_end:].lstrip("\n")
+
+    return text[:section_start] + section + text[section_end:]
+
+
+def sync_lecture_notes(data: list[dict]) -> list[Path]:
+    """Sync managed curriculum summary blocks into lecture-note files."""
+    updated_paths: list[Path] = []
+
+    for week in data:
+        week_num = int(week.get("week", 0) or 0)
+        if week_num <= 0:
+            continue
+
+        lecture_path = _find_lecture_note_path(week_num)
+        if not lecture_path or not lecture_path.exists():
+            continue
+
+        original = lecture_path.read_text(encoding="utf-8")
+        block_markdown = _render_curriculum_sync_markdown(week)
+        updated = _upsert_lecture_sync_block(original, block_markdown)
+        updated = _strip_duplicate_official_reference_sections(updated)
+        if updated != original:
+            lecture_path.write_text(updated, encoding="utf-8")
+            updated_paths.append(lecture_path)
+
+    return updated_paths
 
 
 # ---------------------------------------------------------------------------
@@ -244,6 +452,35 @@ def _notion_request(method: str, endpoint: str, body: dict | None = None) -> dic
 def _week_to_notion_blocks(week: dict) -> list[dict]:
     """Convert a curriculum week object to Notion block children."""
     blocks = []
+
+    def append_link_section(title: str, items: list[dict]) -> None:
+        if not items:
+            return
+        blocks.append({
+            "object": "block",
+            "type": "heading_2",
+            "heading_2": {
+                "rich_text": [{"type": "text", "text": {"content": title}}]
+            }
+        })
+        for item in items:
+            link_title = item.get("title", "").strip()
+            link_url = item.get("url", "").strip()
+            if not link_title or not link_url:
+                continue
+            blocks.append({
+                "object": "block",
+                "type": "bulleted_list_item",
+                "bulleted_list_item": {
+                    "rich_text": [{
+                        "type": "text",
+                        "text": {
+                            "content": link_title,
+                            "link": {"url": link_url},
+                        }
+                    }]
+                }
+            })
 
     # Title heading
     blocks.append({
@@ -295,6 +532,9 @@ def _week_to_notion_blocks(week: dict) -> list[dict]:
                     "checked": False
                 }
             })
+
+    append_link_section("공식 영상 튜토리얼", week.get("videos", []))
+    append_link_section("공식 문서", week.get("docs", []))
 
     # Shortcuts section
     shortcuts = week.get("shortcuts", [])
@@ -390,6 +630,20 @@ def _get_notion_page_blocks(page_id: str) -> list[dict]:
         cursor = result.get("next_cursor")
     return all_blocks
 
+
+def _get_notion_page_blocks_recursive(page_id: str) -> list[dict]:
+    """Fetch all page blocks in depth-first order, including nested children."""
+    flat_blocks: list[dict] = []
+
+    def walk(parent_id: str) -> None:
+        for block in _get_notion_page_blocks(parent_id):
+            flat_blocks.append(block)
+            if block.get("has_children"):
+                walk(block["id"])
+
+    walk(page_id)
+    return flat_blocks
+
 def _delete_all_notion_blocks(page_id: str) -> None:
     """Delete all block children from a Notion page."""
     blocks = _get_notion_page_blocks(page_id)
@@ -434,6 +688,25 @@ def _extract_text(rich_text_list: list) -> str:
     """Extract plain text from Notion rich_text array."""
     return "".join(rt.get("plain_text", "") for rt in rich_text_list)
 
+
+def _extract_link(rich_text_list: list) -> dict | None:
+    """Extract a title/url pair from Notion rich_text."""
+    title = _extract_text(rich_text_list).strip()
+    if not title:
+        return None
+
+    url = ""
+    for item in rich_text_list:
+        url = item.get("href") or ""
+        if not url:
+            url = item.get("text", {}).get("link", {}).get("url", "")
+        if url:
+            break
+
+    if not url:
+        return None
+    return {"title": title, "url": url}
+
 def fetch_notion_to_curriculum(week_num: int, existing_week: dict) -> dict:
     """Fetch a Notion page and extract curriculum-compatible data."""
     mapping = _load_notion_mapping()
@@ -449,30 +722,80 @@ def fetch_notion_to_curriculum(week_num: int, existing_week: dict) -> dict:
     clean_title = re.sub(r"^(?:⭐\s*)?Week\s*\d+\s*[:：]\s*", "", raw_title).strip()
 
     # Fetch blocks
-    blocks = _get_notion_page_blocks(page_id)
+    blocks = _get_notion_page_blocks_recursive(page_id)
 
     # Parse blocks into structured sections
     result = {**existing_week, "title": clean_title or existing_week.get("title", "")}
 
     # Extract shortcuts from code blocks
+    existing_steps = existing_week.get("steps", []) or []
+    steps = []
+    current_step = None
     shortcuts = []
     mistakes = []
+    assignment_title = ""
+    assignment_description_parts = []
     assignment_checklist = []
+    videos = []
+    docs = []
     current_section = ""
+    seen_sections = set()
 
     for block in blocks:
         btype = block.get("type", "")
 
         if btype == "heading_2":
             text = _extract_text(block["heading_2"].get("rich_text", []))
-            if "단축키" in text:
+            current_step = None
+            if "학습 목표" in text:
+                current_section = "steps"
+                seen_sections.add("steps")
+            elif "공식 영상" in text:
+                current_section = "videos"
+                seen_sections.add("videos")
+            elif "공식 문서" in text:
+                current_section = "docs"
+                seen_sections.add("docs")
+            elif "단축키" in text:
                 current_section = "shortcuts"
+                seen_sections.add("shortcuts")
             elif "실수" in text or "해결" in text:
                 current_section = "mistakes"
+                seen_sections.add("mistakes")
             elif "과제" in text:
                 current_section = "assignment"
+                seen_sections.add("assignment")
             else:
                 current_section = text
+
+        elif btype == "heading_3" and current_section == "steps":
+            text = _extract_text(block["heading_3"].get("rich_text", []))
+            existing_step = existing_steps[len(steps)] if len(steps) < len(existing_steps) else {}
+            current_step = {
+                "title": text,
+                "copy": "",
+                "goal": [],
+                "done": list(existing_step.get("done", []) or []),
+                "image": existing_step.get("image", ""),
+                "tasks": [],
+            }
+            steps.append(current_step)
+
+        elif btype == "paragraph" and current_section == "steps" and current_step is not None:
+            text = _extract_text(block["paragraph"].get("rich_text", []))
+            if text:
+                if current_step["copy"]:
+                    current_step["copy"] += "\n\n" + text
+                else:
+                    current_step["copy"] = text
+
+        elif btype == "paragraph" and current_section == "assignment":
+            text = _extract_text(block["paragraph"].get("rich_text", []))
+            if text:
+                if not assignment_title:
+                    assignment_title = text
+                else:
+                    assignment_description_parts.append(text)
 
         elif btype == "code" and current_section == "shortcuts":
             code_text = _extract_text(block["code"].get("rich_text", []))
@@ -485,22 +808,65 @@ def fetch_notion_to_curriculum(week_num: int, existing_week: dict) -> dict:
                 if len(parts) == 2:
                     shortcuts.append({"keys": parts[0].strip(), "action": parts[1].strip()})
 
+        elif btype == "bulleted_list_item" and current_section == "steps" and current_step is not None:
+            text = _extract_text(block["bulleted_list_item"].get("rich_text", []))
+            if text:
+                current_step["goal"].append(text)
+
         elif btype == "bulleted_list_item" and current_section == "mistakes":
             text = _extract_text(block["bulleted_list_item"].get("rich_text", []))
             if text:
                 mistakes.append(text)
+
+        elif btype == "bulleted_list_item" and current_section in ("videos", "docs"):
+            link = _extract_link(block["bulleted_list_item"].get("rich_text", []))
+            if link:
+                if current_section == "videos":
+                    videos.append(link)
+                else:
+                    docs.append(link)
+
+        elif btype == "to_do" and current_section == "steps" and current_step is not None:
+            text = _extract_text(block["to_do"].get("rich_text", []))
+            if text:
+                existing_task = {}
+                if steps:
+                    step_idx = len(steps) - 1
+                    if step_idx < len(existing_steps):
+                        existing_tasks = existing_steps[step_idx].get("tasks", []) or []
+                        if len(current_step["tasks"]) < len(existing_tasks):
+                            existing_task = existing_tasks[len(current_step["tasks"])]
+
+                label, sep, detail = text.partition(" — ")
+                current_step["tasks"].append({
+                    "id": existing_task.get("id") or f"w{week_num}-t{len(current_step['tasks']) + 1}",
+                    "label": label.strip(),
+                    "detail": detail.strip() if sep else "",
+                })
 
         elif btype == "to_do" and current_section == "assignment":
             text = _extract_text(block["to_do"].get("rich_text", []))
             if text:
                 assignment_checklist.append(text)
 
+    if "steps" in seen_sections and steps:
+        result["steps"] = steps
     if shortcuts:
         result["shortcuts"] = shortcuts
     if mistakes:
         result["mistakes"] = mistakes
-    if assignment_checklist:
-        result.setdefault("assignment", {})["checklist"] = assignment_checklist
+    if "assignment" in seen_sections:
+        assignment = {**(existing_week.get("assignment", {}) or {})}
+        if assignment_title:
+            assignment["title"] = assignment_title
+        if assignment_description_parts:
+            assignment["description"] = "\n\n".join(assignment_description_parts)
+        assignment["checklist"] = assignment_checklist
+        result["assignment"] = assignment
+    if "videos" in seen_sections:
+        result["videos"] = videos
+    if "docs" in seen_sections:
+        result["docs"] = docs
 
     return result
 
