@@ -59,6 +59,33 @@ def _resolve_week(week_arg: str, lectures_root: Path) -> tuple[int, Path]:
     return week_num, matches[0]
 
 
+def _load_subtitle_note_library(source: Path, notes: Path | None):
+    """Load note sources for subtitle/outline generation."""
+    from .subtitles import (
+        infer_default_notes_paths,
+        merge_note_libraries,
+        parse_clip_notes,
+        parse_week_video_map,
+    )
+
+    note_paths = [notes] if notes else infer_default_notes_paths(source)
+    note_libraries = []
+    used_note_paths = []
+
+    for note_path in note_paths:
+        if note_path is None or not note_path.exists():
+            continue
+        if note_path.suffix.lower() == ".md":
+            note_libraries.append(parse_clip_notes(note_path))
+            used_note_paths.append(note_path)
+        elif note_path.suffix.lower() in {".yaml", ".yml"}:
+            note_libraries.append(parse_week_video_map(note_path))
+            used_note_paths.append(note_path)
+
+    notes_library = merge_note_libraries(*note_libraries) if note_libraries else None
+    return notes_library, used_note_paths
+
+
 @click.group()
 @click.option("--config", "-c", type=click.Path(exists=False), default=None)
 @click.pass_context
@@ -463,10 +490,6 @@ def subtitle_clips(
         burn_in_subtitles,
         discover_videos,
         generate_subtitle_draft,
-        infer_default_notes_paths,
-        merge_note_libraries,
-        parse_clip_notes,
-        parse_week_video_map,
         write_manifest,
         write_srt,
     )
@@ -479,20 +502,7 @@ def subtitle_clips(
     if limit is not None:
         videos = videos[:limit]
 
-    note_paths = [notes] if notes else infer_default_notes_paths(source)
-    note_libraries = []
-    used_note_paths = []
-    for note_path in note_paths:
-        if note_path is None or not note_path.exists():
-            continue
-        if note_path.suffix.lower() == ".md":
-            note_libraries.append(parse_clip_notes(note_path))
-            used_note_paths.append(note_path)
-        elif note_path.suffix.lower() in {".yaml", ".yml"}:
-            note_libraries.append(parse_week_video_map(note_path))
-            used_note_paths.append(note_path)
-
-    notes_library = merge_note_libraries(*note_libraries) if note_libraries else None
+    notes_library, used_note_paths = _load_subtitle_note_library(source, notes)
     if used_note_paths:
         console.print("[cyan]Using notes:[/cyan]")
         for note_path in used_note_paths:
@@ -540,6 +550,169 @@ def subtitle_clips(
     if burn_in:
         console.print(f"[green]✓[/green] Burned videos: {burned_dir}")
     console.print(f"[green]✓[/green] Manifest: {manifest_path}")
+
+
+@cli.command()
+@click.argument("source", type=click.Path(exists=True, path_type=Path))
+@click.option(
+    "--notes",
+    type=click.Path(exists=True, dir_okay=False, path_type=Path),
+    default=None,
+    help="Optional note source file",
+)
+@click.option(
+    "--output-dir",
+    type=click.Path(file_okay=False, path_type=Path),
+    default=None,
+    help="Directory for generated outline card images",
+)
+@click.option("--limit", type=int, default=None, help="Only process the first N videos")
+def outline_cards(source: Path, notes: Path | None, output_dir: Path | None, limit: int | None) -> None:
+    """Generate chapter overview cards from subtitle draft text."""
+    from .compositor.title_card import generate_outline_card
+    from .subtitles import build_outline_card_content, discover_videos, generate_subtitle_draft
+
+    videos = discover_videos(source)
+    if not videos:
+        console.print(f"[red]No video files found in {source}[/red]")
+        sys.exit(1)
+
+    if limit is not None:
+        videos = videos[:limit]
+
+    notes_library, used_note_paths = _load_subtitle_note_library(source, notes)
+    if used_note_paths:
+        console.print("[cyan]Using notes:[/cyan]")
+        for note_path in used_note_paths:
+            console.print(f"  {note_path}")
+
+    base_dir = source.parent if source.is_file() else source
+    root_dir = output_dir or (base_dir / "outline_cards")
+
+    table = Table(title="목차 카드 출력", show_lines=True)
+    table.add_column("File", style="cyan", width=28)
+    table.add_column("Title", width=28)
+    table.add_column("항목", justify="right", width=8)
+
+    for video_path in videos:
+        draft = generate_subtitle_draft(video_path, notes_library)
+        content = build_outline_card_content(draft)
+
+        card_path = root_dir / f"{video_path.stem}.png"
+        generate_outline_card(
+            content.title,
+            content.items,
+            card_path,
+            label="챕터 개요",
+            summary=content.summary,
+        )
+
+        table.add_row(video_path.name[:28], content.title[:28], str(len(content.items)))
+
+    console.print()
+    console.print(table)
+    console.print(f"\n[green]✓[/green] 목차 카드: {root_dir}")
+
+
+@cli.command()
+@click.argument("source", type=click.Path(exists=True, path_type=Path))
+@click.option(
+    "--notes",
+    type=click.Path(exists=True, dir_okay=False, path_type=Path),
+    default=None,
+    help="Optional note source file",
+)
+@click.option(
+    "--output-dir",
+    type=click.Path(file_okay=False, path_type=Path),
+    default=None,
+    help="Directory for generated opener assets and videos",
+)
+@click.option("--limit", type=int, default=None, help="Only process the first N videos")
+@click.option("--opener-seconds", type=float, default=4.0, help="Duration of chapter overview card")
+def chapter_openers(
+    source: Path,
+    notes: Path | None,
+    output_dir: Path | None,
+    limit: int | None,
+    opener_seconds: float,
+) -> None:
+    """Generate chapter overview cards and prepend them to videos."""
+    from .compositor.title_card import generate_outline_card
+    from .subtitles import (
+        build_outline_card_content,
+        discover_videos,
+        generate_subtitle_draft,
+        prepend_outline_opener,
+        probe_video,
+    )
+
+    videos = discover_videos(source)
+    if not videos:
+        console.print(f"[red]No video files found in {source}[/red]")
+        sys.exit(1)
+
+    if limit is not None:
+        videos = videos[:limit]
+
+    notes_library, used_note_paths = _load_subtitle_note_library(source, notes)
+    if used_note_paths:
+        console.print("[cyan]Using notes:[/cyan]")
+        for note_path in used_note_paths:
+            console.print(f"  {note_path}")
+
+    base_dir = source.parent if source.is_file() else source
+    root_dir = output_dir or (base_dir / "chapter_openers")
+    cards_dir = root_dir / "cards"
+    videos_dir = root_dir / "videos"
+
+    table = Table(title="챕터 개요 오프닝 출력", show_lines=True)
+    table.add_column("File", style="cyan", width=28)
+    table.add_column("Title", width=28)
+    table.add_column("오프닝", justify="right", width=8)
+    skipped: list[tuple[str, str]] = []
+
+    for video_path in videos:
+        try:
+            draft = generate_subtitle_draft(video_path, notes_library)
+            content = build_outline_card_content(draft)
+            probe = probe_video(video_path)
+
+            card_path = cards_dir / f"{video_path.stem}.png"
+            generate_outline_card(
+                content.title,
+                content.items,
+                card_path,
+                label="챕터 개요",
+                summary=content.summary,
+                width=probe.width,
+                height=probe.height,
+            )
+
+            output_path = videos_dir / f"{video_path.stem}-chapter.mp4"
+            prepend_outline_opener(
+                video_path,
+                card_path,
+                output_path,
+                opener_seconds=opener_seconds,
+            )
+
+            table.add_row(video_path.name[:28], content.title[:28], f"{opener_seconds:.1f}s")
+        except Exception as exc:
+            skipped.append((video_path.name, str(exc)))
+
+    console.print()
+    console.print(table)
+    console.print(f"\n[green]✓[/green] 챕터 개요 카드: {cards_dir}")
+    console.print(f"[green]✓[/green] 오프닝 포함 영상: {videos_dir}")
+    if skipped:
+        skipped_table = Table(title="건너뛴 파일", show_lines=True)
+        skipped_table.add_column("File", style="yellow", width=28)
+        skipped_table.add_column("Reason", width=72)
+        for file_name, reason in skipped:
+            skipped_table.add_row(file_name[:28], reason[:72])
+        console.print()
+        console.print(skipped_table)
 
 
 @cli.command()

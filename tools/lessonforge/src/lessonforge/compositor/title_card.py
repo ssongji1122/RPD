@@ -11,6 +11,8 @@ from typing import Optional
 
 from PIL import Image, ImageDraw, ImageFont
 
+from ..subtitles import OutlineCardItem
+
 
 # Design tokens matching marp-theme.css / lessonforge.config.yaml
 COLORS = {
@@ -112,15 +114,6 @@ def generate_title_card(
         draw.text(
             ((width - sub_w) // 2, y + 30), subtitle, font=sub_font, fill=muted
         )
-
-    # Bottom info bar
-    info_font = _get_font(20)
-    info_text = "인하대학교 • 로봇프러덕트 디자인 • 2026 Spring"
-    info_bbox = draw.textbbox((0, 0), info_text, font=info_font)
-    info_w = info_bbox[2] - info_bbox[0]
-    draw.text(
-        ((width - info_w) // 2, height - 60), info_text, font=info_font, fill=muted
-    )
 
     # Bottom accent line
     draw.rectangle([(0, height - 4), (width, height)], fill=accent)
@@ -274,14 +267,110 @@ def generate_outro_card(
         fill=accent,
     )
 
-    # Footer
-    footer_font = _get_font(22)
-    footer = "인하대학교 로봇프러덕트 디자인"
-    footer_bbox = draw.textbbox((0, 0), footer, font=footer_font)
-    footer_w = footer_bbox[2] - footer_bbox[0]
-    draw.text(
-        ((width - footer_w) // 2, height - 60), footer, font=footer_font, fill=muted
-    )
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    img.save(str(output_path), "PNG")
+    return output_path
+
+
+def generate_outline_card(
+    title: str,
+    items: list[OutlineCardItem],
+    output_path: Path,
+    *,
+    label: str = "챕터 개요",
+    summary: str = "",
+    width: int = 1920,
+    height: int = 1080,
+) -> Path:
+    """Generate a chapter overview card inspired by clean neon-on-black explainer slides."""
+    bg = (5, 5, 5)
+    accent = (0, 245, 140)
+    text_color = (247, 247, 247)
+    muted = (150, 150, 150)
+    border = (92, 92, 92)
+    dim_line = (34, 34, 34)
+
+    img = Image.new("RGB", (width, height), bg)
+    draw = ImageDraw.Draw(img)
+
+    label_font = _get_font(max(24, int(width * 0.018)), bold=True)
+    title_font = _get_font(max(48, int(width * 0.04)), bold=True)
+    item_title_font = _get_font(max(28, int(width * 0.026)), bold=True)
+    item_sub_font = _get_font(max(20, int(width * 0.019)))
+    number_font = _get_font(max(24, int(width * 0.02)), bold=True)
+    summary_font = _get_font(max(30, int(width * 0.026)), bold=True)
+
+    safe_width = width - 180
+    label_bbox = draw.textbbox((0, 0), label, font=label_font)
+    label_w = label_bbox[2] - label_bbox[0]
+    draw.text(((width - label_w) // 2, 90), label, font=label_font, fill=muted)
+
+    title_lines = _wrap_text(draw, title, title_font, safe_width)
+    y = 150
+    for line in title_lines:
+        bbox = draw.textbbox((0, 0), line, font=title_font)
+        line_w = bbox[2] - bbox[0]
+        draw.text(((width - line_w) // 2, y), line, font=title_font, fill=text_color)
+        y += int(title_font.size * 1.15)
+
+    row_top = y + 40
+    row_gap = max(44, int(height * 0.045))
+    circle_size = max(64, int(width * 0.05))
+    circle_x = int(width * 0.12)
+    text_x = circle_x + circle_size + max(36, int(width * 0.025))
+    row_width = width - text_x - int(width * 0.12)
+
+    visible_items = items[:4]
+    for index, item in enumerate(visible_items, start=1):
+        current_y = row_top + (index - 1) * row_gap * 2
+
+        cx = circle_x + circle_size // 2
+        cy = current_y + circle_size // 2 - 4
+        draw.ellipse(
+            (circle_x, current_y, circle_x + circle_size, current_y + circle_size),
+            outline=border,
+            width=4,
+        )
+
+        num_text = str(index)
+        num_bbox = draw.textbbox((0, 0), num_text, font=number_font)
+        num_w = num_bbox[2] - num_bbox[0]
+        num_h = num_bbox[3] - num_bbox[1]
+        draw.text(
+            (cx - num_w / 2, cy - num_h / 2 - 2),
+            num_text,
+            font=number_font,
+            fill=text_color,
+        )
+
+        title_lines = _wrap_text(draw, item.title, item_title_font, row_width)
+        text_y = current_y - 2
+        for line in title_lines:
+            draw.text((text_x, text_y), line, font=item_title_font, fill=text_color)
+            text_y += int(item_title_font.size * 1.1)
+
+        if item.subtitle:
+            subtitle_lines = _wrap_text(draw, item.subtitle, item_sub_font, row_width)
+            for line in subtitle_lines:
+                draw.text((text_x, text_y + 8), line, font=item_sub_font, fill=muted)
+                text_y += int(item_sub_font.size * 1.15)
+
+        line_y = current_y + circle_size + 18
+        if index < len(visible_items):
+            draw.line(
+                (text_x, line_y, width - int(width * 0.12), line_y),
+                fill=dim_line,
+                width=2,
+            )
+
+    summary_text = summary.strip() or title
+    summary_lines = _wrap_text(draw, summary_text, summary_font, safe_width)
+    summary_y = height - 180
+    for line in summary_lines:
+        bbox = draw.textbbox((0, 0), line, font=summary_font)
+        line_w = bbox[2] - bbox[0]
+        draw.text(((width - line_w) // 2, summary_y), line, font=summary_font, fill=accent)
+        summary_y += int(summary_font.size * 1.18)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     img.save(str(output_path), "PNG")

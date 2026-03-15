@@ -82,6 +82,35 @@ class SubtitleDraft:
     cues: list[SubtitleCue] = field(default_factory=list)
 
 
+@dataclass
+class VideoProbeInfo:
+    """Basic stream information needed for rendering derived videos."""
+
+    width: int
+    height: int
+    duration_seconds: float
+    fps: float
+    has_audio: bool
+    sample_rate: int = 48000
+
+
+@dataclass
+class OutlineCardItem:
+    """One numbered row on a chapter overview card."""
+
+    title: str
+    subtitle: str = ""
+
+
+@dataclass
+class OutlineCardContent:
+    """Structured content for chapter overview and table-of-contents cards."""
+
+    title: str
+    summary: str
+    items: list[OutlineCardItem] = field(default_factory=list)
+
+
 def discover_videos(source: Path) -> list[Path]:
     """Return videos from a file or directory input."""
     if source.is_file():
@@ -94,6 +123,8 @@ def discover_videos(source: Path) -> list[Path]:
             and path.suffix.lower() in VIDEO_SUFFIXES
             and not path.name.startswith(".")
             and not path.name.startswith("._")
+            and "preview" not in path.stem.lower()
+            and "subtitled" not in path.stem.lower()
         )
     ]
     return videos
@@ -265,6 +296,63 @@ def generate_subtitle_draft(
     )
 
 
+def build_outline_bullets(draft: SubtitleDraft, max_bullets: int = 5) -> list[str]:
+    """Convert draft cues into concise chapter overview bullets."""
+    bullets: list[str] = []
+    seen: set[str] = set()
+    prefix = f"{draft.title}: "
+
+    for cue in draft.cues:
+        for raw_line in cue.text.splitlines():
+            line = raw_line.strip()
+            if not line:
+                continue
+            if line.startswith(prefix):
+                line = line[len(prefix):].strip()
+            line = re.sub(r"\s+", " ", line)
+            if line not in seen:
+                seen.add(line)
+                bullets.append(line)
+            if len(bullets) >= max_bullets:
+                return bullets
+
+    return bullets[:max_bullets]
+
+
+def build_outline_card_content(
+    draft: SubtitleDraft,
+    *,
+    max_items: int = 4,
+) -> OutlineCardContent:
+    """Turn draft cues into a stylized chapter overview structure."""
+    bullets = build_outline_bullets(draft, max_bullets=max_items + 1)
+
+    if not bullets:
+        return OutlineCardContent(title=draft.title, summary=draft.title, items=[])
+
+    summary = draft.title
+    item_texts = bullets
+
+    if len(bullets) >= 3 and _looks_like_summary_line(bullets[0]):
+        summary = bullets[0]
+        item_texts = bullets[1:]
+    elif len(bullets) == 2 and bullets[1] != draft.title:
+        summary = bullets[1]
+        item_texts = [bullets[0]]
+    elif bullets:
+        summary = bullets[0]
+
+    items = [_split_outline_item(text) for text in item_texts[:max_items]]
+    if not items:
+        items = [_split_outline_item(summary)]
+
+    return OutlineCardContent(
+        title=draft.title,
+        summary=summary,
+        items=items,
+    )
+
+
 def write_srt(draft: SubtitleDraft, output_path: Path) -> Path:
     """Persist a draft as an SRT sidecar file."""
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -358,6 +446,241 @@ def burn_in_subtitles(video_path: Path, srt_path: Path, output_path: Path) -> Pa
     )
     if result.returncode != 0:
         return _mux_subtitles(ffmpeg, video_path, srt_path, output_path)
+    return output_path
+
+
+def prepend_outline_opener(
+    video_path: Path,
+    outline_image_path: Path,
+    output_path: Path,
+    *,
+    opener_seconds: float = 4.0,
+) -> Path:
+    """Prepend a chapter overview card to the beginning of a video."""
+    ffmpeg = find_ffmpeg()
+    probe = probe_video(video_path)
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    # Prefer a fast concat-copy path so batch rendering long tutorials stays practical.
+    if probe.has_audio:
+        try:
+            return _prepend_outline_opener_concat_copy(
+                ffmpeg,
+                video_path,
+                outline_image_path,
+                output_path,
+                probe,
+                opener_seconds=opener_seconds,
+            )
+        except RuntimeError:
+            pass
+
+    return _prepend_outline_opener_reencode(
+        ffmpeg,
+        video_path,
+        outline_image_path,
+        output_path,
+        probe,
+        opener_seconds=opener_seconds,
+    )
+
+
+def _prepend_outline_opener_concat_copy(
+    ffmpeg: str,
+    video_path: Path,
+    outline_image_path: Path,
+    output_path: Path,
+    probe: VideoProbeInfo,
+    *,
+    opener_seconds: float,
+) -> Path:
+    """Encode only the opener clip, then remux-copy the original video body."""
+    fps = _normalize_fps(probe.fps)
+    sample_rate = probe.sample_rate or 48000
+
+    with TemporaryDirectory(prefix="lessonforge-opener-") as temp_dir_str:
+        temp_dir = Path(temp_dir_str)
+        opener_clip_path = temp_dir / "opener.mp4"
+        concat_list_path = temp_dir / "concat.txt"
+
+        opener_result = subprocess.run(
+            [
+                ffmpeg,
+                "-loglevel",
+                "error",
+                "-y",
+                "-loop",
+                "1",
+                "-t",
+                f"{opener_seconds:.3f}",
+                "-i",
+                str(outline_image_path),
+                "-f",
+                "lavfi",
+                "-t",
+                f"{opener_seconds:.3f}",
+                "-i",
+                f"anullsrc=channel_layout=stereo:sample_rate={sample_rate}",
+                "-vf",
+                f"fps={fps:.3f},format=yuv420p",
+                "-c:v",
+                "libx264",
+                "-preset",
+                "veryfast",
+                "-crf",
+                "20",
+                "-pix_fmt",
+                "yuv420p",
+                "-c:a",
+                "aac",
+                "-b:a",
+                "128k",
+                "-ar",
+                str(sample_rate),
+                "-movflags",
+                "+faststart",
+                str(opener_clip_path),
+            ],
+            capture_output=True,
+            text=True,
+            timeout=600,
+        )
+        if opener_result.returncode != 0:
+            raise RuntimeError(opener_result.stderr.strip() or "ffmpeg opener render failed")
+
+        concat_list_path.write_text(
+            "\n".join(
+                [
+                    f"file '{_escape_concat_path(opener_clip_path.resolve())}'",
+                    f"file '{_escape_concat_path(video_path.resolve())}'",
+                ]
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+
+        concat_result = subprocess.run(
+            [
+                ffmpeg,
+                "-loglevel",
+                "error",
+                "-y",
+                "-f",
+                "concat",
+                "-safe",
+                "0",
+                "-i",
+                str(concat_list_path),
+                "-c",
+                "copy",
+                "-movflags",
+                "+faststart",
+                str(output_path),
+            ],
+            capture_output=True,
+            text=True,
+            timeout=1800,
+        )
+        if concat_result.returncode != 0:
+            raise RuntimeError(concat_result.stderr.strip() or "ffmpeg concat-copy prepend failed")
+
+    return output_path
+
+
+def _prepend_outline_opener_reencode(
+    ffmpeg: str,
+    video_path: Path,
+    outline_image_path: Path,
+    output_path: Path,
+    probe: VideoProbeInfo,
+    *,
+    opener_seconds: float,
+) -> Path:
+    """Fallback path that re-encodes the full video."""
+
+    fps = _normalize_fps(probe.fps)
+    sample_rate = probe.sample_rate or 48000
+
+    cmd = [
+        ffmpeg,
+        "-loglevel",
+        "error",
+        "-y",
+        "-loop",
+        "1",
+        "-t",
+        f"{opener_seconds:.3f}",
+        "-i",
+        str(outline_image_path),
+        "-f",
+        "lavfi",
+        "-t",
+        f"{opener_seconds:.3f}",
+        "-i",
+        f"anullsrc=channel_layout=stereo:sample_rate={sample_rate}",
+        "-i",
+        str(video_path),
+    ]
+
+    if probe.has_audio:
+        filter_complex = (
+            f"[0:v]fps={fps:.3f},format=yuv420p[v0];"
+            f"[1:a]atrim=duration={opener_seconds:.3f}[a0];"
+            f"[2:v]fps={fps:.3f},format=yuv420p[v1];"
+            f"[2:a]aresample={sample_rate}[a1];"
+            f"[v0][a0][v1][a1]concat=n=2:v=1:a=1[v][a]"
+        )
+    else:
+        cmd.extend(
+            [
+                "-f",
+                "lavfi",
+                "-t",
+                f"{probe.duration_seconds:.3f}",
+                "-i",
+                f"anullsrc=channel_layout=stereo:sample_rate={sample_rate}",
+            ]
+        )
+        filter_complex = (
+            f"[0:v]fps={fps:.3f},format=yuv420p[v0];"
+            f"[1:a]atrim=duration={opener_seconds:.3f}[a0];"
+            f"[2:v]fps={fps:.3f},format=yuv420p[v1];"
+            f"[3:a]atrim=duration={probe.duration_seconds:.3f}[a1];"
+            f"[v0][a0][v1][a1]concat=n=2:v=1:a=1[v][a]"
+        )
+
+    cmd.extend(
+        [
+            "-filter_complex",
+            filter_complex,
+            "-map",
+            "[v]",
+            "-map",
+            "[a]",
+            "-c:v",
+            "libx264",
+            "-preset",
+            "veryfast",
+            "-crf",
+            "20",
+            "-c:a",
+            "aac",
+            "-b:a",
+            "128k",
+            "-movflags",
+            "+faststart",
+            str(output_path),
+        ]
+    )
+
+    result = subprocess.run(
+        cmd,
+        capture_output=True,
+        text=True,
+        timeout=3600,
+    )
+    if result.returncode != 0:
+        raise RuntimeError(result.stderr.strip() or "ffmpeg outline opener prepend failed")
     return output_path
 
 
@@ -484,6 +807,11 @@ def _escape_filter_value(value: str) -> str:
     value = value.replace(";", "\\;")
     value = value.replace(" ", "\\ ")
     return value
+
+
+def _escape_concat_path(path: Path) -> str:
+    """Escape a filesystem path for an ffmpeg concat list file."""
+    return str(path).replace("\\", "\\\\").replace("'", r"'\''")
 
 
 def _ffmpeg_supports_subtitles_filter(ffmpeg: str) -> bool:
@@ -644,6 +972,65 @@ def get_video_dimensions(video_path: Path) -> tuple[int, int]:
         return (1920, 1080)
 
 
+def probe_video(video_path: Path) -> VideoProbeInfo:
+    """Collect video metadata required for opener rendering."""
+    ffprobe = find_ffprobe()
+    result = subprocess.run(
+        [
+            ffprobe,
+            "-v",
+            "quiet",
+            "-print_format",
+            "json",
+            "-show_streams",
+            "-show_format",
+            str(video_path),
+        ],
+        capture_output=True,
+        text=True,
+        timeout=30,
+    )
+
+    if result.returncode != 0:
+        return VideoProbeInfo(
+            width=1920,
+            height=1080,
+            duration_seconds=10.0,
+            fps=30.0,
+            has_audio=False,
+        )
+
+    try:
+        payload = json.loads(result.stdout)
+        streams = payload.get("streams", [])
+        format_data = payload.get("format", {})
+        video_stream = next((s for s in streams if s.get("codec_type") == "video"), {})
+        audio_stream = next((s for s in streams if s.get("codec_type") == "audio"), None)
+
+        width = int(video_stream.get("width", 1920))
+        height = int(video_stream.get("height", 1080))
+        fps = _parse_fps(str(video_stream.get("avg_frame_rate") or video_stream.get("r_frame_rate") or "30/1"))
+        duration = float(format_data.get("duration", 10.0))
+        sample_rate = int(audio_stream.get("sample_rate", 48000)) if audio_stream else 48000
+
+        return VideoProbeInfo(
+            width=width,
+            height=height,
+            duration_seconds=duration,
+            fps=fps,
+            has_audio=audio_stream is not None,
+            sample_rate=sample_rate,
+        )
+    except Exception:
+        return VideoProbeInfo(
+            width=1920,
+            height=1080,
+            duration_seconds=10.0,
+            fps=30.0,
+            has_audio=False,
+        )
+
+
 def _render_overlay_image(
     cue: SubtitleCue,
     output_path: Path,
@@ -739,3 +1126,70 @@ def _derive_title_from_cover(covers: str) -> str:
     """Strip generic prefixes from week_video_map titles."""
     cleaned = re.sub(r"^Step\s*[\d-]+\s*:\s*", "", covers, flags=re.IGNORECASE)
     return cleaned.strip()
+
+
+def _looks_like_summary_line(text: str) -> bool:
+    """Detect broad summary sentences that work better as a bottom takeaway."""
+    lowered = text.lower()
+    keywords = [
+        "주요 영역",
+        "관련 실습 흐름",
+        "워크플로우",
+        "흐름",
+        "기초",
+        "핵심",
+        "소개",
+    ]
+    return any(keyword in lowered for keyword in keywords) and "—" not in text
+
+
+def _split_outline_item(text: str) -> OutlineCardItem:
+    """Split a line into bold title + smaller subtitle."""
+    cleaned = text.strip().rstrip(".")
+
+    for delimiter in ("—", "->", "→", ":"):
+        if delimiter in cleaned:
+            left, right = cleaned.split(delimiter, 1)
+            left = left.strip()
+            right = right.strip()
+            if left and right:
+                return OutlineCardItem(title=left, subtitle=right)
+
+    paren_match = re.match(r"^(.*?)\s*\((.*?)\)$", cleaned)
+    if paren_match:
+        title = paren_match.group(1).strip()
+        subtitle = paren_match.group(2).strip()
+        if title and subtitle:
+            return OutlineCardItem(title=title, subtitle=subtitle)
+
+    if cleaned.endswith("입니다"):
+        cleaned = cleaned.removesuffix("입니다").strip()
+
+    return OutlineCardItem(title=cleaned)
+
+
+def _parse_fps(value: str) -> float:
+    """Parse ffprobe frame rate strings like '30000/1001'."""
+    if "/" in value:
+        num, den = value.split("/", 1)
+        try:
+            numerator = float(num)
+            denominator = float(den)
+            if denominator == 0:
+                return 30.0
+            return numerator / denominator
+        except ValueError:
+            return 30.0
+    try:
+        return float(value)
+    except ValueError:
+        return 30.0
+
+
+def _normalize_fps(value: float) -> float:
+    """Clamp FPS to a practical range for derived exports."""
+    if value <= 1:
+        return 30.0
+    if value > 60:
+        return 60.0
+    return value
