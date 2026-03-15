@@ -689,6 +689,19 @@ function initQuiz(questions) {
     scoreDiv.appendChild(retry);
 
     container.appendChild(scoreDiv);
+
+    // ── Notify parent of quiz completion ──────
+    try {
+      var wid = new URLSearchParams(location.search).get("wid")
+             || location.pathname.split("/").pop().replace(".html", "");
+      window.parent.postMessage({
+        type: "showme-quiz-complete",
+        widgetId: wid,
+        score: score,
+        total: questions.length,
+        pass: score >= Math.ceil(questions.length * 0.75)
+      }, "*");
+    } catch(e) {}
   }
 }
 
