@@ -78,7 +78,9 @@ const CURRICULUM = [
       "설치 중 권한 오류 → 관리자 권한으로 재설치",
       "한글 경로에 설치하면 오류 → 영어 경로 사용"
     ],
-    "docs": []
+    "docs": [
+      { "title": "Blender 설치 가이드", "url": "https://docs.blender.org/manual/en/latest/getting_started/installing/index.html" }
+    ]
   },
   {
     "week": 2,
@@ -303,6 +305,15 @@ const CURRICULUM = [
         "title": "Bevel",
         "url": "https://docs.blender.org/manual/en/latest/modeling/meshes/tools/bevel.html"
       }
+    ],
+    "shortcuts": [
+      { "keys": "MMB Drag", "action": "Orbit (시점 회전)" },
+      { "keys": "Shift + MMB", "action": "Pan (시점 이동)" },
+      { "keys": "Scroll", "action": "Zoom (확대/축소)" },
+      { "keys": "Numpad 1/3/7", "action": "Front/Right/Top View" },
+      { "keys": "G / R / S", "action": "Grab / Rotate / Scale" },
+      { "keys": "G + X/Y/Z", "action": "축 고정 이동" },
+      { "keys": "Tab", "action": "Object ↔ Edit Mode 전환" }
     ]
   },
   {
@@ -653,6 +664,7 @@ const CURRICULUM = [
       {
         "title": "Transform 정리와 파츠 관리",
         "image": "assets/images/week04/transform-apply.png",
+        "showme": "transform-apply",
         "copy": "디테일을 넣기 전에 Scale과 파츠 구성을 먼저 정리해요. 수치가 꼬여 있거나 파츠가 뒤섞여 있으면 그다음 작업이 계속 불편해져요.",
         "goal": [
           "Transform을 정리한다",
@@ -688,6 +700,7 @@ const CURRICULUM = [
       {
         "title": "얼굴과 패널 디테일",
         "image": "assets/images/week04/inset-panel-detail.png",
+        "showme": "boolean-modifier",
         "copy": "큰 덩어리가 잡힌 상태에서 눈, 패널, 관절 라인을 추가하는 단계예요. Inset과 Boolean을 같이 쓰면 디테일을 빠르게 만들 수 있어요.",
         "goal": [
           "Inset과 Boolean으로 디테일을 추가한다"
@@ -717,6 +730,7 @@ const CURRICULUM = [
       {
         "title": "Bevel 두 가지 비교",
         "image": "assets/images/week04/bevel-modifier.png",
+        "showme": "bevel-modifier",
         "copy": "같은 '모서리 정리'라도 손으로 직접 깎는 방법과 Modifier로 전체를 정리하는 방법은 다르게 느껴져요. 둘 다 직접 비교해보는 게 가장 빠릅니다.",
         "goal": [
           "Ctrl+B와 Bevel Modifier를 구분해 쓴다"
@@ -916,6 +930,7 @@ const CURRICULUM = [
       {
         "title": "Sculpt Mode 기초",
         "image": "assets/images/week05/sculpt-mode.png",
+        "showme": "sculpt-basics",
         "copy": "브러시로 메쉬를 직접 주무르는 모드예요. 마우스로 칠하듯이 형태를 만들어요. 점토 조각과 가장 비슷한 방식이에요.",
         "goal": [
           "기본 Sculpt 브러시를 안다"
@@ -953,6 +968,14 @@ const CURRICULUM = [
     "mistakes": [
       "AI 메쉬 폴리곤이 너무 많음 → Decimate Modifier로 줄이기"
     ],
+    "shortcuts": [
+      { "keys": "Ctrl + Tab", "action": "Sculpt Mode 전환" },
+      { "keys": "F", "action": "브러시 크기 조절" },
+      { "keys": "Shift + F", "action": "브러시 강도 조절" },
+      { "keys": "Ctrl (hold)", "action": "브러시 반전 (파내기)" },
+      { "keys": "Shift (hold)", "action": "Smooth 임시 전환" },
+      { "keys": "Ctrl + Z", "action": "되돌리기" }
+    ],
     "docs": [
       {
         "title": "Sculpt Mode",
@@ -977,6 +1000,7 @@ const CURRICULUM = [
       {
         "title": "Material 할당",
         "image": "assets/images/week06/material-assign.png",
+        "showme": "material-basics",
         "copy": "오브젝트에 색이나 재질을 입히는 거예요. 색만 바꿔도 결과물이 완전히 달라 보여요.",
         "goal": [
           "Material 슬롯의 구조를 안다"
@@ -1000,6 +1024,7 @@ const CURRICULUM = [
       {
         "title": "Principled BSDF 탐색",
         "image": "assets/images/week06/principled-bsdf.png",
+        "showme": "principled-bsdf",
         "copy": "숫자 하나로 금속/유리/플라스틱이 바뀌어요. Metallic을 1로 올리면 금속, Transmission을 1로 올리면 유리처럼 보여요.",
         "goal": [
           "각 파라미터가 보여서 효과를 안다"
@@ -1028,6 +1053,7 @@ const CURRICULUM = [
       {
         "title": "Shader Node Editor",
         "image": "assets/images/week06/shader-editor.png",
+        "showme": "shader-editor",
         "copy": "노드는 레고 블록처럼 연결해서 재질을 만들어요. 색을 그라데이션으로 바꾸거나 질감을 섞는 등 복잡한 재질이 가능해요.",
         "goal": [
           "노드 기반 재질 편집 방식을 이해한다"
@@ -1065,15 +1091,19 @@ const CURRICULUM = [
     "mistakes": [
       "재질이 화면에서 안 보임 → Viewport Shading을 Rendered로 변경"
     ],
+    "shortcuts": [
+      { "keys": "Z", "action": "Shading 모드 전환 파이 메뉴" },
+      { "keys": "Shift + A", "action": "Shader Editor 노드 추가" },
+      { "keys": "Ctrl + Shift + Click", "action": "Viewer Node 연결" },
+      { "keys": "Ctrl + T", "action": "Texture Mapping 자동 연결" },
+      { "keys": "M", "action": "Frame 그룹 만들기" },
+      { "keys": "H", "action": "노드 숨기기/접기" }
+    ],
     "docs": [
-      {
-        "title": "Principled BSDF",
-        "url": "https://docs.blender.org/manual/en/latest/render/shader_nodes/shader/principled.html"
-      },
-      {
-        "title": "Shader Editor",
-        "url": "https://docs.blender.org/manual/en/latest/editors/shader_editor.html"
-      }
+      { "title": "Materials", "url": "https://docs.blender.org/manual/en/latest/render/materials/introduction.html" },
+      { "title": "Principled BSDF", "url": "https://docs.blender.org/manual/en/latest/render/shader_nodes/shader/principled.html" },
+      { "title": "Shader Editor", "url": "https://docs.blender.org/manual/en/latest/editors/shader_editor.html" },
+      { "title": "Texture Nodes", "url": "https://docs.blender.org/manual/en/latest/render/shader_nodes/textures/index.html" }
     ]
   },
   {
@@ -1093,6 +1123,7 @@ const CURRICULUM = [
       {
         "title": "Seam 설정",
         "image": "assets/images/week07/uv-seam.png",
+        "showme": "uv-unwrapping",
         "copy": "종이 박스를 펼치면 평평해지죠. UV Unwrap도 3D 메쉬를 종이처럼 바닥에 펼치는 거예요. 그 위에 이미지를 올리면 텍스처가 입혀져요.",
         "goal": [
           "Seam의 역할을 이해한다"
@@ -1116,6 +1147,7 @@ const CURRICULUM = [
       {
         "title": "Unwrap & UV Editor",
         "image": "assets/images/week07/uv-editor.png",
+        "showme": "uv-editor",
         "copy": "Seam을 그은 경계선대로 메쉬가 펼쳐져서 UV Editor에 2D로 나와요. 여기 보이는 모양대로 이미지가 입혀져요.",
         "goal": [
           "UV가 어떻게 펼쳐지는지 이해한다"
@@ -1182,11 +1214,18 @@ const CURRICULUM = [
       "텍스처가 늘어남 → Seam 위치 조정 필요",
       "연결 끊김 → UV Map이 Material과 동일한지 확인"
     ],
+    "shortcuts": [
+      { "keys": "U", "action": "UV Unwrap 메뉴" },
+      { "keys": "Ctrl + E → Mark Seam", "action": "UV Seam 지정" },
+      { "keys": "L", "action": "UV Editor에서 Island 선택" },
+      { "keys": "P", "action": "UV Pin 고정" },
+      { "keys": "A", "action": "UV 전체 선택" },
+      { "keys": "S + X/Y + 0", "action": "UV Island 정렬" }
+    ],
     "docs": [
-      {
-        "title": "UV Unwrapping",
-        "url": "https://docs.blender.org/manual/en/latest/modeling/meshes/uv/unwrapping/index.html"
-      }
+      { "title": "UV Unwrapping", "url": "https://docs.blender.org/manual/en/latest/modeling/meshes/uv/unwrapping/index.html" },
+      { "title": "UV Editor", "url": "https://docs.blender.org/manual/en/latest/editors/uv/introduction.html" },
+      { "title": "Texture Painting", "url": "https://docs.blender.org/manual/en/latest/sculpt_paint/texture_paint/index.html" }
     ]
   },
   {
@@ -1260,6 +1299,7 @@ const CURRICULUM = [
       {
         "title": "Light 종류 탐색",
         "image": "assets/images/week09/light-types.png",
+        "showme": "light-types",
         "copy": "요리사 스튜디오에서 조명을 세팅하듯, 어떤 조명을 쓰냐에 따라 분위기가 완전히 달라져요. 동일한 오브젝트라도 조명만 바꾸면 다른 작품처럼 보여요.",
         "goal": [
           "각 Light 타입의 특성을 안다"
@@ -1283,6 +1323,7 @@ const CURRICULUM = [
       {
         "title": "HDRI 환경 조명",
         "image": "assets/images/week09/hdri-world.png",
+        "showme": "hdri-lighting",
         "copy": "360도 파노라마 사진이 전구 역할을 해요. 텍스처 하나로 자연스러운 환경 조명을 만들 수 있어요.",
         "goal": [
           "HDRI의 역할과 장점을 안다"
@@ -1306,6 +1347,7 @@ const CURRICULUM = [
       {
         "title": "3점 조명 세팅",
         "image": "assets/images/week09/three-point-light.png",
+        "showme": "three-point-light",
         "copy": "사진 체울린 사진처럼 Key(주), Fill(보조), Rim(윤곽) 세 개만 잘 놓으면 어떤 오브젝트도 입체감 있게 보여요.",
         "goal": [
           "3점 조명의 원리를 이해한다"
@@ -1344,6 +1386,13 @@ const CURRICULUM = [
       "빛이 너무 강함 → Energy 값 줄이기",
       "그림자 없음 → Shadow 설정 확인"
     ],
+    "shortcuts": [
+      { "keys": "Shift + A → Light", "action": "조명 추가" },
+      { "keys": "Z → Rendered", "action": "렌더 미리보기" },
+      { "keys": "Shift + Z", "action": "Rendered/Solid 토글" },
+      { "keys": "Ctrl + Numpad 0", "action": "현재 시점 → 카메라" },
+      { "keys": "Numpad 0", "action": "카메라 뷰 전환" }
+    ],
     "docs": [
       {
         "title": "Lighting",
@@ -1368,6 +1417,7 @@ const CURRICULUM = [
       {
         "title": "키프레임 기초",
         "image": "assets/images/week10/keyframe-intro.png",
+        "showme": "keyframe-basics",
         "copy": "A 위치를 1프레임에 사진 찍고, B 위치를 50프레임에 사진 찍으면 Blender가 둘 사이를 자동으로 이어줘요. 그게 키프레임이에요.",
         "goal": [
           "키프레임의 개념을 이해한다"
@@ -1396,6 +1446,7 @@ const CURRICULUM = [
       {
         "title": "Dope Sheet",
         "image": "assets/images/week10/dope-sheet.png",
+        "showme": "graph-editor",
         "copy": "키프레임들이 시간 순서대로 나열된 타임라인이에요. 사진들 사이 간격을 늘리거나 줄여서 빠르게/느리게 움직이는 타이밍을 조절해요.",
         "goal": [
           "키프레임 위치를 드래그로 조절한다"
@@ -1428,11 +1479,18 @@ const CURRICULUM = [
     "mistakes": [
       "애니메이션이 끊김 → 보간 방식 Graph Editor에서 확인"
     ],
+    "shortcuts": [
+      { "keys": "I", "action": "Insert Keyframe" },
+      { "keys": "Alt + I", "action": "Delete Keyframe" },
+      { "keys": "Space", "action": "재생/정지" },
+      { "keys": "← / →", "action": "이전/다음 프레임" },
+      { "keys": "Shift + ← / →", "action": "시작/끝 프레임" },
+      { "keys": "T", "action": "Interpolation 변경" }
+    ],
     "docs": [
-      {
-        "title": "Keyframes",
-        "url": "https://docs.blender.org/manual/en/latest/animation/keyframes/introduction.html"
-      }
+      { "title": "Keyframes", "url": "https://docs.blender.org/manual/en/latest/animation/keyframes/introduction.html" },
+      { "title": "Dope Sheet", "url": "https://docs.blender.org/manual/en/latest/editors/dope_sheet/introduction.html" },
+      { "title": "Graph Editor", "url": "https://docs.blender.org/manual/en/latest/editors/graph_editor/introduction.html" }
     ]
   },
   {
@@ -1452,6 +1510,7 @@ const CURRICULUM = [
       {
         "title": "Armature 추가",
         "image": "assets/images/week11/armature-structure.png",
+        "showme": "armature-basics",
         "copy": "인형에 철사 뼈대를 넣는 것처럼, 메쉬 안에 Bone(뼈)을 만들어요. 뼈를 움직이면 연결된 메쉬도 따라와요.",
         "goal": [
           "Armature 구조를 이해한다"
@@ -1475,6 +1534,7 @@ const CURRICULUM = [
       {
         "title": "메쉬 연결",
         "image": "assets/images/week11/mesh-skinning.png",
+        "showme": "weight-paint",
         "copy": "메쉬(피부)와 Armature(뼈대)를 연결하는 거예요. Ctrl+P로 붙여놓으면 본을 움직일 때 메쉬도 따라와요.",
         "goal": [
           "Armature Parent의 개념을 이해한다"
@@ -1512,11 +1572,17 @@ const CURRICULUM = [
     "mistakes": [
       "Weight Paint가 이상 → Automatic Weights 재설정"
     ],
+    "shortcuts": [
+      { "keys": "Shift + A → Armature", "action": "뼈대 추가" },
+      { "keys": "Ctrl + P", "action": "Armature Deform 연결" },
+      { "keys": "E", "action": "Bone 확장 (Edit Mode)" },
+      { "keys": "Alt + P", "action": "Parent 해제" },
+      { "keys": "Ctrl + Tab", "action": "Pose Mode 전환" }
+    ],
     "docs": [
-      {
-        "title": "Armatures",
-        "url": "https://docs.blender.org/manual/en/latest/animation/armatures/index.html"
-      }
+      { "title": "Armatures", "url": "https://docs.blender.org/manual/en/latest/animation/armatures/index.html" },
+      { "title": "Skinning", "url": "https://docs.blender.org/manual/en/latest/animation/armatures/skinning/index.html" },
+      { "title": "Weight Paint", "url": "https://docs.blender.org/manual/en/latest/sculpt_paint/weight_paint/index.html" }
     ]
   },
   {
@@ -1600,7 +1666,15 @@ const CURRICULUM = [
     "mistakes": [
       "FBX 임포트가 회전됨 → Import 설정에서 Forward/Up 방향 확인"
     ],
-    "docs": []
+    "shortcuts": [
+      { "keys": "Ctrl + J", "action": "오브젝트 합치기 (Join)" },
+      { "keys": "Ctrl + A → All Transforms", "action": "Transform 적용" },
+      { "keys": "Shift + Ctrl + M", "action": "Merge by Distance" }
+    ],
+    "docs": [
+      { "title": "Import/Export", "url": "https://docs.blender.org/manual/en/latest/files/import_export/index.html" },
+      { "title": "NLA Editor", "url": "https://docs.blender.org/manual/en/latest/editors/nla/index.html" }
+    ]
   },
   {
     "week": 13,
@@ -1619,6 +1693,7 @@ const CURRICULUM = [
       {
         "title": "렌더 엔진 비교",
         "image": "assets/images/week13/cycles-eevee.png",
+        "showme": "render-settings",
         "copy": "Cycles는 사진 인화처럼 정밀하고 느리고, EEVEE는 게임 엔진처럼 빠르지만 덜 사실적이에요. 수정 중엔 EEVEE, 최종 제출엔 Cycles를 써요.",
         "goal": [
           "두 엔진의 차이를 안다"
@@ -1642,6 +1717,7 @@ const CURRICULUM = [
       {
         "title": "출력 설정 및 렌더",
         "image": "assets/images/week13/render-output.png",
+        "showme": "compositing-basics",
         "copy": "해상도, 파일 형식, 저장 경로를 설정하고 F12로 렌더해요. 한 번 설정해두면 계속 쓸 수 있어요.",
         "goal": [
           "렌더 출력 파이프라인을 이해한다"
@@ -1679,11 +1755,18 @@ const CURRICULUM = [
     "mistakes": [
       "렌더가 너무 오래 걸림 → Sample 수 줄이기 (초안은 64~128)"
     ],
+    "shortcuts": [
+      { "keys": "F12", "action": "이미지 렌더링" },
+      { "keys": "Ctrl + F12", "action": "애니메이션 렌더링" },
+      { "keys": "F11", "action": "마지막 렌더 결과 보기" },
+      { "keys": "Z → Rendered", "action": "실시간 렌더 미리보기" },
+      { "keys": "Ctrl + B (카메라 뷰)", "action": "렌더 영역 지정" }
+    ],
     "docs": [
-      {
-        "title": "Cycles Render",
-        "url": "https://docs.blender.org/manual/en/latest/render/cycles/index.html"
-      }
+      { "title": "Cycles", "url": "https://docs.blender.org/manual/en/latest/render/cycles/index.html" },
+      { "title": "EEVEE", "url": "https://docs.blender.org/manual/en/latest/render/eevee/index.html" },
+      { "title": "Render Output", "url": "https://docs.blender.org/manual/en/latest/render/output/index.html" },
+      { "title": "Compositing", "url": "https://docs.blender.org/manual/en/latest/compositing/index.html" }
     ]
   },
   {

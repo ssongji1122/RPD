@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — HDRI 환경 조명</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Tab Navigation ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+
+/* ── Tab Panels ── */
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+
+/* ── Concept Cards ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card h3 {
+  margin: 0 0 8px; font-size: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.concept-card p {
+  margin: 0; color: var(--muted-strong);
+  font-size: .88rem; line-height: 1.7;
+}
+.concept-card ul {
+  margin: 8px 0 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
+}
+
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: .72rem; font-weight: 600;
+}
+.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: #fbbf24; }
+
+/* ── Keyboard Shortcut ── */
+.kbd {
+  display: inline-block;
+  padding: 3px 8px; border-radius: 6px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  color: var(--key-soft);
+  font-size: .82rem; font-weight: 600;
+  font-family: var(--font);
+}
+
+/* ── Canvas / Demo ── */
+.demo-wrap {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+  margin: 14px 0;
+}
+.demo-wrap canvas {
+  display: block; width: 100%;
+}
+.demo-controls {
+  display: flex; gap: 8px; padding: 12px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.demo-hint {
+  font-size: .78rem; color: var(--muted);
+  text-align: center; padding: 6px 0 0;
+}
+.demo-btn {
+  padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .82rem;
+  cursor: pointer;
+  transition: background .14s, color .14s;
+}
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active {
+  background: rgba(10,132,255,.14);
+  color: var(--key-soft);
+  border-color: rgba(10,132,255,.3);
+}
+
+/* ── Usage Grid ── */
+.usage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.usage-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 16px;
+}
+.usage-card h4 {
+  margin: 0 0 8px; font-size: .92rem;
+  color: var(--key-soft);
+}
+.usage-card ul {
+  margin: 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem;
+  line-height: 1.8;
+}
+
+/* ── Tip Box ── */
+.tip-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(10,132,255,.2);
+  background: rgba(10,132,255,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+}
+.tip-box strong { color: var(--key-soft); }
+
+/* ── Combo Section ── */
+.combo-section {
+  margin-top: 18px;
+}
+.combo-section h4 {
+  margin: 0 0 10px;
+  font-size: .92rem;
+  color: var(--text);
+}
+.combo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.combo-card {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 12px 14px;
+}
+.combo-card .combo-name {
+  font-size: .86rem;
+  font-weight: 600;
+  color: var(--key-soft);
+  margin-bottom: 4px;
+}
+.combo-card .combo-desc {
+  font-size: .8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ── Shortcut Reference ── */
+.shortcut-list {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.shortcut-list h4 {
+  margin: 0 0 10px;
+  font-size: .9rem;
+  color: var(--text);
+}
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: .84rem;
+  color: var(--muted-strong);
+}
+.shortcut-row + .shortcut-row {
+  border-top: 1px solid var(--line);
+}
+.shortcut-keys {
+  flex-shrink: 0;
+}
+.analogy {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(245,158,11,.06);
+  border: 1px solid rgba(245,158,11,.15);
+  font-size: .82rem;
+  color: #fbbf24;
+  font-style: italic;
+}
+
+/* ── Quiz ── */
+.quiz-progress {
+  font-size: .78rem; color: var(--muted);
+  margin-bottom: 12px;
+}
+.quiz-question {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.quiz-question h4 {
+  margin: 0 0 12px; font-size: .94rem;
+}
+.quiz-option {
+  display: block; width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.025);
+  color: var(--text);
+  font: inherit; font-size: .86rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background .14s, border-color .14s;
+}
+.quiz-option:hover {
+  background: rgba(255,255,255,.06);
+  border-color: var(--line-strong);
+}
+.quiz-option.correct {
+  background: rgba(16,185,129,.12);
+  border-color: rgba(16,185,129,.4);
+  color: var(--success-soft);
+}
+.quiz-option.wrong {
+  background: rgba(239,68,68,.1);
+  border-color: rgba(239,68,68,.3);
+  color: #fca5a5;
+}
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback {
+  margin-top: 8px; padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: .84rem;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: #fca5a5; }
+
+.quiz-score {
+  text-align: center; padding: 20px;
+  font-size: 1.1rem; font-weight: 600;
+}
+.quiz-retry {
+  display: block; margin: 12px auto;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--key);
+  background: rgba(10,132,255,.12);
+  color: var(--key-soft);
+  font: inherit; font-size: .88rem;
+  cursor: pointer;
+  transition: background .14s;
+}
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+
+/* ── Official Doc Reference ── */
+.doc-ref {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(10,132,255,.15);
+  background: rgba(10,132,255,.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-ref a {
+  color: var(--key-soft);
+  font-size: .84rem;
+  text-decoration: none;
+  line-height: 1.5;
+}
+.doc-ref a:hover { text-decoration: underline; }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Tab Bar -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+</nav>
+
+<!-- TAB 1: 개념 이해 -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3>HDRI란? <span class="badge badge-blue">기본</span></h3>
+      <p>HDRI(High Dynamic Range Image)는 360도 파노라마 이미지로, 실제 환경의 빛 정보를 담고 있습니다. 이를 환경 조명으로 사용하면 사실적인 반사와 조명을 손쉽게 구현할 수 있습니다.</p>
+      <div class="analogy">실제 장소를 360도 촬영한 사진 안에 3D 오브젝트를 놓는 것과 같아요</div>
+    </div>
+    <div class="concept-card">
+      <h3>Environment Texture 연결 <span class="badge badge-green">노드</span></h3>
+      <p>World Properties에서 Environment Texture 노드를 Background에 연결하면 HDRI가 적용됩니다. Shader Editor(World 모드)에서 설정합니다.</p>
+      <ul>
+        <li>World Properties &rarr; Surface &rarr; Color &rarr; Environment Texture</li>
+        <li>Strength로 밝기 조절</li>
+        <li>Mapping 노드로 회전 조절</li>
+      </ul>
+    </div>
+    <div class="concept-card">
+      <h3>Poly Haven <span class="badge badge-amber">리소스</span></h3>
+      <p>Poly Haven(polyhaven.com)은 무료 CC0 라이선스 HDRI를 제공하는 사이트입니다. 실내, 야외, 스튜디오 등 다양한 환경을 다운로드하여 사용할 수 있습니다.</p>
+      <ul>
+        <li>1K~16K 해상도 제공</li>
+        <li>상업적 사용 가능 (CC0)</li>
+        <li>수백 개의 무료 HDRI</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="shortcut-list">
+    <h4>HDRI 설정 경로</h4>
+    <div class="shortcut-row">
+      <span class="shortcut-keys">World Properties</span>
+      <span>Properties 패널 &rarr; 지구 아이콘</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys">Surface &rarr; Color</span>
+      <span>노란 점 클릭 &rarr; Environment Texture 선택</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys">Open &rarr; HDRI 파일</span>
+      <span>.hdr 또는 .exr 파일 불러오기</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Z</span> &rarr; Rendered</span>
+      <span>렌더 프리뷰에서 HDRI 확인</span>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/render/lights/world.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — World Lighting
+    </a>
+  </div>
+</section>
+
+<!-- TAB 2: 시각적 비교 -->
+<section class="panel" id="panel-visual" role="tabpanel">
+  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
+    구체에 다른 HDRI 환경(실내/야외/스튜디오)이 반사되는 모습을 비교하세요.
+  </p>
+  <div class="demo-wrap">
+    <canvas id="demoCanvas" width="680" height="300"></canvas>
+    <div class="demo-controls">
+      <button class="demo-btn is-active" id="btnOutdoor">야외 (Outdoor)</button>
+      <button class="demo-btn" id="btnIndoor">실내 (Indoor)</button>
+      <button class="demo-btn" id="btnStudio">스튜디오 (Studio)</button>
+    </div>
+  </div>
+  <p class="demo-hint">각 환경을 선택하면 구체의 반사와 조명이 달라집니다.</p>
+</section>
+
+<!-- TAB 3: 언제 쓰나요? -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>HDRI가 필요할 때</h4>
+      <ul>
+        <li>사실적인 환경 반사가 필요한 제품 렌더</li>
+        <li>야외 건축 시각화</li>
+        <li>자동차, 금속 오브젝트 렌더링</li>
+        <li>빠른 조명 세팅이 필요할 때</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>HDRI만으로 부족한 경우</h4>
+      <ul>
+        <li>강한 직접 조명이 필요한 장면</li>
+        <li>특정 방향의 그림자가 필요할 때</li>
+        <li>HDRI에 없는 환경을 만들 때</li>
+        <li>스타일라이즈드(비사실적) 렌더</li>
+      </ul>
+    </div>
+  </div>
+  <div class="tip-box">
+    <strong>팁:</strong> HDRI는 보통 Strength 1.0으로 시작하세요. 너무 밝으면 0.5~0.8로, 어두우면 1.5~2.0으로 조절합니다. Mapping 노드의 Z Rotation으로 태양 방향을 회전시킬 수 있습니다.
+  </div>
+  <div class="combo-section">
+    <h4>HDRI 활용 조합</h4>
+    <div class="combo-grid">
+      <div class="combo-card">
+        <div class="combo-name">HDRI + Sun Light</div>
+        <div class="combo-desc">HDRI로 환경 반사를 주고 Sun Light로 직접 조명과 그림자를 강화합니다. 야외 장면의 표준 세팅입니다.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">HDRI + Light Path (Is Camera Ray)</div>
+        <div class="combo-desc">카메라에만 HDRI 배경을 보여주고, 조명은 다른 색으로 설정하는 고급 기법입니다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/render/lights/world.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — World Lighting
+    </a>
+  </div>
+</section>
+
+<!-- TAB 4: 퀴즈 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+// ── Tab Switching ──────────────────────────────
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(t) {
+      t.classList.remove("is-active");
+      t.setAttribute("aria-selected", "false");
+    });
+    document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("is-active"); });
+    tab.classList.add("is-active");
+    tab.setAttribute("aria-selected", "true");
+    document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+  });
+  tab.addEventListener("touchend", function(e) { e.preventDefault(); tab.click(); });
+});
+
+// ── Quiz Engine (Safe DOM methods) ────────────
+function initQuiz(questions) {
+  var container = document.getElementById("quizArea");
+  var score = 0, answered = 0;
+  var scoreDiv = null;
+
+  var progress = document.createElement("div");
+  progress.className = "quiz-progress";
+  progress.textContent = "\uBB38\uC81C 0 / " + questions.length + " \u00b7 \uC810\uC218 0\uC810";
+  container.appendChild(progress);
+
+  questions.forEach(function(q, qi) {
+    var div = document.createElement("div");
+    div.className = "quiz-question";
+
+    var heading = document.createElement("h4");
+    heading.textContent = "Q" + (qi + 1) + ". " + q.question;
+    div.appendChild(heading);
+
+    var fb = document.createElement("div");
+    fb.className = "quiz-feedback";
+
+    q.options.forEach(function(opt, oi) {
+      var btn = document.createElement("button");
+      btn.className = "quiz-option";
+      btn.textContent = opt;
+      btn.addEventListener("click", function() {
+        if (btn.disabled) return;
+        div.querySelectorAll(".quiz-option").forEach(function(b) { b.disabled = true; });
+        answered++;
+        if (oi === q.answer) {
+          btn.classList.add("correct");
+          fb.className = "quiz-feedback show correct-fb";
+          fb.textContent = "\u2705 " + q.explanation;
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
+          fb.className = "quiz-feedback show wrong-fb";
+          fb.textContent = "\u274c " + q.explanation;
+
+          var retryBtn = document.createElement("button");
+          retryBtn.className = "quiz-retry";
+          retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
+          retryBtn.textContent = "\uB2E4\uC2DC \uD480\uAE30";
+          retryBtn.addEventListener("click", function() {
+            answered--;
+            div.querySelectorAll(".quiz-option").forEach(function(b) {
+              b.disabled = false;
+              b.classList.remove("wrong", "correct");
+            });
+            fb.className = "quiz-feedback";
+            fb.textContent = "";
+            retryBtn.remove();
+            if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+            progress.textContent = "\uBB38\uC81C " + answered + " / " + questions.length + " \u00b7 \uC810\uC218 " + score + "\uC810";
+          });
+          fb.appendChild(retryBtn);
+        }
+        progress.textContent = "\uBB38\uC81C " + answered + " / " + questions.length + " \u00b7 \uC810\uC218 " + score + "\uC810";
+        if (answered === questions.length) showScore();
+      });
+      div.appendChild(btn);
+    });
+
+    div.appendChild(fb);
+    container.appendChild(div);
+  });
+
+  function showScore() {
+    if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+    scoreDiv = document.createElement("div");
+    scoreDiv.className = "quiz-score";
+
+    var emoji = document.createElement("div");
+    emoji.style.cssText = "font-size:36px;margin-bottom:8px";
+    emoji.textContent = score === questions.length ? "\ud83c\udf89" : score >= Math.ceil(questions.length / 2) ? "\ud83d\udc4d" : "\ud83d\udcda";
+    scoreDiv.appendChild(emoji);
+
+    var result = document.createElement("div");
+    result.style.cssText = "font-size:18px;font-weight:500;margin-bottom:6px";
+    result.textContent = score + " / " + questions.length + " \uC815\uB2F5";
+    scoreDiv.appendChild(result);
+
+    var msg = document.createElement("div");
+    msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
+    msg.textContent = score === questions.length ? "\uC644\uBCBD\uD569\uB2C8\uB2E4!" : "\uC870\uAE08 \uB354 \uC5F0\uC2B5\uD558\uBA74 \uC644\uBCBD\uD574\uC9C8 \uAC70\uC608\uC694!";
+    scoreDiv.appendChild(msg);
+
+    var saveBtn = document.createElement("button");
+    saveBtn.className = "quiz-retry";
+    saveBtn.style.cssText = "background:rgba(10,132,255,.18);border-color:var(--key);margin-bottom:8px";
+    saveBtn.textContent = "\uAE30\uB85D \uC800\uC7A5\uD558\uAE30";
+    saveBtn.addEventListener("click", function() {
+      try {
+        var wid = new URLSearchParams(location.search).get("wid")
+               || location.pathname.split("/").pop().replace(".html", "");
+        window.parent.postMessage({
+          type: "showme-quiz-complete",
+          widgetId: wid,
+          score: score,
+          total: questions.length,
+          pass: score >= Math.ceil(questions.length * 0.75)
+        }, "*");
+      } catch(e) {}
+      saveBtn.textContent = "\uC800\uC7A5 \uC644\uB8CC!";
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = ".5";
+    });
+    scoreDiv.appendChild(saveBtn);
+
+    var retry = document.createElement("button");
+    retry.className = "quiz-retry";
+    retry.textContent = "\uCC98\uC74C\uBD80\uD130 \uB2E4\uC2DC";
+    retry.addEventListener("click", function() { location.reload(); });
+    scoreDiv.appendChild(retry);
+
+    container.appendChild(scoreDiv);
+  }
+}
+
+// ── Canvas HDRI Demo ────────────────────────
+(function() {
+  var canvas = document.getElementById("demoCanvas");
+  var ctx = canvas.getContext("2d");
+  var W = canvas.width, H = canvas.height;
+  var currentEnv = "outdoor";
+  var time = 0;
+  var animId = null;
+
+  var envConfigs = {
+    outdoor: {
+      label: "\uC57C\uC678 (Outdoor)",
+      skyTop: "#1a3a5c",
+      skyBot: "#6ba3d6",
+      groundColor: "#3a5c2e",
+      sunColor: "rgba(255,230,150,.9)",
+      sunX: 500, sunY: 50,
+      ambient: "rgba(135,185,230,.15)",
+      reflectTop: "#4a7aaa",
+      reflectMid: "#8bb8d8",
+      reflectBot: "#5a8a3e",
+      highlights: [{x:0.3, y:0.2, color:"rgba(255,240,180,.6)", size:12}]
+    },
+    indoor: {
+      label: "\uC2E4\uB0B4 (Indoor)",
+      skyTop: "#2a2015",
+      skyBot: "#3d3025",
+      groundColor: "#2a2520",
+      sunColor: "rgba(255,200,120,.7)",
+      sunX: 450, sunY: 80,
+      ambient: "rgba(200,170,120,.1)",
+      reflectTop: "#3d3530",
+      reflectMid: "#5a4a3a",
+      reflectBot: "#332a22",
+      highlights: [{x:0.6, y:0.3, color:"rgba(255,210,140,.5)", size:10}]
+    },
+    studio: {
+      label: "\uC2A4\uD29C\uB514\uC624 (Studio)",
+      skyTop: "#1a1a1a",
+      skyBot: "#2a2a2a",
+      groundColor: "#1a1a1a",
+      sunColor: "rgba(255,255,255,.8)",
+      sunX: 340, sunY: 40,
+      ambient: "rgba(200,200,200,.08)",
+      reflectTop: "#222222",
+      reflectMid: "#444444",
+      reflectBot: "#1a1a1a",
+      highlights: [
+        {x:0.25, y:0.35, color:"rgba(255,255,255,.7)", size:15},
+        {x:0.7, y:0.4, color:"rgba(255,255,255,.3)", size:10}
+      ]
+    }
+  };
+
+  // Sphere center
+  var sx = 340, sy = 140, sr = 80;
+
+  function draw() {
+    time += 0.015;
+    var env = envConfigs[currentEnv];
+    ctx.clearRect(0, 0, W, H);
+
+    // Sky gradient (environment background)
+    var skyGrd = ctx.createLinearGradient(0, 0, 0, H * 0.65);
+    skyGrd.addColorStop(0, env.skyTop);
+    skyGrd.addColorStop(1, env.skyBot);
+    ctx.fillStyle = skyGrd;
+    ctx.fillRect(0, 0, W, H * 0.65);
+
+    // Ground
+    ctx.fillStyle = env.groundColor;
+    ctx.fillRect(0, H * 0.65, W, H * 0.35);
+
+    // Horizon line
+    ctx.strokeStyle = "rgba(255,255,255,.1)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(0, H * 0.65);
+    ctx.lineTo(W, H * 0.65);
+    ctx.stroke();
+
+    // Sun/Light source glow
+    var sunGrd = ctx.createRadialGradient(env.sunX, env.sunY, 0, env.sunX, env.sunY, 80);
+    sunGrd.addColorStop(0, env.sunColor);
+    sunGrd.addColorStop(0.3, env.sunColor.replace(/[\d.]+\)$/, "0.2)"));
+    sunGrd.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = sunGrd;
+    ctx.beginPath();
+    ctx.arc(env.sunX, env.sunY, 80, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Ambient fill
+    ctx.fillStyle = env.ambient;
+    ctx.fillRect(0, 0, W, H);
+
+    // Ground shadow under sphere
+    ctx.fillStyle = "rgba(0,0,0,.2)";
+    ctx.beginPath();
+    ctx.ellipse(sx, H * 0.65 + 10, sr * 0.7, 10, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Sphere — gradient to simulate reflection
+    var sphGrd = ctx.createLinearGradient(sx, sy - sr, sx, sy + sr);
+    sphGrd.addColorStop(0, env.reflectTop);
+    sphGrd.addColorStop(0.5, env.reflectMid);
+    sphGrd.addColorStop(1, env.reflectBot);
+    ctx.beginPath();
+    ctx.arc(sx, sy, sr, 0, Math.PI * 2);
+    ctx.fillStyle = sphGrd;
+    ctx.fill();
+
+    // Sphere edge highlight
+    ctx.strokeStyle = "rgba(255,255,255,.15)";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Specular highlights on sphere
+    env.highlights.forEach(function(h) {
+      var hx = sx - sr * 0.5 + sr * h.x;
+      var hy = sy - sr * 0.5 + sr * h.y;
+      var pulse = h.size + Math.sin(time * 2) * 1.5;
+      var hGrd = ctx.createRadialGradient(hx, hy, 0, hx, hy, pulse);
+      hGrd.addColorStop(0, h.color);
+      hGrd.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = hGrd;
+      ctx.beginPath();
+      ctx.arc(hx, hy, pulse, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // Fresnel rim effect
+    ctx.beginPath();
+    ctx.arc(sx, sy, sr - 1, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(255,255,255,.08)";
+    ctx.lineWidth = 4;
+    ctx.stroke();
+
+    // Environment label
+    ctx.font = "bold 12px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillStyle = "rgba(255,255,255,.6)";
+    ctx.fillText(env.label, W / 2, H - 12);
+
+    // Node diagram on the right
+    drawNodeDiagram(env);
+
+    animId = requestAnimationFrame(draw);
+  }
+
+  function drawNodeDiagram(env) {
+    var nx = 580, ny = 60;
+
+    // Environment Texture node
+    ctx.fillStyle = "rgba(80,60,30,.8)";
+    roundRect(ctx, nx - 55, ny, 110, 40, 6);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,200,100,.4)";
+    ctx.lineWidth = 1;
+    roundRect(ctx, nx - 55, ny, 110, 40, 6);
+    ctx.stroke();
+    ctx.font = "9px sans-serif";
+    ctx.fillStyle = "rgba(255,200,100,.8)";
+    ctx.textAlign = "center";
+    ctx.fillText("Environment", nx, ny + 16);
+    ctx.fillText("Texture (.hdr)", nx, ny + 30);
+
+    // Arrow
+    ctx.strokeStyle = "rgba(255,255,255,.3)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(nx, ny + 40);
+    ctx.lineTo(nx, ny + 55);
+    ctx.stroke();
+    ctx.fillStyle = "rgba(255,255,255,.3)";
+    ctx.beginPath();
+    ctx.moveTo(nx - 4, ny + 52);
+    ctx.lineTo(nx, ny + 58);
+    ctx.lineTo(nx + 4, ny + 52);
+    ctx.fill();
+
+    // Background node
+    ctx.fillStyle = "rgba(40,70,40,.8)";
+    roundRect(ctx, nx - 45, ny + 60, 90, 35, 6);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(100,200,100,.4)";
+    ctx.lineWidth = 1;
+    roundRect(ctx, nx - 45, ny + 60, 90, 35, 6);
+    ctx.stroke();
+    ctx.font = "9px sans-serif";
+    ctx.fillStyle = "rgba(100,200,100,.8)";
+    ctx.fillText("Background", nx, ny + 82);
+
+    // Strength label
+    ctx.font = "8px sans-serif";
+    ctx.fillStyle = "rgba(255,255,255,.4)";
+    ctx.fillText("Strength: 1.0", nx, ny + 112);
+  }
+
+  function roundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
+
+  function setEnv(env) {
+    currentEnv = env;
+    document.querySelectorAll(".demo-btn").forEach(function(b) { b.classList.remove("is-active"); });
+    var ids = { outdoor: "btnOutdoor", indoor: "btnIndoor", studio: "btnStudio" };
+    document.getElementById(ids[env]).classList.add("is-active");
+  }
+
+  document.getElementById("btnOutdoor").addEventListener("click", function() { setEnv("outdoor"); });
+  document.getElementById("btnOutdoor").addEventListener("touchend", function(e) { e.preventDefault(); setEnv("outdoor"); });
+  document.getElementById("btnIndoor").addEventListener("click", function() { setEnv("indoor"); });
+  document.getElementById("btnIndoor").addEventListener("touchend", function(e) { e.preventDefault(); setEnv("indoor"); });
+  document.getElementById("btnStudio").addEventListener("click", function() { setEnv("studio"); });
+  document.getElementById("btnStudio").addEventListener("touchend", function(e) { e.preventDefault(); setEnv("studio"); });
+
+  draw();
+})();
+
+// ── Quiz Data ─────────────────────────────────
+initQuiz([
+  {
+    question: "HDRI\uB97C Blender\uC5D0\uC11C \uD658\uACBD \uC870\uBA85\uC73C\uB85C \uC124\uC815\uD558\uB294 \uACBD\uB85C\uB294?",
+    options: [
+      "Object Properties \u2192 Material",
+      "World Properties \u2192 Surface \u2192 Color \u2192 Environment Texture",
+      "Render Properties \u2192 Lighting",
+      "Scene Properties \u2192 Background"
+    ],
+    answer: 1,
+    explanation: "HDRI\uB294 World Properties\uC758 Surface \u2192 Color\uC5D0\uC11C Environment Texture \uB178\uB4DC\uB97C \uC120\uD0DD\uD558\uACE0 .hdr \uD30C\uC77C\uC744 \uBD88\uB7EC\uC640\uC11C \uC124\uC815\uD569\uB2C8\uB2E4."
+  },
+  {
+    question: "Poly Haven\uC758 HDRI \uB77C\uC774\uC120\uC2A4\uB294?",
+    options: [
+      "\uC720\uB8CC \uAD6C\uB3C5",
+      "CC-BY (attribution \uD544\uC694)",
+      "CC0 (\uBB34\uB8CC, \uC0C1\uC5C5\uC801 \uC0AC\uC6A9 \uAC00\uB2A5)",
+      "GPL"
+    ],
+    answer: 2,
+    explanation: "Poly Haven\uC740 CC0 \uB77C\uC774\uC120\uC2A4\uB85C, \uC800\uC791\uAD8C \uD45C\uC2DC \uC5C6\uC774 \uBB34\uB8CC\uB85C \uC0C1\uC5C5\uC801 \uC0AC\uC6A9\uAE4C\uC9C0 \uAC00\uB2A5\uD569\uB2C8\uB2E4."
+  },
+  {
+    question: "HDRI \uD658\uACBD\uC758 \uD0DC\uC591 \uBC29\uD5A5\uC744 \uD68C\uC804\uC2DC\uD0A4\uB824\uBA74?",
+    options: [
+      "HDRI \uD30C\uC77C\uC744 \uC774\uBBF8\uC9C0 \uD3B8\uC9D1\uAE30\uC5D0\uC11C \uC218\uC815",
+      "Mapping \uB178\uB4DC\uC758 Z Rotation \uAC12\uC744 \uBCC0\uACBD",
+      "Sun Light\uB97C \uCD94\uAC00\uB85C \uC124\uCE58",
+      "\uCE74\uBA54\uB77C\uB97C \uD68C\uC804"
+    ],
+    answer: 1,
+    explanation: "Shader Editor(World \uBAA8\uB4DC)\uC5D0\uC11C Mapping \uB178\uB4DC\uC758 Z Rotation\uC744 \uBCC0\uACBD\uD558\uBA74 HDRI \uD658\uACBD \uC804\uCCB4\uAC00 \uD68C\uC804\uB418\uC5B4 \uD0DC\uC591 \uBC29\uD5A5\uC744 \uC870\uC808\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
+  },
+  {
+    question: "HDRI \uC870\uBA85\uB9CC\uC73C\uB85C \uBD80\uC871\uD55C \uC0C1\uD669\uC740?",
+    options: [
+      "\uC81C\uD488 \uB80C\uB354\uB9C1",
+      "\uAE08\uC18D \uC624\uBE0C\uC81D\uD2B8 \uBC18\uC0AC",
+      "\uD2B9\uC815 \uBC29\uD5A5\uC758 \uAC15\uD55C \uADF8\uB9BC\uC790\uAC00 \uD544\uC694\uD55C \uC7A5\uBA74",
+      "\uC57C\uC678 \uAC74\uCD95 \uC2DC\uAC01\uD654"
+    ],
+    answer: 2,
+    explanation: "HDRI\uB294 \uD658\uACBD \uBC18\uC0AC\uC640 \uBD80\uB4DC\uB7EC\uC6B4 \uC870\uBA85\uC5D0 \uB6F0\uC5B4\uB098\uC9C0\uB9CC, \uD2B9\uC815 \uBC29\uD5A5\uC758 \uAC15\uD55C \uADF8\uB9BC\uC790\uAC00 \uD544\uC694\uD558\uBA74 Sun Light \uB4F1\uC744 \uCD94\uAC00\uB85C \uC0AC\uC6A9\uD574\uC57C \uD569\uB2C8\uB2E4."
+  }
+]);
+</script>
+
+</body>
+</html>

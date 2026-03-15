@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — Cycles vs EEVEE 비교</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Tab Navigation ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+
+/* ── Tab Panels ── */
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+
+/* ── Concept Cards ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card h3 {
+  margin: 0 0 8px; font-size: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.concept-card p {
+  margin: 0; color: var(--muted-strong);
+  font-size: .88rem; line-height: 1.7;
+}
+.concept-card ul {
+  margin: 8px 0 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
+}
+
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: .72rem; font-weight: 600;
+}
+.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: #fbbf24; }
+
+/* ── Keyboard Shortcut ── */
+.kbd {
+  display: inline-block;
+  padding: 3px 8px; border-radius: 6px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  color: var(--key-soft);
+  font-size: .82rem; font-weight: 600;
+  font-family: var(--font);
+}
+
+/* ── Canvas / Demo ── */
+.demo-wrap {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+  margin: 14px 0;
+}
+.demo-wrap canvas {
+  display: block; width: 100%;
+}
+.demo-controls {
+  display: flex; gap: 8px; padding: 12px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+  align-items: center;
+}
+.demo-hint {
+  font-size: .78rem; color: var(--muted);
+  text-align: center; padding: 6px 0 0;
+}
+.demo-btn {
+  padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .82rem;
+  cursor: pointer;
+  transition: background .14s, color .14s;
+}
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active {
+  background: rgba(10,132,255,.14);
+  color: var(--key-soft);
+  border-color: rgba(10,132,255,.3);
+}
+
+/* ── Usage Grid ── */
+.usage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.usage-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 16px;
+}
+.usage-card h4 {
+  margin: 0 0 8px; font-size: .92rem;
+  color: var(--key-soft);
+}
+.usage-card ul {
+  margin: 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem;
+  line-height: 1.8;
+}
+
+/* ── Tip Box ── */
+.tip-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(10,132,255,.2);
+  background: rgba(10,132,255,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+}
+.tip-box strong { color: var(--key-soft); }
+
+/* ── Combo Section ── */
+.combo-section {
+  margin-top: 18px;
+}
+.combo-section h4 {
+  margin: 0 0 10px;
+  font-size: .92rem;
+  color: var(--text);
+}
+.combo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.combo-card {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 12px 14px;
+}
+.combo-card .combo-name {
+  font-size: .86rem;
+  font-weight: 600;
+  color: var(--key-soft);
+  margin-bottom: 4px;
+}
+.combo-card .combo-desc {
+  font-size: .8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ── Shortcut Reference ── */
+.shortcut-list {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.shortcut-list h4 {
+  margin: 0 0 10px;
+  font-size: .9rem;
+  color: var(--text);
+}
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: .84rem;
+  color: var(--muted-strong);
+}
+.shortcut-row + .shortcut-row {
+  border-top: 1px solid var(--line);
+}
+.shortcut-keys {
+  flex-shrink: 0;
+}
+.analogy {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(245,158,11,.06);
+  border: 1px solid rgba(245,158,11,.15);
+  font-size: .82rem;
+  color: #fbbf24;
+  font-style: italic;
+}
+
+/* ── Quiz ── */
+.quiz-progress {
+  font-size: .78rem; color: var(--muted);
+  margin-bottom: 12px;
+}
+.quiz-question {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.quiz-question h4 {
+  margin: 0 0 12px; font-size: .94rem;
+}
+.quiz-option {
+  display: block; width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.025);
+  color: var(--text);
+  font: inherit; font-size: .86rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background .14s, border-color .14s;
+}
+.quiz-option:hover {
+  background: rgba(255,255,255,.06);
+  border-color: var(--line-strong);
+}
+.quiz-option.correct {
+  background: rgba(16,185,129,.12);
+  border-color: rgba(16,185,129,.4);
+  color: var(--success-soft);
+}
+.quiz-option.wrong {
+  background: rgba(239,68,68,.1);
+  border-color: rgba(239,68,68,.3);
+  color: #fca5a5;
+}
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback {
+  margin-top: 8px; padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: .84rem;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: #fca5a5; }
+
+.quiz-score {
+  text-align: center; padding: 20px;
+  font-size: 1.1rem; font-weight: 600;
+}
+.quiz-retry {
+  display: block; margin: 12px auto;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--key);
+  background: rgba(10,132,255,.12);
+  color: var(--key-soft);
+  font: inherit; font-size: .88rem;
+  cursor: pointer;
+  transition: background .14s;
+}
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+
+/* ── Official Doc Reference ── */
+.doc-ref {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(10,132,255,.15);
+  background: rgba(10,132,255,.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-ref a {
+  color: var(--key-soft);
+  font-size: .84rem;
+  text-decoration: none;
+  line-height: 1.5;
+}
+.doc-ref a:hover { text-decoration: underline; }
+
+/* ── Slider ── */
+.demo-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 160px; height: 6px;
+  border-radius: 3px;
+  background: rgba(255,255,255,.12);
+  outline: none;
+}
+.demo-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--key);
+  cursor: pointer;
+  border: 2px solid #fff;
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Tab Bar -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+</nav>
+
+<!-- TAB 1: 개념 이해 -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">Cycles</span> Ray Tracing 엔진</h3>
+      <p>빛의 경로를 물리적으로 추적하여 사실적인 이미지를 만듭니다. 반사, 굴절, 전역 조명(GI), Caustics 등을 정확하게 시뮬레이션합니다. 느리지만 결과물이 사실적입니다.</p>
+      <div class="analogy">Cycles = 사진 촬영 — 시간이 걸리지만 진짜처럼 보여요</div>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-green">EEVEE</span> 실시간 래스터 엔진</h3>
+      <p>게임 엔진과 같은 래스터화 방식으로 빠르게 렌더링합니다. Screen Space Reflections, AO 등 근사 기법을 사용합니다. 빠르지만 물리적 정확도는 Cycles에 못 미칩니다.</p>
+      <div class="analogy">EEVEE = 게임 화면 — 즉시 보이지만 완벽하진 않아요</div>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-amber">비교</span> 주요 차이점</h3>
+      <ul>
+        <li>속도: EEVEE >> Cycles (수십~수백 배)</li>
+        <li>정확도: Cycles >> EEVEE</li>
+        <li>반사/굴절: Cycles 정확 vs EEVEE 근사</li>
+        <li>GI: Cycles 자동 vs EEVEE 수동 설정</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="shortcut-list">
+    <h4>주요 단축키</h4>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">F12</span></span>
+      <span>렌더링 시작</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">F12</span></span>
+      <span>애니메이션 렌더링</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">F11</span></span>
+      <span>마지막 렌더 결과 보기</span>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/render/cycles/index.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Cycles
+    </a>
+  </div>
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/render/eevee/index.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — EEVEE
+    </a>
+  </div>
+</section>
+
+<!-- TAB 2: 시각적 비교 -->
+<section class="panel" id="panel-visual" role="tabpanel">
+  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
+    슬라이더를 좌우로 드래그하여 Cycles(왼쪽)와 EEVEE(오른쪽) 렌더 결과를 비교하세요.
+  </p>
+  <div class="demo-wrap">
+    <canvas id="demoCanvas" width="680" height="380"></canvas>
+    <div class="demo-controls">
+      <span style="font-size:.82rem;color:var(--muted);">Cycles</span>
+      <input type="range" id="splitSlider" class="demo-slider" min="0" max="100" value="50">
+      <span style="font-size:.82rem;color:var(--muted);">EEVEE</span>
+      <button class="demo-btn" id="btnReset" style="margin-left:auto;">50/50</button>
+    </div>
+  </div>
+  <p class="demo-hint">왼쪽: Cycles (사실적 반사/그림자) | 오른쪽: EEVEE (빠르지만 근사)</p>
+</section>
+
+<!-- TAB 3: 언제 쓰나요? -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>Cycles를 쓸 때</h4>
+      <ul>
+        <li>최종 프레젠테이션 / 포트폴리오</li>
+        <li>건축 비주얼라이제이션</li>
+        <li>제품 광고 렌더</li>
+        <li>정확한 유리/금속 반사가 필요할 때</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>EEVEE를 쓸 때</h4>
+      <ul>
+        <li>작업 중 빠른 프리뷰</li>
+        <li>애니메이션 초안 확인</li>
+        <li>게임 에셋 미리보기</li>
+        <li>시간이 부족한 프로젝트</li>
+      </ul>
+    </div>
+  </div>
+  <div class="tip-box">
+    <strong>팁:</strong> 작업 중에는 EEVEE로 빠르게 확인하고, 최종 렌더만 Cycles로 전환하는 워크플로우가 가장 효율적입니다. Render Properties 패널에서 엔진을 바꿀 수 있습니다.
+  </div>
+  <div class="combo-section">
+    <h4>렌더링 최적화 팁</h4>
+    <div class="combo-grid">
+      <div class="combo-card">
+        <div class="combo-name">Cycles + Denoising</div>
+        <div class="combo-desc">적은 Sample로 렌더 후 Denoiser로 노이즈 제거. 렌더 시간을 크게 단축할 수 있습니다.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">EEVEE + Light Probes</div>
+        <div class="combo-desc">Irradiance Volume과 Reflection Cubemap으로 EEVEE의 GI와 반사 품질을 향상시킵니다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/render/cycles/index.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Cycles
+    </a>
+  </div>
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/render/eevee/index.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — EEVEE
+    </a>
+  </div>
+</section>
+
+<!-- TAB 4: 퀴즈 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+// ── Tab Switching ──────────────────────────────
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(t) {
+      t.classList.remove("is-active");
+      t.setAttribute("aria-selected", "false");
+    });
+    document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("is-active"); });
+    tab.classList.add("is-active");
+    tab.setAttribute("aria-selected", "true");
+    document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+  });
+});
+
+// ── Quiz Engine (Safe DOM methods) ────────────
+function initQuiz(questions) {
+  var container = document.getElementById("quizArea");
+  var score = 0, answered = 0;
+  var scoreDiv = null;
+
+  var progress = document.createElement("div");
+  progress.className = "quiz-progress";
+  progress.textContent = "\uBB38\uC81C 0 / " + questions.length + " \u00b7 \uC810\uC218 0\uC810";
+  container.appendChild(progress);
+
+  questions.forEach(function(q, qi) {
+    var div = document.createElement("div");
+    div.className = "quiz-question";
+
+    var heading = document.createElement("h4");
+    heading.textContent = "Q" + (qi + 1) + ". " + q.question;
+    div.appendChild(heading);
+
+    var fb = document.createElement("div");
+    fb.className = "quiz-feedback";
+
+    q.options.forEach(function(opt, oi) {
+      var btn = document.createElement("button");
+      btn.className = "quiz-option";
+      btn.textContent = opt;
+      btn.addEventListener("click", function() {
+        if (btn.disabled) return;
+        div.querySelectorAll(".quiz-option").forEach(function(b) { b.disabled = true; });
+        answered++;
+        if (oi === q.answer) {
+          btn.classList.add("correct");
+          fb.className = "quiz-feedback show correct-fb";
+          fb.textContent = "\u2705 " + q.explanation;
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
+          fb.className = "quiz-feedback show wrong-fb";
+          fb.textContent = "\u274c " + q.explanation;
+
+          var retryBtn = document.createElement("button");
+          retryBtn.className = "quiz-retry";
+          retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
+          retryBtn.textContent = "\uB2E4\uC2DC \uD480\uAE30";
+          retryBtn.addEventListener("click", function() {
+            answered--;
+            div.querySelectorAll(".quiz-option").forEach(function(b) {
+              b.disabled = false;
+              b.classList.remove("wrong", "correct");
+            });
+            fb.className = "quiz-feedback";
+            fb.textContent = "";
+            retryBtn.remove();
+            if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+            progress.textContent = "\uBB38\uC81C " + answered + " / " + questions.length + " \u00b7 \uC810\uC218 " + score + "\uC810";
+          });
+          fb.appendChild(retryBtn);
+        }
+        progress.textContent = "\uBB38\uC81C " + answered + " / " + questions.length + " \u00b7 \uC810\uC218 " + score + "\uC810";
+        if (answered === questions.length) showScore();
+      });
+      div.appendChild(btn);
+    });
+
+    div.appendChild(fb);
+    container.appendChild(div);
+  });
+
+  function showScore() {
+    if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+
+    scoreDiv = document.createElement("div");
+    scoreDiv.className = "quiz-score";
+
+    var emoji = document.createElement("div");
+    emoji.style.cssText = "font-size:36px;margin-bottom:8px";
+    emoji.textContent = score === questions.length ? "\ud83c\udf89" : score >= Math.ceil(questions.length / 2) ? "\ud83d\udc4d" : "\ud83d\udcda";
+    scoreDiv.appendChild(emoji);
+
+    var result = document.createElement("div");
+    result.style.cssText = "font-size:18px;font-weight:500;margin-bottom:6px";
+    result.textContent = score + " / " + questions.length + " \uC815\uB2F5";
+    scoreDiv.appendChild(result);
+
+    var msg = document.createElement("div");
+    msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
+    msg.textContent = score === questions.length ? "\uC644\uBCBD\uD569\uB2C8\uB2E4!" : "\uC870\uAE08 \uB354 \uC5F0\uC2B5\uD558\uBA74 \uC644\uBCBD\uD574\uC9C8 \uAC70\uC608\uC694!";
+    scoreDiv.appendChild(msg);
+
+    var saveBtn = document.createElement("button");
+    saveBtn.className = "quiz-retry";
+    saveBtn.style.cssText = "background:rgba(10,132,255,.18);border-color:var(--key);margin-bottom:8px";
+    saveBtn.textContent = "\uAE30\uB85D \uC800\uC7A5\uD558\uAE30";
+    saveBtn.addEventListener("click", function() {
+      try {
+        var wid = new URLSearchParams(location.search).get("wid")
+               || location.pathname.split("/").pop().replace(".html", "");
+        window.parent.postMessage({
+          type: "showme-quiz-complete",
+          widgetId: wid,
+          score: score,
+          total: questions.length,
+          pass: score >= Math.ceil(questions.length * 0.75)
+        }, "*");
+      } catch(e) {}
+      saveBtn.textContent = "\uC800\uC7A5 \uC644\uB8CC!";
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = ".5";
+    });
+    scoreDiv.appendChild(saveBtn);
+
+    var retry = document.createElement("button");
+    retry.className = "quiz-retry";
+    retry.textContent = "\uCC98\uC74C\uBD80\uD130 \uB2E4\uC2DC";
+    retry.addEventListener("click", function() { location.reload(); });
+    scoreDiv.appendChild(retry);
+
+    container.appendChild(scoreDiv);
+  }
+}
+
+// ── Canvas Cycles vs EEVEE Comparison Demo ────────
+(function() {
+  var canvas = document.getElementById("demoCanvas");
+  var ctx = canvas.getContext("2d");
+  var W = canvas.width, H = canvas.height;
+  var splitPos = 0.5; // 0=all Cycles, 1=all EEVEE
+
+  function drawScene(mode, clipX, clipW) {
+    // mode: "cycles" or "eevee"
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(clipX, 0, clipW, H);
+    ctx.clip();
+
+    // Background
+    if (mode === "cycles") {
+      // Cycles: smooth gradient sky with subtle color
+      var skyGrad = ctx.createLinearGradient(0, 0, 0, H * 0.65);
+      skyGrad.addColorStop(0, "#1a2340");
+      skyGrad.addColorStop(0.5, "#2a3a5c");
+      skyGrad.addColorStop(1, "#3d4a6a");
+      ctx.fillStyle = skyGrad;
+    } else {
+      // EEVEE: slightly banded sky
+      var skyGrad = ctx.createLinearGradient(0, 0, 0, H * 0.65);
+      skyGrad.addColorStop(0, "#1c2545");
+      skyGrad.addColorStop(0.4, "#2e3e60");
+      skyGrad.addColorStop(0.7, "#3a4868");
+      skyGrad.addColorStop(1, "#404e70");
+      ctx.fillStyle = skyGrad;
+    }
+    ctx.fillRect(0, 0, W, H * 0.65);
+
+    // Floor
+    if (mode === "cycles") {
+      var floorGrad = ctx.createLinearGradient(0, H * 0.65, 0, H);
+      floorGrad.addColorStop(0, "#3a3530");
+      floorGrad.addColorStop(1, "#252220");
+      ctx.fillStyle = floorGrad;
+    } else {
+      ctx.fillStyle = "#35302b";
+    }
+    ctx.fillRect(0, H * 0.65, W, H * 0.35);
+
+    // Floor grid / reflection
+    if (mode === "cycles") {
+      // Subtle reflection on floor
+      for (var i = 0; i < 8; i++) {
+        ctx.fillStyle = "rgba(100,120,160," + (0.03 - i * 0.003) + ")";
+        ctx.fillRect(0, H * 0.65 + i * 6, W, 6);
+      }
+    }
+
+    // Main sphere
+    var sx = W * 0.35, sy = H * 0.42, sr = 65;
+
+    // Cycles: proper soft shadow, accurate reflection
+    if (mode === "cycles") {
+      // Soft shadow
+      for (var si = 5; si >= 0; si--) {
+        ctx.beginPath();
+        ctx.ellipse(sx + 10, H * 0.65 + 8, sr * 1.1 + si * 3, sr * 0.2 + si * 1.5, 0, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(0,0,0," + (0.08 - si * 0.012) + ")";
+        ctx.fill();
+      }
+    } else {
+      // EEVEE: sharper shadow
+      ctx.beginPath();
+      ctx.ellipse(sx + 12, H * 0.65 + 6, sr * 1.0, sr * 0.18, 0, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(0,0,0,0.35)";
+      ctx.fill();
+    }
+
+    // Sphere with lighting
+    var sphereGrad = ctx.createRadialGradient(sx - 20, sy - 25, sr * 0.05, sx, sy, sr);
+    if (mode === "cycles") {
+      sphereGrad.addColorStop(0, "#e8ddd0");
+      sphereGrad.addColorStop(0.3, "#b8a898");
+      sphereGrad.addColorStop(0.7, "#6a5a50");
+      sphereGrad.addColorStop(1, "#2a2220");
+    } else {
+      sphereGrad.addColorStop(0, "#ddd0c0");
+      sphereGrad.addColorStop(0.35, "#b0a090");
+      sphereGrad.addColorStop(0.65, "#706058");
+      sphereGrad.addColorStop(1, "#302828");
+    }
+    ctx.beginPath(); ctx.arc(sx, sy, sr, 0, Math.PI * 2);
+    ctx.fillStyle = sphereGrad; ctx.fill();
+
+    // Specular highlight
+    var hlGrad = ctx.createRadialGradient(sx - 22, sy - 28, 2, sx - 22, sy - 28, 20);
+    hlGrad.addColorStop(0, mode === "cycles" ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.5)");
+    hlGrad.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.beginPath(); ctx.arc(sx, sy, sr, 0, Math.PI * 2);
+    ctx.fillStyle = hlGrad; ctx.fill();
+
+    // Glass cube (right side)
+    var cubeX = W * 0.62, cubeY = H * 0.38, cubeW = 80, cubeH = 90;
+
+    if (mode === "cycles") {
+      // Cycles: proper glass with caustics hint
+      // Shadow with caustic color
+      ctx.beginPath();
+      ctx.ellipse(cubeX + cubeW / 2 + 5, H * 0.65 + 6, cubeW * 0.6, cubeH * 0.12, 0, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(0,0,0,0.12)";
+      ctx.fill();
+      // Caustic light spot
+      ctx.beginPath();
+      ctx.ellipse(cubeX + cubeW / 2 + 15, H * 0.65 + 4, 12, 5, 0.2, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(180,200,255,0.15)";
+      ctx.fill();
+
+      // Glass body
+      ctx.fillStyle = "rgba(180,210,240,0.12)";
+      ctx.fillRect(cubeX, cubeY, cubeW, cubeH);
+      ctx.strokeStyle = "rgba(200,220,255,0.4)";
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(cubeX, cubeY, cubeW, cubeH);
+
+      // Refraction lines inside
+      ctx.strokeStyle = "rgba(200,220,255,0.15)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(cubeX + 10, cubeY + 15);
+      ctx.lineTo(cubeX + cubeW - 15, cubeY + cubeH - 20);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cubeX + 20, cubeY + 10);
+      ctx.lineTo(cubeX + cubeW - 10, cubeY + cubeH - 25);
+      ctx.stroke();
+
+      // Edge highlights
+      ctx.strokeStyle = "rgba(255,255,255,0.3)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(cubeX, cubeY); ctx.lineTo(cubeX + cubeW, cubeY);
+      ctx.stroke();
+    } else {
+      // EEVEE: flat-ish glass, no caustics
+      ctx.beginPath();
+      ctx.ellipse(cubeX + cubeW / 2 + 8, H * 0.65 + 5, cubeW * 0.5, cubeH * 0.1, 0, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(0,0,0,0.25)";
+      ctx.fill();
+
+      ctx.fillStyle = "rgba(160,190,220,0.08)";
+      ctx.fillRect(cubeX, cubeY, cubeW, cubeH);
+      ctx.strokeStyle = "rgba(180,200,230,0.25)";
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(cubeX, cubeY, cubeW, cubeH);
+
+      ctx.strokeStyle = "rgba(255,255,255,0.15)";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(cubeX, cubeY); ctx.lineTo(cubeX + cubeW, cubeY);
+      ctx.stroke();
+    }
+
+    // Metal cylinder (smaller)
+    var cylX = W * 0.48, cylY = H * 0.5, cylR = 22, cylH2 = 50;
+
+    if (mode === "cycles") {
+      // Shadow
+      ctx.beginPath();
+      ctx.ellipse(cylX + 5, H * 0.65 + 5, cylR * 1.3, cylR * 0.25, 0, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(0,0,0,0.15)";
+      ctx.fill();
+
+      // Metal body with environment reflection
+      var metalGrad = ctx.createLinearGradient(cylX - cylR, 0, cylX + cylR, 0);
+      metalGrad.addColorStop(0, "#3a3a40");
+      metalGrad.addColorStop(0.3, "#8a8a90");
+      metalGrad.addColorStop(0.5, "#c0c0c8");
+      metalGrad.addColorStop(0.7, "#707078");
+      metalGrad.addColorStop(1, "#2a2a30");
+      ctx.fillStyle = metalGrad;
+      ctx.fillRect(cylX - cylR, cylY - cylH2, cylR * 2, cylH2 * 2);
+
+      // Environment reflection band
+      ctx.fillStyle = "rgba(60,80,120,0.2)";
+      ctx.fillRect(cylX - cylR + 5, cylY - cylH2 + 10, cylR * 2 - 10, 8);
+    } else {
+      ctx.beginPath();
+      ctx.ellipse(cylX + 6, H * 0.65 + 4, cylR * 1.1, cylR * 0.2, 0, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(0,0,0,0.2)";
+      ctx.fill();
+
+      var metalGrad = ctx.createLinearGradient(cylX - cylR, 0, cylX + cylR, 0);
+      metalGrad.addColorStop(0, "#404048");
+      metalGrad.addColorStop(0.4, "#888890");
+      metalGrad.addColorStop(0.6, "#a0a0a8");
+      metalGrad.addColorStop(1, "#303038");
+      ctx.fillStyle = metalGrad;
+      ctx.fillRect(cylX - cylR, cylY - cylH2, cylR * 2, cylH2 * 2);
+    }
+
+    // Top ellipse of cylinder
+    ctx.beginPath();
+    ctx.ellipse(cylX, cylY - cylH2, cylR, cylR * 0.35, 0, 0, Math.PI * 2);
+    ctx.fillStyle = mode === "cycles" ? "#a0a0a8" : "#909098";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,0.2)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Label
+    ctx.fillStyle = mode === "cycles" ? "rgba(10,132,255,0.9)" : "rgba(16,185,129,0.9)";
+    ctx.font = "bold 14px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(mode === "cycles" ? "Cycles" : "EEVEE", W / 2, 24);
+
+    // Info text
+    ctx.fillStyle = "rgba(255,255,255,.4)";
+    ctx.font = "11px sans-serif";
+    if (mode === "cycles") {
+      ctx.textAlign = "left";
+      ctx.fillText("Ray Tracing | 5min+", 12, H - 12);
+    } else {
+      ctx.textAlign = "right";
+      ctx.fillText("Rasterization | <1s", W - 12, H - 12);
+    }
+
+    ctx.restore();
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = "#17181a";
+    ctx.fillRect(0, 0, W, H);
+
+    var splitX = Math.floor(splitPos * W);
+
+    // Draw Cycles side (left)
+    if (splitX > 0) {
+      drawScene("cycles", 0, splitX);
+    }
+
+    // Draw EEVEE side (right)
+    if (splitX < W) {
+      drawScene("eevee", splitX, W - splitX);
+    }
+
+    // Split line
+    ctx.strokeStyle = "#fff";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(splitX, 0);
+    ctx.lineTo(splitX, H);
+    ctx.stroke();
+
+    // Split handle
+    ctx.beginPath();
+    ctx.arc(splitX, H / 2, 14, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(10,132,255,0.9)";
+    ctx.fill();
+    ctx.strokeStyle = "#fff";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Arrows on handle
+    ctx.fillStyle = "#fff";
+    ctx.font = "bold 12px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("\u25C0\u25B6", splitX, H / 2 + 4);
+  }
+
+  var slider = document.getElementById("splitSlider");
+  slider.addEventListener("input", function() {
+    splitPos = parseInt(slider.value) / 100;
+    draw();
+  });
+
+  // Also allow dragging on canvas
+  var dragging = false;
+
+  function getEventPos(e) {
+    var rect = canvas.getBoundingClientRect();
+    var scaleX = canvas.width / rect.width;
+    var clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    return (clientX - rect.left) * scaleX;
+  }
+
+  canvas.addEventListener("mousedown", function(e) {
+    var x = getEventPos(e);
+    if (Math.abs(x - splitPos * W) < 30) { dragging = true; e.preventDefault(); }
+  });
+  canvas.addEventListener("mousemove", function(e) {
+    if (!dragging) return;
+    e.preventDefault();
+    splitPos = Math.max(0.02, Math.min(0.98, getEventPos(e) / W));
+    slider.value = Math.round(splitPos * 100);
+    draw();
+  });
+  canvas.addEventListener("mouseup", function() { dragging = false; });
+  canvas.addEventListener("mouseleave", function() { dragging = false; });
+
+  canvas.addEventListener("touchstart", function(e) {
+    var x = getEventPos(e);
+    if (Math.abs(x - splitPos * W) < 40) { dragging = true; e.preventDefault(); }
+  }, { passive: false });
+  canvas.addEventListener("touchmove", function(e) {
+    if (!dragging) return;
+    e.preventDefault();
+    splitPos = Math.max(0.02, Math.min(0.98, getEventPos(e) / W));
+    slider.value = Math.round(splitPos * 100);
+    draw();
+  }, { passive: false });
+  canvas.addEventListener("touchend", function() { dragging = false; });
+
+  document.getElementById("btnReset").addEventListener("click", function() {
+    splitPos = 0.5;
+    slider.value = 50;
+    draw();
+  });
+
+  draw();
+})();
+
+// ── Quiz Data ─────────────────────────────────
+initQuiz([
+  {
+    question: "Cycles \uB80C\uB354 \uC5D4\uC9C4\uC758 \uD575\uC2EC \uBC29\uC2DD\uC740?",
+    options: [
+      "\uB798\uC2A4\uD130\uB77C\uC774\uC81C\uC774\uC158 (Rasterization)",
+      "\uBE5B\uC758 \uACBD\uB85C\uB97C \uC2DC\uBBAC\uB808\uC774\uC158\uD558\uB294 \uB808\uC774 \uD2B8\uB808\uC774\uC2F1 (Ray Tracing)",
+      "\uD53D\uC140 \uAE30\uBC18 \uBCF4\uAC04\uBC95",
+      "\uC2E4\uC2DC\uAC04 \uD504\uB808\uC784 \uBC84\uD37C\uB9C1"
+    ],
+    answer: 1,
+    explanation: "Cycles\uB294 \uBE5B\uC758 \uACBD\uB85C\uB97C \uBB3C\uB9AC\uC801\uC73C\uB85C \uCD94\uC801\uD558\uB294 Ray Tracing \uBC29\uC2DD\uC744 \uC0AC\uC6A9\uD558\uC5EC \uC0AC\uC2E4\uC801\uC778 \uBC18\uC0AC, \uAD74\uC808, \uADF8\uB9BC\uC790\uB97C \uB9CC\uB4ED\uB2C8\uB2E4."
+  },
+  {
+    question: "EEVEE\uAC00 Cycles\uBCF4\uB2E4 \uBE60\uB978 \uC774\uC720\uB294?",
+    options: [
+      "GPU\uB97C \uC0AC\uC6A9\uD558\uC9C0 \uC54A\uC544\uC11C",
+      "\uBE5B\uC744 \uCD94\uC801\uD558\uC9C0 \uC54A\uACE0 \uADFC\uC0AC(Approximation) \uAE30\uBC95\uC744 \uC0AC\uC6A9\uD558\uBBC0\uB85C",
+      "\uD574\uC0C1\uB3C4\uAC00 \uB0AE\uC544\uC11C",
+      "\uC7AC\uC9C8\uC744 \uBB34\uC2DC\uD558\uBBC0\uB85C"
+    ],
+    answer: 1,
+    explanation: "EEVEE\uB294 \uAC8C\uC784 \uC5D4\uC9C4\uACFC \uAC19\uC740 \uB798\uC2A4\uD130\uD654 \uBC29\uC2DD\uC73C\uB85C, \uBE5B\uC744 \uC9C1\uC811 \uCD94\uC801\uD558\uC9C0 \uC54A\uACE0 \uADFC\uC0AC \uAE30\uBC95\uC73C\uB85C \uBE60\uB974\uAC8C \uB80C\uB354\uB9C1\uD569\uB2C8\uB2E4."
+  },
+  {
+    question: "\uCD5C\uC885 \uD3EC\uD2B8\uD3F4\uB9AC\uC624 \uB80C\uB354\uC5D0 \uAC00\uC7A5 \uC801\uD569\uD55C \uC5D4\uC9C4\uC740?",
+    options: [
+      "EEVEE (\uBE60\uB974\uB2C8\uAE4C)",
+      "Workbench (\uAC00\uBCBC\uC6B0\uB2C8\uAE4C)",
+      "Cycles (\uC0AC\uC2E4\uC801\uC774\uB2C8\uAE4C)",
+      "\uC0C1\uAD00\uC5C6\uB2E4"
+    ],
+    answer: 2,
+    explanation: "\uD3EC\uD2B8\uD3F4\uB9AC\uC624\uCC98\uB7FC \uCD5C\uACE0 \uD488\uC9C8\uC774 \uD544\uC694\uD55C \uACBD\uC6B0 Cycles\uAC00 \uC801\uD569\uD569\uB2C8\uB2E4. \uC0AC\uC2E4\uC801\uC778 \uBC18\uC0AC\uC640 \uADF8\uB9BC\uC790\uB97C \uC81C\uACF5\uD569\uB2C8\uB2E4."
+  },
+  {
+    question: "F12 \uB2E8\uCD95\uD0A4\uC758 \uAE30\uB2A5\uC740?",
+    options: [
+      "\uC800\uC7A5",
+      "\uB80C\uB354\uB9C1 \uC2DC\uC791",
+      "\uC560\uB2C8\uBA54\uC774\uC158 \uC7AC\uC0DD",
+      "\uC804\uCCB4 \uD654\uBA74 \uC804\uD658"
+    ],
+    answer: 1,
+    explanation: "F12\uB97C \uB204\uB974\uBA74 \uD604\uC7AC \uC124\uC815\uB41C \uB80C\uB354 \uC5D4\uC9C4\uC73C\uB85C \uB80C\uB354\uB9C1\uC774 \uC2DC\uC791\uB429\uB2C8\uB2E4. Ctrl+F12\uB294 \uC560\uB2C8\uBA54\uC774\uC158 \uB80C\uB354\uC785\uB2C8\uB2E4."
+  }
+]);
+</script>
+
+</body>
+</html>
