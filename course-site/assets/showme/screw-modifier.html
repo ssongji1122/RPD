@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Show Me — Mirror Modifier 이해</title>
+<title>Show Me — Screw Modifier 이해</title>
 <style>
 /* ══════════════════════════════════════════════════
    Show Me Widget — Standalone Dark Theme
@@ -135,6 +135,7 @@ body {
   display: flex; gap: 8px; padding: 12px;
   border-top: 1px solid var(--line);
   flex-wrap: wrap;
+  align-items: center;
 }
 .demo-hint {
   font-size: .78rem; color: var(--muted);
@@ -154,6 +155,18 @@ body {
   background: rgba(10,132,255,.14);
   color: var(--key-soft);
   border-color: rgba(10,132,255,.3);
+}
+
+/* ── Slider ── */
+.demo-slider-wrap {
+  display: flex; align-items: center; gap: 8px;
+  font-size: .82rem; color: var(--muted-strong);
+}
+.demo-slider-wrap input[type="range"] {
+  width: 120px; accent-color: var(--key);
+}
+.demo-slider-wrap .slider-label {
+  min-width: 50px; font-size: .78rem; color: var(--muted);
 }
 
 /* ── Usage Grid ── */
@@ -355,6 +368,7 @@ body {
   .tabs { padding: 0 8px; }
   .tab { padding: 10px 12px; font-size: .8rem; }
   .panel { padding: 16px 12px; }
+  .demo-slider-wrap input[type="range"] { width: 90px; }
 }
 </style>
 </head>
@@ -363,7 +377,7 @@ body {
 <!-- Tab Bar -->
 <nav class="tabs" role="tablist">
   <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
-  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">인터랙티브 데모</button>
   <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
   <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
 </nav>
@@ -372,96 +386,94 @@ body {
 <section class="panel is-active" id="panel-concept" role="tabpanel">
   <div class="concept-grid">
     <div class="concept-card">
-      <h3>Mirror Modifier란?</h3>
-      <p>거울처럼 한쪽만 편집하면 반대쪽이 자동으로 따라오는 Modifier입니다. 좌우 대칭 모델을 만들 때 작업량을 절반으로 줄여줍니다.</p>
-      <div class="analogy">거울 앞에서 한쪽을 바꾸면 반대쪽이 자동으로 따라와요</div>
+      <h3>Screw Modifier란?</h3>
+      <p>프로파일(단면)을 축 기준으로 회전시켜 3D 형태를 만드는 모디파이어입니다. 선반(Lathe) 가공과 동일한 원리로, 병, 꽃병, 나사 등을 만들 때 사용합니다.</p>
+      <div class="analogy">도자기 물레 위에서 흙을 돌려 형태를 만드는 것</div>
     </div>
     <div class="concept-card">
-      <h3>Clipping이란?</h3>
-      <p>중심선을 넘지 못하게 하는 옵션입니다. ON이면 중심 정점이 정확히 중앙에 고정되어, 양쪽이 깔끔하게 이어집니다.</p>
-      <div class="analogy">중심선에 보이지 않는 벽이 생겨서 정점이 넘어가지 못해요</div>
+      <h3>Axis &amp; Angle</h3>
+      <p><strong>Axis</strong>: 회전 축(X/Y/Z)을 선택합니다.</p>
+      <p style="margin-top:6px"><strong>Angle</strong>: 회전 각도입니다. 360도는 완전한 회전체, 180도는 반쪽만 만들어집니다.</p>
+      <p style="margin-top:6px"><strong>Steps</strong>: 회전의 분할 수입니다. 높을수록 부드러운 곡면이 됩니다.</p>
     </div>
-  </div>
-
-  <div class="shortcut-list">
-    <h4>주요 단축키</h4>
-    <div class="shortcut-row">
-      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">1</span></span>
-      <span>Modifier 추가 패널</span>
-    </div>
-    <div class="shortcut-row">
-      <span class="shortcut-keys"><span class="kbd">S</span> <span class="kbd">X</span> <span class="kbd">0</span></span>
-      <span>중심선 정렬 (선택한 정점의 X좌표를 0으로)</span>
-    </div>
-    <div class="shortcut-row">
-      <span class="shortcut-keys">Clipping 체크박스</span>
-      <span>Properties &rarr; Modifier tab에서 설정</span>
+    <div class="concept-card">
+      <h3>Screw (나사산)</h3>
+      <p>Screw 값을 0이 아닌 값으로 설정하면, 프로파일이 회전하면서 동시에 축 방향으로 이동합니다. 이렇게 나사산이나 스프링 형태를 만들 수 있습니다.</p>
     </div>
   </div>
 
   <div class="doc-ref">
-    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html" target="_blank" rel="noopener">
-      📖 Blender 공식 문서 — Mirror Modifier
+    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/screw.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Screw Modifier
     </a>
   </div>
 </section>
 
-<!-- TAB 2: 시각적 비교 -->
+<!-- TAB 2: 인터랙티브 데모 -->
 <section class="panel" id="panel-visual" role="tabpanel">
   <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    왼쪽 반의 꼭짓점을 드래그하면 오른쪽이 자동으로 미러됩니다.
+    왼쪽의 프로파일(꽃병 단면)이 축을 기준으로 회전하여 3D 윤곽선을 형성합니다. 슬라이더로 Angle과 Screw를 조절해 보세요.
   </p>
   <div class="demo-wrap">
     <canvas id="demoCanvas" width="680" height="300"></canvas>
     <div class="demo-controls">
-      <button class="demo-btn is-active" id="btnClipping">Clipping ON</button>
+      <div class="demo-slider-wrap">
+        <span class="slider-label">Angle</span>
+        <input type="range" id="sliderAngle" min="0" max="360" value="360">
+        <span id="angleVal" style="min-width:32px">360°</span>
+      </div>
+      <div class="demo-slider-wrap">
+        <span class="slider-label">Screw</span>
+        <input type="range" id="sliderScrew" min="0" max="80" value="0">
+        <span id="screwVal" style="min-width:24px">0</span>
+      </div>
       <button class="demo-btn" id="btnReset">초기화</button>
     </div>
   </div>
-  <p class="demo-hint">꼭짓점을 드래그해 보세요. Clipping을 토글하면 중심선 넘기 동작이 달라집니다.</p>
+  <p class="demo-hint">프로파일이 축을 기준으로 회전하여 3D 형태가 만들어지는 과정을 관찰해 보세요.</p>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->
 <section class="panel" id="panel-when" role="tabpanel">
   <div class="usage-grid">
     <div class="usage-card">
-      <h4>Mirror가 필요할 때</h4>
+      <h4>Screw가 필요할 때</h4>
       <ul>
-        <li>좌우 대칭 로봇</li>
-        <li>자동차</li>
-        <li>캐릭터 얼굴</li>
-        <li>가구</li>
+        <li>꽃병 / 병 / 컵 (선반 가공)</li>
+        <li>나사 / 볼트 / 스프링</li>
+        <li>기둥 / 파이프</li>
+        <li>나선 계단</li>
       </ul>
     </div>
     <div class="usage-card">
-      <h4>Mirror를 안 쓰는 경우</h4>
+      <h4>Screw를 안 쓰는 경우</h4>
       <ul>
-        <li>비대칭 디자인</li>
-        <li>유기적 형태</li>
-        <li>한쪽만 다른 디테일</li>
+        <li>비대칭 형태</li>
+        <li>복잡한 형태 (직접 모델링이 나음)</li>
+        <li>유기적이고 불규칙한 모양</li>
       </ul>
     </div>
   </div>
   <div class="tip-box">
-    <strong>팁:</strong> Mirror는 원점(Origin)이 중심에 있어야 해요. <span class="kbd">S</span>+<span class="kbd">X</span>+<span class="kbd">0</span>으로 중심선을 맞추고, 오브젝트를 먼저 중앙에 놓은 뒤 Mirror를 추가하세요.
+    <strong>팁:</strong> 프로파일은 반드시 축 한쪽에만 있어야 합니다! 중심에서 한쪽으로만 그려야 올바른 결과가 나옵니다. 프로파일이 축을 걸쳐 있으면 겹치는 면이 생깁니다.
   </div>
   <div class="combo-section">
     <h4>자주 쓰는 조합</h4>
     <div class="combo-grid">
       <div class="combo-card">
-        <div class="combo-name">Mirror + Subdivision Surface</div>
-        <div class="combo-desc">Mirror로 대칭을 잡고 Subdivision으로 부드럽게. Mirror가 위, Subdivision이 아래 순서로 배치합니다.</div>
+        <div class="combo-name">Screw + Subdivision Surface</div>
+        <div class="combo-desc">Screw로 기본 형태를 만들고 Subdivision으로 부드러운 표면을 만듭니다. Steps를 낮추고 Subdivision으로 보완하면 효율적입니다.</div>
       </div>
       <div class="combo-card">
-        <div class="combo-name">Mirror + Solidify</div>
-        <div class="combo-desc">대칭 형태에 두께를 추가할 때. 얇은 판이나 갑옷 같은 모델에 유용합니다.</div>
+        <div class="combo-name">Screw + Array</div>
+        <div class="combo-desc">나사산 한 바퀴를 Screw로 만들고 Array로 반복하여 긴 나사를 만듭니다.</div>
       </div>
     </div>
   </div>
 
   <div class="doc-ref">
-    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html" target="_blank" rel="noopener">
-      📖 Blender 공식 문서 — Mirror Modifier
+    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/screw.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Screw Modifier
     </a>
   </div>
 </section>
@@ -614,33 +626,37 @@ function initQuiz(questions) {
   }
 }
 
-// ── Canvas Mirror Demo ────────────────────────
+// ── Canvas Screw Demo ─────────────────────────
 (function() {
   var canvas = document.getElementById("demoCanvas");
   var ctx = canvas.getContext("2d");
-  var clipping = true;
-  var dragging = -1;
-  var hitRadius = 14;
+  var angle = 360;
+  var screwOffset = 0;
+  var animFrame = null;
+  var animAngle = 0; // current animation rotation for 3D effect
 
-  // Initial left-half vertices (robot torso shape, top-down view)
-  // These are offsets from center — stored as positive X values from center
-  var defaultVerts = [
-    { x: 10,  y: 60  },  // top-center-ish
-    { x: 100, y: 50  },  // top-right shoulder
-    { x: 120, y: 90  },  // right shoulder corner
-    { x: 110, y: 160 },  // right waist
-    { x: 90,  y: 220 },  // right hip
-    { x: 10,  y: 240 },  // bottom-center-ish
+  // Vase profile points (half profile, from bottom to top)
+  // x = distance from axis, y = height (0 = bottom)
+  var profile = [
+    { x: 30, y: 0 },    // base bottom
+    { x: 35, y: 5 },    // base edge
+    { x: 20, y: 20 },   // narrow base
+    { x: 16, y: 40 },   // neck bottom
+    { x: 14, y: 60 },   // narrowest
+    { x: 18, y: 80 },   // belly start
+    { x: 32, y: 110 },  // belly widest
+    { x: 34, y: 130 },  // upper belly
+    { x: 28, y: 150 },  // shoulder
+    { x: 18, y: 165 },  // neck
+    { x: 16, y: 175 },  // neck narrow
+    { x: 20, y: 185 },  // lip
+    { x: 22, y: 190 },  // rim
   ];
 
-  // Working copy
-  var verts = [];
-  function resetVerts() {
-    verts = defaultVerts.map(function(v) { return { x: v.x, y: v.y }; });
-  }
-  resetVerts();
-
-  var centerX = canvas.width / 2;
+  var profileAreaX = 160; // left area for profile display
+  var axisX = 190;        // rotation axis X position
+  var viewCenterX = 440;  // center of 3D view
+  var viewCenterY = 150;
 
   function draw() {
     var w = canvas.width;
@@ -651,252 +667,265 @@ function initQuiz(questions) {
     ctx.fillStyle = "#17181a";
     ctx.fillRect(0, 0, w, h);
 
-    // Grid lines (subtle)
+    // Grid
     ctx.strokeStyle = "rgba(255,255,255,.04)";
     ctx.lineWidth = 1;
     var step = 40;
     for (var gx = step; gx < w; gx += step) {
-      ctx.beginPath();
-      ctx.moveTo(gx, 0);
-      ctx.lineTo(gx, h);
-      ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
     }
     for (var gy = step; gy < h; gy += step) {
-      ctx.beginPath();
-      ctx.moveTo(0, gy);
-      ctx.lineTo(w, gy);
-      ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
     }
 
-    // Center mirror axis — dashed line
-    ctx.strokeStyle = "rgba(245,158,11,.5)";
-    ctx.lineWidth = 2;
-    ctx.setLineDash([8, 6]);
+    // Divider line
+    ctx.strokeStyle = "rgba(255,255,255,.08)";
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
     ctx.beginPath();
-    ctx.moveTo(centerX, 0);
-    ctx.lineTo(centerX, h);
+    ctx.moveTo(profileAreaX + 20, 10);
+    ctx.lineTo(profileAreaX + 20, h - 10);
     ctx.stroke();
     ctx.setLineDash([]);
 
-    // Axis label
-    ctx.fillStyle = "rgba(245,158,11,.7)";
-    ctx.font = "11px sans-serif";
+    // ── Left: Profile ──
+    ctx.fillStyle = "rgba(10,132,255,.7)";
+    ctx.font = "bold 11px sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("Mirror Axis (X=0)", centerX, 18);
+    ctx.fillText("Profile (단면)", profileAreaX / 2 + 10, 18);
 
-    // Draw left half polygon (original)
-    drawPolygon(verts, -1, "rgba(10,132,255,.25)", "rgba(10,132,255,.7)");
+    // Axis line (vertical)
+    var profAxisX = 50;
+    var profBaseY = h - 40;
+    ctx.strokeStyle = "rgba(245,158,11,.5)";
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    ctx.moveTo(profAxisX, 30);
+    ctx.lineTo(profAxisX, profBaseY + 10);
+    ctx.stroke();
+    ctx.setLineDash([]);
 
-    // Draw right half polygon (mirrored)
-    var mirrored = verts.map(function(v) {
-      return { x: v.x, y: v.y };
+    ctx.fillStyle = "rgba(245,158,11,.6)";
+    ctx.font = "10px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Axis", profAxisX, profBaseY + 24);
+
+    // Draw profile curve
+    ctx.beginPath();
+    profile.forEach(function(p, i) {
+      var px = profAxisX + p.x;
+      var py = profBaseY - p.y;
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
     });
-    drawPolygon(mirrored, 1, "rgba(16,185,129,.15)", "rgba(16,185,129,.5)");
+    ctx.strokeStyle = "rgba(10,132,255,.8)";
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
 
-    // Labels
-    ctx.font = "bold 12px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillStyle = "rgba(10,132,255,.8)";
-    ctx.fillText("Original (Edit)", centerX - 80, h - 14);
-    ctx.fillStyle = "rgba(16,185,129,.6)";
-    ctx.fillText("Mirrored (Auto)", centerX + 80, h - 14);
-
-    // Draw vertex handles on left side
-    verts.forEach(function(v, i) {
-      var sx = centerX - v.x;
-      var sy = v.y;
+    // Profile vertices
+    profile.forEach(function(p) {
+      var px = profAxisX + p.x;
+      var py = profBaseY - p.y;
       ctx.beginPath();
-      ctx.arc(sx, sy, 6, 0, Math.PI * 2);
-      ctx.fillStyle = (dragging === i) ? "#0a84ff" : "rgba(10,132,255,.9)";
+      ctx.arc(px, py, 3, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(10,132,255,.9)";
       ctx.fill();
-      ctx.strokeStyle = "#fff";
-      ctx.lineWidth = 1.5;
+    });
+
+    // ── Right: 3D Screw visualization ──
+    ctx.fillStyle = "rgba(16,185,129,.7)";
+    ctx.font = "bold 11px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("3D Result (Angle: " + angle + "\u00b0)", viewCenterX, 18);
+
+    // Rotation axis (vertical dashed)
+    ctx.strokeStyle = "rgba(245,158,11,.4)";
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    ctx.moveTo(viewCenterX, 30);
+    ctx.lineTo(viewCenterX, h - 20);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Draw revolved surface as wireframe rings
+    var angleRad = angle * Math.PI / 180;
+    var numRings = Math.max(2, Math.round(angle / 15));
+    var ringStep = angleRad / numRings;
+
+    // Scale for 3D view
+    var scale3D = 0.7;
+    var baseY3D = h - 40;
+    var tiltX = 0.35; // perspective tilt for X
+    var tiltY = 0.85; // perspective compression for depth
+
+    // Draw rings (horizontal ellipses at each profile point)
+    for (var pi = 0; pi < profile.length; pi++) {
+      var p = profile[pi];
+      var r = p.x * scale3D;
+      var cy = baseY3D - p.y * scale3D;
+      var screwShift = (p.y / 190) * screwOffset * scale3D;
+      cy -= screwShift;
+
+      // Draw arc for this profile ring
+      ctx.beginPath();
+      for (var ai = 0; ai <= numRings; ai++) {
+        var a = ai * ringStep + animAngle;
+        var rx = Math.cos(a) * r;
+        var ry = Math.sin(a) * r * tiltX;
+        var sx = viewCenterX + rx;
+        var sy = cy - ry;
+        if (ai === 0) ctx.moveTo(sx, sy);
+        else ctx.lineTo(sx, sy);
+      }
+      ctx.strokeStyle = "rgba(16,185,129,.3)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    // Draw meridian lines (vertical profile curves at different angles)
+    var numMeridians = Math.max(2, Math.round(angle / 30));
+    var meridianStep = angleRad / numMeridians;
+
+    for (var mi = 0; mi <= numMeridians; mi++) {
+      var ma = mi * meridianStep + animAngle;
+      ctx.beginPath();
+      profile.forEach(function(p, i) {
+        var r = p.x * scale3D;
+        var cy = baseY3D - p.y * scale3D;
+        var screwShift = (p.y / 190) * screwOffset * scale3D;
+        cy -= screwShift;
+
+        var rx = Math.cos(ma) * r;
+        var ry = Math.sin(ma) * r * tiltX;
+        var sx = viewCenterX + rx;
+        var sy = cy - ry;
+        if (i === 0) ctx.moveTo(sx, sy);
+        else ctx.lineTo(sx, sy);
+      });
+
+      // Determine if this meridian is on the "front" (visible) side
+      var facing = Math.sin(ma);
+      var alpha = facing > 0 ? 0.6 : 0.15;
+      ctx.strokeStyle = "rgba(16,185,129," + alpha + ")";
+      ctx.lineWidth = facing > 0 ? 2 : 1;
+      ctx.stroke();
+    }
+
+    // Draw the two edge profile lines (start and end of the angle)
+    [0, angleRad].forEach(function(edgeAngle, edgeIdx) {
+      var ea = edgeAngle + animAngle;
+      ctx.beginPath();
+      profile.forEach(function(p, i) {
+        var r = p.x * scale3D;
+        var cy = baseY3D - p.y * scale3D;
+        var screwShift = (p.y / 190) * screwOffset * scale3D;
+        cy -= screwShift;
+        var rx = Math.cos(ea) * r;
+        var ry = Math.sin(ea) * r * tiltX;
+        var sx = viewCenterX + rx;
+        var sy = cy - ry;
+        if (i === 0) ctx.moveTo(sx, sy);
+        else ctx.lineTo(sx, sy);
+      });
+      ctx.strokeStyle = "rgba(10,132,255,.7)";
+      ctx.lineWidth = 2;
       ctx.stroke();
     });
 
-    // Clipping indicator
-    ctx.fillStyle = clipping ? "rgba(16,185,129,.7)" : "rgba(239,68,68,.7)";
-    ctx.font = "bold 11px sans-serif";
-    ctx.textAlign = "left";
-    ctx.fillText("Clipping: " + (clipping ? "ON" : "OFF"), 12, 18);
-  }
-
-  function drawPolygon(pts, side, fillColor, strokeColor) {
-    // side: -1 = left of center, +1 = right of center
-    if (pts.length < 2) return;
-    ctx.beginPath();
-    pts.forEach(function(v, i) {
-      var sx = (side === -1) ? (centerX - v.x) : (centerX + v.x);
-      var sy = v.y;
-      if (i === 0) ctx.moveTo(sx, sy);
-      else ctx.lineTo(sx, sy);
-    });
-    ctx.closePath();
-    ctx.fillStyle = fillColor;
-    ctx.fill();
-    ctx.strokeStyle = strokeColor;
-    ctx.lineWidth = 2;
-    ctx.stroke();
-  }
-
-  function getEventPos(e) {
-    var rect = canvas.getBoundingClientRect();
-    var scaleX = canvas.width / rect.width;
-    var scaleY = canvas.height / rect.height;
-    var clientX, clientY;
-    if (e.touches && e.touches.length > 0) {
-      clientX = e.touches[0].clientX;
-      clientY = e.touches[0].clientY;
-    } else {
-      clientX = e.clientX;
-      clientY = e.clientY;
+    // Screw info
+    if (screwOffset > 0) {
+      ctx.fillStyle = "rgba(245,158,11,.7)";
+      ctx.font = "11px sans-serif";
+      ctx.textAlign = "right";
+      ctx.fillText("Screw offset: " + screwOffset, w - 12, h - 12);
     }
-    return {
-      x: (clientX - rect.left) * scaleX,
-      y: (clientY - rect.top) * scaleY
-    };
   }
 
-  function findVertex(pos) {
-    var best = -1;
-    var bestDist = hitRadius * hitRadius;
-    verts.forEach(function(v, i) {
-      var sx = centerX - v.x;
-      var sy = v.y;
-      var dx = pos.x - sx;
-      var dy = pos.y - sy;
-      var d2 = dx * dx + dy * dy;
-      if (d2 < bestDist) {
-        bestDist = d2;
-        best = i;
-      }
-    });
-    return best;
-  }
-
-  function onDown(e) {
-    e.preventDefault();
-    var pos = getEventPos(e);
-    dragging = findVertex(pos);
-    if (dragging >= 0) draw();
-  }
-
-  function onMove(e) {
-    if (dragging < 0) return;
-    e.preventDefault();
-    var pos = getEventPos(e);
-    // Convert screen position to vertex coords (offset from center)
-    var newX = centerX - pos.x;
-    var newY = pos.y;
-
-    // Clamp Y
-    if (newY < 10) newY = 10;
-    if (newY > canvas.height - 10) newY = canvas.height - 10;
-
-    // Clipping: prevent crossing center line (x must stay >= 0)
-    if (clipping) {
-      if (newX < 0) newX = 0;
-    }
-    // Even without clipping, don't go too far right
-    if (newX > centerX - 10) newX = centerX - 10;
-
-    verts[dragging].x = newX;
-    verts[dragging].y = newY;
+  // Animation loop
+  function animate() {
+    animAngle += 0.008;
     draw();
+    animFrame = requestAnimationFrame(animate);
   }
 
-  function onUp(e) {
-    if (dragging >= 0) {
-      dragging = -1;
-      draw();
-    }
-  }
+  animate();
 
-  // Mouse events
-  canvas.addEventListener("mousedown", onDown);
-  canvas.addEventListener("mousemove", onMove);
-  canvas.addEventListener("mouseup", onUp);
-  canvas.addEventListener("mouseleave", onUp);
-
-  // Touch events
-  canvas.addEventListener("touchstart", onDown, { passive: false });
-  canvas.addEventListener("touchmove", onMove, { passive: false });
-  canvas.addEventListener("touchend", onUp);
-  canvas.addEventListener("touchcancel", onUp);
-
-  // Clipping toggle
-  var btnClipping = document.getElementById("btnClipping");
-  btnClipping.addEventListener("click", function() {
-    clipping = !clipping;
-    if (clipping) {
-      btnClipping.textContent = "Clipping ON";
-      btnClipping.classList.add("is-active");
-      // Enforce clipping on current verts
-      verts.forEach(function(v) {
-        if (v.x < 0) v.x = 0;
-      });
-    } else {
-      btnClipping.textContent = "Clipping OFF";
-      btnClipping.classList.remove("is-active");
-    }
-    draw();
+  // Angle slider
+  var sliderAngle = document.getElementById("sliderAngle");
+  var angleVal = document.getElementById("angleVal");
+  sliderAngle.addEventListener("input", function() {
+    angle = parseInt(this.value);
+    angleVal.textContent = angle + "\u00b0";
   });
+  sliderAngle.addEventListener("touchstart", function(e) { e.stopPropagation(); }, { passive: true });
+
+  // Screw slider
+  var sliderScrew = document.getElementById("sliderScrew");
+  var screwVal = document.getElementById("screwVal");
+  sliderScrew.addEventListener("input", function() {
+    screwOffset = parseInt(this.value);
+    screwVal.textContent = screwOffset;
+  });
+  sliderScrew.addEventListener("touchstart", function(e) { e.stopPropagation(); }, { passive: true });
 
   // Reset button
   document.getElementById("btnReset").addEventListener("click", function() {
-    resetVerts();
-    draw();
+    angle = 360;
+    screwOffset = 0;
+    sliderAngle.value = 360;
+    sliderScrew.value = 0;
+    angleVal.textContent = "360\u00b0";
+    screwVal.textContent = "0";
   });
-
-  // Initial draw
-  draw();
 })();
 
 // ── Quiz Data ─────────────────────────────────
 initQuiz([
   {
-    question: "Mirror Modifier\uB97C \uCD94\uAC00\uD588\uB294\uB370 \uBBF8\uB7EC\uB41C \uBC18\uCABD\uC774 \uC774\uC0C1\uD55C \uACF3\uC5D0 \uB098\uD0C0\uB098\uC694. \uAC00\uC7A5 \uD754\uD55C \uC6D0\uC778\uC740?",
+    question: "Screw Modifier\uC758 \uAE30\uBCF8 \uC6D0\uB9AC\uB294 \uBB34\uC5C7\uC778\uAC00\uC694?",
     options: [
-      "Apply Scale\uC744 \uC548 \uD574\uC11C",
-      "Origin\uC774 \uC624\uBE0C\uC81D\uD2B8 \uC911\uC2EC\uC5D0 \uC788\uC9C0 \uC54A\uC544\uC11C",
-      "Clipping\uC774 \uCF1C\uC838 \uC788\uC5B4\uC11C",
-      "Edit Mode\uAC00 \uC544\uB2C8\uB77C\uC11C"
+      "\uBA54\uC26C\uB97C \uBCF5\uC81C\uD558\uC5EC \uBC30\uC5F4\uD55C\uB2E4",
+      "\uD504\uB85C\uD30C\uC77C\uC744 \uCD95 \uAE30\uC900\uC73C\uB85C \uD68C\uC804\uD55C\uB2E4",
+      "\uC624\uBE0C\uC81D\uD2B8\uB97C \uB300\uCE6D \uBCF5\uC81C\uD55C\uB2E4",
+      "\uD45C\uBA74\uC744 \uBD80\uB4DC\uB7FD\uAC8C \uB9CC\uB4E0\uB2E4"
     ],
     answer: 1,
-    explanation: "Mirror\uB294 Origin\uC744 \uAE30\uC900\uC73C\uB85C \uBC18\uC804\uD569\uB2C8\uB2E4. Origin\uC774 \uC624\uBE0C\uC81D\uD2B8 \uC911\uC2EC\uC5D0 \uC788\uC9C0 \uC54A\uC73C\uBA74 \uBBF8\uB7EC\uB41C \uBC18\uCABD\uC774 \uC5C9\uB69A\uD55C \uC704\uCE58\uC5D0 \uC0DD\uAE41\uB2C8\uB2E4."
+    explanation: "Screw Modifier\uB294 2D \uD504\uB85C\uD30C\uC77C(\uB2E8\uBA74)\uC744 \uCD95 \uAE30\uC900\uC73C\uB85C \uD68C\uC804\uC2DC\uCF1C 3D \uD615\uD0DC\uB97C \uB9CC\uB4ED\uB2C8\uB2E4."
   },
   {
-    question: "Clipping \uC635\uC158\uC744 \uCF1C\uBA74 \uC5B4\uB5A4 \uD6A8\uACFC\uAC00 \uC788\uB098\uC694?",
+    question: "Angle\uC744 180\uB3C4\uB85C \uC124\uC815\uD558\uBA74 \uACB0\uACFC\uB294?",
     options: [
-      "\uBBF8\uB7EC\uAC00 \uBE44\uD65C\uC131\uD654\uB41C\uB2E4",
-      "\uC790\uB3D9\uC73C\uB85C Apply\uB41C\uB2E4",
-      "\uC911\uC2EC \uC815\uC810\uC774 \uBBF8\uB7EC \uCD95\uC744 \uB118\uC9C0 \uBABB\uD55C\uB2E4",
-      "\uBC18\uB300\uD3B8\uC774 \uC228\uACA8\uC9C4\uB2E4"
+      "\uC644\uC804\uD55C \uD68C\uC804\uCCB4",
+      "\uBC18\uCABD \uD68C\uC804\uCCB4",
+      "\uB098\uC0AC\uC0B0 \uD615\uD0DC",
+      "\uD504\uB85C\uD30C\uC77C\uB9CC \uBCF4\uC778\uB2E4"
     ],
-    answer: 2,
-    explanation: "Clipping\uC744 \uCF1C\uBA74 \uC815\uC810\uC774 \uBBF8\uB7EC \uCD95\uC744 \uB118\uC5B4\uAC00\uC9C0 \uBABB\uD569\uB2C8\uB2E4. \uC774\uB807\uAC8C \uD558\uBA74 \uC911\uC2EC\uC120\uC5D0\uC11C \uC591\uCABD\uC774 \uAE54\uB054\uD558\uAC8C \uC774\uC5B4\uC9D1\uB2C8\uB2E4."
+    answer: 1,
+    explanation: "Angle 180\uB3C4\uB294 \uBC18\uBC14\uD034\uB9CC \uD68C\uC804\uD558\uBBC0\uB85C \uBC18\uCABD \uD68C\uC804\uCCB4\uAC00 \uB9CC\uB4E4\uC5B4\uC9D1\uB2C8\uB2E4."
   },
   {
-    question: "S \u2192 X \u2192 0\uC744 \uB204\uB974\uBA74 \uC5B4\uB5A4 \uC77C\uC774 \uC77C\uC5B4\uB098\uB098\uC694?",
+    question: "\uB098\uC0AC\uC0B0\uC744 \uB9CC\uB4E4\uB824\uBA74 \uC5B4\uB5BB\uAC8C \uD574\uC57C \uD558\uB098\uC694?",
     options: [
-      "\uC624\uBE0C\uC81D\uD2B8\uAC00 \uC0AD\uC81C\uB41C\uB2E4",
-      "X\uCD95 \uBBF8\uB7EC\uAC00 \uC801\uC6A9\uB41C\uB2E4",
-      "X\uC88C\uD45C\uAC00 0\uC774 \uB418\uC5B4 \uC911\uC2EC\uC120 \uC815\uB82C",
-      "\uC2A4\uCF00\uC77C\uC774 \uCD08\uAE30\uD654\uB41C\uB2E4"
+      "Angle\uC744 720\uB3C4\uB85C \uC124\uC815\uD55C\uB2E4",
+      "Steps\uB97C 1\uB85C \uC124\uC815\uD55C\uB2E4",
+      "Screw \uAC12\uC744 0\uC774 \uC544\uB2CC \uAC12\uC73C\uB85C \uC124\uC815\uD55C\uB2E4",
+      "Array Modifier\uB97C \uCD94\uAC00\uD55C\uB2E4"
     ],
     answer: 2,
-    explanation: "S(Scale) \u2192 X(\uCD95 \uC81C\uD55C) \u2192 0(\uAC12)\uC744 \uB204\uB974\uBA74 \uC120\uD0DD\uD55C \uC815\uC810\uC758 X\uC88C\uD45C\uAC00 0\uC774 \uB418\uC5B4 \uC815\uD655\uD788 \uC911\uC2EC\uC120\uC5D0 \uC815\uB82C\uB429\uB2C8\uB2E4."
+    explanation: "Screw \uAC12\uC744 0\uC774 \uC544\uB2CC \uAC12\uC73C\uB85C \uC124\uC815\uD558\uBA74 \uD68C\uC804\uD558\uBA74\uC11C \uCD95 \uBC29\uD5A5\uC73C\uB85C \uC774\uB3D9\uD558\uC5EC \uB098\uC0AC\uC0B0/\uC2A4\uD504\uB9C1 \uD615\uD0DC\uAC00 \uB9CC\uB4E4\uC5B4\uC9D1\uB2C8\uB2E4."
   },
   {
-    question: "Mirror + Subdivision Surface \uC870\uD569\uC5D0\uC11C Modifier \uC21C\uC11C\uB294?",
+    question: "\uD504\uB85C\uD30C\uC77C \uC704\uCE58\uC5D0\uC11C \uC8FC\uC758\uD560 \uC810\uC740?",
     options: [
-      "\uC21C\uC11C \uC0C1\uAD00\uC5C6\uB2E4",
-      "Subdivision\uC774 \uC704",
-      "Mirror\uAC00 \uC704",
-      "\uB458 \uB2E4 Apply \uD6C4 \uC0AC\uC6A9"
+      "\uD504\uB85C\uD30C\uC77C\uC744 \uCD95 \uC911\uC559\uC5D0 \uBC30\uCE58\uD55C\uB2E4",
+      "\uD504\uB85C\uD30C\uC77C\uC744 \uCD95 \uD55C\uCABD\uC5D0\uB9CC \uBC30\uCE58\uD55C\uB2E4",
+      "\uD504\uB85C\uD30C\uC77C\uC744 \uCD95\uC5D0\uC11C \uBA40\uB9AC \uBC30\uCE58\uD55C\uB2E4",
+      "\uD504\uB85C\uD30C\uC77C \uC704\uCE58\uB294 \uC0C1\uAD00\uC5C6\uB2E4"
     ],
-    answer: 2,
-    explanation: "Mirror\uAC00 \uC704\uC5D0, Subdivision\uC774 \uC544\uB798\uC5D0 \uC640\uC57C \uD569\uB2C8\uB2E4. \uBA3C\uC800 \uB300\uCE6D\uC744 \uC7A1\uACE0 \uB098\uC11C \uBD80\uB4DC\uB7FD\uAC8C \uB9CC\uB4DC\uB294 \uAC83\uC774 \uC62C\uBC14\uB978 \uC21C\uC11C\uC785\uB2C8\uB2E4."
+    answer: 1,
+    explanation: "\uD504\uB85C\uD30C\uC77C\uC740 \uBC18\uB4DC\uC2DC \uCD95 \uD55C\uCABD\uC5D0\uB9CC \uC788\uC5B4\uC57C \uD569\uB2C8\uB2E4. \uCD95\uC744 \uAC78\uCCD0 \uC788\uC73C\uBA74 \uACA8\uCE58\uB294 \uBA74\uC774 \uC0DD\uAE41\uB2C8\uB2E4."
   }
 ]);
 </script>

@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — UV Unwrapping 이해</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Tab Navigation ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+
+/* ── Tab Panels ── */
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+
+/* ── Concept Cards ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card h3 {
+  margin: 0 0 8px; font-size: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.concept-card p {
+  margin: 0; color: var(--muted-strong);
+  font-size: .88rem; line-height: 1.7;
+}
+.concept-card ul {
+  margin: 8px 0 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
+}
+
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: .72rem; font-weight: 600;
+}
+.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: #fbbf24; }
+
+/* ── Keyboard Shortcut ── */
+.kbd {
+  display: inline-block;
+  padding: 3px 8px; border-radius: 6px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  color: var(--key-soft);
+  font-size: .82rem; font-weight: 600;
+  font-family: var(--font);
+}
+
+/* ── Canvas / Demo ── */
+.demo-wrap {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+  margin: 14px 0;
+}
+.demo-wrap canvas {
+  display: block; width: 100%;
+}
+.demo-controls {
+  display: flex; gap: 8px; padding: 12px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.demo-hint {
+  font-size: .78rem; color: var(--muted);
+  text-align: center; padding: 6px 0 0;
+}
+.demo-btn {
+  padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .82rem;
+  cursor: pointer;
+  transition: background .14s, color .14s;
+}
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active {
+  background: rgba(10,132,255,.14);
+  color: var(--key-soft);
+  border-color: rgba(10,132,255,.3);
+}
+
+/* ── Usage Grid ── */
+.usage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.usage-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 16px;
+}
+.usage-card h4 {
+  margin: 0 0 8px; font-size: .92rem;
+  color: var(--key-soft);
+}
+.usage-card ul {
+  margin: 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem;
+  line-height: 1.8;
+}
+
+/* ── Tip Box ── */
+.tip-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(10,132,255,.2);
+  background: rgba(10,132,255,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+}
+.tip-box strong { color: var(--key-soft); }
+
+/* ── Combo Section ── */
+.combo-section {
+  margin-top: 18px;
+}
+.combo-section h4 {
+  margin: 0 0 10px;
+  font-size: .92rem;
+  color: var(--text);
+}
+.combo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.combo-card {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 12px 14px;
+}
+.combo-card .combo-name {
+  font-size: .86rem;
+  font-weight: 600;
+  color: var(--key-soft);
+  margin-bottom: 4px;
+}
+.combo-card .combo-desc {
+  font-size: .8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ── Shortcut Reference ── */
+.shortcut-list {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.shortcut-list h4 {
+  margin: 0 0 10px;
+  font-size: .9rem;
+  color: var(--text);
+}
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: .84rem;
+  color: var(--muted-strong);
+}
+.shortcut-row + .shortcut-row {
+  border-top: 1px solid var(--line);
+}
+.shortcut-keys {
+  flex-shrink: 0;
+}
+.analogy {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(245,158,11,.06);
+  border: 1px solid rgba(245,158,11,.15);
+  font-size: .82rem;
+  color: #fbbf24;
+  font-style: italic;
+}
+
+/* ── Quiz ── */
+.quiz-progress {
+  font-size: .78rem; color: var(--muted);
+  margin-bottom: 12px;
+}
+.quiz-question {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.quiz-question h4 {
+  margin: 0 0 12px; font-size: .94rem;
+}
+.quiz-option {
+  display: block; width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.025);
+  color: var(--text);
+  font: inherit; font-size: .86rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background .14s, border-color .14s;
+}
+.quiz-option:hover {
+  background: rgba(255,255,255,.06);
+  border-color: var(--line-strong);
+}
+.quiz-option.correct {
+  background: rgba(16,185,129,.12);
+  border-color: rgba(16,185,129,.4);
+  color: var(--success-soft);
+}
+.quiz-option.wrong {
+  background: rgba(239,68,68,.1);
+  border-color: rgba(239,68,68,.3);
+  color: #fca5a5;
+}
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback {
+  margin-top: 8px; padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: .84rem;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: #fca5a5; }
+
+.quiz-score {
+  text-align: center; padding: 20px;
+  font-size: 1.1rem; font-weight: 600;
+}
+.quiz-retry {
+  display: block; margin: 12px auto;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--key);
+  background: rgba(10,132,255,.12);
+  color: var(--key-soft);
+  font: inherit; font-size: .88rem;
+  cursor: pointer;
+  transition: background .14s;
+}
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+
+/* ── Official Doc Reference ── */
+.doc-ref {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(10,132,255,.15);
+  background: rgba(10,132,255,.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-ref a {
+  color: var(--key-soft);
+  font-size: .84rem;
+  text-decoration: none;
+  line-height: 1.5;
+}
+.doc-ref a:hover { text-decoration: underline; }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Tab Bar -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+</nav>
+
+<!-- TAB 1: 개념 이해 -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3>UV Unwrapping이란?</h3>
+      <p>3D 메쉬의 표면을 2D 평면으로 펼치는 과정입니다. 텍스처(이미지)를 3D 모델에 올바르게 입히려면, 각 면이 2D 이미지의 어느 부분에 대응하는지 정의해야 합니다. 이때 U, V 좌표계를 사용합니다.</p>
+      <div class="analogy">종이 상자를 뜯어서 평면으로 펼치는 것과 같습니다 — 3D를 2D로 만드는 과정이에요</div>
+    </div>
+    <div class="concept-card">
+      <h3>Seam(재단선)이란?</h3>
+      <p>UV를 펼칠 때 "어디를 잘라야 하는지" 알려주는 선입니다. Seam의 위치에 따라 UV Island(섬)의 모양과 개수가 달라집니다. 적절한 Seam 배치가 깨끗한 UV의 핵심입니다.</p>
+      <div class="analogy">옷을 만들 때 천을 자르는 재단선 — 어디를 자르느냐에 따라 결과물이 달라져요</div>
+    </div>
+  </div>
+
+  <div class="shortcut-list">
+    <h4>주요 단축키</h4>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">U</span></span>
+      <span>UV Unwrap 메뉴 (UV Mapping)</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">E</span> &rarr; Mark Seam</span>
+      <span>선택한 엣지를 Seam으로 지정</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">E</span> &rarr; Clear Seam</span>
+      <span>Seam 제거</span>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/modeling/meshes/uv/unwrapping/index.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — UV Unwrapping
+    </a>
+  </div>
+</section>
+
+<!-- TAB 2: 시각적 비교 -->
+<section class="panel" id="panel-visual" role="tabpanel">
+  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
+    정육면체의 Seam 위치를 바꿔보세요. Seam에 따라 UV가 어떻게 펼쳐지는지 확인할 수 있습니다.
+  </p>
+  <div class="demo-wrap">
+    <canvas id="demoCanvas" width="680" height="360"></canvas>
+    <div class="demo-controls">
+      <button class="demo-btn is-active" id="btnCross">십자형 Seam</button>
+      <button class="demo-btn" id="btnStrip">띠형 Seam</button>
+      <button class="demo-btn" id="btnCustom">커스텀 Seam</button>
+      <button class="demo-btn" id="btnAnimate">펼치기 애니메이션</button>
+    </div>
+  </div>
+  <p class="demo-hint">버튼을 눌러 Seam 위치를 바꾸면 UV 결과가 달라집니다. '펼치기 애니메이션'으로 펼쳐지는 과정을 확인하세요.</p>
+</section>
+
+<!-- TAB 3: 언제 쓰나요? -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>UV Unwrapping이 필요할 때</h4>
+      <ul>
+        <li>텍스처 페인팅 (Texture Paint)</li>
+        <li>이미지 텍스처 매핑</li>
+        <li>게임 에셋 제작</li>
+        <li>Baking (Normal Map, AO 등)</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>UV가 덜 중요한 경우</h4>
+      <ul>
+        <li>Procedural 텍스처만 사용</li>
+        <li>단색 재질 (Color만 적용)</li>
+        <li>간단한 프리뷰/스케치</li>
+      </ul>
+    </div>
+  </div>
+  <div class="tip-box">
+    <strong>팁:</strong> Smart UV Project는 빠르지만 결과가 깔끔하지 않을 수 있습니다. 중요한 모델은 직접 Seam을 잡고 <span class="kbd">U</span> &rarr; Unwrap을 사용하세요. Seam은 눈에 잘 안 보이는 곳(겨드랑이, 뒤통수 등)에 배치하는 것이 좋습니다.
+  </div>
+  <div class="combo-section">
+    <h4>자주 쓰는 워크플로우</h4>
+    <div class="combo-grid">
+      <div class="combo-card">
+        <div class="combo-name">Mark Seam → Unwrap → UV Editor 정리</div>
+        <div class="combo-desc">Edit Mode에서 Seam을 잡고, U키로 Unwrap한 뒤, UV Editor에서 Island를 정렬합니다.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Smart UV Project → 수동 보정</div>
+        <div class="combo-desc">복잡한 모델은 먼저 Smart UV Project로 대략 펼친 뒤, 문제 부분만 수동으로 Seam을 잡아 다시 Unwrap합니다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/modeling/meshes/uv/unwrapping/index.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — UV Unwrapping
+    </a>
+  </div>
+</section>
+
+<!-- TAB 4: 퀴즈 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+// ── Tab Switching ──────────────────────────────
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(t) {
+      t.classList.remove("is-active");
+      t.setAttribute("aria-selected", "false");
+    });
+    document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("is-active"); });
+    tab.classList.add("is-active");
+    tab.setAttribute("aria-selected", "true");
+    document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+  });
+});
+
+// ── Quiz Engine (Safe DOM methods) ────────────
+function initQuiz(questions) {
+  var container = document.getElementById("quizArea");
+  var score = 0, answered = 0;
+  var scoreDiv = null;
+
+  var progress = document.createElement("div");
+  progress.className = "quiz-progress";
+  progress.textContent = "\uBB38\uC81C 0 / " + questions.length + " \u00b7 \uC810\uC218 0\uC810";
+  container.appendChild(progress);
+
+  questions.forEach(function(q, qi) {
+    var div = document.createElement("div");
+    div.className = "quiz-question";
+
+    var heading = document.createElement("h4");
+    heading.textContent = "Q" + (qi + 1) + ". " + q.question;
+    div.appendChild(heading);
+
+    var fb = document.createElement("div");
+    fb.className = "quiz-feedback";
+
+    q.options.forEach(function(opt, oi) {
+      var btn = document.createElement("button");
+      btn.className = "quiz-option";
+      btn.textContent = opt;
+      btn.addEventListener("click", function() {
+        if (btn.disabled) return;
+        div.querySelectorAll(".quiz-option").forEach(function(b) { b.disabled = true; });
+        answered++;
+        if (oi === q.answer) {
+          btn.classList.add("correct");
+          fb.className = "quiz-feedback show correct-fb";
+          fb.textContent = "\u2705 " + q.explanation;
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
+          fb.className = "quiz-feedback show wrong-fb";
+          fb.textContent = "\u274c " + q.explanation;
+
+          var retryBtn = document.createElement("button");
+          retryBtn.className = "quiz-retry";
+          retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
+          retryBtn.textContent = "\uB2E4\uC2DC \uD480\uAE30";
+          retryBtn.addEventListener("click", function() {
+            answered--;
+            div.querySelectorAll(".quiz-option").forEach(function(b) {
+              b.disabled = false;
+              b.classList.remove("wrong", "correct");
+            });
+            fb.className = "quiz-feedback";
+            fb.textContent = "";
+            retryBtn.remove();
+            if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+            progress.textContent = "\uBB38\uC81C " + answered + " / " + questions.length + " \u00b7 \uC810\uC218 " + score + "\uC810";
+          });
+          fb.appendChild(retryBtn);
+        }
+        progress.textContent = "\uBB38\uC81C " + answered + " / " + questions.length + " \u00b7 \uC810\uC218 " + score + "\uC810";
+        if (answered === questions.length) showScore();
+      });
+      div.appendChild(btn);
+    });
+
+    div.appendChild(fb);
+    container.appendChild(div);
+  });
+
+  function showScore() {
+    if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+
+    scoreDiv = document.createElement("div");
+    scoreDiv.className = "quiz-score";
+
+    var emoji = document.createElement("div");
+    emoji.style.cssText = "font-size:36px;margin-bottom:8px";
+    emoji.textContent = score === questions.length ? "\ud83c\udf89" : score >= Math.ceil(questions.length / 2) ? "\ud83d\udc4d" : "\ud83d\udcda";
+    scoreDiv.appendChild(emoji);
+
+    var result = document.createElement("div");
+    result.style.cssText = "font-size:18px;font-weight:500;margin-bottom:6px";
+    result.textContent = score + " / " + questions.length + " \uC815\uB2F5";
+    scoreDiv.appendChild(result);
+
+    var msg = document.createElement("div");
+    msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
+    msg.textContent = score === questions.length ? "\uC644\uBCBD\uD569\uB2C8\uB2E4!" : "\uC870\uAE08 \uB354 \uC5F0\uC2B5\uD558\uBA74 \uC644\uBCBD\uD574\uC9C8 \uAC70\uC608\uC694!";
+    scoreDiv.appendChild(msg);
+
+    var saveBtn = document.createElement("button");
+    saveBtn.className = "quiz-retry";
+    saveBtn.style.cssText = "background:rgba(10,132,255,.18);border-color:var(--key);margin-bottom:8px";
+    saveBtn.textContent = "\uAE30\uB85D \uC800\uC7A5\uD558\uAE30";
+    saveBtn.addEventListener("click", function() {
+      try {
+        var wid = new URLSearchParams(location.search).get("wid")
+               || location.pathname.split("/").pop().replace(".html", "");
+        window.parent.postMessage({
+          type: "showme-quiz-complete",
+          widgetId: wid,
+          score: score,
+          total: questions.length,
+          pass: score >= Math.ceil(questions.length * 0.75)
+        }, "*");
+      } catch(e) {}
+      saveBtn.textContent = "\uC800\uC7A5 \uC644\uB8CC!";
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = ".5";
+    });
+    scoreDiv.appendChild(saveBtn);
+
+    var retry = document.createElement("button");
+    retry.className = "quiz-retry";
+    retry.textContent = "\uCC98\uC74C\uBD80\uD130 \uB2E4\uC2DC";
+    retry.addEventListener("click", function() { location.reload(); });
+    scoreDiv.appendChild(retry);
+
+    container.appendChild(scoreDiv);
+  }
+}
+
+// ── Canvas UV Unwrap Demo ─────────────────────
+(function() {
+  var canvas = document.getElementById("demoCanvas");
+  var ctx = canvas.getContext("2d");
+  var W = canvas.width, H = canvas.height;
+  var animating = false;
+  var animProgress = 0;
+  var animId = null;
+  var currentMode = "cross";
+
+  var cubeSize = 70;
+  var cubeCenter = { x: 170, y: 180 };
+
+  function isoX(x, y, z) { return cubeCenter.x + (x - y) * 0.866 * cubeSize; }
+  function isoY(x, y, z) { return cubeCenter.y - z * cubeSize + (x + y) * 0.5 * cubeSize; }
+
+  var cubeVerts = [
+    [0,0,0],[1,0,0],[1,1,0],[0,1,0],
+    [0,0,1],[1,0,1],[1,1,1],[0,1,1]
+  ];
+
+  var faces = [
+    { idx: [4,5,6,7], color: "rgba(10,132,255,.5)",  label: "Top",    seamColor: "#0a84ff" },
+    { idx: [0,1,2,3], color: "rgba(239,68,68,.4)",    label: "Bottom", seamColor: "#ef4444" },
+    { idx: [0,1,5,4], color: "rgba(16,185,129,.4)",   label: "Front",  seamColor: "#10b981" },
+    { idx: [2,3,7,6], color: "rgba(245,158,11,.4)",   label: "Back",   seamColor: "#f59e0b" },
+    { idx: [1,2,6,5], color: "rgba(168,85,247,.4)",   label: "Right",  seamColor: "#a855f7" },
+    { idx: [0,3,7,4], color: "rgba(236,72,153,.4)",   label: "Left",   seamColor: "#ec4899" }
+  ];
+
+  var uvFaceSize = 48;
+
+  var uvLayouts = {
+    cross: [
+      { fx: 1, fy: 0 }, { fx: 1, fy: 2 }, { fx: 1, fy: 1 },
+      { fx: 1, fy: 3 }, { fx: 2, fy: 1 }, { fx: 0, fy: 1 }
+    ],
+    strip: [
+      { fx: 0, fy: 0 }, { fx: 5, fy: 0 }, { fx: 1, fy: 0 },
+      { fx: 3, fy: 0 }, { fx: 2, fy: 0 }, { fx: 4, fy: 0 }
+    ],
+    custom: [
+      { fx: 0, fy: 0 }, { fx: 2, fy: 2 }, { fx: 0, fy: 1 },
+      { fx: 2, fy: 1 }, { fx: 1, fy: 1 }, { fx: 0, fy: 2 }
+    ]
+  };
+
+  var seamEdges = {
+    cross: [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[2,6]],
+    strip:  [[0,4],[1,5],[2,6],[3,7],[4,7],[5,6]],
+    custom: [[0,1],[1,2],[4,5],[5,6],[3,7],[0,3]]
+  };
+
+  function draw(t) {
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = "#17181a";
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.strokeStyle = "rgba(255,255,255,.04)";
+    ctx.lineWidth = 1;
+    for (var gx = 40; gx < W; gx += 40) {
+      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke();
+    }
+    for (var gy = 40; gy < H; gy += 40) {
+      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke();
+    }
+
+    ctx.fillStyle = "rgba(255,255,255,.5)";
+    ctx.font = "bold 12px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("3D Cube + Seam", 170, 20);
+    ctx.fillText("UV Layout (2D)", 520, 20);
+
+    ctx.strokeStyle = "rgba(255,255,255,.1)";
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(330, 10); ctx.lineTo(330, H - 10); ctx.stroke();
+    ctx.setLineDash([]);
+
+    drawCube();
+    drawUV(t);
+
+    ctx.font = "11px sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#fbbf24";
+    ctx.fillText("--- Seam (\uC7AC\uB2E8\uC120)", 20, H - 16);
+    ctx.fillStyle = "rgba(255,255,255,.4)";
+    ctx.fillText("Seam \uC704\uCE58\uC5D0 \uB530\uB77C UV \uD3BC\uCE68 \uACB0\uACFC\uAC00 \uB2EC\uB77C\uC9D1\uB2C8\uB2E4", 170, H - 16);
+  }
+
+  function drawCube() {
+    var drawOrder = [1, 3, 5, 0, 2, 4];
+    drawOrder.forEach(function(fi) {
+      var f = faces[fi];
+      var pts = f.idx.map(function(vi) {
+        return { x: isoX(cubeVerts[vi][0], cubeVerts[vi][1], cubeVerts[vi][2]),
+                 y: isoY(cubeVerts[vi][0], cubeVerts[vi][1], cubeVerts[vi][2]) };
+      });
+      ctx.beginPath();
+      pts.forEach(function(p, i) {
+        if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+      });
+      ctx.closePath();
+      ctx.fillStyle = f.color;
+      ctx.fill();
+      ctx.strokeStyle = "rgba(255,255,255,.3)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    });
+
+    var seams = seamEdges[currentMode];
+    ctx.strokeStyle = "#fbbf24";
+    ctx.lineWidth = 3;
+    ctx.setLineDash([6, 4]);
+    seams.forEach(function(e) {
+      var p1 = { x: isoX(cubeVerts[e[0]][0], cubeVerts[e[0]][1], cubeVerts[e[0]][2]),
+                 y: isoY(cubeVerts[e[0]][0], cubeVerts[e[0]][1], cubeVerts[e[0]][2]) };
+      var p2 = { x: isoX(cubeVerts[e[1]][0], cubeVerts[e[1]][1], cubeVerts[e[1]][2]),
+                 y: isoY(cubeVerts[e[1]][0], cubeVerts[e[1]][1], cubeVerts[e[1]][2]) };
+      ctx.beginPath();
+      ctx.moveTo(p1.x, p1.y);
+      ctx.lineTo(p2.x, p2.y);
+      ctx.stroke();
+    });
+    ctx.setLineDash([]);
+  }
+
+  function drawUV(t) {
+    var layout = uvLayouts[currentMode];
+    var s = uvFaceSize;
+    var minFx = 99, maxFx = 0, minFy = 99, maxFy = 0;
+    layout.forEach(function(l) {
+      if (l.fx < minFx) minFx = l.fx;
+      if (l.fx > maxFx) maxFx = l.fx;
+      if (l.fy < minFy) minFy = l.fy;
+      if (l.fy > maxFy) maxFy = l.fy;
+    });
+    var layoutW = (maxFx - minFx + 1) * s;
+    var layoutH = (maxFy - minFy + 1) * s;
+    var offsetX = 520 - layoutW / 2;
+    var offsetY = (H - 40) / 2 - layoutH / 2 + 20;
+
+    var uvBoxSize = Math.max(layoutW, layoutH) + 30;
+    var uvBoxX = 520 - uvBoxSize / 2;
+    var uvBoxY = (H - 40) / 2 - uvBoxSize / 2 + 20;
+    ctx.strokeStyle = "rgba(255,255,255,.15)";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(uvBoxX, uvBoxY, uvBoxSize, uvBoxSize);
+    ctx.fillStyle = "rgba(255,255,255,.25)";
+    ctx.font = "10px sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("0,0", uvBoxX, uvBoxY + uvBoxSize + 12);
+    ctx.textAlign = "right";
+    ctx.fillText("1,1", uvBoxX + uvBoxSize, uvBoxY - 4);
+
+    layout.forEach(function(l, fi) {
+      var f = faces[fi];
+      var fx = offsetX + (l.fx - minFx) * s;
+      var fy = offsetY + (l.fy - minFy) * s;
+
+      if (animating && t < 1) {
+        var cx = 520 - s / 2;
+        var cy = H / 2 - s / 2;
+        fx = cx + (fx - cx) * t;
+        fy = cy + (fy - cy) * t;
+      }
+
+      ctx.fillStyle = f.color;
+      ctx.fillRect(fx, fy, s, s);
+      ctx.strokeStyle = f.seamColor;
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(fx, fy, s, s);
+
+      ctx.fillStyle = "rgba(255,255,255,.8)";
+      ctx.font = "bold 10px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(f.label, fx + s / 2, fy + s / 2 + 4);
+    });
+  }
+
+  function animateUnwrap() {
+    if (animId) cancelAnimationFrame(animId);
+    animating = true;
+    animProgress = 0;
+    var startTime = null;
+    var duration = 1200;
+
+    function step(ts) {
+      if (!startTime) startTime = ts;
+      var elapsed = ts - startTime;
+      animProgress = Math.min(elapsed / duration, 1);
+      var t = 1 - Math.pow(1 - animProgress, 3);
+      draw(t);
+      if (animProgress < 1) {
+        animId = requestAnimationFrame(step);
+      } else {
+        animating = false;
+        animId = null;
+      }
+    }
+    animId = requestAnimationFrame(step);
+  }
+
+  function setMode(mode) {
+    currentMode = mode;
+    document.querySelectorAll(".demo-controls .demo-btn").forEach(function(b) {
+      b.classList.remove("is-active");
+    });
+    if (mode === "cross") document.getElementById("btnCross").classList.add("is-active");
+    if (mode === "strip") document.getElementById("btnStrip").classList.add("is-active");
+    if (mode === "custom") document.getElementById("btnCustom").classList.add("is-active");
+    animateUnwrap();
+  }
+
+  document.getElementById("btnCross").addEventListener("click", function() { setMode("cross"); });
+  document.getElementById("btnStrip").addEventListener("click", function() { setMode("strip"); });
+  document.getElementById("btnCustom").addEventListener("click", function() { setMode("custom"); });
+  document.getElementById("btnAnimate").addEventListener("click", function() { animateUnwrap(); });
+
+  draw(1);
+})();
+
+// ── Quiz Data ─────────────────────────────────
+initQuiz([
+  {
+    question: "UV Unwrapping\uC758 \uBAA9\uC801\uC740 \uBB34\uC5C7\uC778\uAC00\uC694?",
+    options: [
+      "3D \uBAA8\uB378\uC758 \uD3F4\uB9AC\uACE4 \uC218\uB97C \uC904\uC774\uAE30 \uC704\uD574",
+      "3D \uD45C\uBA74\uC744 2D\uB85C \uD3BC\uCCD0\uC11C \uD14D\uC2A4\uCCD0\uB97C \uC785\uD788\uAE30 \uC704\uD574",
+      "\uBAA8\uB378\uC758 \uD06C\uAE30\uB97C \uC870\uC808\uD558\uAE30 \uC704\uD574",
+      "\uC560\uB2C8\uBA54\uC774\uC158\uC744 \uC801\uC6A9\uD558\uAE30 \uC704\uD574"
+    ],
+    answer: 1,
+    explanation: "UV Unwrapping\uC740 3D \uBA54\uC26C\uC758 \uD45C\uBA74\uC744 2D \uD3C9\uBA74\uC73C\uB85C \uD3BC\uCCD0\uC11C \uC774\uBBF8\uC9C0 \uD14D\uC2A4\uCCD0\uB97C \uC62C\uBC14\uB974\uAC8C \uB9E4\uD551\uD558\uAE30 \uC704\uD55C \uACFC\uC815\uC785\uB2C8\uB2E4."
+  },
+  {
+    question: "Seam(\uC7AC\uB2E8\uC120)\uC744 \uB9C8\uD06C\uD558\uB294 \uB2E8\uCD95\uD0A4\uB294?",
+    options: [
+      "U \u2192 Mark Seam",
+      "Ctrl+E \u2192 Mark Seam",
+      "Shift+S \u2192 Mark Seam",
+      "Alt+U \u2192 Mark Seam"
+    ],
+    answer: 1,
+    explanation: "Edit Mode\uC5D0\uC11C \uC5E3\uC9C0\uB97C \uC120\uD0DD\uD55C \uD6C4 Ctrl+E \u2192 Mark Seam\uC73C\uB85C Seam\uC744 \uC9C0\uC815\uD569\uB2C8\uB2E4."
+  },
+  {
+    question: "UV \uC88C\uD45C\uC758 \uBC94\uC704\uB294 \uC5BC\uB9C8\uC778\uAC00\uC694?",
+    options: [
+      "-1\uC5D0\uC11C 1\uAE4C\uC9C0",
+      "0\uC5D0\uC11C 1\uAE4C\uC9C0",
+      "0\uC5D0\uC11C 100\uAE4C\uC9C0",
+      "\uC81C\uD55C \uC5C6\uC74C"
+    ],
+    answer: 1,
+    explanation: "UV \uC88C\uD45C\uB294 0\uC5D0\uC11C 1 \uC0AC\uC774\uC758 \uBC94\uC704\uB97C \uC0AC\uC6A9\uD569\uB2C8\uB2E4. \uC774 \uBC94\uC704\uB97C \uBC97\uC5B4\uB098\uBA74 \uD14D\uC2A4\uCCD0\uAC00 \uBC18\uBCF5(Tiling)\uB429\uB2C8\uB2E4."
+  },
+  {
+    question: "Seam \uC704\uCE58\uAC00 UV \uACB0\uACFC\uC5D0 \uBBF8\uCE58\uB294 \uC601\uD5A5\uC73C\uB85C \uC62C\uBC14\uB978 \uAC83\uC740?",
+    options: [
+      "Seam\uC740 UV\uC5D0 \uC601\uD5A5\uC744 \uC8FC\uC9C0 \uC54A\uB294\uB2E4",
+      "Seam\uC774 \uB9CE\uC744\uC218\uB85D \uD56D\uC0C1 \uC88B\uB2E4",
+      "Seam \uC704\uCE58\uC5D0 \uB530\uB77C UV Island\uC758 \uBAA8\uC591\uACFC \uAC1C\uC218\uAC00 \uB2EC\uB77C\uC9C4\uB2E4",
+      "Seam\uC740 \uC790\uB3D9\uC73C\uB85C \uCD5C\uC801 \uC704\uCE58\uAC00 \uACB0\uC815\uB41C\uB2E4"
+    ],
+    answer: 2,
+    explanation: "Seam\uC758 \uC704\uCE58\uC5D0 \uB530\uB77C UV Island\uC758 \uBAA8\uC591\uACFC \uAC1C\uC218\uAC00 \uB2EC\uB77C\uC9D1\uB2C8\uB2E4. \uC801\uC808\uD55C Seam \uBC30\uCE58\uAC00 \uAE68\uB057\uD55C UV\uC758 \uD575\uC2EC\uC785\uB2C8\uB2E4."
+  }
+]);
+</script>
+
+</body>
+</html>

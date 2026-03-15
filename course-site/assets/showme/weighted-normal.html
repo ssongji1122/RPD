@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — Weighted Normal 이해</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Tab Navigation ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+
+/* ── Tab Panels ── */
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+
+/* ── Concept Cards ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card h3 {
+  margin: 0 0 8px; font-size: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.concept-card p {
+  margin: 0; color: var(--muted-strong);
+  font-size: .88rem; line-height: 1.7;
+}
+.concept-card ul {
+  margin: 8px 0 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
+}
+
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: .72rem; font-weight: 600;
+}
+.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: #fbbf24; }
+
+/* ── Keyboard Shortcut ── */
+.kbd {
+  display: inline-block;
+  padding: 3px 8px; border-radius: 6px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  color: var(--key-soft);
+  font-size: .82rem; font-weight: 600;
+  font-family: var(--font);
+}
+
+/* ── Canvas / Demo ── */
+.demo-wrap {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+  margin: 14px 0;
+}
+.demo-wrap canvas {
+  display: block; width: 100%;
+}
+.demo-controls {
+  display: flex; gap: 8px; padding: 12px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.demo-hint {
+  font-size: .78rem; color: var(--muted);
+  text-align: center; padding: 6px 0 0;
+}
+.demo-btn {
+  padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .82rem;
+  cursor: pointer;
+  transition: background .14s, color .14s;
+}
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active {
+  background: rgba(10,132,255,.14);
+  color: var(--key-soft);
+  border-color: rgba(10,132,255,.3);
+}
+
+/* ── Usage Grid ── */
+.usage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.usage-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 16px;
+}
+.usage-card h4 {
+  margin: 0 0 8px; font-size: .92rem;
+  color: var(--key-soft);
+}
+.usage-card ul {
+  margin: 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem;
+  line-height: 1.8;
+}
+
+/* ── Tip Box ── */
+.tip-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(10,132,255,.2);
+  background: rgba(10,132,255,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+}
+.tip-box strong { color: var(--key-soft); }
+
+/* ── Combo Section ── */
+.combo-section {
+  margin-top: 18px;
+}
+.combo-section h4 {
+  margin: 0 0 10px;
+  font-size: .92rem;
+  color: var(--text);
+}
+.combo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.combo-card {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 12px 14px;
+}
+.combo-card .combo-name {
+  font-size: .86rem;
+  font-weight: 600;
+  color: var(--key-soft);
+  margin-bottom: 4px;
+}
+.combo-card .combo-desc {
+  font-size: .8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ── Shortcut Reference ── */
+.shortcut-list {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.shortcut-list h4 {
+  margin: 0 0 10px;
+  font-size: .9rem;
+  color: var(--text);
+}
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: .84rem;
+  color: var(--muted-strong);
+}
+.shortcut-row + .shortcut-row {
+  border-top: 1px solid var(--line);
+}
+.shortcut-keys {
+  flex-shrink: 0;
+}
+.analogy {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(245,158,11,.06);
+  border: 1px solid rgba(245,158,11,.15);
+  font-size: .82rem;
+  color: #fbbf24;
+  font-style: italic;
+}
+
+/* ── Quiz ── */
+.quiz-progress {
+  font-size: .78rem; color: var(--muted);
+  margin-bottom: 12px;
+}
+.quiz-question {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.quiz-question h4 {
+  margin: 0 0 12px; font-size: .94rem;
+}
+.quiz-option {
+  display: block; width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.025);
+  color: var(--text);
+  font: inherit; font-size: .86rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background .14s, border-color .14s;
+}
+.quiz-option:hover {
+  background: rgba(255,255,255,.06);
+  border-color: var(--line-strong);
+}
+.quiz-option.correct {
+  background: rgba(16,185,129,.12);
+  border-color: rgba(16,185,129,.4);
+  color: var(--success-soft);
+}
+.quiz-option.wrong {
+  background: rgba(239,68,68,.1);
+  border-color: rgba(239,68,68,.3);
+  color: #fca5a5;
+}
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback {
+  margin-top: 8px; padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: .84rem;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: #fca5a5; }
+
+.quiz-score {
+  text-align: center; padding: 20px;
+  font-size: 1.1rem; font-weight: 600;
+}
+.quiz-retry {
+  display: block; margin: 12px auto;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--key);
+  background: rgba(10,132,255,.12);
+  color: var(--key-soft);
+  font: inherit; font-size: .88rem;
+  cursor: pointer;
+  transition: background .14s;
+}
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+
+/* ── Official Doc Reference ── */
+.doc-ref {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(10,132,255,.15);
+  background: rgba(10,132,255,.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-ref a {
+  color: var(--key-soft);
+  font-size: .84rem;
+  text-decoration: none;
+  line-height: 1.5;
+}
+.doc-ref a:hover { text-decoration: underline; }
+.doc-ref-list {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.doc-ref-list .doc-ref { margin-top: 0; }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Tab Bar -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+</nav>
+
+<!-- TAB 1: 개념 이해 -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">Core</span> Weighted Normal이란?</h3>
+      <p>면의 크기(면적)를 기준으로 Normal(법선) 방향을 다시 계산하는 Modifier입니다. 큰 면이 더 많은 영향을 주어서 평평한 면이 더 깨끗하게 보입니다.</p>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-green">Why</span> 왜 필요한가?</h3>
+      <p>Shade Smooth만 쓰면 작은 면과 큰 면의 Normal이 동일하게 섞여서 큰 면에 울퉁불퉁한 음영이 생깁니다. Weighted Normal로 큰 면에 우선권을 주면 평평한 면이 깔끔해집니다.</p>
+    </div>
+  </div>
+
+  <div class="analogy">큰 거울은 빛을 균일하게 반사하고, 작은 거울 조각은 빛을 산란시켜요. Weighted Normal은 큰 거울이 이기게 해요</div>
+
+  <div class="shortcut-list">
+    <h4>적용 방법</h4>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Right-click</span></span>
+      <span>Shade Smooth 적용</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Properties</span> &rarr; <span class="kbd">Normals</span></span>
+      <span>Auto Smooth 설정 (Object Data Properties에서)</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">1~5</span></span>
+      <span>Weighted Normal은 Modifier 탭에서 Add Modifier로 추가</span>
+    </div>
+  </div>
+
+  <div class="doc-ref-list">
+    <div class="doc-ref">
+      <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/modify/weighted_normal.html" target="_blank" rel="noopener">
+        📖 Blender 공식 문서 — Weighted Normal Modifier
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- TAB 2: 시각적 비교 -->
+<section class="panel" id="panel-visual" role="tabpanel">
+  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
+    왼쪽은 Shade Smooth만 적용한 상태, 오른쪽은 Weighted Normal을 추가한 상태입니다. 토글 버튼으로 비교해 보세요.
+  </p>
+  <div class="demo-wrap">
+    <canvas id="demoCanvas" width="680" height="340"></canvas>
+    <div class="demo-controls">
+      <button class="demo-btn is-active" id="btnToggle">Before / After 토글</button>
+    </div>
+  </div>
+  <p class="demo-hint">Shade Smooth만 적용하면 윗면에 울퉁불퉁한 음영이 생기지만, Weighted Normal을 추가하면 깨끗해집니다.</p>
+</section>
+
+<!-- TAB 3: 언제 쓰나요? -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>Weighted Normal 필요할 때</h4>
+      <ul>
+        <li>하드서피스 모델의 평평한 면이 울퉁불퉁할 때</li>
+        <li>Bevel Modifier와 함께 쓸 때</li>
+        <li>제품/기계/로봇 모델링</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>안 써도 되는 경우</h4>
+      <ul>
+        <li>유기적 모델 (캐릭터, 동물)</li>
+        <li>이미 음영이 깨끗한 경우</li>
+        <li>정밀한 Normal 제어가 필요한 경우</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="combo-section">
+    <h4>자주 쓰는 조합</h4>
+    <div class="combo-grid">
+      <div class="combo-card">
+        <div class="combo-name">Bevel Modifier + Weighted Normal</div>
+        <div class="combo-desc">하드서피스 마무리 정석. Bevel로 모서리를 깎고 Weighted Normal로 셰이딩을 정리합니다.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Auto Smooth + Weighted Normal</div>
+        <div class="combo-desc">날카로운 모서리는 유지하면서 평평한 면의 셰이딩을 깨끗하게 만듭니다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>팁:</strong> Weighted Normal은 항상 Modifier Stack의 맨 아래에 두세요! Bevel &rarr; Weighted Normal 순서가 정석이에요.
+  </div>
+
+  <div class="doc-ref-list">
+    <div class="doc-ref">
+      <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/modify/weighted_normal.html" target="_blank" rel="noopener">
+        📖 Blender 공식 문서 — Weighted Normal Modifier
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- TAB 4: 퀴즈 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+// ── Tab Switching ──────────────────────────────
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(t) {
+      t.classList.remove("is-active");
+      t.setAttribute("aria-selected", "false");
+    });
+    document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("is-active"); });
+    tab.classList.add("is-active");
+    tab.setAttribute("aria-selected", "true");
+    document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+  });
+});
+
+// ── Quiz Engine (Safe DOM methods) ────────────
+function initQuiz(questions) {
+  var container = document.getElementById("quizArea");
+  var score = 0, answered = 0;
+  var scoreDiv = null;
+
+  // Progress indicator
+  var progress = document.createElement("div");
+  progress.className = "quiz-progress";
+  progress.textContent = "\uBB38\uC81C 0 / " + questions.length + " \u00b7 \uC810\uC218 0\uC810";
+  container.appendChild(progress);
+
+  questions.forEach(function(q, qi) {
+    var div = document.createElement("div");
+    div.className = "quiz-question";
+
+    var heading = document.createElement("h4");
+    heading.textContent = "Q" + (qi + 1) + ". " + q.question;
+    div.appendChild(heading);
+
+    var fb = document.createElement("div");
+    fb.className = "quiz-feedback";
+
+    q.options.forEach(function(opt, oi) {
+      var btn = document.createElement("button");
+      btn.className = "quiz-option";
+      btn.textContent = opt;
+      btn.addEventListener("click", function() {
+        if (btn.disabled) return;
+        div.querySelectorAll(".quiz-option").forEach(function(b) { b.disabled = true; });
+        answered++;
+        if (oi === q.answer) {
+          btn.classList.add("correct");
+          fb.className = "quiz-feedback show correct-fb";
+          fb.textContent = "\u2705 " + q.explanation;
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
+          fb.className = "quiz-feedback show wrong-fb";
+          fb.textContent = "\u274c " + q.explanation;
+
+          // Add retry button for wrong answers
+          var retryBtn = document.createElement("button");
+          retryBtn.className = "quiz-retry";
+          retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
+          retryBtn.textContent = "\uB2E4\uC2DC \uD480\uAE30";
+          retryBtn.addEventListener("click", function() {
+            answered--;
+            div.querySelectorAll(".quiz-option").forEach(function(b) {
+              b.disabled = false;
+              b.classList.remove("wrong", "correct");
+            });
+            fb.className = "quiz-feedback";
+            fb.textContent = "";
+            retryBtn.remove();
+            if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+            progress.textContent = "\uBB38\uC81C " + answered + " / " + questions.length + " \u00b7 \uC810\uC218 " + score + "\uC810";
+          });
+          fb.appendChild(retryBtn);
+        }
+        progress.textContent = "\uBB38\uC81C " + answered + " / " + questions.length + " \u00b7 \uC810\uC218 " + score + "\uC810";
+        if (answered === questions.length) showScore();
+      });
+      div.appendChild(btn);
+    });
+
+    div.appendChild(fb);
+    container.appendChild(div);
+  });
+
+  function showScore() {
+    if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+
+    scoreDiv = document.createElement("div");
+    scoreDiv.className = "quiz-score";
+
+    var emoji = document.createElement("div");
+    emoji.style.cssText = "font-size:36px;margin-bottom:8px";
+    emoji.textContent = score === questions.length ? "\ud83c\udf89" : score >= Math.ceil(questions.length / 2) ? "\ud83d\udc4d" : "\ud83d\udcda";
+    scoreDiv.appendChild(emoji);
+
+    var result = document.createElement("div");
+    result.style.cssText = "font-size:18px;font-weight:500;margin-bottom:6px";
+    result.textContent = score + " / " + questions.length + " \uC815\uB2F5";
+    scoreDiv.appendChild(result);
+
+    var msg = document.createElement("div");
+    msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
+    msg.textContent = score === questions.length ? "\uC644\uBCBD\uD569\uB2C8\uB2E4!" : "\uC870\uAE08 \uB354 \uC5F0\uC2B5\uD558\uBA74 \uC644\uBCBD\uD574\uC9C8 \uAC70\uC608\uC694!";
+    scoreDiv.appendChild(msg);
+
+    // Save button
+    var saveBtn = document.createElement("button");
+    saveBtn.className = "quiz-retry";
+    saveBtn.style.cssText = "background:rgba(10,132,255,.18);border-color:var(--key);margin-bottom:8px";
+    saveBtn.textContent = "\uAE30\uB85D \uC800\uC7A5\uD558\uAE30";
+    saveBtn.addEventListener("click", function() {
+      try {
+        var wid = new URLSearchParams(location.search).get("wid")
+               || location.pathname.split("/").pop().replace(".html", "");
+        window.parent.postMessage({
+          type: "showme-quiz-complete",
+          widgetId: wid,
+          score: score,
+          total: questions.length,
+          pass: score >= Math.ceil(questions.length * 0.75)
+        }, "*");
+      } catch(e) {}
+      saveBtn.textContent = "\uC800\uC7A5 \uC644\uB8CC!";
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = ".5";
+    });
+    scoreDiv.appendChild(saveBtn);
+
+    var retry = document.createElement("button");
+    retry.className = "quiz-retry";
+    retry.textContent = "\uCC98\uC74C\uBD80\uD130 \uB2E4\uC2DC";
+    retry.addEventListener("click", function() { location.reload(); });
+    scoreDiv.appendChild(retry);
+
+    container.appendChild(scoreDiv);
+  }
+}
+
+// ── Canvas Weighted Normal Demo ───────────────
+(function() {
+  var canvas = document.getElementById("demoCanvas");
+  var ctx = canvas.getContext("2d");
+  var showWeightedNormal = false;
+
+  // Toggle button
+  var btnToggle = document.getElementById("btnToggle");
+  btnToggle.addEventListener("click", function() {
+    showWeightedNormal = !showWeightedNormal;
+    if (showWeightedNormal) {
+      btnToggle.textContent = "After (Weighted Normal ON) \u2014 \uD074\uB9AD\uD558\uC5EC Before \uBCF4\uAE30";
+    } else {
+      btnToggle.textContent = "Before / After \uD1A0\uAE00";
+    }
+    draw();
+  });
+  btnToggle.addEventListener("touchend", function(e) {
+    e.preventDefault();
+    btnToggle.click();
+  });
+
+  function draw() {
+    var w = canvas.width;
+    var h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    // Background
+    ctx.fillStyle = "#17181a";
+    ctx.fillRect(0, 0, w, h);
+
+    // Grid
+    ctx.strokeStyle = "rgba(255,255,255,.04)";
+    ctx.lineWidth = 1;
+    var step = 40;
+    for (var gx = step; gx < w; gx += step) {
+      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
+    }
+    for (var gy = step; gy < h; gy += step) {
+      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
+    }
+
+    // Layout: two side-by-side boxes
+    var leftCx = w * 0.25;
+    var rightCx = w * 0.75;
+
+    // Divider
+    ctx.strokeStyle = "rgba(255,255,255,.06)";
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(w * 0.5, 20);
+    ctx.lineTo(w * 0.5, h - 20);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Labels
+    ctx.font = "bold 12px sans-serif";
+    ctx.textAlign = "center";
+
+    ctx.fillStyle = "rgba(239,68,68,.8)";
+    ctx.fillText("Shade Smooth Only", leftCx, 30);
+
+    ctx.fillStyle = "rgba(16,185,129,.8)";
+    ctx.fillText("Shade Smooth + Weighted Normal", rightCx, 30);
+
+    // Draw left box — Shade Smooth only (with artifacts)
+    drawBox(ctx, leftCx, h * 0.52, 130, 90, false, showWeightedNormal);
+
+    // Draw right box — with Weighted Normal (clean)
+    drawBox(ctx, rightCx, h * 0.52, 130, 90, true, showWeightedNormal);
+  }
+
+  function drawBox(cx2d, cx, cy, bw, bh, hasWN, isAfter) {
+    // Isometric-ish 3D box
+    var topOffX = 40;
+    var topOffY = -30;
+
+    // Front face
+    var fl = cx - bw / 2;
+    var fr = cx + bw / 2;
+    var ft = cy - bh / 2;
+    var fb = cy + bh / 2;
+
+    // Top face vertices (parallelogram)
+    var tlf = { x: fl, y: ft };
+    var trf = { x: fr, y: ft };
+    var trb = { x: fr + topOffX, y: ft + topOffY };
+    var tlb = { x: fl + topOffX, y: ft + topOffY };
+
+    // Right face vertices
+    var rft = { x: fr, y: ft };
+    var rfb = { x: fr, y: fb };
+    var rbt = { x: fr + topOffX, y: ft + topOffY };
+    var rbb = { x: fr + topOffX, y: fb + topOffY };
+
+    // Draw front face
+    cx2d.beginPath();
+    cx2d.moveTo(fl, ft);
+    cx2d.lineTo(fr, ft);
+    cx2d.lineTo(fr, fb);
+    cx2d.lineTo(fl, fb);
+    cx2d.closePath();
+    if (hasWN) {
+      cx2d.fillStyle = "rgba(16,185,129,.18)";
+    } else {
+      cx2d.fillStyle = "rgba(10,132,255,.15)";
+    }
+    cx2d.fill();
+    cx2d.strokeStyle = hasWN ? "rgba(16,185,129,.4)" : "rgba(10,132,255,.4)";
+    cx2d.lineWidth = 1;
+    cx2d.stroke();
+
+    // Draw right face
+    cx2d.beginPath();
+    cx2d.moveTo(rft.x, rft.y);
+    cx2d.lineTo(rbt.x, rbt.y);
+    cx2d.lineTo(rbb.x, rbb.y);
+    cx2d.lineTo(rfb.x, rfb.y);
+    cx2d.closePath();
+    if (hasWN) {
+      cx2d.fillStyle = "rgba(16,185,129,.10)";
+    } else {
+      cx2d.fillStyle = "rgba(10,132,255,.08)";
+    }
+    cx2d.fill();
+    cx2d.strokeStyle = hasWN ? "rgba(16,185,129,.4)" : "rgba(10,132,255,.4)";
+    cx2d.lineWidth = 1;
+    cx2d.stroke();
+
+    // Draw top face
+    cx2d.beginPath();
+    cx2d.moveTo(tlf.x, tlf.y);
+    cx2d.lineTo(trf.x, trf.y);
+    cx2d.lineTo(trb.x, trb.y);
+    cx2d.lineTo(tlb.x, tlb.y);
+    cx2d.closePath();
+
+    if (hasWN) {
+      // Clean uniform shading
+      var grad = cx2d.createLinearGradient(tlf.x, tlf.y, trb.x, trb.y);
+      grad.addColorStop(0, "rgba(16,185,129,.28)");
+      grad.addColorStop(0.5, "rgba(16,185,129,.25)");
+      grad.addColorStop(1, "rgba(16,185,129,.22)");
+      cx2d.fillStyle = grad;
+      cx2d.fill();
+    } else {
+      // Shade Smooth artifacts — irregular gradient patches on top face
+      cx2d.fillStyle = "rgba(10,132,255,.20)";
+      cx2d.fill();
+
+      // Simulate shading artifacts with streaks
+      var numStripes = 6;
+      var topW = trb.x - tlb.x;
+      var stripeW = topW / numStripes;
+      for (var s = 0; s < numStripes; s++) {
+        var alpha = (s % 2 === 0) ? 0.12 : 0.04;
+        if (s === 2) alpha = 0.18;
+        if (s === 4) alpha = 0.15;
+
+        // Compute stripe parallelogram within the top face
+        var t0 = s / numStripes;
+        var t1 = (s + 1) / numStripes;
+
+        var sLeft0x = tlf.x + (trf.x - tlf.x) * t0;
+        var sLeft0y = tlf.y;
+        var sLeft1x = tlf.x + (trf.x - tlf.x) * t1;
+        var sLeft1y = tlf.y;
+        var sRight0x = tlb.x + (trb.x - tlb.x) * t0;
+        var sRight0y = tlb.y + (trb.y - tlb.y) * t0 + (tlb.y - tlb.y) * (1 - t0);
+        var sRight1x = tlb.x + (trb.x - tlb.x) * t1;
+        var sRight1y = tlb.y + (trb.y - tlb.y) * t1 + (tlb.y - tlb.y) * (1 - t1);
+
+        // Simplified: interpolate corners of top face
+        var p0 = lerpPt(tlf, tlb, t0);
+        var p1 = lerpPt(tlf, tlb, t1);
+        var p2 = lerpPt(trf, trb, t1);
+        var p3 = lerpPt(trf, trb, t0);
+
+        cx2d.beginPath();
+        cx2d.moveTo(p0.x, p0.y);
+        cx2d.lineTo(p1.x, p1.y);
+        cx2d.lineTo(p2.x, p2.y);
+        cx2d.lineTo(p3.x, p3.y);
+        cx2d.closePath();
+        cx2d.fillStyle = "rgba(10,132,255," + alpha + ")";
+        cx2d.fill();
+      }
+
+      // Additional wobble streaks going the other direction
+      var numCross = 4;
+      for (var c = 0; c < numCross; c++) {
+        var ct0 = c / numCross;
+        var ct1 = (c + 1) / numCross;
+        var ca = (c % 2 === 0) ? 0.10 : 0.02;
+        if (c === 1) ca = 0.14;
+
+        var cp0 = lerpPt(tlf, trf, ct0);
+        var cp1 = lerpPt(tlf, trf, ct1);
+        var cp2 = lerpPt(tlb, trb, ct1);
+        var cp3 = lerpPt(tlb, trb, ct0);
+
+        cx2d.beginPath();
+        cx2d.moveTo(cp0.x, cp0.y);
+        cx2d.lineTo(cp1.x, cp1.y);
+        cx2d.lineTo(cp2.x, cp2.y);
+        cx2d.lineTo(cp3.x, cp3.y);
+        cx2d.closePath();
+        cx2d.fillStyle = "rgba(239,68,68," + ca + ")";
+        cx2d.fill();
+      }
+    }
+
+    // Top face outline
+    cx2d.beginPath();
+    cx2d.moveTo(tlf.x, tlf.y);
+    cx2d.lineTo(trf.x, trf.y);
+    cx2d.lineTo(trb.x, trb.y);
+    cx2d.lineTo(tlb.x, tlb.y);
+    cx2d.closePath();
+    cx2d.strokeStyle = hasWN ? "rgba(16,185,129,.4)" : "rgba(10,132,255,.4)";
+    cx2d.lineWidth = 1;
+    cx2d.stroke();
+
+    // Label on the top face
+    cx2d.save();
+    cx2d.font = "bold 10px sans-serif";
+    cx2d.textAlign = "center";
+    var labelCx = (tlf.x + trf.x + trb.x + tlb.x) / 4;
+    var labelCy = (tlf.y + trf.y + trb.y + tlb.y) / 4;
+
+    if (hasWN) {
+      cx2d.fillStyle = "rgba(16,185,129,.9)";
+      cx2d.fillText("\uAE68\uB057\uD55C \uC74C\uC601", labelCx, labelCy + 4);
+    } else {
+      cx2d.fillStyle = "rgba(239,68,68,.9)";
+      cx2d.fillText("\uC6B8\uD241\uBD88\uD241\uD55C \uC74C\uC601", labelCx, labelCy + 4);
+    }
+    cx2d.restore();
+
+    // Bottom label
+    cx2d.font = "10px sans-serif";
+    cx2d.textAlign = "center";
+    cx2d.fillStyle = hasWN ? "rgba(16,185,129,.6)" : "rgba(239,68,68,.6)";
+    var bottomLabel = hasWN ? "Normal \uBC29\uD5A5\uC774 \uD070 \uBA74 \uAE30\uC900\uC73C\uB85C \uC815\uB9AC\uB428" : "Normal\uC774 \uB3D9\uC77C\uD558\uAC8C \uC11E\uC5EC \uC74C\uC601 \uBB38\uC81C \uBC1C\uC0DD";
+    cx2d.fillText(bottomLabel, cx + topOffX / 2, fb + 20);
+  }
+
+  function lerpPt(a, b, t) {
+    return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
+  }
+
+  // Initial draw
+  draw();
+})();
+
+// ── Quiz Data ─────────────────────────────────
+initQuiz([
+  {
+    question: "Weighted Normal Modifier\uB294 \uBB34\uC5C7\uC744 \uAE30\uC900\uC73C\uB85C Normal\uC744 \uB2E4\uC2DC \uACC4\uC0B0\uD558\uB098\uC694?",
+    options: [
+      "\uBC84\uD14D\uC2A4\uC758 \uC704\uCE58",
+      "\uBA74\uC758 \uD06C\uAE30(\uBA74\uC801)",
+      "\uBAA8\uC11C\uB9AC\uC758 \uAC01\uB3C4",
+      "\uBA54\uC2DC\uC758 \uC804\uCCB4 \uBCFC\uB968"
+    ],
+    answer: 1,
+    explanation: "Weighted Normal\uC740 \uBA74\uC758 \uD06C\uAE30(\uBA74\uC801)\uB97C \uAE30\uC900\uC73C\uB85C Normal \uBC29\uD5A5\uC744 \uB2E4\uC2DC \uACC4\uC0B0\uD569\uB2C8\uB2E4. \uD070 \uBA74\uC774 \uB354 \uB9CE\uC740 \uC601\uD5A5\uB825\uC744 \uAC00\uC9D1\uB2C8\uB2E4."
+  },
+  {
+    question: "Bevel Modifier\uC640 Weighted Normal\uC744 \uD568\uAED8 \uC4F8 \uB54C, \uC62C\uBC14\uB978 \uC21C\uC11C\uB294?",
+    options: [
+      "Weighted Normal \u2192 Bevel",
+      "Bevel \u2192 Weighted Normal",
+      "\uC21C\uC11C\uB294 \uC0C1\uAD00\uC5C6\uB2E4",
+      "\uB450 \uAC1C\uB97C \uB3D9\uC2DC\uC5D0 \uCD94\uAC00\uD558\uBA74 \uB41C\uB2E4"
+    ],
+    answer: 1,
+    explanation: "Bevel\uC774 \uBA3C\uC800 \uBAA8\uC11C\uB9AC\uB97C \uAE4E\uACE0, \uADF8 \uC544\uB798\uC5D0 Weighted Normal\uC744 \uBC30\uCE58\uD558\uC5EC \uC170\uC774\uB529\uC744 \uC815\uB9AC\uD569\uB2C8\uB2E4. Weighted Normal\uC740 \uD56D\uC0C1 Modifier Stack\uC758 \uB9E8 \uC544\uB798\uC5D0 \uB450\uC138\uC694."
+  },
+  {
+    question: "Shade Smooth\uB9CC \uC801\uC6A9\uD588\uC744 \uB54C \uD070 \uBA74\uC5D0 \uC74C\uC601\uC774 \uC6B8\uD241\uBD88\uD241\uD574\uC9C0\uB294 \uC774\uC720\uB294?",
+    options: [
+      "\uBA54\uC2DC\uC758 \uD3F4\uB9AC\uACE4 \uC218\uAC00 \uBD80\uC871\uD574\uC11C",
+      "\uC791\uC740 \uBA74\uACFC \uD070 \uBA74\uC758 Normal\uC774 \uB3D9\uC77C\uD558\uAC8C \uC11E\uC5EC\uC11C",
+      "\uC870\uBA85 \uC124\uC815\uC774 \uC798\uBABB\uB418\uC5B4\uC11C",
+      "UV \uB9F5\uD551\uC774 \uC5C6\uC5B4\uC11C"
+    ],
+    answer: 1,
+    explanation: "Shade Smooth\uB294 \uBAA8\uB4E0 \uBA74\uC758 Normal\uC744 \uB3D9\uC77C\uD558\uAC8C \uC11E\uAE30 \uB54C\uBB38\uC5D0, \uC791\uC740 \uBA74\uC774 \uD070 \uBA74\uC758 \uC170\uC774\uB529\uC744 \uC654\uACE1\uC2DC\uCF1C \uC6B8\uD241\uBD88\uD241\uD55C \uC74C\uC601\uC774 \uC0DD\uAE41\uB2C8\uB2E4."
+  },
+  {
+    question: "Weighted Normal\uC744 \uC0AC\uC6A9\uD558\uC9C0 \uC54A\uC544\uB3C4 \uB418\uB294 \uACBD\uC6B0\uB294?",
+    options: [
+      "\uC81C\uD488 \uBAA8\uB378\uB9C1\uC744 \uD560 \uB54C",
+      "\uCE90\uB9AD\uD130/\uB3D9\uBB3C \uAC19\uC740 \uC720\uAE30\uC801 \uBAA8\uB378",
+      "Bevel Modifier\uC640 \uD568\uAED8 \uC4F8 \uB54C",
+      "\uB85C\uBD07 \uBAA8\uB378\uB9C1\uC744 \uD560 \uB54C"
+    ],
+    answer: 1,
+    explanation: "\uCE90\uB9AD\uD130\uB098 \uB3D9\uBB3C \uAC19\uC740 \uC720\uAE30\uC801 \uBAA8\uB378\uC740 \uC790\uC5F0\uC2A4\uB7EC\uC6B4 Normal \uD750\uB984\uC774 \uD544\uC694\uD558\uBBC0\uB85C Weighted Normal\uC774 \uD544\uC694\uD558\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4."
+  }
+]);
+</script>
+
+</body>
+</html>

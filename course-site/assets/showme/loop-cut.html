@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — Loop Cut 이해</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+/* ── Tab Navigation ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+/* ── Tab Panels ── */
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+/* ── Concept Cards ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card h3 {
+  margin: 0 0 8px; font-size: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.concept-card p {
+  margin: 0; color: var(--muted-strong);
+  font-size: .88rem; line-height: 1.7;
+}
+.concept-card ul {
+  margin: 8px 0 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
+}
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: .72rem; font-weight: 600;
+}
+.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: #fbbf24; }
+/* ── Keyboard Shortcut ── */
+.kbd {
+  display: inline-block;
+  padding: 3px 8px; border-radius: 6px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  color: var(--key-soft);
+  font-size: .82rem; font-weight: 600;
+  font-family: var(--font);
+}
+/* ── Canvas / Demo ── */
+.demo-wrap {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+  margin: 14px 0;
+}
+.demo-wrap canvas {
+  display: block; width: 100%;
+}
+.demo-controls {
+  display: flex; gap: 8px; padding: 12px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.demo-hint {
+  font-size: .78rem; color: var(--muted);
+  text-align: center; padding: 6px 0 0;
+}
+.demo-btn {
+  padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .82rem;
+  cursor: pointer;
+  transition: background .14s, color .14s;
+}
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active {
+  background: rgba(10,132,255,.14);
+  color: var(--key-soft);
+  border-color: rgba(10,132,255,.3);
+}
+/* ── Usage Grid ── */
+.usage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.usage-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 16px;
+}
+.usage-card h4 {
+  margin: 0 0 8px; font-size: .92rem;
+  color: var(--key-soft);
+}
+.usage-card ul {
+  margin: 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem;
+  line-height: 1.8;
+}
+/* ── Tip Box ── */
+.tip-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(10,132,255,.2);
+  background: rgba(10,132,255,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+}
+.tip-box strong { color: var(--key-soft); }
+/* ── Combo Section ── */
+.combo-section {
+  margin-top: 18px;
+}
+.combo-section h4 {
+  margin: 0 0 10px;
+  font-size: .92rem;
+  color: var(--text);
+}
+.combo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.combo-card {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 12px 14px;
+}
+.combo-card .combo-name {
+  font-size: .86rem;
+  font-weight: 600;
+  color: var(--key-soft);
+  margin-bottom: 4px;
+}
+.combo-card .combo-desc {
+  font-size: .8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+/* ── Shortcut Reference ── */
+.shortcut-list {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.shortcut-list h4 {
+  margin: 0 0 10px;
+  font-size: .9rem;
+  color: var(--text);
+}
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: .84rem;
+  color: var(--muted-strong);
+}
+.shortcut-row + .shortcut-row {
+  border-top: 1px solid var(--line);
+}
+.shortcut-keys {
+  flex-shrink: 0;
+}
+.analogy {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(245,158,11,.06);
+  border: 1px solid rgba(245,158,11,.15);
+  font-size: .82rem;
+  color: #fbbf24;
+  font-style: italic;
+}
+/* ── Quiz ── */
+.quiz-progress {
+  font-size: .78rem; color: var(--muted);
+  margin-bottom: 12px;
+}
+.quiz-question {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.quiz-question h4 {
+  margin: 0 0 12px; font-size: .94rem;
+}
+.quiz-option {
+  display: block; width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.025);
+  color: var(--text);
+  font: inherit; font-size: .86rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background .14s, border-color .14s;
+}
+.quiz-option:hover {
+  background: rgba(255,255,255,.06);
+  border-color: var(--line-strong);
+}
+.quiz-option.correct {
+  background: rgba(16,185,129,.12);
+  border-color: rgba(16,185,129,.4);
+  color: var(--success-soft);
+}
+.quiz-option.wrong {
+  background: rgba(239,68,68,.1);
+  border-color: rgba(239,68,68,.3);
+  color: #fca5a5;
+}
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback {
+  margin-top: 8px; padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: .84rem;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: #fca5a5; }
+.quiz-score {
+  text-align: center; padding: 20px;
+  font-size: 1.1rem; font-weight: 600;
+}
+.quiz-retry {
+  display: block; margin: 12px auto;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--key);
+  background: rgba(10,132,255,.12);
+  color: var(--key-soft);
+  font: inherit; font-size: .88rem;
+  cursor: pointer;
+  transition: background .14s;
+}
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+/* ── Official Doc Reference ── */
+.doc-ref {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(10,132,255,.15);
+  background: rgba(10,132,255,.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-ref a {
+  color: var(--key-soft);
+  font-size: .84rem;
+  text-decoration: none;
+  line-height: 1.5;
+}
+.doc-ref a:hover { text-decoration: underline; }
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Tab Bar -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+</nav>
+
+<!-- TAB 1: 개념 이해 -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">Ctrl+R</span> Loop Cut</h3>
+      <p>메시를 고리(loop) 형태로 한 바퀴 자르는 도구입니다. 디테일을 추가하는 가장 기본적인 방법이며, 모델링의 필수 기법입니다. Ctrl+R을 누르면 노란색 프리뷰 선이 나타나고, 마우스 휠로 분할 수를 조절할 수 있습니다.</p>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-green">GG</span> Edge Slide</h3>
+      <p>이미 있는 Edge Loop를 표면을 따라 미끄러지듯 이동시킵니다. 형상은 유지하면서 분할 위치만 조정할 때 사용합니다. G를 두 번 연속 누르면 Edge Slide 모드가 됩니다.</p>
+    </div>
+  </div>
+
+  <div class="analogy">빵을 슬라이스하는 것처럼, Loop Cut은 메시를 깔끔하게 한 바퀴 잘라요</div>
+
+  <div class="shortcut-list">
+    <h4>주요 단축키</h4>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">R</span></span>
+      <span>Loop Cut 시작 &mdash; 노란색 프리뷰 표시</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">스크롤</span></span>
+      <span>분할 수 조절 &mdash; 한 번에 여러 줄 추가</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">LMB</span></span>
+      <span>위치 확정 &mdash; 클릭한 곳에 배치</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">RMB</span></span>
+      <span>중앙 배치 &mdash; 정확히 가운데에 배치</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">G</span> <span class="kbd">G</span></span>
+      <span>Edge Slide &mdash; 표면을 따라 엣지 이동</span>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/modeling/meshes/editing/edge/loopcut_slide.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Loop Cut and Slide
+    </a>
+  </div>
+</section>
+
+<!-- TAB 2: 시각적 비교 -->
+<section class="panel" id="panel-visual" role="tabpanel">
+  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
+    버튼으로 분할 수를 변경하고, 캔버스를 좌우로 드래그하여 Loop Cut 위치를 조절하세요.
+  </p>
+  <div class="demo-wrap">
+    <canvas id="demoCanvas" width="680" height="340"></canvas>
+    <div class="demo-controls">
+      <button class="demo-btn" id="btnMinus">- 분할</button>
+      <button class="demo-btn is-active" id="btnCutLabel">분할 수: 1</button>
+      <button class="demo-btn" id="btnPlus">+ 분할</button>
+      <button class="demo-btn" id="btnSlideToggle">Edge Slide OFF</button>
+      <button class="demo-btn" id="btnReset">초기화</button>
+    </div>
+  </div>
+  <p class="demo-hint">좌우로 드래그하면 Loop Cut 위치가 이동합니다. +/- 버튼으로 분할 수를 조절하세요.</p>
+</section>
+
+<!-- TAB 3: 언제 쓰나요? -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>디테일 추가</h4>
+      <ul>
+        <li>모서리를 날카롭게 유지 (Subdivision과 함께)</li>
+        <li>특정 영역만 세밀하게 나누기</li>
+        <li>Subdivision Surface 적용 시 형태 보존</li>
+        <li>원하는 곳에만 정밀한 메시 밀도 추가</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>형태 제어</h4>
+      <ul>
+        <li>창문이나 문 위치 잡기 (건축 모델링)</li>
+        <li>캐릭터 관절 부위에 Edge Loop 추가</li>
+        <li>벨트, 팔찌 등 장식 위치 설정</li>
+        <li>Extrude할 면 영역 구분</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="combo-section">
+    <h4>자주 쓰는 조합</h4>
+    <div class="combo-grid">
+      <div class="combo-card">
+        <div class="combo-name">Ctrl+R + Ctrl+B (Loop Cut + Bevel)</div>
+        <div class="combo-desc">Loop 추가 후 해당 엣지를 Bevel로 다듬기. 날카로운 모서리를 부드럽게 만들 때 필수 조합입니다.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Ctrl+R + E (Loop Cut + Extrude)</div>
+        <div class="combo-desc">새로 생긴 면을 선택해서 뽑기. 창문이나 선반 같은 돌출 형태를 만들 때 사용합니다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>팁:</strong> Loop Cut 중에 스크롤(마우스 휠)을 굴리면 분할 수가 늘어나요. 한 번에 여러 줄을 추가할 수 있어요! 확정 전 <span class="kbd">RMB</span>를 누르면 정확히 중앙에 배치됩니다.
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/modeling/meshes/editing/edge/loopcut_slide.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Loop Cut and Slide
+    </a>
+  </div>
+</section>
+
+<!-- TAB 4: 퀴즈 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+// ── Tab Switching ──────────────────────────────
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(t) {
+      t.classList.remove("is-active");
+      t.setAttribute("aria-selected", "false");
+    });
+    document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("is-active"); });
+    tab.classList.add("is-active");
+    tab.setAttribute("aria-selected", "true");
+    document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+  });
+});
+
+// ── Quiz Engine (Safe DOM methods) ────────────
+function initQuiz(questions) {
+  var container = document.getElementById("quizArea");
+  var score = 0, answered = 0;
+  var scoreDiv = null;
+
+  var progress = document.createElement("div");
+  progress.className = "quiz-progress";
+  progress.textContent = "문제 0 / " + questions.length + " \u00b7 점수 0점";
+  container.appendChild(progress);
+
+  questions.forEach(function(q, qi) {
+    var div = document.createElement("div");
+    div.className = "quiz-question";
+
+    var heading = document.createElement("h4");
+    heading.textContent = "Q" + (qi + 1) + ". " + q.question;
+    div.appendChild(heading);
+
+    var fb = document.createElement("div");
+    fb.className = "quiz-feedback";
+
+    q.options.forEach(function(opt, oi) {
+      var btn = document.createElement("button");
+      btn.className = "quiz-option";
+      btn.textContent = opt;
+      btn.addEventListener("click", function() {
+        if (btn.disabled) return;
+        div.querySelectorAll(".quiz-option").forEach(function(b) { b.disabled = true; });
+        answered++;
+        if (oi === q.answer) {
+          btn.classList.add("correct");
+          fb.className = "quiz-feedback show correct-fb";
+          fb.textContent = "\u2705 " + q.explanation;
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
+          fb.className = "quiz-feedback show wrong-fb";
+          fb.textContent = "\u274c " + q.explanation;
+
+          var retryBtn = document.createElement("button");
+          retryBtn.className = "quiz-retry";
+          retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
+          retryBtn.textContent = "다시 풀기";
+          retryBtn.addEventListener("click", function() {
+            answered--;
+            div.querySelectorAll(".quiz-option").forEach(function(b) {
+              b.disabled = false;
+              b.classList.remove("wrong", "correct");
+            });
+            fb.className = "quiz-feedback";
+            fb.textContent = "";
+            retryBtn.remove();
+            if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+            progress.textContent = "문제 " + answered + " / " + questions.length + " \u00b7 점수 " + score + "점";
+          });
+          fb.appendChild(retryBtn);
+        }
+        progress.textContent = "문제 " + answered + " / " + questions.length + " \u00b7 점수 " + score + "점";
+        if (answered === questions.length) showScore();
+      });
+      div.appendChild(btn);
+    });
+
+    div.appendChild(fb);
+    container.appendChild(div);
+  });
+
+  function showScore() {
+    if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+    scoreDiv = document.createElement("div");
+    scoreDiv.className = "quiz-score";
+
+    var emoji = document.createElement("div");
+    emoji.style.cssText = "font-size:36px;margin-bottom:8px";
+    emoji.textContent = score === questions.length ? "\ud83c\udf89" : score >= Math.ceil(questions.length / 2) ? "\ud83d\udc4d" : "\ud83d\udcda";
+    scoreDiv.appendChild(emoji);
+
+    var result = document.createElement("div");
+    result.style.cssText = "font-size:18px;font-weight:500;margin-bottom:6px";
+    result.textContent = score + " / " + questions.length + " 정답";
+    scoreDiv.appendChild(result);
+
+    var msg = document.createElement("div");
+    msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
+    msg.textContent = score === questions.length ? "완벽합니다!" : "조금 더 연습하면 완벽해질 거예요!";
+    scoreDiv.appendChild(msg);
+
+    var saveBtn = document.createElement("button");
+    saveBtn.className = "quiz-retry";
+    saveBtn.style.cssText = "background:rgba(10,132,255,.18);border-color:var(--key);margin-bottom:8px";
+    saveBtn.textContent = "기록 저장하기";
+    saveBtn.addEventListener("click", function() {
+      try {
+        var wid = new URLSearchParams(location.search).get("wid")
+               || location.pathname.split("/").pop().replace(".html", "");
+        window.parent.postMessage({
+          type: "showme-quiz-complete",
+          widgetId: wid,
+          score: score,
+          total: questions.length,
+          pass: score >= Math.ceil(questions.length * 0.75)
+        }, "*");
+      } catch(e) {}
+      saveBtn.textContent = "저장 완료!";
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = ".5";
+    });
+    scoreDiv.appendChild(saveBtn);
+
+    var retry = document.createElement("button");
+    retry.className = "quiz-retry";
+    retry.textContent = "처음부터 다시";
+    retry.addEventListener("click", function() { location.reload(); });
+    scoreDiv.appendChild(retry);
+
+    container.appendChild(scoreDiv);
+  }
+}
+
+// ── Canvas Loop Cut Demo ─────────────────────
+(function() {
+  var canvas = document.getElementById("demoCanvas");
+  var ctx = canvas.getContext("2d");
+  var cuts = 1;
+  var slideOffset = 0; // -1 to 1, 0 = center
+  var slideMode = false;
+  var isDragging = false;
+  var dragStartX = 0;
+
+  // 3D box parameters (isometric-ish view)
+  var boxLeft = 140;
+  var boxRight = 540;
+  var boxTop = 60;
+  var boxBottom = 260;
+  var isoOffsetX = 60;
+  var isoOffsetY = 40;
+
+  function reset() {
+    cuts = 1;
+    slideOffset = 0;
+    slideMode = false;
+    document.getElementById("btnCutLabel").textContent = "분할 수: 1";
+    document.getElementById("btnSlideToggle").textContent = "Edge Slide OFF";
+    document.getElementById("btnSlideToggle").classList.remove("is-active");
+    draw();
+  }
+
+  function draw() {
+    var w = canvas.width;
+    var h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    // Background
+    ctx.fillStyle = "#17181a";
+    ctx.fillRect(0, 0, w, h);
+
+    // Grid
+    ctx.strokeStyle = "rgba(255,255,255,.04)";
+    ctx.lineWidth = 1;
+    var step = 40;
+    for (var gx = step; gx < w; gx += step) {
+      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
+    }
+    for (var gy = step; gy < h; gy += step) {
+      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
+    }
+
+    // Draw 3D box — front face
+    ctx.fillStyle = "rgba(255,255,255,.05)";
+    ctx.strokeStyle = "rgba(255,255,255,.2)";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(boxLeft, boxTop);
+    ctx.lineTo(boxRight, boxTop);
+    ctx.lineTo(boxRight, boxBottom);
+    ctx.lineTo(boxLeft, boxBottom);
+    ctx.closePath();
+    ctx.fill(); ctx.stroke();
+
+    // Top face
+    ctx.fillStyle = "rgba(255,255,255,.08)";
+    ctx.beginPath();
+    ctx.moveTo(boxLeft, boxTop);
+    ctx.lineTo(boxLeft + isoOffsetX, boxTop - isoOffsetY);
+    ctx.lineTo(boxRight + isoOffsetX, boxTop - isoOffsetY);
+    ctx.lineTo(boxRight, boxTop);
+    ctx.closePath();
+    ctx.fill(); ctx.stroke();
+
+    // Right face
+    ctx.fillStyle = "rgba(255,255,255,.03)";
+    ctx.beginPath();
+    ctx.moveTo(boxRight, boxTop);
+    ctx.lineTo(boxRight + isoOffsetX, boxTop - isoOffsetY);
+    ctx.lineTo(boxRight + isoOffsetX, boxBottom - isoOffsetY);
+    ctx.lineTo(boxRight, boxBottom);
+    ctx.closePath();
+    ctx.fill(); ctx.stroke();
+
+    // Draw loop cut lines
+    var boxWidth = boxRight - boxLeft;
+    for (var i = 0; i < cuts; i++) {
+      var t = (i + 1) / (cuts + 1);
+
+      // Apply slide offset
+      if (slideMode) {
+        t = t + slideOffset * 0.4;
+        t = Math.max(0.05, Math.min(0.95, t));
+      }
+
+      var cutX = boxLeft + boxWidth * t;
+
+      // Cut line on front face
+      ctx.strokeStyle = "rgba(245,158,11,.8)";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.moveTo(cutX, boxTop);
+      ctx.lineTo(cutX, boxBottom);
+      ctx.stroke();
+
+      // Cut line on top face
+      ctx.beginPath();
+      ctx.moveTo(cutX, boxTop);
+      ctx.lineTo(cutX + isoOffsetX, boxTop - isoOffsetY);
+      ctx.stroke();
+
+      // Vertex dots at intersections
+      ctx.fillStyle = "rgba(245,158,11,1)";
+      var dotPositions = [
+        { x: cutX, y: boxTop },
+        { x: cutX, y: boxBottom },
+        { x: cutX + isoOffsetX, y: boxTop - isoOffsetY }
+      ];
+      dotPositions.forEach(function(dot) {
+        ctx.beginPath();
+        ctx.arc(dot.x, dot.y, 4, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
+
+    // Labels
+    ctx.fillStyle = "rgba(245,158,11,.7)";
+    ctx.font = "bold 12px sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("Loop Cut \u00d7 " + cuts, 14, 22);
+
+    if (slideMode) {
+      ctx.fillStyle = "rgba(16,185,129,.7)";
+      ctx.textAlign = "right";
+      ctx.fillText("Edge Slide: " + (slideOffset > 0 ? "+" : "") + slideOffset.toFixed(2), w - 14, 22);
+    }
+
+    // Mode indicator
+    ctx.fillStyle = "rgba(255,255,255,.2)";
+    ctx.font = "11px sans-serif";
+    ctx.textAlign = "center";
+    if (slideMode) {
+      ctx.fillText("좌우로 드래그하여 Edge Slide", w / 2, h - 14);
+    } else {
+      ctx.fillText("Ctrl+R 프리뷰 — +/- 로 분할 수 조절", w / 2, h - 14);
+    }
+
+    // Draw existing edges (horizontal divisions for reference)
+    ctx.strokeStyle = "rgba(255,255,255,.1)";
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    var midY = (boxTop + boxBottom) / 2;
+    ctx.beginPath();
+    ctx.moveTo(boxLeft, midY);
+    ctx.lineTo(boxRight, midY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  function getEventPos(e) {
+    var rect = canvas.getBoundingClientRect();
+    var scaleX = canvas.width / rect.width;
+    var clientX;
+    if (e.touches && e.touches.length > 0) {
+      clientX = e.touches[0].clientX;
+    } else {
+      clientX = e.clientX;
+    }
+    return { x: (clientX - rect.left) * scaleX };
+  }
+
+  function onDown(e) {
+    e.preventDefault();
+    isDragging = true;
+    dragStartX = getEventPos(e).x;
+  }
+
+  function onMove(e) {
+    if (!isDragging) return;
+    e.preventDefault();
+    var pos = getEventPos(e);
+    var delta = (pos.x - dragStartX) / (boxRight - boxLeft);
+    if (slideMode) {
+      slideOffset = Math.max(-0.8, Math.min(0.8, delta));
+    }
+    draw();
+  }
+
+  function onUp(e) {
+    isDragging = false;
+  }
+
+  canvas.addEventListener("mousedown", onDown);
+  canvas.addEventListener("mousemove", onMove);
+  canvas.addEventListener("mouseup", onUp);
+  canvas.addEventListener("mouseleave", onUp);
+  canvas.addEventListener("touchstart", onDown, { passive: false });
+  canvas.addEventListener("touchmove", onMove, { passive: false });
+  canvas.addEventListener("touchend", onUp);
+  canvas.addEventListener("touchcancel", onUp);
+
+  // Controls
+  var btnMinus = document.getElementById("btnMinus");
+  var btnPlus = document.getElementById("btnPlus");
+  var btnCutLabel = document.getElementById("btnCutLabel");
+  var btnSlideToggle = document.getElementById("btnSlideToggle");
+
+  btnMinus.addEventListener("click", function() {
+    if (cuts > 1) {
+      cuts--;
+      btnCutLabel.textContent = "분할 수: " + cuts;
+      draw();
+    }
+  });
+
+  btnPlus.addEventListener("click", function() {
+    if (cuts < 10) {
+      cuts++;
+      btnCutLabel.textContent = "분할 수: " + cuts;
+      draw();
+    }
+  });
+
+  btnSlideToggle.addEventListener("click", function() {
+    slideMode = !slideMode;
+    if (slideMode) {
+      btnSlideToggle.textContent = "Edge Slide ON";
+      btnSlideToggle.classList.add("is-active");
+    } else {
+      btnSlideToggle.textContent = "Edge Slide OFF";
+      btnSlideToggle.classList.remove("is-active");
+      slideOffset = 0;
+    }
+    draw();
+  });
+
+  document.getElementById("btnReset").addEventListener("click", function() { reset(); });
+
+  draw();
+})();
+
+// ── Quiz Data ─────────────────────────────────
+initQuiz([
+  {
+    question: "Loop Cut의 기본 단축키는 무엇인가요?",
+    options: [
+      "L",
+      "Ctrl + L",
+      "Ctrl + R",
+      "Shift + R"
+    ],
+    answer: 2,
+    explanation: "Ctrl+R이 Loop Cut의 기본 단축키입니다. 누르면 노란색 프리뷰 선이 나타납니다."
+  },
+  {
+    question: "Loop Cut 중에 분할 수를 늘리려면 어떻게 하나요?",
+    options: [
+      "Shift를 누른 채 클릭한다",
+      "마우스 휠(스크롤)을 굴린다",
+      "숫자 키를 누른다",
+      "Tab 키를 누른다"
+    ],
+    answer: 1,
+    explanation: "Loop Cut 모드에서 마우스 휠을 굴리면 분할 수가 늘어나거나 줄어듭니다."
+  },
+  {
+    question: "Edge Slide(GG)는 어떤 상황에서 사용하나요?",
+    options: [
+      "새로운 엣지를 추가할 때",
+      "엣지를 삭제할 때",
+      "기존 엣지를 표면을 따라 위치만 이동할 때",
+      "엣지를 병합할 때"
+    ],
+    answer: 2,
+    explanation: "Edge Slide(G를 두 번)는 기존 엣지의 형태를 유지하면서 표면을 따라 위치만 조정하는 도구입니다."
+  },
+  {
+    question: "Loop Cut 확정 시 정확히 중앙에 배치하려면 어떤 키를 누르나요?",
+    options: [
+      "LMB (왼쪽 클릭)",
+      "Enter",
+      "RMB (오른쪽 클릭)",
+      "Space"
+    ],
+    answer: 2,
+    explanation: "LMB는 현재 마우스 위치에 확정하고, RMB(오른쪽 클릭)를 누르면 정확히 중앙에 배치됩니다."
+  }
+]);
+</script>
+
+</body>
+</html>

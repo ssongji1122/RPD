@@ -1,0 +1,193 @@
+---
+description: "Show Me 교육 카드 생성. 예: /showme array-modifier, /showme list, /showme verify"
+allowed-tools: Read, Write, Edit, Glob, Grep, Bash(python3 -m http.server:*), Bash(curl:*), Bash(wc:*), Bash(ls:*), Agent
+---
+
+## Context
+
+- 워크트리 위치: !`git worktree list 2>/dev/null | head -3`
+- 기존 카드 수: !`ls course-site/assets/showme/*.html 2>/dev/null | grep -v _template | wc -l | tr -d ' '`개
+- 기존 카드: !`ls course-site/assets/showme/*.html 2>/dev/null | grep -v _template | xargs -I{} basename {} .html | tr '\n' ', '`
+- 레지스트리 항목 수: !`grep -c '"label"' course-site/assets/showme/_registry.js 2>/dev/null || echo 0`개
+
+## Task
+
+인자: `$ARGUMENTS`
+
+---
+
+### 모드 분기
+
+**`list`**: 기존 카드 목록 + 레지스트리 미매칭 항목 출력
+**`verify`**: 전체 카드 무결성 검증 (initQuiz, postMessage, doc-ref, 4탭)
+**`verify {id}`**: 특정 카드 검증
+**`{widget-id}`**: 새 카드 생성 (아래 표준 절차)
+**`{id1} {id2} ...`**: 여러 카드 병렬 생성 (각각 독립 에이전트)
+**인자 없음**: 이 도움말 출력
+
+---
+
+### 새 카드 생성 표준 절차
+
+#### Step 1: 사전 확인
+1. `course-site/assets/showme/{widget-id}.html` 이미 존재하는지 확인
+2. `_registry.js`에 해당 ID 등록 여부 확인
+3. Blender 공식 문서 URL 확인: `https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/{name}.html`
+
+#### Step 2: HTML 생성
+
+**파일 위치**: `course-site/assets/showme/{widget-id}.html`
+
+반드시 `mirror-modifier.html`의 **전체 CSS**를 복사하여 사용 (외부 참조 없이 독립형).
+
+**필수 구조** (4탭):
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{한글 제목}</title>
+  <style>
+    /* ── 전체 CSS 인라인 (mirror-modifier.html에서 복사) ── */
+  </style>
+</head>
+<body>
+  <nav class="tabs" role="tablist">
+    <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true">개념 이해</button>
+    <button class="tab" data-tab="visual" role="tab" aria-selected="false">시각적 비교</button>
+    <button class="tab" data-tab="when" role="tab" aria-selected="false">언제 쓰나요?</button>
+    <button class="tab" data-tab="quiz" role="tab" aria-selected="false">퀴즈</button>
+  </nav>
+
+  <section class="panel is-active" id="panel-concept" role="tabpanel">...</section>
+  <section class="panel" id="panel-visual" role="tabpanel">...</section>
+  <section class="panel" id="panel-when" role="tabpanel">...</section>
+  <section class="panel" id="panel-quiz" role="tabpanel">...</section>
+
+  <script>
+    /* 탭 전환 + initQuiz + postMessage */
+  </script>
+</body>
+</html>
+```
+
+#### 탭별 필수 컴포넌트
+
+**탭 1 — 개념 이해**:
+- `.concept-grid` > `.concept-card` (2~3개)
+  - 각 카드에 `.badge` + 설명 + `.analogy` 비유 박스
+- `.shortcut-list` > `.shortcut-row` (주요 단축키 3~5개)
+- `.doc-ref` 또는 `.doc-ref-list` (Blender 공식 문서 링크)
+
+**탭 2 — 시각적 비교**:
+- `.demo-wrap` > `<canvas>` (680x300 권장)
+- `.demo-controls` > `.demo-btn` (인터랙션 버튼)
+- `.demo-hint` (조작 안내)
+- Canvas에 `requestAnimationFrame` 애니메이션 사용
+- 터치 이벤트 지원 (`touchend` with `preventDefault`)
+
+**탭 3 — 언제 쓰나요?**:
+- `.usage-grid` > `.usage-card` (2열: 필요할 때 vs 안 필요할 때)
+- `.combo-section` > `.combo-grid` > `.combo-card` (추천 조합 2~3개)
+- `.tip-box` (팁/주의사항)
+- `.doc-ref` (공식 문서 링크)
+
+**탭 4 — 퀴즈**:
+- `<div id="quiz-wrap"></div>`
+- `initQuiz(questions)` 호출 — 4~5문제
+- 각 문제: `{ question, options[], answer(0-indexed), explanation }`
+- 75% 이상 통과
+- 완료 시 `postMessage` 전송:
+```javascript
+window.parent.postMessage({
+  type: "showme-quiz-complete",
+  widgetId: new URLSearchParams(location.search).get("wid"),
+  score: score,
+  total: questions.length,
+  pass: score >= Math.ceil(questions.length * 0.75)
+}, "*");
+```
+
+#### Step 3: 레지스트리 등록
+
+`course-site/assets/showme/_registry.js`에 추가:
+```javascript
+"widget-id": { label: "한글 라벨", icon: "이모지" },
+```
+
+#### Step 4: curriculum.js 연결 (선택)
+
+해당 주차의 step에 `showme` 필드 추가:
+```javascript
+// 단일
+"showme": "widget-id"
+// 복수
+"showme": ["widget-id-1", "widget-id-2"]
+```
+
+#### Step 5: 검증 체크리스트
+- [ ] 파일 존재: `course-site/assets/showme/{id}.html`
+- [ ] `initQuiz` 포함
+- [ ] `postMessage` 포함
+- [ ] `doc-ref` 포함 (공식 문서 링크)
+- [ ] `data-tab` 4개 (concept, visual, when, quiz)
+- [ ] `_registry.js`에 등록
+- [ ] 모바일 반응형 (`@media max-width: 600px`)
+- [ ] 터치 이벤트 지원
+
+---
+
+### CSS 변수 레퍼런스
+
+```
+--bg: #0a0a0a          --surface: #17181a      --line: rgba(255,255,255,.08)
+--key: #0a84ff         --key-soft: #8ec5ff     --success: #10b981
+--warn: #f59e0b        --danger: #ef4444       --text: #f5f5f7
+--muted: #a1a1aa       --radius-sm: 12px       --radius-md: 18px
+```
+
+### CSS 컴포넌트 요약
+
+| 클래스 | 용도 |
+|--------|------|
+| `.concept-grid` / `.concept-card` | 개념 카드 그리드 |
+| `.badge` `.badge-blue/green/amber/red` | 인라인 뱃지 |
+| `.analogy` | 비유 설명 박스 (amber) |
+| `.shortcut-list` / `.shortcut-row` / `.kbd` | 단축키 목록 |
+| `.demo-wrap` / `.demo-controls` / `.demo-btn` | Canvas 데모 영역 |
+| `.usage-grid` / `.usage-card` | 사용 사례 2열 |
+| `.combo-section` / `.combo-grid` / `.combo-card` | 추천 조합 |
+| `.tip-box` | 팁/주의사항 박스 |
+| `.doc-ref` / `.doc-ref-list` | 공식 문서 링크 |
+| `.compare-table` | 비교 테이블 |
+| `.section-divider` | 섹션 구분선 |
+
+### Blender 공식 문서 URL 패턴
+
+| 카테고리 | URL 패턴 |
+|----------|----------|
+| Generate 모디파이어 | `https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/{name}.html` |
+| Mesh 도구 | `https://docs.blender.org/manual/en/latest/modeling/meshes/tools/{tool}.html` |
+| Edge 편집 | `https://docs.blender.org/manual/en/latest/modeling/meshes/editing/edge/{tool}.html` |
+| Mesh 편집 | `https://docs.blender.org/manual/en/latest/modeling/meshes/editing/mesh/{tool}.html` |
+
+### 병렬 생성 (여러 카드)
+
+카드 간 의존성이 없으므로 Agent 도구로 병렬 실행 가능.
+각 에이전트에게 전달할 프롬프트에 반드시 포함:
+1. 이 스킬의 "새 카드 생성 표준 절차" 전체
+2. `mirror-modifier.html` 전체 내용 (CSS 복사용)
+3. 해당 Blender 기능의 개념/단축키/사용 사례
+
+### 참조 파일
+
+| 파일 | 역할 |
+|------|------|
+| `course-site/assets/showme/_template.html` | 전체 CSS 원본 |
+| `course-site/assets/showme/_registry.js` | 위젯 메타데이터 |
+| `course-site/assets/showme/mirror-modifier.html` | 표준 참조 카드 (단일 기능) |
+| `course-site/assets/showme/edit-mode-tools.html` | 복합 참조 카드 (다중 도구) |
+| `course-site/week.html` | 모달 시스템, iframe 임베드 |
+| `course-site/data/curriculum.js` | 주차별 showme 필드 |

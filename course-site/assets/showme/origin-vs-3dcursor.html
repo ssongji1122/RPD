@@ -616,11 +616,12 @@ function initCanvas() {
 function initQuiz(questions) {
   var container = document.getElementById("quizArea");
   var score = 0, answered = 0;
+  var scoreDiv = null; // track score section for updates
 
   // Progress indicator
   var progress = document.createElement("div");
   progress.className = "quiz-progress";
-  progress.textContent = "\uBB38\uC81C 0 / " + questions.length + " \u00b7 \uC810\uC218 0\uC810";
+  progress.textContent = "문제 0 / " + questions.length + " \u00b7 점수 0점";
   container.appendChild(progress);
 
   questions.forEach(function(q, qi) {
@@ -652,8 +653,29 @@ function initQuiz(questions) {
           div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
           fb.className = "quiz-feedback show wrong-fb";
           fb.textContent = "\u274c " + q.explanation;
+
+          // Add retry button for wrong answers
+          var retryBtn = document.createElement("button");
+          retryBtn.className = "quiz-retry";
+          retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
+          retryBtn.textContent = "다시 풀기";
+          retryBtn.addEventListener("click", function() {
+            // Reset this question
+            answered--;
+            div.querySelectorAll(".quiz-option").forEach(function(b) {
+              b.disabled = false;
+              b.classList.remove("wrong", "correct");
+            });
+            fb.className = "quiz-feedback";
+            fb.textContent = "";
+            retryBtn.remove();
+            // Remove score section if it was shown
+            if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+            progress.textContent = "문제 " + answered + " / " + questions.length + " \u00b7 점수 " + score + "점";
+          });
+          fb.appendChild(retryBtn);
         }
-        progress.textContent = "\uBB38\uC81C " + answered + " / " + questions.length + " \u00b7 \uC810\uC218 " + score + "\uC810";
+        progress.textContent = "문제 " + answered + " / " + questions.length + " \u00b7 점수 " + score + "점";
         if (answered === questions.length) showScore();
       });
       div.appendChild(btn);
@@ -664,44 +686,57 @@ function initQuiz(questions) {
   });
 
   function showScore() {
-    var scoreDiv = document.createElement("div");
+    // Remove previous score section if exists (e.g. after retry)
+    if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+
+    scoreDiv = document.createElement("div");
     scoreDiv.className = "quiz-score";
 
     var emoji = document.createElement("div");
     emoji.style.cssText = "font-size:36px;margin-bottom:8px";
-    emoji.textContent = score === questions.length ? "\uD83C\uDF89" : score >= Math.ceil(questions.length / 2) ? "\uD83D\uDC4D" : "\uD83D\uDCDA";
+    emoji.textContent = score === questions.length ? "\ud83c\udf89" : score >= Math.ceil(questions.length / 2) ? "\ud83d\udc4d" : "\ud83d\udcda";
     scoreDiv.appendChild(emoji);
 
     var result = document.createElement("div");
     result.style.cssText = "font-size:18px;font-weight:500;margin-bottom:6px";
-    result.textContent = score + " / " + questions.length + " \uC815\uB2F5";
+    result.textContent = score + " / " + questions.length + " 정답";
     scoreDiv.appendChild(result);
 
     var msg = document.createElement("div");
     msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
-    msg.textContent = score === questions.length ? "\uC644\uBCBD\uD569\uB2C8\uB2E4! Origin\uACFC 3D Cursor\uB97C \uC644\uC804\uD788 \uC774\uD574\uD588\uC5B4\uC694." : "\uC870\uAE08 \uB354 \uC5F0\uC2B5\uD558\uBA74 \uC644\uBCBD\uD574\uC9C8 \uAC70\uC608\uC694!";
+    msg.textContent = score === questions.length ? "완벽합니다!" : "조금 더 연습하면 완벽해질 거예요!";
     scoreDiv.appendChild(msg);
+
+    // Save button — sends result to parent for Notion sync
+    var saveBtn = document.createElement("button");
+    saveBtn.className = "quiz-retry";
+    saveBtn.style.cssText = "background:rgba(10,132,255,.18);border-color:var(--key);margin-bottom:8px";
+    saveBtn.textContent = "기록 저장하기";
+    saveBtn.addEventListener("click", function() {
+      try {
+        var wid = new URLSearchParams(location.search).get("wid")
+               || location.pathname.split("/").pop().replace(".html", "");
+        window.parent.postMessage({
+          type: "showme-quiz-complete",
+          widgetId: wid,
+          score: score,
+          total: questions.length,
+          pass: score >= Math.ceil(questions.length * 0.75)
+        }, "*");
+      } catch(e) {}
+      saveBtn.textContent = "저장 완료!";
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = ".5";
+    });
+    scoreDiv.appendChild(saveBtn);
 
     var retry = document.createElement("button");
     retry.className = "quiz-retry";
-    retry.textContent = "\uCC98\uC74C\uBD80\uD130 \uB2E4\uC2DC";
+    retry.textContent = "처음부터 다시";
     retry.addEventListener("click", function() { location.reload(); });
     scoreDiv.appendChild(retry);
 
     container.appendChild(scoreDiv);
-
-    // ── Notify parent of quiz completion ──────
-    try {
-      var wid = new URLSearchParams(location.search).get("wid")
-             || location.pathname.split("/").pop().replace(".html", "");
-      window.parent.postMessage({
-        type: "showme-quiz-complete",
-        widgetId: wid,
-        score: score,
-        total: questions.length,
-        pass: score >= Math.ceil(questions.length * 0.75)
-      }, "*");
-    } catch(e) {}
   }
 }
 

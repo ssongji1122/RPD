@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — Extrude 작동 원리</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+/* ── Tab Navigation ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+/* ── Tab Panels ── */
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+/* ── Concept Cards ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card h3 {
+  margin: 0 0 8px; font-size: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.concept-card p {
+  margin: 0; color: var(--muted-strong);
+  font-size: .88rem; line-height: 1.7;
+}
+.concept-card ul {
+  margin: 8px 0 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
+}
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: .72rem; font-weight: 600;
+}
+.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: #fbbf24; }
+/* ── Keyboard Shortcut ── */
+.kbd {
+  display: inline-block;
+  padding: 3px 8px; border-radius: 6px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  color: var(--key-soft);
+  font-size: .82rem; font-weight: 600;
+  font-family: var(--font);
+}
+/* ── Canvas / Demo ── */
+.demo-wrap {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+  margin: 14px 0;
+}
+.demo-wrap canvas {
+  display: block; width: 100%;
+}
+.demo-controls {
+  display: flex; gap: 8px; padding: 12px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.demo-hint {
+  font-size: .78rem; color: var(--muted);
+  text-align: center; padding: 6px 0 0;
+}
+.demo-btn {
+  padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .82rem;
+  cursor: pointer;
+  transition: background .14s, color .14s;
+}
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active {
+  background: rgba(10,132,255,.14);
+  color: var(--key-soft);
+  border-color: rgba(10,132,255,.3);
+}
+/* ── Usage Grid ── */
+.usage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.usage-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 16px;
+}
+.usage-card h4 {
+  margin: 0 0 8px; font-size: .92rem;
+  color: var(--key-soft);
+}
+.usage-card ul {
+  margin: 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem;
+  line-height: 1.8;
+}
+/* ── Tip Box ── */
+.tip-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(10,132,255,.2);
+  background: rgba(10,132,255,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+}
+.tip-box strong { color: var(--key-soft); }
+/* ── Combo Section ── */
+.combo-section {
+  margin-top: 18px;
+}
+.combo-section h4 {
+  margin: 0 0 10px;
+  font-size: .92rem;
+  color: var(--text);
+}
+.combo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.combo-card {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 12px 14px;
+}
+.combo-card .combo-name {
+  font-size: .86rem;
+  font-weight: 600;
+  color: var(--key-soft);
+  margin-bottom: 4px;
+}
+.combo-card .combo-desc {
+  font-size: .8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+/* ── Shortcut Reference ── */
+.shortcut-list {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.shortcut-list h4 {
+  margin: 0 0 10px;
+  font-size: .9rem;
+  color: var(--text);
+}
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: .84rem;
+  color: var(--muted-strong);
+}
+.shortcut-row + .shortcut-row {
+  border-top: 1px solid var(--line);
+}
+.shortcut-keys {
+  flex-shrink: 0;
+}
+.analogy {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(245,158,11,.06);
+  border: 1px solid rgba(245,158,11,.15);
+  font-size: .82rem;
+  color: #fbbf24;
+  font-style: italic;
+}
+/* ── Quiz ── */
+.quiz-progress {
+  font-size: .78rem; color: var(--muted);
+  margin-bottom: 12px;
+}
+.quiz-question {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.quiz-question h4 {
+  margin: 0 0 12px; font-size: .94rem;
+}
+.quiz-option {
+  display: block; width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.025);
+  color: var(--text);
+  font: inherit; font-size: .86rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background .14s, border-color .14s;
+}
+.quiz-option:hover {
+  background: rgba(255,255,255,.06);
+  border-color: var(--line-strong);
+}
+.quiz-option.correct {
+  background: rgba(16,185,129,.12);
+  border-color: rgba(16,185,129,.4);
+  color: var(--success-soft);
+}
+.quiz-option.wrong {
+  background: rgba(239,68,68,.1);
+  border-color: rgba(239,68,68,.3);
+  color: #fca5a5;
+}
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback {
+  margin-top: 8px; padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: .84rem;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: #fca5a5; }
+.quiz-score {
+  text-align: center; padding: 20px;
+  font-size: 1.1rem; font-weight: 600;
+}
+.quiz-retry {
+  display: block; margin: 12px auto;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--key);
+  background: rgba(10,132,255,.12);
+  color: var(--key-soft);
+  font: inherit; font-size: .88rem;
+  cursor: pointer;
+  transition: background .14s;
+}
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+/* ── Official Doc Reference ── */
+.doc-ref {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(10,132,255,.15);
+  background: rgba(10,132,255,.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-ref a {
+  color: var(--key-soft);
+  font-size: .84rem;
+  text-decoration: none;
+  line-height: 1.5;
+}
+.doc-ref a:hover { text-decoration: underline; }
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Tab Bar -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+</nav>
+
+<!-- TAB 1: 개념 이해 -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">E</span> Extrude Region</h3>
+      <p>선택한 면을 뽑아내어 새로운 지오메트리를 만드는 도구입니다. 점토를 손가락으로 잡아 당기는 것과 같습니다. 기본 형태에서 복잡한 구조를 만들어 나가는 가장 핵심적인 모델링 기법이에요.</p>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-green">Alt+E</span> Normal 방향 Extrude</h3>
+      <p>Alt+E로 면의 법선(Normal) 방향을 따라 균일하게 돌출합니다. 여러 면을 동시에 선택했을 때, 각 면이 자신의 법선 방향으로 개별적으로 뽑혀 나옵니다. 곡면에 균일한 두께를 줄 때 특히 유용합니다.</p>
+    </div>
+  </div>
+
+  <div class="analogy">찰흙에서 손가락으로 잡아당기면 새로운 형태가 늘어나오는 것, 그게 Extrude예요</div>
+
+  <div class="shortcut-list">
+    <h4>주요 단축키</h4>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">E</span></span>
+      <span>Extrude Region &mdash; 선택한 면/엣지/점을 뽑기</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Alt</span> + <span class="kbd">E</span></span>
+      <span>Extrude Along Normals &mdash; 법선 방향으로 균일 돌출</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">RMB</span></span>
+      <span>Extrude to Cursor &mdash; 커서 위치까지 뽑기</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">E</span> &rarr; <span class="kbd">ESC</span></span>
+      <span>뽑고 제자리 &mdash; 분리된 면 생성 (주의!)</span>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/modeling/meshes/tools/extrude_region.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Extrude Region
+    </a>
+  </div>
+</section>
+
+<!-- TAB 2: 시각적 비교 -->
+<section class="panel" id="panel-visual" role="tabpanel">
+  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
+    각 모드 버튼을 클릭하고 캔버스 위에서 드래그하여 Extrude 효과를 확인하세요.
+  </p>
+  <div class="demo-wrap">
+    <canvas id="demoCanvas" width="680" height="340"></canvas>
+    <div class="demo-controls">
+      <button class="demo-btn is-active" id="btnRegion">Region (E)</button>
+      <button class="demo-btn" id="btnNormals">Along Normals</button>
+      <button class="demo-btn" id="btnIndividual">Individual</button>
+      <button class="demo-btn" id="btnReset">초기화</button>
+    </div>
+  </div>
+  <p class="demo-hint">캔버스를 위아래로 드래그하면 Extrude 양이 변합니다. 모드를 바꿔서 차이를 비교하세요.</p>
+</section>
+
+<!-- TAB 3: 언제 쓰나요? -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>Region Extrude (E)</h4>
+      <ul>
+        <li>건물 층 쌓기</li>
+        <li>캐릭터 팔다리 만들기</li>
+        <li>기본 형태에서 복잡한 형태로 발전</li>
+        <li>파이프, 터널 형태 생성</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>Along Normals (Alt+E)</h4>
+      <ul>
+        <li>갑옷 두께 만들기</li>
+        <li>곡면의 디테일 추가</li>
+        <li>선택한 면 모두 균일하게 돌출</li>
+        <li>벽체 두께 부여</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="combo-section">
+    <h4>자주 쓰는 조합</h4>
+    <div class="combo-grid">
+      <div class="combo-card">
+        <div class="combo-name">E + S (Extrude + Scale)</div>
+        <div class="combo-desc">뽑은 후 바로 크기 조절. 지붕을 뾰족하게 만들거나 점점 좁아지는 형태를 만들 때 사용합니다.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">E + 0 + S (제자리 + Scale)</div>
+        <div class="combo-desc">면을 복제한 뒤 안쪽으로 줄여 Inset 효과를 낼 수 있습니다. Inset Faces(I) 대용으로 유용합니다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>주의:</strong> E를 누르고 ESC를 누르면 겉보기엔 아무 일도 안 일어난 것 같지만, 실제로는 겹친 면이 생겨요! 반드시 <span class="kbd">Ctrl</span>+<span class="kbd">Z</span>로 취소하세요. 겹친 면은 렌더링 아티팩트와 법선 오류의 원인이 됩니다.
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/modeling/meshes/tools/extrude_region.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Extrude Region
+    </a>
+  </div>
+</section>
+
+<!-- TAB 4: 퀴즈 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+// ── Tab Switching ──────────────────────────────
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(t) {
+      t.classList.remove("is-active");
+      t.setAttribute("aria-selected", "false");
+    });
+    document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("is-active"); });
+    tab.classList.add("is-active");
+    tab.setAttribute("aria-selected", "true");
+    document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+  });
+});
+
+// ── Quiz Engine (Safe DOM methods) ────────────
+function initQuiz(questions) {
+  var container = document.getElementById("quizArea");
+  var score = 0, answered = 0;
+  var scoreDiv = null;
+
+  var progress = document.createElement("div");
+  progress.className = "quiz-progress";
+  progress.textContent = "문제 0 / " + questions.length + " \u00b7 점수 0점";
+  container.appendChild(progress);
+
+  questions.forEach(function(q, qi) {
+    var div = document.createElement("div");
+    div.className = "quiz-question";
+
+    var heading = document.createElement("h4");
+    heading.textContent = "Q" + (qi + 1) + ". " + q.question;
+    div.appendChild(heading);
+
+    var fb = document.createElement("div");
+    fb.className = "quiz-feedback";
+
+    q.options.forEach(function(opt, oi) {
+      var btn = document.createElement("button");
+      btn.className = "quiz-option";
+      btn.textContent = opt;
+      btn.addEventListener("click", function() {
+        if (btn.disabled) return;
+        div.querySelectorAll(".quiz-option").forEach(function(b) { b.disabled = true; });
+        answered++;
+        if (oi === q.answer) {
+          btn.classList.add("correct");
+          fb.className = "quiz-feedback show correct-fb";
+          fb.textContent = "\u2705 " + q.explanation;
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
+          fb.className = "quiz-feedback show wrong-fb";
+          fb.textContent = "\u274c " + q.explanation;
+
+          var retryBtn = document.createElement("button");
+          retryBtn.className = "quiz-retry";
+          retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
+          retryBtn.textContent = "다시 풀기";
+          retryBtn.addEventListener("click", function() {
+            answered--;
+            div.querySelectorAll(".quiz-option").forEach(function(b) {
+              b.disabled = false;
+              b.classList.remove("wrong", "correct");
+            });
+            fb.className = "quiz-feedback";
+            fb.textContent = "";
+            retryBtn.remove();
+            if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+            progress.textContent = "문제 " + answered + " / " + questions.length + " \u00b7 점수 " + score + "점";
+          });
+          fb.appendChild(retryBtn);
+        }
+        progress.textContent = "문제 " + answered + " / " + questions.length + " \u00b7 점수 " + score + "점";
+        if (answered === questions.length) showScore();
+      });
+      div.appendChild(btn);
+    });
+
+    div.appendChild(fb);
+    container.appendChild(div);
+  });
+
+  function showScore() {
+    if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+    scoreDiv = document.createElement("div");
+    scoreDiv.className = "quiz-score";
+
+    var emoji = document.createElement("div");
+    emoji.style.cssText = "font-size:36px;margin-bottom:8px";
+    emoji.textContent = score === questions.length ? "\ud83c\udf89" : score >= Math.ceil(questions.length / 2) ? "\ud83d\udc4d" : "\ud83d\udcda";
+    scoreDiv.appendChild(emoji);
+
+    var result = document.createElement("div");
+    result.style.cssText = "font-size:18px;font-weight:500;margin-bottom:6px";
+    result.textContent = score + " / " + questions.length + " 정답";
+    scoreDiv.appendChild(result);
+
+    var msg = document.createElement("div");
+    msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
+    msg.textContent = score === questions.length ? "완벽합니다!" : "조금 더 연습하면 완벽해질 거예요!";
+    scoreDiv.appendChild(msg);
+
+    var saveBtn = document.createElement("button");
+    saveBtn.className = "quiz-retry";
+    saveBtn.style.cssText = "background:rgba(10,132,255,.18);border-color:var(--key);margin-bottom:8px";
+    saveBtn.textContent = "기록 저장하기";
+    saveBtn.addEventListener("click", function() {
+      try {
+        var wid = new URLSearchParams(location.search).get("wid")
+               || location.pathname.split("/").pop().replace(".html", "");
+        window.parent.postMessage({
+          type: "showme-quiz-complete",
+          widgetId: wid,
+          score: score,
+          total: questions.length,
+          pass: score >= Math.ceil(questions.length * 0.75)
+        }, "*");
+      } catch(e) {}
+      saveBtn.textContent = "저장 완료!";
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = ".5";
+    });
+    scoreDiv.appendChild(saveBtn);
+
+    var retry = document.createElement("button");
+    retry.className = "quiz-retry";
+    retry.textContent = "처음부터 다시";
+    retry.addEventListener("click", function() { location.reload(); });
+    scoreDiv.appendChild(retry);
+
+    container.appendChild(scoreDiv);
+  }
+}
+
+// ── Canvas Extrude Demo ──────────────────────
+(function() {
+  var canvas = document.getElementById("demoCanvas");
+  var ctx = canvas.getContext("2d");
+  var mode = "region"; // region | normals | individual
+  var dragStartY = -1;
+  var extrudeAmount = 0;
+  var isDragging = false;
+
+  // Base shape: 3 faces (top-down quad view)
+  var faces = [
+    { x: 140, y: 200, w: 120, h: 80, nx: 0, ny: -1 },
+    { x: 280, y: 200, w: 120, h: 80, nx: 1, ny: -1 },
+    { x: 420, y: 200, w: 120, h: 80, nx: 0, ny: -1 }
+  ];
+
+  function reset() {
+    extrudeAmount = 0;
+    draw();
+  }
+
+  function draw() {
+    var w = canvas.width;
+    var h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    // Background
+    ctx.fillStyle = "#17181a";
+    ctx.fillRect(0, 0, w, h);
+
+    // Grid
+    ctx.strokeStyle = "rgba(255,255,255,.04)";
+    ctx.lineWidth = 1;
+    var step = 40;
+    for (var gx = step; gx < w; gx += step) {
+      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
+    }
+    for (var gy = step; gy < h; gy += step) {
+      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
+    }
+
+    // Mode label
+    ctx.fillStyle = "rgba(10,132,255,.7)";
+    ctx.font = "bold 12px sans-serif";
+    ctx.textAlign = "left";
+    var modeLabel = mode === "region" ? "Region (E)" : mode === "normals" ? "Along Normals (Alt+E)" : "Individual Faces";
+    ctx.fillText("Mode: " + modeLabel, 14, 22);
+
+    // Extrude amount label
+    ctx.fillStyle = "rgba(245,158,11,.7)";
+    ctx.textAlign = "right";
+    ctx.fillText("Extrude: " + Math.round(extrudeAmount) + "px", w - 14, 22);
+
+    // Clamp extrude
+    var amt = Math.max(0, Math.min(extrudeAmount, 150));
+
+    // Draw base faces
+    faces.forEach(function(f, i) {
+      // Base quad (always visible)
+      ctx.fillStyle = "rgba(255,255,255,.06)";
+      ctx.strokeStyle = "rgba(255,255,255,.2)";
+      ctx.lineWidth = 1.5;
+      ctx.fillRect(f.x, f.y, f.w, f.h);
+      ctx.strokeRect(f.x, f.y, f.w, f.h);
+    });
+
+    if (amt > 2) {
+      if (mode === "region") {
+        // All 3 faces extrude together as one region upward
+        var minX = faces[0].x;
+        var maxX = faces[2].x + faces[2].w;
+        var topY = faces[0].y;
+
+        // Side walls
+        ctx.fillStyle = "rgba(10,132,255,.12)";
+        ctx.strokeStyle = "rgba(10,132,255,.5)";
+        ctx.lineWidth = 1.5;
+
+        // Left wall
+        ctx.beginPath();
+        ctx.moveTo(minX, topY);
+        ctx.lineTo(minX, topY - amt);
+        ctx.lineTo(minX + 10, topY - amt - 6);
+        ctx.lineTo(minX + 10, topY - 6);
+        ctx.closePath();
+        ctx.fill(); ctx.stroke();
+
+        // Right wall
+        ctx.beginPath();
+        ctx.moveTo(maxX, topY);
+        ctx.lineTo(maxX, topY - amt);
+        ctx.lineTo(maxX + 10, topY - amt - 6);
+        ctx.lineTo(maxX + 10, topY - 6);
+        ctx.closePath();
+        ctx.fill(); ctx.stroke();
+
+        // Top face (extruded)
+        ctx.fillStyle = "rgba(10,132,255,.25)";
+        ctx.strokeStyle = "rgba(10,132,255,.7)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(minX, topY - amt);
+        ctx.lineTo(maxX, topY - amt);
+        ctx.lineTo(maxX + 10, topY - amt - 6);
+        ctx.lineTo(minX + 10, topY - amt - 6);
+        ctx.closePath();
+        ctx.fill(); ctx.stroke();
+
+        // Front wall
+        ctx.fillStyle = "rgba(10,132,255,.18)";
+        ctx.strokeStyle = "rgba(10,132,255,.5)";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(minX, topY);
+        ctx.lineTo(maxX, topY);
+        ctx.lineTo(maxX, topY - amt);
+        ctx.lineTo(minX, topY - amt);
+        ctx.closePath();
+        ctx.fill(); ctx.stroke();
+
+      } else if (mode === "normals") {
+        // Each face extrudes along its own normal (outward)
+        faces.forEach(function(f, i) {
+          var dirX = (i === 0) ? -0.3 : (i === 2) ? 0.3 : 0;
+          var dirY = -1;
+          var ex = amt * dirX;
+          var ey = amt * dirY;
+
+          // Side walls
+          ctx.fillStyle = "rgba(16,185,129,.1)";
+          ctx.strokeStyle = "rgba(16,185,129,.4)";
+          ctx.lineWidth = 1.5;
+
+          ctx.beginPath();
+          ctx.moveTo(f.x, f.y);
+          ctx.lineTo(f.x + ex, f.y + ey);
+          ctx.lineTo(f.x + f.w + ex, f.y + ey);
+          ctx.lineTo(f.x + f.w, f.y);
+          ctx.closePath();
+          ctx.fill(); ctx.stroke();
+
+          // Extruded top face
+          ctx.fillStyle = "rgba(16,185,129,.2)";
+          ctx.strokeStyle = "rgba(16,185,129,.7)";
+          ctx.lineWidth = 2;
+          ctx.fillRect(f.x + ex, f.y + ey, f.w, f.h * 0.15);
+          ctx.strokeRect(f.x + ex, f.y + ey, f.w, f.h * 0.15);
+        });
+
+      } else if (mode === "individual") {
+        // Each face extrudes independently along its own normal
+        faces.forEach(function(f, i) {
+          var angle = (i === 0) ? -0.4 : (i === 2) ? 0.4 : 0;
+          var ex = amt * Math.sin(angle);
+          var ey = -amt;
+
+          // Connecting walls
+          ctx.fillStyle = "rgba(245,158,11,.08)";
+          ctx.strokeStyle = "rgba(245,158,11,.35)";
+          ctx.lineWidth = 1.5;
+
+          // Left side
+          ctx.beginPath();
+          ctx.moveTo(f.x, f.y);
+          ctx.lineTo(f.x + ex, f.y + ey);
+          ctx.lineTo(f.x + ex, f.y + ey + f.h);
+          ctx.lineTo(f.x, f.y + f.h);
+          ctx.closePath();
+          ctx.fill(); ctx.stroke();
+
+          // Right side
+          ctx.beginPath();
+          ctx.moveTo(f.x + f.w, f.y);
+          ctx.lineTo(f.x + f.w + ex, f.y + ey);
+          ctx.lineTo(f.x + f.w + ex, f.y + ey + f.h);
+          ctx.lineTo(f.x + f.w, f.y + f.h);
+          ctx.closePath();
+          ctx.fill(); ctx.stroke();
+
+          // Top extruded face
+          ctx.fillStyle = "rgba(245,158,11,.18)";
+          ctx.strokeStyle = "rgba(245,158,11,.7)";
+          ctx.lineWidth = 2;
+          ctx.fillRect(f.x + ex, f.y + ey, f.w, f.h);
+          ctx.strokeRect(f.x + ex, f.y + ey, f.w, f.h);
+        });
+      }
+    }
+
+    // Labels on base faces
+    ctx.fillStyle = "rgba(255,255,255,.35)";
+    ctx.font = "11px sans-serif";
+    ctx.textAlign = "center";
+    faces.forEach(function(f, i) {
+      ctx.fillText("Face " + (i + 1), f.x + f.w / 2, f.y + f.h / 2 + 4);
+    });
+
+    // Instruction
+    ctx.fillStyle = "rgba(255,255,255,.25)";
+    ctx.font = "11px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("위아래로 드래그하여 Extrude", w / 2, h - 14);
+  }
+
+  function getEventPos(e) {
+    var rect = canvas.getBoundingClientRect();
+    var scaleX = canvas.width / rect.width;
+    var scaleY = canvas.height / rect.height;
+    var clientX, clientY;
+    if (e.touches && e.touches.length > 0) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    }
+    return {
+      x: (clientX - rect.left) * scaleX,
+      y: (clientY - rect.top) * scaleY
+    };
+  }
+
+  function onDown(e) {
+    e.preventDefault();
+    var pos = getEventPos(e);
+    isDragging = true;
+    dragStartY = pos.y;
+  }
+
+  function onMove(e) {
+    if (!isDragging) return;
+    e.preventDefault();
+    var pos = getEventPos(e);
+    var delta = dragStartY - pos.y;
+    extrudeAmount = Math.max(0, Math.min(delta, 150));
+    draw();
+  }
+
+  function onUp(e) {
+    isDragging = false;
+  }
+
+  canvas.addEventListener("mousedown", onDown);
+  canvas.addEventListener("mousemove", onMove);
+  canvas.addEventListener("mouseup", onUp);
+  canvas.addEventListener("mouseleave", onUp);
+  canvas.addEventListener("touchstart", onDown, { passive: false });
+  canvas.addEventListener("touchmove", onMove, { passive: false });
+  canvas.addEventListener("touchend", onUp);
+  canvas.addEventListener("touchcancel", onUp);
+
+  // Mode buttons
+  var btnRegion = document.getElementById("btnRegion");
+  var btnNormals = document.getElementById("btnNormals");
+  var btnIndividual = document.getElementById("btnIndividual");
+  var allBtns = [btnRegion, btnNormals, btnIndividual];
+
+  function setMode(m, btn) {
+    mode = m;
+    extrudeAmount = 0;
+    allBtns.forEach(function(b) { b.classList.remove("is-active"); });
+    btn.classList.add("is-active");
+    draw();
+  }
+
+  btnRegion.addEventListener("click", function() { setMode("region", btnRegion); });
+  btnNormals.addEventListener("click", function() { setMode("normals", btnNormals); });
+  btnIndividual.addEventListener("click", function() { setMode("individual", btnIndividual); });
+  document.getElementById("btnReset").addEventListener("click", function() { reset(); });
+
+  draw();
+})();
+
+// ── Quiz Data ─────────────────────────────────
+initQuiz([
+  {
+    question: "Extrude Region의 기본 단축키는 무엇인가요?",
+    options: [
+      "Alt + E",
+      "E",
+      "Ctrl + E",
+      "Shift + E"
+    ],
+    answer: 1,
+    explanation: "E 키가 Extrude Region의 기본 단축키입니다. Alt+E는 Extrude Along Normals입니다."
+  },
+  {
+    question: "여러 면을 선택하고 각 면의 법선 방향으로 균일하게 돌출하려면 어떤 방법을 사용해야 하나요?",
+    options: [
+      "E (Extrude Region)",
+      "Ctrl + RMB (Extrude to Cursor)",
+      "Alt + E (Extrude Along Normals)",
+      "Shift + E (Edge Crease)"
+    ],
+    answer: 2,
+    explanation: "Alt+E (Extrude Along Normals)를 사용하면 각 면이 자신의 법선 방향을 따라 균일하게 돌출됩니다."
+  },
+  {
+    question: "E를 누르고 바로 ESC를 누르면 어떤 문제가 생기나요?",
+    options: [
+      "아무 일도 일어나지 않는다",
+      "면이 삭제된다",
+      "겹친 면(중복 지오메트리)이 생긴다",
+      "Undo가 불가능해진다"
+    ],
+    answer: 2,
+    explanation: "E 후 ESC를 누르면 겉보기엔 아무 변화가 없지만, 같은 위치에 겹친 면이 생깁니다. 반드시 Ctrl+Z로 취소해야 합니다."
+  },
+  {
+    question: "E (Extrude) + 0 + S (Scale)의 조합은 어떤 효과를 만들어 내나요?",
+    options: [
+      "면을 삭제한다",
+      "면을 뒤집는다",
+      "Inset 효과 (면 안쪽으로 축소)",
+      "면을 분리한다"
+    ],
+    answer: 2,
+    explanation: "E로 뽑고 0으로 제자리에 두고 S로 스케일하면 Inset Faces(I)와 비슷한 효과를 낼 수 있습니다."
+  }
+]);
+</script>
+
+</body>
+</html>

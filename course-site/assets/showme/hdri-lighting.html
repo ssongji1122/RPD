@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — HDRI 환경 조명</title>
+<style>
+:root {
+  --bg:#0a0a0a;--bg-soft:#111214;--surface:#17181a;--surface-strong:#1c1d20;
+  --line:rgba(255,255,255,.08);--line-strong:rgba(255,255,255,.14);
+  --key:#0a84ff;--key-strong:#0071e3;--key-soft:#8ec5ff;
+  --success:#10b981;--success-soft:#6ee7b7;--warn:#f59e0b;--danger:#ef4444;
+  --text:#f5f5f7;--muted:#a1a1aa;--muted-strong:#d4d4d8;
+  --radius-sm:12px;--radius-md:18px;--radius-lg:24px;
+  --font:"Noto Sans KR",-apple-system,BlinkMacSystemFont,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;padding:0;font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--line);padding:0 16px;background:var(--bg-soft);overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:12px 16px;font-size:.84rem;font-weight:500;color:var(--muted);cursor:pointer;border:none;border-bottom:2px solid transparent;white-space:nowrap;transition:color .14s,border-color .14s;background:none;font-family:inherit}
+.tab:hover{color:var(--muted-strong)}
+.tab.is-active{color:var(--key-soft);border-bottom-color:var(--key)}
+.panel{display:none;padding:20px 16px}
+.panel.is-active{display:block}
+.concept-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.concept-card{border-radius:var(--radius-md);border:1px solid var(--line);background:var(--surface);padding:18px}
+.concept-card h3{margin:0 0 8px;font-size:1rem;display:flex;align-items:center;gap:8px}
+.concept-card p{margin:0;color:var(--muted-strong);font-size:.88rem;line-height:1.7}
+.concept-card ul{margin:8px 0 0;padding-left:16px;color:var(--muted-strong);font-size:.85rem;line-height:1.8}
+.badge{display:inline-block;padding:3px 9px;border-radius:999px;font-size:.72rem;font-weight:600}
+.badge-blue{background:rgba(10,132,255,.15);color:var(--key-soft)}
+.badge-green{background:rgba(16,185,129,.15);color:var(--success-soft)}
+.badge-amber{background:rgba(245,158,11,.15);color:#fbbf24}
+.kbd{display:inline-block;padding:3px 8px;border-radius:6px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:var(--key-soft);font-size:.82rem;font-weight:600;font-family:var(--font)}
+.demo-wrap{border-radius:var(--radius-md);border:1px solid var(--line);background:var(--surface);overflow:hidden;margin:14px 0}
+.demo-wrap canvas{display:block;width:100%}
+.demo-controls{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line);flex-wrap:wrap;align-items:center}
+.demo-hint{font-size:.78rem;color:var(--muted);text-align:center;padding:6px 0 0}
+.demo-btn{padding:7px 14px;border-radius:999px;border:1px solid var(--line-strong);background:rgba(255,255,255,.04);color:var(--muted-strong);font:inherit;font-size:.82rem;cursor:pointer;transition:background .14s,color .14s}
+.demo-btn:hover{background:rgba(255,255,255,.09);color:var(--text)}
+.demo-btn.is-active{background:rgba(10,132,255,.14);color:var(--key-soft);border-color:rgba(10,132,255,.3)}
+.usage-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.usage-card{border-radius:var(--radius-md);border:1px solid var(--line);background:var(--surface);padding:16px}
+.usage-card h4{margin:0 0 8px;font-size:.92rem;color:var(--key-soft)}
+.usage-card ul{margin:0;padding-left:16px;color:var(--muted-strong);font-size:.85rem;line-height:1.8}
+.tip-box{border-radius:var(--radius-md);border:1px solid rgba(10,132,255,.2);background:rgba(10,132,255,.06);padding:14px 16px;margin-top:14px;font-size:.86rem;color:var(--muted-strong)}
+.tip-box strong{color:var(--key-soft)}
+.combo-section{margin-top:18px}
+.combo-section h4{margin:0 0 10px;font-size:.92rem;color:var(--text)}
+.combo-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.combo-card{border-radius:var(--radius-sm);border:1px solid var(--line);background:var(--surface);padding:12px 14px}
+.combo-card .combo-name{font-size:.86rem;font-weight:600;color:var(--key-soft);margin-bottom:4px}
+.combo-card .combo-desc{font-size:.8rem;color:var(--muted);line-height:1.5}
+.shortcut-list{margin-top:16px;padding:14px 16px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--surface)}
+.shortcut-list h4{margin:0 0 10px;font-size:.9rem;color:var(--text)}
+.shortcut-row{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:.84rem;color:var(--muted-strong)}
+.shortcut-row+.shortcut-row{border-top:1px solid var(--line)}
+.shortcut-keys{flex-shrink:0}
+.analogy{margin-top:8px;padding:10px 14px;border-radius:var(--radius-sm);background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.15);font-size:.82rem;color:#fbbf24;font-style:italic}
+.quiz-progress{font-size:.78rem;color:var(--muted);margin-bottom:12px}
+.quiz-question{margin-bottom:20px;padding:16px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--surface)}
+.quiz-question h4{margin:0 0 12px;font-size:.94rem}
+.quiz-option{display:block;width:100%;padding:10px 14px;margin-bottom:6px;border-radius:var(--radius-sm);border:1px solid var(--line);background:rgba(255,255,255,.025);color:var(--text);font:inherit;font-size:.86rem;cursor:pointer;text-align:left;transition:background .14s,border-color .14s}
+.quiz-option:hover{background:rgba(255,255,255,.06);border-color:var(--line-strong)}
+.quiz-option.correct{background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.4);color:var(--success-soft)}
+.quiz-option.wrong{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.3);color:#fca5a5}
+.quiz-option:disabled{cursor:default;opacity:.85}
+.quiz-feedback{margin-top:8px;padding:10px 14px;border-radius:var(--radius-sm);font-size:.84rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.correct-fb{background:rgba(16,185,129,.08);color:var(--success-soft)}
+.quiz-feedback.wrong-fb{background:rgba(239,68,68,.06);color:#fca5a5}
+.quiz-score{text-align:center;padding:20px;font-size:1.1rem;font-weight:600}
+.quiz-retry{display:block;margin:12px auto;padding:10px 24px;border-radius:999px;border:1px solid var(--key);background:rgba(10,132,255,.12);color:var(--key-soft);font:inherit;font-size:.88rem;cursor:pointer;transition:background .14s}
+.quiz-retry:hover{background:rgba(10,132,255,.22)}
+.doc-ref{margin-top:16px;padding:10px 14px;border-radius:var(--radius-sm);border:1px solid rgba(10,132,255,.15);background:rgba(10,132,255,.04);display:flex;align-items:center;gap:8px}
+.doc-ref a{color:var(--key-soft);font-size:.84rem;text-decoration:none;line-height:1.5}
+.doc-ref a:hover{text-decoration:underline}
+@media(max-width:600px){.concept-grid,.usage-grid,.combo-grid{grid-template-columns:1fr}.tabs{padding:0 8px}.tab{padding:10px 12px;font-size:.8rem}.panel{padding:16px 12px}}
+</style>
+</head>
+<body>
+
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+</nav>
+
+<!-- TAB 1 -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3>HDRI란?</h3>
+      <p>High Dynamic Range Image의 약자로, 360도 파노라마 이미지를 사용해 장면 전체에 자연스러운 환경 조명을 제공합니다. World Properties에서 Environment Texture 노드에 HDRI 파일(.hdr, .exr)을 연결합니다.</p>
+      <div class="analogy">장면 주변에 거대한 사진 공을 씌우는 것 — 공의 이미지가 곧 빛이 됩니다</div>
+    </div>
+    <div class="concept-card">
+      <h3>HDRI Rotation이란?</h3>
+      <p>HDRI 이미지를 Z축으로 회전하면 빛이 들어오는 방향이 바뀝니다. Mapping 노드의 Rotation Z 값을 바꾸면 태양 위치, 반사, 그림자 방향이 모두 달라집니다.</p>
+      <div class="analogy">거대한 사진 공을 돌리면 해가 비치는 방향이 바뀌어요</div>
+    </div>
+  </div>
+
+  <div class="shortcut-list">
+    <h4>설정 경로</h4>
+    <div class="shortcut-row">
+      <span class="shortcut-keys">World Properties</span>
+      <span>Use Nodes &rarr; Color &rarr; Environment Texture</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys">Mapping Node</span>
+      <span>Rotation Z로 HDRI 방향 회전</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys">Strength</span>
+      <span>Background 노드의 Strength 값으로 밝기 조절</span>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/render/lights/world.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — World Lighting
+    </a>
+  </div>
+</section>
+
+<!-- TAB 2 -->
+<section class="panel" id="panel-visual" role="tabpanel">
+  <p style="font-size:.84rem;color:var(--muted);margin:0 0 10px;">
+    슬라이더를 드래그하여 HDRI를 회전하세요. 구체의 반사와 그림자 방향이 변합니다.
+  </p>
+  <div class="demo-wrap">
+    <canvas id="demoCanvas" width="680" height="340"></canvas>
+    <div class="demo-controls">
+      <span style="font-size:.82rem;color:var(--muted-strong)">HDRI Rotation:</span>
+      <input type="range" id="rotSlider" min="0" max="360" value="45" style="flex:1;accent-color:#0a84ff">
+      <span id="rotLabel" style="font-size:.82rem;color:var(--key-soft);min-width:40px">45°</span>
+      <button class="demo-btn" id="btnReset">초기화</button>
+    </div>
+  </div>
+  <p class="demo-hint">HDRI 회전(Rotation Z)에 따라 빛 방향, 반사 하이라이트, 그림자가 바뀌는 것을 관찰하세요.</p>
+</section>
+
+<!-- TAB 3 -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>HDRI가 필요할 때</h4>
+      <ul>
+        <li>사실적인 야외/실내 환경광</li>
+        <li>금속/유리 등 반사 재질 렌더링</li>
+        <li>제품 시각화 (스튜디오 HDRI)</li>
+        <li>배경 이미지와 조명 통합</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>HDRI가 덜 필요한 경우</h4>
+      <ul>
+        <li>완전히 통제된 스튜디오 조명</li>
+        <li>스타일라이즈드/카툰 렌더링</li>
+        <li>어두운 실내 장면 (별도 조명 위주)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="tip-box">
+    <strong>팁:</strong> Poly Haven(polyhaven.com)에서 무료 HDRI를 받을 수 있습니다. 해상도는 2K로도 충분하지만, 반사가 중요한 장면에서는 4K 이상을 추천합니다.
+  </div>
+  <div class="combo-section">
+    <h4>자주 쓰는 조합</h4>
+    <div class="combo-grid">
+      <div class="combo-card">
+        <div class="combo-name">HDRI + Sun Light</div>
+        <div class="combo-desc">HDRI로 전체 환경광을 제공하고, Sun Light로 그림자를 더 선명하게 추가합니다.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">HDRI Strength 조절</div>
+        <div class="combo-desc">Background 노드의 Strength 값을 낮추면 은은한 환경광만 남기고, 별도 조명으로 디테일을 추가할 수 있습니다.</div>
+      </div>
+    </div>
+  </div>
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/render/lights/world.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — World Lighting
+    </a>
+  </div>
+</section>
+
+<!-- TAB 4 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("is-active");t.setAttribute("aria-selected","false");});
+    document.querySelectorAll(".panel").forEach(function(p){p.classList.remove("is-active");});
+    tab.classList.add("is-active"); tab.setAttribute("aria-selected","true");
+    document.getElementById("panel-"+tab.dataset.tab).classList.add("is-active");
+  });
+});
+
+function initQuiz(questions) {
+  var container=document.getElementById("quizArea"); var score=0,answered=0,scoreDiv=null;
+  var progress=document.createElement("div"); progress.className="quiz-progress"; progress.textContent="\uBB38\uC81C 0 / "+questions.length+" \u00b7 \uC810\uC218 0\uC810"; container.appendChild(progress);
+  questions.forEach(function(q,qi){
+    var div=document.createElement("div"); div.className="quiz-question";
+    var heading=document.createElement("h4"); heading.textContent="Q"+(qi+1)+". "+q.question; div.appendChild(heading);
+    var fb=document.createElement("div"); fb.className="quiz-feedback";
+    q.options.forEach(function(opt,oi){
+      var btn=document.createElement("button"); btn.className="quiz-option"; btn.textContent=opt;
+      btn.addEventListener("click",function(){
+        if(btn.disabled)return; div.querySelectorAll(".quiz-option").forEach(function(b){b.disabled=true}); answered++;
+        if(oi===q.answer){btn.classList.add("correct");fb.className="quiz-feedback show correct-fb";fb.textContent="\u2705 "+q.explanation;score++;}
+        else{btn.classList.add("wrong");div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");fb.className="quiz-feedback show wrong-fb";fb.textContent="\u274c "+q.explanation;
+          var retryBtn=document.createElement("button");retryBtn.className="quiz-retry";retryBtn.style.cssText="margin-top:10px;font-size:.82rem;padding:7px 18px";retryBtn.textContent="\uB2E4\uC2DC \uD480\uAE30";
+          retryBtn.addEventListener("click",function(){answered--;div.querySelectorAll(".quiz-option").forEach(function(b){b.disabled=false;b.classList.remove("wrong","correct")});fb.className="quiz-feedback";fb.textContent="";retryBtn.remove();if(scoreDiv){scoreDiv.remove();scoreDiv=null}progress.textContent="\uBB38\uC81C "+answered+" / "+questions.length+" \u00b7 \uC810\uC218 "+score+"\uC810"});
+          fb.appendChild(retryBtn);}
+        progress.textContent="\uBB38\uC81C "+answered+" / "+questions.length+" \u00b7 \uC810\uC218 "+score+"\uC810";
+        if(answered===questions.length)showScore();
+      }); div.appendChild(btn);
+    }); div.appendChild(fb); container.appendChild(div);
+  });
+  function showScore(){
+    if(scoreDiv){scoreDiv.remove();scoreDiv=null}
+    scoreDiv=document.createElement("div");scoreDiv.className="quiz-score";
+    var emoji=document.createElement("div");emoji.style.cssText="font-size:36px;margin-bottom:8px";emoji.textContent=score===questions.length?"\ud83c\udf89":score>=Math.ceil(questions.length/2)?"\ud83d\udc4d":"\ud83d\udcda";scoreDiv.appendChild(emoji);
+    var result=document.createElement("div");result.style.cssText="font-size:18px;font-weight:500;margin-bottom:6px";result.textContent=score+" / "+questions.length+" \uC815\uB2F5";scoreDiv.appendChild(result);
+    var msg=document.createElement("div");msg.style.cssText="font-size:14px;color:var(--muted-strong);margin-bottom:16px";msg.textContent=score===questions.length?"\uC644\uBCBD\uD569\uB2C8\uB2E4!":"\uC870\uAE08 \uB354 \uC5F0\uC2B5\uD558\uBA74 \uC644\uBCBD\uD574\uC9C8 \uAC70\uC608\uC694!";scoreDiv.appendChild(msg);
+    var saveBtn=document.createElement("button");saveBtn.className="quiz-retry";saveBtn.style.cssText="background:rgba(10,132,255,.18);border-color:var(--key);margin-bottom:8px";saveBtn.textContent="\uAE30\uB85D \uC800\uC7A5\uD558\uAE30";
+    saveBtn.addEventListener("click",function(){try{var wid=new URLSearchParams(location.search).get("wid")||location.pathname.split("/").pop().replace(".html","");window.parent.postMessage({type:"showme-quiz-complete",widgetId:wid,score:score,total:questions.length,pass:score>=Math.ceil(questions.length*0.75)},"*")}catch(e){}saveBtn.textContent="\uC800\uC7A5 \uC644\uB8CC!";saveBtn.disabled=true;saveBtn.style.opacity=".5"});
+    scoreDiv.appendChild(saveBtn);
+    var retry=document.createElement("button");retry.className="quiz-retry";retry.textContent="\uCC98\uC74C\uBD80\uD130 \uB2E4\uC2DC";retry.addEventListener("click",function(){location.reload()});scoreDiv.appendChild(retry);
+    container.appendChild(scoreDiv);
+  }
+}
+
+// ── Canvas HDRI Demo ──────────────────────────
+(function(){
+  var canvas=document.getElementById("demoCanvas");
+  var ctx=canvas.getContext("2d");
+  var W=canvas.width, H=canvas.height;
+  var rotation=45;
+  var slider=document.getElementById("rotSlider");
+  var rotLabel=document.getElementById("rotLabel");
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle="#17181a";
+    ctx.fillRect(0,0,W,H);
+
+    var rad=rotation*Math.PI/180;
+
+    // Draw HDRI sphere background (gradient simulating panorama)
+    var cx=W/2, cy=H/2-10, r=140;
+    // Panoramic gradient rotated
+    for(var a=0;a<360;a+=2){
+      var ar=(a+rotation)*Math.PI/180;
+      var hue=(a+rotation)%360;
+      var sat=40+20*Math.sin(ar*2);
+      var light=15+25*Math.max(0,Math.cos(ar-Math.PI*0.3));
+      ctx.beginPath();
+      ctx.moveTo(cx,cy);
+      ctx.arc(cx,cy,r,ar-0.04,ar+0.04);
+      ctx.closePath();
+      ctx.fillStyle="hsl("+hue+","+sat+"%,"+light+"%)";
+      ctx.fill();
+    }
+    // HDRI sphere outline
+    ctx.beginPath();
+    ctx.arc(cx,cy,r,0,Math.PI*2);
+    ctx.strokeStyle="rgba(255,255,255,.15)";
+    ctx.lineWidth=2;
+    ctx.stroke();
+
+    // Sun position in the HDRI
+    var sunAngle=rad+Math.PI*0.3;
+    var sunX=cx+Math.cos(sunAngle)*(r*0.7);
+    var sunY=cy+Math.sin(sunAngle)*(r*0.4);
+    var sunGrad=ctx.createRadialGradient(sunX,sunY,3,sunX,sunY,25);
+    sunGrad.addColorStop(0,"rgba(255,250,200,.9)");
+    sunGrad.addColorStop(0.5,"rgba(255,200,50,.3)");
+    sunGrad.addColorStop(1,"rgba(255,200,50,0)");
+    ctx.beginPath();
+    ctx.arc(sunX,sunY,25,0,Math.PI*2);
+    ctx.fillStyle=sunGrad;
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(sunX,sunY,5,0,Math.PI*2);
+    ctx.fillStyle="#fffbe6";
+    ctx.fill();
+
+    // Reflective sphere (small, in center)
+    var sphX=cx, sphY=cy+10, sphR=35;
+    // Reflection highlight follows HDRI rotation
+    var hlX=sphX+Math.cos(sunAngle)*sphR*0.4;
+    var hlY=sphY+Math.sin(sunAngle)*sphR*0.3;
+    var sgrad=ctx.createRadialGradient(hlX,hlY,3,sphX,sphY,sphR);
+    sgrad.addColorStop(0,"rgba(255,255,255,.7)");
+    sgrad.addColorStop(0.3,"rgba(180,200,220,.4)");
+    sgrad.addColorStop(1,"rgba(30,30,40,.8)");
+    ctx.beginPath();
+    ctx.arc(sphX,sphY,sphR,0,Math.PI*2);
+    ctx.fillStyle=sgrad;
+    ctx.fill();
+    ctx.strokeStyle="rgba(255,255,255,.15)";
+    ctx.lineWidth=1;
+    ctx.stroke();
+
+    // Shadow
+    var shadowOffX=Math.cos(sunAngle+Math.PI)*40;
+    var shadowGrad=ctx.createRadialGradient(sphX+shadowOffX,cy+r-10,5,sphX+shadowOffX,cy+r-10,50);
+    shadowGrad.addColorStop(0,"rgba(0,0,0,.3)");
+    shadowGrad.addColorStop(1,"rgba(0,0,0,0)");
+    ctx.beginPath();
+    ctx.ellipse(sphX+shadowOffX,cy+r-10,50,8,0,0,Math.PI*2);
+    ctx.fillStyle=shadowGrad;
+    ctx.fill();
+
+    // Floor plane
+    ctx.fillStyle="rgba(255,255,255,.03)";
+    ctx.fillRect(0,cy+r-20,W,H-(cy+r-20));
+
+    // Labels
+    ctx.fillStyle="rgba(255,255,255,.5)";
+    ctx.font="bold 12px sans-serif";
+    ctx.textAlign="center";
+    ctx.fillText("HDRI \uD658\uACBD \uAD6C\uCCB4",cx,30);
+    ctx.fillStyle="rgba(255,255,255,.3)";
+    ctx.font="11px sans-serif";
+    ctx.fillText("Rotation: "+rotation+"\u00b0",cx,H-15);
+
+    // Sun direction arrow
+    ctx.strokeStyle="rgba(255,200,50,.5)";
+    ctx.lineWidth=1.5;
+    ctx.setLineDash([4,3]);
+    ctx.beginPath();
+    ctx.moveTo(sunX,sunY);
+    ctx.lineTo(sphX,sphY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle="rgba(255,200,50,.6)";
+    ctx.font="10px sans-serif";
+    ctx.fillText("\u2600 Sun",sunX,sunY-15);
+  }
+
+  slider.addEventListener("input",function(){
+    rotation=parseInt(slider.value);
+    rotLabel.textContent=rotation+"\u00b0";
+    draw();
+  });
+
+  document.getElementById("btnReset").addEventListener("click",function(){
+    rotation=45; slider.value=45; rotLabel.textContent="45\u00b0"; draw();
+  });
+
+  draw();
+})();
+
+initQuiz([
+  {
+    question: "HDRI\uB97C Blender\uC5D0\uC11C \uC124\uC815\uD558\uB294 \uACBD\uB85C\uB294?",
+    options: [
+      "Object Properties \u2192 Texture",
+      "World Properties \u2192 Environment Texture",
+      "Render Properties \u2192 HDRI",
+      "Material Properties \u2192 Image Texture"
+    ],
+    answer: 1,
+    explanation: "HDRI\uB294 World Properties\uC5D0\uC11C Use Nodes\uB97C \uCF1C\uACE0 Color\uC5D0 Environment Texture \uB178\uB4DC\uB97C \uC5F0\uACB0\uD569\uB2C8\uB2E4."
+  },
+  {
+    question: "HDRI\uC758 \uBE5B \uBC29\uD5A5\uC744 \uBC14\uAFB8\uB824\uBA74 \uC5B4\uB5BB\uAC8C \uD574\uC57C \uD558\uB098\uC694?",
+    options: [
+      "HDRI \uD30C\uC77C\uC744 \uC774\uBBF8\uC9C0 \uD3B8\uC9D1\uAE30\uB85C \uC218\uC815\uD55C\uB2E4",
+      "Mapping \uB178\uB4DC\uC758 Rotation Z \uAC12\uC744 \uBCC0\uACBD\uD55C\uB2E4",
+      "Sun Light\uB97C \uCD94\uAC00\uD55C\uB2E4",
+      "\uCE74\uBA54\uB77C \uC704\uCE58\uB97C \uBC14\uAFBC\uB2E4"
+    ],
+    answer: 1,
+    explanation: "Mapping \uB178\uB4DC\uC758 Rotation Z \uAC12\uC744 \uBCC0\uACBD\uD558\uBA74 HDRI\uAC00 \uD68C\uC804\uD558\uC5EC \uBE5B \uBC29\uD5A5\uC774 \uBC14\uB01D\uB2C8\uB2E4."
+  },
+  {
+    question: "HDRI\uC758 \uBC1D\uAE30\uB97C \uC870\uC808\uD558\uB294 \uBC29\uBC95\uC740?",
+    options: [
+      "HDRI \uD574\uC0C1\uB3C4\uB97C \uBC14\uAFBC\uB2E4",
+      "Background \uB178\uB4DC\uC758 Strength \uAC12\uC744 \uBCC0\uACBD\uD55C\uB2E4",
+      "\uCE74\uBA54\uB77C Exposure\uB9CC \uC870\uC808\uD55C\uB2E4",
+      "\uBCC0\uACBD\uD560 \uC218 \uC5C6\uB2E4"
+    ],
+    answer: 1,
+    explanation: "Background \uB178\uB4DC\uC758 Strength \uAC12\uC744 \uB192\uC774\uBA74 \uBC1D\uC544\uC9C0\uACE0, \uB0AE\uCD94\uBA74 \uC5B4\uB450\uC6CC\uC9D1\uB2C8\uB2E4."
+  },
+  {
+    question: "HDRI\uC758 \uC7A5\uC810\uC73C\uB85C \uC62C\uBC14\uB974\uC9C0 \uC54A\uC740 \uAC83\uC740?",
+    options: [
+      "\uC0AC\uC2E4\uC801\uC778 \uD658\uACBD \uC870\uBA85\uC744 \uC81C\uACF5\uD55C\uB2E4",
+      "\uBC18\uC0AC \uC7AC\uC9C8\uC774 \uC790\uC5F0\uC2A4\uB7FD\uAC8C \uBCF4\uC778\uB2E4",
+      "\uADF8\uB9BC\uC790 \uBC29\uD5A5\uC744 \uC815\uBC00\uD558\uAC8C \uC81C\uC5B4\uD560 \uC218 \uC788\uB2E4",
+      "\uBE60\uB974\uAC8C \uC5B4\uB514\uC11C\uB4E0 \uC0AC\uC6A9\uD560 \uC218 \uC788\uB2E4"
+    ],
+    answer: 2,
+    explanation: "HDRI\uB294 \uC0AC\uC2E4\uC801\uC778 \uD658\uACBD\uAD11\uACFC \uBC18\uC0AC\uB97C \uC81C\uACF5\uD558\uC9C0\uB9CC, \uADF8\uB9BC\uC790 \uBC29\uD5A5\uC758 \uC815\uBC00\uD55C \uC81C\uC5B4\uB294 Sun/Spot Light\uB97C \uCD94\uAC00\uD574\uC57C \uD569\uB2C8\uB2E4."
+  }
+]);
+</script>
+
+</body>
+</html>

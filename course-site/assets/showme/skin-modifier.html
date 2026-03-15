@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Show Me — Mirror Modifier 이해</title>
+<title>Show Me — Skin Modifier 이해</title>
 <style>
 /* ══════════════════════════════════════════════════
    Show Me Widget — Standalone Dark Theme
@@ -363,7 +363,7 @@ body {
 <!-- Tab Bar -->
 <nav class="tabs" role="tablist">
   <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
-  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">인터랙티브 데모</button>
   <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
   <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
 </nav>
@@ -372,96 +372,96 @@ body {
 <section class="panel is-active" id="panel-concept" role="tabpanel">
   <div class="concept-grid">
     <div class="concept-card">
-      <h3>Mirror Modifier란?</h3>
-      <p>거울처럼 한쪽만 편집하면 반대쪽이 자동으로 따라오는 Modifier입니다. 좌우 대칭 모델을 만들 때 작업량을 절반으로 줄여줍니다.</p>
-      <div class="analogy">거울 앞에서 한쪽을 바꾸면 반대쪽이 자동으로 따라와요</div>
+      <h3>Skin Modifier란?</h3>
+      <p>꼭짓점과 모서리로 이루어진 뼈대(Skeleton)에 자동으로 살(Skin)을 씌우는 모디파이어입니다. 빠른 프로토타이핑에 최적화되어 있습니다.</p>
+      <div class="analogy">철사로 뼈대를 만들고 점토로 감싸는 것과 같아요</div>
     </div>
     <div class="concept-card">
-      <h3>Clipping이란?</h3>
-      <p>중심선을 넘지 못하게 하는 옵션입니다. ON이면 중심 정점이 정확히 중앙에 고정되어, 양쪽이 깔끔하게 이어집니다.</p>
-      <div class="analogy">중심선에 보이지 않는 벽이 생겨서 정점이 넘어가지 못해요</div>
+      <h3><span class="kbd">Ctrl</span>+<span class="kbd">A</span>로 크기 조절</h3>
+      <p>Edit Mode에서 꼭짓점을 선택한 뒤 <span class="kbd">Ctrl</span>+<span class="kbd">A</span>를 누르면 해당 지점의 Skin 반경을 조절할 수 있습니다. 팔은 가늘게, 몸통은 굵게 만들 수 있습니다.</p>
+    </div>
+    <div class="concept-card">
+      <h3>Mark Root</h3>
+      <p>어떤 꼭짓점을 루트(Root)로 지정할지 결정합니다. 루트 설정에 따라 Skin이 생성되는 방향과 형태가 달라집니다.</p>
     </div>
   </div>
 
   <div class="shortcut-list">
     <h4>주요 단축키</h4>
     <div class="shortcut-row">
-      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">1</span></span>
-      <span>Modifier 추가 패널</span>
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">A</span></span>
+      <span>Skin 반경 조절 (Edit Mode)</span>
     </div>
     <div class="shortcut-row">
-      <span class="shortcut-keys"><span class="kbd">S</span> <span class="kbd">X</span> <span class="kbd">0</span></span>
-      <span>중심선 정렬 (선택한 정점의 X좌표를 0으로)</span>
-    </div>
-    <div class="shortcut-row">
-      <span class="shortcut-keys">Clipping 체크박스</span>
-      <span>Properties &rarr; Modifier tab에서 설정</span>
+      <span class="shortcut-keys">Mark Root 버튼</span>
+      <span>Mesh &rarr; Skin &rarr; Mark Root (Edit Mode)</span>
     </div>
   </div>
 
   <div class="doc-ref">
-    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html" target="_blank" rel="noopener">
-      📖 Blender 공식 문서 — Mirror Modifier
+    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/skin.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Skin Modifier
     </a>
   </div>
 </section>
 
-<!-- TAB 2: 시각적 비교 -->
+<!-- TAB 2: 인터랙티브 데모 -->
 <section class="panel" id="panel-visual" role="tabpanel">
   <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    왼쪽 반의 꼭짓점을 드래그하면 오른쪽이 자동으로 미러됩니다.
+    각 꼭짓점의 원(Skin 반경)을 드래그하여 크기를 조절해 보세요.
   </p>
   <div class="demo-wrap">
     <canvas id="demoCanvas" width="680" height="300"></canvas>
     <div class="demo-controls">
-      <button class="demo-btn is-active" id="btnClipping">Clipping ON</button>
+      <button class="demo-btn is-active" id="btnSubdiv">Subdivision 적용</button>
       <button class="demo-btn" id="btnReset">초기화</button>
     </div>
   </div>
-  <p class="demo-hint">꼭짓점을 드래그해 보세요. Clipping을 토글하면 중심선 넘기 동작이 달라집니다.</p>
+  <p class="demo-hint">꼭짓점의 원 테두리를 드래그하면 반경이 바뀝니다. Subdivision 토글로 부드러운 결과를 미리 볼 수 있습니다.</p>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->
 <section class="panel" id="panel-when" role="tabpanel">
   <div class="usage-grid">
     <div class="usage-card">
-      <h4>Mirror가 필요할 때</h4>
+      <h4>Skin이 필요할 때</h4>
       <ul>
-        <li>좌우 대칭 로봇</li>
-        <li>자동차</li>
-        <li>캐릭터 얼굴</li>
-        <li>가구</li>
+        <li>빠른 캐릭터 프로토타입</li>
+        <li>나무 / 나뭇가지</li>
+        <li>생물 / 촉수</li>
+        <li>로봇 팔다리</li>
       </ul>
     </div>
     <div class="usage-card">
-      <h4>Mirror를 안 쓰는 경우</h4>
+      <h4>Skin을 안 쓰는 경우</h4>
       <ul>
-        <li>비대칭 디자인</li>
-        <li>유기적 형태</li>
-        <li>한쪽만 다른 디테일</li>
+        <li>정밀한 모델링</li>
+        <li>하드서페이스 (Hard Surface)</li>
       </ul>
     </div>
   </div>
-  <div class="tip-box">
-    <strong>팁:</strong> Mirror는 원점(Origin)이 중심에 있어야 해요. <span class="kbd">S</span>+<span class="kbd">X</span>+<span class="kbd">0</span>으로 중심선을 맞추고, 오브젝트를 먼저 중앙에 놓은 뒤 Mirror를 추가하세요.
-  </div>
+
   <div class="combo-section">
     <h4>자주 쓰는 조합</h4>
     <div class="combo-grid">
       <div class="combo-card">
-        <div class="combo-name">Mirror + Subdivision Surface</div>
-        <div class="combo-desc">Mirror로 대칭을 잡고 Subdivision으로 부드럽게. Mirror가 위, Subdivision이 아래 순서로 배치합니다.</div>
+        <div class="combo-name">Skin + Subdivision Surface</div>
+        <div class="combo-desc">Skin으로 기본 형태를 잡고 Subdivision으로 부드럽게. 유기적인 캐릭터에 필수 조합입니다.</div>
       </div>
       <div class="combo-card">
-        <div class="combo-name">Mirror + Solidify</div>
-        <div class="combo-desc">대칭 형태에 두께를 추가할 때. 얇은 판이나 갑옷 같은 모델에 유용합니다.</div>
+        <div class="combo-name">Skin + Mirror</div>
+        <div class="combo-desc">Mirror로 대칭 뼈대를 만들고 Skin으로 살을 씌워 대칭 캐릭터를 빠르게 프로토타이핑합니다.</div>
       </div>
     </div>
   </div>
 
+  <div class="tip-box">
+    <strong>팁:</strong> Skin으로 빠르게 형태를 잡고, Apply 후 Edit Mode에서 디테일을 추가하세요. 프로토타이핑의 왕도입니다!
+  </div>
+
   <div class="doc-ref">
-    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html" target="_blank" rel="noopener">
-      📖 Blender 공식 문서 — Mirror Modifier
+    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/skin.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Skin Modifier
     </a>
   </div>
 </section>
@@ -614,33 +614,42 @@ function initQuiz(questions) {
   }
 }
 
-// ── Canvas Mirror Demo ────────────────────────
+// ── Canvas Skin Demo ──────────────────────────
 (function() {
   var canvas = document.getElementById("demoCanvas");
   var ctx = canvas.getContext("2d");
-  var clipping = true;
+  var subdivOn = true;
   var dragging = -1;
-  var hitRadius = 14;
+  var hitRadius = 18;
 
-  // Initial left-half vertices (robot torso shape, top-down view)
-  // These are offsets from center — stored as positive X values from center
+  // Skeleton vertices (simple character skeleton)
   var defaultVerts = [
-    { x: 10,  y: 60  },  // top-center-ish
-    { x: 100, y: 50  },  // top-right shoulder
-    { x: 120, y: 90  },  // right shoulder corner
-    { x: 110, y: 160 },  // right waist
-    { x: 90,  y: 220 },  // right hip
-    { x: 10,  y: 240 },  // bottom-center-ish
+    { x: 340, y: 50,  r: 18 },  // head
+    { x: 340, y: 110, r: 28 },  // chest
+    { x: 340, y: 180, r: 24 },  // waist
+    { x: 260, y: 90,  r: 12 },  // left arm
+    { x: 420, y: 90,  r: 12 },  // right arm
+    { x: 300, y: 260, r: 14 },  // left leg
+    { x: 380, y: 260, r: 14 },  // right leg
   ];
 
-  // Working copy
+  // Edges (connections between vertices)
+  var edges = [
+    [0, 1], // head to chest
+    [1, 2], // chest to waist
+    [1, 3], // chest to left arm
+    [1, 4], // chest to right arm
+    [2, 5], // waist to left leg
+    [2, 6], // waist to right leg
+  ];
+
   var verts = [];
   function resetVerts() {
-    verts = defaultVerts.map(function(v) { return { x: v.x, y: v.y }; });
+    verts = defaultVerts.map(function(v) { return { x: v.x, y: v.y, r: v.r }; });
   }
   resetVerts();
 
-  var centerX = canvas.width / 2;
+  function lerp(a, b, t) { return a + (b - a) * t; }
 
   function draw() {
     var w = canvas.width;
@@ -651,62 +660,57 @@ function initQuiz(questions) {
     ctx.fillStyle = "#17181a";
     ctx.fillRect(0, 0, w, h);
 
-    // Grid lines (subtle)
+    // Grid
     ctx.strokeStyle = "rgba(255,255,255,.04)";
     ctx.lineWidth = 1;
     var step = 40;
     for (var gx = step; gx < w; gx += step) {
-      ctx.beginPath();
-      ctx.moveTo(gx, 0);
-      ctx.lineTo(gx, h);
-      ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
     }
     for (var gy = step; gy < h; gy += step) {
-      ctx.beginPath();
-      ctx.moveTo(0, gy);
-      ctx.lineTo(w, gy);
-      ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
     }
 
-    // Center mirror axis — dashed line
-    ctx.strokeStyle = "rgba(245,158,11,.5)";
+    // Draw skin mesh (filled shapes around edges)
+    if (subdivOn) {
+      // Smooth subdivided look: draw rounded shapes
+      edges.forEach(function(e) {
+        var a = verts[e[0]], b = verts[e[1]];
+        drawSkinSegmentSmooth(a, b);
+      });
+    } else {
+      // Basic rectangular skin
+      edges.forEach(function(e) {
+        var a = verts[e[0]], b = verts[e[1]];
+        drawSkinSegment(a, b);
+      });
+    }
+
+    // Draw edges (skeleton wireframe)
+    ctx.strokeStyle = "rgba(245,158,11,.6)";
     ctx.lineWidth = 2;
-    ctx.setLineDash([8, 6]);
-    ctx.beginPath();
-    ctx.moveTo(centerX, 0);
-    ctx.lineTo(centerX, h);
-    ctx.stroke();
-    ctx.setLineDash([]);
-
-    // Axis label
-    ctx.fillStyle = "rgba(245,158,11,.7)";
-    ctx.font = "11px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("Mirror Axis (X=0)", centerX, 18);
-
-    // Draw left half polygon (original)
-    drawPolygon(verts, -1, "rgba(10,132,255,.25)", "rgba(10,132,255,.7)");
-
-    // Draw right half polygon (mirrored)
-    var mirrored = verts.map(function(v) {
-      return { x: v.x, y: v.y };
-    });
-    drawPolygon(mirrored, 1, "rgba(16,185,129,.15)", "rgba(16,185,129,.5)");
-
-    // Labels
-    ctx.font = "bold 12px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillStyle = "rgba(10,132,255,.8)";
-    ctx.fillText("Original (Edit)", centerX - 80, h - 14);
-    ctx.fillStyle = "rgba(16,185,129,.6)";
-    ctx.fillText("Mirrored (Auto)", centerX + 80, h - 14);
-
-    // Draw vertex handles on left side
-    verts.forEach(function(v, i) {
-      var sx = centerX - v.x;
-      var sy = v.y;
+    edges.forEach(function(e) {
+      var a = verts[e[0]], b = verts[e[1]];
       ctx.beginPath();
-      ctx.arc(sx, sy, 6, 0, Math.PI * 2);
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.stroke();
+    });
+
+    // Draw vertices and radius circles
+    verts.forEach(function(v, i) {
+      // Radius circle
+      ctx.beginPath();
+      ctx.arc(v.x, v.y, v.r, 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(10,132,255,.5)";
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([4, 3]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Vertex dot
+      ctx.beginPath();
+      ctx.arc(v.x, v.y, 5, 0, Math.PI * 2);
       ctx.fillStyle = (dragging === i) ? "#0a84ff" : "rgba(10,132,255,.9)";
       ctx.fill();
       ctx.strokeStyle = "#fff";
@@ -714,28 +718,93 @@ function initQuiz(questions) {
       ctx.stroke();
     });
 
-    // Clipping indicator
-    ctx.fillStyle = clipping ? "rgba(16,185,129,.7)" : "rgba(239,68,68,.7)";
+    // Labels
+    ctx.font = "bold 11px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillStyle = "rgba(245,158,11,.7)";
+    ctx.fillText("Skeleton (Edges)", 80, h - 14);
+    ctx.fillStyle = "rgba(10,132,255,.7)";
+    ctx.fillText("Skin Radius (Ctrl+A)", w - 110, h - 14);
+
+    // Root indicator
+    ctx.fillStyle = "rgba(16,185,129,.7)";
+    ctx.font = "10px sans-serif";
+    ctx.fillText("Root", verts[0].x, verts[0].y - verts[0].r - 8);
+
+    // Subdiv indicator
+    ctx.fillStyle = subdivOn ? "rgba(16,185,129,.7)" : "rgba(239,68,68,.7)";
     ctx.font = "bold 11px sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText("Clipping: " + (clipping ? "ON" : "OFF"), 12, 18);
+    ctx.fillText("Subdivision: " + (subdivOn ? "ON" : "OFF"), 12, 18);
   }
 
-  function drawPolygon(pts, side, fillColor, strokeColor) {
-    // side: -1 = left of center, +1 = right of center
-    if (pts.length < 2) return;
+  function drawSkinSegment(a, b) {
+    // Draw a trapezoid connecting two vertices with their radii
+    var dx = b.x - a.x;
+    var dy = b.y - a.y;
+    var len = Math.sqrt(dx * dx + dy * dy);
+    if (len === 0) return;
+    var nx = -dy / len;
+    var ny = dx / len;
+
     ctx.beginPath();
-    pts.forEach(function(v, i) {
-      var sx = (side === -1) ? (centerX - v.x) : (centerX + v.x);
-      var sy = v.y;
-      if (i === 0) ctx.moveTo(sx, sy);
-      else ctx.lineTo(sx, sy);
-    });
+    ctx.moveTo(a.x + nx * a.r, a.y + ny * a.r);
+    ctx.lineTo(b.x + nx * b.r, b.y + ny * b.r);
+    ctx.lineTo(b.x - nx * b.r, b.y - ny * b.r);
+    ctx.lineTo(a.x - nx * a.r, a.y - ny * a.r);
     ctx.closePath();
-    ctx.fillStyle = fillColor;
+    ctx.fillStyle = "rgba(10,132,255,.12)";
     ctx.fill();
-    ctx.strokeStyle = strokeColor;
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = "rgba(10,132,255,.25)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // End caps
+    ctx.beginPath();
+    ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(10,132,255,.08)";
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  function drawSkinSegmentSmooth(a, b) {
+    // Draw smooth rounded shape between two vertices
+    var dx = b.x - a.x;
+    var dy = b.y - a.y;
+    var len = Math.sqrt(dx * dx + dy * dy);
+    if (len === 0) return;
+    var nx = -dy / len;
+    var ny = dx / len;
+
+    // Smooth interpolated outline using bezier curves
+    ctx.beginPath();
+    ctx.moveTo(a.x + nx * a.r, a.y + ny * a.r);
+
+    // Smooth curve along one side
+    var mid1x = lerp(a.x, b.x, 0.5) + nx * lerp(a.r, b.r, 0.5);
+    var mid1y = lerp(a.y, b.y, 0.5) + ny * lerp(a.r, b.r, 0.5);
+    ctx.quadraticCurveTo(mid1x, mid1y, b.x + nx * b.r, b.y + ny * b.r);
+
+    // Arc around b
+    var angB = Math.atan2(ny, nx);
+    ctx.arc(b.x, b.y, b.r, angB, angB + Math.PI);
+
+    // Smooth curve along the other side (reversed)
+    var mid2x = lerp(b.x, a.x, 0.5) - nx * lerp(b.r, a.r, 0.5);
+    var mid2y = lerp(b.y, a.y, 0.5) - ny * lerp(b.r, a.r, 0.5);
+    ctx.quadraticCurveTo(mid2x, mid2y, a.x - nx * a.r, a.y - ny * a.r);
+
+    // Arc around a
+    var angA = Math.atan2(-ny, -nx);
+    ctx.arc(a.x, a.y, a.r, angA, angA + Math.PI);
+
+    ctx.closePath();
+    ctx.fillStyle = "rgba(10,132,255,.15)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(10,132,255,.3)";
+    ctx.lineWidth = 1;
     ctx.stroke();
   }
 
@@ -758,17 +827,21 @@ function initQuiz(questions) {
   }
 
   function findVertex(pos) {
+    // Check if near any vertex's radius circle edge (for resizing)
+    // or near the vertex center (for moving)
     var best = -1;
     var bestDist = hitRadius * hitRadius;
     verts.forEach(function(v, i) {
-      var sx = centerX - v.x;
-      var sy = v.y;
-      var dx = pos.x - sx;
-      var dy = pos.y - sy;
-      var d2 = dx * dx + dy * dy;
-      if (d2 < bestDist) {
-        bestDist = d2;
-        best = i;
+      // Distance to the radius circle edge
+      var dx = pos.x - v.x;
+      var dy = pos.y - v.y;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      var edgeDist = Math.abs(dist - v.r);
+      if (edgeDist < hitRadius) {
+        if (edgeDist * edgeDist < bestDist) {
+          bestDist = edgeDist * edgeDist;
+          best = i;
+        }
       }
     });
     return best;
@@ -785,23 +858,14 @@ function initQuiz(questions) {
     if (dragging < 0) return;
     e.preventDefault();
     var pos = getEventPos(e);
-    // Convert screen position to vertex coords (offset from center)
-    var newX = centerX - pos.x;
-    var newY = pos.y;
-
-    // Clamp Y
-    if (newY < 10) newY = 10;
-    if (newY > canvas.height - 10) newY = canvas.height - 10;
-
-    // Clipping: prevent crossing center line (x must stay >= 0)
-    if (clipping) {
-      if (newX < 0) newX = 0;
-    }
-    // Even without clipping, don't go too far right
-    if (newX > centerX - 10) newX = centerX - 10;
-
-    verts[dragging].x = newX;
-    verts[dragging].y = newY;
+    var v = verts[dragging];
+    var dx = pos.x - v.x;
+    var dy = pos.y - v.y;
+    var newR = Math.sqrt(dx * dx + dy * dy);
+    // Clamp radius
+    if (newR < 6) newR = 6;
+    if (newR > 60) newR = 60;
+    v.r = newR;
     draw();
   }
 
@@ -824,25 +888,21 @@ function initQuiz(questions) {
   canvas.addEventListener("touchend", onUp);
   canvas.addEventListener("touchcancel", onUp);
 
-  // Clipping toggle
-  var btnClipping = document.getElementById("btnClipping");
-  btnClipping.addEventListener("click", function() {
-    clipping = !clipping;
-    if (clipping) {
-      btnClipping.textContent = "Clipping ON";
-      btnClipping.classList.add("is-active");
-      // Enforce clipping on current verts
-      verts.forEach(function(v) {
-        if (v.x < 0) v.x = 0;
-      });
+  // Subdivision toggle
+  var btnSubdiv = document.getElementById("btnSubdiv");
+  btnSubdiv.addEventListener("click", function() {
+    subdivOn = !subdivOn;
+    if (subdivOn) {
+      btnSubdiv.textContent = "Subdivision 적용";
+      btnSubdiv.classList.add("is-active");
     } else {
-      btnClipping.textContent = "Clipping OFF";
-      btnClipping.classList.remove("is-active");
+      btnSubdiv.textContent = "Subdivision 해제";
+      btnSubdiv.classList.remove("is-active");
     }
     draw();
   });
 
-  // Reset button
+  // Reset
   document.getElementById("btnReset").addEventListener("click", function() {
     resetVerts();
     draw();
@@ -855,48 +915,48 @@ function initQuiz(questions) {
 // ── Quiz Data ─────────────────────────────────
 initQuiz([
   {
-    question: "Mirror Modifier\uB97C \uCD94\uAC00\uD588\uB294\uB370 \uBBF8\uB7EC\uB41C \uBC18\uCABD\uC774 \uC774\uC0C1\uD55C \uACF3\uC5D0 \uB098\uD0C0\uB098\uC694. \uAC00\uC7A5 \uD754\uD55C \uC6D0\uC778\uC740?",
+    question: "Skin Modifier\uC758 \uC5ED\uD560\uC740 \uBB34\uC5C7\uC778\uAC00\uC694?",
     options: [
-      "Apply Scale\uC744 \uC548 \uD574\uC11C",
-      "Origin\uC774 \uC624\uBE0C\uC81D\uD2B8 \uC911\uC2EC\uC5D0 \uC788\uC9C0 \uC54A\uC544\uC11C",
-      "Clipping\uC774 \uCF1C\uC838 \uC788\uC5B4\uC11C",
-      "Edit Mode\uAC00 \uC544\uB2C8\uB77C\uC11C"
+      "\uBA54\uC26C\uC758 \uC0C9\uC0C1\uC744 \uBCC0\uACBD\uD55C\uB2E4",
+      "\uBFD4\uB300(Skeleton)\uC5D0 \uC790\uB3D9\uC73C\uB85C \uC0B4\uC744 \uC528\uC6B4\uB2E4",
+      "\uBA54\uC26C\uB97C \uBCF5\uC81C\uD55C\uB2E4",
+      "\uBA54\uC26C\uC758 UV\uB97C \uD3B4\uCE5C\uB2E4"
     ],
     answer: 1,
-    explanation: "Mirror\uB294 Origin\uC744 \uAE30\uC900\uC73C\uB85C \uBC18\uC804\uD569\uB2C8\uB2E4. Origin\uC774 \uC624\uBE0C\uC81D\uD2B8 \uC911\uC2EC\uC5D0 \uC788\uC9C0 \uC54A\uC73C\uBA74 \uBBF8\uB7EC\uB41C \uBC18\uCABD\uC774 \uC5C9\uB69A\uD55C \uC704\uCE58\uC5D0 \uC0DD\uAE41\uB2C8\uB2E4."
+    explanation: "Skin Modifier\uB294 \uAF2D\uC9D3\uC810\uACFC \uBAA8\uC11C\uB9AC\uB85C \uC774\uB8E8\uC5B4\uC9C4 \uBFD4\uB300\uC5D0 \uC790\uB3D9\uC73C\uB85C \uC0B4(Skin)\uC744 \uC528\uC6B0\uB294 \uBAA8\uB514\uD30C\uC774\uC5B4\uC785\uB2C8\uB2E4."
   },
   {
-    question: "Clipping \uC635\uC158\uC744 \uCF1C\uBA74 \uC5B4\uB5A4 \uD6A8\uACFC\uAC00 \uC788\uB098\uC694?",
+    question: "\uD2B9\uC815 \uBD80\uC704\uC758 Skin \uBC18\uACBD\uC744 \uAD75\uAC8C \uB610\uB294 \uAC00\uB298\uAC8C \uD558\uB824\uBA74?",
     options: [
-      "\uBBF8\uB7EC\uAC00 \uBE44\uD65C\uC131\uD654\uB41C\uB2E4",
-      "\uC790\uB3D9\uC73C\uB85C Apply\uB41C\uB2E4",
-      "\uC911\uC2EC \uC815\uC810\uC774 \uBBF8\uB7EC \uCD95\uC744 \uB118\uC9C0 \uBABB\uD55C\uB2E4",
-      "\uBC18\uB300\uD3B8\uC774 \uC228\uACA8\uC9C4\uB2E4"
+      "S\uD0A4\uB85C Scale\uD55C\uB2E4",
+      "Ctrl+A\uB85C \uBC18\uACBD\uC744 \uC870\uC808\uD55C\uB2E4",
+      "G\uD0A4\uB85C \uC774\uB3D9\uD55C\uB2E4",
+      "R\uD0A4\uB85C \uD68C\uC804\uD55C\uB2E4"
     ],
-    answer: 2,
-    explanation: "Clipping\uC744 \uCF1C\uBA74 \uC815\uC810\uC774 \uBBF8\uB7EC \uCD95\uC744 \uB118\uC5B4\uAC00\uC9C0 \uBABB\uD569\uB2C8\uB2E4. \uC774\uB807\uAC8C \uD558\uBA74 \uC911\uC2EC\uC120\uC5D0\uC11C \uC591\uCABD\uC774 \uAE54\uB054\uD558\uAC8C \uC774\uC5B4\uC9D1\uB2C8\uB2E4."
+    answer: 1,
+    explanation: "Edit Mode\uC5D0\uC11C \uAF2D\uC9D3\uC810\uC744 \uC120\uD0DD\uD55C \uB4A4 Ctrl+A\uB97C \uB204\uB974\uBA74 \uD574\uB2F9 \uC9C0\uC810\uC758 Skin \uBC18\uACBD\uC744 \uC870\uC808\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
   },
   {
-    question: "S \u2192 X \u2192 0\uC744 \uB204\uB974\uBA74 \uC5B4\uB5A4 \uC77C\uC774 \uC77C\uC5B4\uB098\uB098\uC694?",
+    question: "Skin\uC73C\uB85C \uBD80\uB4DC\uB7EC\uC6B4 \uACB0\uACFC\uB97C \uC5BB\uC73C\uB824\uBA74 \uC5B4\uB5A4 \uBAA8\uB514\uD30C\uC774\uC5B4\uC640 \uC870\uD569\uD574\uC57C \uD558\uB098\uC694?",
     options: [
-      "\uC624\uBE0C\uC81D\uD2B8\uAC00 \uC0AD\uC81C\uB41C\uB2E4",
-      "X\uCD95 \uBBF8\uB7EC\uAC00 \uC801\uC6A9\uB41C\uB2E4",
-      "X\uC88C\uD45C\uAC00 0\uC774 \uB418\uC5B4 \uC911\uC2EC\uC120 \uC815\uB82C",
-      "\uC2A4\uCF00\uC77C\uC774 \uCD08\uAE30\uD654\uB41C\uB2E4"
+      "Boolean",
+      "Array",
+      "Subdivision Surface",
+      "Solidify"
     ],
     answer: 2,
-    explanation: "S(Scale) \u2192 X(\uCD95 \uC81C\uD55C) \u2192 0(\uAC12)\uC744 \uB204\uB974\uBA74 \uC120\uD0DD\uD55C \uC815\uC810\uC758 X\uC88C\uD45C\uAC00 0\uC774 \uB418\uC5B4 \uC815\uD655\uD788 \uC911\uC2EC\uC120\uC5D0 \uC815\uB82C\uB429\uB2C8\uB2E4."
+    explanation: "Skin + Subdivision Surface \uC870\uD569\uC73C\uB85C \uBFD4\uB300\uC5D0 \uBD80\uB4DC\uB7EC\uC6B4 \uC0B4\uC744 \uC528\uC6B8 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
   },
   {
-    question: "Mirror + Subdivision Surface \uC870\uD569\uC5D0\uC11C Modifier \uC21C\uC11C\uB294?",
+    question: "Skin Modifier\uAC00 \uAC00\uC7A5 \uC801\uD569\uD55C \uC791\uC5C5\uC740?",
     options: [
-      "\uC21C\uC11C \uC0C1\uAD00\uC5C6\uB2E4",
-      "Subdivision\uC774 \uC704",
-      "Mirror\uAC00 \uC704",
-      "\uB458 \uB2E4 Apply \uD6C4 \uC0AC\uC6A9"
+      "\uC815\uBC00\uD55C \uD558\uB4DC\uC11C\uD398\uC774\uC2A4 \uBAA8\uB378\uB9C1",
+      "\uBE60\uB978 \uD504\uB85C\uD1A0\uD0C0\uC774\uD551",
+      "UV \uC5B8\uB798\uD551",
+      "\uD14D\uC2A4\uCC98 \uD398\uC778\uD305"
     ],
-    answer: 2,
-    explanation: "Mirror\uAC00 \uC704\uC5D0, Subdivision\uC774 \uC544\uB798\uC5D0 \uC640\uC57C \uD569\uB2C8\uB2E4. \uBA3C\uC800 \uB300\uCE6D\uC744 \uC7A1\uACE0 \uB098\uC11C \uBD80\uB4DC\uB7FD\uAC8C \uB9CC\uB4DC\uB294 \uAC83\uC774 \uC62C\uBC14\uB978 \uC21C\uC11C\uC785\uB2C8\uB2E4."
+    answer: 1,
+    explanation: "Skin Modifier\uB294 \uBE60\uB978 \uD504\uB85C\uD1A0\uD0C0\uC774\uD551\uC5D0 \uCD5C\uC801\uD654\uB418\uC5B4 \uC788\uC2B5\uB2C8\uB2E4. \uCE90\uB9AD\uD130, \uB098\uBB34, \uC0DD\uBB3C \uB4F1\uC758 \uD615\uD0DC\uB97C \uBE60\uB974\uAC8C \uC7A1\uC744 \uC218 \uC788\uC5B4\uC694."
   }
 ]);
 </script>

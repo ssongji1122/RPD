@@ -260,12 +260,73 @@ body {
 }
 .quiz-retry:hover { background: rgba(10,132,255,.22); }
 
+/* ── Official Doc Reference ── */
+.doc-ref {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(10,132,255,.15);
+  background: rgba(10,132,255,.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-ref a {
+  color: var(--key-soft);
+  font-size: .84rem;
+  text-decoration: none;
+  line-height: 1.5;
+}
+.doc-ref a:hover { text-decoration: underline; }
+.doc-ref-list {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.doc-ref-list .doc-ref { margin-top: 0; }
+
+/* ── Comparison Table ── */
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 14px;
+  font-size: .84rem;
+}
+.compare-table thead { background: rgba(10,132,255,.06); }
+.compare-table th {
+  padding: 10px 14px; text-align: left;
+  color: var(--muted-strong); font-weight: 600;
+  font-size: .78rem; letter-spacing: .03em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--line-strong);
+}
+.compare-table td {
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted-strong); line-height: 1.6;
+}
+.compare-table tr:last-child td { border-bottom: none; }
+.compare-table tr:hover td { background: rgba(255,255,255,.02); }
+
+/* ── Section Divider ── */
+.section-divider {
+  margin: 20px 0 16px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--line);
+  font-size: .92rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
 /* ── Responsive ── */
 @media (max-width: 600px) {
   .concept-grid, .usage-grid { grid-template-columns: 1fr; }
   .tabs { padding: 0 8px; }
   .tab { padding: 10px 12px; font-size: .8rem; }
   .panel { padding: 16px 12px; }
+  .compare-table { font-size: .78rem; }
+  .compare-table th, .compare-table td { padding: 6px 10px; }
 }
 </style>
 </head>
@@ -351,6 +412,7 @@ document.querySelectorAll(".tab").forEach(function(tab) {
 function initQuiz(questions) {
   var container = document.getElementById("quizArea");
   var score = 0, answered = 0;
+  var scoreDiv = null; // track score section for updates
 
   // Progress indicator
   var progress = document.createElement("div");
@@ -387,6 +449,27 @@ function initQuiz(questions) {
           div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
           fb.className = "quiz-feedback show wrong-fb";
           fb.textContent = "\u274c " + q.explanation;
+
+          // Add retry button for wrong answers
+          var retryBtn = document.createElement("button");
+          retryBtn.className = "quiz-retry";
+          retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
+          retryBtn.textContent = "다시 풀기";
+          retryBtn.addEventListener("click", function() {
+            // Reset this question
+            answered--;
+            div.querySelectorAll(".quiz-option").forEach(function(b) {
+              b.disabled = false;
+              b.classList.remove("wrong", "correct");
+            });
+            fb.className = "quiz-feedback";
+            fb.textContent = "";
+            retryBtn.remove();
+            // Remove score section if it was shown
+            if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+            progress.textContent = "문제 " + answered + " / " + questions.length + " \u00b7 점수 " + score + "점";
+          });
+          fb.appendChild(retryBtn);
         }
         progress.textContent = "문제 " + answered + " / " + questions.length + " \u00b7 점수 " + score + "점";
         if (answered === questions.length) showScore();
@@ -399,7 +482,10 @@ function initQuiz(questions) {
   });
 
   function showScore() {
-    var scoreDiv = document.createElement("div");
+    // Remove previous score section if exists (e.g. after retry)
+    if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+
+    scoreDiv = document.createElement("div");
     scoreDiv.className = "quiz-score";
 
     var emoji = document.createElement("div");
@@ -417,6 +503,29 @@ function initQuiz(questions) {
     msg.textContent = score === questions.length ? "완벽합니다!" : "조금 더 연습하면 완벽해질 거예요!";
     scoreDiv.appendChild(msg);
 
+    // Save button — sends result to parent for Notion sync
+    var saveBtn = document.createElement("button");
+    saveBtn.className = "quiz-retry";
+    saveBtn.style.cssText = "background:rgba(10,132,255,.18);border-color:var(--key);margin-bottom:8px";
+    saveBtn.textContent = "기록 저장하기";
+    saveBtn.addEventListener("click", function() {
+      try {
+        var wid = new URLSearchParams(location.search).get("wid")
+               || location.pathname.split("/").pop().replace(".html", "");
+        window.parent.postMessage({
+          type: "showme-quiz-complete",
+          widgetId: wid,
+          score: score,
+          total: questions.length,
+          pass: score >= Math.ceil(questions.length * 0.75)
+        }, "*");
+      } catch(e) {}
+      saveBtn.textContent = "저장 완료!";
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = ".5";
+    });
+    scoreDiv.appendChild(saveBtn);
+
     var retry = document.createElement("button");
     retry.className = "quiz-retry";
     retry.textContent = "처음부터 다시";
@@ -424,19 +533,6 @@ function initQuiz(questions) {
     scoreDiv.appendChild(retry);
 
     container.appendChild(scoreDiv);
-
-    // ── Notify parent of quiz completion ──────
-    try {
-      var wid = new URLSearchParams(location.search).get("wid")
-             || location.pathname.split("/").pop().replace(".html", "");
-      window.parent.postMessage({
-        type: "showme-quiz-complete",
-        widgetId: wid,
-        score: score,
-        total: questions.length,
-        pass: score >= Math.ceil(questions.length * 0.75)
-      }, "*");
-    } catch(e) {}
   }
 }
 
