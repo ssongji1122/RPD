@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — 화면 조작 원리</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+/* ── Tab Navigation ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+/* ── Tab Panels ── */
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+/* ── Concept Cards ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card h3 {
+  margin: 0 0 8px; font-size: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.concept-card p {
+  margin: 0; color: var(--muted-strong);
+  font-size: .88rem; line-height: 1.7;
+}
+.concept-card ul {
+  margin: 8px 0 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
+}
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: .72rem; font-weight: 600;
+}
+.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: #fbbf24; }
+/* ── Keyboard Shortcut ── */
+.kbd {
+  display: inline-block;
+  padding: 3px 8px; border-radius: 6px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  color: var(--key-soft);
+  font-size: .82rem; font-weight: 600;
+  font-family: var(--font);
+}
+/* ── Canvas / Demo ── */
+.demo-wrap {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+  margin: 14px 0;
+}
+.demo-wrap canvas {
+  display: block; width: 100%;
+}
+.demo-controls {
+  display: flex; gap: 8px; padding: 12px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.demo-hint {
+  font-size: .78rem; color: var(--muted);
+  text-align: center; padding: 6px 0 0;
+}
+.demo-btn {
+  padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .82rem;
+  cursor: pointer;
+  transition: background .14s, color .14s;
+}
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active {
+  background: rgba(10,132,255,.14);
+  color: var(--key-soft);
+  border-color: rgba(10,132,255,.3);
+}
+/* ── Usage Grid ── */
+.usage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.usage-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 16px;
+}
+.usage-card h4 {
+  margin: 0 0 8px; font-size: .92rem;
+  color: var(--key-soft);
+}
+.usage-card ul {
+  margin: 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem;
+  line-height: 1.8;
+}
+/* ── Tip Box ── */
+.tip-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(10,132,255,.2);
+  background: rgba(10,132,255,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+}
+.tip-box strong { color: var(--key-soft); }
+/* ── Combo Section ── */
+.combo-section {
+  margin-top: 18px;
+}
+.combo-section h4 {
+  margin: 0 0 10px;
+  font-size: .92rem;
+  color: var(--text);
+}
+.combo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.combo-card {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 12px 14px;
+}
+.combo-card .combo-name {
+  font-size: .86rem;
+  font-weight: 600;
+  color: var(--key-soft);
+  margin-bottom: 4px;
+}
+.combo-card .combo-desc {
+  font-size: .8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+/* ── Shortcut Reference ── */
+.shortcut-list {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.shortcut-list h4 {
+  margin: 0 0 10px;
+  font-size: .9rem;
+  color: var(--text);
+}
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: .84rem;
+  color: var(--muted-strong);
+}
+.shortcut-row + .shortcut-row {
+  border-top: 1px solid var(--line);
+}
+.shortcut-keys {
+  flex-shrink: 0;
+}
+.analogy {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(245,158,11,.06);
+  border: 1px solid rgba(245,158,11,.15);
+  font-size: .82rem;
+  color: #fbbf24;
+  font-style: italic;
+}
+/* ── Quiz ── */
+.quiz-progress {
+  font-size: .78rem; color: var(--muted);
+  margin-bottom: 12px;
+}
+.quiz-question {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.quiz-question h4 {
+  margin: 0 0 12px; font-size: .94rem;
+}
+.quiz-option {
+  display: block; width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.025);
+  color: var(--text);
+  font: inherit; font-size: .86rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background .14s, border-color .14s;
+}
+.quiz-option:hover {
+  background: rgba(255,255,255,.06);
+  border-color: var(--line-strong);
+}
+.quiz-option.correct {
+  background: rgba(16,185,129,.12);
+  border-color: rgba(16,185,129,.4);
+  color: var(--success-soft);
+}
+.quiz-option.wrong {
+  background: rgba(239,68,68,.1);
+  border-color: rgba(239,68,68,.3);
+  color: #fca5a5;
+}
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback {
+  margin-top: 8px; padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: .84rem;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: #fca5a5; }
+.quiz-score {
+  text-align: center; padding: 20px;
+  font-size: 1.1rem; font-weight: 600;
+}
+.quiz-retry {
+  display: block; margin: 12px auto;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--key);
+  background: rgba(10,132,255,.12);
+  color: var(--key-soft);
+  font: inherit; font-size: .88rem;
+  cursor: pointer;
+  transition: background .14s;
+}
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+/* ── Official Doc Reference ── */
+.doc-ref {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(10,132,255,.15);
+  background: rgba(10,132,255,.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-ref a {
+  color: var(--key-soft);
+  font-size: .84rem;
+  text-decoration: none;
+  line-height: 1.5;
+}
+.doc-ref a:hover { text-decoration: underline; }
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Tab Bar -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+</nav>
+
+<!-- TAB 1: 개념 이해 -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">핵심</span> Orbit (궤도 회전)</h3>
+      <p>MMB(마우스 가운데 버튼) 드래그로 카메라가 원점 주위를 회전합니다. 구글 어스에서 지구를 돌리는 것과 같은 원리입니다. 오브젝트를 다양한 각도에서 관찰할 수 있습니다.</p>
+      <div class="analogy">구글 어스에서 지구를 손가락으로 돌리듯, MMB로 3D 공간을 자유롭게 회전해요</div>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-green">필수</span> Pan &amp; Zoom</h3>
+      <p>Shift+MMB로 횡이동(Pan), 스크롤로 확대/축소(Zoom)합니다. 카메라를 좌우/상하로 밀거나 앞뒤로 당기는 것과 같습니다.</p>
+      <div class="analogy">구글 어스에서 지구를 돌리고(Orbit), 밀고(Pan), 줌인하는(Zoom) 것과 똑같아요</div>
+    </div>
+  </div>
+
+  <div class="shortcut-list">
+    <h4>주요 단축키</h4>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">MMB 드래그</span></span>
+      <span>Orbit &mdash; 궤도 회전</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Shift</span> + <span class="kbd">MMB</span></span>
+      <span>Pan &mdash; 횡이동</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">스크롤</span></span>
+      <span>Zoom &mdash; 확대/축소</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Numpad 1</span> / <span class="kbd">3</span> / <span class="kbd">7</span></span>
+      <span>Front / Right / Top 뷰</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Numpad 5</span></span>
+      <span>Ortho / Perspective 전환</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Numpad .</span></span>
+      <span>선택 오브젝트에 포커스</span>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/editors/3dview/navigate/index.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — 3D Viewport Navigation
+    </a>
+  </div>
+</section>
+
+<!-- TAB 2: 시각적 비교 -->
+<section class="panel" id="panel-visual" role="tabpanel">
+  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
+    캔버스를 드래그하여 큐브를 회전(Orbit)해 보세요. 아래 버튼으로 Numpad 뷰를 체험할 수 있습니다.
+  </p>
+  <div class="demo-wrap">
+    <canvas id="demoCanvas" width="680" height="380"></canvas>
+    <div class="demo-controls">
+      <button class="demo-btn" id="btnFront">Front (1)</button>
+      <button class="demo-btn" id="btnRight">Right (3)</button>
+      <button class="demo-btn" id="btnTop">Top (7)</button>
+      <button class="demo-btn" id="btnReset">Reset</button>
+    </div>
+  </div>
+  <p class="demo-hint">마우스 드래그 = Orbit 회전 | 버튼 클릭 = Numpad 뷰 전환</p>
+</section>
+
+<!-- TAB 3: 언제 쓰나요? -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>매 순간 사용</h4>
+      <ul>
+        <li>모델링할 때 다양한 각도 확인</li>
+        <li>디테일 확인을 위한 줌인/줌아웃</li>
+        <li>전체 구도를 잡을 때 Orbit으로 둘러보기</li>
+        <li>텍스처/재질 확인을 위한 회전</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>Numpad 뷰 전환</h4>
+      <ul>
+        <li>정확한 정렬이 필요할 때</li>
+        <li>정면/측면에서 비율 확인할 때</li>
+        <li>위에서 레이아웃 배치할 때</li>
+        <li>Ortho 뷰로 치수 확인할 때</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="combo-section">
+    <h4>자주 쓰는 조합</h4>
+    <div class="combo-grid">
+      <div class="combo-card">
+        <div class="combo-name">Numpad . (포커스) + MMB (Orbit)</div>
+        <div class="combo-desc">선택한 오브젝트를 중심으로 화면을 맞춘 뒤, 그 주위를 회전하며 관찰합니다.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Numpad 5 (Ortho) + Numpad 1 (Front)</div>
+        <div class="combo-desc">원근감 없는 정확한 정면뷰로 전환합니다. 정밀한 비율 확인에 필수적인 조합입니다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>팁:</strong> 화면이 길을 잃었으면 <span class="kbd">Numpad .</span>을 누르세요! 선택한 오브젝트 주위로 화면이 돌아옵니다.
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/editors/3dview/navigate/index.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — 3D Viewport Navigation
+    </a>
+  </div>
+</section>
+
+<!-- TAB 4: 퀴즈 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+// ── Tab Switching ──────────────────────────────
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(t) {
+      t.classList.remove("is-active");
+      t.setAttribute("aria-selected", "false");
+    });
+    document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("is-active"); });
+    tab.classList.add("is-active");
+    tab.setAttribute("aria-selected", "true");
+    document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+  });
+});
+
+// ── Quiz Engine (Safe DOM methods) ────────────
+function initQuiz(questions) {
+  var container = document.getElementById("quizArea");
+  var score = 0, answered = 0;
+  var scoreDiv = null;
+
+  var progress = document.createElement("div");
+  progress.className = "quiz-progress";
+  progress.textContent = "문제 0 / " + questions.length + " \u00b7 점수 0점";
+  container.appendChild(progress);
+
+  questions.forEach(function(q, qi) {
+    var div = document.createElement("div");
+    div.className = "quiz-question";
+
+    var heading = document.createElement("h4");
+    heading.textContent = "Q" + (qi + 1) + ". " + q.question;
+    div.appendChild(heading);
+
+    var fb = document.createElement("div");
+    fb.className = "quiz-feedback";
+
+    q.options.forEach(function(opt, oi) {
+      var btn = document.createElement("button");
+      btn.className = "quiz-option";
+      btn.textContent = opt;
+      btn.addEventListener("click", function() {
+        if (btn.disabled) return;
+        div.querySelectorAll(".quiz-option").forEach(function(b) { b.disabled = true; });
+        answered++;
+        if (oi === q.answer) {
+          btn.classList.add("correct");
+          fb.className = "quiz-feedback show correct-fb";
+          fb.textContent = "\u2705 " + q.explanation;
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
+          fb.className = "quiz-feedback show wrong-fb";
+          fb.textContent = "\u274c " + q.explanation;
+
+          var retryBtn = document.createElement("button");
+          retryBtn.className = "quiz-retry";
+          retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
+          retryBtn.textContent = "다시 풀기";
+          retryBtn.addEventListener("click", function() {
+            answered--;
+            div.querySelectorAll(".quiz-option").forEach(function(b) {
+              b.disabled = false;
+              b.classList.remove("wrong", "correct");
+            });
+            fb.className = "quiz-feedback";
+            fb.textContent = "";
+            retryBtn.remove();
+            if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+            progress.textContent = "문제 " + answered + " / " + questions.length + " \u00b7 점수 " + score + "점";
+          });
+          fb.appendChild(retryBtn);
+        }
+        progress.textContent = "문제 " + answered + " / " + questions.length + " \u00b7 점수 " + score + "점";
+        if (answered === questions.length) showScore();
+      });
+      div.appendChild(btn);
+    });
+
+    div.appendChild(fb);
+    container.appendChild(div);
+  });
+
+  function showScore() {
+    if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+
+    scoreDiv = document.createElement("div");
+    scoreDiv.className = "quiz-score";
+
+    var emoji = document.createElement("div");
+    emoji.style.cssText = "font-size:36px;margin-bottom:8px";
+    emoji.textContent = score === questions.length ? "\ud83c\udf89" : score >= Math.ceil(questions.length / 2) ? "\ud83d\udc4d" : "\ud83d\udcda";
+    scoreDiv.appendChild(emoji);
+
+    var result = document.createElement("div");
+    result.style.cssText = "font-size:18px;font-weight:500;margin-bottom:6px";
+    result.textContent = score + " / " + questions.length + " 정답";
+    scoreDiv.appendChild(result);
+
+    var msg = document.createElement("div");
+    msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
+    msg.textContent = score === questions.length ? "완벽합니다!" : "조금 더 연습하면 완벽해질 거예요!";
+    scoreDiv.appendChild(msg);
+
+    var saveBtn = document.createElement("button");
+    saveBtn.className = "quiz-retry";
+    saveBtn.style.cssText = "background:rgba(10,132,255,.18);border-color:var(--key);margin-bottom:8px";
+    saveBtn.textContent = "기록 저장하기";
+    saveBtn.addEventListener("click", function() {
+      try {
+        var wid = new URLSearchParams(location.search).get("wid")
+               || location.pathname.split("/").pop().replace(".html", "");
+        window.parent.postMessage({
+          type: "showme-quiz-complete",
+          widgetId: wid,
+          score: score,
+          total: questions.length,
+          pass: score >= Math.ceil(questions.length * 0.75)
+        }, "*");
+      } catch(e) {}
+      saveBtn.textContent = "저장 완료!";
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = ".5";
+    });
+    scoreDiv.appendChild(saveBtn);
+
+    var retry = document.createElement("button");
+    retry.className = "quiz-retry";
+    retry.textContent = "처음부터 다시";
+    retry.addEventListener("click", function() { location.reload(); });
+    scoreDiv.appendChild(retry);
+
+    container.appendChild(scoreDiv);
+  }
+}
+
+// ── Canvas Viewport Navigation Demo ──────────
+(function() {
+  var canvas = document.getElementById("demoCanvas");
+  var ctx = canvas.getContext("2d");
+  var W = canvas.width;
+  var H = canvas.height;
+
+  // Camera angles (spherical coords)
+  var rotX = -0.4; // pitch
+  var rotY = 0.6;  // yaw
+  var targetRotX = rotX;
+  var targetRotY = rotY;
+  var animating = false;
+
+  // Cube vertices (centered at origin, size 1)
+  var cubeVerts = [
+    [-1, -1, -1], [1, -1, -1], [1, 1, -1], [-1, 1, -1],
+    [-1, -1,  1], [1, -1,  1], [1, 1,  1], [-1, 1,  1]
+  ];
+  // Cube edges (index pairs)
+  var cubeEdges = [
+    [0,1],[1,2],[2,3],[3,0],
+    [4,5],[5,6],[6,7],[7,4],
+    [0,4],[1,5],[2,6],[3,7]
+  ];
+  // Cube faces (for filled rendering)
+  var cubeFaces = [
+    { verts: [0,1,2,3], color: "rgba(10,132,255,.12)" },  // back
+    { verts: [4,5,6,7], color: "rgba(10,132,255,.12)" },  // front
+    { verts: [0,1,5,4], color: "rgba(16,185,129,.10)" },  // bottom
+    { verts: [2,3,7,6], color: "rgba(16,185,129,.10)" },  // top
+    { verts: [0,3,7,4], color: "rgba(245,158,11,.08)" },  // left
+    { verts: [1,2,6,5], color: "rgba(245,158,11,.08)" }   // right
+  ];
+
+  // Face normals for backface culling / depth sorting
+  var faceNormals = [
+    [0, 0, -1], [0, 0, 1],
+    [0, -1, 0], [0, 1, 0],
+    [-1, 0, 0], [1, 0, 0]
+  ];
+
+  function rotatePoint(p, rx, ry) {
+    // Rotate around Y axis
+    var cosY = Math.cos(ry), sinY = Math.sin(ry);
+    var x1 = p[0] * cosY - p[2] * sinY;
+    var z1 = p[0] * sinY + p[2] * cosY;
+    // Rotate around X axis
+    var cosX = Math.cos(rx), sinX = Math.sin(rx);
+    var y2 = p[1] * cosX - z1 * sinX;
+    var z2 = p[1] * sinX + z1 * cosX;
+    return [x1, y2, z2];
+  }
+
+  function project(p) {
+    var scale = 90;
+    var dist = 5;
+    var factor = dist / (dist + p[2]);
+    return [
+      W / 2 + p[0] * scale * factor,
+      H / 2 + p[1] * scale * factor
+    ];
+  }
+
+  function getViewLabel() {
+    // Determine approximate view name
+    var ny = ((rotY % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+    var nx = ((rotX % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+
+    if (Math.abs(targetRotX - (-Math.PI / 2)) < 0.01 && Math.abs(targetRotY) < 0.01) return "Top (7)";
+    if (Math.abs(targetRotX) < 0.01 && Math.abs(targetRotY) < 0.01) return "Front (1)";
+    if (Math.abs(targetRotX) < 0.01 && Math.abs(targetRotY - Math.PI / 2) < 0.01) return "Right (3)";
+    return "Perspective";
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Background
+    ctx.fillStyle = "#17181a";
+    ctx.fillRect(0, 0, W, H);
+
+    // Subtle grid
+    ctx.strokeStyle = "rgba(255,255,255,.04)";
+    ctx.lineWidth = 1;
+    var step = 40;
+    for (var gx = step; gx < W; gx += step) {
+      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke();
+    }
+    for (var gy = step; gy < H; gy += step) {
+      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke();
+    }
+
+    // Transform all vertices
+    var transformed = [];
+    for (var i = 0; i < cubeVerts.length; i++) {
+      transformed.push(rotatePoint(cubeVerts[i], rotX, rotY));
+    }
+
+    // Project vertices
+    var projected = [];
+    for (var i = 0; i < transformed.length; i++) {
+      projected.push(project(transformed[i]));
+    }
+
+    // Draw axis lines through origin
+    var axisLen = 1.8;
+    var axes = [
+      { dir: [axisLen, 0, 0], color: "#ef4444", label: "X" },
+      { dir: [0, axisLen, 0], color: "#10b981", label: "Y" },
+      { dir: [0, 0, axisLen], color: "#0a84ff", label: "Z" }
+    ];
+    axes.forEach(function(axis) {
+      var neg = rotatePoint([-axis.dir[0], -axis.dir[1], -axis.dir[2]], rotX, rotY);
+      var pos = rotatePoint(axis.dir, rotX, rotY);
+      var p1 = project(neg);
+      var p2 = project(pos);
+      ctx.strokeStyle = axis.color;
+      ctx.globalAlpha = 0.3;
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p2[0], p2[1]); ctx.stroke();
+      ctx.globalAlpha = 1;
+      // Label
+      ctx.fillStyle = axis.color;
+      ctx.font = "bold 11px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(axis.label, p2[0] + 8, p2[1] - 4);
+    });
+
+    // Sort faces by depth (painter's algorithm)
+    var faceDepths = [];
+    for (var fi = 0; fi < cubeFaces.length; fi++) {
+      var face = cubeFaces[fi];
+      var avgZ = 0;
+      for (var vi = 0; vi < face.verts.length; vi++) {
+        avgZ += transformed[face.verts[vi]][2];
+      }
+      avgZ /= face.verts.length;
+
+      // Check if face is front-facing
+      var normal = rotatePoint(faceNormals[fi], rotX, rotY);
+      if (normal[2] < 0) {
+        faceDepths.push({ index: fi, depth: avgZ });
+      }
+    }
+    faceDepths.sort(function(a, b) { return b.depth - a.depth; });
+
+    // Draw faces
+    faceDepths.forEach(function(fd) {
+      var face = cubeFaces[fd.index];
+      ctx.beginPath();
+      for (var vi = 0; vi < face.verts.length; vi++) {
+        var pp = projected[face.verts[vi]];
+        if (vi === 0) ctx.moveTo(pp[0], pp[1]);
+        else ctx.lineTo(pp[0], pp[1]);
+      }
+      ctx.closePath();
+      ctx.fillStyle = face.color;
+      ctx.fill();
+      ctx.strokeStyle = "rgba(255,255,255,.15)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    });
+
+    // Draw wireframe edges
+    ctx.strokeStyle = "rgba(142,197,255,.5)";
+    ctx.lineWidth = 1.5;
+    cubeEdges.forEach(function(edge) {
+      var p1 = projected[edge[0]];
+      var p2 = projected[edge[1]];
+      ctx.beginPath();
+      ctx.moveTo(p1[0], p1[1]);
+      ctx.lineTo(p2[0], p2[1]);
+      ctx.stroke();
+    });
+
+    // Draw vertices
+    projected.forEach(function(pp) {
+      ctx.beginPath();
+      ctx.arc(pp[0], pp[1], 3, 0, Math.PI * 2);
+      ctx.fillStyle = "#8ec5ff";
+      ctx.fill();
+    });
+
+    // View label
+    ctx.fillStyle = "rgba(245,158,11,.7)";
+    ctx.font = "bold 12px sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText(getViewLabel(), 12, 22);
+
+    // Orbit hint
+    ctx.fillStyle = "rgba(255,255,255,.3)";
+    ctx.font = "11px sans-serif";
+    ctx.textAlign = "right";
+    ctx.fillText("드래그하여 회전", W - 12, 22);
+  }
+
+  // Mouse drag for orbit
+  var dragging = false;
+  var lastX = 0, lastY = 0;
+
+  function getEventPos(e) {
+    var rect = canvas.getBoundingClientRect();
+    var clientX, clientY;
+    if (e.touches && e.touches.length > 0) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    }
+    return { x: clientX - rect.left, y: clientY - rect.top };
+  }
+
+  function onDown(e) {
+    e.preventDefault();
+    animating = false;
+    dragging = true;
+    var pos = getEventPos(e);
+    lastX = pos.x;
+    lastY = pos.y;
+  }
+
+  function onMove(e) {
+    if (!dragging) return;
+    e.preventDefault();
+    var pos = getEventPos(e);
+    var dx = pos.x - lastX;
+    var dy = pos.y - lastY;
+    rotY += dx * 0.01;
+    rotX += dy * 0.01;
+    // Clamp pitch
+    if (rotX > Math.PI / 2) rotX = Math.PI / 2;
+    if (rotX < -Math.PI / 2) rotX = -Math.PI / 2;
+    targetRotX = rotX;
+    targetRotY = rotY;
+    lastX = pos.x;
+    lastY = pos.y;
+    draw();
+  }
+
+  function onUp() {
+    dragging = false;
+  }
+
+  canvas.addEventListener("mousedown", onDown);
+  canvas.addEventListener("mousemove", onMove);
+  canvas.addEventListener("mouseup", onUp);
+  canvas.addEventListener("mouseleave", onUp);
+  canvas.addEventListener("touchstart", onDown, { passive: false });
+  canvas.addEventListener("touchmove", onMove, { passive: false });
+  canvas.addEventListener("touchend", onUp);
+  canvas.addEventListener("touchcancel", onUp);
+
+  // Animate to target rotation
+  function animateTo(tx, ty) {
+    targetRotX = tx;
+    targetRotY = ty;
+    animating = true;
+    function step() {
+      if (!animating) return;
+      var dx = targetRotX - rotX;
+      var dy = targetRotY - rotY;
+      if (Math.abs(dx) < 0.005 && Math.abs(dy) < 0.005) {
+        rotX = targetRotX;
+        rotY = targetRotY;
+        animating = false;
+        draw();
+        return;
+      }
+      rotX += dx * 0.12;
+      rotY += dy * 0.12;
+      draw();
+      requestAnimationFrame(step);
+    }
+    step();
+  }
+
+  // View buttons
+  document.getElementById("btnFront").addEventListener("click", function() {
+    animateTo(0, 0);
+  });
+  document.getElementById("btnRight").addEventListener("click", function() {
+    animateTo(0, Math.PI / 2);
+  });
+  document.getElementById("btnTop").addEventListener("click", function() {
+    animateTo(-Math.PI / 2, 0);
+  });
+  document.getElementById("btnReset").addEventListener("click", function() {
+    animateTo(-0.4, 0.6);
+  });
+
+  // Initial draw
+  draw();
+})();
+
+// ── Quiz Data ─────────────────────────────────
+initQuiz([
+  {
+    question: "Blender에서 뷰포트를 궤도 회전(Orbit)하려면 어떤 입력을 사용하나요?",
+    options: [
+      "좌클릭 드래그",
+      "MMB(가운데 버튼) 드래그",
+      "우클릭 드래그",
+      "Shift + 좌클릭 드래그"
+    ],
+    answer: 1,
+    explanation: "MMB(마우스 가운데 버튼)를 드래그하면 뷰포트가 궤도 회전합니다. 구글 어스에서 지구를 돌리는 것과 같은 원리예요."
+  },
+  {
+    question: "Numpad 5를 누르면 어떤 일이 일어나나요?",
+    options: [
+      "카메라 뷰로 전환",
+      "Top 뷰로 전환",
+      "Ortho/Perspective 전환",
+      "선택 오브젝트에 포커스"
+    ],
+    answer: 2,
+    explanation: "Numpad 5는 원근(Perspective) 뷰와 직교(Orthographic) 뷰를 토글합니다. 정확한 치수 확인에 유용합니다."
+  },
+  {
+    question: "화면이 길을 잃었을 때 선택한 오브젝트 중심으로 화면을 맞추려면?",
+    options: [
+      "Numpad 0",
+      "Numpad 1",
+      "Numpad .",
+      "Home"
+    ],
+    answer: 2,
+    explanation: "Numpad .(마침표)를 누르면 현재 선택한 오브젝트를 화면 중앙에 맞추고 포커스합니다."
+  },
+  {
+    question: "뷰포트에서 카메라를 횡이동(Pan)하려면 어떤 단축키를 사용하나요?",
+    options: [
+      "Ctrl + MMB",
+      "Alt + MMB",
+      "Shift + MMB",
+      "MMB만 드래그"
+    ],
+    answer: 2,
+    explanation: "Shift + MMB 드래그로 카메라를 상하좌우로 횡이동(Pan)할 수 있습니다. Orbit과 구분하여 사용하세요."
+  }
+]);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — G/R/S 변형 이해</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+/* ── Tab Navigation ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+/* ── Tab Panels ── */
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+/* ── Concept Cards ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card h3 {
+  margin: 0 0 8px; font-size: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.concept-card p {
+  margin: 0; color: var(--muted-strong);
+  font-size: .88rem; line-height: 1.7;
+}
+.concept-card ul {
+  margin: 8px 0 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
+}
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: .72rem; font-weight: 600;
+}
+.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: #fbbf24; }
+/* ── Keyboard Shortcut ── */
+.kbd {
+  display: inline-block;
+  padding: 3px 8px; border-radius: 6px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  color: var(--key-soft);
+  font-size: .82rem; font-weight: 600;
+  font-family: var(--font);
+}
+/* ── Canvas / Demo ── */
+.demo-wrap {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+  margin: 14px 0;
+}
+.demo-wrap canvas {
+  display: block; width: 100%;
+}
+.demo-controls {
+  display: flex; gap: 8px; padding: 12px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.demo-hint {
+  font-size: .78rem; color: var(--muted);
+  text-align: center; padding: 6px 0 0;
+}
+.demo-btn {
+  padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .82rem;
+  cursor: pointer;
+  transition: background .14s, color .14s;
+}
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active {
+  background: rgba(10,132,255,.14);
+  color: var(--key-soft);
+  border-color: rgba(10,132,255,.3);
+}
+/* ── Usage Grid ── */
+.usage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.usage-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 16px;
+}
+.usage-card h4 {
+  margin: 0 0 8px; font-size: .92rem;
+  color: var(--key-soft);
+}
+.usage-card ul {
+  margin: 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem;
+  line-height: 1.8;
+}
+/* ── Tip Box ── */
+.tip-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(10,132,255,.2);
+  background: rgba(10,132,255,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+}
+.tip-box strong { color: var(--key-soft); }
+/* ── Combo Section ── */
+.combo-section {
+  margin-top: 18px;
+}
+.combo-section h4 {
+  margin: 0 0 10px;
+  font-size: .92rem;
+  color: var(--text);
+}
+.combo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.combo-card {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 12px 14px;
+}
+.combo-card .combo-name {
+  font-size: .86rem;
+  font-weight: 600;
+  color: var(--key-soft);
+  margin-bottom: 4px;
+}
+.combo-card .combo-desc {
+  font-size: .8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+/* ── Shortcut Reference ── */
+.shortcut-list {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.shortcut-list h4 {
+  margin: 0 0 10px;
+  font-size: .9rem;
+  color: var(--text);
+}
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: .84rem;
+  color: var(--muted-strong);
+}
+.shortcut-row + .shortcut-row {
+  border-top: 1px solid var(--line);
+}
+.shortcut-keys {
+  flex-shrink: 0;
+}
+.analogy {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(245,158,11,.06);
+  border: 1px solid rgba(245,158,11,.15);
+  font-size: .82rem;
+  color: #fbbf24;
+  font-style: italic;
+}
+/* ── Quiz ── */
+.quiz-progress {
+  font-size: .78rem; color: var(--muted);
+  margin-bottom: 12px;
+}
+.quiz-question {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.quiz-question h4 {
+  margin: 0 0 12px; font-size: .94rem;
+}
+.quiz-option {
+  display: block; width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.025);
+  color: var(--text);
+  font: inherit; font-size: .86rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background .14s, border-color .14s;
+}
+.quiz-option:hover {
+  background: rgba(255,255,255,.06);
+  border-color: var(--line-strong);
+}
+.quiz-option.correct {
+  background: rgba(16,185,129,.12);
+  border-color: rgba(16,185,129,.4);
+  color: var(--success-soft);
+}
+.quiz-option.wrong {
+  background: rgba(239,68,68,.1);
+  border-color: rgba(239,68,68,.3);
+  color: #fca5a5;
+}
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback {
+  margin-top: 8px; padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: .84rem;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: #fca5a5; }
+.quiz-score {
+  text-align: center; padding: 20px;
+  font-size: 1.1rem; font-weight: 600;
+}
+.quiz-retry {
+  display: block; margin: 12px auto;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--key);
+  background: rgba(10,132,255,.12);
+  color: var(--key-soft);
+  font: inherit; font-size: .88rem;
+  cursor: pointer;
+  transition: background .14s;
+}
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+/* ── Official Doc Reference ── */
+.doc-ref {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(10,132,255,.15);
+  background: rgba(10,132,255,.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-ref a {
+  color: var(--key-soft);
+  font-size: .84rem;
+  text-decoration: none;
+  line-height: 1.5;
+}
+.doc-ref a:hover { text-decoration: underline; }
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Tab Bar -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+</nav>
+
+<!-- TAB 1: 개념 이해 -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">핵심</span> G/R/S 삼총사</h3>
+      <p>G = 잡아 이동(Grab), R = 회전(Rotate), S = 크기 변형(Scale). 이 세 가지만 알면 Blender에서 모든 변형의 70%를 커버할 수 있습니다. 키를 누른 뒤 마우스를 움직이고, 클릭으로 확정합니다.</p>
+      <div class="analogy">카드 게임처럼 — G(잡기), R(돌리기), S(크기 바꾸기) 세 장의 카드로 모든 변형을 해요</div>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-green">필수</span> 축 고정 (Axis Constraint)</h3>
+      <p>G, R, S를 누른 뒤 X, Y, Z 키를 누르면 해당 축으로만 변형이 제한됩니다. 이중 축 제한도 가능합니다: G → Shift+Z = Z축을 제외한 XY 평면에서만 이동합니다.</p>
+      <div class="analogy">레일 위의 기차처럼 — 축을 고정하면 정해진 방향으로만 움직여요</div>
+    </div>
+  </div>
+
+  <div class="shortcut-list">
+    <h4>주요 단축키</h4>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">G</span></span>
+      <span>이동 (Grab)</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">R</span></span>
+      <span>회전 (Rotate)</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">S</span></span>
+      <span>크기 변형 (Scale)</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys">+ <span class="kbd">X</span> / <span class="kbd">Y</span> / <span class="kbd">Z</span></span>
+      <span>해당 축으로 고정</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys">+ 숫자 입력</span>
+      <span>정확한 값 입력 (예: G → X → 2 = X축 2m 이동)</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Shift</span> + 축</span>
+      <span>해당 축 제외 (나머지 두 축에서 변형)</span>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/scene_layout/object/editing/transform/introduction.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Transform Introduction
+    </a>
+  </div>
+</section>
+
+<!-- TAB 2: 시각적 비교 -->
+<section class="panel" id="panel-visual" role="tabpanel">
+  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
+    모드를 선택한 뒤 캔버스 위에서 드래그하여 변형해 보세요. 축 고정도 체험해 보세요.
+  </p>
+  <div class="demo-wrap">
+    <canvas id="demoCanvas" width="680" height="380"></canvas>
+    <div class="demo-controls">
+      <button class="demo-btn is-active" id="btnG">G (이동)</button>
+      <button class="demo-btn" id="btnR">R (회전)</button>
+      <button class="demo-btn" id="btnS">S (크기)</button>
+      <span style="width:1px;background:var(--line-strong);margin:0 4px"></span>
+      <button class="demo-btn" id="btnAxisX">X축 고정</button>
+      <button class="demo-btn" id="btnAxisY">Y축 고정</button>
+      <button class="demo-btn" id="btnAxisFree">자유</button>
+      <span style="width:1px;background:var(--line-strong);margin:0 4px"></span>
+      <button class="demo-btn" id="btnResetT">초기화</button>
+    </div>
+  </div>
+  <p class="demo-hint">모드 선택 후 캔버스를 드래그 | 축 고정으로 제한된 변형 체험</p>
+</section>
+
+<!-- TAB 3: 언제 쓰나요? -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>G (이동) 활용</h4>
+      <ul>
+        <li>오브젝트 배치 및 위치 조정</li>
+        <li>Edit Mode에서 정점 미세 조정</li>
+        <li>장면 구성 및 레이아웃</li>
+        <li>축 고정으로 정확한 배치</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>R / S 활용</h4>
+      <ul>
+        <li>R: 방향 맞추기, 기울이기, 각도 조정</li>
+        <li>S: 비율 조정, 찌그러트리기, 변형</li>
+        <li>R+Z+90: 정확한 90도 회전</li>
+        <li>S+특정축: 한 방향으로만 늘리기</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="combo-section">
+    <h4>자주 쓰는 조합</h4>
+    <div class="combo-grid">
+      <div class="combo-card">
+        <div class="combo-name">G → X → 2</div>
+        <div class="combo-desc">X축으로 정확히 2m 이동합니다. 숫자를 타이핑하면 정밀한 배치가 가능합니다.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">R → Z → 90</div>
+        <div class="combo-desc">Z축 기준으로 정확히 90도 회전합니다. 오브젝트 방향을 깔끔하게 맞출 때 유용합니다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>팁:</strong> 숫자 입력이 핵심! <span class="kbd">G</span> → <span class="kbd">X</span> → <span class="kbd">1.5</span> 처럼 정확한 값을 넣으면 프로처럼 작업할 수 있어요.
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/scene_layout/object/editing/transform/introduction.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Transform Introduction
+    </a>
+  </div>
+</section>
+
+<!-- TAB 4: 퀴즈 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+// ── Tab Switching ──────────────────────────────
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(t) {
+      t.classList.remove("is-active");
+      t.setAttribute("aria-selected", "false");
+    });
+    document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("is-active"); });
+    tab.classList.add("is-active");
+    tab.setAttribute("aria-selected", "true");
+    document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+  });
+});
+
+// ── Quiz Engine (Safe DOM methods) ────────────
+function initQuiz(questions) {
+  var container = document.getElementById("quizArea");
+  var score = 0, answered = 0;
+  var scoreDiv = null;
+
+  var progress = document.createElement("div");
+  progress.className = "quiz-progress";
+  progress.textContent = "문제 0 / " + questions.length + " \u00b7 점수 0점";
+  container.appendChild(progress);
+
+  questions.forEach(function(q, qi) {
+    var div = document.createElement("div");
+    div.className = "quiz-question";
+
+    var heading = document.createElement("h4");
+    heading.textContent = "Q" + (qi + 1) + ". " + q.question;
+    div.appendChild(heading);
+
+    var fb = document.createElement("div");
+    fb.className = "quiz-feedback";
+
+    q.options.forEach(function(opt, oi) {
+      var btn = document.createElement("button");
+      btn.className = "quiz-option";
+      btn.textContent = opt;
+      btn.addEventListener("click", function() {
+        if (btn.disabled) return;
+        div.querySelectorAll(".quiz-option").forEach(function(b) { b.disabled = true; });
+        answered++;
+        if (oi === q.answer) {
+          btn.classList.add("correct");
+          fb.className = "quiz-feedback show correct-fb";
+          fb.textContent = "\u2705 " + q.explanation;
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
+          fb.className = "quiz-feedback show wrong-fb";
+          fb.textContent = "\u274c " + q.explanation;
+
+          var retryBtn = document.createElement("button");
+          retryBtn.className = "quiz-retry";
+          retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
+          retryBtn.textContent = "다시 풀기";
+          retryBtn.addEventListener("click", function() {
+            answered--;
+            div.querySelectorAll(".quiz-option").forEach(function(b) {
+              b.disabled = false;
+              b.classList.remove("wrong", "correct");
+            });
+            fb.className = "quiz-feedback";
+            fb.textContent = "";
+            retryBtn.remove();
+            if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+            progress.textContent = "문제 " + answered + " / " + questions.length + " \u00b7 점수 " + score + "점";
+          });
+          fb.appendChild(retryBtn);
+        }
+        progress.textContent = "문제 " + answered + " / " + questions.length + " \u00b7 점수 " + score + "점";
+        if (answered === questions.length) showScore();
+      });
+      div.appendChild(btn);
+    });
+
+    div.appendChild(fb);
+    container.appendChild(div);
+  });
+
+  function showScore() {
+    if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+
+    scoreDiv = document.createElement("div");
+    scoreDiv.className = "quiz-score";
+
+    var emoji = document.createElement("div");
+    emoji.style.cssText = "font-size:36px;margin-bottom:8px";
+    emoji.textContent = score === questions.length ? "\ud83c\udf89" : score >= Math.ceil(questions.length / 2) ? "\ud83d\udc4d" : "\ud83d\udcda";
+    scoreDiv.appendChild(emoji);
+
+    var result = document.createElement("div");
+    result.style.cssText = "font-size:18px;font-weight:500;margin-bottom:6px";
+    result.textContent = score + " / " + questions.length + " 정답";
+    scoreDiv.appendChild(result);
+
+    var msg = document.createElement("div");
+    msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
+    msg.textContent = score === questions.length ? "완벽합니다!" : "조금 더 연습하면 완벽해질 거예요!";
+    scoreDiv.appendChild(msg);
+
+    var saveBtn = document.createElement("button");
+    saveBtn.className = "quiz-retry";
+    saveBtn.style.cssText = "background:rgba(10,132,255,.18);border-color:var(--key);margin-bottom:8px";
+    saveBtn.textContent = "기록 저장하기";
+    saveBtn.addEventListener("click", function() {
+      try {
+        var wid = new URLSearchParams(location.search).get("wid")
+               || location.pathname.split("/").pop().replace(".html", "");
+        window.parent.postMessage({
+          type: "showme-quiz-complete",
+          widgetId: wid,
+          score: score,
+          total: questions.length,
+          pass: score >= Math.ceil(questions.length * 0.75)
+        }, "*");
+      } catch(e) {}
+      saveBtn.textContent = "저장 완료!";
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = ".5";
+    });
+    scoreDiv.appendChild(saveBtn);
+
+    var retry = document.createElement("button");
+    retry.className = "quiz-retry";
+    retry.textContent = "처음부터 다시";
+    retry.addEventListener("click", function() { location.reload(); });
+    scoreDiv.appendChild(retry);
+
+    container.appendChild(scoreDiv);
+  }
+}
+
+// ── Canvas G/R/S Transform Demo ──────────────
+(function() {
+  var canvas = document.getElementById("demoCanvas");
+  var ctx = canvas.getContext("2d");
+  var W = canvas.width;
+  var H = canvas.height;
+
+  // Box state
+  var defaultState = { x: W / 2, y: H / 2, rotation: 0, scaleX: 1, scaleY: 1 };
+  var box = { x: defaultState.x, y: defaultState.y, rotation: defaultState.rotation, scaleX: defaultState.scaleX, scaleY: defaultState.scaleY };
+  var boxW = 100, boxH = 80;
+
+  // Current mode: "grab", "rotate", "scale"
+  var mode = "grab";
+  // Axis constraint: "free", "x", "y"
+  var axisLock = "free";
+
+  var dragging = false;
+  var lastX = 0, lastY = 0;
+  var startX = 0, startY = 0;
+
+  function setActiveBtn(btnId) {
+    ["btnG", "btnR", "btnS"].forEach(function(id) {
+      document.getElementById(id).classList.remove("is-active");
+    });
+    document.getElementById(btnId).classList.add("is-active");
+  }
+
+  function setActiveAxis(btnId) {
+    ["btnAxisX", "btnAxisY", "btnAxisFree"].forEach(function(id) {
+      document.getElementById(id).classList.remove("is-active");
+    });
+    document.getElementById(btnId).classList.add("is-active");
+  }
+
+  document.getElementById("btnG").addEventListener("click", function() { mode = "grab"; setActiveBtn("btnG"); });
+  document.getElementById("btnR").addEventListener("click", function() { mode = "rotate"; setActiveBtn("btnR"); });
+  document.getElementById("btnS").addEventListener("click", function() { mode = "scale"; setActiveBtn("btnS"); });
+
+  document.getElementById("btnAxisX").addEventListener("click", function() { axisLock = "x"; setActiveAxis("btnAxisX"); });
+  document.getElementById("btnAxisY").addEventListener("click", function() { axisLock = "y"; setActiveAxis("btnAxisY"); });
+  document.getElementById("btnAxisFree").addEventListener("click", function() { axisLock = "free"; setActiveAxis("btnAxisFree"); });
+
+  document.getElementById("btnResetT").addEventListener("click", function() {
+    box.x = defaultState.x;
+    box.y = defaultState.y;
+    box.rotation = defaultState.rotation;
+    box.scaleX = defaultState.scaleX;
+    box.scaleY = defaultState.scaleY;
+    draw();
+  });
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Background
+    ctx.fillStyle = "#17181a";
+    ctx.fillRect(0, 0, W, H);
+
+    // Subtle grid
+    ctx.strokeStyle = "rgba(255,255,255,.04)";
+    ctx.lineWidth = 1;
+    var step = 40;
+    for (var gx = step; gx < W; gx += step) {
+      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke();
+    }
+    for (var gy = step; gy < H; gy += step) {
+      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke();
+    }
+
+    // Draw axis lines through box center
+    var axisLen = 160;
+    // X axis (red)
+    ctx.strokeStyle = axisLock === "x" ? "rgba(239,68,68,.8)" : "rgba(239,68,68,.3)";
+    ctx.lineWidth = axisLock === "x" ? 2 : 1;
+    ctx.beginPath(); ctx.moveTo(box.x - axisLen, box.y); ctx.lineTo(box.x + axisLen, box.y); ctx.stroke();
+    ctx.fillStyle = axisLock === "x" ? "rgba(239,68,68,.9)" : "rgba(239,68,68,.5)";
+    ctx.font = "bold 11px sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("X", box.x + axisLen + 4, box.y + 4);
+
+    // Y axis (green) — screen Y is inverted
+    ctx.strokeStyle = axisLock === "y" ? "rgba(16,185,129,.8)" : "rgba(16,185,129,.3)";
+    ctx.lineWidth = axisLock === "y" ? 2 : 1;
+    ctx.beginPath(); ctx.moveTo(box.x, box.y - axisLen); ctx.lineTo(box.x, box.y + axisLen); ctx.stroke();
+    ctx.fillStyle = axisLock === "y" ? "rgba(16,185,129,.9)" : "rgba(16,185,129,.5)";
+    ctx.textAlign = "center";
+    ctx.fillText("Y", box.x, box.y - axisLen - 6);
+
+    // Draw the box
+    ctx.save();
+    ctx.translate(box.x, box.y);
+    ctx.rotate(box.rotation);
+    ctx.scale(box.scaleX, box.scaleY);
+
+    var hw = boxW / 2;
+    var hh = boxH / 2;
+
+    // Fill
+    ctx.fillStyle = "rgba(10,132,255,.2)";
+    ctx.fillRect(-hw, -hh, boxW, boxH);
+
+    // Border
+    ctx.strokeStyle = "rgba(142,197,255,.7)";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(-hw, -hh, boxW, boxH);
+
+    // Corner vertices
+    var corners = [[-hw, -hh], [hw, -hh], [hw, hh], [-hw, hh]];
+    corners.forEach(function(c) {
+      ctx.beginPath();
+      ctx.arc(c[0], c[1], 4, 0, Math.PI * 2);
+      ctx.fillStyle = "#8ec5ff";
+      ctx.fill();
+      ctx.strokeStyle = "#fff";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    });
+
+    // Diagonal cross for visual reference
+    ctx.strokeStyle = "rgba(255,255,255,.08)";
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(-hw, -hh); ctx.lineTo(hw, hh); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(hw, -hh); ctx.lineTo(-hw, hh); ctx.stroke();
+
+    ctx.restore();
+
+    // Origin dot
+    ctx.beginPath();
+    ctx.arc(box.x, box.y, 5, 0, Math.PI * 2);
+    ctx.fillStyle = "#f59e0b";
+    ctx.fill();
+    ctx.strokeStyle = "#fff";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Mode label
+    var modeLabel = mode === "grab" ? "G (이동)" : mode === "rotate" ? "R (회전)" : "S (크기)";
+    var axisLabel = axisLock === "x" ? " + X축 고정" : axisLock === "y" ? " + Y축 고정" : " (자유)";
+    ctx.fillStyle = "rgba(245,158,11,.7)";
+    ctx.font = "bold 12px sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("모드: " + modeLabel + axisLabel, 12, 22);
+
+    // Info display
+    ctx.fillStyle = "rgba(255,255,255,.3)";
+    ctx.font = "11px sans-serif";
+    ctx.textAlign = "right";
+    var info = "위치: (" + Math.round(box.x - W / 2) + ", " + Math.round(-(box.y - H / 2)) + ")";
+    info += "  회전: " + Math.round(box.rotation * 180 / Math.PI) + "\u00b0";
+    info += "  크기: " + box.scaleX.toFixed(2) + "x" + box.scaleY.toFixed(2);
+    ctx.fillText(info, W - 12, 22);
+  }
+
+  function getEventPos(e) {
+    var rect = canvas.getBoundingClientRect();
+    var scaleX = canvas.width / rect.width;
+    var scaleY = canvas.height / rect.height;
+    var clientX, clientY;
+    if (e.touches && e.touches.length > 0) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    }
+    return {
+      x: (clientX - rect.left) * scaleX,
+      y: (clientY - rect.top) * scaleY
+    };
+  }
+
+  function onDown(e) {
+    e.preventDefault();
+    dragging = true;
+    var pos = getEventPos(e);
+    lastX = pos.x;
+    lastY = pos.y;
+    startX = pos.x;
+    startY = pos.y;
+  }
+
+  function onMove(e) {
+    if (!dragging) return;
+    e.preventDefault();
+    var pos = getEventPos(e);
+    var dx = pos.x - lastX;
+    var dy = pos.y - lastY;
+
+    if (mode === "grab") {
+      if (axisLock === "x") {
+        box.x += dx;
+      } else if (axisLock === "y") {
+        box.y += dy;
+      } else {
+        box.x += dx;
+        box.y += dy;
+      }
+      // Clamp
+      if (box.x < 20) box.x = 20;
+      if (box.x > W - 20) box.x = W - 20;
+      if (box.y < 20) box.y = 20;
+      if (box.y > H - 20) box.y = H - 20;
+    } else if (mode === "rotate") {
+      var angle1 = Math.atan2(lastY - box.y, lastX - box.x);
+      var angle2 = Math.atan2(pos.y - box.y, pos.x - box.x);
+      box.rotation += angle2 - angle1;
+    } else if (mode === "scale") {
+      var factor = 1 + dx * 0.005;
+      var factorY = 1 + dy * 0.005;
+      if (axisLock === "x") {
+        box.scaleX *= factor;
+      } else if (axisLock === "y") {
+        box.scaleY *= (1 - dy * 0.005);
+      } else {
+        box.scaleX *= factor;
+        box.scaleY *= factor;
+      }
+      // Clamp scale
+      if (box.scaleX < 0.2) box.scaleX = 0.2;
+      if (box.scaleX > 4) box.scaleX = 4;
+      if (box.scaleY < 0.2) box.scaleY = 0.2;
+      if (box.scaleY > 4) box.scaleY = 4;
+    }
+
+    lastX = pos.x;
+    lastY = pos.y;
+    draw();
+  }
+
+  function onUp() {
+    dragging = false;
+  }
+
+  canvas.addEventListener("mousedown", onDown);
+  canvas.addEventListener("mousemove", onMove);
+  canvas.addEventListener("mouseup", onUp);
+  canvas.addEventListener("mouseleave", onUp);
+  canvas.addEventListener("touchstart", onDown, { passive: false });
+  canvas.addEventListener("touchmove", onMove, { passive: false });
+  canvas.addEventListener("touchend", onUp);
+  canvas.addEventListener("touchcancel", onUp);
+
+  // Initial draw
+  draw();
+})();
+
+// ── Quiz Data ─────────────────────────────────
+initQuiz([
+  {
+    question: "Blender에서 오브젝트를 이동하는 단축키는?",
+    options: [
+      "M",
+      "G",
+      "T",
+      "W"
+    ],
+    answer: 1,
+    explanation: "G(Grab)를 누르면 오브젝트를 이동할 수 있습니다. G를 누른 뒤 마우스를 움직이고 클릭으로 확정합니다."
+  },
+  {
+    question: "G를 누른 뒤 X → 3을 입력하면 어떤 일이 일어나나요?",
+    options: [
+      "오브젝트가 3배로 확대된다",
+      "X축으로 3m 이동한다",
+      "3개의 복사본이 생긴다",
+      "X축 기준으로 3도 회전한다"
+    ],
+    answer: 1,
+    explanation: "G(이동) → X(축 고정) → 3(값 입력)으로 X축 방향으로 정확히 3m 이동합니다. 숫자 입력은 정밀한 작업의 핵심입니다."
+  },
+  {
+    question: "G → Shift+Z의 의미는?",
+    options: [
+      "Z축으로만 이동",
+      "Z축을 제외하고 XY 평면에서 이동",
+      "이동 취소",
+      "Z축 기준으로 회전"
+    ],
+    answer: 1,
+    explanation: "Shift+축 키는 해당 축을 '제외'합니다. Shift+Z는 Z축을 제외한 XY 평면에서만 이동하게 됩니다."
+  },
+  {
+    question: "R → Z → 90을 입력하면?",
+    options: [
+      "Z축으로 90m 이동",
+      "90%로 축소",
+      "Z축 기준으로 90도 회전",
+      "Z축 방향으로 90개 복사"
+    ],
+    answer: 2,
+    explanation: "R(회전) → Z(축 고정) → 90(각도 입력)으로 Z축 기준 정확히 90도 회전합니다."
+  }
+]);
+</script>
+
+</body>
+</html>

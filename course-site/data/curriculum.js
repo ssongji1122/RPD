@@ -907,6 +907,7 @@ const CURRICULUM = [
     "steps": [
       {
         "title": "AI 3D 생성 체험",
+        "image": "assets/images/week05/ai-3d-generation.png",
         "copy": "텍스트 몇 글자 입력하면 3D 메쉬가 뚝딱 나와요. AI가 초안을 만들어주면 우리는 거기서 다듬기만 하면 돼요.",
         "goal": [
           "AI 생성 워크플로우를 이해한다"
@@ -1175,6 +1176,7 @@ const CURRICULUM = [
       },
       {
         "title": "AI Texture 적용",
+        "image": "assets/images/week07/ai-texture.png",
         "copy": "AI가 만든 이미지를 메쉬 표면에 붙이는 거예요. UV가 제대로 펼쳐져 있어야 이미지가 자연스럽게 입혀져요.",
         "goal": [
           "Image Texture 노드 사용법을 안다"
@@ -1601,6 +1603,7 @@ const CURRICULUM = [
     "steps": [
       {
         "title": "Mixamo 업로드",
+        "image": "assets/images/week12/mixamo-upload.png",
         "copy": "AI가 파일을 불러와서 자동으로 뼈대를 넣어줘요. 수동으로 본을 하나하나 넣던 시간이 없어져요.",
         "goal": [
           "Mixamo 워크플로우를 안다"

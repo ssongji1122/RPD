@@ -372,51 +372,38 @@ body {
 <section class="panel is-active" id="panel-concept" role="tabpanel">
   <div class="concept-grid">
     <div class="concept-card">
-      <h3><span class="badge badge-blue">흐름</span> 컴포지팅이란?</h3>
-      <p>렌더링 결과물에 후처리(Post-Processing)를 적용하는 작업입니다. Blender의 Compositor는 노드 기반으로, 렌더 이미지를 입력받아 다양한 효과를 추가한 뒤 최종 출력합니다.</p>
-      <div class="analogy">사진 편집에서 필터를 적용하는 것과 비슷해요. 촬영 후 보정하는 단계입니다</div>
+      <h3><span class="badge badge-blue">Core</span> 컴포지팅이란?</h3>
+      <p>렌더링된 이미지를 노드 기반으로 후처리(Post-processing)하는 과정입니다. 색상 보정, 효과 추가, 여러 렌더 레이어 합성 등을 수행합니다.</p>
+      <div class="analogy">사진 촬영 후 포토샵에서 보정하는 것과 같아요</div>
     </div>
     <div class="concept-card">
-      <h3><span class="badge badge-green">입력</span> Render Layers</h3>
-      <p>렌더링된 이미지 데이터를 노드 그래프에 공급하는 입력 노드입니다. Image(색상), Alpha(투명도), Depth(깊이), Normal(법선) 등 다양한 Pass를 출력합니다.</p>
+      <h3><span class="badge badge-green">노드</span> 노드 기반 워크플로우</h3>
+      <p>Render Layers 노드(입력) &rarr; 효과 노드(처리) &rarr; Composite 노드(출력) 순서로 연결합니다. 각 노드는 독립적으로 ON/OFF 가능합니다.</p>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-amber">효과</span> 주요 컴포지팅 노드</h3>
       <ul>
-        <li>Combined: 최종 합성 이미지</li>
-        <li>Z Depth: 카메라 거리 정보</li>
-        <li>Mist: 안개 효과용 거리 정보</li>
+        <li>Bright/Contrast: 밝기/대비 조절</li>
+        <li>Glare: 빛 번짐 효과 (Bloom)</li>
+        <li>Color Balance: 색상 톤 보정</li>
+        <li>Vignette (Lens Distortion): 가장자리 어둡게</li>
       </ul>
-    </div>
-    <div class="concept-card">
-      <h3><span class="badge badge-amber">효과</span> Glare / Color Balance</h3>
-      <p>Glare는 밝은 부분에서 빛이 번지는 효과(Bloom, Streaks)를 추가합니다. Color Balance는 Lift(어두운 톤)/Gamma(중간 톤)/Gain(밝은 톤)으로 색상을 보정합니다.</p>
-      <div class="analogy">영화 후반 작업에서 색보정(Color Grading)하는 과정이에요</div>
-    </div>
-    <div class="concept-card">
-      <h3><span class="badge badge-blue">출력</span> Composite / Viewer</h3>
-      <p>Composite 노드는 최종 결과를 파일로 저장합니다. Viewer 노드는 Compositor 배경에서 실시간 프리뷰를 보여줍니다. 둘 다 연결해야 확인과 저장이 가능합니다.</p>
     </div>
   </div>
 
   <div class="shortcut-list">
-    <h4>주요 단축키</h4>
+    <h4>주요 단축키 / 설정</h4>
     <div class="shortcut-row">
-      <span class="shortcut-keys">Compositing 탭</span>
-      <span>상단 워크스페이스에서 Compositing 선택</span>
+      <span class="shortcut-keys">Compositing Workspace</span>
+      <span>상단 Workspace 탭에서 전환</span>
     </div>
     <div class="shortcut-row">
-      <span class="shortcut-keys"><span class="kbd">Shift</span> + <span class="kbd">A</span></span>
-      <span>노드 추가 (Add Node)</span>
+      <span class="shortcut-keys">Use Nodes 체크</span>
+      <span>Compositing 에디터 상단 체크박스 활성화</span>
     </div>
     <div class="shortcut-row">
-      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">Shift</span> + 클릭</span>
-      <span>노드를 Viewer에 연결 (프리뷰)</span>
-    </div>
-    <div class="shortcut-row">
-      <span class="shortcut-keys"><span class="kbd">M</span></span>
-      <span>노드 Mute (비활성화)</span>
-    </div>
-    <div class="shortcut-row">
-      <span class="shortcut-keys">"Use Nodes" 체크</span>
-      <span>Compositor 활성화 (필수!)</span>
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">Shift</span> + Click</span>
+      <span>Viewer Node 연결 (중간 결과 미리보기)</span>
     </div>
   </div>
 
@@ -430,17 +417,18 @@ body {
 <!-- TAB 2: 시각적 비교 -->
 <section class="panel" id="panel-visual" role="tabpanel">
   <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    노드 그래프를 시각적으로 보여줍니다. 노드를 드래그하여 위치를 변경하고, 효과를 토글해 보세요.
+    각 노드를 ON/OFF하여 효과가 이미지에 어떤 영향을 주는지 확인하세요.
   </p>
   <div class="demo-wrap">
-    <canvas id="demoCanvas" width="680" height="300"></canvas>
+    <canvas id="demoCanvas" width="680" height="380"></canvas>
     <div class="demo-controls">
-      <button class="demo-btn is-active" id="btnGlare">Glare ON</button>
-      <button class="demo-btn is-active" id="btnColor">Color Balance ON</button>
-      <button class="demo-btn" id="btnReset">초기화</button>
+      <button class="demo-btn is-active" id="btnBright">Bright/Contrast</button>
+      <button class="demo-btn is-active" id="btnGlare">Glare</button>
+      <button class="demo-btn is-active" id="btnVignette">Vignette</button>
+      <button class="demo-btn" id="btnReset">원본으로</button>
     </div>
   </div>
-  <p class="demo-hint">노드를 드래그하여 이동하세요. Glare/Color Balance를 토글하면 연결이 바뀝니다.</p>
+  <p class="demo-hint">각 버튼을 클릭하면 해당 노드를 ON/OFF합니다. 효과가 이미지에 쌓여가는 과정을 관찰하세요.</p>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->
@@ -449,35 +437,34 @@ body {
     <div class="usage-card">
       <h4>컴포지팅이 필요할 때</h4>
       <ul>
-        <li>렌더 결과에 Bloom/Glare 추가</li>
-        <li>색보정 (Color Grading)</li>
-        <li>배경 합성 (Green Screen 키잉)</li>
-        <li>Depth of Field 후처리</li>
-        <li>비네팅, 렌즈 왜곡 효과</li>
+        <li>렌더 후 색감/톤 보정</li>
+        <li>Bloom/Glare 빛번짐 효과 추가</li>
+        <li>여러 렌더 패스 합성 (AO, Shadow 등)</li>
+        <li>배경 합성 (크로마키 등)</li>
       </ul>
     </div>
     <div class="usage-card">
       <h4>컴포지팅이 불필요한 경우</h4>
       <ul>
-        <li>단순 테스트 렌더</li>
-        <li>외부 편집기(After Effects 등)에서 합성</li>
-        <li>EEVEE Bloom으로 충분한 경우</li>
+        <li>단순한 테스트 렌더</li>
+        <li>외부 소프트웨어(After Effects 등)에서 후처리할 때</li>
+        <li>게임 에셋처럼 후처리가 필요 없는 경우</li>
       </ul>
     </div>
   </div>
   <div class="tip-box">
-    <strong>팁:</strong> 컴포지팅은 렌더링 후에 적용되므로 재렌더 없이 효과를 조정할 수 있습니다. "Use Nodes" 체크박스를 반드시 켜야 Compositor가 활성화됩니다. <span class="kbd">Ctrl</span>+<span class="kbd">Shift</span>+클릭으로 중간 노드의 결과를 바로 확인하세요.
+    <strong>팁:</strong> <span class="kbd">Ctrl</span>+<span class="kbd">Shift</span>+Click으로 Viewer Node를 노드에 연결하면 각 단계의 중간 결과를 확인할 수 있습니다. 효과를 하나씩 추가하면서 변화를 비교하세요.
   </div>
   <div class="combo-section">
     <h4>자주 쓰는 노드 조합</h4>
     <div class="combo-grid">
       <div class="combo-card">
-        <div class="combo-name">Render Layers → Glare → Composite</div>
-        <div class="combo-desc">기본적인 Bloom 효과 추가. Glare 타입을 Fog Glow로 설정하면 자연스러운 빛 번짐을 만듭니다.</div>
+        <div class="combo-name">Glare + Color Balance</div>
+        <div class="combo-desc">빛 번짐으로 드라마틱한 분위기를 만들고, 색상 톤으로 영화 같은 느낌을 추가합니다.</div>
       </div>
       <div class="combo-card">
-        <div class="combo-name">Render Layers → Color Balance → Composite</div>
-        <div class="combo-desc">영화 같은 색감 보정. Lift로 그림자 색, Gain으로 하이라이트 색을 조정합니다.</div>
+        <div class="combo-name">Render Layers + Alpha Over</div>
+        <div class="combo-desc">여러 렌더 레이어를 합성하여 캐릭터와 배경을 분리하거나 합치는 작업에 사용합니다.</div>
       </div>
     </div>
   </div>
@@ -517,7 +504,7 @@ function initQuiz(questions) {
 
   var progress = document.createElement("div");
   progress.className = "quiz-progress";
-  progress.textContent = "문제 0 / " + questions.length + " \u00b7 점수 0점";
+  progress.textContent = "\uBB38\uC81C 0 / " + questions.length + " \u00b7 \uC810\uC218 0\uC810";
   container.appendChild(progress);
 
   questions.forEach(function(q, qi) {
@@ -553,7 +540,7 @@ function initQuiz(questions) {
           var retryBtn = document.createElement("button");
           retryBtn.className = "quiz-retry";
           retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
-          retryBtn.textContent = "다시 풀기";
+          retryBtn.textContent = "\uB2E4\uC2DC \uD480\uAE30";
           retryBtn.addEventListener("click", function() {
             answered--;
             div.querySelectorAll(".quiz-option").forEach(function(b) {
@@ -564,11 +551,11 @@ function initQuiz(questions) {
             fb.textContent = "";
             retryBtn.remove();
             if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
-            progress.textContent = "문제 " + answered + " / " + questions.length + " \u00b7 점수 " + score + "점";
+            progress.textContent = "\uBB38\uC81C " + answered + " / " + questions.length + " \u00b7 \uC810\uC218 " + score + "\uC810";
           });
           fb.appendChild(retryBtn);
         }
-        progress.textContent = "문제 " + answered + " / " + questions.length + " \u00b7 점수 " + score + "점";
+        progress.textContent = "\uBB38\uC81C " + answered + " / " + questions.length + " \u00b7 \uC810\uC218 " + score + "\uC810";
         if (answered === questions.length) showScore();
       });
       div.appendChild(btn);
@@ -591,18 +578,18 @@ function initQuiz(questions) {
 
     var result = document.createElement("div");
     result.style.cssText = "font-size:18px;font-weight:500;margin-bottom:6px";
-    result.textContent = score + " / " + questions.length + " 정답";
+    result.textContent = score + " / " + questions.length + " \uC815\uB2F5";
     scoreDiv.appendChild(result);
 
     var msg = document.createElement("div");
     msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
-    msg.textContent = score === questions.length ? "완벽합니다!" : "조금 더 연습하면 완벽해질 거예요!";
+    msg.textContent = score === questions.length ? "\uC644\uBCBD\uD569\uB2C8\uB2E4!" : "\uC870\uAE08 \uB354 \uC5F0\uC2B5\uD558\uBA74 \uC644\uBCBD\uD574\uC9C8 \uAC70\uC608\uC694!";
     scoreDiv.appendChild(msg);
 
     var saveBtn = document.createElement("button");
     saveBtn.className = "quiz-retry";
     saveBtn.style.cssText = "background:rgba(10,132,255,.18);border-color:var(--key);margin-bottom:8px";
-    saveBtn.textContent = "기록 저장하기";
+    saveBtn.textContent = "\uAE30\uB85D \uC800\uC7A5\uD558\uAE30";
     saveBtn.addEventListener("click", function() {
       try {
         var wid = new URLSearchParams(location.search).get("wid")
@@ -615,7 +602,7 @@ function initQuiz(questions) {
           pass: score >= Math.ceil(questions.length * 0.75)
         }, "*");
       } catch(e) {}
-      saveBtn.textContent = "저장 완료!";
+      saveBtn.textContent = "\uC800\uC7A5 \uC644\uB8CC!";
       saveBtn.disabled = true;
       saveBtn.style.opacity = ".5";
     });
@@ -623,7 +610,7 @@ function initQuiz(questions) {
 
     var retry = document.createElement("button");
     retry.className = "quiz-retry";
-    retry.textContent = "처음부터 다시";
+    retry.textContent = "\uCC98\uC74C\uBD80\uD130 \uB2E4\uC2DC";
     retry.addEventListener("click", function() { location.reload(); });
     scoreDiv.appendChild(retry);
 
@@ -631,302 +618,308 @@ function initQuiz(questions) {
   }
 }
 
-// ── Canvas Compositing Node Graph Demo ──────────
+// ── Canvas Compositing Node Chain Demo ────────────
 (function() {
   var canvas = document.getElementById("demoCanvas");
   var ctx = canvas.getContext("2d");
-  var dragging = -1;
-  var hitRadius = 50; // larger because nodes are bigger
-  var glareOn = true;
-  var colorOn = true;
+  var W = canvas.width, H = canvas.height;
 
-  // Node definitions: { name, x, y, w, h, color, sockets_in[], sockets_out[] }
-  var defaultNodes = [
-    { name: "Render Layers", x: 40,  y: 90,  w: 140, h: 80, color: "#6b4c2a", type: "input",
-      sockets_out: ["Image", "Alpha"] },
-    { name: "Glare",         x: 230, y: 50,  w: 120, h: 70, color: "#2a4c6b", type: "effect",
-      sockets_in: ["Image"], sockets_out: ["Image"] },
-    { name: "Color Balance", x: 400, y: 50,  w: 130, h: 70, color: "#2a6b4c", type: "effect",
-      sockets_in: ["Image"], sockets_out: ["Image"] },
-    { name: "Composite",     x: 560, y: 90,  w: 110, h: 70, color: "#6b2a4c", type: "output",
-      sockets_in: ["Image"] },
-  ];
+  var nodes = {
+    bright:   { on: true },
+    glare:    { on: true },
+    vignette: { on: true }
+  };
 
-  var nodes = [];
-  function resetNodes() {
-    nodes = defaultNodes.map(function(n) {
-      return {
-        name: n.name, x: n.x, y: n.y, w: n.w, h: n.h,
-        color: n.color, type: n.type,
-        sockets_in: n.sockets_in ? n.sockets_in.slice() : [],
-        sockets_out: n.sockets_out ? n.sockets_out.slice() : []
-      };
+  // Pre-generate a "rendered scene" as pixel data
+  var baseImage = null;
+
+  function generateBaseImage() {
+    var offCanvas = document.createElement("canvas");
+    offCanvas.width = W;
+    offCanvas.height = H;
+    var oc = offCanvas.getContext("2d");
+
+    // Scene: night cityscape-like render
+    // Sky gradient
+    var skyGrad = oc.createLinearGradient(0, 0, 0, H * 0.6);
+    skyGrad.addColorStop(0, "#0a0e1a");
+    skyGrad.addColorStop(1, "#1a2235");
+    oc.fillStyle = skyGrad;
+    oc.fillRect(0, 0, W, H * 0.6);
+
+    // Stars
+    for (var i = 0; i < 40; i++) {
+      var sx = Math.random() * W;
+      var sy = Math.random() * H * 0.5;
+      var ss = Math.random() * 1.5 + 0.5;
+      oc.beginPath();
+      oc.arc(sx, sy, ss, 0, Math.PI * 2);
+      oc.fillStyle = "rgba(255,255,255," + (Math.random() * 0.5 + 0.3) + ")";
+      oc.fill();
+    }
+
+    // Buildings (silhouettes)
+    var buildings = [
+      { x: 30, w: 60, h: 160 },
+      { x: 100, w: 45, h: 200 },
+      { x: 160, w: 70, h: 140 },
+      { x: 240, w: 50, h: 220 },
+      { x: 300, w: 80, h: 180 },
+      { x: 400, w: 55, h: 250 },
+      { x: 470, w: 65, h: 170 },
+      { x: 550, w: 50, h: 210 },
+      { x: 610, w: 60, h: 150 }
+    ];
+
+    buildings.forEach(function(b) {
+      var baseY = H * 0.6;
+      oc.fillStyle = "#151820";
+      oc.fillRect(b.x, baseY - b.h, b.w, b.h);
+
+      // Windows
+      for (var wy = baseY - b.h + 10; wy < baseY - 10; wy += 16) {
+        for (var wx = b.x + 6; wx < b.x + b.w - 6; wx += 12) {
+          if (Math.random() > 0.35) {
+            var warmth = Math.random();
+            var wr = Math.floor(200 + warmth * 55);
+            var wg = Math.floor(170 + warmth * 50);
+            var wb = Math.floor(80 + (1 - warmth) * 100);
+            oc.fillStyle = "rgba(" + wr + "," + wg + "," + wb + "," + (Math.random() * 0.5 + 0.3) + ")";
+            oc.fillRect(wx, wy, 6, 8);
+          }
+        }
+      }
     });
-  }
-  resetNodes();
 
-  function getConnections() {
-    // Determine connections based on which effects are active
-    var conns = [];
-    if (glareOn && colorOn) {
-      // RenderLayers -> Glare -> ColorBalance -> Composite
-      conns.push({ from: 0, fromSocket: 0, to: 1, toSocket: 0 });
-      conns.push({ from: 1, fromSocket: 0, to: 2, toSocket: 0 });
-      conns.push({ from: 2, fromSocket: 0, to: 3, toSocket: 0 });
-    } else if (glareOn) {
-      // RenderLayers -> Glare -> Composite
-      conns.push({ from: 0, fromSocket: 0, to: 1, toSocket: 0 });
-      conns.push({ from: 1, fromSocket: 0, to: 3, toSocket: 0 });
-    } else if (colorOn) {
-      // RenderLayers -> ColorBalance -> Composite
-      conns.push({ from: 0, fromSocket: 0, to: 2, toSocket: 0 });
-      conns.push({ from: 2, fromSocket: 0, to: 3, toSocket: 0 });
-    } else {
-      // RenderLayers -> Composite
-      conns.push({ from: 0, fromSocket: 0, to: 3, toSocket: 0 });
-    }
-    return conns;
+    // Ground / street
+    var groundGrad = oc.createLinearGradient(0, H * 0.6, 0, H);
+    groundGrad.addColorStop(0, "#1a1e28");
+    groundGrad.addColorStop(1, "#101318");
+    oc.fillStyle = groundGrad;
+    oc.fillRect(0, H * 0.6, W, H * 0.4);
+
+    // Street lights
+    var streetLights = [120, 340, 560];
+    streetLights.forEach(function(lx) {
+      // Light pole
+      oc.fillStyle = "#2a2e38";
+      oc.fillRect(lx - 2, H * 0.55, 4, H * 0.15);
+
+      // Light glow
+      var lightGrad = oc.createRadialGradient(lx, H * 0.55, 2, lx, H * 0.55, 40);
+      lightGrad.addColorStop(0, "rgba(255,220,150,0.5)");
+      lightGrad.addColorStop(0.5, "rgba(255,200,120,0.1)");
+      lightGrad.addColorStop(1, "rgba(0,0,0,0)");
+      oc.beginPath(); oc.arc(lx, H * 0.55, 40, 0, Math.PI * 2);
+      oc.fillStyle = lightGrad; oc.fill();
+
+      // Light on ground
+      var groundGlow = oc.createRadialGradient(lx, H * 0.65, 5, lx, H * 0.7, 60);
+      groundGlow.addColorStop(0, "rgba(255,200,120,0.08)");
+      groundGlow.addColorStop(1, "rgba(0,0,0,0)");
+      oc.beginPath(); oc.arc(lx, H * 0.68, 60, 0, Math.PI * 2);
+      oc.fillStyle = groundGlow; oc.fill();
+    });
+
+    // Moon
+    oc.beginPath();
+    oc.arc(W * 0.8, H * 0.12, 25, 0, Math.PI * 2);
+    oc.fillStyle = "#e8e0d0";
+    oc.fill();
+    var moonGlow = oc.createRadialGradient(W * 0.8, H * 0.12, 25, W * 0.8, H * 0.12, 60);
+    moonGlow.addColorStop(0, "rgba(200,190,170,0.15)");
+    moonGlow.addColorStop(1, "rgba(0,0,0,0)");
+    oc.beginPath(); oc.arc(W * 0.8, H * 0.12, 60, 0, Math.PI * 2);
+    oc.fillStyle = moonGlow; oc.fill();
+
+    baseImage = oc.getImageData(0, 0, W, H);
   }
 
-  function getSocketPos(nodeIdx, isOutput, socketIdx) {
-    var n = nodes[nodeIdx];
-    if (isOutput) {
-      var count = n.sockets_out ? n.sockets_out.length : 1;
-      var spacing = n.h / (count + 1);
-      return { x: n.x + n.w, y: n.y + spacing * (socketIdx + 1) };
-    } else {
-      var count = n.sockets_in ? n.sockets_in.length : 1;
-      var spacing = n.h / (count + 1);
-      return { x: n.x, y: n.y + spacing * (socketIdx + 1) };
+  generateBaseImage();
+
+  function applyEffects() {
+    var imageData = new ImageData(new Uint8ClampedArray(baseImage.data), W, H);
+    var data = imageData.data;
+
+    // Bright/Contrast
+    if (nodes.bright.on) {
+      var brightness = 25;
+      var contrast = 1.2;
+      for (var i = 0; i < data.length; i += 4) {
+        data[i]     = Math.min(255, Math.max(0, (data[i] - 128) * contrast + 128 + brightness));
+        data[i + 1] = Math.min(255, Math.max(0, (data[i + 1] - 128) * contrast + 128 + brightness));
+        data[i + 2] = Math.min(255, Math.max(0, (data[i + 2] - 128) * contrast + 128 + brightness));
+      }
     }
+
+    // Glare (bloom on bright pixels)
+    if (nodes.glare.on) {
+      // Find bright pixels and create glow
+      var glowData = new Float32Array(W * H);
+      for (var i = 0; i < data.length; i += 4) {
+        var lum = (data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114);
+        if (lum > 150) {
+          var idx = (i / 4);
+          glowData[idx] = (lum - 150) / 105;
+        }
+      }
+
+      // Simple box blur for glow (2 passes)
+      var blurRadius = 6;
+      for (var pass = 0; pass < 2; pass++) {
+        var temp = new Float32Array(W * H);
+        for (var y = 0; y < H; y++) {
+          for (var x = 0; x < W; x++) {
+            var sum = 0, cnt = 0;
+            for (var bx = -blurRadius; bx <= blurRadius; bx++) {
+              var nx = x + bx;
+              if (nx >= 0 && nx < W) {
+                sum += glowData[y * W + nx];
+                cnt++;
+              }
+            }
+            temp[y * W + x] = sum / cnt;
+          }
+        }
+        for (var y = 0; y < H; y++) {
+          for (var x = 0; x < W; x++) {
+            var sum = 0, cnt = 0;
+            for (var by = -blurRadius; by <= blurRadius; by++) {
+              var ny = y + by;
+              if (ny >= 0 && ny < H) {
+                sum += temp[ny * W + x];
+                cnt++;
+              }
+            }
+            glowData[y * W + x] = sum / cnt;
+          }
+        }
+      }
+
+      // Add glow to image
+      for (var i = 0; i < data.length; i += 4) {
+        var g = glowData[i / 4] * 120;
+        data[i]     = Math.min(255, data[i] + g * 1.0);
+        data[i + 1] = Math.min(255, data[i + 1] + g * 0.9);
+        data[i + 2] = Math.min(255, data[i + 2] + g * 0.7);
+      }
+    }
+
+    // Vignette
+    if (nodes.vignette.on) {
+      var cx = W / 2, cy = H / 2;
+      var maxDist = Math.sqrt(cx * cx + cy * cy);
+      for (var y = 0; y < H; y++) {
+        for (var x = 0; x < W; x++) {
+          var dx = x - cx, dy = y - cy;
+          var dist = Math.sqrt(dx * dx + dy * dy) / maxDist;
+          var vig = 1 - dist * dist * 0.7;
+          vig = Math.max(0.2, vig);
+          var idx = (y * W + x) * 4;
+          data[idx]     = Math.floor(data[idx] * vig);
+          data[idx + 1] = Math.floor(data[idx + 1] * vig);
+          data[idx + 2] = Math.floor(data[idx + 2] * vig);
+        }
+      }
+    }
+
+    return imageData;
   }
 
   function draw() {
-    var w = canvas.width, h = canvas.height;
-    ctx.clearRect(0, 0, w, h);
+    var imageData = applyEffects();
+    ctx.putImageData(imageData, 0, 0);
 
-    // Background (node editor style)
-    ctx.fillStyle = "#1a1a1e";
-    ctx.fillRect(0, 0, w, h);
+    // Node chain diagram overlay at bottom
+    var chainY = H - 50;
+    var nodeNames = ["Render", "Bright/Contrast", "Glare", "Vignette", "Composite"];
+    var nodeStates = [true, nodes.bright.on, nodes.glare.on, nodes.vignette.on, true];
+    var nodeW = 100, gap = 15;
+    var totalW = nodeNames.length * nodeW + (nodeNames.length - 1) * gap;
+    var startX = (W - totalW) / 2;
 
-    // Dot grid
-    ctx.fillStyle = "rgba(255,255,255,.06)";
-    for (var gx = 20; gx < w; gx += 20) {
-      for (var gy = 20; gy < h; gy += 20) {
-        ctx.fillRect(gx, gy, 1, 1);
-      }
-    }
+    // Background strip
+    ctx.fillStyle = "rgba(0,0,0,0.6)";
+    ctx.fillRect(0, chainY - 8, W, 46);
 
-    // Draw connections (noodles)
-    var conns = getConnections();
-    conns.forEach(function(c) {
-      var from = getSocketPos(c.from, true, c.fromSocket);
-      var to = getSocketPos(c.to, false, c.toSocket);
+    nodeNames.forEach(function(name, i) {
+      var nx = startX + i * (nodeW + gap);
+      var ny = chainY;
 
-      // Bezier curve noodle
-      var cp = Math.abs(to.x - from.x) * 0.5;
-      ctx.beginPath();
-      ctx.moveTo(from.x, from.y);
-      ctx.bezierCurveTo(from.x + cp, from.y, to.x - cp, to.y, to.x, to.y);
-      ctx.strokeStyle = "rgba(200,200,200,.5)";
-      ctx.lineWidth = 2.5;
-      ctx.stroke();
-
-      // Glow effect on noodle
-      ctx.beginPath();
-      ctx.moveTo(from.x, from.y);
-      ctx.bezierCurveTo(from.x + cp, from.y, to.x - cp, to.y, to.x, to.y);
-      ctx.strokeStyle = "rgba(200,200,200,.08)";
-      ctx.lineWidth = 6;
-      ctx.stroke();
-    });
-
-    // Draw nodes
-    nodes.forEach(function(n, i) {
-      var isDisabled = (!glareOn && n.name === "Glare") || (!colorOn && n.name === "Color Balance");
-
-      // Node shadow
-      ctx.fillStyle = "rgba(0,0,0,.3)";
-      ctx.beginPath();
-      ctx.roundRect(n.x + 3, n.y + 3, n.w, n.h, 8);
-      ctx.fill();
-
-      // Node body
-      ctx.fillStyle = isDisabled ? "#2a2a2e" : n.color;
-      ctx.globalAlpha = isDisabled ? 0.4 : 1;
-      ctx.beginPath();
-      ctx.roundRect(n.x, n.y, n.w, n.h, 8);
-      ctx.fill();
-
-      // Node border
-      ctx.strokeStyle = (dragging === i) ? "rgba(255,255,255,.5)" : "rgba(255,255,255,.15)";
-      ctx.lineWidth = (dragging === i) ? 2 : 1;
-      ctx.stroke();
-      ctx.globalAlpha = 1;
-
-      // Title bar
-      ctx.fillStyle = isDisabled ? "rgba(255,255,255,.1)" : "rgba(0,0,0,.25)";
-      ctx.beginPath();
-      ctx.roundRect(n.x, n.y, n.w, 24, [8, 8, 0, 0]);
-      ctx.fill();
-
-      // Title text
-      ctx.fillStyle = isDisabled ? "rgba(255,255,255,.3)" : "#fff";
-      ctx.font = "bold 11px sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText(n.name, n.x + n.w / 2, n.y + 16);
-
-      // Disabled indicator
-      if (isDisabled) {
-        ctx.strokeStyle = "rgba(239,68,68,.5)";
+      // Connection line
+      if (i > 0) {
+        var prevX = startX + (i - 1) * (nodeW + gap) + nodeW;
+        ctx.strokeStyle = nodeStates[i] && nodeStates[i - 1] ? "rgba(10,132,255,0.6)" : "rgba(100,100,100,0.3)";
         ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.moveTo(n.x + 8, n.y + 8);
-        ctx.lineTo(n.x + n.w - 8, n.y + n.h - 8);
+        ctx.moveTo(prevX, ny + 12);
+        ctx.lineTo(nx, ny + 12);
         ctx.stroke();
+
+        // Arrow
+        ctx.fillStyle = ctx.strokeStyle;
         ctx.beginPath();
-        ctx.moveTo(n.x + n.w - 8, n.y + 8);
-        ctx.lineTo(n.x + 8, n.y + n.h - 8);
-        ctx.stroke();
+        ctx.moveTo(nx - 4, ny + 8);
+        ctx.lineTo(nx, ny + 12);
+        ctx.lineTo(nx - 4, ny + 16);
+        ctx.fill();
       }
 
-      // Input sockets
-      if (n.sockets_in) {
-        n.sockets_in.forEach(function(s, si) {
-          var pos = getSocketPos(i, false, si);
-          ctx.beginPath();
-          ctx.arc(pos.x, pos.y, 5, 0, Math.PI * 2);
-          ctx.fillStyle = isDisabled ? "#555" : "#e8c840";
-          ctx.fill();
-          ctx.strokeStyle = "rgba(255,255,255,.3)";
-          ctx.lineWidth = 1;
-          ctx.stroke();
+      // Node box
+      ctx.fillStyle = nodeStates[i] ? "rgba(10,132,255,0.15)" : "rgba(60,60,60,0.15)";
+      ctx.strokeStyle = nodeStates[i] ? "rgba(10,132,255,0.5)" : "rgba(80,80,80,0.3)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(nx, ny, nodeW, 24, 4);
+      ctx.fill();
+      ctx.stroke();
 
-          ctx.fillStyle = isDisabled ? "rgba(255,255,255,.2)" : "rgba(255,255,255,.5)";
-          ctx.font = "9px sans-serif";
-          ctx.textAlign = "left";
-          ctx.fillText(s, pos.x + 9, pos.y + 3);
-        });
-      }
-
-      // Output sockets
-      if (n.sockets_out) {
-        n.sockets_out.forEach(function(s, si) {
-          var pos = getSocketPos(i, true, si);
-          ctx.beginPath();
-          ctx.arc(pos.x, pos.y, 5, 0, Math.PI * 2);
-          ctx.fillStyle = isDisabled ? "#555" : "#e8c840";
-          ctx.fill();
-          ctx.strokeStyle = "rgba(255,255,255,.3)";
-          ctx.lineWidth = 1;
-          ctx.stroke();
-
-          ctx.fillStyle = isDisabled ? "rgba(255,255,255,.2)" : "rgba(255,255,255,.5)";
-          ctx.font = "9px sans-serif";
-          ctx.textAlign = "right";
-          ctx.fillText(s, pos.x - 9, pos.y + 3);
-        });
-      }
+      // Node label
+      ctx.fillStyle = nodeStates[i] ? "rgba(142,197,255,0.9)" : "rgba(120,120,120,0.6)";
+      ctx.font = "bold 9px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(name, nx + nodeW / 2, ny + 16);
     });
 
-    // Flow arrow label
-    ctx.fillStyle = "rgba(255,255,255,.25)";
+    // Active effects label
+    var activeEffects = [];
+    if (nodes.bright.on) activeEffects.push("Bright/Contrast");
+    if (nodes.glare.on) activeEffects.push("Glare");
+    if (nodes.vignette.on) activeEffects.push("Vignette");
+
+    ctx.fillStyle = "rgba(255,255,255,.4)";
     ctx.font = "11px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("Render Layer \u2192 Effect Nodes \u2192 Output", w / 2, h - 10);
-
-    // Data flow indicator
-    var activeCount = (glareOn ? 1 : 0) + (colorOn ? 1 : 0);
-    ctx.fillStyle = "rgba(16,185,129,.6)";
-    ctx.font = "bold 11px sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText("Active Effects: " + activeCount + "/2", 12, 18);
+    ctx.fillText(activeEffects.length > 0 ? activeEffects.length + " effects active" : "No effects (raw render)", 12, 18);
   }
 
-  function getEventPos(e) {
-    var rect = canvas.getBoundingClientRect();
-    var scaleX = canvas.width / rect.width;
-    var scaleY = canvas.height / rect.height;
-    var clientX, clientY;
-    if (e.touches && e.touches.length > 0) {
-      clientX = e.touches[0].clientX;
-      clientY = e.touches[0].clientY;
-    } else {
-      clientX = e.clientX;
-      clientY = e.clientY;
-    }
-    return {
-      x: (clientX - rect.left) * scaleX,
-      y: (clientY - rect.top) * scaleY
-    };
-  }
+  // Button handlers
+  var btnBright = document.getElementById("btnBright");
+  var btnGlare = document.getElementById("btnGlare");
+  var btnVignette = document.getElementById("btnVignette");
 
-  var dragOffsetX = 0, dragOffsetY = 0;
-
-  function findNode(pos) {
-    // Check in reverse (top nodes first)
-    for (var i = nodes.length - 1; i >= 0; i--) {
-      var n = nodes[i];
-      if (pos.x >= n.x && pos.x <= n.x + n.w && pos.y >= n.y && pos.y <= n.y + n.h) {
-        return i;
-      }
-    }
-    return -1;
-  }
-
-  function onDown(e) {
-    e.preventDefault();
-    var pos = getEventPos(e);
-    dragging = findNode(pos);
-    if (dragging >= 0) {
-      dragOffsetX = pos.x - nodes[dragging].x;
-      dragOffsetY = pos.y - nodes[dragging].y;
-      draw();
-    }
-  }
-
-  function onMove(e) {
-    if (dragging < 0) return;
-    e.preventDefault();
-    var pos = getEventPos(e);
-    nodes[dragging].x = Math.max(0, Math.min(canvas.width - nodes[dragging].w, pos.x - dragOffsetX));
-    nodes[dragging].y = Math.max(0, Math.min(canvas.height - nodes[dragging].h, pos.y - dragOffsetY));
-    draw();
-  }
-
-  function onUp() {
-    if (dragging >= 0) { dragging = -1; draw(); }
-  }
-
-  canvas.addEventListener("mousedown", onDown);
-  canvas.addEventListener("mousemove", onMove);
-  canvas.addEventListener("mouseup", onUp);
-  canvas.addEventListener("mouseleave", onUp);
-  canvas.addEventListener("touchstart", onDown, { passive: false });
-  canvas.addEventListener("touchmove", onMove, { passive: false });
-  canvas.addEventListener("touchend", function(e) { e.preventDefault(); onUp(); });
-  canvas.addEventListener("touchcancel", onUp);
-
-  document.getElementById("btnGlare").addEventListener("click", function() {
-    glareOn = !glareOn;
-    this.textContent = "Glare " + (glareOn ? "ON" : "OFF");
-    this.classList.toggle("is-active", glareOn);
+  btnBright.addEventListener("click", function() {
+    nodes.bright.on = !nodes.bright.on;
+    btnBright.classList.toggle("is-active", nodes.bright.on);
     draw();
   });
-  document.getElementById("btnColor").addEventListener("click", function() {
-    colorOn = !colorOn;
-    this.textContent = "Color Balance " + (colorOn ? "ON" : "OFF");
-    this.classList.toggle("is-active", colorOn);
+  btnGlare.addEventListener("click", function() {
+    nodes.glare.on = !nodes.glare.on;
+    btnGlare.classList.toggle("is-active", nodes.glare.on);
+    draw();
+  });
+  btnVignette.addEventListener("click", function() {
+    nodes.vignette.on = !nodes.vignette.on;
+    btnVignette.classList.toggle("is-active", nodes.vignette.on);
     draw();
   });
   document.getElementById("btnReset").addEventListener("click", function() {
-    glareOn = true;
-    colorOn = true;
-    resetNodes();
-    document.getElementById("btnGlare").textContent = "Glare ON";
-    document.getElementById("btnGlare").classList.add("is-active");
-    document.getElementById("btnColor").textContent = "Color Balance ON";
-    document.getElementById("btnColor").classList.add("is-active");
+    nodes.bright.on = false;
+    nodes.glare.on = false;
+    nodes.vignette.on = false;
+    btnBright.classList.remove("is-active");
+    btnGlare.classList.remove("is-active");
+    btnVignette.classList.remove("is-active");
     draw();
   });
 
@@ -936,48 +929,48 @@ function initQuiz(questions) {
 // ── Quiz Data ─────────────────────────────────
 initQuiz([
   {
-    question: "Blender Compositor를 활성화하려면 무엇을 체크해야 하나요?",
+    question: "\uCEF4\uD3EC\uC9C0\uD305\uC758 \uC8FC\uC694 \uBAA9\uC801\uC740?",
     options: [
-      "Enable GPU",
-      "Use Nodes",
-      "Auto Render",
-      "Compositing Mode"
+      "3D \uBAA8\uB378\uB9C1\uC744 \uD558\uB294 \uAC83",
+      "\uB80C\uB354\uB9C1\uB41C \uC774\uBBF8\uC9C0\uB97C \uB178\uB4DC \uAE30\uBC18\uC73C\uB85C \uD6C4\uCC98\uB9AC\uD558\uB294 \uAC83",
+      "UV \uC804\uAC1C\uB97C \uD558\uB294 \uAC83",
+      "\uC560\uB2C8\uBA54\uC774\uC158 \uD0A4\uD504\uB808\uC784\uC744 \uCD94\uAC00\uD558\uB294 \uAC83"
     ],
     answer: 1,
-    explanation: "Compositor를 사용하려면 반드시 'Use Nodes' 체크박스를 켜야 합니다. 이 옵션이 꺼져 있으면 노드 그래프가 적용되지 않습니다."
+    explanation: "\uCEF4\uD3EC\uC9C0\uD305\uC740 \uB80C\uB354\uB9C1 \uD6C4 \uC774\uBBF8\uC9C0\uB97C \uB178\uB4DC\uB85C \uD6C4\uCC98\uB9AC(Post-processing)\uD558\uB294 \uACFC\uC815\uC785\uB2C8\uB2E4. \uC0C9\uBCF4\uC815, \uD6A8\uACFC, \uD569\uC131 \uB4F1\uC744 \uC218\uD589\uD569\uB2C8\uB2E4."
   },
   {
-    question: "Render Layers 노드의 역할은 무엇인가요?",
+    question: "Glare \uB178\uB4DC\uC758 \uD6A8\uACFC\uB294?",
     options: [
-      "최종 이미지를 파일로 저장한다",
-      "렌더링된 이미지 데이터를 노드 그래프에 입력한다",
-      "조명을 추가한다",
-      "카메라를 설정한다"
+      "\uC774\uBBF8\uC9C0\uB97C \uD750\uB9AC\uAC8C \uB9CC\uB4E0\uB2E4",
+      "\uBC1D\uC740 \uBD80\uBD84\uC5D0 \uBE5B \uBC88\uC9D0(Bloom) \uD6A8\uACFC\uB97C \uCD94\uAC00\uD55C\uB2E4",
+      "\uC0C9\uC0C1\uC744 \uBC18\uC804\uC2DC\uD0A8\uB2E4",
+      "\uB178\uC774\uC988\uB97C \uC81C\uAC70\uD55C\uB2E4"
     ],
     answer: 1,
-    explanation: "Render Layers 노드는 렌더링된 이미지(색상, 알파, 깊이 등)를 Compositor 노드 그래프에 공급하는 입력 노드입니다."
+    explanation: "Glare \uB178\uB4DC\uB294 \uBC1D\uC740 \uD53D\uC140\uC5D0 \uBE5B \uBC88\uC9D0(Bloom/Glow) \uD6A8\uACFC\uB97C \uCD94\uAC00\uD558\uC5EC \uB4DC\uB77C\uB9C8\uD2F1\uD55C \uC870\uBA85 \uD6A8\uACFC\uB97C \uB9CC\uB4ED\uB2C8\uB2E4."
   },
   {
-    question: "Glare 노드는 어떤 효과를 만드나요?",
+    question: "Viewer Node\uB97C \uC5F0\uACB0\uD558\uB294 \uB2E8\uCD95\uD0A4\uB294?",
     options: [
-      "이미지를 흑백으로 변환한다",
-      "밝은 부분에서 빛이 번지는 효과(Bloom)를 추가한다",
-      "이미지를 흐리게 만든다",
-      "색상을 반전시킨다"
+      "Ctrl + Z",
+      "Ctrl + Shift + Click",
+      "Alt + Click",
+      "Shift + A"
     ],
     answer: 1,
-    explanation: "Glare 노드는 밝은 부분에서 빛이 번지는 Bloom, Streaks 등의 효과를 추가합니다. Fog Glow 타입이 가장 자연스럽습니다."
+    explanation: "Ctrl+Shift+Click\uC73C\uB85C \uB178\uB4DC\uC5D0 Viewer Node\uB97C \uC5F0\uACB0\uD558\uBA74 \uAC01 \uB2E8\uACC4\uC758 \uC911\uAC04 \uACB0\uACFC\uB97C \uD655\uC778\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
   },
   {
-    question: "Color Balance 노드에서 Lift, Gamma, Gain은 각각 무엇을 조정하나요?",
+    question: "\uCEF4\uD3EC\uC9C0\uD305\uC744 \uC0AC\uC6A9\uD558\uB824\uBA74 \uBC18\uB4DC\uC2DC \uD65C\uC131\uD654\uD574\uC57C \uD558\uB294 \uAC83\uC740?",
     options: [
-      "해상도, 프레임레이트, 비트레이트",
-      "어두운 톤, 중간 톤, 밝은 톤",
-      "빨강, 초록, 파랑 채널",
-      "대비, 채도, 밝기"
+      "Object Mode",
+      "Use Nodes \uCCB4\uD06C\uBC15\uC2A4",
+      "Render Engine \uBCC0\uACBD",
+      "Subdivision Surface"
     ],
     answer: 1,
-    explanation: "Color Balance에서 Lift는 어두운 톤(그림자), Gamma는 중간 톤, Gain은 밝은 톤(하이라이트)의 색상을 각각 조정합니다."
+    explanation: "Compositing \uC5D0\uB514\uD130\uC5D0\uC11C 'Use Nodes' \uCCB4\uD06C\uBC15\uC2A4\uB97C \uD65C\uC131\uD654\uD574\uC57C \uB178\uB4DC \uAE30\uBC18 \uCEF4\uD3EC\uC9C0\uD305\uC744 \uC0AC\uC6A9\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
   }
 ]);
 </script>
