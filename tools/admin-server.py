@@ -29,14 +29,8 @@ from urllib.parse import unquote
 
 from notion_api import (
     load_notion_mapping,
-    notion_request,
-    extract_text,
-    get_page_blocks_recursive,
     fetch_notion_to_curriculum,
-    delete_all_blocks,
-    week_to_notion_blocks,
     sync_week_to_notion,
-    get_notion_token,
     NOTION_API,
 )
 
