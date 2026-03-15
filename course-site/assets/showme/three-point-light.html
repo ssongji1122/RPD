@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — 3점 조명법</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Tab Navigation ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+
+/* ── Tab Panels ── */
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+
+/* ── Concept Cards ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card h3 {
+  margin: 0 0 8px; font-size: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.concept-card p {
+  margin: 0; color: var(--muted-strong);
+  font-size: .88rem; line-height: 1.7;
+}
+.concept-card ul {
+  margin: 8px 0 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
+}
+
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: .72rem; font-weight: 600;
+}
+.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: #fbbf24; }
+
+/* ── Keyboard Shortcut ── */
+.kbd {
+  display: inline-block;
+  padding: 3px 8px; border-radius: 6px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  color: var(--key-soft);
+  font-size: .82rem; font-weight: 600;
+  font-family: var(--font);
+}
+
+/* ── Canvas / Demo ── */
+.demo-wrap {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+  margin: 14px 0;
+}
+.demo-wrap canvas {
+  display: block; width: 100%;
+}
+.demo-controls {
+  display: flex; gap: 8px; padding: 12px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.demo-hint {
+  font-size: .78rem; color: var(--muted);
+  text-align: center; padding: 6px 0 0;
+}
+.demo-btn {
+  padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .82rem;
+  cursor: pointer;
+  transition: background .14s, color .14s;
+}
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active {
+  background: rgba(10,132,255,.14);
+  color: var(--key-soft);
+  border-color: rgba(10,132,255,.3);
+}
+
+/* ── Usage Grid ── */
+.usage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.usage-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 16px;
+}
+.usage-card h4 {
+  margin: 0 0 8px; font-size: .92rem;
+  color: var(--key-soft);
+}
+.usage-card ul {
+  margin: 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem;
+  line-height: 1.8;
+}
+
+/* ── Tip Box ── */
+.tip-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(10,132,255,.2);
+  background: rgba(10,132,255,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+}
+.tip-box strong { color: var(--key-soft); }
+
+/* ── Combo Section ── */
+.combo-section {
+  margin-top: 18px;
+}
+.combo-section h4 {
+  margin: 0 0 10px;
+  font-size: .92rem;
+  color: var(--text);
+}
+.combo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.combo-card {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 12px 14px;
+}
+.combo-card .combo-name {
+  font-size: .86rem;
+  font-weight: 600;
+  color: var(--key-soft);
+  margin-bottom: 4px;
+}
+.combo-card .combo-desc {
+  font-size: .8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ── Shortcut Reference ── */
+.shortcut-list {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.shortcut-list h4 {
+  margin: 0 0 10px;
+  font-size: .9rem;
+  color: var(--text);
+}
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: .84rem;
+  color: var(--muted-strong);
+}
+.shortcut-row + .shortcut-row {
+  border-top: 1px solid var(--line);
+}
+.shortcut-keys {
+  flex-shrink: 0;
+}
+.analogy {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(245,158,11,.06);
+  border: 1px solid rgba(245,158,11,.15);
+  font-size: .82rem;
+  color: #fbbf24;
+  font-style: italic;
+}
+
+/* ── Quiz ── */
+.quiz-progress {
+  font-size: .78rem; color: var(--muted);
+  margin-bottom: 12px;
+}
+.quiz-question {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.quiz-question h4 {
+  margin: 0 0 12px; font-size: .94rem;
+}
+.quiz-option {
+  display: block; width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.025);
+  color: var(--text);
+  font: inherit; font-size: .86rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background .14s, border-color .14s;
+}
+.quiz-option:hover {
+  background: rgba(255,255,255,.06);
+  border-color: var(--line-strong);
+}
+.quiz-option.correct {
+  background: rgba(16,185,129,.12);
+  border-color: rgba(16,185,129,.4);
+  color: var(--success-soft);
+}
+.quiz-option.wrong {
+  background: rgba(239,68,68,.1);
+  border-color: rgba(239,68,68,.3);
+  color: #fca5a5;
+}
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback {
+  margin-top: 8px; padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: .84rem;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: #fca5a5; }
+
+.quiz-score {
+  text-align: center; padding: 20px;
+  font-size: 1.1rem; font-weight: 600;
+}
+.quiz-retry {
+  display: block; margin: 12px auto;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--key);
+  background: rgba(10,132,255,.12);
+  color: var(--key-soft);
+  font: inherit; font-size: .88rem;
+  cursor: pointer;
+  transition: background .14s;
+}
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+
+/* ── Official Doc Reference ── */
+.doc-ref {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(10,132,255,.15);
+  background: rgba(10,132,255,.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-ref a {
+  color: var(--key-soft);
+  font-size: .84rem;
+  text-decoration: none;
+  line-height: 1.5;
+}
+.doc-ref a:hover { text-decoration: underline; }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Tab Bar -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+</nav>
+
+<!-- TAB 1: 개념 이해 -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3><span class="badge badge-amber">Key</span> Key Light (주광)</h3>
+      <p>장면의 주된 빛. 가장 밝고 강한 조명으로, 피사체의 형태와 그림자를 결정합니다. 보통 피사체의 45도 위, 좌측 또는 우측에 배치합니다.</p>
+      <div class="analogy">태양처럼 장면의 '주인공' 조명이에요</div>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">Fill</span> Fill Light (보조광)</h3>
+      <p>Key Light가 만든 그림자를 부드럽게 채워주는 보조 조명. Key Light보다 약하며(보통 50~70% 밝기), Key Light 반대편에 배치합니다.</p>
+      <div class="analogy">그늘진 곳을 살짝 밝혀주는 반사판 역할이에요</div>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-green">Rim</span> Rim/Back Light (역광)</h3>
+      <p>피사체 뒤에서 비추는 빛. 윤곽선(Edge)을 만들어 배경과 분리합니다. 피사체 뒤쪽 위에서 아래로 비춥니다.</p>
+      <div class="analogy">역광으로 머리카락이 빛나는 효과, 실루엣을 만드는 빛이에요</div>
+    </div>
+  </div>
+
+  <div class="shortcut-list">
+    <h4>주요 단축키</h4>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Shift</span> + <span class="kbd">A</span></span>
+      <span>Light 추가 (Add &rarr; Light)</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">G</span></span>
+      <span>조명 이동 (Grab)</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">R</span></span>
+      <span>조명 회전 (Rotate)</span>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/render/lights/light_object.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Light Object
+    </a>
+  </div>
+</section>
+
+<!-- TAB 2: 시각적 비교 -->
+<section class="panel" id="panel-visual" role="tabpanel">
+  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
+    각 조명을 ON/OFF 토글하여 그림자와 하이라이트 변화를 관찰하세요.
+  </p>
+  <div class="demo-wrap">
+    <canvas id="demoCanvas" width="680" height="380"></canvas>
+    <div class="demo-controls">
+      <button class="demo-btn is-active" id="btnKey">Key Light</button>
+      <button class="demo-btn is-active" id="btnFill">Fill Light</button>
+      <button class="demo-btn is-active" id="btnRim">Rim Light</button>
+      <button class="demo-btn" id="btnReset">초기화</button>
+    </div>
+  </div>
+  <p class="demo-hint">각 버튼을 클릭하여 조명을 ON/OFF하면 피사체의 명암 변화를 볼 수 있습니다.</p>
+</section>
+
+<!-- TAB 3: 언제 쓰나요? -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>3점 조명이 필요할 때</h4>
+      <ul>
+        <li>캐릭터/인물 렌더링</li>
+        <li>제품 비주얼라이제이션</li>
+        <li>포트폴리오용 프레젠테이션 렌더</li>
+        <li>단편 애니메이션 장면</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>다른 조명법을 쓰는 경우</h4>
+      <ul>
+        <li>HDRI 환경 조명 (야외 장면)</li>
+        <li>단일 Point Light (게임용 간단 조명)</li>
+        <li>스튜디오 다중 조명 (광고, 패션)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="tip-box">
+    <strong>팁:</strong> Blender에서 <span class="kbd">Shift</span>+<span class="kbd">A</span> &rarr; Light &rarr; Area Light를 추가하면 면적 조명으로 더 자연스러운 그림자를 만들 수 있습니다. Key Light의 밝기를 기준으로 Fill은 50~70%, Rim은 80~120% 정도로 설정하세요.
+  </div>
+  <div class="combo-section">
+    <h4>조명 유형 비교</h4>
+    <div class="combo-grid">
+      <div class="combo-card">
+        <div class="combo-name">Point Light</div>
+        <div class="combo-desc">모든 방향으로 빛 발산. 전구처럼 동작. 부드러운 Fill Light에 적합합니다.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Area Light</div>
+        <div class="combo-desc">면적 광원. 부드러운 그림자. Key Light에 가장 많이 사용됩니다.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Spot Light</div>
+        <div class="combo-desc">원뿔 형태로 빛 집중. 무대 조명처럼 특정 부분을 강조할 때 좋습니다.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Sun Light</div>
+        <div class="combo-desc">평행광. 야외 태양 표현에 적합. 위치와 상관없이 방향만 영향을 줍니다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/render/lights/light_object.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Light Object
+    </a>
+  </div>
+</section>
+
+<!-- TAB 4: 퀴즈 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+// ── Tab Switching ──────────────────────────────
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(t) {
+      t.classList.remove("is-active");
+      t.setAttribute("aria-selected", "false");
+    });
+    document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("is-active"); });
+    tab.classList.add("is-active");
+    tab.setAttribute("aria-selected", "true");
+    document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+  });
+});
+
+// ── Quiz Engine (Safe DOM methods) ────────────
+function initQuiz(questions) {
+  var container = document.getElementById("quizArea");
+  var score = 0, answered = 0;
+  var scoreDiv = null;
+
+  var progress = document.createElement("div");
+  progress.className = "quiz-progress";
+  progress.textContent = "\uBB38\uC81C 0 / " + questions.length + " \u00b7 \uC810\uC218 0\uC810";
+  container.appendChild(progress);
+
+  questions.forEach(function(q, qi) {
+    var div = document.createElement("div");
+    div.className = "quiz-question";
+
+    var heading = document.createElement("h4");
+    heading.textContent = "Q" + (qi + 1) + ". " + q.question;
+    div.appendChild(heading);
+
+    var fb = document.createElement("div");
+    fb.className = "quiz-feedback";
+
+    q.options.forEach(function(opt, oi) {
+      var btn = document.createElement("button");
+      btn.className = "quiz-option";
+      btn.textContent = opt;
+      btn.addEventListener("click", function() {
+        if (btn.disabled) return;
+        div.querySelectorAll(".quiz-option").forEach(function(b) { b.disabled = true; });
+        answered++;
+        if (oi === q.answer) {
+          btn.classList.add("correct");
+          fb.className = "quiz-feedback show correct-fb";
+          fb.textContent = "\u2705 " + q.explanation;
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
+          fb.className = "quiz-feedback show wrong-fb";
+          fb.textContent = "\u274c " + q.explanation;
+
+          var retryBtn = document.createElement("button");
+          retryBtn.className = "quiz-retry";
+          retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
+          retryBtn.textContent = "\uB2E4\uC2DC \uD480\uAE30";
+          retryBtn.addEventListener("click", function() {
+            answered--;
+            div.querySelectorAll(".quiz-option").forEach(function(b) {
+              b.disabled = false;
+              b.classList.remove("wrong", "correct");
+            });
+            fb.className = "quiz-feedback";
+            fb.textContent = "";
+            retryBtn.remove();
+            if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+            progress.textContent = "\uBB38\uC81C " + answered + " / " + questions.length + " \u00b7 \uC810\uC218 " + score + "\uC810";
+          });
+          fb.appendChild(retryBtn);
+        }
+        progress.textContent = "\uBB38\uC81C " + answered + " / " + questions.length + " \u00b7 \uC810\uC218 " + score + "\uC810";
+        if (answered === questions.length) showScore();
+      });
+      div.appendChild(btn);
+    });
+
+    div.appendChild(fb);
+    container.appendChild(div);
+  });
+
+  function showScore() {
+    if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+
+    scoreDiv = document.createElement("div");
+    scoreDiv.className = "quiz-score";
+
+    var emoji = document.createElement("div");
+    emoji.style.cssText = "font-size:36px;margin-bottom:8px";
+    emoji.textContent = score === questions.length ? "\ud83c\udf89" : score >= Math.ceil(questions.length / 2) ? "\ud83d\udc4d" : "\ud83d\udcda";
+    scoreDiv.appendChild(emoji);
+
+    var result = document.createElement("div");
+    result.style.cssText = "font-size:18px;font-weight:500;margin-bottom:6px";
+    result.textContent = score + " / " + questions.length + " \uC815\uB2F5";
+    scoreDiv.appendChild(result);
+
+    var msg = document.createElement("div");
+    msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
+    msg.textContent = score === questions.length ? "\uC644\uBCBD\uD569\uB2C8\uB2E4!" : "\uC870\uAE08 \uB354 \uC5F0\uC2B5\uD558\uBA74 \uC644\uBCBD\uD574\uC9C8 \uAC70\uC608\uC694!";
+    scoreDiv.appendChild(msg);
+
+    var saveBtn = document.createElement("button");
+    saveBtn.className = "quiz-retry";
+    saveBtn.style.cssText = "background:rgba(10,132,255,.18);border-color:var(--key);margin-bottom:8px";
+    saveBtn.textContent = "\uAE30\uB85D \uC800\uC7A5\uD558\uAE30";
+    saveBtn.addEventListener("click", function() {
+      try {
+        var wid = new URLSearchParams(location.search).get("wid")
+               || location.pathname.split("/").pop().replace(".html", "");
+        window.parent.postMessage({
+          type: "showme-quiz-complete",
+          widgetId: wid,
+          score: score,
+          total: questions.length,
+          pass: score >= Math.ceil(questions.length * 0.75)
+        }, "*");
+      } catch(e) {}
+      saveBtn.textContent = "\uC800\uC7A5 \uC644\uB8CC!";
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = ".5";
+    });
+    scoreDiv.appendChild(saveBtn);
+
+    var retry = document.createElement("button");
+    retry.className = "quiz-retry";
+    retry.textContent = "\uCC98\uC74C\uBD80\uD130 \uB2E4\uC2DC";
+    retry.addEventListener("click", function() { location.reload(); });
+    scoreDiv.appendChild(retry);
+
+    container.appendChild(scoreDiv);
+  }
+}
+
+// ── Canvas 3-Point Lighting Demo ────────────────
+(function() {
+  var canvas = document.getElementById("demoCanvas");
+  var ctx = canvas.getContext("2d");
+  var W = canvas.width, H = canvas.height;
+
+  var lights = {
+    key:  { on: true, x: 200, y: 100, color: [255, 240, 220], intensity: 1.0, label: "Key Light" },
+    fill: { on: true, x: 500, y: 160, color: [180, 210, 255], intensity: 0.5, label: "Fill Light" },
+    rim:  { on: true, x: 340, y: 340, color: [255, 255, 255], intensity: 0.7, label: "Rim Light" }
+  };
+
+  var subjectX = 340, subjectY = 190, subjectR = 60;
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = "#111214";
+    ctx.fillRect(0, 0, W, H);
+
+    // Floor plane
+    ctx.fillStyle = "#1a1b1e";
+    ctx.beginPath();
+    ctx.moveTo(0, H * 0.7); ctx.lineTo(W, H * 0.7); ctx.lineTo(W, H); ctx.lineTo(0, H);
+    ctx.closePath(); ctx.fill();
+
+    // Floor grid
+    ctx.strokeStyle = "rgba(255,255,255,.03)";
+    ctx.lineWidth = 1;
+    for (var gx = 0; gx < W; gx += 40) { ctx.beginPath(); ctx.moveTo(gx, H * 0.7); ctx.lineTo(gx, H); ctx.stroke(); }
+    for (var gy = H * 0.7; gy < H; gy += 20) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke(); }
+
+    // Compute lighting
+    var totalLight = { r: 15, g: 15, b: 18 };
+    var shadowIntensity = 0;
+    var rimStrength = 0;
+
+    if (lights.key.on) {
+      totalLight.r += lights.key.color[0] * lights.key.intensity * 0.5;
+      totalLight.g += lights.key.color[1] * lights.key.intensity * 0.5;
+      totalLight.b += lights.key.color[2] * lights.key.intensity * 0.5;
+      shadowIntensity += 0.6;
+    }
+    if (lights.fill.on) {
+      totalLight.r += lights.fill.color[0] * lights.fill.intensity * 0.4;
+      totalLight.g += lights.fill.color[1] * lights.fill.intensity * 0.4;
+      totalLight.b += lights.fill.color[2] * lights.fill.intensity * 0.4;
+      shadowIntensity -= 0.2;
+    }
+    if (lights.rim.on) {
+      rimStrength = 0.8;
+      totalLight.r += 20; totalLight.g += 20; totalLight.b += 20;
+    }
+    totalLight.r = Math.min(255, totalLight.r);
+    totalLight.g = Math.min(255, totalLight.g);
+    totalLight.b = Math.min(255, totalLight.b);
+
+    // Shadow
+    if (shadowIntensity > 0) {
+      ctx.fillStyle = "rgba(0,0,0," + Math.min(0.5, shadowIntensity * 0.4) + ")";
+      ctx.beginPath();
+      ctx.ellipse(lights.key.on ? subjectX + 30 : subjectX, H * 0.7 + 5, subjectR * 1.2, subjectR * 0.3, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Subject sphere
+    var baseR = Math.floor(totalLight.r * 0.6);
+    var baseG = Math.floor(totalLight.g * 0.55);
+    var baseB = Math.floor(totalLight.b * 0.55);
+
+    var gradient = ctx.createRadialGradient(subjectX - 15, subjectY - 15, subjectR * 0.1, subjectX, subjectY, subjectR);
+    if (lights.key.on) {
+      gradient.addColorStop(0, "rgb(" + Math.min(255, baseR + 120) + "," + Math.min(255, baseG + 100) + "," + Math.min(255, baseB + 80) + ")");
+      gradient.addColorStop(0.5, "rgb(" + baseR + "," + baseG + "," + baseB + ")");
+      gradient.addColorStop(1, "rgb(" + Math.floor(baseR * 0.3) + "," + Math.floor(baseG * 0.3) + "," + Math.floor(baseB * 0.3) + ")");
+    } else {
+      var flat = Math.floor((baseR + baseG + baseB) / 3 * 0.4);
+      gradient.addColorStop(0, "rgb(" + (flat + 20) + "," + (flat + 20) + "," + (flat + 20) + ")");
+      gradient.addColorStop(1, "rgb(" + Math.floor(flat * 0.5) + "," + Math.floor(flat * 0.5) + "," + Math.floor(flat * 0.5) + ")");
+    }
+    ctx.beginPath(); ctx.arc(subjectX, subjectY, subjectR, 0, Math.PI * 2);
+    ctx.fillStyle = gradient; ctx.fill();
+
+    // Fill light side
+    if (lights.fill.on) {
+      var fillGrad = ctx.createRadialGradient(subjectX + 25, subjectY, subjectR * 0.2, subjectX + 15, subjectY, subjectR * 0.9);
+      fillGrad.addColorStop(0, "rgba(" + lights.fill.color[0] + "," + lights.fill.color[1] + "," + lights.fill.color[2] + ",0.15)");
+      fillGrad.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.beginPath(); ctx.arc(subjectX, subjectY, subjectR, 0, Math.PI * 2);
+      ctx.fillStyle = fillGrad; ctx.fill();
+    }
+
+    // Key highlight
+    if (lights.key.on) {
+      var hlGrad = ctx.createRadialGradient(subjectX - 20, subjectY - 15, 2, subjectX - 20, subjectY - 15, subjectR * 0.5);
+      hlGrad.addColorStop(0, "rgba(255,255,255,0.42)");
+      hlGrad.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.beginPath(); ctx.arc(subjectX, subjectY, subjectR, 0, Math.PI * 2);
+      ctx.fillStyle = hlGrad; ctx.fill();
+    }
+
+    // Rim glow
+    if (lights.rim.on) {
+      ctx.save();
+      ctx.beginPath(); ctx.arc(subjectX, subjectY, subjectR, 0, Math.PI * 2); ctx.clip();
+      var rimGrad = ctx.createRadialGradient(subjectX, subjectY + subjectR * 0.8, subjectR * 0.1, subjectX, subjectY, subjectR * 1.1);
+      rimGrad.addColorStop(0, "rgba(255,255,255," + (rimStrength * 0.5) + ")");
+      rimGrad.addColorStop(0.3, "rgba(255,255,255," + (rimStrength * 0.15) + ")");
+      rimGrad.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = rimGrad;
+      ctx.fillRect(subjectX - subjectR, subjectY, subjectR * 2, subjectR * 1.2);
+      ctx.restore();
+
+      ctx.beginPath(); ctx.arc(subjectX, subjectY, subjectR + 2, Math.PI * 0.3, Math.PI * 0.7);
+      ctx.strokeStyle = "rgba(255,255,255," + (rimStrength * 0.35) + ")";
+      ctx.lineWidth = 4; ctx.stroke();
+    }
+
+    // Draw light sources
+    var lightEntries = [
+      { key: "key", data: lights.key, labelColor: "#fbbf24" },
+      { key: "fill", data: lights.fill, labelColor: "#8ec5ff" },
+      { key: "rim", data: lights.rim, labelColor: "#6ee7b7" }
+    ];
+
+    lightEntries.forEach(function(entry) {
+      var light = entry.data;
+      if (!light.on) {
+        ctx.beginPath(); ctx.arc(light.x, light.y, 10, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(100,100,100,.2)"; ctx.fill();
+        ctx.strokeStyle = "rgba(100,100,100,.3)"; ctx.lineWidth = 1; ctx.stroke();
+        ctx.fillStyle = "rgba(100,100,100,.4)"; ctx.font = "10px sans-serif"; ctx.textAlign = "center";
+        ctx.fillText("OFF", light.x, light.y - 16);
+        ctx.fillText(light.label, light.x, light.y + 24);
+        return;
+      }
+
+      // Light beam
+      var dx = subjectX - light.x, dy = subjectY - light.y;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      var angle = Math.atan2(dy, dx);
+      var spread = 0.3;
+
+      var beamGrad = ctx.createLinearGradient(light.x, light.y, subjectX, subjectY);
+      beamGrad.addColorStop(0, "rgba(" + light.color[0] + "," + light.color[1] + "," + light.color[2] + "," + (light.intensity * 0.12) + ")");
+      beamGrad.addColorStop(1, "rgba(" + light.color[0] + "," + light.color[1] + "," + light.color[2] + ",0)");
+
+      ctx.beginPath();
+      ctx.moveTo(light.x, light.y);
+      ctx.lineTo(light.x + Math.cos(angle - spread) * dist * 0.9, light.y + Math.sin(angle - spread) * dist * 0.9);
+      ctx.lineTo(light.x + Math.cos(angle + spread) * dist * 0.9, light.y + Math.sin(angle + spread) * dist * 0.9);
+      ctx.closePath();
+      ctx.fillStyle = beamGrad; ctx.fill();
+
+      // Light glow
+      var glowGrad = ctx.createRadialGradient(light.x, light.y, 2, light.x, light.y, 20);
+      glowGrad.addColorStop(0, "rgba(" + light.color[0] + "," + light.color[1] + "," + light.color[2] + "," + (light.intensity * 0.8) + ")");
+      glowGrad.addColorStop(0.5, "rgba(" + light.color[0] + "," + light.color[1] + "," + light.color[2] + "," + (light.intensity * 0.2) + ")");
+      glowGrad.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.beginPath(); ctx.arc(light.x, light.y, 20, 0, Math.PI * 2);
+      ctx.fillStyle = glowGrad; ctx.fill();
+
+      ctx.beginPath(); ctx.arc(light.x, light.y, 8, 0, Math.PI * 2);
+      ctx.fillStyle = "rgb(" + light.color[0] + "," + light.color[1] + "," + light.color[2] + ")";
+      ctx.fill(); ctx.strokeStyle = "#fff"; ctx.lineWidth = 1.5; ctx.stroke();
+
+      ctx.fillStyle = entry.labelColor;
+      ctx.font = "bold 11px sans-serif"; ctx.textAlign = "center";
+      ctx.fillText(light.label, light.x, light.y - 16);
+    });
+
+    ctx.fillStyle = "rgba(255,255,255,.4)"; ctx.font = "11px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("Subject", subjectX, subjectY + subjectR + 20);
+
+    var activeCount = (lights.key.on ? 1 : 0) + (lights.fill.on ? 1 : 0) + (lights.rim.on ? 1 : 0);
+    ctx.fillStyle = "rgba(255,255,255,.4)"; ctx.font = "11px sans-serif"; ctx.textAlign = "left";
+    ctx.fillText(activeCount + "/3 lights active", 12, 18);
+  }
+
+  document.getElementById("btnKey").addEventListener("click", function() {
+    lights.key.on = !lights.key.on;
+    document.getElementById("btnKey").classList.toggle("is-active", lights.key.on); draw();
+  });
+  document.getElementById("btnFill").addEventListener("click", function() {
+    lights.fill.on = !lights.fill.on;
+    document.getElementById("btnFill").classList.toggle("is-active", lights.fill.on); draw();
+  });
+  document.getElementById("btnRim").addEventListener("click", function() {
+    lights.rim.on = !lights.rim.on;
+    document.getElementById("btnRim").classList.toggle("is-active", lights.rim.on); draw();
+  });
+  document.getElementById("btnReset").addEventListener("click", function() {
+    lights.key.on = true; lights.fill.on = true; lights.rim.on = true;
+    document.getElementById("btnKey").classList.add("is-active");
+    document.getElementById("btnFill").classList.add("is-active");
+    document.getElementById("btnRim").classList.add("is-active");
+    draw();
+  });
+
+  draw();
+})();
+
+// ── Quiz Data ─────────────────────────────────
+initQuiz([
+  {
+    question: "3\uC810 \uC870\uBA85\uBC95\uC5D0\uC11C Key Light\uC758 \uC5ED\uD560\uC740?",
+    options: [
+      "\uADF8\uB9BC\uC790\uB97C \uCC44\uC6CC\uC8FC\uB294 \uBCF4\uC870\uAD11",
+      "\uC7A5\uBA74\uC758 \uC8FC\uB41C \uBE5B\uC73C\uB85C \uD615\uD0DC\uC640 \uADF8\uB9BC\uC790\uB97C \uACB0\uC815",
+      "\uD53C\uC0AC\uCCB4 \uB4A4\uC5D0\uC11C \uC724\uACFD\uC120\uC744 \uB9CC\uB4DC\uB294 \uBE5B",
+      "\uBC30\uACBD\uB9CC \uBC1D\uD788\uB294 \uBE5B"
+    ],
+    answer: 1,
+    explanation: "Key Light\uB294 \uC7A5\uBA74\uC758 \uC8FC\uB41C \uBE5B\uC73C\uB85C, \uD53C\uC0AC\uCCB4\uC758 \uD615\uD0DC\uC640 \uADF8\uB9BC\uC790\uB97C \uACB0\uC815\uD569\uB2C8\uB2E4. \uBCF4\uD1B5 45\uB3C4 \uC704, \uC88C\uCE21 \uB610\uB294 \uC6B0\uCE21\uC5D0 \uBC30\uCE58\uD569\uB2C8\uB2E4."
+  },
+  {
+    question: "Fill Light\uB294 Key Light\uC5D0 \uBE44\uD574 \uBCF4\uD1B5 \uC5BC\uB9C8\uB098 \uBC1D\uAC8C \uC124\uC815\uD558\uB098\uC694?",
+    options: [
+      "\uB3D9\uC77C\uD55C \uBC1D\uAE30",
+      "Key Light\uC758 50~70%",
+      "Key Light\uC758 200%",
+      "Key Light\uC758 10%"
+    ],
+    answer: 1,
+    explanation: "Fill Light\uB294 Key Light\uC758 50~70% \uBC1D\uAE30\uB85C \uC124\uC815\uD558\uC5EC \uADF8\uB9BC\uC790\uB97C \uBD80\uB4DC\uB7FD\uAC8C \uCC44\uC6CC\uC90D\uB2C8\uB2E4. \uB108\uBB34 \uBC1D\uC73C\uBA74 \uADF8\uB9BC\uC790\uAC00 \uC0AC\uB77C\uC838\uC11C \uD3C9\uBA74\uC801\uC73C\uB85C \uBCF4\uC785\uB2C8\uB2E4."
+  },
+  {
+    question: "Rim Light\uC758 \uC8FC\uC694 \uD6A8\uACFC\uB294 \uBB34\uC5C7\uC778\uAC00\uC694?",
+    options: [
+      "\uC815\uBA74\uC744 \uBC1D\uAC8C \uBE44\uCD98\uB2E4",
+      "\uADF8\uB9BC\uC790\uB97C \uC5C6\uC560\uC900\uB2E4",
+      "\uD53C\uC0AC\uCCB4\uC758 \uC724\uACFD\uC120\uC744 \uB9CC\uB4E4\uC5B4 \uBC30\uACBD\uACFC \uBD84\uB9AC\uD55C\uB2E4",
+      "\uC0C9\uC628\uB3C4\uB97C \uBCC0\uACBD\uD55C\uB2E4"
+    ],
+    answer: 2,
+    explanation: "Rim Light\uB294 \uD53C\uC0AC\uCCB4 \uB4A4\uC5D0\uC11C \uBE44\uCDB0 \uC724\uACFD\uC120(Edge)\uC744 \uB9CC\uB4E4\uC5B4 \uBC30\uACBD\uACFC \uD53C\uC0AC\uCCB4\uB97C \uC2DC\uAC01\uC801\uC73C\uB85C \uBD84\uB9AC\uD569\uB2C8\uB2E4."
+  },
+  {
+    question: "Blender\uC5D0\uC11C Key Light\uB85C \uAC00\uC7A5 \uC801\uD569\uD55C \uC870\uBA85 \uC720\uD615\uC740?",
+    options: [
+      "Point Light",
+      "Sun Light",
+      "Area Light",
+      "Spot Light"
+    ],
+    answer: 2,
+    explanation: "Area Light\uB294 \uBA74\uC801 \uAD11\uC6D0\uC73C\uB85C \uBD80\uB4DC\uB7EC\uC6B4 \uADF8\uB9BC\uC790\uB97C \uB9CC\uB4E4\uC5B4 Key Light\uB85C \uAC00\uC7A5 \uB9CE\uC774 \uC0AC\uC6A9\uB429\uB2C8\uB2E4."
+  }
+]);
+</script>
+
+</body>
+</html>

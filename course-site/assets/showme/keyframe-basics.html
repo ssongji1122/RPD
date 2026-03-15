@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — 키프레임 기초</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Tab Navigation ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+
+/* ── Tab Panels ── */
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+
+/* ── Concept Cards ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card h3 {
+  margin: 0 0 8px; font-size: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.concept-card p {
+  margin: 0; color: var(--muted-strong);
+  font-size: .88rem; line-height: 1.7;
+}
+.concept-card ul {
+  margin: 8px 0 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
+}
+
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: .72rem; font-weight: 600;
+}
+.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: #fbbf24; }
+
+/* ── Keyboard Shortcut ── */
+.kbd {
+  display: inline-block;
+  padding: 3px 8px; border-radius: 6px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  color: var(--key-soft);
+  font-size: .82rem; font-weight: 600;
+  font-family: var(--font);
+}
+
+/* ── Canvas / Demo ── */
+.demo-wrap {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+  margin: 14px 0;
+}
+.demo-wrap canvas {
+  display: block; width: 100%;
+}
+.demo-controls {
+  display: flex; gap: 8px; padding: 12px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.demo-hint {
+  font-size: .78rem; color: var(--muted);
+  text-align: center; padding: 6px 0 0;
+}
+.demo-btn {
+  padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .82rem;
+  cursor: pointer;
+  transition: background .14s, color .14s;
+}
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active {
+  background: rgba(10,132,255,.14);
+  color: var(--key-soft);
+  border-color: rgba(10,132,255,.3);
+}
+
+/* ── Usage Grid ── */
+.usage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.usage-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 16px;
+}
+.usage-card h4 {
+  margin: 0 0 8px; font-size: .92rem;
+  color: var(--key-soft);
+}
+.usage-card ul {
+  margin: 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem;
+  line-height: 1.8;
+}
+
+/* ── Tip Box ── */
+.tip-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(10,132,255,.2);
+  background: rgba(10,132,255,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+}
+.tip-box strong { color: var(--key-soft); }
+
+/* ── Combo Section ── */
+.combo-section {
+  margin-top: 18px;
+}
+.combo-section h4 {
+  margin: 0 0 10px;
+  font-size: .92rem;
+  color: var(--text);
+}
+.combo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.combo-card {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 12px 14px;
+}
+.combo-card .combo-name {
+  font-size: .86rem;
+  font-weight: 600;
+  color: var(--key-soft);
+  margin-bottom: 4px;
+}
+.combo-card .combo-desc {
+  font-size: .8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ── Shortcut Reference ── */
+.shortcut-list {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.shortcut-list h4 {
+  margin: 0 0 10px;
+  font-size: .9rem;
+  color: var(--text);
+}
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: .84rem;
+  color: var(--muted-strong);
+}
+.shortcut-row + .shortcut-row {
+  border-top: 1px solid var(--line);
+}
+.shortcut-keys {
+  flex-shrink: 0;
+}
+.analogy {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(245,158,11,.06);
+  border: 1px solid rgba(245,158,11,.15);
+  font-size: .82rem;
+  color: #fbbf24;
+  font-style: italic;
+}
+
+/* ── Quiz ── */
+.quiz-progress {
+  font-size: .78rem; color: var(--muted);
+  margin-bottom: 12px;
+}
+.quiz-question {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.quiz-question h4 {
+  margin: 0 0 12px; font-size: .94rem;
+}
+.quiz-option {
+  display: block; width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.025);
+  color: var(--text);
+  font: inherit; font-size: .86rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background .14s, border-color .14s;
+}
+.quiz-option:hover {
+  background: rgba(255,255,255,.06);
+  border-color: var(--line-strong);
+}
+.quiz-option.correct {
+  background: rgba(16,185,129,.12);
+  border-color: rgba(16,185,129,.4);
+  color: var(--success-soft);
+}
+.quiz-option.wrong {
+  background: rgba(239,68,68,.1);
+  border-color: rgba(239,68,68,.3);
+  color: #fca5a5;
+}
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback {
+  margin-top: 8px; padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: .84rem;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: #fca5a5; }
+
+.quiz-score {
+  text-align: center; padding: 20px;
+  font-size: 1.1rem; font-weight: 600;
+}
+.quiz-retry {
+  display: block; margin: 12px auto;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--key);
+  background: rgba(10,132,255,.12);
+  color: var(--key-soft);
+  font: inherit; font-size: .88rem;
+  cursor: pointer;
+  transition: background .14s;
+}
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+
+/* ── Official Doc Reference ── */
+.doc-ref {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(10,132,255,.15);
+  background: rgba(10,132,255,.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-ref a {
+  color: var(--key-soft);
+  font-size: .84rem;
+  text-decoration: none;
+  line-height: 1.5;
+}
+.doc-ref a:hover { text-decoration: underline; }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Tab Bar -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+</nav>
+
+<!-- TAB 1: 개념 이해 -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3>키프레임이란? <span class="badge badge-blue">기본</span></h3>
+      <p>키프레임은 특정 시간(프레임)에 오브젝트의 상태(위치, 회전, 크기 등)를 기록하는 것입니다. 두 키프레임 사이의 중간 값은 Blender가 자동으로 계산(보간)합니다.</p>
+      <div class="analogy">만화 원화가가 핵심 동작만 그리면, 사이 동작은 어시스턴트가 채우는 것과 같아요</div>
+    </div>
+    <div class="concept-card">
+      <h3>키프레임 타입 <span class="badge badge-green">핵심</span></h3>
+      <p><span class="kbd">I</span>를 누르면 키프레임 삽입 메뉴가 나옵니다. 주요 타입은 다음과 같습니다:</p>
+      <ul>
+        <li><strong>Location:</strong> 위치 (X, Y, Z)</li>
+        <li><strong>Rotation:</strong> 회전</li>
+        <li><strong>Scale:</strong> 크기</li>
+        <li><strong>LocRotScale:</strong> 위치+회전+크기 한번에</li>
+      </ul>
+    </div>
+    <div class="concept-card">
+      <h3>Timeline <span class="badge badge-amber">인터페이스</span></h3>
+      <p>Timeline은 화면 하단의 타임라인 에디터입니다. 키프레임은 마름모 모양으로 표시됩니다. 재생 헤드를 이동하여 현재 프레임을 변경할 수 있습니다.</p>
+      <ul>
+        <li>마름모: 키프레임 위치</li>
+        <li>파란 선: 현재 프레임 (Playhead)</li>
+        <li>Start/End: 렌더 범위 설정</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="shortcut-list">
+    <h4>주요 단축키</h4>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">I</span></span>
+      <span>키프레임 삽입 (Insert Keyframe)</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Alt</span> + <span class="kbd">I</span></span>
+      <span>키프레임 삭제</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Space</span></span>
+      <span>애니메이션 재생/정지</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">←</span> / <span class="kbd">→</span></span>
+      <span>이전/다음 프레임</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">↑</span> / <span class="kbd">↓</span></span>
+      <span>이전/다음 키프레임으로 이동</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Shift</span> + <span class="kbd">←</span> / <span class="kbd">→</span></span>
+      <span>처음/끝 프레임으로 이동</span>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/animation/keyframes/introduction.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Keyframes
+    </a>
+  </div>
+</section>
+
+<!-- TAB 2: 시각적 비교 -->
+<section class="panel" id="panel-visual" role="tabpanel">
+  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
+    공이 좌에서 우로 이동하는 애니메이션입니다. Timeline과 키프레임을 확인하세요.
+  </p>
+  <div class="demo-wrap">
+    <canvas id="demoCanvas" width="680" height="300"></canvas>
+    <div class="demo-controls">
+      <button class="demo-btn is-active" id="btnPlay">재생</button>
+      <button class="demo-btn" id="btnPause">정지</button>
+      <button class="demo-btn" id="btnReset">처음으로</button>
+    </div>
+  </div>
+  <p class="demo-hint">재생 버튼으로 애니메이션을 시작하고, Timeline에서 키프레임(마름모)을 확인하세요.</p>
+</section>
+
+<!-- TAB 3: 언제 쓰나요? -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>키프레임이 필요한 경우</h4>
+      <ul>
+        <li>오브젝트 이동 애니메이션</li>
+        <li>카메라 움직임</li>
+        <li>라이트 밝기/색상 변화</li>
+        <li>머터리얼 속성 변화</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>키프레임 대신 사용하는 것</h4>
+      <ul>
+        <li>물리 시뮬레이션 (자동 계산)</li>
+        <li>Drivers (수식 기반 자동화)</li>
+        <li>Constraints (관계 기반)</li>
+        <li>Shape Keys (변형 블렌드)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="tip-box">
+    <strong>팁:</strong> Auto Keying 기능을 켜면 오브젝트를 이동/회전/크기 변경할 때 자동으로 키프레임이 삽입됩니다. Timeline 상단의 녹화 버튼(빨간 원)을 클릭하세요. 단, 의도치 않은 키프레임이 생길 수 있으니 주의하세요.
+  </div>
+  <div class="combo-section">
+    <h4>애니메이션 워크플로우</h4>
+    <div class="combo-grid">
+      <div class="combo-card">
+        <div class="combo-name">Pose to Pose</div>
+        <div class="combo-desc">핵심 포즈(키프레임)를 먼저 잡고, 중간 동작을 나중에 추가하는 방식입니다. 전체 흐름을 먼저 잡을 수 있어 효율적입니다.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Straight Ahead</div>
+        <div class="combo-desc">프레임 1부터 순서대로 키프레임을 추가하는 방식입니다. 자연스러운 물리적 동작에 적합하지만 수정이 어렵습니다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/animation/keyframes/introduction.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Keyframes
+    </a>
+  </div>
+</section>
+
+<!-- TAB 4: 퀴즈 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+// ── Tab Switching ──────────────────────────────
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(t) {
+      t.classList.remove("is-active");
+      t.setAttribute("aria-selected", "false");
+    });
+    document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("is-active"); });
+    tab.classList.add("is-active");
+    tab.setAttribute("aria-selected", "true");
+    document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+  });
+  tab.addEventListener("touchend", function(e) { e.preventDefault(); tab.click(); });
+});
+
+// ── Quiz Engine (Safe DOM methods) ────────────
+function initQuiz(questions) {
+  var container = document.getElementById("quizArea");
+  var score = 0, answered = 0;
+  var scoreDiv = null;
+
+  var progress = document.createElement("div");
+  progress.className = "quiz-progress";
+  progress.textContent = "\uBB38\uC81C 0 / " + questions.length + " \u00b7 \uC810\uC218 0\uC810";
+  container.appendChild(progress);
+
+  questions.forEach(function(q, qi) {
+    var div = document.createElement("div");
+    div.className = "quiz-question";
+
+    var heading = document.createElement("h4");
+    heading.textContent = "Q" + (qi + 1) + ". " + q.question;
+    div.appendChild(heading);
+
+    var fb = document.createElement("div");
+    fb.className = "quiz-feedback";
+
+    q.options.forEach(function(opt, oi) {
+      var btn = document.createElement("button");
+      btn.className = "quiz-option";
+      btn.textContent = opt;
+      btn.addEventListener("click", function() {
+        if (btn.disabled) return;
+        div.querySelectorAll(".quiz-option").forEach(function(b) { b.disabled = true; });
+        answered++;
+        if (oi === q.answer) {
+          btn.classList.add("correct");
+          fb.className = "quiz-feedback show correct-fb";
+          fb.textContent = "\u2705 " + q.explanation;
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
+          fb.className = "quiz-feedback show wrong-fb";
+          fb.textContent = "\u274c " + q.explanation;
+
+          var retryBtn = document.createElement("button");
+          retryBtn.className = "quiz-retry";
+          retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
+          retryBtn.textContent = "\uB2E4\uC2DC \uD480\uAE30";
+          retryBtn.addEventListener("click", function() {
+            answered--;
+            div.querySelectorAll(".quiz-option").forEach(function(b) {
+              b.disabled = false;
+              b.classList.remove("wrong", "correct");
+            });
+            fb.className = "quiz-feedback";
+            fb.textContent = "";
+            retryBtn.remove();
+            if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+            progress.textContent = "\uBB38\uC81C " + answered + " / " + questions.length + " \u00b7 \uC810\uC218 " + score + "\uC810";
+          });
+          fb.appendChild(retryBtn);
+        }
+        progress.textContent = "\uBB38\uC81C " + answered + " / " + questions.length + " \u00b7 \uC810\uC218 " + score + "\uC810";
+        if (answered === questions.length) showScore();
+      });
+      div.appendChild(btn);
+    });
+
+    div.appendChild(fb);
+    container.appendChild(div);
+  });
+
+  function showScore() {
+    if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+    scoreDiv = document.createElement("div");
+    scoreDiv.className = "quiz-score";
+
+    var emoji = document.createElement("div");
+    emoji.style.cssText = "font-size:36px;margin-bottom:8px";
+    emoji.textContent = score === questions.length ? "\ud83c\udf89" : score >= Math.ceil(questions.length / 2) ? "\ud83d\udc4d" : "\ud83d\udcda";
+    scoreDiv.appendChild(emoji);
+
+    var result = document.createElement("div");
+    result.style.cssText = "font-size:18px;font-weight:500;margin-bottom:6px";
+    result.textContent = score + " / " + questions.length + " \uC815\uB2F5";
+    scoreDiv.appendChild(result);
+
+    var msg = document.createElement("div");
+    msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
+    msg.textContent = score === questions.length ? "\uC644\uBCBD\uD569\uB2C8\uB2E4!" : "\uC870\uAE08 \uB354 \uC5F0\uC2B5\uD558\uBA74 \uC644\uBCBD\uD574\uC9C8 \uAC70\uC608\uC694!";
+    scoreDiv.appendChild(msg);
+
+    var saveBtn = document.createElement("button");
+    saveBtn.className = "quiz-retry";
+    saveBtn.style.cssText = "background:rgba(10,132,255,.18);border-color:var(--key);margin-bottom:8px";
+    saveBtn.textContent = "\uAE30\uB85D \uC800\uC7A5\uD558\uAE30";
+    saveBtn.addEventListener("click", function() {
+      try {
+        var wid = new URLSearchParams(location.search).get("wid")
+               || location.pathname.split("/").pop().replace(".html", "");
+        window.parent.postMessage({
+          type: "showme-quiz-complete",
+          widgetId: wid,
+          score: score,
+          total: questions.length,
+          pass: score >= Math.ceil(questions.length * 0.75)
+        }, "*");
+      } catch(e) {}
+      saveBtn.textContent = "\uC800\uC7A5 \uC644\uB8CC!";
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = ".5";
+    });
+    scoreDiv.appendChild(saveBtn);
+
+    var retry = document.createElement("button");
+    retry.className = "quiz-retry";
+    retry.textContent = "\uCC98\uC74C\uBD80\uD130 \uB2E4\uC2DC";
+    retry.addEventListener("click", function() { location.reload(); });
+    scoreDiv.appendChild(retry);
+
+    container.appendChild(scoreDiv);
+  }
+}
+
+// ── Canvas Keyframe Animation Demo ────────────────────────
+(function() {
+  var canvas = document.getElementById("demoCanvas");
+  var ctx = canvas.getContext("2d");
+  var W = canvas.width, H = canvas.height;
+
+  // Animation state
+  var totalFrames = 60;
+  var currentFrame = 0;
+  var playing = true;
+  var animId = null;
+
+  // Keyframes: frame -> x position
+  var keyframes = [
+    { frame: 0, x: 80, y: 120 },
+    { frame: 15, x: 250, y: 60 },
+    { frame: 30, x: 420, y: 120 },
+    { frame: 45, x: 530, y: 80 },
+    { frame: 60, x: 600, y: 120 }
+  ];
+
+  // Timeline layout
+  var tlY = 210;
+  var tlH = 60;
+  var tlLeft = 60;
+  var tlRight = W - 30;
+  var tlWidth = tlRight - tlLeft;
+
+  function getInterpolatedPos(frame) {
+    // Find surrounding keyframes
+    var prev = keyframes[0], next = keyframes[keyframes.length - 1];
+    for (var i = 0; i < keyframes.length - 1; i++) {
+      if (frame >= keyframes[i].frame && frame <= keyframes[i + 1].frame) {
+        prev = keyframes[i];
+        next = keyframes[i + 1];
+        break;
+      }
+    }
+    if (frame <= prev.frame) return { x: prev.x, y: prev.y };
+    if (frame >= next.frame) return { x: next.x, y: next.y };
+
+    var t = (frame - prev.frame) / (next.frame - prev.frame);
+    // Smooth ease (cubic)
+    t = t * t * (3 - 2 * t);
+    return {
+      x: prev.x + (next.x - prev.x) * t,
+      y: prev.y + (next.y - prev.y) * t
+    };
+  }
+
+  function frameToTlX(frame) {
+    return tlLeft + (frame / totalFrames) * tlWidth;
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = "#17181a";
+    ctx.fillRect(0, 0, W, H);
+
+    // Grid
+    ctx.strokeStyle = "rgba(255,255,255,.03)";
+    ctx.lineWidth = 1;
+    for (var gx = 40; gx < W; gx += 40) {
+      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, tlY - 10); ctx.stroke();
+    }
+
+    // Motion path (ghost trail)
+    ctx.strokeStyle = "rgba(10,132,255,.2)";
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    for (var f = 0; f <= totalFrames; f++) {
+      var p = getInterpolatedPos(f);
+      if (f === 0) ctx.moveTo(p.x, p.y);
+      else ctx.lineTo(p.x, p.y);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Ghost balls at keyframes
+    keyframes.forEach(function(kf) {
+      ctx.beginPath();
+      ctx.arc(kf.x, kf.y, 14, 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(10,132,255,.2)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    });
+
+    // Current ball position
+    var pos = getInterpolatedPos(currentFrame);
+    // Ball shadow
+    ctx.beginPath();
+    ctx.ellipse(pos.x, 170, 16, 5, 0, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(0,0,0,.2)";
+    ctx.fill();
+    // Ball
+    var ballGrd = ctx.createRadialGradient(pos.x - 4, pos.y - 4, 0, pos.x, pos.y, 18);
+    ballGrd.addColorStop(0, "#5ab0ff");
+    ballGrd.addColorStop(1, "#0a6fd8");
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y, 18, 0, Math.PI * 2);
+    ctx.fillStyle = ballGrd;
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,.3)";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    // Highlight
+    ctx.beginPath();
+    ctx.arc(pos.x - 5, pos.y - 5, 5, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(255,255,255,.3)";
+    ctx.fill();
+
+    // ── Timeline Area ──
+    ctx.fillStyle = "rgba(255,255,255,.03)";
+    ctx.fillRect(0, tlY, W, tlH + 20);
+    ctx.strokeStyle = "rgba(255,255,255,.1)";
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0, tlY); ctx.lineTo(W, tlY); ctx.stroke();
+
+    // Timeline axis
+    ctx.strokeStyle = "rgba(255,255,255,.15)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(tlLeft, tlY + 30);
+    ctx.lineTo(tlRight, tlY + 30);
+    ctx.stroke();
+
+    // Frame ticks
+    ctx.fillStyle = "rgba(255,255,255,.3)";
+    ctx.font = "9px sans-serif";
+    ctx.textAlign = "center";
+    for (var tick = 0; tick <= totalFrames; tick += 10) {
+      var tx = frameToTlX(tick);
+      ctx.beginPath();
+      ctx.moveTo(tx, tlY + 26);
+      ctx.lineTo(tx, tlY + 34);
+      ctx.strokeStyle = "rgba(255,255,255,.2)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.fillText(tick, tx, tlY + 46);
+    }
+
+    // Keyframe diamonds
+    keyframes.forEach(function(kf) {
+      var kx = frameToTlX(kf.frame);
+      var ky = tlY + 30;
+      ctx.save();
+      ctx.translate(kx, ky);
+      ctx.rotate(Math.PI / 4);
+      ctx.fillStyle = "rgba(245,158,11,.8)";
+      ctx.fillRect(-5, -5, 10, 10);
+      ctx.strokeStyle = "rgba(245,158,11,1)";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(-5, -5, 10, 10);
+      ctx.restore();
+    });
+
+    // Playhead (blue vertical line)
+    var phX = frameToTlX(currentFrame);
+    ctx.strokeStyle = "rgba(10,132,255,.9)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(phX, tlY + 8);
+    ctx.lineTo(phX, tlY + tlH);
+    ctx.stroke();
+    // Playhead triangle
+    ctx.fillStyle = "rgba(10,132,255,.9)";
+    ctx.beginPath();
+    ctx.moveTo(phX - 6, tlY + 8);
+    ctx.lineTo(phX + 6, tlY + 8);
+    ctx.lineTo(phX, tlY + 16);
+    ctx.closePath();
+    ctx.fill();
+
+    // Frame counter
+    ctx.font = "bold 10px sans-serif";
+    ctx.fillStyle = "rgba(10,132,255,.8)";
+    ctx.textAlign = "center";
+    ctx.fillText("Frame " + currentFrame, phX, tlY + 5);
+
+    // Timeline label
+    ctx.font = "10px sans-serif";
+    ctx.fillStyle = "rgba(255,255,255,.3)";
+    ctx.textAlign = "left";
+    ctx.fillText("Timeline", 10, tlY + 34);
+
+    // Legend
+    ctx.font = "10px sans-serif";
+    ctx.textAlign = "right";
+    // Keyframe diamond legend
+    ctx.save();
+    ctx.translate(W - 80, tlY + 55);
+    ctx.rotate(Math.PI / 4);
+    ctx.fillStyle = "rgba(245,158,11,.6)";
+    ctx.fillRect(-3, -3, 6, 6);
+    ctx.restore();
+    ctx.fillStyle = "rgba(255,255,255,.4)";
+    ctx.fillText("= Keyframe", W - 20, tlY + 59);
+
+    if (playing) {
+      currentFrame++;
+      if (currentFrame > totalFrames) currentFrame = 0;
+    }
+
+    animId = requestAnimationFrame(draw);
+  }
+
+  document.getElementById("btnPlay").addEventListener("click", function() {
+    playing = true;
+    document.getElementById("btnPlay").classList.add("is-active");
+    document.getElementById("btnPause").classList.remove("is-active");
+  });
+  document.getElementById("btnPlay").addEventListener("touchend", function(e) { e.preventDefault(); this.click(); });
+
+  document.getElementById("btnPause").addEventListener("click", function() {
+    playing = false;
+    document.getElementById("btnPause").classList.add("is-active");
+    document.getElementById("btnPlay").classList.remove("is-active");
+  });
+  document.getElementById("btnPause").addEventListener("touchend", function(e) { e.preventDefault(); this.click(); });
+
+  document.getElementById("btnReset").addEventListener("click", function() {
+    currentFrame = 0;
+    playing = false;
+    document.getElementById("btnPause").classList.add("is-active");
+    document.getElementById("btnPlay").classList.remove("is-active");
+  });
+  document.getElementById("btnReset").addEventListener("touchend", function(e) { e.preventDefault(); this.click(); });
+
+  draw();
+})();
+
+// ── Quiz Data ─────────────────────────────────
+initQuiz([
+  {
+    question: "\uD0A4\uD504\uB808\uC784\uC744 \uC0BD\uC785\uD558\uB294 \uB2E8\uCD95\uD0A4\uB294?",
+    options: [
+      "K",
+      "I",
+      "F",
+      "Ctrl + K"
+    ],
+    answer: 1,
+    explanation: "I\uD0A4\uB97C \uB204\uB974\uBA74 Insert Keyframe \uBA54\uB274\uAC00 \uB098\uD0C0\uB098\uACE0, Location, Rotation, Scale \uB4F1\uC744 \uC120\uD0DD\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
+  },
+  {
+    question: "\uB2E4\uC74C \uD0A4\uD504\uB808\uC784\uC73C\uB85C \uC810\uD504\uD558\uB294 \uB2E8\uCD95\uD0A4\uB294?",
+    options: [
+      "\u2192 (\uC624\uB978\uCABD \uD654\uC0B4\uD45C)",
+      "\u2193 (\uC544\uB798 \uD654\uC0B4\uD45C)",
+      "Tab",
+      "N"
+    ],
+    answer: 1,
+    explanation: "\u2193(\uC544\uB798 \uD654\uC0B4\uD45C)\uB294 \uB2E4\uC74C \uD0A4\uD504\uB808\uC784\uC73C\uB85C, \u2191(\uC704 \uD654\uC0B4\uD45C)\uB294 \uC774\uC804 \uD0A4\uD504\uB808\uC784\uC73C\uB85C \uC774\uB3D9\uD569\uB2C8\uB2E4."
+  },
+  {
+    question: "\uC560\uB2C8\uBA54\uC774\uC158\uC744 \uC7AC\uC0DD/\uC815\uC9C0\uD558\uB294 \uB2E8\uCD95\uD0A4\uB294?",
+    options: [
+      "Enter",
+      "P",
+      "Space",
+      "Tab"
+    ],
+    answer: 2,
+    explanation: "Space\uBC14\uB97C \uB204\uB974\uBA74 \uD0C0\uC784\uB77C\uC778\uC758 \uC560\uB2C8\uBA54\uC774\uC158\uC774 \uC7AC\uC0DD/\uC815\uC9C0\uB429\uB2C8\uB2E4."
+  },
+  {
+    question: "LocRotScale \uD0A4\uD504\uB808\uC784\uC740 \uBB34\uC5C7\uC744 \uAE30\uB85D\uD558\uB098\uC694?",
+    options: [
+      "\uC704\uCE58\uB9CC \uAE30\uB85D",
+      "\uD68C\uC804\uB9CC \uAE30\uB85D",
+      "\uC704\uCE58 + \uD68C\uC804 + \uD06C\uAE30\uB97C \uBAA8\uB450 \uAE30\uB85D",
+      "\uCE74\uBA54\uB77C \uC704\uCE58\uB97C \uAE30\uB85D"
+    ],
+    answer: 2,
+    explanation: "LocRotScale\uC740 Location(\uC704\uCE58), Rotation(\uD68C\uC804), Scale(\uD06C\uAE30)\uC744 \uD55C\uBC88\uC5D0 \uBAA8\uB450 \uD0A4\uD504\uB808\uC784\uC73C\uB85C \uAE30\uB85D\uD558\uB294 \uC635\uC158\uC785\uB2C8\uB2E4."
+  }
+]);
+</script>
+
+</body>
+</html>
