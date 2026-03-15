@@ -660,10 +660,16 @@ class AdminHandler(BaseHTTPRequestHandler):
         self._send_error_json(404, "Not found")
 
     def do_POST(self) -> None:
-        if not self._check_auth():
+        path = self._route_path()
+
+        # POST /api/notion-quiz — no auth required (student-facing endpoint)
+        if path == "/api/notion-quiz":
+            self._handle_notion_quiz()
             return
 
-        path = self._route_path()
+        # All other POST endpoints require auth
+        if not self._check_auth():
+            return
 
         # POST /api/upload/{weekNum}/{stepIdx}
         upload_match = re.match(r"^/api/upload/(\d+)/(\d+)$", path)
@@ -888,6 +894,55 @@ class AdminHandler(BaseHTTPRequestHandler):
             self._send_json({"ok": True, "week": updated})
         except Exception as exc:
             self._send_error_json(500, f"Notion fetch failed: {exc}")
+
+    def _handle_notion_quiz(self) -> None:
+        """Log a Show Me quiz completion to the Notion 제출/공개피드백 database."""
+        # Load per-site config (gitignored), falling back to env var
+        config_path = COURSE_SITE / "data" / "notion-config.json"
+        token: str | None = None
+        if config_path.exists():
+            try:
+                with open(config_path, encoding="utf-8") as f:
+                    cfg = json.load(f)
+                if not cfg.get("enabled"):
+                    self._send_json({"ok": False, "reason": "disabled"})
+                    return
+                token = cfg.get("token") or NOTION_TOKEN
+            except Exception as exc:
+                self._send_error_json(500, f"Config read error: {exc}")
+                return
+        else:
+            token = NOTION_TOKEN
+
+        if not token:
+            self._send_json({"ok": False, "reason": "no token configured"})
+            return
+
+        body = self._read_body()
+        try:
+            payload = json.loads(body)
+        except json.JSONDecodeError as exc:
+            self._send_error_json(400, f"Invalid JSON: {exc}")
+            return
+
+        req = urllib.request.Request(
+            f"{NOTION_API}/pages",
+            data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
+            headers={
+                "Authorization": f"Bearer {token}",
+                "Notion-Version": "2022-06-28",
+                "Content-Type": "application/json",
+            },
+        )
+        try:
+            with urllib.request.urlopen(req) as resp:
+                result = json.loads(resp.read().decode("utf-8"))
+            self._send_json({"ok": True, "id": result.get("id")})
+        except urllib.error.HTTPError as exc:
+            err_body = exc.read().decode("utf-8", errors="replace")
+            self._send_error_json(exc.code, err_body)
+        except Exception as exc:
+            self._send_error_json(500, str(exc))
 
     # -- static file serving -----------------------------------------------
 
