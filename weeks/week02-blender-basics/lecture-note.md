@@ -3,7 +3,7 @@
 ## 📑 목차
 
 - [학습 목표](#학습-목표)
-- [영상 구성](#영상-구성-총-28분)
+- [영상 구성](#영상-구성-총-42분)
 - [설치](#설치)
 - [프리퍼런스 설정](#프리퍼런스-설정)
 - [UI 구조](#ui-구조)
@@ -13,6 +13,10 @@
   - [Timeline](#timeline-타임라인--애니메이션-시간축)
 - [뷰포트 조작](#뷰포트-조작)
 - [Transform 기초](#transform-기초)
+- [3D Cursor · Origin · Transform Pivot 완전 정복](#3d-cursor--origin--transform-pivot-완전-정복)
+  - [3D Cursor (3D 커서)](#3d-cursor-3d-커서)
+  - [Origin (오리진)](#origin-오리진)
+  - [Transform Pivot Point](#transform-pivot-point)
 - [Apply Transform & Origin](#apply-transform--origin)
   - [왜 따로 있을까? — Origin vs 3D Cursor](#-근데-왜-따로-있을까--origin과-3d-cursor가-분리된-진짜-이유)
 - [Join / Separate / Bridge](#join--separate--bridge)
@@ -33,18 +37,22 @@
 - [ ] Blender UI 4개 영역의 역할을 설명할 수 있다
 - [ ] 뷰포트를 자유롭게 회전·이동·줌 할 수 있다
 - [ ] G·R·S + 축 제한으로 오브젝트를 원하는 위치에 배치할 수 있다
+- [ ] 3D Cursor를 원하는 위치에 놓고, Shift+S로 정밀 이동할 수 있다
+- [ ] Origin(오리진)의 역할을 이해하고 Set Origin으로 위치를 조정할 수 있다
+- [ ] Transform Pivot Point 5가지 옵션의 차이를 구분하고 상황에 맞게 쓸 수 있다
 - [ ] Apply Transform과 Origin의 개념을 이해하고 적용할 수 있다
 - [ ] Join·Separate·Bridge로 오브젝트를 합치고, 분리하고, 연결할 수 있다
 
 ---
 
-## 영상 구성 (총 ~28분)
+## 영상 구성 (총 ~42분)
 
 | # | 영상 제목 | 시간 |
 |---|-----------|------|
 | Seg A | 설치 & 환경설정 | 7분 |
 | Seg B | 화면 구조 & 뷰포트 조작 | 10분 |
 | Seg C | Transform & Apply Transform | 11분 |
+| Seg D | 3D Cursor · Origin · Transform Pivot | 14분 |
 
 ---
 
@@ -330,7 +338,8 @@ Visibility
 
 ### 📸 스크린샷 촬영 가이드 (강의 자료용)
 
-아래 이미지를 직접 촬영해서 `images/` 폴더에 저장하세요:
+아래 이미지는 현재 `images/` 폴더에 채워두었습니다.
+다음에 같은 자료를 다시 만들 때는 같은 구도로 촬영하면 강의 흐름을 유지하기 쉽습니다.
 
 | 파일명 | 캡처 내용 | 팁 |
 |--------|-----------|-----|
@@ -340,6 +349,14 @@ Visibility
 | `properties_tabs.png` | Properties 패널 탭 전체 목록 | 세로 탭 아이콘이 다 보이게 |
 | `properties_object.png` | Object Properties 탭 열린 상태 | Scale (1,1,1) 보이게 |
 | `timeline_overview.png` | Timeline 전체 (재생바 포함) | 기본 상태 |
+| `3d_cursor_overview.png` | 뷰포트 안 3D Cursor가 보이는 상태 | 기본 씬에서 Cursor 빨간-흰 원 보이게 |
+| `3d_cursor_snap_menu.png` | Shift+S 파이 메뉴 | Cursor 위에 열린 상태 |
+| `origin_overview.png` | 오브젝트 선택 시 주황 점(Origin) 위치 | Cube 선택 후 Origin 점 클로즈업 |
+| `origin_set_menu.png` | 우클릭 → Set Origin 메뉴 | 메뉴 항목 전부 보이게 |
+| `origin_offcenter.png` | Origin이 어긋난 상태 vs 수정 비교 | 나란히 두 상태 캡처 |
+| `pivot_point_menu.png` | 뷰포트 Header의 Pivot 선택기 드롭다운 | 5가지 옵션이 다 보이게 |
+| `pivot_individual.png` | Individual Origins로 각자 스케일 비교 | 전후 상태 |
+| `pivot_3dcursor.png` | 3D Cursor 기준 회전 결과 | Cursor 위치와 회전 중심 일치 확인 |
 
 > Mac 스크린샷: `Cmd + Shift + 4` → 드래그 캡처
 > Windows: `Win + Shift + S` → 캡처 도구
@@ -396,6 +413,348 @@ G + Shift + Z  → Z 제외(XY 평면)에서만 이동
 
 ---
 
+## 3D Cursor · Origin · Transform Pivot 완전 정복
+
+> "이 세 가지를 구분하지 못하면 '왜 이상한 방향으로 회전하지?', '왜 새 오브젝트가 엉뚱한 곳에 생기지?' 라는 의문이 계속 생깁니다. 이 섹션을 읽고 나면 그 의문들이 한 번에 해결될 거예요!"
+
+---
+
+### 3D Cursor (3D 커서)
+
+> 📌 **한 줄 요약**: "내가 원하는 곳에 꽂아두는 임시 표시핀"
+
+![3D Cursor 예시](images/3d_cursor_overview.png)
+
+**3D Cursor가 뭔가요?**
+
+뷰포트 안에 떠있는 **빨간-흰색 조준십자 마커**입니다.
+처음엔 그냥 장식처럼 보이지만, 알고 나면 없어서는 안 될 도구예요.
+
+```
+뷰포트 안에서 보이는 모습:
+
+         ╋  ← 3D Cursor (빨간/흰 교차 원 + 십자선)
+        / \
+       ×   ×
+        \ /
+         ×
+```
+
+**3D Cursor의 두 가지 핵심 역할**
+
+| 역할 | 설명 | 예시 |
+|------|------|------|
+| **새 오브젝트의 탄생 위치** | `Shift+A`로 추가하는 모든 오브젝트는 Cursor가 있는 곳에 생성됩니다 | "탁자 위에 컵을 놓고 싶어" → Cursor를 탁자 위로 이동 후 `Shift+A` |
+| **Transform의 기준점** | Pivot을 "3D Cursor"로 설정하면 모든 회전·스케일이 Cursor를 중심으로 작동합니다 | "여러 의자를 테이블 중앙 기준으로 둥글게 배치" |
+
+---
+
+#### 3D Cursor 조작법
+
+##### 위치 바꾸기 — `Shift + 우클릭`
+
+```
+Shift + 우클릭 → 클릭한 위치로 Cursor 이동
+```
+
+> 💡 예: 바닥 면의 정중앙에 기둥을 세우고 싶다면?
+> 1. `Shift + 우클릭`으로 바닥 중앙에 Cursor 놓기
+> 2. `Shift + A → Mesh → Cylinder` 추가
+> 3. 기둥이 정확히 바닥 중앙에 생깁니다!
+
+##### 원점으로 리셋 — `Shift + C`
+
+```
+Shift + C → Cursor를 월드 원점(0, 0, 0)으로 초기화 + 전체 씬 보기
+```
+
+> ⚠️ Cursor가 어디 있는지 모를 때: 새 오브젝트를 추가했더니 화면 밖 엉뚱한 곳에 생겼다면, `Shift+C`로 Cursor를 초기화하세요. 이게 **가장 흔한 초보 당황 상황 1위**입니다!
+
+##### 정밀 배치 — `Snap → Cursor to Selected`
+
+이미 만들어진 오브젝트나 버텍스의 **정확한 위치**로 Cursor를 이동하고 싶을 때 씁니다.
+
+```
+방법 1: Object Mode에서 오브젝트 선택
+        → Header 메뉴 Object → Snap → Cursor to Selected
+
+방법 2: Edit Mode에서 버텍스/엣지/페이스 선택
+        → Mesh → Snap → Cursor to Selected
+        (또는 Shift + S → Cursor to Selected)
+```
+
+```
+예시 — 문 경첩 위치를 정확히 잡을 때:
+
+  [문]         [경첩 버텍스]
+   ──────────────●
+                 ↑
+            Cursor to Selected 후
+            Cursor가 이 정확한 위치로 이동
+```
+
+**Shift + S — Snap Pie Menu (자주 쓰는 단축키)**
+
+`Shift + S`를 누르면 파이 메뉴가 나타납니다.
+
+```
+          Cursor to World Origin
+                  ↑
+  Selected to    [●]    Cursor to Selected
+     Cursor    ←   →
+                  ↓
+           Cursor to Active
+```
+
+| 메뉴 항목 | 동작 |
+|-----------|------|
+| **Cursor to Selected** | Cursor → 선택한 오브젝트/버텍스 위치 |
+| **Selected to Cursor** | 선택한 오브젝트 → Cursor 위치로 이동 |
+| **Cursor to World Origin** | Cursor → (0,0,0) 초기화 |
+| **Cursor to Active** | Cursor → Active 오브젝트 위치 |
+
+> 💡 `Shift+S`는 **정밀 배치**의 핵심입니다. 이것만 익혀도 "여기에 딱 맞게 놓는" 작업이 훨씬 쉬워져요!
+
+**스크린샷 가이드**
+
+| 파일명 | 캡처 내용 |
+|--------|-----------|
+| `images/3d_cursor_overview.png` | 뷰포트 안 3D Cursor가 보이는 상태 |
+| `images/3d_cursor_snap_menu.png` | Shift+S 파이 메뉴 |
+
+**공식 문서**: [3D Cursor — Blender Manual](https://docs.blender.org/manual/en/latest/editors/3dview/3d_cursor.html)
+
+---
+
+### Origin (오리진)
+
+> 📌 **한 줄 요약**: "오브젝트에 붙어있는 '기준 주소지' 주황 점"
+
+![Origin 위치 예시](images/origin_overview.png)
+
+**Origin이 뭔가요?**
+
+오브젝트를 선택하면 보이는 **주황색 점**입니다. 이 점이 해당 오브젝트의 "집 주소"예요.
+
+```
+  ╭──────────────╮
+  │              │   ← 파란 테두리 = 선택된 오브젝트
+  │      ●       │   ← 주황 점 = Origin (기준점)
+  │              │
+  ╰──────────────╯
+```
+
+**Origin의 세 가지 역할**
+
+1. **이동·회전·스케일의 기준**: G·R·S 조작은 모두 Origin을 기준으로 계산됩니다
+2. **N 패널 Location 수치**: Properties에 표시되는 Location(X,Y,Z) 값이 바로 Origin의 월드 좌표입니다
+3. **부모-자식 관계의 연결점**: 리깅에서 뼈대가 오브젝트를 움직일 때 Origin을 기준으로 당깁니다
+
+---
+
+**Origin 위치 조정하기 — `우클릭 → Set Origin`**
+
+오브젝트를 우클릭하면 "Set Origin" 메뉴가 나옵니다.
+
+```
+우클릭 → Set Origin
+  ├─ Origin to Geometry         ← 메시 중심으로 (★ 가장 많이 씀)
+  ├─ Origin to 3D Cursor        ← 3D Cursor 위치로
+  ├─ Origin to Center of Mass   ← 물리적 무게 중심으로
+  └─ Geometry to Origin         ← 오브젝트는 그대로, 메시를 Origin 쪽으로 이동
+```
+
+> **예시로 이해하기:**
+>
+> 🚪 **문을 경첩에서 회전시키고 싶을 때**
+>
+> ```
+>  기본 상태:                  Origin 이동 후:
+>
+>  ●──────────┐               ┌──────────●
+>  Origin이   │               │          Origin이
+>  중앙에 있음│               │          경첩(왼쪽) 위치로
+>             │               │
+>  R 키 → 중앙 기준 회전       R 키 → 경첩 기준 회전  ✅
+> ```
+>
+> 1. Edit Mode에서 경첩이 있을 왼쪽 엣지 선택
+> 2. `Shift+S → Cursor to Selected` (Cursor를 경첩 위치로)
+> 3. Object Mode로 복귀 후 `우클릭 → Set Origin to 3D Cursor`
+> 4. 이제 `R` 키를 누르면 경첩 기준으로 회전!
+
+**각 옵션 언제 쓰나?**
+
+| 옵션 | 언제 쓰나 | 예시 |
+|------|-----------|------|
+| **Origin to Geometry** | 오브젝트 중앙으로 Origin 재설정 | Edit Mode에서 버텍스 이동 후 Origin이 어긋났을 때 |
+| **Origin to 3D Cursor** | 특정 위치를 Origin으로 | 바닥 기준으로 스케일, 문 경첩 회전 |
+| **Origin to Center of Mass** | 물리 시뮬레이션 준비 | Rigid Body 설정 전 |
+| **Geometry to Origin** | Origin은 고정, 메시를 맞춤 | 여러 오브젝트의 Origin을 (0,0,0)으로 통일할 때 |
+
+> ⚠️ **Origin ≠ 피벗을 움직이는 것이 아닙니다!**
+> Origin을 이동해도 메시 자체는 뷰포트에서 같은 자리에 있습니다.
+> 다만 N 패널의 Location 수치가 바뀝니다. 헷갈리지 마세요!
+
+**원점이 어긋났을 때 빠른 수정**
+
+```
+증상: 오브젝트를 회전하면 엉뚱한 곳을 중심으로 빙글빙글 돔
+원인: Origin이 메시 중앙에 없음
+
+해결:
+  Object Mode에서 오브젝트 선택
+  → 우클릭 → Set Origin → Origin to Geometry ✅
+```
+
+**스크린샷 가이드**
+
+| 파일명 | 캡처 내용 |
+|--------|-----------|
+| `images/origin_overview.png` | 오브젝트 선택 시 주황 점(Origin) 위치 |
+| `images/origin_set_menu.png` | 우클릭 → Set Origin 메뉴 |
+| `images/origin_offcenter.png` | Origin이 어긋난 상태 vs 수정된 상태 비교 |
+
+**공식 문서**: [Object Origin — Blender Manual](https://docs.blender.org/manual/en/latest/scene_layout/object/origin.html)
+
+---
+
+### Transform Pivot Point
+
+> 📌 **한 줄 요약**: "G·R·S 조작이 어디를 기준으로 일어날지 정하는 설정"
+
+![Transform Pivot 메뉴](images/pivot_point_menu.png)
+
+**Transform Pivot Point가 뭔가요?**
+
+G(이동)는 기준점이 없지만, **R(회전)**과 **S(스케일)**은 반드시 "어디를 중심으로?" 라는 기준점이 필요합니다.
+그 기준점을 설정하는 것이 **Transform Pivot Point**입니다.
+
+```
+뷰포트 Header (상단 바)에서 위치:
+
+[Object Mode ▾]  [View] [Select] [Add] [Object]  [⬛▾]  [⬚ Overlay▾]
+                                                    ↑
+                                           Pivot Point 선택기
+                                           (점 모양 아이콘)
+```
+
+**5가지 Pivot Point 옵션**
+
+| 옵션 | 아이콘 느낌 | 설명 | 언제 쓰나 |
+|------|------------|------|-----------|
+| **Individual Origins** | 각자 점 | 각 오브젝트가 자기 Origin을 기준으로 회전/스케일 | 여러 나무를 각자 자리에서 키울 때 |
+| **Median Point** | 가운데 점 | 선택된 모든 오브젝트의 가운데(평균 위치) | 여러 오브젝트를 묶어서 한꺼번에 조작 |
+| **3D Cursor** | Cursor 표시 | 3D Cursor 위치를 기준으로 | 특정 점을 중심으로 오브젝트들을 둥글게 배치 |
+| **Bounding Box Center** | 박스 중심 | 선택된 모든 것의 경계 상자 중심 | 복잡한 선택의 물리적 중앙 |
+| **Active Element** | 주황 점 | Active(마지막 선택) 오브젝트의 Origin | 특정 오브젝트를 기준으로 나머지를 정렬 |
+
+---
+
+**실전 예시로 완벽 이해하기**
+
+#### 예시 1: 꽃잎 5장을 꽃처럼 배치하기
+
+```
+목표: 꽃잎 하나를 만들고, 중앙을 기준으로 72도씩 회전해서 복제
+
+방법:
+  1. 꽃잎 오브젝트 만들기
+  2. Shift+C로 Cursor를 원점(꽃 중심)으로
+  3. Pivot → 3D Cursor 선택
+  4. Shift+D → R → Z → 72 → Enter 로 꽃잎 복제+회전
+  5. 반복 × 4 → 꽃 완성! 🌸
+```
+
+```
+Pivot = Median Point 일 때:          Pivot = 3D Cursor 일 때:
+  ●●●●●  → 전부 중앙 기준 뭉침       ●●●●● → Cursor(중심) 기준 퍼짐
+  (잘못됨)                              (원하는 결과 ✅)
+```
+
+#### 예시 2: 여러 오브젝트를 동시에 키우기
+
+```
+목표: 방 안에 의자 5개가 있고, 모두 1.5배 키우되 각자 자기 위치에서
+
+Pivot = Median Point:   모든 의자가 방 중앙으로 모임 (엉망)
+Pivot = Individual Origins: 각자 자기 위치에서 1.5배 커짐 ✅
+```
+
+#### 예시 3: 건물 모서리 기준으로 스케일
+
+```
+목표: 건물을 왼쪽 아래 모서리는 고정, 오른쪽 위로만 키우기
+
+  1. Edit Mode에서 왼쪽 아래 버텍스 선택
+  2. Shift+S → Cursor to Selected
+  3. Object Mode 복귀
+  4. Pivot → 3D Cursor
+  5. S → X → 2 → Enter : 왼쪽 모서리 고정한 채 X방향으로 2배 확장
+```
+
+---
+
+**단축키 요약**
+
+| 단축키 | 동작 |
+|--------|------|
+| **뷰포트 Header 아이콘 클릭** | Pivot Point 선택 메뉴 열기 |
+| **`. (마침표)`** | 개별 원점(Individual Origins) 토글 |
+| **`/ (슬래시)`** | 3D Cursor Pivot 토글 (일부 버전) |
+
+> 💡 **Pivot 변경은 임시입니다!** 작업이 끝나면 원래 설정(Median Point)으로 되돌리는 습관을 들이세요.
+> 다음 번에 회전이 이상하다면 십중팔구 Pivot Point 설정을 바꾼 채 잊어버린 경우입니다.
+
+**스크린샷 가이드**
+
+| 파일명 | 캡처 내용 |
+|--------|-----------|
+| `images/pivot_point_menu.png` | 뷰포트 Header의 Pivot 선택기 드롭다운 |
+| `images/pivot_individual.png` | Individual Origins로 각자 스케일 비교 |
+| `images/pivot_3dcursor.png` | 3D Cursor 기준 회전 결과 |
+
+**공식 문서**: [Pivot Point — Blender Manual](https://docs.blender.org/manual/en/latest/editors/3dview/controls/pivot_point/index.html)
+
+---
+
+### 🔗 세 개념의 관계 한눈에 보기
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                                                             │
+│   3D Cursor ─────────────→  Origin 이동의 목적지가 된다     │
+│       │          Set Origin to 3D Cursor                    │
+│       │                                                     │
+│       └─────────────────→  Pivot Point로 선택 가능          │
+│                             (Transform → 3D Cursor)         │
+│                                                             │
+│   Origin  ────────────────→  Pivot Point로 선택 가능        │
+│                              (Individual Origins,           │
+│                               Active Element)              │
+│                                                             │
+│   Pivot Point ────────────→  R/S 조작의 중심점이 된다       │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**비유로 기억하기**
+
+| 개념 | 비유 | 역할 |
+|------|------|------|
+| **3D Cursor** | 포스트잇 메모 | "여기!" 표시해두는 임시 마커. 어디든 이동 가능 |
+| **Origin** | 오브젝트의 주민등록 주소 | 오브젝트에 영구 귀속. 회전·스케일의 기본 기준 |
+| **Transform Pivot** | 컴퍼스의 침 | 지금 이 작업에서 어디를 중심으로 할지 선택하는 설정 |
+
+---
+
+**공식 튜토리얼**
+
+- [Blender Studio - 3D Cursor](https://studio.blender.org/training/blender-2-8-fundamentals/3d-cursor/)
+- [Blender Studio - Object Origins](https://studio.blender.org/training/blender-2-8-fundamentals/object-origins/)
+
+---
+
 ## Apply Transform & Origin
 
 ### Apply Transform (Ctrl + A)
@@ -411,16 +770,25 @@ Ctrl + A → Apply All Transforms
 ```
 → Location(0,0,0) / Rotation(0,0,0) / Scale(1,1,1) 확인
 
-### Origin 설정
+### Origin 설정 요약
 
-**Origin(주황 점)**: 오브젝트의 기준점. 이동·회전·스케일의 중심.
+> ℹ️ Origin의 개념과 Set Origin 옵션 전체는 위 **[Origin (오리진)](#origin-오리진)** 섹션에서 자세히 다뤘습니다.
+
+**Apply Transform 후 Origin 확인 루틴**
 
 ```
-Right-click → Set Origin
-  ├─ Origin to Geometry     ← 메시 중심으로 (가장 많이 씀)
-  ├─ Origin to 3D Cursor    ← 3D Cursor 위치로
-  └─ Origin to Center of Mass
+Ctrl+A → Apply All Transforms 실행
+  ↓
+Scale (1,1,1) 확인 → OK
+  ↓
+Origin 위치 확인 (메시 중앙에 있는가?)
+  → 어긋났다면: 우클릭 → Set Origin → Origin to Geometry
 ```
+
+| 자주 쓰는 Set Origin 옵션 | 언제 |
+|--------------------------|------|
+| **Origin to Geometry** | Apply Transform 후 기본 정리 |
+| **Origin to 3D Cursor** | 바닥 기준 스케일, 경첩 기준 회전 등 특수 작업 |
 
 ### 🤔 근데 왜 따로 있을까? — Origin과 3D Cursor가 분리된 진짜 이유
 
@@ -599,10 +967,12 @@ Right-click → Set Origin
 **진행 순서**
 
 ```
-Step 1: Shift+A → Mesh 에서 도형 3개 이상 추가
-Step 2: G·R·S + 축 제한으로 원하는 위치·크기·각도에 배치
-Step 3: 완성 후 Ctrl+A → Apply All Transforms
-Step 4: 여유가 되면 Ctrl+J로 합치기, P로 분리하기도 시도
+Step 1: Shift+C → Cursor를 원점으로 초기화 (습관처럼!)
+Step 2: Shift+A → Mesh 에서 도형 3개 이상 추가
+Step 3: G·R·S + 축 제한으로 원하는 위치·크기·각도에 배치
+Step 4: Shift+우클릭으로 Cursor를 원하는 위치에 옮긴 뒤 Shift+A로 정밀 배치 시도
+Step 5: 완성 후 Ctrl+A → Apply All Transforms → Origin to Geometry 확인
+Step 6: 여유가 되면 Ctrl+J로 합치기, P로 분리하기도 시도
 ```
 
 > 💡 정답은 없습니다! G·R·S 조작과 축 제한에 익숙해지는 것이 목표입니다. 다양한 도형을 추가하고 Transform을 반복 연습해 보세요.
@@ -617,6 +987,9 @@ Step 4: 여유가 되면 Ctrl+J로 합치기, P로 분리하기도 시도
 | 뷰 회전이 안 됨 | MMB 없음 | Emulate 3 Button Mouse 체크 |
 | Modifier 적용 시 형태 왜곡 | Apply Transform 안 함 | Ctrl+A → Apply All Transforms |
 | 회전 중심이 이상함 | Origin 위치 문제 | Set Origin to Geometry |
+| 새 오브젝트가 엉뚱한 곳에 생김 | 3D Cursor가 이동된 상태 | `Shift+C` → Cursor 원점 초기화 |
+| 여러 오브젝트가 한 점으로 몰려서 스케일됨 | Pivot이 Median Point인 상태 | Pivot → Individual Origins 변경 |
+| 특정 점 기준으로 회전이 안 됨 | Pivot 설정 확인 필요 | Cursor를 원하는 위치로 → Pivot → 3D Cursor |
 
 ---
 
@@ -627,6 +1000,8 @@ Step 4: 여유가 되면 Ctrl+J로 합치기, P로 분리하기도 시도
   - 1장: 기본 도형 **3개 이상**을 G·R·S로 조합하여 만든 캐릭터·장면·조형물 스크린샷
   - 1장: Properties에서 Scale이 (1,1,1)로 Apply된 상태 확인 스크린샷
   - (선택) 간단한 설명 한 줄 — 무엇을 만들었는지
+  - (도전) 3D Cursor를 이용해 정확한 위치에 도형을 추가한 과정 스크린샷 1장
+  - (도전) Transform Pivot을 Individual Origins으로 바꾸고, 두 오브젝트를 동시에 다른 방향으로 회전한 결과 스크린샷 1장
 - **기한:** 다음 수업 전까지
 
 ## 📋 주차 체크리스트
@@ -636,10 +1011,158 @@ Step 4: 여유가 되면 Ctrl+J로 합치기, P로 분리하기도 시도
 - [ ] UI 4개 영역 위치 파악
 - [ ] 뷰포트 회전·이동·줌 자유롭게 가능
 - [ ] G·R·S + 축 제한 조작 가능
+- [ ] Shift+우클릭으로 3D Cursor 이동, Shift+C로 리셋, Shift+S 파이 메뉴 활용
+- [ ] Set Origin → Origin to Geometry 사용 가능
+- [ ] Transform Pivot Point 옵션 전환 가능 (Median / Individual / 3D Cursor)
 - [ ] Ctrl+A Apply Transform 습관화
 - [ ] Join(Ctrl+J), Separate(P), Bridge Edge Loops 사용 가능
 
+<!-- AUTO:CURRICULUM-SYNC:START -->
+## 커리큘럼 연동 요약
+
+> 이 섹션은 `course-site/data/curriculum.js` 기준으로 자동 갱신됩니다.
+
+- 핵심 키워드: 화면 조작 · 오브젝트 변형 · 첫 모델링
+- 예상 시간: ~3시간
+
+### 실습 단계
+
+#### 1. 프리퍼런스 세팅
+
+Blender를 처음 열면 옵션이 너무 많아서 압도돼요. 일단 수업과 같은 세팅으로 맞춰두면 헷갈릴 일이 줄어요.
+
+![프리퍼런스 세팅](../../course-site/assets/images/week02/ui-overview.png)
+
+배울 것
+
+- Preferences 위치를 안다
+- 입력 장치 제약을 먼저 해결한다
+
+체크해볼 것
+
+- Edit → Preferences 직접 열어보기 (단축키: Ctrl + , (쉼표))
+- Input → Emulate 3 Button Mouse 켜기 (마우스 휠 없는 경우)
+- 저장 방식 Preferences에서 확인 (Auto-Save 설정 위치 파악)
+
+#### 2. 화면 조작
+
+구글 지도에서 거리뷰를 돌리는 것처럼, Blender 화면도 마우스로 돌리고 확대해요. 처음엔 어색하지만 10분만 하면 익숙해져요.
+
+![화면 조작](../../course-site/assets/images/week02/navigation-gizmo.png)
+
+배울 것
+
+- Orbit/Pan/Zoom을 자유롭게 쓴다
+- 정면/측면/상면 뷰로 이동한다
+
+체크해볼 것
+
+- Numpad 1/3/7 로 뷰 전환 연습
+- Scroll로 Zoom In/Out 해보기
+- Middle Mouse로 Orbit 해보기 (없으면 Alt+LMB)
+
+#### 3. 기본 변형 (G/R/S)
+
+G/R/S 세 글자만 기억하면 돼요. G(잡아서 이동), R(돌리기), S(늘리거나 줄이기). 그 다음에 X/Y/Z를 누르면 방향도 고정할 수 있어요.
+
+![기본 변형 (G/R/S)](../../course-site/assets/images/week02/transform-gizmo.png)
+
+배울 것
+
+- G/R/S 단축키를 손에 익힌다
+- 축 고정 (X/Y/Z)을 이해한다
+
+체크해볼 것
+
+- G → X로 X축 방향으로만 이동
+- S → 0.5 로 절반 크기로 줄이기
+- R → Z → 45 로 45도 회전
+
+#### 4. Edit Mode 모델링
+
+Tab 키 하나로 '보는 모드'와 '편집 모드'를 오가요. Extrude(E)는 점토를 손으로 당기는 것처럼 면을 뽑아내는 거예요.
+
+![Edit Mode 모델링](../../course-site/assets/images/week02/editmode-modeling.png)
+
+배울 것
+
+- Object/Edit Mode 전환을 안다
+- 면을 선택하고 Extrude로 뽑는다
+
+체크해볼 것
+
+- Tab으로 Edit Mode 진입/복귀
+- 면 선택 후 E로 Extrude 하기 (위나 아래 방향으로 뽑기)
+- Ctrl+R로 Loop Cut 추가해보기 (마우스로 위치 조정 후 클릭)
+
+#### 5. Bevel 마무리
+
+날카로운 모서리를 부드럽게 깎는 거예요. 실제 제품 디자인에서도 안전을 위해 모서리를 깎는데 (Chamfer), 그게 Bevel이에요.
+
+![Bevel 마무리](../../course-site/assets/images/week02/bevel-tool.png)
+
+배울 것
+
+- Bevel의 원리를 이해한다
+- 최종 형태를 Object Mode에서 확인한다
+
+체크해볼 것
+
+- 모서리 선택 후 Ctrl+B로 Bevel (스크롤로 분할 수 조절)
+- Tab으로 Object Mode 복귀 후 확인
+- F12로 렌더 or 스크린샷 저장
+
+### 과제 한눈에 보기
+
+- 과제명: 간단한 로우폴리 소품 만들기
+- 설명: 화면 조작과 기본 모델링 도구를 사용해 간단한 소품을 만들고 제출합니다.
+- 제출 체크:
+  - 완성 이미지 2장 이상
+  - .blend 파일 1개
+  - 사용한 도구 3개 이상 적기
+
+### 자주 막히는 지점
+
+- 탭(Tab) 키 없이 면을 클릭하려고 함 → Object Mode에선 편집이 안 돼요. Tab으로 Edit Mode로 먼저 들어가세요.
+- 새 박스가 이상한 곳에 생겼어요 → 3D Cursor가 이동했을 때 생기는 현상. Shift+C로 원점으로 돌려놓으세요.
+- 화면이 안 돌아가요 → 마우스 휠이 없는 경우, Preferences에서 [Emulate 3 Button Mouse]를 켜세요.
+
+### 공식 영상 튜토리얼
+
+- [Blender Studio - Viewport Navigation](https://studio.blender.org/training/blender-2-8-fundamentals/viewport-navigation/)
+- [Blender Studio - Interface Overview](https://studio.blender.org/training/blender-2-8-fundamentals/interface-overview/)
+- [Blender Studio - Select & Transform](https://studio.blender.org/training/blender-2-8-fundamentals/select-transform/)
+
+### 공식 문서
+
+- [Preferences](https://docs.blender.org/manual/en/latest/editors/preferences/introduction.html)
+- [3D Navigation](https://docs.blender.org/manual/en/latest/editors/3dview/navigate/introduction.html)
+- [Extrude Region](https://docs.blender.org/manual/en/latest/modeling/meshes/tools/extrude_region.html)
+- [Loop Cut](https://docs.blender.org/manual/en/latest/modeling/meshes/tools/loop.html)
+- [Bevel](https://docs.blender.org/manual/en/latest/modeling/meshes/tools/bevel.html)
+<!-- AUTO:CURRICULUM-SYNC:END -->
+
 ## 참고 자료
+
+### 공식 문서 (Blender Manual)
+
+| 주제 | 링크 |
+|------|------|
+| 3D Cursor | [docs.blender.org — 3D Cursor](https://docs.blender.org/manual/en/latest/editors/3dview/3d_cursor.html) |
+| Object Origin | [docs.blender.org — Object Origin](https://docs.blender.org/manual/en/latest/scene_layout/object/origin.html) |
+| Transform Pivot Point | [docs.blender.org — Pivot Point](https://docs.blender.org/manual/en/latest/editors/3dview/controls/pivot_point/index.html) |
+| 3D Navigation | [docs.blender.org — 3D Navigation](https://docs.blender.org/manual/en/latest/editors/3dview/navigate/introduction.html) |
+| Extrude / Loop Cut / Bevel | [Extrude](https://docs.blender.org/manual/en/latest/modeling/meshes/tools/extrude_region.html) · [Loop Cut](https://docs.blender.org/manual/en/latest/modeling/meshes/tools/loop.html) · [Bevel](https://docs.blender.org/manual/en/latest/modeling/meshes/tools/bevel.html) |
+
+### 공식 영상 튜토리얼 (Blender Studio)
+
+- [Viewport Navigation](https://studio.blender.org/training/blender-2-8-fundamentals/viewport-navigation/)
+- [Interface Overview](https://studio.blender.org/training/blender-2-8-fundamentals/interface-overview/)
+- [Select & Transform](https://studio.blender.org/training/blender-2-8-fundamentals/select-transform/)
+- [3D Cursor](https://studio.blender.org/training/blender-2-8-fundamentals/3d-cursor/)
+- [Object Origins](https://studio.blender.org/training/blender-2-8-fundamentals/object-origins/)
+
+### 추가 참고
 
 - [Blender 단축키 모음](../../resources/blender-shortcuts.md)
 - Blender Guru 2026 Donut Part 1: https://www.youtube.com/watch?v=-tbSCMbJA6o

@@ -376,3 +376,57 @@ Blender 5.0에서는 리깅 워크플로우에 몇 가지 개선이 있습니다
 - 복잡한 리깅 작업을 AI로 자동화하여 시간 절약
 
 > 준비: Adobe 계정 가입 (무료) - https://mixamo.com
+
+<!-- AUTO:CURRICULUM-SYNC:START -->
+## 커리큘럼 연동 요약
+
+> 이 섹션은 `course-site/data/curriculum.js` 기준으로 자동 갱신됩니다.
+
+- 핵심 키워드: Armature · 본 구조 · 웨이트 페인팅
+- 예상 시간: ~3시간
+
+### 실습 단계
+
+#### 1. Armature 추가
+
+인형에 철사 뼈대를 넣는 것처럼, 메쉬 안에 Bone(뼈)을 만들어요. 뼈를 움직이면 연결된 메쉬도 따라와요.
+
+배울 것
+
+- Armature 구조를 이해한다
+
+체크해볼 것
+
+- Shift+A → Armature → Single Bone
+- Edit Mode로 본 추가 (E로 Extrude)
+
+#### 2. 메쉬 연결
+
+메쉬(피부)와 Armature(뼈대)를 연결하는 거예요. Ctrl+P로 붙여놓으면 본을 움직일 때 메쉬도 따라와요.
+
+배울 것
+
+- Armature Parent의 개념을 이해한다
+
+체크해볼 것
+
+- Mesh → Armature 순서로 선택
+- Ctrl+P → With Automatic Weights
+- Pose Mode에서 본 회전해보기 (R키)
+
+### 과제 한눈에 보기
+
+- 과제명: 기본 캐릭터 리깅
+- 설명: 간단한 캐릭터 메쉬에 Armature를 연결하고 포즈 3가지를 스크린샷으로 제출합니다.
+- 제출 체크:
+  - 포즈 3가지 스크린샷
+  - 리깅된 .blend 파일
+
+### 자주 막히는 지점
+
+- Weight Paint가 이상 → Automatic Weights 재설정
+
+### 공식 문서
+
+- [Armatures](https://docs.blender.org/manual/en/latest/animation/armatures/index.html)
+<!-- AUTO:CURRICULUM-SYNC:END -->

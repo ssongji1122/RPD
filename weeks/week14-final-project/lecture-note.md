@@ -336,6 +336,39 @@
 - [ ] Discord #final-project 채널에 모든 파일이 업로드되었는가
 - [ ] 업로드한 파일을 직접 다운로드하여 정상 작동 확인하였는가
 
+<!-- AUTO:CURRICULUM-SYNC:START -->
+## 커리큘럼 연동 요약
+
+> 이 섹션은 `course-site/data/curriculum.js` 기준으로 자동 갱신됩니다.
+
+- 핵심 키워드: 개인 프로젝트 집중 작업
+- 예상 시간: 수업 전체 작업 + 피드백
+
+### 실습 단계
+
+#### 1. 프로젝트 마무리
+
+모델링·재질·조명·렌더링을 종합해서 최종 작품을 완성합니다.
+
+배울 것
+
+- 발표 가능한 완성 작품
+
+체크해볼 것
+
+- 미완성 부분 목록 작성 후 우선순위 결정
+- 재질/조명 최종 조정
+- 최종 렌더 5장 이상 저장
+
+### 과제 한눈에 보기
+
+- 과제명: 최종 프로젝트 사전 제출
+- 설명: 기말 발표 전 .blend + 렌더 이미지를 제출합니다.
+- 제출 체크:
+  - 렌더 이미지 5장 이상
+  - .blend 파일 정리된 상태
+<!-- AUTO:CURRICULUM-SYNC:END -->
+
 ## 참고 자료
 
 - [Blender Manual: Animation](https://docs.blender.org/manual/en/latest/animation/index.html)

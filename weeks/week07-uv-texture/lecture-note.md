@@ -183,12 +183,81 @@
 - **기한:** 다음 수업 전까지
 - **중요:** 다음 주 중간고사 대비! 모델링 + 텍스처 완성본을 준비할 것
 
+<!-- AUTO:CURRICULUM-SYNC:START -->
+## 커리큘럼 연동 요약
+
+> 이 섹션은 `course-site/data/curriculum.js` 기준으로 자동 갱신됩니다.
+
+- 핵심 키워드: UV 펼치기 · 텍스처 매핑
+- 예상 시간: ~3시간
+
+### 실습 단계
+
+#### 1. Seam 설정
+
+종이 박스를 펼치면 평평해지죠. UV Unwrap도 3D 메쉬를 종이처럼 바닥에 펼치는 거예요. 그 위에 이미지를 올리면 텍스처가 입혀져요.
+
+배울 것
+
+- Seam의 역할을 이해한다
+
+체크해볼 것
+
+- Edit Mode → Edge Select 모드
+- Edge 선택 후 Ctrl+E → Mark Seam
+
+#### 2. Unwrap & UV Editor
+
+Seam을 그은 경계선대로 메쉬가 펼쳐져서 UV Editor에 2D로 나와요. 여기 보이는 모양대로 이미지가 입혀져요.
+
+배울 것
+
+- UV가 어떻게 펼쳐지는지 이해한다
+
+체크해볼 것
+
+- U → Unwrap 실행
+- UV Editor 열어서 결과 확인
+- UV 섬 이동/크기 조절해보기
+
+#### 3. AI Texture 적용
+
+AI가 만든 이미지를 메쉬 표면에 붙이는 거예요. UV가 제대로 펼쳐져 있어야 이미지가 자연스럽게 입혀져요.
+
+배울 것
+
+- Image Texture 노드 사용법을 안다
+
+체크해볼 것
+
+- AI 텍스처 이미지 파일 저장 (Stable Diffusion, Adobe Firefly 등)
+- Shader Editor → Image Texture 노드 추가
+- 이미지 파일 연결 후 Base Color에 연결
+
+### 과제 한눈에 보기
+
+- 과제명: 텍스처 입힌 소품
+- 설명: Seam → Unwrap → AI Texture 순서로 텍스처를 입힌 소품을 제출합니다.
+- 제출 체크:
+  - UV Unwrap이 완료된 .blend
+  - AI 텍스처 이미지 포함
+  - 렌더 이미지 1장
+
+### 자주 막히는 지점
+
+- 텍스처가 늘어남 → Seam 위치 조정 필요
+- 연결 끊김 → UV Map이 Material과 동일한지 확인
+
+### 공식 문서
+
+- [UV Unwrapping](https://docs.blender.org/manual/en/latest/modeling/meshes/uv/unwrapping/index.html)
+<!-- AUTO:CURRICULUM-SYNC:END -->
+
 ## 참고 자료
 
 - [Blender Manual: UV Editing](https://docs.blender.org/manual/en/latest/editors/uv/index.html)
 - [Poly Haven](https://polyhaven.com) - 무료 PBR 텍스처 라이브러리
 - [Meshy AI](https://www.meshy.ai) - AI 3D 텍스처 생성
-
 ## 📋 프로젝트 진행 체크리스트
 
 - [ ] 로봇 모델의 UV Unwrapping 완료 (Seam 설정 + Unwrap)

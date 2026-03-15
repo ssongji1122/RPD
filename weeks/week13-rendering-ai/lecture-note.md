@@ -554,6 +554,60 @@ Set render engine to Eevee with bloom enabled and render each camera view.
   - Look 설정을 Medium Contrast로 변경하여 확인
   - Viewport Shading의 Color Management와 렌더 설정이 일치하는지 확인
 
+<!-- AUTO:CURRICULUM-SYNC:START -->
+## 커리큘럼 연동 요약
+
+> 이 섹션은 `course-site/data/curriculum.js` 기준으로 자동 갱신됩니다.
+
+- 핵심 키워드: Cycles vs EEVEE · 출력 설정 · AI 후처리
+- 예상 시간: ~3시간
+
+### 실습 단계
+
+#### 1. 렌더 엔진 비교
+
+Cycles는 사진 인화처럼 정밀하고 느리고, EEVEE는 게임 엔진처럼 빠르지만 덜 사실적이에요. 수정 중엔 EEVEE, 최종 제출엔 Cycles를 써요.
+
+배울 것
+
+- 두 엔진의 차이를 안다
+
+체크해볼 것
+
+- Render Properties → Engine → Cycles로 전환
+- EEVEE로 전환 후 속도 차이 비교
+
+#### 2. 출력 설정 및 렌더
+
+해상도, 파일 형식, 저장 경로를 설정하고 F12로 렌더해요. 한 번 설정해두면 계속 쓸 수 있어요.
+
+배울 것
+
+- 렌더 출력 파이프라인을 이해한다
+
+체크해볼 것
+
+- Output Properties → 해상도 1920×1080 설정
+- 파일 출력 경로 설정
+- F12로 단일 프레임 렌더 확인
+
+### 과제 한눈에 보기
+
+- 과제명: 렌더링 설정 포트폴리오
+- 설명: EEVEE와 Cycles로 동일한 씬을 렌더한 비교 이미지와 최종 고품질 렌더.
+- 제출 체크:
+  - 두 엔진 비교 이미지
+  - 최종 렌더 이미지
+
+### 자주 막히는 지점
+
+- 렌더가 너무 오래 걸림 → Sample 수 줄이기 (초안은 64~128)
+
+### 공식 문서
+
+- [Cycles Render](https://docs.blender.org/manual/en/latest/render/cycles/index.html)
+<!-- AUTO:CURRICULUM-SYNC:END -->
+
 ## Notion 참고 자료
 
 수업 Notion 페이지에서 다음 자료를 추가로 참고하세요:
@@ -562,7 +616,6 @@ Set render engine to Eevee with bloom enabled and render each camera view.
 - **Camera Setting:** 카메라 타입별 활용법
 - **Render & Export:** 출력 포맷별 장단점
 - **Eevee 문제해결:** Eevee 렌더 시 발생하는 일반적인 문제와 해결법
-
 ## 핵심 정리
 
 | 개념 | 핵심 |
