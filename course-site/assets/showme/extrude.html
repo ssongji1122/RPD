@@ -372,7 +372,7 @@ body {
     </div>
     <div class="concept-card">
       <h3><span class="badge badge-cyan">Ctrl+RMB</span> Extrude to Cursor</h3>
-      <p>우클릭(RMB)한 위치까지 선택된 지오메트리를 곧장 뽑아냅니다. 양을 직접 입력하지 않고 3D 뷰포트에서 클릭만으로 정확한 끝 위치를 지정할 수 있어서, 파이프나 선로 등을 빠르게 배치할 때 유용합니다.</p>
+      <p>3D 뷰포트에서 <strong>마우스를 클릭한 위치</strong>까지 선택된 지오메트리를 곧장 뽑아냅니다. Blender의 3D Cursor 오브젝트(Shift+RMB로 배치하는 다트)가 아니라, 클릭 순간 마우스 포인터가 가리키는 뷰포트 위치가 끝점이 됩니다.</p>
     </div>
   </div>
 
@@ -458,9 +458,9 @@ body {
     </div>
     <div id="desc-cursor" style="display:none;">
       <div style="background:rgba(6,182,212,.06);border:1px solid rgba(6,182,212,.18);border-radius:12px;padding:14px 16px;font-size:.85rem;">
-        <span class="badge badge-cyan" style="margin-bottom:6px;display:inline-block;">To Cursor (Ctrl+RMB) — 커서 위치로 돌출</span>
-        <p style="margin:4px 0;color:var(--muted-strong);"><strong>Ctrl+RMB 클릭한 위치까지</strong> 선택 면이 일직선으로 뻗어나갑니다. 화면에서 Face B(파란 면)가 커서 방향으로 돌출됩니다.</p>
-        <p style="margin:4px 0;color:var(--muted-strong);">수치를 직접 입력하지 않고도 원하는 끝 위치를 즉시 클릭으로 지정할 수 있어 파이프·케이블 배치에 특히 유용합니다.</p>
+        <span class="badge badge-cyan" style="margin-bottom:6px;display:inline-block;">To Cursor (Ctrl+RMB) — 마우스 클릭 위치로 돌출</span>
+        <p style="margin:4px 0;color:var(--muted-strong);"><strong>마우스를 클릭한 위치</strong>까지 선택 면이 일직선으로 뻗어나갑니다. Blender 3D Cursor 오브젝트가 아니라 <strong>클릭 순간 마우스 포인터 위치</strong>가 끝점입니다.</p>
+        <p style="margin:4px 0;color:var(--muted-strong);">화면에서 Face B(파란 면)가 동심원 클릭 표시 방향으로 돌출되는 걸 확인하세요. 수치 없이 클릭 한 번으로 길이를 지정할 수 있어 파이프·케이블 배치에 유용합니다.</p>
       </div>
     </div>
   </div>
@@ -932,15 +932,20 @@ function initQuiz(questions) {
       ctx.beginPath(); ctx.moveTo(fcx0, fcy0); ctx.lineTo(curX0, curY0); ctx.stroke();
       ctx.setLineDash([]);
       ctx.restore();
-      // Cursor crosshair
+      // Mouse click indicator (concentric circles — NOT 3D Cursor)
       ctx.strokeStyle = rgba(cyan0, 0.9);
       ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.arc(curX0, curY0, 8, 0, Math.PI * 2); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(curX0 - 13, curY0); ctx.lineTo(curX0 + 13, curY0); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(curX0, curY0 - 13); ctx.lineTo(curX0, curY0 + 13); ctx.stroke();
+      ctx.beginPath(); ctx.arc(curX0, curY0, 10, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = rgba(cyan0, 0.9);
+      ctx.beginPath(); ctx.arc(curX0, curY0, 4, 0, Math.PI * 2); ctx.fill();
+      ctx.save();
+      ctx.strokeStyle = rgba(cyan0, 0.35);
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(curX0, curY0, 17, 0, Math.PI * 2); ctx.stroke();
+      ctx.restore();
       ctx.fillStyle = rgba(cyan0, 0.85);
       ctx.font = "bold 10px sans-serif"; ctx.textAlign = "left";
-      ctx.fillText("Ctrl+RMB", curX0 + 16, curY0 + 4);
+      ctx.fillText("마우스 클릭 위치", curX0 + 22, curY0 + 4);
     }
 
     if (mode === "manifold") {
