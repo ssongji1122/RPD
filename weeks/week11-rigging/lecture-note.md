@@ -391,6 +391,8 @@ Blender 5.0에서는 리깅 워크플로우에 몇 가지 개선이 있습니다
 
 인형에 철사 뼈대를 넣는 것처럼, 메쉬 안에 Bone(뼈)을 만들어요. 뼈를 움직이면 연결된 메쉬도 따라와요.
 
+![Armature 추가](../../course-site/assets/images/week11/armature-structure.png)
+
 배울 것
 
 - Armature 구조를 이해한다
@@ -404,6 +406,8 @@ Blender 5.0에서는 리깅 워크플로우에 몇 가지 개선이 있습니다
 
 메쉬(피부)와 Armature(뼈대)를 연결하는 거예요. Ctrl+P로 붙여놓으면 본을 움직일 때 메쉬도 따라와요.
 
+![메쉬 연결](../../course-site/assets/images/week11/mesh-skinning.png)
+
 배울 것
 
 - Armature Parent의 개념을 이해한다
@@ -413,6 +417,14 @@ Blender 5.0에서는 리깅 워크플로우에 몇 가지 개선이 있습니다
 - Mesh → Armature 순서로 선택
 - Ctrl+P → With Automatic Weights
 - Pose Mode에서 본 회전해보기 (R키)
+
+### 핵심 단축키
+
+- `Shift + A → Armature`: 뼈대 추가
+- `Ctrl + P`: Armature Deform 연결
+- `E`: Bone 확장 (Edit Mode)
+- `Alt + P`: Parent 해제
+- `Ctrl + Tab`: Pose Mode 전환
 
 ### 과제 한눈에 보기
 
@@ -429,4 +441,6 @@ Blender 5.0에서는 리깅 워크플로우에 몇 가지 개선이 있습니다
 ### 공식 문서
 
 - [Armatures](https://docs.blender.org/manual/en/latest/animation/armatures/index.html)
+- [Skinning](https://docs.blender.org/manual/en/latest/animation/armatures/skinning/index.html)
+- [Weight Paint](https://docs.blender.org/manual/en/latest/sculpt_paint/weight_paint/index.html)
 <!-- AUTO:CURRICULUM-SYNC:END -->

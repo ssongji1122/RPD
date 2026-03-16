@@ -1112,6 +1112,16 @@ Tab 키 하나로 '보는 모드'와 '편집 모드'를 오가요. Extrude(E)는
 - Tab으로 Object Mode 복귀 후 확인
 - F12로 렌더 or 스크린샷 저장
 
+### 핵심 단축키
+
+- `MMB Drag`: Orbit (시점 회전)
+- `Shift + MMB`: Pan (시점 이동)
+- `Scroll`: Zoom (확대/축소)
+- `Numpad 1/3/7`: Front/Right/Top View
+- `G / R / S`: Grab / Rotate / Scale
+- `G + X/Y/Z`: 축 고정 이동
+- `Tab`: Object ↔ Edit Mode 전환
+
 ### 과제 한눈에 보기
 
 - 과제명: 간단한 로우폴리 소품 만들기

@@ -366,94 +366,7 @@
     .auth-error {
       color: #f87171; font-size: .82rem; margin-bottom: 10px; min-height: 1.2em;
     }
-    .sync-review-card {
-      width: min(760px, calc(100% - 40px));
-      max-height: min(86vh, 920px);
-      overflow: auto;
-      padding: 28px;
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--line);
-      background: linear-gradient(180deg, rgba(23,24,26,.98), rgba(18,18,20,.98));
-      box-shadow: var(--shadow-card);
-    }
-    .sync-review-card h2 {
-      margin: 0 0 8px;
-      font-size: 1.2rem;
-      font-weight: 620;
-    }
-    .sync-review-card > p {
-      margin: 0;
-      color: var(--muted);
-      font-size: .9rem;
-      line-height: 1.6;
-    }
-    .sync-review-body {
-      display: grid;
-      gap: 14px;
-      margin-top: 18px;
-    }
-    .sync-review-week {
-      padding: 16px 18px;
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.03);
-    }
-    .sync-review-week-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 10px;
-    }
-    .sync-review-week-title {
-      font-size: .96rem;
-      font-weight: 600;
-      color: var(--text);
-    }
-    .sync-review-chip {
-      display: inline-flex;
-      align-items: center;
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: .75rem;
-      font-weight: 600;
-      color: var(--muted-strong);
-      background: rgba(255,255,255,.06);
-      white-space: nowrap;
-    }
-    .sync-review-note {
-      border-radius: 12px;
-      padding: 10px 12px;
-      font-size: .84rem;
-      line-height: 1.6;
-      color: var(--muted-strong);
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.06);
-    }
-    .sync-review-note.warn {
-      color: #fde68a;
-      background: rgba(245,158,11,.12);
-      border-color: rgba(245,158,11,.26);
-    }
-    .sync-review-note.error {
-      color: #fca5a5;
-      background: rgba(239,68,68,.12);
-      border-color: rgba(239,68,68,.22);
-    }
-    .sync-review-list {
-      margin: 10px 0 0;
-      padding-left: 18px;
-      color: var(--muted);
-      font-size: .84rem;
-      line-height: 1.8;
-    }
-    .sync-review-actions {
-      display: flex;
-      justify-content: flex-end;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 22px;
-    }
+    /* sync-review styles removed: save flow simplified */
 
     /* ── Responsive ────────────────────────────────────── */
     @media (max-width: 800px) {
@@ -474,8 +387,7 @@
       .field-row { flex-direction: column; gap: 0; }
       .table-editor-row .field-input.short { max-width: none; flex: 1; }
       .task-editor-row { flex-direction: column; }
-      .sync-review-week-head { flex-direction: column; align-items: start; }
-      .sync-review-actions .btn { width: 100%; justify-content: center; }
+      /* sync-review responsive rules removed */
     }
 
     /* ── Empty state ──────────────────────────────────── */
@@ -494,16 +406,45 @@
       font-size: .82rem;
       padding: 7px 12px;
     }
-    .sync-toggle {
-      display: none;
-      align-items: center;
-      gap: 8px;
-      color: var(--muted);
-      font-size: .82rem;
-      white-space: nowrap;
+    /* sync-toggle removed: Notion is now source of truth */
+
+    /* ── Notion-owned fields (read-only) ──────────────── */
+    .notion-field {
+      position: relative;
+      background: var(--bg-muted, #2a2a2a);
+      border-radius: var(--radius-sm, 8px);
+      opacity: 0.75;
     }
-    .sync-toggle input {
-      margin: 0;
+    .notion-field::after {
+      content: "\1F512";
+      position: absolute;
+      right: 8px;
+      top: 4px;
+      font-size: 12px;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .notion-field input,
+    .notion-field textarea,
+    .notion-field select {
+      pointer-events: none;
+      opacity: 0.6;
+    }
+    .notion-field .btn-add,
+    .notion-field .btn-icon,
+    .notion-field .pill-remove,
+    .notion-field button {
+      pointer-events: none;
+      opacity: 0.4;
+    }
+    .notion-info-banner {
+      background: #1a365d;
+      color: #90cdf4;
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      line-height: 1.5;
     }
 
     /* ── WYSIWYG Preview Styles ───────────────────────── */
@@ -663,13 +604,9 @@
             <span>&#9679;</span> 저장되지 않은 변경
           </div>
           <div class="notion-sync-group" id="notionGroup" style="display:none">
-            <button class="btn btn-ghost" id="notionPullBtn" type="button" title="Notion에서 가져오기">&#128229; Notion</button>
-            <button class="btn btn-ghost" id="notionPushBtn" type="button" title="Notion으로 보내기">&#128228; Notion</button>
+            <button class="btn btn-ghost" id="notionPullBtn" type="button" title="Notion에서 동기화">&#128260; 지금 동기화</button>
           </div>
-          <label class="sync-toggle" id="notionAutoSyncWrap">
-            <input id="notionAutoSync" type="checkbox" />
-            <span>저장 기본값: Notion 반영</span>
-          </label>
+          <!-- Auto-sync toggle removed: Notion is now source of truth -->
           <button class="btn btn-ghost" id="previewBtn" type="button">미리보기 &#8599;</button>
           <button class="btn btn-primary" id="saveBtn" type="button">&#128190; 저장</button>
         </div>
@@ -710,19 +647,7 @@
     </div>
   </div>
 
-  <div class="auth-overlay" id="syncReviewOverlay" style="display:none">
-    <div class="sync-review-card">
-      <h2>저장 전 확인</h2>
-      <p id="syncReviewLead"></p>
-      <div class="sync-review-body" id="syncReviewBody"></div>
-      <div class="sync-review-actions">
-        <button class="btn btn-ghost" id="syncReviewCancel" type="button">취소</button>
-        <button class="btn btn-ghost" id="syncReviewPull" type="button" style="display:none">Notion 변경 먼저 가져오기</button>
-        <button class="btn btn-ghost" id="syncReviewLocal" type="button">웹 + 강의노트만 저장</button>
-        <button class="btn btn-primary" id="syncReviewPush" type="button" style="display:none">웹 + 강의노트 + Notion 저장</button>
-      </div>
-    </div>
-  </div>
+  <!-- Sync review overlay removed: save flow simplified (Notion is source of truth) -->
 
   <script>
   // ════════════════════════════════════════════════════════
@@ -741,7 +666,12 @@
     var dirtyWeeks = {};
     var authToken = sessionStorage.getItem("rpd-admin-token") || "";
     var notionConfigured = false;
-    var autoNotionSync = localStorage.getItem("rpd-admin-auto-notion-sync") !== "0";
+    var hasNotion = false;
+    var ownership = null;
+
+    // Notion-owned field lists (used when hasNotion is true)
+    var NOTION_WEEK_FIELDS = ["title", "subtitle", "duration", "topics", "assignment", "shortcuts", "mistakes", "docs"];
+    var NOTION_STEP_FIELDS = ["title", "copy", "goal", "tasks"];
 
     // ─── DOM refs ────────────────────────────────────────
     var sidebarList    = document.getElementById("sidebarList");
@@ -759,18 +689,7 @@
     var sidebarOverlay = document.getElementById("sidebarOverlay");
     var notionGroup    = document.getElementById("notionGroup");
     var notionPullBtn  = document.getElementById("notionPullBtn");
-    var notionPushBtn  = document.getElementById("notionPushBtn");
-    var notionAutoSyncWrap = document.getElementById("notionAutoSyncWrap");
-    var notionAutoSync = document.getElementById("notionAutoSync");
-    var syncReviewOverlay = document.getElementById("syncReviewOverlay");
-    var syncReviewLead = document.getElementById("syncReviewLead");
-    var syncReviewBody = document.getElementById("syncReviewBody");
-    var syncReviewCancel = document.getElementById("syncReviewCancel");
-    var syncReviewPull = document.getElementById("syncReviewPull");
-    var syncReviewLocal = document.getElementById("syncReviewLocal");
-    var syncReviewPush = document.getElementById("syncReviewPush");
-    var pendingSaveReview = null;
-    var pendingSaveResolver = null;
+    // Sync review and auto-sync removed (Notion is now source of truth)
 
     // ─── Helpers ─────────────────────────────────────────
 
@@ -820,274 +739,29 @@
       return h;
     }
 
-    notionAutoSync.checked = autoNotionSync;
-    notionAutoSync.addEventListener("change", function() {
-      autoNotionSync = notionAutoSync.checked;
-      localStorage.setItem("rpd-admin-auto-notion-sync", autoNotionSync ? "1" : "0");
-    });
+    // Auto-sync checkbox removed (Notion is source of truth)
 
-    function findWeekIndex(weekNum) {
-      for (var i = 0; i < curriculum.length; i++) {
-        if (String(curriculum[i].week) === String(weekNum)) return i;
-      }
-      return -1;
+    function isNotionField(fieldName) {
+      return hasNotion && NOTION_WEEK_FIELDS.indexOf(fieldName) !== -1;
     }
 
-    function getWeekByNumber(weekNum) {
-      var idx = findWeekIndex(weekNum);
-      return idx === -1 ? null : curriculum[idx];
+    function isNotionStepField(fieldName) {
+      return hasNotion && NOTION_STEP_FIELDS.indexOf(fieldName) !== -1;
     }
 
-    function normalizeStringList(items) {
-      return (items || []).map(function(item) {
-        return String(item == null ? "" : item).trim();
-      }).filter(function(item) {
-        return item.length > 0;
-      });
+    /** Wraps HTML in a notion-field div when the field is Notion-owned */
+    function notionWrap(fieldName, html, isStepField) {
+      var isOwned = isStepField ? isNotionStepField(fieldName) : isNotionField(fieldName);
+      if (!isOwned) return html;
+      return '<div class="notion-field">' + html + '</div>';
     }
 
-    function normalizeLinks(items) {
-      return (items || []).map(function(item) {
-        return {
-          title: String(item && item.title || "").trim(),
-          url: String(item && item.url || "").trim(),
-        };
-      }).filter(function(item) {
-        return item.title && item.url;
-      });
-    }
+    // findWeekIndex, getWeekByNumber, normalize/diff/review functions removed
+    // (Notion is now source of truth, save flow simplified)
 
-    function normalizeTasks(tasks) {
-      return (tasks || []).map(function(task) {
-        return {
-          label: String(task && task.label || "").trim(),
-          detail: String(task && task.detail || "").trim(),
-        };
-      }).filter(function(task) {
-        return task.label || task.detail;
-      });
-    }
-
-    function normalizeSteps(steps) {
-      return (steps || []).map(function(step) {
-        return {
-          title: String(step && step.title || "").trim(),
-          copy: String(step && step.copy || "").trim(),
-          goal: normalizeStringList(step && step.goal),
-          tasks: normalizeTasks(step && step.tasks),
-        };
-      }).filter(function(step) {
-        return step.title || step.copy || step.goal.length || step.tasks.length;
-      });
-    }
-
-    function normalizeShortcuts(shortcuts) {
-      return (shortcuts || []).map(function(shortcut) {
-        return {
-          keys: String(shortcut && shortcut.keys || "").trim(),
-          action: String(shortcut && shortcut.action || "").trim(),
-        };
-      }).filter(function(shortcut) {
-        return shortcut.keys || shortcut.action;
-      });
-    }
-
-    function normalizeAssignment(assignment) {
-      return {
-        title: String(assignment && assignment.title || "").trim(),
-        description: String(assignment && assignment.description || "").trim(),
-        checklist: normalizeStringList(assignment && assignment.checklist),
-      };
-    }
-
-    function summarizeNotionDiffs(localWeek, notionWeek) {
-      var diffs = [];
-      if (!localWeek || !notionWeek) return diffs;
-
-      if (String(localWeek.title || "").trim() !== String(notionWeek.title || "").trim()) {
-        diffs.push("제목");
-      }
-      if (JSON.stringify(normalizeSteps(localWeek.steps)) !== JSON.stringify(normalizeSteps(notionWeek.steps))) {
-        diffs.push("실습 단계");
-      }
-      if (JSON.stringify(normalizeShortcuts(localWeek.shortcuts)) !== JSON.stringify(normalizeShortcuts(notionWeek.shortcuts))) {
-        diffs.push("단축키");
-      }
-      if (JSON.stringify(normalizeAssignment(localWeek.assignment)) !== JSON.stringify(normalizeAssignment(notionWeek.assignment))) {
-        diffs.push("과제");
-      }
-      if (JSON.stringify(normalizeStringList(localWeek.mistakes)) !== JSON.stringify(normalizeStringList(notionWeek.mistakes))) {
-        diffs.push("막히는 지점");
-      }
-      if (JSON.stringify(normalizeLinks(localWeek.videos)) !== JSON.stringify(normalizeLinks(notionWeek.videos))) {
-        diffs.push("공식 영상");
-      }
-      if (JSON.stringify(normalizeLinks(localWeek.docs)) !== JSON.stringify(normalizeLinks(notionWeek.docs))) {
-        diffs.push("공식 문서");
-      }
-      return diffs;
-    }
-
-    async function fetchNotionPreview(weekNum) {
-      var res = await fetch("/api/notion-pull/" + weekNum, {
-        method: "POST",
-        headers: apiHeaders(),
-      });
-      var data = await res.json();
-      if (!res.ok || !data.ok) {
-        return { ok: false, error: data && data.error ? data.error : "비교 실패" };
-      }
-      return { ok: true, week: data.week };
-    }
-
-    async function buildSaveReview(weeksToSync) {
-      var weeks = await Promise.all(weeksToSync.map(async function(weekNum) {
-        var localWeek = getWeekByNumber(weekNum);
-        var item = {
-          weekNum: String(weekNum),
-          title: localWeek ? localWeek.title : "",
-          notion: { status: "disabled", diffs: [], week: null, error: "" },
-        };
-
-        if (!notionConfigured) return item;
-
-        try {
-          var preview = await fetchNotionPreview(weekNum);
-          if (!preview.ok) {
-            item.notion = { status: "error", diffs: [], week: null, error: preview.error || "비교 실패" };
-            return item;
-          }
-
-          var diffs = summarizeNotionDiffs(localWeek, preview.week);
-          item.notion = {
-            status: diffs.length ? "different" : "same",
-            diffs: diffs,
-            week: preview.week,
-            error: "",
-          };
-          return item;
-        } catch (err) {
-          item.notion = { status: "error", diffs: [], week: null, error: err.message || "비교 실패" };
-          return item;
-        }
-      }));
-
-      return {
-        weeks: weeks,
-        notionConfigured: notionConfigured,
-        hasNotionConflicts: weeks.some(function(item) { return item.notion.status === "different"; }),
-        hasNotionErrors: weeks.some(function(item) { return item.notion.status === "error"; }),
-      };
-    }
-
-    function setReviewButtonStyle(button, primary) {
-      button.className = primary ? "btn btn-primary" : "btn btn-ghost";
-    }
-
-    function buildSaveReviewHTML(review) {
-      var parts = [];
-      review.weeks.forEach(function(item) {
-        parts.push(
-          '<div class="sync-review-week">',
-          '<div class="sync-review-week-head">',
-          '<div class="sync-review-week-title">Week ', esc(String(item.weekNum).padStart(2, "0")), ' · ', esc(item.title || "제목 없음"), '</div>',
-          '<span class="sync-review-chip">웹 + 강의노트 저장 예정</span>',
-          '</div>'
-        );
-
-        if (!review.notionConfigured) {
-          parts.push('<div class="sync-review-note">Notion 연결이 없어 이번 저장은 웹과 강의노트만 반영됩니다.</div>');
-        } else if (item.notion.status === "same") {
-          parts.push('<div class="sync-review-note">Notion과 비교한 결과, 지금 편집본과 차이가 없습니다.</div>');
-        } else if (item.notion.status === "different") {
-          parts.push(
-            '<div class="sync-review-note warn">Notion에도 다른 변경이 있습니다. 현재 편집본으로 저장하면 Notion 내용을 덮어쓸 수 있어요.</div>',
-            '<ul class="sync-review-list">'
-          );
-          item.notion.diffs.forEach(function(diff) {
-            parts.push('<li>', esc(diff), ' 항목이 다릅니다.</li>');
-          });
-          parts.push('</ul>');
-        } else {
-          parts.push(
-            '<div class="sync-review-note error">Notion 비교에 실패했습니다. 오늘은 로컬 저장만 하거나 수동 확인이 안전합니다.<br />',
-            esc(item.notion.error || "비교 실패"),
-            '</div>'
-          );
-        }
-
-        parts.push('</div>');
-      });
-      return parts.join("");
-    }
-
-    function openSaveReview(review) {
-      pendingSaveReview = review;
-
-      if (!review.notionConfigured) {
-        syncReviewLead.textContent = "저장하면 웹과 강의노트에 반영됩니다. 저장 방향을 한 번 더 확인하세요.";
-      } else if (review.hasNotionConflicts) {
-        syncReviewLead.textContent = "Notion에도 변경이 보여서 저장 방향을 먼저 정하는 게 안전합니다.";
-      } else if (review.hasNotionErrors) {
-        syncReviewLead.textContent = "일부 주차는 Notion 비교가 실패했습니다. 로컬 저장은 가능하지만 Notion 반영은 신중히 선택하세요.";
-      } else {
-        syncReviewLead.textContent = "저장 범위를 확인한 뒤 진행하세요. 필요하면 Notion까지 같이 반영할 수 있습니다.";
-      }
-
-      syncReviewBody.innerHTML = buildSaveReviewHTML(review);
-      syncReviewPull.style.display = review.hasNotionConflicts ? "" : "none";
-      syncReviewPush.style.display = review.notionConfigured ? "" : "none";
-      syncReviewPull.textContent = "Notion 변경 먼저 가져오기 (현재 편집 덮어씀)";
-      syncReviewLocal.textContent = review.notionConfigured ? "웹 + 강의노트만 저장" : "저장";
-
-      var preferPush = review.notionConfigured && autoNotionSync && !review.hasNotionErrors;
-      setReviewButtonStyle(syncReviewLocal, !preferPush);
-      setReviewButtonStyle(syncReviewPush, preferPush);
-
-      syncReviewOverlay.style.display = "";
-
-      return new Promise(function(resolve) {
-        pendingSaveResolver = resolve;
-      });
-    }
-
-    function closeSaveReview(action) {
-      syncReviewOverlay.style.display = "none";
-      pendingSaveReview = null;
-      if (pendingSaveResolver) {
-        var resolve = pendingSaveResolver;
-        pendingSaveResolver = null;
-        resolve(action);
-      }
-    }
-
-    function applyPulledWeeks(review) {
-      var applied = [];
-
-      review.weeks.forEach(function(item) {
-        if (item.notion.status !== "different" || !item.notion.week) return;
-        var idx = findWeekIndex(item.weekNum);
-        if (idx === -1) return;
-        curriculum[idx] = item.notion.week;
-        applied.push("Week " + item.weekNum);
-        markDirty(item.weekNum);
-      });
-
-      if (!applied.length) {
-        toast("가져올 Notion 변경이 없습니다.", "success");
-        return;
-      }
-
-      renderSidebar();
-      renderEditor();
-      toast("Notion 변경을 편집기에 가져왔습니다. 내용 확인 후 저장해 주세요.", "success");
-    }
-
-    async function performCurriculumSave(pushToNotion, weeksToSync) {
-      var shouldPush = pushToNotion && notionConfigured && weeksToSync.length > 0;
-
+    async function performCurriculumSave() {
       saveBtn.disabled = true;
-      saveBtn.textContent = shouldPush ? "저장 + Notion 반영 중..." : "저장 중...";
+      saveBtn.textContent = "\uC800\uC7A5 \uC911...";
       try {
         var res = await fetch("/api/curriculum", {
           method: "PUT",
@@ -1096,42 +770,12 @@
         });
         if (!res.ok) throw new Error("HTTP " + res.status);
         clearDirty();
-
-        if (!shouldPush) {
-          toast("저장 완료 (웹 + 강의노트 반영)", "success");
-          return;
-        }
-
-        var synced = [];
-        var failed = [];
-        for (var i = 0; i < weeksToSync.length; i++) {
-          var weekNum = weeksToSync[i];
-          try {
-            var notionRes = await fetch("/api/notion-push/" + weekNum, {
-              method: "POST",
-              headers: apiHeaders(),
-            });
-            var notionData = await notionRes.json();
-            if (!notionRes.ok || !notionData.ok) {
-              failed.push("Week " + weekNum + (notionData && notionData.error ? " (" + notionData.error + ")" : ""));
-            } else {
-              synced.push("Week " + weekNum);
-            }
-          } catch (syncErr) {
-            failed.push("Week " + weekNum + " (" + syncErr.message + ")");
-          }
-        }
-
-        if (failed.length) {
-          toast("저장 완료 (웹 + 강의노트 반영), Notion 일부 실패: " + failed.join(", "), "error");
-        } else {
-          toast("저장 + 강의노트 + Notion 반영 완료 (" + synced.join(", ") + ")", "success");
-        }
+        toast("\uC800\uC7A5 \uC644\uB8CC", "success");
       } catch (e) {
-        toast("저장 실패: " + e.message, "error");
+        toast("\uC800\uC7A5 \uC2E4\uD328: " + e.message, "error");
       } finally {
         saveBtn.disabled = false;
-        saveBtn.textContent = "\uD83D\uDCBE 저장";
+        saveBtn.textContent = "\uD83D\uDCBE \uC800\uC7A5";
       }
     }
 
@@ -1142,6 +786,15 @@
      */
     function buildEditorHTML(w) {
       var parts = [];
+
+      // ── Info banner (Notion integration) ──
+      if (hasNotion) {
+        parts.push(
+          '<div class="notion-info-banner">',
+          '\uD83D\uDCDD \uD68C\uC0C9 \uD544\uB4DC\uB294 \uB178\uC158\uC5D0\uC11C \uAD00\uB9AC\uB429\uB2C8\uB2E4. \uC218\uC815\uD558\uB824\uBA74 \uB178\uC158\uC5D0\uC11C \uD3B8\uC9D1\uD558\uC138\uC694.',
+          '</div>'
+        );
+      }
 
       // ── Admin control bar (status selector, admin-only) ──
       parts.push(
@@ -1159,38 +812,48 @@
       parts.push(
         '<section class="preview-hero">',
         '<div class="preview-hero-card">',
-        '<div class="eyebrow">Week ', esc(String(w.week).padStart(2,"0")), ' · RPD</div>',
-        '<h1 style="margin:0"><input class="edit-h1" data-field="title" value="', esc(w.title), '" placeholder="주차 제목" /></h1>',
-        '<p style="max-width:640px;margin:0">',
-        '<textarea class="edit-p" data-field="subtitle" rows="2" placeholder="부제목 (선택)">', esc(w.subtitle || ""), '</textarea>',
-        '</p>',
-        '<div class="preview-hero-meta">',
-        '<span class="meta-chip">⏱ <input class="edit-chip" data-field="duration" value="', esc(w.duration), '" placeholder="시간" /></span>',
-        '<span class="meta-chip">📋 ', w.steps.length, '단계 실습</span>',
+        '<div class="eyebrow">Week ', esc(String(w.week).padStart(2,"0")), ' · RPD</div>'
+      );
+      parts.push(notionWrap("title",
+        '<h1 style="margin:0"><input class="edit-h1" data-field="title" value="' + esc(w.title) + '" placeholder="주차 제목" /></h1>'
+      ));
+      parts.push(notionWrap("subtitle",
+        '<p style="max-width:640px;margin:0"><textarea class="edit-p" data-field="subtitle" rows="2" placeholder="부제목 (선택)">' + esc(w.subtitle || "") + '</textarea></p>'
+      ));
+      parts.push(
+        '<div class="preview-hero-meta">'
+      );
+      parts.push(notionWrap("duration",
+        '<span class="meta-chip">\u23F1 <input class="edit-chip" data-field="duration" value="' + esc(w.duration) + '" placeholder="시간" /></span>'
+      ));
+      parts.push(
+        '<span class="meta-chip">\uD83D\uDCCB ', w.steps.length, '단계 실습</span>',
         '</div>',
         '</div>',
         '</section>'
       );
 
       // ── TOPICS ──────────────────────────────────────────
-      parts.push(
+      var topicsHTML = [];
+      topicsHTML.push(
         '<div class="preview-section">',
         '<div class="section-head"><h3>이번 주</h3></div>',
         '<div id="topicsList" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">'
       );
       (w.topics || []).forEach(function(t, i) {
-        parts.push(
+        topicsHTML.push(
           '<div class="preview-topic-pill">',
           '<input data-list="topics" data-idx="', i, '" value="', esc(t), '" />',
           '<button class="pill-remove" data-remove="topics" data-idx="', i, '" type="button" title="삭제">&times;</button>',
           '</div>'
         );
       });
-      parts.push(
+      topicsHTML.push(
         '</div>',
         '<button class="btn-add" data-add="topics" type="button" style="margin-top:10px">+ 주제 추가</button>',
         '</div>'
       );
+      parts.push(notionWrap("topics", topicsHTML.join("")));
 
       // ── STEPS ───────────────────────────────────────────
       parts.push(
@@ -1209,7 +872,8 @@
 
       // ── SHORTCUTS ───────────────────────────────────────
       var shortcuts = w.shortcuts || [];
-      parts.push(
+      var shortcutsHTML = [];
+      shortcutsHTML.push(
         '<div class="preview-section">',
         '<div class="section-head"><h3>단축키 치트시트</h3></div>',
         '<div class="card shortcut-table-wrap">',
@@ -1218,7 +882,7 @@
         '<tbody id="shortcutsList">'
       );
       shortcuts.forEach(function(s, i) {
-        parts.push(
+        shortcutsHTML.push(
           '<tr>',
           '<td><kbd class="shortcut-key" style="display:block"><input class="edit-inline" data-shortcut-field="keys" data-idx="', i, '" value="', esc(s.keys), '" placeholder="단축키" style="width:100%" /></kbd></td>',
           '<td><input class="edit-inline" data-shortcut-field="action" data-idx="', i, '" value="', esc(s.action), '" placeholder="기능 설명" style="width:100%" /></td>',
@@ -1226,12 +890,13 @@
           '</tr>'
         );
       });
-      parts.push(
+      shortcutsHTML.push(
         '</tbody></table>',
         '</div>',
         '<button class="btn-add" data-add="shortcuts" type="button" style="margin-top:10px">+ 단축키 추가</button>',
         '</div>'
       );
+      parts.push(notionWrap("shortcuts", shortcutsHTML.join("")));
 
       // ── EXPLORE ─────────────────────────────────────────
       var explore = w.explore || [];
@@ -1257,7 +922,8 @@
 
       // ── MISTAKES ────────────────────────────────────────
       var mistakes = w.mistakes || [];
-      parts.push(
+      var mistakesHTML = [];
+      mistakesHTML.push(
         '<div class="preview-section">',
         '<div class="section-head"><h3>막히는 지점</h3></div>',
         '<details class="card mistakes-section" open>',
@@ -1265,19 +931,20 @@
         '<ul id="mistakesList" style="padding-left:0;margin:6px 0 4px;list-style:none">'
       );
       mistakes.forEach(function(m, i) {
-        parts.push(
+        mistakesHTML.push(
           '<li class="edit-list-row">',
           '<input class="edit-inline" data-list="mistakes" data-idx="', i, '" value="', esc(m), '" style="flex:1" />',
           '<button class="btn-icon danger" data-remove="mistakes" data-idx="', i, '" type="button">&times;</button>',
           '</li>'
         );
       });
-      parts.push(
+      mistakesHTML.push(
         '</ul>',
         '<button class="btn-add" data-add="mistakes" type="button" style="margin-top:4px">+ 항목 추가</button>',
         '</details>',
         '</div>'
       );
+      parts.push(notionWrap("mistakes", mistakesHTML.join("")));
 
       // ── VIDEOS ──────────────────────────────────────────
       var videos = w.videos || [];
@@ -1311,13 +978,14 @@
 
       // ── DOCS ────────────────────────────────────────────
       var docs = w.docs || [];
-      parts.push(
+      var docsHTML = [];
+      docsHTML.push(
         '<div class="preview-section">',
         '<div class="section-head"><h3>공식 문서</h3></div>',
         '<div id="docsList" style="display:grid;gap:8px">'
       );
       docs.forEach(function(d, i) {
-        parts.push(
+        docsHTML.push(
           '<div class="preview-link-edit">',
           '<div class="link-fields">',
           '<input class="edit-inline" data-doc-field="title" data-idx="', i, '" value="', esc(d.title), '" placeholder="문서 이름" style="font-size:.88rem" />',
@@ -1327,15 +995,17 @@
           '</div>'
         );
       });
-      parts.push(
+      docsHTML.push(
         '</div>',
         '<button class="btn-add" data-add="docs" type="button" style="margin-top:8px">+ 문서 추가</button>',
         '</div>'
       );
+      parts.push(notionWrap("docs", docsHTML.join("")));
 
       // ── ASSIGNMENT ──────────────────────────────────────
       var a = w.assignment || { title: "", description: "", checklist: [] };
-      parts.push(
+      var assignmentHTML = [];
+      assignmentHTML.push(
         '<div class="preview-section">',
         '<div class="section-head"><h3>과제</h3></div>',
         '<div class="card assignment-card">',
@@ -1347,19 +1017,20 @@
         '<ul id="checklistList" style="padding-left:0;margin:10px 0 4px;list-style:none">'
       );
       (a.checklist || []).forEach(function(c, i) {
-        parts.push(
+        assignmentHTML.push(
           '<li class="edit-list-row">',
           '<input class="edit-inline" data-list="checklist" data-idx="', i, '" value="', esc(c), '" style="flex:1;color:var(--muted-strong)" />',
           '<button class="btn-icon danger" data-remove="checklist" data-idx="', i, '" type="button">&times;</button>',
           '</li>'
         );
       });
-      parts.push(
+      assignmentHTML.push(
         '</ul>',
         '<button class="btn-add" data-add="checklist" type="button" style="margin-top:4px">+ 항목 추가</button>',
         '</div>',
         '</div>'
       );
+      parts.push(notionWrap("assignment", assignmentHTML.join("")));
 
       return parts.join("");
     }
@@ -1367,16 +1038,21 @@
     function buildStepCard(parts, step, si, weekNum) {
       // Render each step as a visual lab-step card (matching week.html layout)
       parts.push(
-        '<article class="lab-step" data-step-idx="', si, '">',
+        '<article class="lab-step" data-step-idx="', si, '">'
+      );
 
-        // Step header: number + title/copy (editable) + admin move/delete
+      // Step header: number + title/copy (editable) + admin move/delete
+      var titleCopyHTML =
+        '<div style="flex:1;min-width:0">' +
+        '<strong style="display:block"><input class="edit-inline" data-step-field="title" data-step="' + si + '" value="' + esc(step.title || "") + '" placeholder="단계 제목" style="width:100%;font-size:1.02rem;font-weight:600" /></strong>' +
+        '<p style="margin:5px 0 0"><textarea class="edit-inline" data-step-field="copy" data-step="' + si + '" rows="2" placeholder="단계 설명" style="width:100%;color:var(--muted);line-height:1.66;font-size:.94rem">' + esc(step.copy || "") + '</textarea></p>' +
+        '</div>';
+
+      parts.push(
         '<div class="step-header">',
         '<div class="step-title-group">',
         '<div class="step-number">', (si + 1), '</div>',
-        '<div style="flex:1;min-width:0">',
-        '<strong style="display:block"><input class="edit-inline" data-step-field="title" data-step="', si, '" value="', esc(step.title || ""), '" placeholder="단계 제목" style="width:100%;font-size:1.02rem;font-weight:600" /></strong>',
-        '<p style="margin:5px 0 0"><textarea class="edit-inline" data-step-field="copy" data-step="', si, '" rows="2" placeholder="단계 설명" style="width:100%;color:var(--muted);line-height:1.66;font-size:.94rem">', esc(step.copy || ""), '</textarea></p>',
-        '</div>',
+        notionWrap("title", titleCopyHTML, true),
         '</div>',
         '<div class="step-header-admin">',
         '<button class="btn-icon" data-move-step="up" data-idx="', si, '" type="button" title="위로">&#8593;</button>',
@@ -1408,10 +1084,11 @@
         '</div>'
       );
 
-      // Tasks
-      parts.push('<div class="task-list" style="gap:8px">');
+      // Tasks (Notion-owned at step level)
+      var tasksHTML = [];
+      tasksHTML.push('<div class="task-list" style="gap:8px">');
       (step.tasks || []).forEach(function(t, ti) {
-        parts.push(
+        tasksHTML.push(
           '<div class="admin-task-edit">',
           '<div class="admin-task-fields">',
           '<input class="edit-inline" data-task-field="label" data-step="', si, '" data-idx="', ti, '" value="', esc(t.label), '" placeholder="작업 이름" style="font-size:.94rem;font-weight:600;width:100%" />',
@@ -1421,11 +1098,13 @@
           '</div>'
         );
       });
-      parts.push(
+      tasksHTML.push(
         '</div>',
-        '<button class="btn-add" data-task-add data-step="', si, '" type="button" style="margin-top:6px">+ 작업 추가</button>',
-        '</article>'
+        '<button class="btn-add" data-task-add data-step="', si, '" type="button" style="margin-top:6px">+ 작업 추가</button>'
       );
+      parts.push(notionWrap("tasks", tasksHTML.join(""), true));
+
+      parts.push('</article>');
     }
 
     function buildSidebarHTML() {
@@ -1466,7 +1145,8 @@
           return;
         }
         authOverlay.style.display = "none";
-        curriculum = await res.json();
+        var result = await res.json();
+        parseCurriculumResponse(result);
         renderSidebar();
         selectWeek(0);
       } catch (e) {
@@ -1478,21 +1158,7 @@
       if (e.key === "Enter") authSubmit.click();
     });
 
-    syncReviewCancel.addEventListener("click", function() {
-      closeSaveReview("cancel");
-    });
-    syncReviewLocal.addEventListener("click", function() {
-      closeSaveReview("local");
-    });
-    syncReviewPush.addEventListener("click", function() {
-      closeSaveReview("push");
-    });
-    syncReviewPull.addEventListener("click", function() {
-      closeSaveReview("pull");
-    });
-    syncReviewOverlay.addEventListener("click", function(e) {
-      if (e.target === syncReviewOverlay) closeSaveReview("cancel");
-    });
+    // Sync review event listeners removed (save flow simplified)
 
     // ─── Mobile sidebar ──────────────────────────────────
     hamburgerBtn.addEventListener("click", function() {
@@ -1505,6 +1171,21 @@
     });
 
     // ─── Data loading ────────────────────────────────────
+    /** Parse API response: supports both bare array (old) and envelope (new) */
+    function parseCurriculumResponse(result) {
+      if (Array.isArray(result)) {
+        // Old format: bare array
+        curriculum = result;
+        hasNotion = false;
+        ownership = null;
+      } else {
+        // New format: { data, hasNotion, ownership }
+        curriculum = result.data || result;
+        hasNotion = result.hasNotion || false;
+        ownership = result.ownership || null;
+      }
+    }
+
     async function loadCurriculum() {
       try {
         var res = await fetch("/api/curriculum", { headers: apiHeaders() });
@@ -1513,7 +1194,8 @@
           return;
         }
         if (!res.ok) throw new Error("HTTP " + res.status);
-        curriculum = await res.json();
+        var result = await res.json();
+        parseCurriculumResponse(result);
         renderSidebar();
         selectWeek(0);
       } catch (e) {
@@ -1528,39 +1210,10 @@
     // ─── Saving ──────────────────────────────────────────
     saveBtn.addEventListener("click", async function() {
       if (!dirty) {
-        toast("변경사항이 없습니다.", "success");
+        toast("\uBCC0\uACBD\uC0AC\uD56D\uC774 \uC5C6\uC2B5\uB2C8\uB2E4.", "success");
         return;
       }
-
-      var weeksToSync = Object.keys(dirtyWeeks);
-
-      saveBtn.disabled = true;
-      saveBtn.textContent = notionConfigured ? "저장 전 비교 중..." : "저장 전 확인 중...";
-      try {
-        var review = await buildSaveReview(weeksToSync);
-        var action = await openSaveReview(review);
-
-        if (action === "pull") {
-          applyPulledWeeks(review);
-          return;
-        }
-
-        if (action === "local") {
-          await performCurriculumSave(false, weeksToSync);
-          return;
-        }
-
-        if (action === "push") {
-          await performCurriculumSave(true, weeksToSync);
-          return;
-        }
-      } catch (e) {
-        toast("저장 전 비교 실패: " + e.message, "error");
-      } finally {
-        if (!saveBtn.disabled) return;
-        saveBtn.disabled = false;
-        saveBtn.textContent = "\uD83D\uDCBE 저장";
-      }
+      await performCurriculumSave();
     });
 
     // ─── Preview ─────────────────────────────────────────
@@ -1950,10 +1603,6 @@
 
     // ─── Keyboard shortcut: Ctrl/Cmd+S to save ───────────
     document.addEventListener("keydown", function(e) {
-      if (e.key === "Escape" && syncReviewOverlay.style.display !== "none") {
-        closeSaveReview("cancel");
-        return;
-      }
       if ((e.ctrlKey || e.metaKey) && e.key === "s") {
         e.preventDefault();
         saveBtn.click();
@@ -1966,85 +1615,46 @@
         var res = await fetch("/api/notion-status", { headers: apiHeaders() });
         var data = await res.json();
         notionConfigured = !!(data.configured && data.mapping_loaded);
-        if (notionConfigured) {
-          notionGroup.style.display = "flex";
-          notionAutoSyncWrap.style.display = "flex";
-        } else {
-          notionGroup.style.display = "none";
-          notionAutoSyncWrap.style.display = "none";
-        }
+        notionGroup.style.display = notionConfigured ? "flex" : "none";
       } catch(e) {
         notionConfigured = false;
         notionGroup.style.display = "none";
-        notionAutoSyncWrap.style.display = "none";
       }
     }
-
-    notionPushBtn.addEventListener("click", async function() {
-      if (!curriculum[selectedIdx]) return;
-      var weekNum = curriculum[selectedIdx].week;
-
-      if (!confirm("Week " + weekNum + " \uB0B4\uC6A9\uC744 Notion\uC5D0 \uBC18\uC601\uD558\uC2DC\uACA0\uC2B5\uB2C8\uAE4C?")) return;
-
-      notionPushBtn.disabled = true;
-      notionPushBtn.textContent = "\u23F3 \uC804\uC1A1 \uC911...";
-
-      try {
-        var res = await fetch("/api/notion-push/" + weekNum, {
-          method: "POST",
-          headers: apiHeaders(),
-        });
-        var data = await res.json();
-        if (data.ok) {
-          toast("Notion \uBC18\uC601 \uC644\uB8CC (" + data.blocks_written + "\uAC1C \uBE14\uB85D)", "success");
-        } else {
-          toast("Notion \uBC18\uC601 \uC2E4\uD328: " + data.error, "error");
-        }
-      } catch(e) {
-        toast("Notion \uC5F0\uACB0 \uC2E4\uD328: " + e.message, "error");
-      } finally {
-        notionPushBtn.disabled = false;
-        notionPushBtn.textContent = "\uD83D\uDCE4 Notion";
-      }
-    });
 
     notionPullBtn.addEventListener("click", async function() {
       if (!curriculum[selectedIdx]) return;
       var weekNum = curriculum[selectedIdx].week;
 
       notionPullBtn.disabled = true;
-      notionPullBtn.textContent = "\u23F3 \uAC00\uC838\uC624\uB294 \uC911...";
+      notionPullBtn.textContent = "\u23F3 \uB3D9\uAE30\uD654 \uC911...";
 
       try {
-        var preview = await fetchNotionPreview(weekNum);
-        if (!preview.ok) {
-          toast("Notion \uAC00\uC838\uC624\uAE30 \uC2E4\uD328: " + preview.error, "error");
+        var res = await fetch("/api/notion-pull/" + weekNum, {
+          method: "POST",
+          headers: apiHeaders(),
+        });
+        var data = await res.json();
+        if (!res.ok || !data.ok) {
+          toast("\uB3D9\uAE30\uD654 \uC2E4\uD328: " + (data.error || "Unknown error"), "error");
           return;
         }
 
-        var pulled = preview.week;
-        var current = curriculum[selectedIdx];
-        var changes = summarizeNotionDiffs(current, pulled);
+        toast("Week " + weekNum + " \uB3D9\uAE30\uD654 \uC644\uB8CC", "success");
 
-        if (changes.length === 0) {
-          toast("Notion\uACFC \uB3D9\uC77C\uD569\uB2C8\uB2E4. \uBCC0\uACBD\uC0AC\uD56D \uC5C6\uC74C.", "success");
-          return;
-        }
-
-        var msg = "Notion\uC5D0\uC11C \uAC00\uC838\uC628 \uBCC0\uACBD\uC0AC\uD56D:\n\n- " + changes.join("\n- ") + "\n\n\uD604\uC7AC \uD3B8\uC9D1 \uB0B4\uC6A9\uC744 \uB36E\uC5B4\uC4F0\uACE0 \uC801\uC6A9\uD560\uAE4C\uC694?";
-        if (confirm(msg)) {
-          applyPulledWeeks({
-            weeks: [{
-              weekNum: String(weekNum),
-              notion: { status: "different", week: pulled }
-            }]
-          });
+        // Reload curriculum to reflect synced data
+        var reloadRes = await fetch("/api/curriculum", { headers: apiHeaders() });
+        if (reloadRes.ok) {
+          var result = await reloadRes.json();
+          parseCurriculumResponse(result);
+          renderSidebar();
+          selectWeek(selectedIdx);
         }
       } catch(e) {
         toast("Notion \uC5F0\uACB0 \uC2E4\uD328: " + e.message, "error");
       } finally {
         notionPullBtn.disabled = false;
-        notionPullBtn.textContent = "\uD83D\uDCE5 Notion";
+        notionPullBtn.textContent = "\uD83D\uDD04 \uC9C0\uAE08 \uB3D9\uAE30\uD654";
       }
     });
 

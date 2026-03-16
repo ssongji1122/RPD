@@ -27,6 +27,14 @@ from pathlib import Path
 import urllib.request
 from urllib.parse import unquote
 
+from notion_api import (
+    load_notion_mapping,
+    fetch_notion_to_curriculum,
+    merge_curriculum,
+    sync_week_to_notion,
+    NOTION_API,
+)
+
 # ---------------------------------------------------------------------------
 # Paths
 # ---------------------------------------------------------------------------
@@ -34,11 +42,15 @@ ROOT = Path(__file__).resolve().parent.parent
 COURSE_SITE = ROOT / "course-site"
 WEEKS_DIR = ROOT / "weeks"
 CURRICULUM_JS = COURSE_SITE / "data" / "curriculum.js"
+OVERRIDES_JSON = COURSE_SITE / "data" / "overrides.json"
+NOTION_JSON = COURSE_SITE / "data" / "curriculum-notion.json"
 IMAGES_DIR = COURSE_SITE / "assets" / "images"
 VIDEOS_DIR = COURSE_SITE / "assets" / "videos"
-NOTION_MAPPING = ROOT / "tools" / "notion-mapping.json"
 NOTION_TOKEN: str | None = os.environ.get("NOTION_TOKEN")
-NOTION_API = "https://api.notion.com/v1"
+
+# Admin-owned fields
+ADMIN_WEEK_FIELDS = {"status", "summary", "videos", "explore"}
+ADMIN_STEP_FIELDS = {"image", "done", "showme", "link"}
 
 # ---------------------------------------------------------------------------
 # Auth
@@ -216,6 +228,45 @@ def write_curriculum(data: list[dict]) -> None:
     content = CURRICULUM_HEADER + pretty + CURRICULUM_FOOTER
     CURRICULUM_JS.write_text(content, encoding="utf-8")
     sync_lecture_notes(data)
+
+
+def read_overrides() -> dict:
+    """Read overrides.json."""
+    if not OVERRIDES_JSON.exists():
+        return {"_comment": "어드민 전용 필드. 노션 동기화 시 이 값이 우선함.", "weeks": {}}
+    return json.loads(OVERRIDES_JSON.read_text(encoding="utf-8"))
+
+
+def write_overrides(overrides: dict) -> None:
+    """Write overrides.json."""
+    OVERRIDES_JSON.write_text(
+        json.dumps(overrides, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+
+def read_notion_data() -> list[dict] | None:
+    """Read curriculum-notion.json if it exists."""
+    if not NOTION_JSON.exists():
+        return None
+    return json.loads(NOTION_JSON.read_text(encoding="utf-8"))
+
+
+
+def get_merged_curriculum() -> list[dict]:
+    """Get final curriculum: notion + overrides merged. Falls back to curriculum.js if no notion data."""
+    notion_data = read_notion_data()
+    if notion_data is None:
+        # Fallback: no curriculum-notion.json yet, use existing curriculum.js
+        return read_curriculum()
+    overrides = read_overrides()
+    return merge_curriculum(notion_data, overrides)
+
+
+def regenerate_curriculum_js() -> None:
+    """Regenerate curriculum.js from notion + overrides."""
+    merged = get_merged_curriculum()
+    write_curriculum(merged)
 
 
 def _find_lecture_note_path(week_num: int) -> Path | None:
@@ -422,457 +473,6 @@ def sync_lecture_notes(data: list[dict]) -> list[Path]:
 
 
 # ---------------------------------------------------------------------------
-# Notion API helpers
-# ---------------------------------------------------------------------------
-def _load_notion_mapping() -> dict:
-    """Load week -> Notion page ID mapping."""
-    if not NOTION_MAPPING.exists():
-        return {}
-    with open(NOTION_MAPPING, encoding="utf-8") as f:
-        data = json.load(f)
-    return data.get("weeks", {})
-
-def _notion_request(method: str, endpoint: str, body: dict | None = None) -> dict:
-    """Make an authenticated request to the Notion API."""
-    if not NOTION_TOKEN:
-        raise RuntimeError("NOTION_TOKEN environment variable not set")
-
-    url = f"{NOTION_API}{endpoint}"
-    headers = {
-        "Authorization": f"Bearer {NOTION_TOKEN}",
-        "Notion-Version": "2022-06-28",
-        "Content-Type": "application/json",
-    }
-
-    data = json.dumps(body).encode("utf-8") if body else None
-    req = urllib.request.Request(url, data=data, headers=headers, method=method)
-
-    with urllib.request.urlopen(req) as resp:
-        return json.loads(resp.read().decode("utf-8"))
-
-def _week_to_notion_blocks(week: dict) -> list[dict]:
-    """Convert a curriculum week object to Notion block children."""
-    blocks = []
-
-    def append_link_section(title: str, items: list[dict]) -> None:
-        if not items:
-            return
-        blocks.append({
-            "object": "block",
-            "type": "heading_2",
-            "heading_2": {
-                "rich_text": [{"type": "text", "text": {"content": title}}]
-            }
-        })
-        for item in items:
-            link_title = item.get("title", "").strip()
-            link_url = item.get("url", "").strip()
-            if not link_title or not link_url:
-                continue
-            blocks.append({
-                "object": "block",
-                "type": "bulleted_list_item",
-                "bulleted_list_item": {
-                    "rich_text": [{
-                        "type": "text",
-                        "text": {
-                            "content": link_title,
-                            "link": {"url": link_url},
-                        }
-                    }]
-                }
-            })
-
-    # Title heading
-    blocks.append({
-        "object": "block",
-        "type": "heading_2",
-        "heading_2": {
-            "rich_text": [{"type": "text", "text": {"content": "학습 목표"}}]
-        }
-    })
-
-    # Steps as checklist
-    for step in week.get("steps", []):
-        # Step title as heading_3
-        blocks.append({
-            "object": "block",
-            "type": "heading_3",
-            "heading_3": {
-                "rich_text": [{"type": "text", "text": {"content": step["title"]}}]
-            }
-        })
-        # Step copy as paragraph
-        if step.get("copy"):
-            blocks.append({
-                "object": "block",
-                "type": "paragraph",
-                "paragraph": {
-                    "rich_text": [{"type": "text", "text": {"content": step["copy"]}}]
-                }
-            })
-        # Goals as bullet list
-        for goal in step.get("goal", []):
-            blocks.append({
-                "object": "block",
-                "type": "bulleted_list_item",
-                "bulleted_list_item": {
-                    "rich_text": [{"type": "text", "text": {"content": goal}}]
-                }
-            })
-        # Tasks as to_do items
-        for task in step.get("tasks", []):
-            text = task.get("label", "")
-            if task.get("detail"):
-                text += f" — {task['detail']}"
-            blocks.append({
-                "object": "block",
-                "type": "to_do",
-                "to_do": {
-                    "rich_text": [{"type": "text", "text": {"content": text}}],
-                    "checked": False
-                }
-            })
-
-    append_link_section("공식 영상 튜토리얼", week.get("videos", []))
-    append_link_section("공식 문서", week.get("docs", []))
-
-    # Shortcuts section
-    shortcuts = week.get("shortcuts", [])
-    if shortcuts:
-        blocks.append({
-            "object": "block",
-            "type": "heading_2",
-            "heading_2": {
-                "rich_text": [{"type": "text", "text": {"content": "📌 단축키 퀵 레퍼런스"}}]
-            }
-        })
-        shortcut_text = "\n".join(f"{s['keys'].ljust(24)}{s['action']}" for s in shortcuts)
-        blocks.append({
-            "object": "block",
-            "type": "code",
-            "code": {
-                "rich_text": [{"type": "text", "text": {"content": shortcut_text}}],
-                "language": "plain text"
-            }
-        })
-
-    # Assignment section
-    assignment = week.get("assignment", {})
-    if assignment:
-        blocks.append({
-            "object": "block",
-            "type": "heading_2",
-            "heading_2": {
-                "rich_text": [{"type": "text", "text": {"content": "과제"}}]
-            }
-        })
-        if assignment.get("title"):
-            blocks.append({
-                "object": "block",
-                "type": "paragraph",
-                "paragraph": {
-                    "rich_text": [
-                        {"type": "text", "text": {"content": assignment["title"]}, "annotations": {"bold": True}},
-                    ]
-                }
-            })
-        if assignment.get("description"):
-            blocks.append({
-                "object": "block",
-                "type": "paragraph",
-                "paragraph": {
-                    "rich_text": [{"type": "text", "text": {"content": assignment["description"]}}]
-                }
-            })
-        for item in assignment.get("checklist", []):
-            blocks.append({
-                "object": "block",
-                "type": "to_do",
-                "to_do": {
-                    "rich_text": [{"type": "text", "text": {"content": item}}],
-                    "checked": False
-                }
-            })
-
-    # Mistakes section
-    mistakes = week.get("mistakes", [])
-    if mistakes:
-        blocks.append({
-            "object": "block",
-            "type": "heading_2",
-            "heading_2": {
-                "rich_text": [{"type": "text", "text": {"content": "⚠️ 흔한 실수와 해결법"}}]
-            }
-        })
-        for m in mistakes:
-            blocks.append({
-                "object": "block",
-                "type": "bulleted_list_item",
-                "bulleted_list_item": {
-                    "rich_text": [{"type": "text", "text": {"content": m}}]
-                }
-            })
-
-    return blocks
-
-def _get_notion_page_blocks(page_id: str) -> list[dict]:
-    """Fetch all blocks from a Notion page."""
-    all_blocks = []
-    cursor = None
-    while True:
-        endpoint = f"/blocks/{page_id}/children?page_size=100"
-        if cursor:
-            endpoint += f"&start_cursor={cursor}"
-        result = _notion_request("GET", endpoint)
-        all_blocks.extend(result.get("results", []))
-        if not result.get("has_more"):
-            break
-        cursor = result.get("next_cursor")
-    return all_blocks
-
-
-def _get_notion_page_blocks_recursive(page_id: str) -> list[dict]:
-    """Fetch all page blocks in depth-first order, including nested children."""
-    flat_blocks: list[dict] = []
-
-    def walk(parent_id: str) -> None:
-        for block in _get_notion_page_blocks(parent_id):
-            flat_blocks.append(block)
-            if block.get("has_children"):
-                walk(block["id"])
-
-    walk(page_id)
-    return flat_blocks
-
-def _delete_all_notion_blocks(page_id: str) -> None:
-    """Delete all block children from a Notion page."""
-    blocks = _get_notion_page_blocks(page_id)
-    for block in blocks:
-        try:
-            _notion_request("DELETE", f"/blocks/{block['id']}")
-        except Exception:
-            pass  # Some blocks may not be deletable
-
-def sync_week_to_notion(week: dict) -> dict:
-    """Push a curriculum week to its Notion page."""
-    mapping = _load_notion_mapping()
-    week_num = str(week.get("week", ""))
-    page_id = mapping.get(week_num)
-    if not page_id:
-        raise ValueError(f"No Notion page mapped for week {week_num}")
-
-    # Update page title
-    title_text = f"Week {week_num.zfill(2)}: {week.get('title', '')}"
-    _notion_request("PATCH", f"/pages/{page_id}", {
-        "properties": {
-            "title": {
-                "title": [{"type": "text", "text": {"content": title_text}}]
-            }
-        }
-    })
-
-    # Delete existing blocks and replace with new content
-    _delete_all_notion_blocks(page_id)
-
-    # Add new blocks (Notion API limit: 100 blocks per append)
-    new_blocks = _week_to_notion_blocks(week)
-    for i in range(0, len(new_blocks), 100):
-        chunk = new_blocks[i:i+100]
-        _notion_request("PATCH", f"/blocks/{page_id}/children", {
-            "children": chunk
-        })
-
-    return {"ok": True, "page_id": page_id, "blocks_written": len(new_blocks)}
-
-def _extract_text(rich_text_list: list) -> str:
-    """Extract plain text from Notion rich_text array."""
-    return "".join(rt.get("plain_text", "") for rt in rich_text_list)
-
-
-def _extract_link(rich_text_list: list) -> dict | None:
-    """Extract a title/url pair from Notion rich_text."""
-    title = _extract_text(rich_text_list).strip()
-    if not title:
-        return None
-
-    url = ""
-    for item in rich_text_list:
-        url = item.get("href") or ""
-        if not url:
-            url = item.get("text", {}).get("link", {}).get("url", "")
-        if url:
-            break
-
-    if not url:
-        return None
-    return {"title": title, "url": url}
-
-def fetch_notion_to_curriculum(week_num: int, existing_week: dict) -> dict:
-    """Fetch a Notion page and extract curriculum-compatible data."""
-    mapping = _load_notion_mapping()
-    page_id = mapping.get(str(week_num))
-    if not page_id:
-        raise ValueError(f"No Notion page mapped for week {week_num}")
-
-    # Fetch page properties (title)
-    page = _notion_request("GET", f"/pages/{page_id}")
-    title_parts = page.get("properties", {}).get("title", {}).get("title", [])
-    raw_title = _extract_text(title_parts)
-    # Strip "Week NN: " prefix if present
-    clean_title = re.sub(r"^(?:⭐\s*)?Week\s*\d+\s*[:：]\s*", "", raw_title).strip()
-
-    # Fetch blocks
-    blocks = _get_notion_page_blocks_recursive(page_id)
-
-    # Parse blocks into structured sections
-    result = {**existing_week, "title": clean_title or existing_week.get("title", "")}
-
-    # Extract shortcuts from code blocks
-    existing_steps = existing_week.get("steps", []) or []
-    steps = []
-    current_step = None
-    shortcuts = []
-    mistakes = []
-    assignment_title = ""
-    assignment_description_parts = []
-    assignment_checklist = []
-    videos = []
-    docs = []
-    current_section = ""
-    seen_sections = set()
-
-    for block in blocks:
-        btype = block.get("type", "")
-
-        if btype == "heading_2":
-            text = _extract_text(block["heading_2"].get("rich_text", []))
-            current_step = None
-            if "학습 목표" in text:
-                current_section = "steps"
-                seen_sections.add("steps")
-            elif "공식 영상" in text:
-                current_section = "videos"
-                seen_sections.add("videos")
-            elif "공식 문서" in text:
-                current_section = "docs"
-                seen_sections.add("docs")
-            elif "단축키" in text:
-                current_section = "shortcuts"
-                seen_sections.add("shortcuts")
-            elif "실수" in text or "해결" in text:
-                current_section = "mistakes"
-                seen_sections.add("mistakes")
-            elif "과제" in text:
-                current_section = "assignment"
-                seen_sections.add("assignment")
-            else:
-                current_section = text
-
-        elif btype == "heading_3" and current_section == "steps":
-            text = _extract_text(block["heading_3"].get("rich_text", []))
-            existing_step = existing_steps[len(steps)] if len(steps) < len(existing_steps) else {}
-            current_step = {
-                "title": text,
-                "copy": "",
-                "goal": [],
-                "done": list(existing_step.get("done", []) or []),
-                "image": existing_step.get("image", ""),
-                "tasks": [],
-            }
-            steps.append(current_step)
-
-        elif btype == "paragraph" and current_section == "steps" and current_step is not None:
-            text = _extract_text(block["paragraph"].get("rich_text", []))
-            if text:
-                if current_step["copy"]:
-                    current_step["copy"] += "\n\n" + text
-                else:
-                    current_step["copy"] = text
-
-        elif btype == "paragraph" and current_section == "assignment":
-            text = _extract_text(block["paragraph"].get("rich_text", []))
-            if text:
-                if not assignment_title:
-                    assignment_title = text
-                else:
-                    assignment_description_parts.append(text)
-
-        elif btype == "code" and current_section == "shortcuts":
-            code_text = _extract_text(block["code"].get("rich_text", []))
-            for line in code_text.strip().split("\n"):
-                line = line.strip()
-                if not line:
-                    continue
-                # Try to split on multiple spaces
-                parts = re.split(r"\s{2,}", line, maxsplit=1)
-                if len(parts) == 2:
-                    shortcuts.append({"keys": parts[0].strip(), "action": parts[1].strip()})
-
-        elif btype == "bulleted_list_item" and current_section == "steps" and current_step is not None:
-            text = _extract_text(block["bulleted_list_item"].get("rich_text", []))
-            if text:
-                current_step["goal"].append(text)
-
-        elif btype == "bulleted_list_item" and current_section == "mistakes":
-            text = _extract_text(block["bulleted_list_item"].get("rich_text", []))
-            if text:
-                mistakes.append(text)
-
-        elif btype == "bulleted_list_item" and current_section in ("videos", "docs"):
-            link = _extract_link(block["bulleted_list_item"].get("rich_text", []))
-            if link:
-                if current_section == "videos":
-                    videos.append(link)
-                else:
-                    docs.append(link)
-
-        elif btype == "to_do" and current_section == "steps" and current_step is not None:
-            text = _extract_text(block["to_do"].get("rich_text", []))
-            if text:
-                existing_task = {}
-                if steps:
-                    step_idx = len(steps) - 1
-                    if step_idx < len(existing_steps):
-                        existing_tasks = existing_steps[step_idx].get("tasks", []) or []
-                        if len(current_step["tasks"]) < len(existing_tasks):
-                            existing_task = existing_tasks[len(current_step["tasks"])]
-
-                label, sep, detail = text.partition(" — ")
-                current_step["tasks"].append({
-                    "id": existing_task.get("id") or f"w{week_num}-t{len(current_step['tasks']) + 1}",
-                    "label": label.strip(),
-                    "detail": detail.strip() if sep else "",
-                })
-
-        elif btype == "to_do" and current_section == "assignment":
-            text = _extract_text(block["to_do"].get("rich_text", []))
-            if text:
-                assignment_checklist.append(text)
-
-    if "steps" in seen_sections and steps:
-        result["steps"] = steps
-    if shortcuts:
-        result["shortcuts"] = shortcuts
-    if mistakes:
-        result["mistakes"] = mistakes
-    if "assignment" in seen_sections:
-        assignment = {**(existing_week.get("assignment", {}) or {})}
-        if assignment_title:
-            assignment["title"] = assignment_title
-        if assignment_description_parts:
-            assignment["description"] = "\n\n".join(assignment_description_parts)
-        assignment["checklist"] = assignment_checklist
-        result["assignment"] = assignment
-    if "videos" in seen_sections:
-        result["videos"] = videos
-    if "docs" in seen_sections:
-        result["docs"] = docs
-
-    return result
-
-
-# ---------------------------------------------------------------------------
 # Multipart parser (stdlib only)
 # ---------------------------------------------------------------------------
 def parse_multipart(body: bytes, content_type: str) -> dict[str, tuple[str, bytes]]:
@@ -987,15 +587,26 @@ class AdminHandler(BaseHTTPRequestHandler):
         # API: GET /api/curriculum
         if path == "/api/curriculum":
             try:
-                data = read_curriculum()
-                self._send_json(data)
+                data = get_merged_curriculum()
+                has_notion = NOTION_JSON.exists()
+                self._send_json({
+                    "data": data,
+                    "hasNotion": has_notion,
+                    "ownership": {
+                        "notion": ["title", "subtitle", "duration", "topics",
+                                  "steps.title", "steps.copy", "steps.goal", "steps.tasks",
+                                  "assignment", "shortcuts", "mistakes", "docs"],
+                        "admin": ["status", "summary", "videos", "explore",
+                                 "steps.image", "steps.done", "steps.showme", "steps.link"]
+                    }
+                })
             except Exception as exc:
                 self._send_error_json(500, str(exc))
             return
 
         # API: GET /api/notion-status
         if path == "/api/notion-status":
-            mapping = _load_notion_mapping()
+            mapping = load_notion_mapping()
             self._send_json({
                 "configured": bool(NOTION_TOKEN),
                 "mapping_loaded": bool(mapping),
@@ -1015,6 +626,11 @@ class AdminHandler(BaseHTTPRequestHandler):
         # PUT /api/curriculum
         if path == "/api/curriculum":
             self._handle_put_curriculum()
+            return
+
+        # PUT /api/overrides
+        if path == "/api/overrides":
+            self._handle_put_overrides()
             return
 
         # PUT /api/week/{n}/status
@@ -1073,6 +689,7 @@ class AdminHandler(BaseHTTPRequestHandler):
     # -- API handlers ------------------------------------------------------
 
     def _handle_put_curriculum(self) -> None:
+        """Handle full curriculum save. Extracts admin fields to overrides.json."""
         body = self._read_body()
         try:
             data = json.loads(body)
@@ -1084,12 +701,85 @@ class AdminHandler(BaseHTTPRequestHandler):
             self._send_error_json(400, "Body must be a JSON array")
             return
 
+        # Extract admin-owned fields into overrides
+        overrides = read_overrides()
+        for week in data:
+            week_num = str(week.get("week", ""))
+            if not week_num:
+                continue
+            week_ov = overrides.get("weeks", {}).get(week_num, {})
+
+            for field in ADMIN_WEEK_FIELDS:
+                if field in week:
+                    week_ov[field] = week[field]
+
+            steps = week.get("steps", [])
+            steps_ov = week_ov.get("steps", {})
+            for idx, step in enumerate(steps):
+                step_ov = steps_ov.get(str(idx), {})
+                for field in ADMIN_STEP_FIELDS:
+                    if field in step:
+                        step_ov[field] = step[field]
+                if step_ov:
+                    steps_ov[str(idx)] = step_ov
+            if steps_ov:
+                week_ov["steps"] = steps_ov
+            if week_ov:
+                overrides.setdefault("weeks", {})[week_num] = week_ov
+
+        write_overrides(overrides)
+        regenerate_curriculum_js()
+        self._send_json({"ok": True})
+
+    def _handle_put_overrides(self) -> None:
+        """Save admin override fields."""
+        body = self._read_body()
         try:
-            write_curriculum(data)
-        except Exception as exc:
-            self._send_error_json(500, f"Write failed: {exc}")
+            payload = json.loads(body)
+        except json.JSONDecodeError as exc:
+            self._send_error_json(400, f"Invalid JSON: {exc}")
             return
 
+        week_num = str(payload.get("weekNum", ""))
+        field = payload.get("field", "")
+        value = payload.get("value")
+        step_idx = payload.get("stepIdx")
+
+        if not week_num or not field:
+            self._send_error_json(400, "weekNum and field are required")
+            return
+
+        # Validate field ownership (admin fields + "copy" for text overrides)
+        if step_idx is not None:
+            allowed = ADMIN_STEP_FIELDS | {"copy"}
+            if field not in allowed:
+                self._send_error_json(
+                    400, f"Field '{field}' is not an admin-owned step field"
+                )
+                return
+        else:
+            allowed = ADMIN_WEEK_FIELDS | {"copy"}
+            if field not in allowed:
+                self._send_error_json(
+                    400, f"Field '{field}' is not an admin-owned week field"
+                )
+                return
+
+        overrides = read_overrides()
+        if week_num not in overrides.get("weeks", {}):
+            overrides.setdefault("weeks", {})[week_num] = {}
+
+        if step_idx is not None:
+            # Step-level override
+            step_key = str(step_idx)
+            overrides["weeks"][week_num].setdefault("steps", {}).setdefault(step_key, {})
+            overrides["weeks"][week_num]["steps"][step_key][field] = value
+        else:
+            # Week-level override
+            overrides["weeks"][week_num][field] = value
+
+        write_overrides(overrides)
+        regenerate_curriculum_js()
         self._send_json({"ok": True})
 
     def _handle_put_week_status(self, week_num: int) -> None:
@@ -1107,29 +797,11 @@ class AdminHandler(BaseHTTPRequestHandler):
             )
             return
 
-        try:
-            data = read_curriculum()
-        except Exception as exc:
-            self._send_error_json(500, f"Read failed: {exc}")
-            return
-
-        found = False
-        for entry in data:
-            if entry.get("week") == week_num:
-                entry["status"] = new_status
-                found = True
-                break
-
-        if not found:
-            self._send_error_json(404, f"Week {week_num} not found")
-            return
-
-        try:
-            write_curriculum(data)
-        except Exception as exc:
-            self._send_error_json(500, f"Write failed: {exc}")
-            return
-
+        overrides = read_overrides()
+        week_key = str(week_num)
+        overrides.setdefault("weeks", {}).setdefault(week_key, {})["status"] = new_status
+        write_overrides(overrides)
+        regenerate_curriculum_js()
         self._send_json({"ok": True, "week": week_num, "status": new_status})
 
     def _handle_upload(self, week_num: int, step_idx: int) -> None:
@@ -1179,38 +851,13 @@ class AdminHandler(BaseHTTPRequestHandler):
         # Relative path from course-site/ root
         relative_path = f"assets/images/week-{week_num:02d}/{dest_filename}"
 
-        # Update curriculum.js
-        try:
-            data = read_curriculum()
-        except Exception as exc:
-            self._send_error_json(500, f"Read curriculum failed: {exc}")
-            return
-
-        week_entry = None
-        for entry in data:
-            if entry.get("week") == week_num:
-                week_entry = entry
-                break
-
-        if week_entry is None:
-            self._send_error_json(404, f"Week {week_num} not found in curriculum")
-            return
-
-        steps = week_entry.get("steps", [])
-        if step_idx < 0 or step_idx >= len(steps):
-            self._send_error_json(
-                400,
-                f"Step index {step_idx} out of range (week {week_num} has {len(steps)} steps)",
-            )
-            return
-
-        steps[step_idx]["image"] = relative_path
-
-        try:
-            write_curriculum(data)
-        except Exception as exc:
-            self._send_error_json(500, f"Write curriculum failed: {exc}")
-            return
+        # Save image path to overrides.json
+        overrides = read_overrides()
+        week_key = str(week_num)
+        overrides.setdefault("weeks", {}).setdefault(week_key, {}).setdefault("steps", {}).setdefault(str(step_idx), {})
+        overrides["weeks"][week_key]["steps"][str(step_idx)]["image"] = relative_path
+        write_overrides(overrides)
+        regenerate_curriculum_js()
 
         self._send_json({"ok": True, "path": relative_path})
 
@@ -1247,9 +894,9 @@ class AdminHandler(BaseHTTPRequestHandler):
             )
             return
 
-        # Validate curriculum state before writing file
+        # Validate curriculum state — use merged data for video index check
         try:
-            data = read_curriculum()
+            data = get_merged_curriculum()
         except Exception as exc:
             self._send_error_json(500, f"Read curriculum failed: {exc}")
             return
@@ -1281,13 +928,19 @@ class AdminHandler(BaseHTTPRequestHandler):
 
         # Relative path from course-site/ root
         relative_path = f"assets/videos/week-{week_num:02d}/{dest_filename}"
-        videos[video_idx]["url"] = relative_path
 
-        try:
-            write_curriculum(data)
-        except Exception as exc:
-            self._send_error_json(500, f"Write curriculum failed: {exc}")
-            return
+        # Save to overrides.json (videos is an admin-owned field)
+        overrides = read_overrides()
+        week_key = str(week_num)
+        if week_key not in overrides.get("weeks", {}):
+            overrides.setdefault("weeks", {})[week_key] = {}
+        week_ovr = overrides["weeks"][week_key]
+        ovr_videos = week_ovr.get("videos", videos[:])  # init from current if needed
+        if video_idx < len(ovr_videos):
+            ovr_videos[video_idx]["url"] = relative_path
+        week_ovr["videos"] = ovr_videos
+        write_overrides(overrides)
+        regenerate_curriculum_js()
 
         self._send_json({"ok": True, "path": relative_path})
 
@@ -1320,29 +973,40 @@ class AdminHandler(BaseHTTPRequestHandler):
             self._send_error_json(500, f"Notion sync failed: {exc}")
 
     def _handle_notion_pull(self, week_num: int) -> None:
-        """Pull data from Notion and return diff preview (does NOT auto-save)."""
+        """Pull data from Notion and update curriculum-notion.json."""
         if not NOTION_TOKEN:
             self._send_error_json(503, "NOTION_TOKEN not configured")
             return
 
-        try:
-            data = read_curriculum()
-        except Exception as exc:
-            self._send_error_json(500, f"Read failed: {exc}")
+        notion_data = read_notion_data()
+        if notion_data is None:
+            self._send_error_json(404, "curriculum-notion.json not found")
             return
 
         existing = None
-        for entry in data:
+        for entry in notion_data:
             if entry.get("week") == week_num:
                 existing = entry
                 break
-
         if not existing:
-            self._send_error_json(404, f"Week {week_num} not found")
-            return
+            existing = {"week": week_num}
 
         try:
             updated = fetch_notion_to_curriculum(week_num, existing)
+            # Update curriculum-notion.json
+            for i, entry in enumerate(notion_data):
+                if entry.get("week") == week_num:
+                    notion_data[i] = updated
+                    break
+            else:
+                notion_data.append(updated)
+                notion_data.sort(key=lambda w: w.get("week", 0))
+
+            NOTION_JSON.write_text(
+                json.dumps(notion_data, ensure_ascii=False, indent=2) + "\n",
+                encoding="utf-8",
+            )
+            regenerate_curriculum_js()
             self._send_json({"ok": True, "week": updated})
         except Exception as exc:
             self._send_error_json(500, f"Notion fetch failed: {exc}")
@@ -1486,7 +1150,7 @@ def main() -> None:
 
     auth_mode = "ENABLED (ADMIN_KEY set)" if ADMIN_KEY else "DISABLED (development)"
     notion_mode = "ENABLED" if NOTION_TOKEN else "DISABLED (set NOTION_TOKEN)"
-    notion_weeks = len(_load_notion_mapping()) if NOTION_MAPPING.exists() else 0
+    notion_weeks = len(load_notion_mapping())
 
     HTTPServer.allow_reuse_address = True
     server = HTTPServer(("0.0.0.0", args.port), AdminHandler)
