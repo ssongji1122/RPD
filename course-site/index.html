@@ -49,6 +49,8 @@
     }
     .week-card.is-done   { border-color: rgba(16,185,129,.25); }
     .week-card.is-exam   { border-color: rgba(245,158,11,.3); }
+    .week-card.is-locked { cursor: not-allowed; opacity: .45; }
+    .week-card.is-locked:hover { border-color: rgba(147,197,253,.1); transform: none; }
 
     /* ── Featured: active week card ── */
     .week-card.is-active {
@@ -200,9 +202,10 @@
       var maxChips = isActive ? 5 : 3;
       var pageUrl = "week.html?week=" + w.week;
 
+      var isUpcoming = w.status !== "done" && w.status !== "active" && !w.title.includes("⭐");
       var a = document.createElement("a");
-      a.className = "week-card " + getCardClass(w);
-      a.href = pageUrl;
+      a.className = "week-card " + getCardClass(w) + (isUpcoming ? " is-locked" : "");
+      if (!isUpcoming) a.href = pageUrl;
 
       // Active label
       if (isActive) {
