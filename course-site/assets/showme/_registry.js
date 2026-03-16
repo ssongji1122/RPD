@@ -80,4 +80,6 @@ const SHOWME_REGISTRY = {
 
   // ── Concepts ──
   "origin-vs-3dcursor":     { label: "Origin vs 3D Cursor",    icon: "🎯" },
+  "poly-circle":            { label: "다각형으로 원 만들기",       icon: "⭕" },
+  "box-rounding":           { label: "박스 모서리 라운딩",          icon: "📦" },
 };
