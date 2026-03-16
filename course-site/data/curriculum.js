@@ -215,7 +215,11 @@ const CURRICULUM = [
           "G → X 처럼 축 고정 이동이 된다",
           "숫자 입력으로 정확한 값 이동이 된다"
         ],
-        "showme": "transform-grs"
+        "showme": [
+          "transform-grs",
+          "transform-orientation",
+          "pivot-point"
+        ]
       },
       {
         "title": "Edit Mode 모델링",
@@ -249,7 +253,9 @@ const CURRICULUM = [
         "showme": [
           "edit-mode",
           "extrude",
-          "loop-cut"
+          "loop-cut",
+          "snap",
+          "proportional-editing"
         ]
       },
       {
@@ -282,6 +288,36 @@ const CURRICULUM = [
           "결과물을 스크린샷으로 저장했다"
         ],
         "showme": "bevel-tool"
+      },
+      {
+        "title": "뷰포트 셰이딩",
+        "copy": "같은 모델도 어떤 '조명 방식'으로 보느냐에 따라 전혀 다르게 보여요. Solid는 작업 중 기본 뷰, Material Preview는 재질 확인, Rendered는 실제 렌더 결과예요.",
+        "goal": [
+          "4가지 Shading 모드를 구분한다",
+          "작업 목적에 맞는 모드를 선택한다"
+        ],
+        "tasks": [
+          {
+            "id": "w2-t16",
+            "label": "Z 키로 Pie Menu 열어 모드 전환",
+            "detail": "Wireframe / Solid / Material Preview / Rendered"
+          },
+          {
+            "id": "w2-t17",
+            "label": "Solid 모드에서 Cavity/Matcap 바꿔보기",
+            "detail": "헤더 오른쪽 구 아이콘 클릭"
+          },
+          {
+            "id": "w2-t18",
+            "label": "Material Preview로 HDRI 환경 확인",
+            "detail": "재질 없어도 형태는 확인 가능"
+          }
+        ],
+        "done": [
+          "Z Pie Menu로 빠르게 모드 전환이 된다",
+          "Solid와 Material Preview 차이를 말할 수 있다"
+        ],
+        "showme": "viewport-shading"
       }
     ],
     "assignment": {
@@ -551,7 +587,10 @@ const CURRICULUM = [
           "Bevel Modifier나 Weighted Normal을 확인했다",
           "언제 쓰는지 말할 수 있다"
         ],
-        "showme": "bevel-modifier",
+        "showme": [
+          "bevel-modifier",
+          "transform-apply"
+        ],
         "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/bevel.html"
       }
     ],
