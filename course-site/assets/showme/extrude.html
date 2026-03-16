@@ -723,72 +723,78 @@ function initQuiz(questions) {
 
       } else {
         // Along Normals / Individual — each face extrudes along its own normal
-        var shrink = (mode === "individual") ? 22 : 0;
+        // Both modes use FULL parallelograms (no shrink); junction handling differs
         faces.forEach(function(f) {
           var ex = f.nx * amt, ey = f.ny * amt;
-          var ax = f.ax + f.tx * shrink,  ay = f.ay + f.ty * shrink;
-          var bx = f.bx - f.tx * shrink,  by = f.by - f.ty * shrink;
 
           // Wall parallelogram
           ctx.fillStyle = rgba(f.cr, 0.14);
           ctx.strokeStyle = rgba(f.cr, 0.26);
           ctx.lineWidth = 1;
           ctx.beginPath();
-          ctx.moveTo(ax, ay); ctx.lineTo(bx, by);
-          ctx.lineTo(bx + ex, by + ey); ctx.lineTo(ax + ex, ay + ey);
+          ctx.moveTo(f.ax, f.ay); ctx.lineTo(f.bx, f.by);
+          ctx.lineTo(f.bx + ex, f.by + ey); ctx.lineTo(f.ax + ex, f.ay + ey);
           ctx.closePath(); ctx.fill(); ctx.stroke();
 
           // Extruded top edge
           ctx.strokeStyle = rgba(f.cr, 0.92);
           ctx.lineWidth = 3; ctx.lineCap = "round";
           ctx.beginPath();
-          ctx.moveTo(ax + ex, ay + ey);
-          ctx.lineTo(bx + ex, by + ey);
+          ctx.moveTo(f.ax + ex, f.ay + ey);
+          ctx.lineTo(f.bx + ex, f.by + ey);
           ctx.stroke();
 
           // Normal direction arrow from face midpoint
-          var mx = (ax + bx) / 2, my = (ay + by) / 2;
+          var mx = (f.ax + f.bx) / 2, my = (f.ay + f.by) / 2;
           drawArrow(mx, my, mx + ex * 0.65, my + ey * 0.65, rgba(f.cr, 0.9), 2);
         });
 
-        // Junction annotations
+        // Junction annotations — base vertex is SHARED; top vertices diverge
         var jPairs = [[0,1],[1,2]];
         jPairs.forEach(function(p) {
           var fA = faces[p[0]], fB = faces[p[1]];
-          var jx = fA.bx, jy = fA.by; // shared base vertex
-          // Top of fA at junction (right end, shrunk inward)
-          var topAx = fA.bx - fA.tx * shrink + fA.nx * amt;
-          var topAy = fA.by - fA.ty * shrink + fA.ny * amt;
-          // Top of fB at junction (left end, shrunk inward)
-          var topBx = fB.ax + fB.tx * shrink + fB.nx * amt;
-          var topBy = fB.ay + fB.ty * shrink + fB.ny * amt;
+          var jx = fA.bx, jy = fA.by;            // shared base junction vertex
+          var topAx = fA.bx + fA.nx * amt;        // fA top at junction
+          var topAy = fA.by + fA.ny * amt;
+          var topBx = fB.ax + fB.nx * amt;        // fB top at junction
+          var topBy = fB.ay + fB.ny * amt;
 
           if (mode === "individual") {
-            // Red dashed gap line + "틈" label
+            // Triangular wedge gap: base stays shared, top splits apart
             ctx.save();
-            ctx.strokeStyle = "rgba(239,68,68,.6)";
-            ctx.lineWidth = 1.5; ctx.setLineDash([3,3]);
-            ctx.beginPath(); ctx.moveTo(topAx, topAy); ctx.lineTo(topBx, topBy); ctx.stroke();
+            ctx.fillStyle = "rgba(239,68,68,.13)";
+            ctx.strokeStyle = "rgba(239,68,68,.55)";
+            ctx.lineWidth = 1; ctx.setLineDash([3,3]);
+            ctx.beginPath();
+            ctx.moveTo(jx, jy);
+            ctx.lineTo(topAx, topAy);
+            ctx.lineTo(topBx, topBy);
+            ctx.closePath();
+            ctx.fill(); ctx.stroke();
             ctx.setLineDash([]);
             ctx.restore();
-            var gmx = (topAx + topBx) / 2, gmy = (topAy + topBy) / 2 - 12;
-            ctx.fillStyle = "rgba(239,68,68,.8)";
+            // "틈" label inside the triangle centroid
+            var gmx = (jx + topAx + topBx) / 3;
+            var gmy = (jy + topAy + topBy) / 3 - 4;
+            ctx.fillStyle = "rgba(239,68,68,.9)";
             ctx.font = "bold 10px sans-serif"; ctx.textAlign = "center";
             ctx.fillText("틈", gmx, gmy);
           } else {
-            // Along Normals: dashed connector showing "stitched" junction
+            // Along Normals: junction is "welded" — draw a cap triangle to show connection
             ctx.save();
-            ctx.strokeStyle = "rgba(255,255,255,.22)";
-            ctx.lineWidth = 1; ctx.setLineDash([2,3]);
+            ctx.fillStyle = "rgba(255,255,255,.07)";
+            ctx.strokeStyle = "rgba(255,255,255,.25)";
+            ctx.lineWidth = 1;
             ctx.beginPath();
-            ctx.moveTo(jx, jy); ctx.lineTo(topAx, topAy);
-            ctx.moveTo(jx, jy); ctx.lineTo(topBx, topBy);
-            ctx.stroke();
-            ctx.setLineDash([]);
-            // Small filled circle at junction top average
+            ctx.moveTo(jx, jy);
+            ctx.lineTo(topAx, topAy);
+            ctx.lineTo(topBx, topBy);
+            ctx.closePath();
+            ctx.fill(); ctx.stroke();
+            // Dot at mid-top to show "connected"
             var cx2 = (topAx + topBx) / 2, cy2 = (topAy + topBy) / 2;
-            ctx.fillStyle = "rgba(255,255,255,.5)";
-            ctx.beginPath(); ctx.arc(cx2, cy2, 3, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = "rgba(255,255,255,.55)";
+            ctx.beginPath(); ctx.arc(cx2, cy2, 3, 0, Math.PI * 2); ctx.fill();
             ctx.restore();
           }
         });
