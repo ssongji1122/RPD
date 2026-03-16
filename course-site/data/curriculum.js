@@ -122,7 +122,7 @@ const CURRICULUM = [
       "Blender 인터페이스 구조",
       "화면 조작 (Orbit/Pan/Zoom)",
       "오브젝트 기본 변형 (G/R/S)",
-      "Extrude / Bevel / Loop Cut"
+      "Extrude / Inset / Loop Cut / Bevel"
     ],
     "steps": [
       {
@@ -237,6 +237,11 @@ const CURRICULUM = [
           },
           {
             "id": "w2-t12",
+            "label": "I 키로 Inset 적용해보기",
+            "detail": "면 선택 후 I → 드래그로 안쪽 면 생성"
+          },
+          {
+            "id": "w2-t13",
             "label": "Ctrl+R로 Loop Cut 추가해보기",
             "detail": "마우스로 위치 조정 후 클릭"
           }
@@ -249,6 +254,7 @@ const CURRICULUM = [
         "showme": [
           "edit-mode",
           "extrude",
+          "inset",
           "loop-cut"
         ]
       },
@@ -310,6 +316,10 @@ const CURRICULUM = [
       {
         "title": "Extrude Region",
         "url": "https://docs.blender.org/manual/en/latest/modeling/meshes/tools/extrude_region.html"
+      },
+      {
+        "title": "Inset Faces",
+        "url": "https://docs.blender.org/manual/en/latest/modeling/meshes/tools/inset_faces.html"
       },
       {
         "title": "Loop Cut",
