@@ -19,6 +19,13 @@ from pathlib import Path
 # doc_url이 None이면 해당 스텝은 스킵 (AI 생성 도구 등 공식 문서 없음)
 
 STEP_MAP = {
+    # Week 3: 기초 모델링 1 - Modifier
+    (3, 0): ("base-form",              "https://docs.blender.org/manual/en/latest/modeling/meshes/tools/extrude_region.html"),
+    (3, 1): ("mirror-modifier",        "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html"),
+    (3, 2): ("subdivision-surface",    "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/subdivision_surface.html"),
+    (3, 3): ("array-boolean-detail",   "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/booleans.html"),
+    (3, 4): ("bevel-weighted-normal",  "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/bevel.html"),
+
     # Week 4: 기초 모델링 2 - 하드서피스 디테일
     (4, 0): ("transform-apply",      "https://docs.blender.org/manual/en/latest/scene_layout/object/editing/apply.html"),
     (4, 1): ("inset-panel-detail",   "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/booleans.html"),
