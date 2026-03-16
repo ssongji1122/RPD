@@ -150,6 +150,8 @@
 
 디테일을 넣기 전에 Scale과 파츠 구성을 먼저 정리해요. 수치가 꼬여 있거나 파츠가 뒤섞여 있으면 그다음 작업이 계속 불편해져요.
 
+![Transform 정리와 파츠 관리](../../course-site/assets/images/week04/transform-apply.png)
+
 배울 것
 
 - Transform을 정리한다
@@ -166,6 +168,8 @@
 
 큰 덩어리가 잡힌 상태에서 눈, 패널, 관절 라인을 추가하는 단계예요. Inset과 Boolean을 같이 쓰면 디테일을 빠르게 만들 수 있어요.
 
+![얼굴과 패널 디테일](../../course-site/assets/images/week04/inset-panel-detail.png)
+
 배울 것
 
 - Inset과 Boolean으로 디테일을 추가한다
@@ -179,6 +183,8 @@
 #### 3. Bevel 두 가지 비교
 
 같은 '모서리 정리'라도 손으로 직접 깎는 방법과 Modifier로 전체를 정리하는 방법은 다르게 느껴져요. 둘 다 직접 비교해보는 게 가장 빠릅니다.
+
+![Bevel 두 가지 비교](../../course-site/assets/images/week04/bevel-modifier.png)
 
 배울 것
 
@@ -194,6 +200,8 @@
 
 형태는 괜찮은데 표면이 울퉁불퉁해 보일 때가 있어요. 이럴 때 음영을 정리해주는 흐름을 익혀두면 결과물이 훨씬 단정해져요.
 
+![Weighted Normal과 음영 정리](../../course-site/assets/images/week04/weighted-normal.png)
+
 배울 것
 
 - Weighted Normal의 역할을 이해한다
@@ -207,6 +215,8 @@
 #### 5. Apply 시점과 최종 점검
 
 정리 단계에서 가장 많이 헷갈리는 건 '언제 확정하느냐'예요. 수정 가능성을 남길지, 지금 확정할지를 의식적으로 나눠보면 훨씬 안정적으로 작업할 수 있어요.
+
+![Apply 시점과 최종 점검](../../course-site/assets/images/week04/array-modifier.png)
 
 배울 것
 
