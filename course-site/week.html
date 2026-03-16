@@ -757,6 +757,10 @@
 
     // ─── Student Login Flow ─────────────────────────
     function initStudentLogin() {
+      // TODO: 학번 로그인 기능 비활성화 중 (학생 명단 준비 전)
+      document.getElementById("studentLoginOverlay").classList.add("is-hidden");
+      return;
+
       var sid = getCurrentSid();
       var overlay = document.getElementById("studentLoginOverlay");
       var badge   = document.getElementById("studentBadge");
