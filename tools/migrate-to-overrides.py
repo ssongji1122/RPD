@@ -178,6 +178,30 @@ def build_overrides(weeks: list[dict]) -> dict:
     return overrides
 
 
+NOTION_JSON = ROOT / "course-site" / "data" / "curriculum-notion.json"
+
+
+def build_notion_snapshot(weeks: list[dict]) -> list[dict]:
+    """
+    Build Notion-only data by stripping admin-owned fields from each week.
+    This is the inverse of build_overrides().
+    """
+    import copy
+
+    result = []
+    for week in weeks:
+        w = copy.deepcopy(week)
+        # Remove week-level admin fields
+        for field in WEEK_FIELDS:
+            w.pop(field, None)
+        # Remove step-level admin fields
+        for step in w.get("steps", []):
+            for field in STEP_FIELDS:
+                step.pop(field, None)
+        result.append(w)
+    return result
+
+
 def print_summary(overrides: dict) -> None:
     """Print a human-readable summary of extracted data."""
     weeks_data = overrides.get("weeks", {})
@@ -230,6 +254,13 @@ def main() -> int:
     OVERRIDES_JSON.write_text(output, encoding="utf-8")
     print(f"Written to {OVERRIDES_JSON}")
     print(f"File size: {len(output):,} bytes")
+
+    # Also generate curriculum-notion.json (Notion-only snapshot)
+    notion_data = build_notion_snapshot(weeks)
+    notion_output = json.dumps(notion_data, ensure_ascii=False, indent=2) + "\n"
+    NOTION_JSON.write_text(notion_output, encoding="utf-8")
+    print(f"Written to {NOTION_JSON}")
+    print(f"File size: {len(notion_output):,} bytes")
 
     return 0
 
