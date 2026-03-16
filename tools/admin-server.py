@@ -677,6 +677,11 @@ class AdminHandler(BaseHTTPRequestHandler):
             self._handle_notion_push(week_num)
             return
 
+        # POST /api/notion-push-all
+        if path == "/api/notion-push-all":
+            self._handle_notion_push_all()
+            return
+
         # POST /api/notion-pull/{weekNum}
         notion_pull_match = re.match(r"^/api/notion-pull/(\d+)$", path)
         if notion_pull_match:
@@ -971,6 +976,48 @@ class AdminHandler(BaseHTTPRequestHandler):
             self._send_json(result)
         except Exception as exc:
             self._send_error_json(500, f"Notion sync failed: {exc}")
+
+    def _handle_notion_push_all(self) -> None:
+        """Push all curriculum weeks to Notion."""
+        if not NOTION_TOKEN:
+            self._send_error_json(503, "NOTION_TOKEN not configured")
+            return
+
+        try:
+            data = read_curriculum()
+        except Exception as exc:
+            self._send_error_json(500, f"Read failed: {exc}")
+            return
+
+        try:
+            mapping = load_notion_mapping()
+        except Exception as exc:
+            self._send_error_json(500, f"Mapping load failed: {exc}")
+            return
+        results = []
+        for week in data:
+            week_num = week.get("week")
+            if str(week_num) not in mapping:
+                results.append({
+                    "week": week_num,
+                    "ok": False,
+                    "error": "no mapping",
+                    "title": week.get("title", ""),
+                })
+                continue
+            try:
+                sync_week_to_notion(week)
+                results.append({"week": week_num, "ok": True, "title": week.get("title", "")})
+            except Exception as exc:
+                results.append({
+                    "week": week_num,
+                    "ok": False,
+                    "error": str(exc),
+                    "title": week.get("title", ""),
+                })
+
+        success_count = sum(1 for r in results if r["ok"])
+        self._send_json({"results": results, "success_count": success_count, "total": len(results)})
 
     def _handle_notion_pull(self, week_num: int) -> None:
         """Pull data from Notion and update curriculum-notion.json."""

@@ -5,7 +5,11 @@
 // ============================================================
 
 const SHOWME_REGISTRY = {
+  // ── Week 3: Reference Setup ──
+  "image-reference":        { label: "이미지 레퍼런스 설정",      icon: "🖼️" },
+
   // ── Week 2: Interface & Fundamentals ──
+  "blender-preferences":    { label: "Preferences 설정",        icon: "⚙️" },
   "viewport-navigation":    { label: "화면 조작 원리",          icon: "🧭" },
   "transform-grs":          { label: "G/R/S 변형 이해",         icon: "↔️" },
   "transform-orientation":  { label: "Transform Orientation 이해", icon: "🧭" },
@@ -84,4 +88,6 @@ const SHOWME_REGISTRY = {
 
   // ── Concepts ──
   "origin-vs-3dcursor":     { label: "Origin vs 3D Cursor",    icon: "🎯" },
+  "poly-circle":            { label: "다각형으로 원 만들기",       icon: "⭕" },
+  "box-rounding":           { label: "박스 모서리 라운딩",          icon: "📦" },
 };

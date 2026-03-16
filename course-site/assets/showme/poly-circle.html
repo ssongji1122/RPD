@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — 다각형으로 원 만들기</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Tab Navigation ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+
+/* ── Tab Panels ── */
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+
+/* ── Concept Cards ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card h3 {
+  margin: 0 0 8px; font-size: 1rem;
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.concept-card p {
+  margin: 0; color: var(--muted-strong);
+  font-size: .88rem; line-height: 1.7;
+}
+.concept-card ul {
+  margin: 8px 0 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
+}
+
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: .72rem; font-weight: 600;
+}
+.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: #fbbf24; }
+
+/* ── Keyboard Shortcut ── */
+.kbd {
+  display: inline-block;
+  padding: 3px 8px; border-radius: 6px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  color: var(--key-soft);
+  font-size: .82rem; font-weight: 600;
+  font-family: var(--font);
+}
+
+/* ── Canvas / Demo ── */
+.demo-wrap {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+  margin: 14px 0;
+}
+.demo-wrap canvas {
+  display: block; width: 100%;
+}
+.demo-controls {
+  display: flex; gap: 8px; padding: 12px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.demo-hint {
+  font-size: .78rem; color: var(--muted);
+  text-align: center; padding: 6px 0 0;
+}
+.demo-btn {
+  padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .82rem;
+  cursor: pointer;
+  transition: background .14s, color .14s;
+}
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active {
+  background: rgba(10,132,255,.14);
+  color: var(--key-soft);
+  border-color: rgba(10,132,255,.3);
+}
+
+/* ── Stat Bar ── */
+.stat-bar-wrap {
+  padding: 0 16px 14px;
+}
+.stat-label {
+  font-size: .8rem; color: var(--muted); margin-bottom: 6px;
+}
+.stat-bar-track {
+  height: 8px; border-radius: 999px;
+  background: rgba(255,255,255,.07);
+  overflow: hidden;
+}
+.stat-bar-fill {
+  height: 100%; border-radius: 999px;
+  background: var(--key);
+  transition: width .35s ease;
+}
+.stat-value {
+  font-size: .82rem; color: var(--key-soft); margin-top: 5px;
+}
+
+/* ── Usage Grid ── */
+.usage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.usage-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 16px;
+}
+.usage-card h4 {
+  margin: 0 0 8px; font-size: .92rem;
+  color: var(--key-soft);
+}
+.usage-card ul {
+  margin: 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem;
+  line-height: 1.8;
+}
+
+/* ── Tip Box ── */
+.tip-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(10,132,255,.2);
+  background: rgba(10,132,255,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+}
+.tip-box strong { color: var(--key-soft); }
+
+/* ── Combo Section ── */
+.combo-section {
+  margin-top: 18px;
+}
+.combo-section h4 {
+  margin: 0 0 10px;
+  font-size: .92rem;
+  color: var(--text);
+}
+.combo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.combo-card {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 12px 14px;
+}
+.combo-card .combo-name {
+  font-size: .86rem;
+  font-weight: 600;
+  color: var(--key-soft);
+  margin-bottom: 4px;
+}
+.combo-card .combo-desc {
+  font-size: .8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ── Shortcut Reference ── */
+.shortcut-list {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.shortcut-list h4 {
+  margin: 0 0 10px;
+  font-size: .9rem;
+  color: var(--text);
+}
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: .84rem;
+  color: var(--muted-strong);
+}
+.shortcut-row + .shortcut-row {
+  border-top: 1px solid var(--line);
+}
+.shortcut-keys {
+  flex-shrink: 0;
+}
+.analogy {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(245,158,11,.06);
+  border: 1px solid rgba(245,158,11,.15);
+  font-size: .82rem;
+  color: #fbbf24;
+  font-style: italic;
+}
+
+/* ── Quiz ── */
+.quiz-progress {
+  font-size: .78rem; color: var(--muted);
+  margin-bottom: 12px;
+}
+.quiz-question {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.quiz-question h4 {
+  margin: 0 0 12px; font-size: .94rem;
+}
+.quiz-option {
+  display: block; width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.025);
+  color: var(--text);
+  font: inherit; font-size: .86rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background .14s, border-color .14s;
+}
+.quiz-option:hover {
+  background: rgba(255,255,255,.06);
+  border-color: var(--line-strong);
+}
+.quiz-option.correct {
+  background: rgba(16,185,129,.12);
+  border-color: rgba(16,185,129,.4);
+  color: var(--success-soft);
+}
+.quiz-option.wrong {
+  background: rgba(239,68,68,.1);
+  border-color: rgba(239,68,68,.3);
+  color: #fca5a5;
+}
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback {
+  margin-top: 8px; padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: .84rem;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: #fca5a5; }
+
+.quiz-score {
+  text-align: center; padding: 20px;
+  font-size: 1.1rem; font-weight: 600;
+}
+.quiz-retry {
+  display: block; margin: 12px auto;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--key);
+  background: rgba(10,132,255,.12);
+  color: var(--key-soft);
+  font: inherit; font-size: .88rem;
+  cursor: pointer;
+  transition: background .14s;
+}
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+
+/* ── Official Doc Reference ── */
+.doc-ref {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(10,132,255,.15);
+  background: rgba(10,132,255,.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-ref a {
+  color: var(--key-soft);
+  font-size: .84rem;
+  text-decoration: none;
+  line-height: 1.5;
+}
+.doc-ref a:hover { text-decoration: underline; }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Tab Bar -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+</nav>
+
+<!-- TAB 1: 개념 이해 -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <div class="concept-grid">
+
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">핵심 원리</span> 다각형 → 원</h3>
+      <p>3D에서 진짜 "원"은 없어요. 모든 원형은 꼭짓점이 많은 다각형으로 흉내 낸 것입니다. 꼭짓점이 4개면 사각형, 8개면 8각형, 32개 이상이면 거의 완벽한 원처럼 보입니다.</p>
+      <div class="analogy">픽셀로 그린 원처럼, 3D의 원도 충분히 많은 직선 조각으로 이루어져요</div>
+    </div>
+
+    <div class="concept-card">
+      <h3><span class="badge badge-green">Loop Cut</span> 면 분할의 의미</h3>
+      <p>원통(Cylinder)에 Loop Cut(<span class="kbd">Ctrl</span>+<span class="kbd">R</span>)을 추가하면 가로 방향 면이 더 잘게 나뉩니다. 처음 원통을 만들 때 <strong>꼭짓점 수(Vertices)</strong>를 높게 설정하거나, Subdivision Surface와 함께 쓰면 훨씬 부드러운 원이 됩니다.</p>
+      <div class="analogy">Loop Cut은 "가로줄"을 추가해서 세로 방향 조각의 수를 그대로 유지해요</div>
+    </div>
+
+    <div class="concept-card">
+      <h3><span class="badge badge-amber">R 값</span> Bevel Profile</h3>
+      <p>Bevel 도구(<span class="kbd">Ctrl</span>+<span class="kbd">B</span>)의 <strong>Profile 값(R)</strong>은 베벨된 가장자리가 얼마나 둥근지 결정합니다.</p>
+      <ul>
+        <li><strong>0.0</strong> — 안쪽으로 오목하게</li>
+        <li><strong>0.5</strong> — 평평한 기본값</li>
+        <li><strong>1.0</strong> — 완전 원형 볼록 프로파일</li>
+      </ul>
+      <p style="margin-top:8px;">세그먼트 수(<span class="kbd">S</span> 입력)가 많을수록 R 값의 효과가 더 부드럽게 표현됩니다.</p>
+      <div class="analogy">R 값이 1에 가까울수록 베벨이 파이처럼 부풀어 올라요</div>
+    </div>
+
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">Crease</span> 엣지 날카로움 제어</h3>
+      <p><strong>Crease 값</strong>은 Subdivision Surface 모디파이어와 함께 쓰여, 특정 엣지가 부드러워지지 않도록 "고정"하는 설정입니다.</p>
+      <ul>
+        <li><strong>0.0</strong> — 완전히 부드럽게 (Subdivision의 영향 받음)</li>
+        <li><strong>1.0</strong> — 완전히 날카롭게 (Subdivision이 무시)</li>
+      </ul>
+      <p style="margin-top:8px;">모서리는 부드럽게 만들되, 특정 경계선은 날카롭게 유지하고 싶을 때 사용합니다. 설정은 Edit Mode에서 엣지 선택 후 <strong>Sidebar(N) → Item 탭 → Edge Crease</strong>에서 조절하거나, Shift+E 단축키를 사용합니다.</p>
+      <div class="analogy">Crease = "이 엣지만큼은 부드러워지지 마!" 라고 Subdivision에게 명령하는 것</div>
+    </div>
+
+  </div>
+
+  <div class="shortcut-list">
+    <h4>주요 단축키 / 설정</h4>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">R</span></span>
+      <span>Loop Cut 추가</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys">스크롤 휠 (Loop Cut 중)</span>
+      <span>루프컷 수 조절</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys">Shift+A → Mesh → Circle</span>
+      <span>원 추가 시 꼭짓점 수 직접 지정 가능</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span>+<span class="kbd">B</span> → <span class="kbd">S</span></span>
+      <span>Bevel 후 S 입력으로 세그먼트 수 변경</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span>+<span class="kbd">B</span> → <span class="kbd">P</span></span>
+      <span>Bevel 후 P 입력으로 Profile(R) 값 변경</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Shift</span> + <span class="kbd">E</span></span>
+      <span>선택한 엣지의 Crease 값 설정 (0→날카로움, 1→완전 고정)</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys">N → Item → Edge Crease</span>
+      <span>Sidebar에서 선택 엣지의 Crease 수치 직접 입력</span>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/modeling/meshes/editing/edge/loop_cut_slide.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Loop Cut and Slide
+    </a>
+  </div>
+</section>
+
+<!-- TAB 2: 시각적 비교 -->
+<section class="panel" id="panel-visual" role="tabpanel">
+  <p style="font-size:.84rem; color:var(--muted); margin:0 0 4px;">
+    꼭짓점 수가 많아질수록 점선 원(진짜 수학적 원)에 가까워집니다.
+  </p>
+  <div class="demo-wrap">
+    <canvas id="demoCanvas" width="680" height="300"></canvas>
+    <div class="demo-controls">
+      <button class="demo-btn is-active" data-n="4">4각형</button>
+      <button class="demo-btn" data-n="6">6각형</button>
+      <button class="demo-btn" data-n="8">8각형</button>
+      <button class="demo-btn" data-n="12">12각형</button>
+      <button class="demo-btn" data-n="16">16각형</button>
+      <button class="demo-btn" data-n="32">32각형</button>
+    </div>
+  </div>
+  <div class="stat-bar-wrap">
+    <div class="stat-label">원 면적 대비 커버율 (꼭짓점이 많을수록 100%에 가까워짐)</div>
+    <div class="stat-bar-track">
+      <div class="stat-bar-fill" id="statBarFill" style="width:63.7%"></div>
+    </div>
+    <div class="stat-value" id="statValue">4각형 — 63.7%</div>
+  </div>
+  <p class="demo-hint">버튼을 눌러 꼭짓점 수를 바꿔보세요. 주황 점선이 진짜 원입니다.</p>
+</section>
+
+<!-- TAB 3: 언제 쓰나요? -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>꼭짓점 수를 늘려야 할 때</h4>
+      <ul>
+        <li>부드러운 원통/파이프</li>
+        <li>구(Sphere) 형태 모델링</li>
+        <li>렌더링 결과가 각져 보일 때</li>
+        <li>Bevel로 둥근 모서리 표현 시</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>낮은 꼭짓점 수가 적합할 때</h4>
+      <ul>
+        <li>게임용 로우폴리 모델</li>
+        <li>각진 디자인이 의도인 경우</li>
+        <li>Subdivision Surface로 나중에 부드럽게 할 때</li>
+        <li>초기 블로킹 단계</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>꿀팁:</strong> 원통 추가 시 기본 꼭짓점 수는 32개입니다. 화면 왼쪽 아래 <strong>Add Cylinder 패널</strong>에서 즉시 변경 가능해요. 추가 후에는 변경이 불가능하므로, 처음에 정확히 설정하세요.
+  </div>
+
+  <div class="combo-section">
+    <h4>자주 쓰는 조합</h4>
+    <div class="combo-grid">
+      <div class="combo-card">
+        <div class="combo-name">낮은 N각형 + Subdivision Surface</div>
+        <div class="combo-desc">적은 폴리곤으로 시작해 Subdivision으로 부드럽게 만드는 전통적인 방법. 편집은 단순하게, 결과는 부드럽게.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Loop Cut + Bevel (R=1.0)</div>
+        <div class="combo-desc">Loop Cut으로 지지 엣지를 추가하고, Bevel Profile을 1로 설정해 완전한 원형 단면을 만드는 기법.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">높은 N각형 + Decimate</div>
+        <div class="combo-desc">충분한 꼭짓점으로 원형을 만든 후, 불필요한 폴리곤을 Decimate로 정리하는 방식.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Subdivision + Crease</div>
+        <div class="combo-desc">Subdivision으로 전체를 부드럽게 만들고, 날카롭게 유지할 모서리에만 Crease=1을 적용. 딱딱한 제품 모델링의 핵심 기법.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Ctrl+B 베벨 + S 세그먼트</div>
+        <div class="combo-desc">모서리를 베벨할 때 S로 세그먼트 수를 늘리면 자연스러운 둥근 모서리가 완성됩니다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/modeling/meshes/editing/edge/bevel.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Bevel (Profile R 값 포함)
+    </a>
+  </div>
+  <div class="doc-ref" style="margin-top:8px;">
+    <a href="https://docs.blender.org/manual/en/latest/modeling/meshes/editing/edge/edge_data.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Edge Crease (Subdivision Surface와 함께)
+    </a>
+  </div>
+</section>
+
+<!-- TAB 4: 퀴즈 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+// ── Tab Switching ──────────────────────────────
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(t) {
+      t.classList.remove("is-active");
+      t.setAttribute("aria-selected", "false");
+    });
+    document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("is-active"); });
+    tab.classList.add("is-active");
+    tab.setAttribute("aria-selected", "true");
+    document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+  });
+});
+
+// ── Quiz Engine ────────────────────────────────
+function initQuiz(questions) {
+  var container = document.getElementById("quizArea");
+  var score = 0, answered = 0;
+  var scoreDiv = null;
+
+  var progress = document.createElement("div");
+  progress.className = "quiz-progress";
+  progress.textContent = "문제 0 / " + questions.length + " · 점수 0점";
+  container.appendChild(progress);
+
+  questions.forEach(function(q, qi) {
+    var div = document.createElement("div");
+    div.className = "quiz-question";
+
+    var heading = document.createElement("h4");
+    heading.textContent = "Q" + (qi + 1) + ". " + q.question;
+    div.appendChild(heading);
+
+    var fb = document.createElement("div");
+    fb.className = "quiz-feedback";
+
+    q.options.forEach(function(opt, oi) {
+      var btn = document.createElement("button");
+      btn.className = "quiz-option";
+      btn.textContent = opt;
+      btn.addEventListener("click", function() {
+        if (btn.disabled) return;
+        div.querySelectorAll(".quiz-option").forEach(function(b) { b.disabled = true; });
+        answered++;
+        if (oi === q.answer) {
+          btn.classList.add("correct");
+          fb.className = "quiz-feedback show correct-fb";
+          fb.textContent = "✅ " + q.explanation;
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
+          fb.className = "quiz-feedback show wrong-fb";
+          fb.textContent = "❌ " + q.explanation;
+
+          var retryBtn = document.createElement("button");
+          retryBtn.className = "quiz-retry";
+          retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
+          retryBtn.textContent = "다시 풀기";
+          retryBtn.addEventListener("click", function() {
+            answered--;
+            div.querySelectorAll(".quiz-option").forEach(function(b) {
+              b.disabled = false;
+              b.classList.remove("wrong", "correct");
+            });
+            fb.className = "quiz-feedback";
+            fb.textContent = "";
+            retryBtn.remove();
+            if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+            progress.textContent = "문제 " + answered + " / " + questions.length + " · 점수 " + score + "점";
+          });
+          fb.appendChild(retryBtn);
+        }
+        progress.textContent = "문제 " + answered + " / " + questions.length + " · 점수 " + score + "점";
+        if (answered === questions.length) showScore();
+      });
+      div.appendChild(btn);
+    });
+
+    div.appendChild(fb);
+    container.appendChild(div);
+  });
+
+  function showScore() {
+    if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+    scoreDiv = document.createElement("div");
+    scoreDiv.className = "quiz-score";
+
+    var emoji = document.createElement("div");
+    emoji.style.cssText = "font-size:36px;margin-bottom:8px";
+    emoji.textContent = score === questions.length ? "🎉" : score >= Math.ceil(questions.length / 2) ? "👍" : "📚";
+    scoreDiv.appendChild(emoji);
+
+    var result = document.createElement("div");
+    result.style.cssText = "font-size:18px;font-weight:500;margin-bottom:6px";
+    result.textContent = score + " / " + questions.length + " 정답";
+    scoreDiv.appendChild(result);
+
+    var msg = document.createElement("div");
+    msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
+    msg.textContent = score === questions.length ? "완벽합니다!" : "조금 더 연습하면 완벽해질 거예요!";
+    scoreDiv.appendChild(msg);
+
+    var saveBtn = document.createElement("button");
+    saveBtn.className = "quiz-retry";
+    saveBtn.style.cssText = "background:rgba(10,132,255,.18);border-color:var(--key);margin-bottom:8px";
+    saveBtn.textContent = "기록 저장하기";
+    saveBtn.addEventListener("click", function() {
+      try {
+        var wid = new URLSearchParams(location.search).get("wid")
+               || location.pathname.split("/").pop().replace(".html", "");
+        window.parent.postMessage({
+          type: "showme-quiz-complete",
+          widgetId: wid,
+          score: score,
+          total: questions.length,
+          pass: score >= Math.ceil(questions.length * 0.75)
+        }, "*");
+      } catch(e) {}
+      saveBtn.textContent = "저장 완료!";
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = ".5";
+    });
+    scoreDiv.appendChild(saveBtn);
+
+    var retry = document.createElement("button");
+    retry.className = "quiz-retry";
+    retry.textContent = "처음부터 다시";
+    retry.addEventListener("click", function() { location.reload(); });
+    scoreDiv.appendChild(retry);
+
+    container.appendChild(scoreDiv);
+  }
+}
+
+// ── N각형 → 원 Demo ────────────────────────────
+(function() {
+  var canvas = document.getElementById("demoCanvas");
+  if (!canvas) return;
+  var ctx = canvas.getContext("2d");
+  var currentN = 4;
+
+  // Coverage ratio: area of N-gon / area of circumscribed circle
+  // = (N * sin(2π/N)) / (2π)
+  function coverageRatio(n) {
+    return (n * Math.sin(2 * Math.PI / n)) / (2 * Math.PI);
+  }
+
+  function draw(n) {
+    var w = canvas.width;
+    var h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    // Background
+    ctx.fillStyle = "#17181a";
+    ctx.fillRect(0, 0, w, h);
+
+    // Grid (subtle)
+    ctx.strokeStyle = "rgba(255,255,255,.04)";
+    ctx.lineWidth = 1;
+    var step = 40;
+    for (var gx = 0; gx < w; gx += step) {
+      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
+    }
+    for (var gy = 0; gy < h; gy += step) {
+      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
+    }
+
+    // Layout: left = single big N-gon | right = comparison table
+    var cx = w * 0.35;
+    var cy = h / 2;
+    var r = Math.min(cx, cy) * 0.78;
+
+    // True circle (dashed, reference)
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(245,158,11,.6)";
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([6, 5]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // N-gon fill
+    ctx.beginPath();
+    for (var i = 0; i < n; i++) {
+      var angle = (i / n) * Math.PI * 2 - Math.PI / 2;
+      var px = cx + r * Math.cos(angle);
+      var py = cy + r * Math.sin(angle);
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.fillStyle = "rgba(10,132,255,.18)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(10,132,255,.85)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Vertices dots
+    for (var j = 0; j < n; j++) {
+      var va = (j / n) * Math.PI * 2 - Math.PI / 2;
+      var vx = cx + r * Math.cos(va);
+      var vy = cy + r * Math.sin(va);
+      ctx.beginPath();
+      ctx.arc(vx, vy, 4, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(10,132,255,.9)";
+      ctx.fill();
+    }
+
+    // Center dot
+    ctx.beginPath();
+    ctx.arc(cx, cy, 3, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(255,255,255,.3)";
+    ctx.fill();
+
+    // Label — polygon name
+    ctx.fillStyle = "rgba(10,132,255,.9)";
+    ctx.font = "bold 13px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(n + "각형 (" + n + "개 꼭짓점)", cx, h - 16);
+
+    // Label — true circle
+    ctx.fillStyle = "rgba(245,158,11,.7)";
+    ctx.font = "11px sans-serif";
+    ctx.fillText("주황 점선 = 진짜 원", cx, h - 2);
+
+    // Right side: step-up comparison (tiny polygons in a row)
+    var steps = [4, 6, 8, 12, 16, 32];
+    var rightX = w * 0.58;
+    var rightW = w - rightX - 16;
+    var stepH = (h - 32) / steps.length;
+    var smallR = Math.min(stepH * 0.38, rightW * 0.12);
+
+    ctx.fillStyle = "rgba(255,255,255,.06)";
+    ctx.fillRect(rightX - 8, 16, rightW + 16, h - 32);
+
+    ctx.fillStyle = "rgba(255,255,255,.25)";
+    ctx.font = "bold 10px sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("꼭짓점 수 비교", rightX, 28);
+
+    steps.forEach(function(sn, si) {
+      var scx = rightX + smallR + 14;
+      var scy = 40 + si * stepH + stepH / 2;
+      var sr = smallR;
+
+      // highlight current
+      var isCurrent = (sn === n);
+
+      // draw true circle outline
+      ctx.beginPath();
+      ctx.arc(scx, scy, sr, 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(245,158,11,.3)";
+      ctx.lineWidth = 1;
+      ctx.setLineDash([3, 3]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // draw N-gon
+      ctx.beginPath();
+      for (var k = 0; k < sn; k++) {
+        var sa = (k / sn) * Math.PI * 2 - Math.PI / 2;
+        var spx = scx + sr * Math.cos(sa);
+        var spy = scy + sr * Math.sin(sa);
+        if (k === 0) ctx.moveTo(spx, spy);
+        else ctx.lineTo(spx, spy);
+      }
+      ctx.closePath();
+      ctx.fillStyle = isCurrent ? "rgba(10,132,255,.3)" : "rgba(10,132,255,.1)";
+      ctx.fill();
+      ctx.strokeStyle = isCurrent ? "rgba(10,132,255,.9)" : "rgba(10,132,255,.35)";
+      ctx.lineWidth = isCurrent ? 2 : 1;
+      ctx.stroke();
+
+      // label
+      var ratio = coverageRatio(sn);
+      var pct = (ratio * 100).toFixed(1);
+      ctx.fillStyle = isCurrent ? "var(--key-soft)" : "rgba(255,255,255,.4)";
+      ctx.fillStyle = isCurrent ? "#8ec5ff" : "rgba(255,255,255,.4)";
+      ctx.font = isCurrent ? "bold 11px sans-serif" : "10px sans-serif";
+      ctx.textAlign = "left";
+      ctx.fillText(sn + "각형  " + pct + "%", scx + sr + 10, scy + 4);
+    });
+  }
+
+  function updateStat(n) {
+    var ratio = coverageRatio(n);
+    var pct = (ratio * 100).toFixed(1);
+    var fill = document.getElementById("statBarFill");
+    var val = document.getElementById("statValue");
+    if (fill) fill.style.width = pct + "%";
+    if (val) val.textContent = n + "각형 — " + pct + "%";
+  }
+
+  // Button wiring
+  document.querySelectorAll(".demo-btn[data-n]").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      document.querySelectorAll(".demo-btn[data-n]").forEach(function(b) {
+        b.classList.remove("is-active");
+      });
+      btn.classList.add("is-active");
+      currentN = parseInt(btn.dataset.n, 10);
+      draw(currentN);
+      updateStat(currentN);
+    });
+    btn.addEventListener("touchend", function(e) {
+      e.preventDefault();
+      btn.click();
+    });
+  });
+
+  draw(currentN);
+  updateStat(currentN);
+})();
+
+// ── Quiz Data ──────────────────────────────────
+initQuiz([
+  {
+    question: "3D 소프트웨어에서 '원'은 어떻게 만들어지나요?",
+    options: [
+      "수학적으로 완벽한 원이 렌더링된다",
+      "꼭짓점이 많은 다각형으로 원을 흉내 낸다",
+      "곡선 데이터를 직접 저장한다",
+      "픽셀 단위로 원을 저장한다"
+    ],
+    answer: 1,
+    explanation: "3D 메시에서 원은 꼭짓점이 많은 다각형(N각형)으로 근사합니다. 꼭짓점이 많을수록 진짜 원에 가까워집니다."
+  },
+  {
+    question: "Blender에서 원통을 추가할 때 꼭짓점 수를 변경하는 방법은?",
+    options: [
+      "Ctrl+R로 루프컷 추가",
+      "추가 직후 왼쪽 아래 'Add Cylinder' 패널에서 Vertices 변경",
+      "Properties 패널의 Geometry 탭",
+      "Object Mode에서 N 패널 수정"
+    ],
+    answer: 1,
+    explanation: "Shift+A로 원통을 추가한 직후, 화면 왼쪽 아래 'Last Operator' 패널에서 꼭짓점 수를 변경할 수 있습니다. 이 패널은 추가 직후에만 나타납니다."
+  },
+  {
+    question: "Bevel 도구에서 Profile 값(R)을 1.0으로 설정하면?",
+    options: [
+      "베벨이 평평해진다",
+      "베벨이 안쪽으로 오목해진다",
+      "베벨이 완전한 원형 볼록 단면이 된다",
+      "베벨이 삭제된다"
+    ],
+    answer: 2,
+    explanation: "Profile(R) 값 1.0은 베벨 단면이 완전한 원형 볼록 프로파일이 됩니다. 세그먼트 수가 많을수록 더 부드러운 원형이 표현됩니다."
+  },
+  {
+    question: "4각형(꼭짓점 4개)은 같은 반지름의 원 면적 대비 약 몇 %를 커버하나요?",
+    options: [
+      "약 50%",
+      "약 64%",
+      "약 80%",
+      "약 95%"
+    ],
+    answer: 1,
+    explanation: "4각형(정사각형)의 면적은 내접원 면적의 약 63.7%입니다. 꼭짓점이 늘어날수록 커버율이 높아져 32각형은 약 99.4%에 달합니다."
+  },
+  {
+    question: "Bevel 후 세그먼트 수를 늘리는 단축키는?",
+    options: [
+      "Ctrl+B 후 N 입력",
+      "Ctrl+B 후 S 입력",
+      "Ctrl+B 후 R 입력",
+      "Ctrl+B 후 Tab 키"
+    ],
+    answer: 1,
+    explanation: "Ctrl+B로 베벨 시작 후 S를 누르면 세그먼트 수를 입력할 수 있습니다. 세그먼트가 많을수록 베벨이 더 부드러운 곡면으로 표현됩니다."
+  }
+]);
+</script>
+
+</body>
+</html>

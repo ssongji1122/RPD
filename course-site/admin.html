@@ -605,6 +605,7 @@
           </div>
           <div class="notion-sync-group" id="notionGroup" style="display:none">
             <button class="btn btn-ghost" id="notionPullBtn" type="button" title="Notion에서 동기화">&#128260; 지금 동기화</button>
+            <button class="btn btn-ghost" id="notionPushAllBtn" type="button" title="curriculum.js → Notion 전체 push">&#128640; 전체 Push</button>
           </div>
           <!-- Auto-sync toggle removed: Notion is now source of truth -->
           <button class="btn btn-ghost" id="previewBtn" type="button">미리보기 &#8599;</button>
@@ -644,6 +645,15 @@
       <div class="auth-error" id="authError"></div>
       <input class="field-input" id="authInput" type="password" placeholder="비밀번호 입력" autocomplete="off" />
       <button class="btn btn-primary" id="authSubmit" type="button" style="width:100%;justify-content:center;">인증</button>
+    </div>
+  </div>
+
+  <!-- Notion Push All 결과 모달 -->
+  <div class="auth-overlay" id="pushAllOverlay" style="display:none">
+    <div class="auth-card" style="max-width:480px;width:90%">
+      <h2>Notion 전체 Push 결과</h2>
+      <div id="pushAllLog" style="font-size:.85rem;line-height:1.8;max-height:320px;overflow-y:auto;margin:12px 0;font-family:monospace"></div>
+      <button class="btn btn-primary" id="pushAllCloseBtn" type="button" style="width:100%;justify-content:center;">닫기</button>
     </div>
   </div>
 
@@ -689,6 +699,10 @@
     var sidebarOverlay = document.getElementById("sidebarOverlay");
     var notionGroup    = document.getElementById("notionGroup");
     var notionPullBtn  = document.getElementById("notionPullBtn");
+    var notionPushAllBtn = document.getElementById("notionPushAllBtn");
+    var pushAllOverlay   = document.getElementById("pushAllOverlay");
+    var pushAllLog       = document.getElementById("pushAllLog");
+    var pushAllCloseBtn  = document.getElementById("pushAllCloseBtn");
     // Sync review and auto-sync removed (Notion is now source of truth)
 
     // ─── Helpers ─────────────────────────────────────────
@@ -1655,6 +1669,51 @@
       } finally {
         notionPullBtn.disabled = false;
         notionPullBtn.textContent = "\uD83D\uDD04 \uC9C0\uAE08 \uB3D9\uAE30\uD654";
+      }
+    });
+
+    notionPushAllBtn.addEventListener("click", async function() {
+      pushAllLog.innerHTML = "<span style='color:#aaa'>전체 push 중...</span>";
+      pushAllOverlay.style.display = "flex";
+      notionPushAllBtn.disabled = true;
+      notionPushAllBtn.textContent = "\u23F3 Push \uc911...";
+
+      try {
+        var res = await fetch("/api/notion-push-all", {
+          method: "POST",
+          headers: apiHeaders(),
+        });
+        var data = await res.json();
+
+        if (!res.ok) {
+          pushAllLog.innerHTML = "<span style='color:#f66'>오류: " + esc(data.error || "Unknown") + "</span>";
+          return;
+        }
+
+        var lines = data.results.map(function(r) {
+          var icon = r.ok ? "✓" : "✗";
+          var color = r.ok ? "#6f6" : "#f66";
+          var detail = r.ok ? "" : " — " + esc(r.error || "");
+          return "<span style='color:" + color + "'>" + icon + " Week " +
+            esc(String(r.week).padStart(2, "0")) + ": " + esc(r.title) + detail + "</span>";
+        });
+        lines.push("");
+        lines.push("<strong>완료: " + esc(String(data.success_count)) + "/" + esc(String(data.total)) + " 성공</strong>");
+        pushAllLog.innerHTML = lines.join("<br>");
+      } catch(e) {
+        pushAllLog.innerHTML = "<span style='color:#f66'>연결 실패: " + esc(e.message) + "</span>";
+      } finally {
+        notionPushAllBtn.disabled = false;
+        notionPushAllBtn.textContent = "\uD83D\uDE80 \uc804\uccb4 Push";
+      }
+    });
+
+    pushAllCloseBtn.addEventListener("click", function() {
+      pushAllOverlay.style.display = "none";
+    });
+    document.addEventListener("keydown", function(e) {
+      if (e.key === "Escape" && pushAllOverlay.style.display !== "none") {
+        pushAllOverlay.style.display = "none";
       }
     });
 
