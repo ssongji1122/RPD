@@ -373,77 +373,75 @@ const CURRICULUM = [
     "subtitle": "기본형 · 대칭 · 곡면 · 반복",
     "duration": "~3시간",
     "topics": [
+      "Reference Image로 작업 준비",
       "Edit Mode: Extrude / Loop Cut / Inset / Bevel",
-      "Mirror — 대칭 모델링",
-      "Subdivision Surface / Solidify — 곡면과 두께",
-      "Array / Boolean — 반복과 구멍",
-      "Bevel Modifier / Weighted Normal — 마무리",
-      "Modifier Stack 순서와 Apply 타이밍"
+      "Mirror Modifier",
+      "Subdivision Surface",
+      "Solidify Modifier",
+      "Array Modifier",
+      "Boolean Modifier",
+      "Bevel Modifier + Weighted Normal",
+      "Modifier Stack 순서와 Apply"
     ],
     "steps": [
       {
-        "title": "기본형 만들기",
-        "copy": "레고 블록을 직접 깎아 원하는 형태를 만들어요. Extrude로 덩어리를 뽑고, Loop Cut으로 나누고, Inset과 Bevel로 다듬는 게 기본 흐름이에요.",
+        "title": "Reference Image + Edit Mode",
+        "copy": "모델링 전에 참고 이미지를 깔아두면 형태 잡기가 훨씬 쉬워요. Shift+A → Image → Reference로 불러온 다음, Tab으로 Edit Mode에 들어가서 Extrude, Loop Cut, Inset, Bevel로 기본형을 만들어요.",
         "goal": [
-          "Edit Mode 도구 흐름을 안다",
-          "기본형을 직접 만든다"
+          "Reference Image를 뷰포트에 배치한다",
+          "Edit Mode 도구 4가지를 실제로 써본다"
         ],
         "tasks": [
           {
             "id": "w3-t1",
-            "label": "Tab으로 Edit Mode 진입",
-            "detail": "Object Mode ↔ Edit Mode 전환"
+            "label": "Shift+A → Image → Reference로 참고 이미지 불러오기",
+            "detail": "Data 탭에서 Opacity 조절"
           },
           {
             "id": "w3-t2",
-            "label": "Extrude로 팔이나 다리 위치 뽑기",
-            "detail": "E로 면을 돌출"
+            "label": "Extrude (E)로 덩어리 뽑기",
+            "detail": "면 선택 후 E → G+축 고정으로 방향 제어"
           },
           {
             "id": "w3-t3",
-            "label": "Loop Cut으로 관절 위치 나누기",
-            "detail": "Ctrl+R로 분할선 추가"
+            "label": "Loop Cut (Ctrl+R)으로 분할선 추가하기",
+            "detail": "스크롤로 루프 개수 조절"
           },
           {
             "id": "w3-t4",
-            "label": "Inset과 Bevel로 패널과 모서리 다듬기",
-            "detail": "I, Ctrl+B 사용"
+            "label": "Inset (I)과 Bevel (Ctrl+B)로 패널·모서리 다듬기",
+            "detail": "Bevel은 스크롤로 세그먼트 추가"
           }
         ],
         "image": "assets/images/week03/base-form.png",
         "done": [
-          "몸통과 주요 덩어리가 잡혔다",
-          "도구를 바꿔가며 형태를 만들 수 있다"
+          "Reference Image가 뷰포트에 깔려 있다",
+          "기본 형태가 잡혔다"
         ],
         "showme": "edit-mode-tools",
         "link": "https://docs.blender.org/manual/en/latest/modeling/meshes/tools/extrude_region.html"
       },
       {
         "title": "Mirror Modifier",
-        "copy": "거울 앞에 서면 반대편이 자동으로 따라오죠? Mirror가 그거예요. 한쪽만 만들면 작업량이 반으로 줄어요.",
+        "copy": "X축을 기준으로 반쪽을 대칭 복사해요. 한쪽만 만들면 작업량이 반으로 줄어요. Clipping을 켜면 중앙 정점이 넘어가지 않게 붙잡아줘요.",
         "goal": [
-          "Mirror 역할과 기본 설정을 이해한다"
+          "Mirror를 추가하고 Clipping을 설정한다"
         ],
         "tasks": [
           {
             "id": "w3-t5",
-            "label": "절반을 지우고 Mirror 추가하기",
-            "detail": "Add Modifier → Mirror"
+            "label": "절반 지우고 Add Modifier → Mirror 추가하기",
+            "detail": "Axis: X 확인"
           },
           {
             "id": "w3-t6",
-            "label": "Clipping 켜기",
+            "label": "Clipping 옵션 켜기",
             "detail": "중심선 버텍스가 넘어가지 않게 고정"
           },
           {
             "id": "w3-t7",
-            "label": "한쪽만 Extrude해서 자동 대칭 확인",
-            "detail": ""
-          },
-          {
-            "id": "w3-t8",
-            "label": "중심선이 벌어지면 S + X + 0 써보기",
-            "detail": "X축 0으로 다시 정렬"
+            "label": "한쪽만 Extrude해서 대칭 반영 확인하기",
+            "detail": "중심선 벌어지면 S+X+0으로 정렬"
           }
         ],
         "image": "assets/images/week03/mirror-modifier.png",
@@ -455,110 +453,204 @@ const CURRICULUM = [
         "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html"
       },
       {
-        "title": "곡면과 두께",
-        "copy": "각진 레고 블록에 사포를 대면 모서리가 둥글어지듯이, Subdivision은 표면을 부드럽게 만들어요. Solidify는 색종이를 두꺼운 판지로 바꾸는 거예요.",
+        "title": "Subdivision Surface",
+        "copy": "면을 잘게 쪼개서 표면을 둥글고 매끄럽게 만들어요. 단, 전부 뭉개지는 걸 막으려면 날카운 모서리 옆에 Support Loop (Ctrl+R)를 추가하거나 Edge Crease (Shift+E)를 줘야 해요.",
         "goal": [
-          "Subdivision과 Solidify를 구분해 쓴다",
-          "곡면과 두께를 조절한다"
+          "Subdivision Level을 조절한다",
+          "Support Loop과 Edge Crease로 형태를 보존한다"
         ],
         "tasks": [
           {
+            "id": "w3-t8",
+            "label": "Subdivision Surface 추가하고 Ctrl+1/2/3으로 레벨 비교하기",
+            "detail": "Viewport와 Render 레벨 차이 확인"
+          },
+          {
             "id": "w3-t9",
-            "label": "Subdivision Surface 추가하기",
-            "detail": "Ctrl+1/2/3으로 레벨 바꿔보기"
+            "label": "날카운 모서리 옆에 Support Loop 추가하기",
+            "detail": "Ctrl+R로 모서리 근처에 루프 2개 — 형태가 살아나는 것 확인"
           },
           {
             "id": "w3-t10",
-            "label": "Shift+E로 날카로운 모서리 남기기",
-            "detail": "Edge Crease"
-          },
-          {
-            "id": "w3-t11",
-            "label": "Plane에 Solidify로 두께 주기",
-            "detail": "Thickness와 Offset 비교"
+            "label": "Shift+E로 Edge Crease 적용 후 Support Loop와 비교하기",
+            "detail": "두 방법의 차이를 눈으로 확인"
           }
         ],
         "image": "assets/images/week03/subdivision-surface.png",
         "done": [
-          "큰 덩어리가 부드러워졌다",
-          "패널에 두께가 생겼다"
+          "표면이 부드러워졌다",
+          "날카운 모서리가 유지되는 방법을 2가지 써봤다"
         ],
-        "showme": [
-          "subdivision-surface",
-          "solidify-modifier"
-        ],
+        "showme": "subdivision-surface",
         "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/subdivision_surface.html"
       },
       {
-        "title": "반복과 구멍",
-        "copy": "복사기로 같은 부품을 줄줄이 찍어내는 게 Array, 쿠키 틀로 반죽에서 모양을 빼내는 게 Boolean이에요. 디테일을 빠르게 늘릴 때 유용해요.",
+        "title": "Solidify Modifier",
+        "copy": "종이처럼 얇은 면(Plane)에 두께를 줘서 판 형태로 만들어요. 로봇의 장갑판이나 외장 패널을 만들 때 유용해요.",
         "goal": [
-          "Array와 Boolean을 구분해 쓴다"
+          "Solidify로 면에 두께를 준다"
         ],
         "tasks": [
           {
-            "id": "w3-t12",
-            "label": "Array로 같은 부품 5개 반복하기",
-            "detail": "Count와 Offset 바꿔보기"
+            "id": "w3-t11",
+            "label": "Plane에 Solidify 추가하고 Thickness 조절하기",
+            "detail": "양수/음수로 방향 변화 확인"
           },
           {
+            "id": "w3-t12",
+            "label": "Offset 값을 -1 / 0 / 1로 바꿔보기",
+            "detail": "두께가 안쪽/양쪽/바깥쪽으로 붙는 차이 확인"
+          }
+        ],
+        "image": "assets/images/week03/subdivision-surface.png",
+        "done": [
+          "Plane이 두께 있는 판으로 바뀌었다"
+        ],
+        "showme": "solidify-modifier",
+        "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/solidify.html"
+      },
+      {
+        "title": "Array Modifier",
+        "copy": "같은 부품을 일정 간격으로 복제해요. Count로 개수, Offset으로 간격을 조절하면 반복 파츠를 한 번에 만들 수 있어요.",
+        "goal": [
+          "Array로 반복 구조를 만든다"
+        ],
+        "tasks": [
+          {
             "id": "w3-t13",
-            "label": "Boolean Difference로 홈 하나 만들기",
-            "detail": "커터 오브젝트를 겹치게 두기"
+            "label": "Array 추가하고 Count를 5로 설정하기",
+            "detail": "Relative Offset으로 간격 조절"
           },
           {
             "id": "w3-t14",
-            "label": "Solidify나 Array를 기존 형태에 추가해보기",
-            "detail": "반복이나 패널 중 하나 더 실험"
+            "label": "Constant Offset으로 X/Y/Z 방향 바꿔보기",
+            "detail": "Relative vs Constant 차이 비교"
           }
         ],
         "image": "assets/images/week03/array-boolean-detail.png",
         "done": [
-          "반복 구조가 생겼다",
-          "구멍이나 홈이 하나 이상 만들어졌다"
+          "같은 형태가 일정 간격으로 반복된다"
         ],
-        "showme": [
-          "array-modifier",
-          "boolean-modifier"
-        ],
-        "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/booleans.html"
+        "showme": "array-modifier",
+        "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/array.html"
       },
       {
-        "title": "마무리 손질",
-        "copy": "Ctrl+B가 '이 모서리 하나만 다듬기'라면, Bevel Modifier는 '전체 모서리를 한 번에 정리'예요. Weighted Normal은 형태가 아니라 빛이 닿는 느낌(음영)을 정리해줘요.",
+        "title": "Boolean Modifier",
+        "copy": "두 오브젝트가 겹치는 부분을 기준으로 자르거나 합쳐요. Difference는 구멍을 뚫고, Union은 합치고, Intersect는 겹치는 부분만 남겨요.",
         "goal": [
-          "필수 추가 Modifier를 안다"
+          "Boolean Difference로 구멍을 뚫는다"
         ],
         "tasks": [
           {
             "id": "w3-t15",
-            "label": "Bevel Modifier로 모서리 둥글게 만들기",
-            "detail": "전체적인 하드서피스 느낌 확인"
+            "label": "커터 오브젝트를 겹치게 두고 Boolean Difference 추가하기",
+            "detail": "Solver: Exact 선택"
           },
           {
             "id": "w3-t16",
-            "label": "Weighted Normal로 음영 정리하기",
-            "detail": "Bevel과 같이 넣으면 차이가 잘 보임"
-          },
+            "label": "커터를 이동해서 구멍 위치 조절하기",
+            "detail": "커터가 완전히 관통해야 깔끔하게 잘림"
+          }
+        ],
+        "image": "assets/images/week03/array-boolean-detail.png",
+        "done": [
+          "메쉬에 구멍이나 홈이 만들어졌다"
+        ],
+        "showme": "boolean-modifier",
+        "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/booleans.html"
+      },
+      {
+        "title": "Bevel Modifier",
+        "copy": "전체 모서리를 한꺼번에 둥글게 깎아줘요. Ctrl+B가 '모서리 하나씩 수동 다듬기'라면, Bevel Modifier는 '전체 자동 정리'예요.",
+        "goal": [
+          "Bevel Modifier를 추가하고 Amount/Segments를 조절한다"
+        ],
+        "tasks": [
           {
             "id": "w3-t17",
-            "label": "Ctrl+B와 Bevel Modifier 차이 보기",
-            "detail": "부분 수정과 전체 정리 흐름 비교"
+            "label": "Bevel Modifier 추가하고 Amount와 Segments 조절하기",
+            "detail": "Segments가 높을수록 부드러움"
+          },
+          {
+            "id": "w3-t18",
+            "label": "Limit Method를 Angle로 바꿔서 날카운 모서리만 적용하기",
+            "detail": "30°~60° 사이 실험"
           }
         ],
         "image": "assets/images/week03/bevel-weighted-normal.png",
         "done": [
-          "Bevel Modifier나 Weighted Normal을 확인했다",
-          "언제 쓰는지 말할 수 있다"
+          "전체 모서리가 자연스럽게 둥글어졌다"
         ],
         "showme": "bevel-modifier",
         "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/bevel.html"
+      },
+      {
+        "title": "Weighted Normal",
+        "copy": "형태는 바꾸지 않고, 빛이 닿는 느낌(음영)만 정리해줘요. Bevel Modifier 바로 아래에 넣으면 하드서피스가 훨씬 깔끔해져요.",
+        "goal": [
+          "Weighted Normal을 추가해서 음영 차이를 확인한다"
+        ],
+        "tasks": [
+          {
+            "id": "w3-t19",
+            "label": "Weighted Normal 추가 전/후 음영 비교하기",
+            "detail": "Bevel Modifier 아래에 배치"
+          },
+          {
+            "id": "w3-t20",
+            "label": "Face Strength Mode 켜보기",
+            "detail": "Keep Sharp와 함께 쓰면 효과가 더 잘 보임"
+          }
+        ],
+        "image": "assets/images/week03/bevel-weighted-normal.png",
+        "done": [
+          "음영이 깔끔하게 정리됐다"
+        ],
+        "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/modify/weighted_normal.html"
+      },
+      {
+        "title": "Modifier Stack 정리",
+        "copy": "Modifier는 위에서 아래로 순서대로 적용돼요. Mirror → Subdivision → Bevel 순서가 바뀌면 결과도 달라져요. Apply는 '되돌릴 수 없는 확정'이라 마지막에만 써요.",
+        "goal": [
+          "Modifier 순서가 결과에 미치는 영향을 이해한다",
+          "Apply 타이밍을 안다"
+        ],
+        "tasks": [
+          {
+            "id": "w3-t21",
+            "label": "Modifier 순서를 드래그로 바꿔보고 결과 차이 확인하기",
+            "detail": "Mirror ↔ Subdivision 위치 교환"
+          },
+          {
+            "id": "w3-t22",
+            "label": "Apply 전에 Ctrl+A로 Transform 정리하기",
+            "detail": "Scale이 1이 아니면 Modifier 결과가 달라짐"
+          }
+        ],
+        "image": "assets/images/week03/bevel-weighted-normal.png",
+        "done": [
+          "순서를 바꿨을 때 결과가 달라지는 것을 확인했다",
+          "Apply는 마지막에만 하는 이유를 안다"
+        ],
+        "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/introduction.html"
       }
     ],
     "shortcuts": [
       {
+        "keys": "Shift + A",
+        "action": "Add 메뉴 (Image → Reference로 참고 이미지 추가)"
+      },
+      {
+        "keys": "1 / 2 / 3",
+        "action": "Vertex / Edge / Face 선택 모드 전환"
+      },
+      {
         "keys": "E",
         "action": "Extrude (면/선 돌출)"
+      },
+      {
+        "keys": "Alt + E",
+        "action": "Extrude Along Normals (면 방향으로 돌출)"
       },
       {
         "keys": "Ctrl + R",
@@ -602,11 +694,13 @@ const CURRICULUM = [
     },
     "mistakes": [
       "중심선이 벌어짐 → Mirror의 Clipping 확인",
+      "Subdivision 추가했더니 형태가 다 뭉개짐 → 날카운 모서리 옆에 Support Loop 추가 (Ctrl+R)",
       "너무 둥글어짐 → Subdivision Level 낮추고 Shift+E 써보기",
       "두께나 간격이 이상함 → Ctrl+A로 Scale 먼저 정리",
       "Modifier를 너무 일찍 Apply함 → Apply는 마지막에만",
-      "Boolean이 이상함 → 커터가 실제로 겹치는지 확인",
-      "음영이 지저분함 → Weighted Normal 추가해보기"
+      "Boolean이 이상함 → 커터가 실제로 겹치는지 확인, Exact 모드 시도",
+      "음영이 지저분함 → Weighted Normal 추가해보기",
+      "Mirror 순서가 이상함 → Mirror는 스택 맨 위 (Subdivision 아래)"
     ],
     "docs": [
       {
@@ -640,6 +734,10 @@ const CURRICULUM = [
       {
         "title": "Simple Deform",
         "url": "https://docs.blender.org/manual/en/latest/modeling/modifiers/deform/simple_deform.html"
+      },
+      {
+        "title": "Skin Modifier",
+        "url": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/skin.html"
       },
       {
         "title": "Decimate",
@@ -686,6 +784,10 @@ const CURRICULUM = [
       {
         "title": "반복 파츠 만들기",
         "hint": "Cube 또는 Cylinder → Array로 6~10개 반복"
+      },
+      {
+        "title": "Skin Modifier로 손가락 만들기",
+        "hint": "점과 선만으로 뼈대를 만들고 Skin으로 두께 추가 → Ctrl+A로 각 정점 굵기 조절"
       },
       {
         "title": "하드서피스 음영 정리",
