@@ -30,6 +30,7 @@ from urllib.parse import unquote
 from notion_api import (
     load_notion_mapping,
     fetch_notion_to_curriculum,
+    merge_curriculum,
     sync_week_to_notion,
     NOTION_API,
 )
@@ -249,27 +250,6 @@ def read_notion_data() -> list[dict] | None:
         return None
     return json.loads(NOTION_JSON.read_text(encoding="utf-8"))
 
-
-def merge_curriculum(notion_data: list[dict], overrides: dict) -> list[dict]:
-    """Merge Notion data with admin overrides."""
-    import copy
-    weeks_ov = overrides.get("weeks", {})
-    result = []
-    for week in notion_data:
-        merged = copy.deepcopy(week)
-        week_num = str(week["week"])
-        ov = weeks_ov.get(week_num, {})
-        for key, val in ov.items():
-            if key == "steps":
-                continue
-            merged[key] = copy.deepcopy(val)
-        steps_ov = ov.get("steps", {})
-        if steps_ov and "steps" in merged:
-            for idx, step in enumerate(merged["steps"]):
-                step_ov = steps_ov.get(str(idx), {})
-                merged["steps"][idx] = {**step, **copy.deepcopy(step_ov)}
-        result.append(merged)
-    return result
 
 
 def get_merged_curriculum() -> list[dict]:
@@ -759,6 +739,22 @@ class AdminHandler(BaseHTTPRequestHandler):
         if not week_num or not field:
             self._send_error_json(400, "weekNum and field are required")
             return
+
+        # Validate field ownership (admin fields + "copy" for text overrides)
+        if step_idx is not None:
+            allowed = ADMIN_STEP_FIELDS | {"copy"}
+            if field not in allowed:
+                self._send_error_json(
+                    400, f"Field '{field}' is not an admin-owned step field"
+                )
+                return
+        else:
+            allowed = ADMIN_WEEK_FIELDS | {"copy"}
+            if field not in allowed:
+                self._send_error_json(
+                    400, f"Field '{field}' is not an admin-owned week field"
+                )
+                return
 
         overrides = read_overrides()
         if week_num not in overrides.get("weeks", {}):
