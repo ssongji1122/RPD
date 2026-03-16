@@ -398,18 +398,42 @@ body {
 <!-- TAB 2: 시각적 비교 -->
 <section class="panel" id="panel-visual" role="tabpanel">
   <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    각 모드 버튼을 클릭하고 캔버스 위에서 드래그하여 Extrude 효과를 확인하세요.
+    세 면의 기울기를 주목하세요 — 모드별로 돌출 방향이 어떻게 달라지는지 드래그로 확인하세요.
   </p>
   <div class="demo-wrap">
-    <canvas id="demoCanvas" width="680" height="340"></canvas>
+    <canvas id="demoCanvas" width="680" height="320"></canvas>
     <div class="demo-controls">
       <button class="demo-btn is-active" id="btnRegion">Region (E)</button>
-      <button class="demo-btn" id="btnNormals">Along Normals</button>
+      <button class="demo-btn" id="btnNormals">Along Normals (Alt+E)</button>
       <button class="demo-btn" id="btnIndividual">Individual</button>
       <button class="demo-btn" id="btnReset">초기화</button>
     </div>
   </div>
-  <p class="demo-hint">캔버스를 위아래로 드래그하면 Extrude 양이 변합니다. 모드를 바꿔서 차이를 비교하세요.</p>
+  <p class="demo-hint">자동으로 애니메이션됩니다 — 드래그로 직접 조작할 수도 있어요.</p>
+  <!-- Mode descriptions -->
+  <div style="margin-top:12px;">
+    <div id="desc-region" style="display:block;">
+      <div style="background:rgba(10,132,255,.06);border:1px solid rgba(10,132,255,.18);border-radius:12px;padding:14px 16px;font-size:.85rem;">
+        <span class="badge badge-blue" style="margin-bottom:6px;display:inline-block;">Region (E) — 영역 돌출</span>
+        <p style="margin:4px 0;color:var(--muted-strong);">선택된 <strong>모든 면이 하나의 덩어리</strong>로 묶여 전체가 같은 방향(전역 위쪽)으로 돌출됩니다.</p>
+        <p style="margin:4px 0;color:var(--muted-strong);">기울어진 Face A·C도 위쪽으로 뽑히므로 연결된 하나의 박스 형태로 결과가 나옵니다. 면 간 경계가 합쳐집니다.</p>
+      </div>
+    </div>
+    <div id="desc-normals" style="display:none;">
+      <div style="background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.18);border-radius:12px;padding:14px 16px;font-size:.85rem;">
+        <span class="badge badge-green" style="margin-bottom:6px;display:inline-block;">Along Normals (Alt+E) — 법선 방향 돌출</span>
+        <p style="margin:4px 0;color:var(--muted-strong);"><strong>각 면이 자신의 법선(수직 방향)으로</strong> 개별 돌출됩니다. Region과의 핵심 차이입니다!</p>
+        <p style="margin:4px 0;color:var(--muted-strong);">→ <strong style="color:rgba(16,185,129,.9)">Face A</strong>는 왼쪽 위, <strong style="color:rgba(10,132,255,.9)">Face B</strong>는 바로 위, <strong style="color:rgba(245,158,11,.9)">Face C</strong>는 오른쪽 위로 뽑힙니다. 곡면·갑옷에 균일한 두께를 줄 때 필수입니다.</p>
+      </div>
+    </div>
+    <div id="desc-individual" style="display:none;">
+      <div style="background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.18);border-radius:12px;padding:14px 16px;font-size:.85rem;">
+        <span class="badge badge-amber" style="margin-bottom:6px;display:inline-block;">Individual Faces — 개별 면 돌출</span>
+        <p style="margin:4px 0;color:var(--muted-strong);">각 면이 <strong>완전히 독립적으로</strong> 자신의 법선 방향으로 돌출됩니다. 공유 엣지가 분리되어 면 사이에 틈이 생깁니다.</p>
+        <p style="margin:4px 0;color:var(--muted-strong);">Along Normals와 방향은 같지만 면들이 서로 연결되지 않고 별개 형태로 분리되어 뽑혀 나옵니다.</p>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->
@@ -605,271 +629,284 @@ function initQuiz(questions) {
 (function() {
   var canvas = document.getElementById("demoCanvas");
   var ctx = canvas.getContext("2d");
-  var mode = "region"; // region | normals | individual
-  var dragStartY = -1;
+  var W = canvas.width, H = canvas.height;
+  var mode = "region";
   var extrudeAmount = 0;
   var isDragging = false;
+  var dragStartY = -1;
+  var animDir = 1;
+  var animPaused = false;
+  var resumeTimer = null;
 
-  // Base shape: 3 faces (top-down quad view)
+  // 3 connected faces forming a "hill" cross-section (side view)
+  // Face A: left slope  Face B: flat top  Face C: right slope
   var faces = [
-    { x: 140, y: 200, w: 120, h: 80, nx: 0, ny: -1 },
-    { x: 280, y: 200, w: 120, h: 80, nx: 1, ny: -1 },
-    { x: 420, y: 200, w: 120, h: 80, nx: 0, ny: -1 }
+    { ax: 90,  ay: 265, bx: 220, by: 185, cr: [16, 185, 129], label: "Face A" },
+    { ax: 220, ay: 185, bx: 460, by: 185, cr: [10, 132, 255], label: "Face B" },
+    { ax: 460, ay: 185, bx: 590, by: 265, cr: [245, 158, 11], label: "Face C" }
   ];
 
-  function reset() {
-    extrudeAmount = 0;
-    draw();
+  // Compute outward normals: right-perp of direction, pointing upward (screen Y-)
+  faces.forEach(function(f) {
+    var dx = f.bx - f.ax, dy = f.by - f.ay;
+    var len = Math.sqrt(dx * dx + dy * dy);
+    f.nx = dy / len;    // right-perp x component
+    f.ny = -dx / len;   // right-perp y component
+    if (f.ny > 0) { f.nx = -f.nx; f.ny = -f.ny; } // ensure upward
+    f.len = len;
+    f.tx = dx / len; f.ty = dy / len; // tangent along face
+  });
+  // Result: Face A n=(-0.524,-0.851)  Face B n=(0,-1)  Face C n=(0.524,-0.851)
+
+  function rgba(c, a) { return "rgba(" + c[0] + "," + c[1] + "," + c[2] + "," + a + ")"; }
+
+  function drawArrow(x1, y1, x2, y2, color, lw) {
+    var dx = x2 - x1, dy = y2 - y1;
+    var len = Math.sqrt(dx * dx + dy * dy);
+    if (len < 4) return;
+    var ang = Math.atan2(dy, dx);
+    var hs = Math.min(9, len * 0.35);
+    ctx.save();
+    ctx.strokeStyle = color; ctx.lineWidth = lw || 1.5; ctx.lineCap = "round";
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - hs * Math.cos(ang - 0.42), y2 - hs * Math.sin(ang - 0.42));
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - hs * Math.cos(ang + 0.42), y2 - hs * Math.sin(ang + 0.42));
+    ctx.stroke();
+    ctx.restore();
   }
 
   function draw() {
-    var w = canvas.width;
-    var h = canvas.height;
-    ctx.clearRect(0, 0, w, h);
-
-    // Background
+    ctx.clearRect(0, 0, W, H);
     ctx.fillStyle = "#17181a";
-    ctx.fillRect(0, 0, w, h);
+    ctx.fillRect(0, 0, W, H);
 
     // Grid
-    ctx.strokeStyle = "rgba(255,255,255,.04)";
+    ctx.strokeStyle = "rgba(255,255,255,.035)";
     ctx.lineWidth = 1;
-    var step = 40;
-    for (var gx = step; gx < w; gx += step) {
-      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
-    }
-    for (var gy = step; gy < h; gy += step) {
-      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
-    }
+    for (var gx = 40; gx < W; gx += 40) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke(); }
+    for (var gy = 40; gy < H; gy += 40) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke(); }
 
-    // Mode label
-    ctx.fillStyle = "rgba(10,132,255,.7)";
-    ctx.font = "bold 12px sans-serif";
-    ctx.textAlign = "left";
-    var modeLabel = mode === "region" ? "Region (E)" : mode === "normals" ? "Along Normals (Alt+E)" : "Individual Faces";
-    ctx.fillText("Mode: " + modeLabel, 14, 22);
+    var amt = Math.max(0, Math.min(extrudeAmount, 95));
 
-    // Extrude amount label
-    ctx.fillStyle = "rgba(245,158,11,.7)";
-    ctx.textAlign = "right";
-    ctx.fillText("Extrude: " + Math.round(extrudeAmount) + "px", w - 14, 22);
-
-    // Clamp extrude
-    var amt = Math.max(0, Math.min(extrudeAmount, 150));
-
-    // Draw base faces
-    faces.forEach(function(f, i) {
-      // Base quad (always visible)
-      ctx.fillStyle = "rgba(255,255,255,.06)";
-      ctx.strokeStyle = "rgba(255,255,255,.2)";
-      ctx.lineWidth = 1.5;
-      ctx.fillRect(f.x, f.y, f.w, f.h);
-      ctx.strokeRect(f.x, f.y, f.w, f.h);
-    });
-
-    if (amt > 2) {
+    // ── Extrusions ──
+    if (amt > 1) {
       if (mode === "region") {
-        // All 3 faces extrude together as one region upward
-        var minX = faces[0].x;
-        var maxX = faces[2].x + faces[2].w;
-        var topY = faces[0].y;
-
-        // Side walls
-        ctx.fillStyle = "rgba(10,132,255,.12)";
-        ctx.strokeStyle = "rgba(10,132,255,.5)";
-        ctx.lineWidth = 1.5;
-
-        // Left wall
-        ctx.beginPath();
-        ctx.moveTo(minX, topY);
-        ctx.lineTo(minX, topY - amt);
-        ctx.lineTo(minX + 10, topY - amt - 6);
-        ctx.lineTo(minX + 10, topY - 6);
-        ctx.closePath();
-        ctx.fill(); ctx.stroke();
-
-        // Right wall
-        ctx.beginPath();
-        ctx.moveTo(maxX, topY);
-        ctx.lineTo(maxX, topY - amt);
-        ctx.lineTo(maxX + 10, topY - amt - 6);
-        ctx.lineTo(maxX + 10, topY - 6);
-        ctx.closePath();
-        ctx.fill(); ctx.stroke();
-
-        // Top face (extruded)
-        ctx.fillStyle = "rgba(10,132,255,.25)";
-        ctx.strokeStyle = "rgba(10,132,255,.7)";
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(minX, topY - amt);
-        ctx.lineTo(maxX, topY - amt);
-        ctx.lineTo(maxX + 10, topY - amt - 6);
-        ctx.lineTo(minX + 10, topY - amt - 6);
-        ctx.closePath();
-        ctx.fill(); ctx.stroke();
-
-        // Front wall
-        ctx.fillStyle = "rgba(10,132,255,.18)";
-        ctx.strokeStyle = "rgba(10,132,255,.5)";
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        ctx.moveTo(minX, topY);
-        ctx.lineTo(maxX, topY);
-        ctx.lineTo(maxX, topY - amt);
-        ctx.lineTo(minX, topY - amt);
-        ctx.closePath();
-        ctx.fill(); ctx.stroke();
-
-      } else if (mode === "normals") {
-        // Each face extrudes along its own normal (outward)
-        faces.forEach(function(f, i) {
-          var dirX = (i === 0) ? -0.3 : (i === 2) ? 0.3 : 0;
-          var dirY = -1;
-          var ex = amt * dirX;
-          var ey = amt * dirY;
-
-          // Side walls
-          ctx.fillStyle = "rgba(16,185,129,.1)";
-          ctx.strokeStyle = "rgba(16,185,129,.4)";
-          ctx.lineWidth = 1.5;
-
+        // All faces move in global upward direction (0, -1)
+        faces.forEach(function(f) {
+          ctx.fillStyle = rgba(f.cr, 0.11);
+          ctx.strokeStyle = rgba(f.cr, 0.22);
+          ctx.lineWidth = 1;
           ctx.beginPath();
-          ctx.moveTo(f.x, f.y);
-          ctx.lineTo(f.x + ex, f.y + ey);
-          ctx.lineTo(f.x + f.w + ex, f.y + ey);
-          ctx.lineTo(f.x + f.w, f.y);
+          ctx.moveTo(f.ax, f.ay);
+          ctx.lineTo(f.bx, f.by);
+          ctx.lineTo(f.bx, f.by - amt);
+          ctx.lineTo(f.ax, f.ay - amt);
           ctx.closePath();
           ctx.fill(); ctx.stroke();
+        });
+        // Extruded top edges
+        faces.forEach(function(f) {
+          ctx.strokeStyle = rgba(f.cr, 0.8);
+          ctx.lineWidth = 3; ctx.lineCap = "round";
+          ctx.beginPath();
+          ctx.moveTo(f.ax, f.ay - amt);
+          ctx.lineTo(f.bx, f.by - amt);
+          ctx.stroke();
+        });
+        // Single upward arrow from flat face midpoint
+        var midX = (faces[1].ax + faces[1].bx) / 2;
+        var midY = faces[1].ay;
+        drawArrow(midX, midY - 4, midX, midY - amt - 8, "rgba(255,255,255,.65)", 2.5);
+        ctx.fillStyle = "rgba(255,255,255,.55)";
+        ctx.font = "bold 11px sans-serif"; ctx.textAlign = "center";
+        ctx.fillText("전체가 위로 ↑", midX, midY - amt - 18);
 
-          // Extruded top face
-          ctx.fillStyle = "rgba(16,185,129,.2)";
-          ctx.strokeStyle = "rgba(16,185,129,.7)";
-          ctx.lineWidth = 2;
-          ctx.fillRect(f.x + ex, f.y + ey, f.w, f.h * 0.15);
-          ctx.strokeRect(f.x + ex, f.y + ey, f.w, f.h * 0.15);
+      } else {
+        // Along Normals / Individual — each face extrudes along its own normal
+        // Both modes use FULL parallelograms (no shrink); junction handling differs
+        faces.forEach(function(f) {
+          var ex = f.nx * amt, ey = f.ny * amt;
+
+          // Wall parallelogram
+          ctx.fillStyle = rgba(f.cr, 0.14);
+          ctx.strokeStyle = rgba(f.cr, 0.26);
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(f.ax, f.ay); ctx.lineTo(f.bx, f.by);
+          ctx.lineTo(f.bx + ex, f.by + ey); ctx.lineTo(f.ax + ex, f.ay + ey);
+          ctx.closePath(); ctx.fill(); ctx.stroke();
+
+          // Extruded top edge
+          ctx.strokeStyle = rgba(f.cr, 0.92);
+          ctx.lineWidth = 3; ctx.lineCap = "round";
+          ctx.beginPath();
+          ctx.moveTo(f.ax + ex, f.ay + ey);
+          ctx.lineTo(f.bx + ex, f.by + ey);
+          ctx.stroke();
+
+          // Normal direction arrow from face midpoint
+          var mx = (f.ax + f.bx) / 2, my = (f.ay + f.by) / 2;
+          drawArrow(mx, my, mx + ex * 0.65, my + ey * 0.65, rgba(f.cr, 0.9), 2);
         });
 
-      } else if (mode === "individual") {
-        // Each face extrudes independently along its own normal
-        faces.forEach(function(f, i) {
-          var angle = (i === 0) ? -0.4 : (i === 2) ? 0.4 : 0;
-          var ex = amt * Math.sin(angle);
-          var ey = -amt;
+        // Junction annotations — base vertex is SHARED; top vertices diverge
+        var jPairs = [[0,1],[1,2]];
+        jPairs.forEach(function(p) {
+          var fA = faces[p[0]], fB = faces[p[1]];
+          var jx = fA.bx, jy = fA.by;            // shared base junction vertex
+          var topAx = fA.bx + fA.nx * amt;        // fA top at junction
+          var topAy = fA.by + fA.ny * amt;
+          var topBx = fB.ax + fB.nx * amt;        // fB top at junction
+          var topBy = fB.ay + fB.ny * amt;
 
-          // Connecting walls
-          ctx.fillStyle = "rgba(245,158,11,.08)";
-          ctx.strokeStyle = "rgba(245,158,11,.35)";
-          ctx.lineWidth = 1.5;
-
-          // Left side
-          ctx.beginPath();
-          ctx.moveTo(f.x, f.y);
-          ctx.lineTo(f.x + ex, f.y + ey);
-          ctx.lineTo(f.x + ex, f.y + ey + f.h);
-          ctx.lineTo(f.x, f.y + f.h);
-          ctx.closePath();
-          ctx.fill(); ctx.stroke();
-
-          // Right side
-          ctx.beginPath();
-          ctx.moveTo(f.x + f.w, f.y);
-          ctx.lineTo(f.x + f.w + ex, f.y + ey);
-          ctx.lineTo(f.x + f.w + ex, f.y + ey + f.h);
-          ctx.lineTo(f.x + f.w, f.y + f.h);
-          ctx.closePath();
-          ctx.fill(); ctx.stroke();
-
-          // Top extruded face
-          ctx.fillStyle = "rgba(245,158,11,.18)";
-          ctx.strokeStyle = "rgba(245,158,11,.7)";
-          ctx.lineWidth = 2;
-          ctx.fillRect(f.x + ex, f.y + ey, f.w, f.h);
-          ctx.strokeRect(f.x + ex, f.y + ey, f.w, f.h);
+          if (mode === "individual") {
+            // Triangular wedge gap: base stays shared, top splits apart
+            ctx.save();
+            ctx.fillStyle = "rgba(239,68,68,.13)";
+            ctx.strokeStyle = "rgba(239,68,68,.55)";
+            ctx.lineWidth = 1; ctx.setLineDash([3,3]);
+            ctx.beginPath();
+            ctx.moveTo(jx, jy);
+            ctx.lineTo(topAx, topAy);
+            ctx.lineTo(topBx, topBy);
+            ctx.closePath();
+            ctx.fill(); ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.restore();
+            // "틈" label inside the triangle centroid
+            var gmx = (jx + topAx + topBx) / 3;
+            var gmy = (jy + topAy + topBy) / 3 - 4;
+            ctx.fillStyle = "rgba(239,68,68,.9)";
+            ctx.font = "bold 10px sans-serif"; ctx.textAlign = "center";
+            ctx.fillText("틈", gmx, gmy);
+          } else {
+            // Along Normals: junction is "welded" — draw a cap triangle to show connection
+            ctx.save();
+            ctx.fillStyle = "rgba(255,255,255,.07)";
+            ctx.strokeStyle = "rgba(255,255,255,.25)";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(jx, jy);
+            ctx.lineTo(topAx, topAy);
+            ctx.lineTo(topBx, topBy);
+            ctx.closePath();
+            ctx.fill(); ctx.stroke();
+            // Dot at mid-top to show "connected"
+            var cx2 = (topAx + topBx) / 2, cy2 = (topAy + topBy) / 2;
+            ctx.fillStyle = "rgba(255,255,255,.55)";
+            ctx.beginPath(); ctx.arc(cx2, cy2, 3, 0, Math.PI * 2); ctx.fill();
+            ctx.restore();
+          }
         });
       }
+    } else if (mode === "normals" || mode === "individual") {
+      // Show normal hint arrows before dragging
+      faces.forEach(function(f) {
+        var mx = (f.ax + f.bx) / 2, my = (f.ay + f.by) / 2;
+        drawArrow(mx, my, mx + f.nx * 38, my + f.ny * 38, rgba(f.cr, 0.55), 1.5);
+      });
     }
 
-    // Labels on base faces
-    ctx.fillStyle = "rgba(255,255,255,.35)";
-    ctx.font = "11px sans-serif";
-    ctx.textAlign = "center";
-    faces.forEach(function(f, i) {
-      ctx.fillText("Face " + (i + 1), f.x + f.w / 2, f.y + f.h / 2 + 4);
+    // ── Base faces (drawn on top) ──
+    faces.forEach(function(f) {
+      ctx.strokeStyle = rgba(f.cr, amt > 1 ? 0.55 : 0.95);
+      ctx.lineWidth = 4; ctx.lineCap = "round";
+      ctx.beginPath(); ctx.moveTo(f.ax, f.ay); ctx.lineTo(f.bx, f.by); ctx.stroke();
+
+      // Label inside the hill (inward = -normal direction)
+      var mx = (f.ax + f.bx) / 2 - f.nx * 22;
+      var my = (f.ay + f.by) / 2 - f.ny * 22;
+      ctx.font = "11px sans-serif"; ctx.textAlign = "center";
+      ctx.fillStyle = rgba(f.cr, 0.75);
+      ctx.fillText(f.label, mx, my + 4);
     });
 
-    // Instruction
-    ctx.fillStyle = "rgba(255,255,255,.25)";
-    ctx.font = "11px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("위아래로 드래그하여 Extrude", w / 2, h - 14);
-  }
+    // Mode label
+    ctx.font = "bold 12px sans-serif"; ctx.textAlign = "left";
+    ctx.fillStyle = "rgba(255,255,255,.42)";
+    var modeLabels = { region: "Region (E)", normals: "Along Normals (Alt+E)", individual: "Individual Faces" };
+    ctx.fillText(modeLabels[mode], 14, 22);
 
-  function getEventPos(e) {
-    var rect = canvas.getBoundingClientRect();
-    var scaleX = canvas.width / rect.width;
-    var scaleY = canvas.height / rect.height;
-    var clientX, clientY;
-    if (e.touches && e.touches.length > 0) {
-      clientX = e.touches[0].clientX;
-      clientY = e.touches[0].clientY;
-    } else {
-      clientX = e.clientX;
-      clientY = e.clientY;
+    // Ground reference line
+    ctx.strokeStyle = "rgba(255,255,255,.07)";
+    ctx.lineWidth = 1; ctx.setLineDash([5, 5]);
+    ctx.beginPath(); ctx.moveTo(60, 295); ctx.lineTo(W - 60, 295); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Bottom hint (drag override)
+    if (isDragging) {
+      ctx.fillStyle = "rgba(255,255,255,.2)";
+      ctx.font = "11px sans-serif"; ctx.textAlign = "center";
+      ctx.fillText("드래그 중 — 놓으면 자동 재개", W / 2, H - 8);
     }
-    return {
-      x: (clientX - rect.left) * scaleX,
-      y: (clientY - rect.top) * scaleY
-    };
   }
 
-  function onDown(e) {
-    e.preventDefault();
-    var pos = getEventPos(e);
-    isDragging = true;
-    dragStartY = pos.y;
+  // ── Animation loop ──
+  function animate() {
+    if (!animPaused && !isDragging) {
+      extrudeAmount += animDir * 0.9;
+      if (extrudeAmount >= 90) { extrudeAmount = 90; animDir = -1; }
+      if (extrudeAmount <= 0)  { extrudeAmount = 0;  animDir =  1; }
+      draw();
+    }
+    requestAnimationFrame(animate);
+  }
+  animate();
+
+  // ── Events (drag to override animation) ──
+  function getPosY(e) {
+    var rect = canvas.getBoundingClientRect();
+    var scaleY = canvas.height / rect.height;
+    var clientY = (e.touches && e.touches.length > 0) ? e.touches[0].clientY : e.clientY;
+    return (clientY - rect.top) * scaleY;
   }
 
-  function onMove(e) {
-    if (!isDragging) return;
-    e.preventDefault();
-    var pos = getEventPos(e);
-    var delta = dragStartY - pos.y;
-    extrudeAmount = Math.max(0, Math.min(delta, 150));
-    draw();
+  function pauseAnim() {
+    animPaused = true;
+    if (resumeTimer) { clearTimeout(resumeTimer); resumeTimer = null; }
   }
-
-  function onUp(e) {
+  function resumeAnim() {
     isDragging = false;
+    resumeTimer = setTimeout(function() { animPaused = false; }, 1200);
   }
 
-  canvas.addEventListener("mousedown", onDown);
-  canvas.addEventListener("mousemove", onMove);
-  canvas.addEventListener("mouseup", onUp);
-  canvas.addEventListener("mouseleave", onUp);
-  canvas.addEventListener("touchstart", onDown, { passive: false });
-  canvas.addEventListener("touchmove", onMove, { passive: false });
-  canvas.addEventListener("touchend", onUp);
-  canvas.addEventListener("touchcancel", onUp);
+  canvas.addEventListener("mousedown",  function(e) { e.preventDefault(); isDragging = true; pauseAnim(); dragStartY = getPosY(e); });
+  canvas.addEventListener("mousemove",  function(e) { if (!isDragging) return; e.preventDefault(); extrudeAmount = Math.max(0, Math.min(dragStartY - getPosY(e), 95)); draw(); });
+  canvas.addEventListener("mouseup",    resumeAnim);
+  canvas.addEventListener("mouseleave", resumeAnim);
+  canvas.addEventListener("touchstart", function(e) { e.preventDefault(); isDragging = true; pauseAnim(); dragStartY = getPosY(e); }, { passive: false });
+  canvas.addEventListener("touchmove",  function(e) { if (!isDragging) return; e.preventDefault(); extrudeAmount = Math.max(0, Math.min(dragStartY - getPosY(e), 95)); draw(); }, { passive: false });
+  canvas.addEventListener("touchend",   resumeAnim);
+  canvas.addEventListener("touchcancel",resumeAnim);
 
-  // Mode buttons
-  var btnRegion = document.getElementById("btnRegion");
-  var btnNormals = document.getElementById("btnNormals");
+  // ── Mode buttons ──
+  var btnRegion     = document.getElementById("btnRegion");
+  var btnNormals    = document.getElementById("btnNormals");
   var btnIndividual = document.getElementById("btnIndividual");
   var allBtns = [btnRegion, btnNormals, btnIndividual];
 
-  function setMode(m, btn) {
-    mode = m;
-    extrudeAmount = 0;
-    allBtns.forEach(function(b) { b.classList.remove("is-active"); });
-    btn.classList.add("is-active");
-    draw();
+  function updateDesc(m) {
+    ["region", "normals", "individual"].forEach(function(id) {
+      var el = document.getElementById("desc-" + id);
+      if (el) el.style.display = (id === m) ? "block" : "none";
+    });
   }
 
-  btnRegion.addEventListener("click", function() { setMode("region", btnRegion); });
-  btnNormals.addEventListener("click", function() { setMode("normals", btnNormals); });
+  function setMode(m, btn) {
+    mode = m; extrudeAmount = 0; animDir = 1; animPaused = false;
+    if (resumeTimer) { clearTimeout(resumeTimer); resumeTimer = null; }
+    allBtns.forEach(function(b) { b.classList.remove("is-active"); });
+    btn.classList.add("is-active");
+    updateDesc(m);
+  }
+
+  btnRegion.addEventListener("click",     function() { setMode("region",     btnRegion);     });
+  btnNormals.addEventListener("click",    function() { setMode("normals",    btnNormals);    });
   btnIndividual.addEventListener("click", function() { setMode("individual", btnIndividual); });
-  document.getElementById("btnReset").addEventListener("click", function() { reset(); });
+  document.getElementById("btnReset").addEventListener("click", function() { extrudeAmount = 0; animDir = 1; animPaused = false; });
 
   draw();
 })();
