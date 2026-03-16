@@ -5,10 +5,79 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>도구 라이브러리 — RPD</title>
   <link rel="stylesheet" href="assets/tokens.css" />
+  <style>
+/* ── Layout ── */
+.lib-header {
+  position: sticky; top: 0; z-index: 10;
+  background: rgba(10,10,10,.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+  padding: 0 20px;
+}
+.lib-header-inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 18px 0;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.lib-back {
+  color: var(--muted); font-size: .84rem;
+  transition: color .14s;
+}
+.lib-back:hover { color: var(--text); }
+.lib-title {
+  margin: 0; font-size: clamp(1.4rem, 3vw, 2rem);
+  font-family: var(--font-display); font-weight: 650;
+  letter-spacing: -.02em;
+}
+.lib-subtitle {
+  margin: 4px 0 0; color: var(--muted-strong); font-size: .9rem;
+}
+.lib-search-wrap {
+  display: flex; align-items: center; gap: 12px;
+}
+.lib-search {
+  flex: 1; padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.05);
+  color: var(--text); font: inherit; font-size: .9rem;
+  outline: none; transition: border-color .14s;
+}
+.lib-search:focus { border-color: var(--key); }
+.lib-search::placeholder { color: var(--muted); }
+.lib-count {
+  font-size: .8rem; color: var(--muted); white-space: nowrap;
+}
+.lib-main {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 24px 20px 80px;
+}
+  </style>
 </head>
 <body>
   <div class="page-shell">
-    <p style="color:var(--muted);padding:40px">라이브러리 준비 중</p>
+    <header class="lib-header">
+      <div class="lib-header-inner">
+        <a href="index.html" class="lib-back">← 홈</a>
+        <div>
+          <h1 class="lib-title">도구 라이브러리</h1>
+          <p class="lib-subtitle">Blender 도구·모디파이어 개념 카드 모음</p>
+        </div>
+        <div class="lib-search-wrap">
+          <input
+            class="lib-search"
+            id="libSearch"
+            type="search"
+            placeholder="예: Array, Mirror, UV..."
+            autocomplete="off"
+          />
+          <span class="lib-count" id="libCount"></span>
+        </div>
+      </div>
+    </header>
+    <main class="lib-main" id="libMain"></main>
   </div>
   <script src="assets/showme/_registry.js"></script>
 </body>
