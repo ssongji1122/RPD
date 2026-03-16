@@ -144,7 +144,7 @@
         }
       ],
       "steps": {
-        "0": {
+        "1": {
           "image": "assets/images/week03/base-form.png",
           "done": [
             "몸통과 주요 덩어리가 잡혔다",
@@ -153,7 +153,7 @@
           "showme": "edit-mode-tools",
           "link": "https://docs.blender.org/manual/en/latest/modeling/meshes/tools/extrude_region.html"
         },
-        "1": {
+        "2": {
           "image": "assets/images/week03/mirror-modifier.png",
           "done": [
             "한쪽을 움직이면 반대쪽도 같이 바뀐다",
@@ -162,7 +162,7 @@
           "showme": "mirror-modifier",
           "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html"
         },
-        "2": {
+        "3": {
           "image": "assets/images/week03/subdivision-surface.png",
           "done": [
             "큰 덩어리가 부드러워졌다",
@@ -174,7 +174,7 @@
           ],
           "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/subdivision_surface.html"
         },
-        "3": {
+        "4": {
           "image": "assets/images/week03/array-boolean-detail.png",
           "done": [
             "반복 구조가 생겼다",
@@ -186,7 +186,7 @@
           ],
           "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/booleans.html"
         },
-        "4": {
+        "5": {
           "image": "assets/images/week03/bevel-weighted-normal.png",
           "done": [
             "Bevel Modifier나 Weighted Normal을 확인했다",
@@ -194,6 +194,29 @@
           ],
           "showme": "bevel-modifier",
           "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/bevel.html"
+        },
+        "0": {
+          "image": "assets/images/week03/robot-ref-front.png",
+          "done": [
+            "정면·측면 레퍼런스가 각 뷰에 정렬되어 있다",
+            "모델링 도중 레퍼런스가 방해되지 않는다"
+          ],
+          "showme": "image-reference",
+          "link": "https://docs.blender.org/manual/en/latest/editors/3dview/display/overlays.html",
+          "downloads": [
+            {
+              "label": "정면 (Front)",
+              "url": "assets/images/week03/robot-ref-front.png"
+            },
+            {
+              "label": "측면 (Side)",
+              "url": "assets/images/week03/robot-ref-side.png"
+            },
+            {
+              "label": "후면 (Back)",
+              "url": "assets/images/week03/robot-ref-back.png"
+            }
+          ]
         }
       }
     },
