@@ -73,9 +73,9 @@ def main() -> int:
         print(f"Error: curriculum.js 읽기 실패 — {exc}", file=sys.stderr)
         return 1
 
-    if args.week:
+    if args.week is not None:
         target_nums = {args.week}
-    elif args.weeks:
+    elif args.weeks is not None:
         target_nums = set(args.weeks)
     else:
         target_nums = None
@@ -89,7 +89,7 @@ def main() -> int:
         weeks_to_push = all_weeks
 
     if not weeks_to_push:
-        print("push할 주차가 없습니다.")
+        print("push할 주차가 없습니다.", file=sys.stderr)
         return 2
 
     print(f"Pushing {len(weeks_to_push)} week(s) to Notion...")
