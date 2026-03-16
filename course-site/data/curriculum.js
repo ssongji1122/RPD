@@ -373,19 +373,17 @@ const CURRICULUM = [
     "subtitle": "기본형 · 대칭 · 곡면 · 반복",
     "duration": "~3시간",
     "topics": [
-      "Extrude / Loop Cut / Inset / Bevel",
-      "Mirror Modifier",
-      "Subdivision / Solidify",
-      "Array / Boolean",
-      "필수 추가: Bevel / Weighted Normal",
-      "Join / Separate",
-      "Apply 타이밍",
-      "선택 심화: Simple Deform / Decimate"
+      "Edit Mode: Extrude / Loop Cut / Inset / Bevel",
+      "Mirror — 대칭 모델링",
+      "Subdivision Surface / Solidify — 곡면과 두께",
+      "Array / Boolean — 반복과 구멍",
+      "Bevel Modifier / Weighted Normal — 마무리",
+      "Modifier Stack 순서와 Apply 타이밍"
     ],
     "steps": [
       {
         "title": "기본형 만들기",
-        "copy": "점토를 손으로 만지듯 기본형은 Edit Mode에서 직접 만들어요. 큰 덩어리를 먼저 잡고 세부는 나중에 다듬으면 돼요.",
+        "copy": "레고 블록을 직접 깎아 원하는 형태를 만들어요. Extrude로 덩어리를 뽑고, Loop Cut으로 나누고, Inset과 Bevel로 다듬는 게 기본 흐름이에요.",
         "goal": [
           "Edit Mode 도구 흐름을 안다",
           "기본형을 직접 만든다"
@@ -417,11 +415,12 @@ const CURRICULUM = [
           "몸통과 주요 덩어리가 잡혔다",
           "도구를 바꿔가며 형태를 만들 수 있다"
         ],
-        "showme": "edit-mode-tools"
+        "showme": "edit-mode-tools",
+        "link": "https://docs.blender.org/manual/en/latest/modeling/meshes/tools/extrude_region.html"
       },
       {
         "title": "Mirror Modifier",
-        "copy": "거울처럼 한쪽만 편집하면 반대쪽이 자동으로 따라와요. 로봇처럼 좌우 대칭인 모델에 제일 먼저 떠올리면 좋아요.",
+        "copy": "거울 앞에 서면 반대편이 자동으로 따라오죠? Mirror가 그거예요. 한쪽만 만들면 작업량이 반으로 줄어요.",
         "goal": [
           "Mirror 역할과 기본 설정을 이해한다"
         ],
@@ -452,11 +451,12 @@ const CURRICULUM = [
           "한쪽을 움직이면 반대쪽도 같이 바뀐다",
           "Clipping으로 중심선이 벌어지지 않는다"
         ],
-        "showme": "mirror-modifier"
+        "showme": "mirror-modifier",
+        "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html"
       },
       {
         "title": "곡면과 두께",
-        "copy": "각진 박스를 더 부드럽게 만들거나 납작한 면에 두께를 줄 수 있어요. 큰 실루엣을 빠르게 다듬을 때 많이 써요.",
+        "copy": "각진 레고 블록에 사포를 대면 모서리가 둥글어지듯이, Subdivision은 표면을 부드럽게 만들어요. Solidify는 색종이를 두꺼운 판지로 바꾸는 거예요.",
         "goal": [
           "Subdivision과 Solidify를 구분해 쓴다",
           "곡면과 두께를 조절한다"
@@ -486,11 +486,12 @@ const CURRICULUM = [
         "showme": [
           "subdivision-surface",
           "solidify-modifier"
-        ]
+        ],
+        "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/subdivision_surface.html"
       },
       {
         "title": "반복과 구멍",
-        "copy": "도장을 찍듯 같은 부품을 반복하거나, 블록을 빼내듯 구멍을 만들 수 있어요. 디테일을 빠르게 늘릴 때 유용해요.",
+        "copy": "복사기로 같은 부품을 줄줄이 찍어내는 게 Array, 쿠키 틀로 반죽에서 모양을 빼내는 게 Boolean이에요. 디테일을 빠르게 늘릴 때 유용해요.",
         "goal": [
           "Array와 Boolean을 구분해 쓴다"
         ],
@@ -519,11 +520,12 @@ const CURRICULUM = [
         "showme": [
           "array-modifier",
           "boolean-modifier"
-        ]
+        ],
+        "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/booleans.html"
       },
       {
-        "title": "필수 추가 Modifier",
-        "copy": "핵심 5개 다음으로 바로 써먹기 좋은 보조 Modifier예요. `Ctrl+B`는 부분 수정, Bevel Modifier는 전체 정리, Weighted Normal은 음영 정리라고 나눠 생각하면 이해가 쉬워요.",
+        "title": "마무리 손질",
+        "copy": "Ctrl+B가 '이 모서리 하나만 다듬기'라면, Bevel Modifier는 '전체 모서리를 한 번에 정리'예요. Weighted Normal은 형태가 아니라 빛이 닿는 느낌(음영)을 정리해줘요.",
         "goal": [
           "필수 추가 Modifier를 안다"
         ],
@@ -549,7 +551,8 @@ const CURRICULUM = [
           "Bevel Modifier나 Weighted Normal을 확인했다",
           "언제 쓰는지 말할 수 있다"
         ],
-        "showme": "bevel-modifier"
+        "showme": "bevel-modifier",
+        "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/bevel.html"
       }
     ],
     "shortcuts": [
@@ -588,7 +591,7 @@ const CURRICULUM = [
     ],
     "assignment": {
       "title": "Edit + Modifier 로봇",
-      "description": "Edit Mode와 Modifier를 함께 써서 기본형과 디테일이 보이는 형태를 만드세요.",
+      "description": "Edit Mode와 Modifier를 함께 써서 기본형과 디테일이 보이는 형태를 만들어요. 스크린샷 3장 + Modifier 목록 + 한줄 코멘트를 제출해요.",
       "checklist": [
         "Edit Mode 도구 3가지 이상 사용",
         "Modifier 2가지 이상 사용",
@@ -644,7 +647,7 @@ const CURRICULUM = [
       }
     ],
     "status": "active",
-    "summary": "Edit Mode로 기본형을 만들고 Modifier로 더 빠르게 다듬는 흐름을 익힙니다.",
+    "summary": "레고 조립처럼, Edit Mode로 블록을 깎고 Modifier로 대칭·곡면·반복 효과를 얹는 흐름을 배워요.",
     "videos": [
       {
         "title": "Blender Studio - Modeling Introduction",
