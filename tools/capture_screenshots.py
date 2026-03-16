@@ -215,7 +215,7 @@ def main():
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
-        ctx = browser.new_context(viewport={"width": 1280, "height": 820})
+        ctx = browser.new_context(viewport={"width": 1280, "height": 820}, color_scheme="dark")
         page = ctx.new_page()
 
         success = 0
