@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — 박스 모서리 라운딩</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active { color: var(--key-soft); border-bottom-color: var(--key); }
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+
+/* Concept */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card h3 { margin: 0 0 8px; font-size: 1rem; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.concept-card p  { margin: 0; color: var(--muted-strong); font-size: .88rem; line-height: 1.7; }
+.concept-card ul { margin: 8px 0 0; padding-left: 16px; color: var(--muted-strong); font-size: .85rem; line-height: 1.8; }
+.badge { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: .72rem; font-weight: 600; }
+.badge-blue  { background: rgba(10,132,255,.15); color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15); color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15); color: #fbbf24; }
+.badge-red   { background: rgba(239,68,68,.15);  color: #fca5a5; }
+.kbd {
+  display: inline-block; padding: 3px 8px; border-radius: 6px;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14);
+  color: var(--key-soft); font-size: .82rem; font-weight: 600; font-family: var(--font);
+}
+.analogy {
+  margin-top: 8px; padding: 10px 14px; border-radius: var(--radius-sm);
+  background: rgba(245,158,11,.06); border: 1px solid rgba(245,158,11,.15);
+  font-size: .82rem; color: #fbbf24; font-style: italic;
+}
+
+/* Demo */
+.demo-wrap {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+  margin: 14px 0;
+}
+.demo-wrap canvas { display: block; width: 100%; }
+.demo-controls { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--line); flex-wrap: wrap; align-items: center; }
+.demo-hint { font-size: .78rem; color: var(--muted); text-align: center; padding: 6px 0 0; }
+.demo-btn {
+  padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .82rem;
+  cursor: pointer;
+  transition: background .14s, color .14s;
+}
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active { background: rgba(10,132,255,.14); color: var(--key-soft); border-color: rgba(10,132,255,.3); }
+.demo-label {
+  font-size: .78rem; color: var(--muted); padding: 0 4px;
+}
+
+/* Shortcut */
+.shortcut-list { margin-top: 16px; padding: 14px 16px; border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); }
+.shortcut-list h4 { margin: 0 0 10px; font-size: .9rem; color: var(--text); }
+.shortcut-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-size: .84rem; color: var(--muted-strong); }
+.shortcut-row + .shortcut-row { border-top: 1px solid var(--line); }
+.shortcut-keys { flex-shrink: 0; }
+
+/* Usage */
+.usage-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.usage-card { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); padding: 16px; }
+.usage-card h4 { margin: 0 0 8px; font-size: .92rem; color: var(--key-soft); }
+.usage-card ul { margin: 0; padding-left: 16px; color: var(--muted-strong); font-size: .85rem; line-height: 1.8; }
+.tip-box { border-radius: var(--radius-md); border: 1px solid rgba(10,132,255,.2); background: rgba(10,132,255,.06); padding: 14px 16px; margin-top: 14px; font-size: .86rem; color: var(--muted-strong); }
+.tip-box strong { color: var(--key-soft); }
+.combo-section { margin-top: 18px; }
+.combo-section h4 { margin: 0 0 10px; font-size: .92rem; color: var(--text); }
+.combo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.combo-card { border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--surface); padding: 12px 14px; }
+.combo-card .combo-name { font-size: .86rem; font-weight: 600; color: var(--key-soft); margin-bottom: 4px; }
+.combo-card .combo-desc { font-size: .8rem; color: var(--muted); line-height: 1.5; }
+.doc-ref { margin-top: 16px; padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid rgba(10,132,255,.15); background: rgba(10,132,255,.04); display: flex; align-items: center; gap: 8px; }
+.doc-ref a { color: var(--key-soft); font-size: .84rem; text-decoration: none; line-height: 1.5; }
+.doc-ref a:hover { text-decoration: underline; }
+
+/* Quiz */
+.quiz-progress { font-size: .78rem; color: var(--muted); margin-bottom: 12px; }
+.quiz-question { margin-bottom: 20px; padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); }
+.quiz-question h4 { margin: 0 0 12px; font-size: .94rem; }
+.quiz-option { display: block; width: 100%; padding: 10px 14px; margin-bottom: 6px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: rgba(255,255,255,.025); color: var(--text); font: inherit; font-size: .86rem; cursor: pointer; text-align: left; transition: background .14s, border-color .14s; }
+.quiz-option:hover { background: rgba(255,255,255,.06); border-color: var(--line-strong); }
+.quiz-option.correct { background: rgba(16,185,129,.12); border-color: rgba(16,185,129,.4); color: var(--success-soft); }
+.quiz-option.wrong   { background: rgba(239,68,68,.1);   border-color: rgba(239,68,68,.3);  color: #fca5a5; }
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback { margin-top: 8px; padding: 10px 14px; border-radius: var(--radius-sm); font-size: .84rem; display: none; }
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: #fca5a5; }
+.quiz-score { text-align: center; padding: 20px; font-size: 1.1rem; font-weight: 600; }
+.quiz-retry { display: block; margin: 12px auto; padding: 10px 24px; border-radius: 999px; border: 1px solid var(--key); background: rgba(10,132,255,.12); color: var(--key-soft); font: inherit; font-size: .88rem; cursor: pointer; transition: background .14s; }
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+</nav>
+
+<!-- TAB 1: 개념 이해 -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <div class="concept-grid">
+
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">베벨 너비</span> 컷 위치가 둥글기를 결정</h3>
+      <p>베벨(<span class="kbd">Ctrl</span>+<span class="kbd">B</span>)의 <strong>너비(Width)</strong>는 원래 모서리에서 얼마나 멀리 잘라낼지를 결정합니다. 너비가 넓을수록 라운딩이 크고 완만해지고, 좁을수록 작고 날카로운 모서리가 됩니다.</p>
+      <div class="analogy">나무를 깎을 때 모서리를 많이 깎을수록 더 둥근 것처럼, 베벨 너비 = 깎는 양</div>
+    </div>
+
+    <div class="concept-card">
+      <h3><span class="badge badge-amber">R 값</span> 단면 곡선의 모양</h3>
+      <p>같은 너비라도 <strong>Profile(R) 값</strong>에 따라 단면 곡선의 모양이 달라집니다.</p>
+      <ul>
+        <li><strong>R = 0.0</strong> — 안쪽으로 오목하게 파임 (凹)</li>
+        <li><strong>R = 0.5</strong> — 평평한 직선 (기본값)</li>
+        <li><strong>R = 0.75</strong> — 약간 볼록하게</li>
+        <li><strong>R = 1.0</strong> — 완전 원형 볼록 (凸)</li>
+      </ul>
+      <p style="margin-top:8px;">세그먼트 수가 많을수록 R 값의 곡선이 더 부드럽게 보입니다.</p>
+      <div class="analogy">R 값 = 잘린 단면이 얼마나 부풀거나 꺼지는가</div>
+    </div>
+
+    <div class="concept-card">
+      <h3><span class="badge badge-green">지지 루프컷</span> Subdivision 고정</h3>
+      <p>Subdivision Surface 모디파이어를 쓸 때, 날카롭게 유지하고 싶은 모서리 <strong>가까이</strong> 루프컷을 추가하면 해당 영역이 덜 둥글어집니다. 루프컷이 모서리에 가까울수록 더 날카롭고, 멀수록 더 둥글어집니다.</p>
+      <div class="analogy">지지 루프컷 = 고무줄이 튀어나가지 않도록 잡아주는 핀</div>
+    </div>
+
+  </div>
+
+  <div class="shortcut-list">
+    <h4>주요 단축키</h4>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">B</span></span>
+      <span>베벨 시작 (드래그로 너비 조절)</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys">스크롤 (베벨 중)</span>
+      <span>세그먼트 수 조절 (많을수록 부드러운 곡선)</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">P</span> (베벨 후 패널)</span>
+      <span>Profile(R) 값 변경 — 0.0 ~ 1.0</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys">왼쪽 아래 Operator Panel → Shape</span>
+      <span>베벨 확정 후 R 값 수치 직접 입력</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">R</span></span>
+      <span>지지 루프컷 추가 (모서리 가까이 배치)</span>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/modeling/meshes/editing/edge/bevel.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Bevel (Profile / Shape 값 포함)
+    </a>
+  </div>
+</section>
+
+<!-- TAB 2: 시각적 비교 -->
+<section class="panel" id="panel-visual" role="tabpanel">
+  <p style="font-size:.84rem; color:var(--muted); margin:0 0 4px;">
+    베벨 너비와 R 값을 바꿔가며 모서리 단면이 어떻게 달라지는지 확인하세요.
+  </p>
+  <div class="demo-wrap">
+    <canvas id="demoCanvas" width="680" height="320"></canvas>
+    <div class="demo-controls">
+      <span class="demo-label">너비:</span>
+      <button class="demo-btn" data-width="0.15">좁게</button>
+      <button class="demo-btn is-active" data-width="0.35">보통</button>
+      <button class="demo-btn" data-width="0.6">넓게</button>
+      <span class="demo-label" style="margin-left:8px;">R 값:</span>
+      <button class="demo-btn" data-r="0.0">0.0 오목</button>
+      <button class="demo-btn" data-r="0.5" id="btnR05">0.5 평평</button>
+      <button class="demo-btn is-active" data-r="1.0">1.0 볼록</button>
+    </div>
+  </div>
+  <p class="demo-hint">너비 버튼 → 모서리 크기 / R 값 버튼 → 단면 곡선 모양. 4개 코너를 동시에 비교합니다.</p>
+
+  <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--line);">
+    <p style="font-size:.84rem; color:var(--muted); margin:0 0 4px;">
+      <strong style="color:var(--success-soft);">지지 루프컷 위치</strong>에 따라 Subdivision Surface 결과가 어떻게 달라지는지 확인하세요.
+    </p>
+  </div>
+  <div class="demo-wrap">
+    <canvas id="loopCanvas" width="680" height="260"></canvas>
+    <div class="demo-controls">
+      <span class="demo-label">루프컷 위치:</span>
+      <button class="demo-btn is-active" data-loop="0.06">아주 가까이</button>
+      <button class="demo-btn" data-loop="0.2">보통</button>
+      <button class="demo-btn" data-loop="0.42">멀리</button>
+      <button class="demo-btn" data-loop="none">없음</button>
+    </div>
+  </div>
+  <p class="demo-hint">주황 점 = 지지 루프컷 위치. 가까울수록 모서리가 날카롭게, 멀수록 더 둥글어집니다.</p>
+</section>
+
+<!-- TAB 3: 언제 쓰나요? -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>베벨 라운딩이 필요할 때</h4>
+      <ul>
+        <li>제품/기기 모서리 둥글게 표현</li>
+        <li>로봇 헤드처럼 딱딱하지만 부드러운 형태</li>
+        <li>건축 기둥·벽 모서리</li>
+        <li>렌더링 시 하이라이트 라인 표현</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>지지 루프컷이 필요할 때</h4>
+      <ul>
+        <li>Subdivision 쓰면서 모서리를 유지하고 싶을 때</li>
+        <li>박스 전체는 둥글게, 특정 면만 날카롭게</li>
+        <li>캐릭터 눈 주변처럼 부분 유지</li>
+        <li>Crease 대신 토폴로지로 해결할 때</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>R 값 선택 팁:</strong> 딱딱한 제품엔 <strong>R=1.0 + 세그먼트 3~4</strong>가 자연스러운 광택 하이라이트를 만들어 줍니다. 유기적 형태나 캐릭터엔 지지 루프컷 + Subdivision Surface 조합이 더 자연스럽습니다.
+  </div>
+
+  <div class="combo-section">
+    <h4>자주 쓰는 조합</h4>
+    <div class="combo-grid">
+      <div class="combo-card">
+        <div class="combo-name">Bevel R=1.0 + 세그먼트 4</div>
+        <div class="combo-desc">딱딱한 제품·로봇 모서리. 세그먼트를 늘려 둥근 하이라이트 라인을 만드는 기본 방법.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">지지 루프컷 + Subdivision Surface</div>
+        <div class="combo-desc">전체를 부드럽게 만들되 특정 모서리만 날카롭게. 루프컷이 가까울수록 더 날카로운 결과.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Bevel Modifier (자동 각도 기반)</div>
+        <div class="combo-desc">특정 각도 이상의 엣지에만 자동으로 베벨 적용. 매번 수동으로 베벨하지 않아도 됨.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Bevel + Mirror + Subdivision</div>
+        <div class="combo-desc">절반만 모델링하면서 모서리 라운딩까지 적용. 순서: Mirror → Bevel → Subdivision.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/modeling/meshes/editing/edge/bevel.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Bevel
+    </a>
+  </div>
+</section>
+
+<!-- TAB 4: 퀴즈 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+// ── Tab Switching ──────────────────────────────
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(t) {
+      t.classList.remove("is-active");
+      t.setAttribute("aria-selected", "false");
+    });
+    document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("is-active"); });
+    tab.classList.add("is-active");
+    tab.setAttribute("aria-selected", "true");
+    document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+  });
+});
+
+// ── Bevel Profile Demo ─────────────────────────
+(function() {
+  var canvas = document.getElementById("demoCanvas");
+  if (!canvas) return;
+  var ctx = canvas.getContext("2d");
+
+  var currentWidth = 0.35; // 0..1 fraction of half-box
+  var currentR = 1.0;
+  var SEGS = 8; // segments per bevel
+
+  // Compute bevel profile point at parameter t (0..1) for given R and width W
+  // Box corner is at (cx, cy). Box edges go +X and +Y from corner.
+  // bevelA = (cx + W, cy)  [on horizontal edge]
+  // bevelB = (cx, cy + W)  [on vertical edge]
+  // Note: canvas Y increases downward, so "convex" means bulging toward corner
+  function bevelPt(t, cx, cy, W, R) {
+    // Flat (R=0.5): linear interpolation A→B
+    var flatX = (cx + W) * (1 - t) + cx * t;
+    var flatY = cy * (1 - t) + (cy + W) * t;
+
+    // Convex (R=1.0): circular arc centered at corner (cx,cy), radius W
+    var convexAngle = t * Math.PI / 2; // 0 → π/2
+    var convexX = cx + W * Math.cos(convexAngle);
+    var convexY = cy + W * Math.sin(convexAngle);
+
+    // Concave (R=0.0): circular arc centered at (cx+W, cy+W), radius W, curves inward
+    var concaveAngle = Math.PI + t * Math.PI / 2; // π → 3π/2
+    var concaveX = (cx + W) + W * Math.cos(concaveAngle);
+    var concaveY = (cy + W) + W * Math.sin(concaveAngle);
+
+    var x, y;
+    if (R <= 0.5) {
+      var u = R / 0.5;
+      x = concaveX * (1 - u) + flatX * u;
+      y = concaveY * (1 - u) + flatY * u;
+    } else {
+      var u2 = (R - 0.5) / 0.5;
+      x = flatX * (1 - u2) + convexX * u2;
+      y = flatY * (1 - u2) + convexY * u2;
+    }
+    return { x: x, y: y };
+  }
+
+  // Draw a single rounded box corner, scaled to fit cell
+  // corner = 'tl','tr','bl','br' — determines box orientation
+  function drawCornerCell(cellX, cellY, cellW, cellH, W_frac, R, label, isActive) {
+    var pad = 20;
+    var boxW = cellW - pad * 2;
+    var boxH = cellH - pad * 2;
+    var bx = cellX + pad; // box top-left
+    var by = cellY + pad;
+
+    // W in pixels (fraction of half-box size)
+    var halfSize = Math.min(boxW, boxH) * 0.42;
+    var W = halfSize * W_frac;
+
+    // Draw box face (top-left corner of box at bx,by)
+    var cornerX = bx + boxW * 0.5;
+    var cornerY = by + boxH * 0.5;
+
+    // Highlight active cell
+    if (isActive) {
+      ctx.fillStyle = "rgba(10,132,255,.05)";
+      ctx.beginPath();
+      ctx.roundRect ? ctx.roundRect(cellX+2, cellY+2, cellW-4, cellH-4, 10) : ctx.rect(cellX+2, cellY+2, cellW-4, cellH-4);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(10,132,255,.25)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    // Box face (just the top-left quadrant around the corner)
+    var edgeLen = halfSize * 1.4;
+
+    // Filled box region (excluding bevel area)
+    ctx.beginPath();
+    ctx.moveTo(cornerX - edgeLen, cornerY); // left edge start
+    ctx.lineTo(cornerX - W, cornerY);        // left edge to bevel
+    // bevel profile
+    for (var i = 0; i <= SEGS; i++) {
+      var t = i / SEGS;
+      var pt = bevelPt(t, cornerX - W, cornerY - W, W, R);
+      // Actually we need to re-think the coordinate system
+      // Let's use: corner at top-left, horizontal edge goes right, vertical goes down
+      ctx.lineTo(pt.x, pt.y);
+    }
+    ctx.lineTo(cornerX, cornerY - W);       // top edge from bevel
+    ctx.lineTo(cornerX, cornerY - edgeLen); // top edge end
+    ctx.lineTo(cornerX - edgeLen, cornerY - edgeLen); // far corner
+    ctx.closePath();
+    ctx.fillStyle = isActive ? "rgba(10,132,255,.22)" : "rgba(10,132,255,.12)";
+    ctx.fill();
+
+    // Box outline (just the edges)
+    ctx.strokeStyle = isActive ? "rgba(10,132,255,.9)" : "rgba(10,132,255,.45)";
+    ctx.lineWidth = isActive ? 2 : 1.5;
+
+    // Left edge
+    ctx.beginPath();
+    ctx.moveTo(cornerX - edgeLen, cornerY);
+    ctx.lineTo(cornerX - W, cornerY);
+    ctx.stroke();
+
+    // Bevel profile
+    ctx.beginPath();
+    for (var j = 0; j <= SEGS; j++) {
+      var tj = j / SEGS;
+      var pj = bevelPt(tj, cornerX - W, cornerY - W, W, R);
+      if (j === 0) ctx.moveTo(pj.x, pj.y);
+      else ctx.lineTo(pj.x, pj.y);
+    }
+    ctx.stroke();
+
+    // Top edge
+    ctx.beginPath();
+    ctx.moveTo(cornerX, cornerY - W);
+    ctx.lineTo(cornerX, cornerY - edgeLen);
+    ctx.stroke();
+
+    // Bevel endpoint dots
+    var dotColor = isActive ? "rgba(10,132,255,.9)" : "rgba(10,132,255,.5)";
+    [[cornerX - W, cornerY], [cornerX, cornerY - W]].forEach(function(pt) {
+      ctx.beginPath();
+      ctx.arc(pt[0], pt[1], 3, 0, Math.PI * 2);
+      ctx.fillStyle = dotColor;
+      ctx.fill();
+    });
+
+    // Width dimension line
+    if (isActive) {
+      ctx.strokeStyle = "rgba(245,158,11,.5)";
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 3]);
+      ctx.beginPath();
+      ctx.moveTo(cornerX - W, cornerY + 10);
+      ctx.lineTo(cornerX, cornerY + 10);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = "#fbbf24";
+      ctx.font = "9px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("W=" + Math.round(W_frac * 100) + "%", cornerX - W / 2, cornerY + 20);
+    }
+
+    // Label
+    var labelY = cellY + cellH - 6;
+    ctx.fillStyle = isActive ? "rgba(10,132,255,.9)" : "rgba(255,255,255,.45)";
+    ctx.font = (isActive ? "bold " : "") + "11px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(label, cellX + cellW / 2, labelY);
+  }
+
+  function draw() {
+    var w = canvas.width;
+    var h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    // Background
+    ctx.fillStyle = "#17181a";
+    ctx.fillRect(0, 0, w, h);
+
+    // Grid
+    ctx.strokeStyle = "rgba(255,255,255,.04)";
+    ctx.lineWidth = 1;
+    for (var gx = 40; gx < w; gx += 40) {
+      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
+    }
+    for (var gy = 40; gy < h; gy += 40) {
+      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
+    }
+
+    // Layout: 4 panels showing R=0, 0.5, 0.75, 1.0 for current width
+    var rValues = [0.0, 0.5, 0.75, 1.0];
+    var labels  = ["R=0.0\n오목", "R=0.5\n평평", "R=0.75\n약간 볼록", "R=1.0\n원형 볼록"];
+    var cellW = w / 4;
+    var cellH = h;
+
+    rValues.forEach(function(r, i) {
+      var isActive = Math.abs(r - currentR) < 0.01;
+      drawCornerCell(i * cellW, 0, cellW, cellH - 20, currentWidth, r, labels[i], isActive);
+    });
+
+    // Bottom label
+    ctx.fillStyle = "rgba(255,255,255,.25)";
+    ctx.font = "10px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("베벨 너비: " + Math.round(currentWidth * 100) + "%  |  세그먼트: " + SEGS + "개", w / 2, h - 6);
+  }
+
+  // Width buttons
+  document.querySelectorAll(".demo-btn[data-width]").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      document.querySelectorAll(".demo-btn[data-width]").forEach(function(b) { b.classList.remove("is-active"); });
+      btn.classList.add("is-active");
+      currentWidth = parseFloat(btn.dataset.width);
+      draw();
+    });
+    btn.addEventListener("touchend", function(e) { e.preventDefault(); btn.click(); });
+  });
+
+  // R buttons
+  document.querySelectorAll(".demo-btn[data-r]").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      document.querySelectorAll(".demo-btn[data-r]").forEach(function(b) { b.classList.remove("is-active"); });
+      btn.classList.add("is-active");
+      currentR = parseFloat(btn.dataset.r);
+      draw();
+    });
+    btn.addEventListener("touchend", function(e) { e.preventDefault(); btn.click(); });
+  });
+
+  draw();
+})();
+
+// ── Quiz Engine ────────────────────────────────
+function initQuiz(questions) {
+  var container = document.getElementById("quizArea");
+  var score = 0, answered = 0;
+  var scoreDiv = null;
+
+  var progress = document.createElement("div");
+  progress.className = "quiz-progress";
+  progress.textContent = "문제 0 / " + questions.length + " · 점수 0점";
+  container.appendChild(progress);
+
+  questions.forEach(function(q, qi) {
+    var div = document.createElement("div");
+    div.className = "quiz-question";
+    var heading = document.createElement("h4");
+    heading.textContent = "Q" + (qi + 1) + ". " + q.question;
+    div.appendChild(heading);
+    var fb = document.createElement("div");
+    fb.className = "quiz-feedback";
+
+    q.options.forEach(function(opt, oi) {
+      var btn = document.createElement("button");
+      btn.className = "quiz-option";
+      btn.textContent = opt;
+      btn.addEventListener("click", function() {
+        if (btn.disabled) return;
+        div.querySelectorAll(".quiz-option").forEach(function(b) { b.disabled = true; });
+        answered++;
+        if (oi === q.answer) {
+          btn.classList.add("correct");
+          fb.className = "quiz-feedback show correct-fb";
+          fb.textContent = "✅ " + q.explanation;
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
+          fb.className = "quiz-feedback show wrong-fb";
+          fb.textContent = "❌ " + q.explanation;
+          var retryBtn = document.createElement("button");
+          retryBtn.className = "quiz-retry";
+          retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
+          retryBtn.textContent = "다시 풀기";
+          retryBtn.addEventListener("click", function() {
+            answered--;
+            div.querySelectorAll(".quiz-option").forEach(function(b) { b.disabled = false; b.classList.remove("wrong","correct"); });
+            fb.className = "quiz-feedback"; fb.textContent = "";
+            retryBtn.remove();
+            if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+            progress.textContent = "문제 " + answered + " / " + questions.length + " · 점수 " + score + "점";
+          });
+          fb.appendChild(retryBtn);
+        }
+        progress.textContent = "문제 " + answered + " / " + questions.length + " · 점수 " + score + "점";
+        if (answered === questions.length) showScore();
+      });
+      div.appendChild(btn);
+    });
+    div.appendChild(fb);
+    container.appendChild(div);
+  });
+
+  function showScore() {
+    if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+    scoreDiv = document.createElement("div");
+    scoreDiv.className = "quiz-score";
+    var emoji = document.createElement("div");
+    emoji.style.cssText = "font-size:36px;margin-bottom:8px";
+    emoji.textContent = score === questions.length ? "🎉" : score >= Math.ceil(questions.length / 2) ? "👍" : "📚";
+    scoreDiv.appendChild(emoji);
+    var result = document.createElement("div");
+    result.style.cssText = "font-size:18px;font-weight:500;margin-bottom:6px";
+    result.textContent = score + " / " + questions.length + " 정답";
+    scoreDiv.appendChild(result);
+    var msg = document.createElement("div");
+    msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
+    msg.textContent = score === questions.length ? "완벽합니다!" : "조금 더 연습하면 완벽해질 거예요!";
+    scoreDiv.appendChild(msg);
+    var saveBtn = document.createElement("button");
+    saveBtn.className = "quiz-retry";
+    saveBtn.style.cssText = "background:rgba(10,132,255,.18);border-color:var(--key);margin-bottom:8px";
+    saveBtn.textContent = "기록 저장하기";
+    saveBtn.addEventListener("click", function() {
+      try {
+        var wid = new URLSearchParams(location.search).get("wid") || location.pathname.split("/").pop().replace(".html","");
+        window.parent.postMessage({ type:"showme-quiz-complete", widgetId:wid, score:score, total:questions.length, pass:score>=Math.ceil(questions.length*0.75) }, "*");
+      } catch(e) {}
+      saveBtn.textContent = "저장 완료!"; saveBtn.disabled = true; saveBtn.style.opacity = ".5";
+    });
+    scoreDiv.appendChild(saveBtn);
+    var retry = document.createElement("button");
+    retry.className = "quiz-retry";
+    retry.textContent = "처음부터 다시";
+    retry.addEventListener("click", function() { location.reload(); });
+    scoreDiv.appendChild(retry);
+    container.appendChild(scoreDiv);
+  }
+}
+
+// ── Support Loop Demo ──────────────────────────
+(function() {
+  var canvas = document.getElementById("loopCanvas");
+  if (!canvas) return;
+  var ctx = canvas.getContext("2d");
+
+  // loopFrac: distance of support loop from corner, as fraction of edge half-length
+  // 0 = at corner, 0.5 = halfway along edge
+  var loopFrac = 0.06; // default: very close
+  var hasLoop = true;
+
+  // Catmull-Rom spline: compute point at t on segment p1→p2, using p0 and p3 as tangent guides
+  function catmullRom(p0, p1, p2, p3, t) {
+    var t2 = t * t, t3 = t2 * t;
+    return {
+      x: 0.5 * ((2*p1.x) + (-p0.x+p2.x)*t + (2*p0.x-5*p1.x+4*p2.x-p3.x)*t2 + (-p0.x+3*p1.x-3*p2.x+p3.x)*t3),
+      y: 0.5 * ((2*p1.y) + (-p0.y+p2.y)*t + (2*p0.y-5*p1.y+4*p2.y-p3.y)*t2 + (-p0.y+3*p1.y-3*p2.y+p3.y)*t3)
+    };
+  }
+
+  // Draw smooth curve through array of points using Catmull-Rom
+  function drawCatmullRom(pts, strokeColor, lineWidth) {
+    if (pts.length < 2) return;
+    ctx.beginPath();
+    ctx.strokeStyle = strokeColor;
+    ctx.lineWidth = lineWidth;
+    // Extend with phantom points at both ends
+    var ghost0 = { x: 2*pts[0].x - pts[1].x, y: 2*pts[0].y - pts[1].y };
+    var ghostN = { x: 2*pts[pts.length-1].x - pts[pts.length-2].x, y: 2*pts[pts.length-1].y - pts[pts.length-2].y };
+    var all = [ghost0].concat(pts).concat([ghostN]);
+    var STEPS = 20;
+    var started = false;
+    for (var i = 1; i < all.length - 2; i++) {
+      for (var s = 0; s <= STEPS; s++) {
+        var t = s / STEPS;
+        var pt = catmullRom(all[i-1], all[i], all[i+1], all[i+2], t);
+        if (!started) { ctx.moveTo(pt.x, pt.y); started = true; }
+        else ctx.lineTo(pt.x, pt.y);
+      }
+    }
+    ctx.stroke();
+  }
+
+  function buildPoints(w, h) {
+    // L-shaped cross section: horizontal edge → corner → vertical edge
+    // Corner at (cx, cy)
+    var cx = w * 0.55;
+    var cy = h * 0.42;
+    var edgeLen = Math.min(cx * 0.85, cy * 0.85);
+    var supportDist = edgeLen * loopFrac;
+
+    var pts;
+    if (hasLoop) {
+      pts = [
+        { x: cx - edgeLen, y: cy },          // P0: far left
+        { x: cx - supportDist, y: cy },       // P1: support loop on horizontal (moves)
+        { x: cx, y: cy },                     // P2: corner
+        { x: cx, y: cy + supportDist },       // P3: support loop on vertical (moves)
+        { x: cx, y: cy + edgeLen }            // P4: far bottom
+      ];
+    } else {
+      pts = [
+        { x: cx - edgeLen, y: cy },           // P0
+        { x: cx, y: cy },                     // P1: corner
+        { x: cx, y: cy + edgeLen }            // P2
+      ];
+    }
+    return { pts: pts, cx: cx, cy: cy, edgeLen: edgeLen, supportDist: supportDist };
+  }
+
+  function draw() {
+    var w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    // Background
+    ctx.fillStyle = "#17181a";
+    ctx.fillRect(0, 0, w, h);
+
+    // Grid
+    ctx.strokeStyle = "rgba(255,255,255,.04)";
+    ctx.lineWidth = 1;
+    for (var gx = 40; gx < w; gx += 40) { ctx.beginPath(); ctx.moveTo(gx,0); ctx.lineTo(gx,h); ctx.stroke(); }
+    for (var gy = 40; gy < h; gy += 40) { ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(w,gy); ctx.stroke(); }
+
+    var info = buildPoints(w, h);
+    var pts = info.pts;
+    var cx = info.cx, cy = info.cy, edgeLen = info.edgeLen;
+
+    // ── LEFT PANEL: control mesh (raw box + loop cuts) ──
+    var panelW = w * 0.48;
+
+    // Box face fill (top-left quadrant around corner)
+    ctx.fillStyle = "rgba(10,132,255,.1)";
+    ctx.fillRect(cx - edgeLen, cy - edgeLen * 0.6, edgeLen, edgeLen * 0.6);
+    ctx.fillRect(cx, cy, edgeLen * 0.6, edgeLen);
+
+    // Box mesh edges (L-shape)
+    ctx.strokeStyle = "rgba(10,132,255,.5)";
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.moveTo(cx - edgeLen, cy); ctx.lineTo(cx, cy); ctx.lineTo(cx, cy + edgeLen);
+    ctx.stroke();
+
+    // Support loop lines (if active)
+    if (hasLoop) {
+      var sx1 = cx - info.supportDist;
+      var sy3 = cy + info.supportDist;
+      ctx.strokeStyle = "rgba(245,158,11,.7)";
+      ctx.lineWidth = 1.5;
+      // Vertical line at support loop on horizontal edge
+      ctx.beginPath(); ctx.moveTo(sx1, cy - edgeLen * 0.45); ctx.lineTo(sx1, cy + 10); ctx.stroke();
+      // Horizontal line at support loop on vertical edge
+      ctx.beginPath(); ctx.moveTo(cx - 10, sy3); ctx.lineTo(cx + edgeLen * 0.45, sy3); ctx.stroke();
+    }
+
+    // Control vertex dots
+    pts.forEach(function(p, i) {
+      var isCorner = (hasLoop ? i === 2 : i === 1);
+      var isSupport = hasLoop && (i === 1 || i === 3);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, isCorner ? 5 : 4, 0, Math.PI * 2);
+      ctx.fillStyle = isCorner ? "rgba(10,132,255,.9)" : isSupport ? "#fbbf24" : "rgba(255,255,255,.4)";
+      ctx.fill();
+      ctx.strokeStyle = "#fff";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    });
+
+    // Label
+    ctx.fillStyle = "rgba(255,255,255,.4)";
+    ctx.font = "11px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("컨트롤 메시 (루프컷 위치)", panelW * 0.5, h - 8);
+    if (hasLoop) {
+      ctx.fillStyle = "#fbbf24";
+      ctx.fillText("● 지지 루프컷", cx - info.supportDist, cy - 14);
+    }
+
+    // ── RIGHT PANEL: Subdivision result ──
+    var rightOfsX = w * 0.5;
+    // Shift points to right panel
+    var ptsR = pts.map(function(p) { return { x: p.x + rightOfsX - cx + (w - rightOfsX) * 0.5 - edgeLen * 0.05, y: p.y }; });
+    var cxR = cx + rightOfsX - cx + (w - rightOfsX) * 0.5 - edgeLen * 0.05;
+
+    // Box fill
+    ctx.fillStyle = "rgba(16,185,129,.08)";
+    ctx.fillRect(cxR - edgeLen, cy - edgeLen * 0.6, edgeLen, edgeLen * 0.6);
+    ctx.fillRect(cxR, cy, edgeLen * 0.6, edgeLen);
+
+    // Raw mesh (faint)
+    ctx.strokeStyle = "rgba(255,255,255,.12)";
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(cxR - edgeLen, cy); ctx.lineTo(cxR, cy); ctx.lineTo(cxR, cy + edgeLen);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Subdivision result curve (Catmull-Rom)
+    drawCatmullRom(ptsR, "rgba(16,185,129,.9)", 2.5);
+
+    // Highlight the corner area
+    ctx.fillStyle = "rgba(16,185,129,.15)";
+    ctx.beginPath();
+    ctx.arc(cxR, cy, 6, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Label
+    ctx.fillStyle = "rgba(255,255,255,.4)";
+    ctx.font = "11px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Subdivision 결과", rightOfsX + (w - rightOfsX) * 0.5, h - 8);
+
+    // Divider
+    ctx.strokeStyle = "rgba(255,255,255,.08)";
+    ctx.lineWidth = 1;
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.moveTo(w * 0.49, 12); ctx.lineTo(w * 0.49, h - 12);
+    ctx.stroke();
+
+    // Status text
+    var statusText = hasLoop
+      ? "루프컷이 모서리에서 " + Math.round(loopFrac * 100) + "% 위치 — " + (loopFrac < 0.12 ? "날카로운 엣지" : loopFrac < 0.28 ? "중간 정도" : "많이 둥근 모서리")
+      : "루프컷 없음 — 모서리가 크게 둥글어짐";
+    ctx.fillStyle = loopFrac < 0.12 ? "rgba(10,132,255,.8)" : loopFrac < 0.28 ? "#fbbf24" : "rgba(239,68,68,.7)";
+    ctx.fillStyle = hasLoop && loopFrac < 0.12 ? "rgba(16,185,129,.8)" : "#fbbf24";
+    ctx.font = "bold 11px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(statusText, w / 2, 18);
+  }
+
+  // Loop position buttons
+  document.querySelectorAll(".demo-btn[data-loop]").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      document.querySelectorAll(".demo-btn[data-loop]").forEach(function(b) { b.classList.remove("is-active"); });
+      btn.classList.add("is-active");
+      if (btn.dataset.loop === "none") {
+        hasLoop = false;
+      } else {
+        hasLoop = true;
+        loopFrac = parseFloat(btn.dataset.loop);
+      }
+      draw();
+    });
+    btn.addEventListener("touchend", function(e) { e.preventDefault(); btn.click(); });
+  });
+
+  draw();
+})();
+
+initQuiz([
+  {
+    question: "Bevel의 너비(Width)가 결정하는 것은?",
+    options: [
+      "단면 곡선이 얼마나 볼록/오목한지",
+      "원래 모서리에서 얼마나 멀리 잘라낼지 (라운딩의 크기)",
+      "세그먼트(면)의 수",
+      "베벨이 적용될 각도 범위"
+    ],
+    answer: 1,
+    explanation: "베벨 Width는 원래 엣지에서 얼마나 떨어진 위치에 잘라낼지를 결정합니다. 넓을수록 큰 라운딩, 좁을수록 작고 날카로운 결과가 됩니다."
+  },
+  {
+    question: "Bevel Profile(R) 값이 1.0일 때 단면 모양은?",
+    options: [
+      "안쪽으로 오목하게 파인 형태",
+      "완전히 평평한 직선",
+      "원형 호처럼 바깥쪽으로 볼록한 형태",
+      "지그재그 형태"
+    ],
+    answer: 2,
+    explanation: "R=1.0은 단면이 원형 호처럼 바깥쪽으로 볼록하게 됩니다. 딱딱한 제품 모서리에 자연스러운 하이라이트 라인을 만들 때 자주 사용됩니다."
+  },
+  {
+    question: "Subdivision Surface 사용 시 모서리를 날카롭게 유지하려면?",
+    options: [
+      "모서리 엣지를 삭제한다",
+      "모서리 가까이에 지지 루프컷을 추가한다",
+      "Subdivision Level을 0으로 낮춘다",
+      "R 값을 0.0으로 설정한다"
+    ],
+    answer: 1,
+    explanation: "지지 루프컷을 모서리 가까이 추가하면 Subdivision이 그 부분을 덜 부드럽게 만듭니다. 루프컷이 가까울수록 더 날카로운 모서리가 유지됩니다."
+  },
+  {
+    question: "베벨 후 Profile(R) 값을 수정하는 가장 쉬운 방법은?",
+    options: [
+      "다시 Ctrl+B를 눌러 처음부터 반복",
+      "Edit Mode에서 N 패널 → Item 탭",
+      "베벨 직후 왼쪽 아래 Operator Panel(또는 F9)에서 Shape 값 변경",
+      "Modifier Properties 탭에서 변경"
+    ],
+    answer: 2,
+    explanation: "베벨 작업 직후 화면 왼쪽 아래 'Adjust Last Operation' 패널에서 Width, Segments, Shape(R) 값을 모두 수정할 수 있습니다. F9를 누르면 다시 열립니다."
+  },
+  {
+    question: "R=0.0인 베벨 단면의 특징은?",
+    options: [
+      "볼록한 원형 호",
+      "평평한 직선",
+      "안쪽으로 오목하게 파인 형태",
+      "뾰족한 삼각형"
+    ],
+    answer: 2,
+    explanation: "R=0.0은 단면이 안쪽으로 오목하게 파이는 형태(凹)입니다. R=0.5가 평평한 기본값이고, R이 낮아질수록 더 오목해집니다."
+  }
+]);
+</script>
+
+</body>
+</html>
