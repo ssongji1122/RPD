@@ -989,7 +989,11 @@ class AdminHandler(BaseHTTPRequestHandler):
             self._send_error_json(500, f"Read failed: {exc}")
             return
 
-        mapping = load_notion_mapping()
+        try:
+            mapping = load_notion_mapping()
+        except Exception as exc:
+            self._send_error_json(500, f"Mapping load failed: {exc}")
+            return
         results = []
         for week in data:
             week_num = week.get("week")
@@ -1012,8 +1016,8 @@ class AdminHandler(BaseHTTPRequestHandler):
                     "title": week.get("title", ""),
                 })
 
-        ok_count = sum(1 for r in results if r["ok"])
-        self._send_json({"results": results, "ok": ok_count, "total": len(results)})
+        success_count = sum(1 for r in results if r["ok"])
+        self._send_json({"results": results, "success_count": success_count, "total": len(results)})
 
     def _handle_notion_pull(self, week_num: int) -> None:
         """Pull data from Notion and update curriculum-notion.json."""
