@@ -409,7 +409,7 @@ body {
       <button class="demo-btn" id="btnReset">초기화</button>
     </div>
   </div>
-  <p class="demo-hint">캔버스를 위아래로 드래그하면 Extrude 양이 변합니다.</p>
+  <p class="demo-hint">자동으로 애니메이션됩니다 — 드래그로 직접 조작할 수도 있어요.</p>
   <!-- Mode descriptions -->
   <div style="margin-top:12px;">
     <div id="desc-region" style="display:block;">
@@ -634,6 +634,9 @@ function initQuiz(questions) {
   var extrudeAmount = 0;
   var isDragging = false;
   var dragStartY = -1;
+  var animDir = 1;
+  var animPaused = false;
+  var resumeTimer = null;
 
   // 3 connected faces forming a "hill" cross-section (side view)
   // Face A: left slope  Face B: flat top  Face C: right slope
@@ -833,15 +836,27 @@ function initQuiz(questions) {
     ctx.beginPath(); ctx.moveTo(60, 295); ctx.lineTo(W - 60, 295); ctx.stroke();
     ctx.setLineDash([]);
 
-    // Bottom hint
-    if (amt <= 1) {
+    // Bottom hint (drag override)
+    if (isDragging) {
       ctx.fillStyle = "rgba(255,255,255,.2)";
       ctx.font = "11px sans-serif"; ctx.textAlign = "center";
-      ctx.fillText("위아래로 드래그하여 Extrude 적용", W / 2, H - 8);
+      ctx.fillText("드래그 중 — 놓으면 자동 재개", W / 2, H - 8);
     }
   }
 
-  // ── Events ──
+  // ── Animation loop ──
+  function animate() {
+    if (!animPaused && !isDragging) {
+      extrudeAmount += animDir * 0.9;
+      if (extrudeAmount >= 90) { extrudeAmount = 90; animDir = -1; }
+      if (extrudeAmount <= 0)  { extrudeAmount = 0;  animDir =  1; }
+      draw();
+    }
+    requestAnimationFrame(animate);
+  }
+  animate();
+
+  // ── Events (drag to override animation) ──
   function getPosY(e) {
     var rect = canvas.getBoundingClientRect();
     var scaleY = canvas.height / rect.height;
@@ -849,14 +864,23 @@ function initQuiz(questions) {
     return (clientY - rect.top) * scaleY;
   }
 
-  canvas.addEventListener("mousedown",  function(e) { e.preventDefault(); isDragging = true; dragStartY = getPosY(e); });
+  function pauseAnim() {
+    animPaused = true;
+    if (resumeTimer) { clearTimeout(resumeTimer); resumeTimer = null; }
+  }
+  function resumeAnim() {
+    isDragging = false;
+    resumeTimer = setTimeout(function() { animPaused = false; }, 1200);
+  }
+
+  canvas.addEventListener("mousedown",  function(e) { e.preventDefault(); isDragging = true; pauseAnim(); dragStartY = getPosY(e); });
   canvas.addEventListener("mousemove",  function(e) { if (!isDragging) return; e.preventDefault(); extrudeAmount = Math.max(0, Math.min(dragStartY - getPosY(e), 95)); draw(); });
-  canvas.addEventListener("mouseup",    function() { isDragging = false; });
-  canvas.addEventListener("mouseleave", function() { isDragging = false; });
-  canvas.addEventListener("touchstart", function(e) { e.preventDefault(); isDragging = true; dragStartY = getPosY(e); }, { passive: false });
+  canvas.addEventListener("mouseup",    resumeAnim);
+  canvas.addEventListener("mouseleave", resumeAnim);
+  canvas.addEventListener("touchstart", function(e) { e.preventDefault(); isDragging = true; pauseAnim(); dragStartY = getPosY(e); }, { passive: false });
   canvas.addEventListener("touchmove",  function(e) { if (!isDragging) return; e.preventDefault(); extrudeAmount = Math.max(0, Math.min(dragStartY - getPosY(e), 95)); draw(); }, { passive: false });
-  canvas.addEventListener("touchend",   function() { isDragging = false; });
-  canvas.addEventListener("touchcancel",function() { isDragging = false; });
+  canvas.addEventListener("touchend",   resumeAnim);
+  canvas.addEventListener("touchcancel",resumeAnim);
 
   // ── Mode buttons ──
   var btnRegion     = document.getElementById("btnRegion");
@@ -872,17 +896,17 @@ function initQuiz(questions) {
   }
 
   function setMode(m, btn) {
-    mode = m; extrudeAmount = 0;
+    mode = m; extrudeAmount = 0; animDir = 1; animPaused = false;
+    if (resumeTimer) { clearTimeout(resumeTimer); resumeTimer = null; }
     allBtns.forEach(function(b) { b.classList.remove("is-active"); });
     btn.classList.add("is-active");
     updateDesc(m);
-    draw();
   }
 
   btnRegion.addEventListener("click",     function() { setMode("region",     btnRegion);     });
   btnNormals.addEventListener("click",    function() { setMode("normals",    btnNormals);    });
   btnIndividual.addEventListener("click", function() { setMode("individual", btnIndividual); });
-  document.getElementById("btnReset").addEventListener("click", function() { extrudeAmount = 0; draw(); });
+  document.getElementById("btnReset").addEventListener("click", function() { extrudeAmount = 0; animDir = 1; animPaused = false; });
 
   draw();
 })();
