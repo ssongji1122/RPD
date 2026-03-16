@@ -77,6 +77,38 @@
   color: var(--key-soft);
   border-bottom-color: var(--key);
 }
+.lib-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+.lib-card {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 8px; padding: 18px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  cursor: pointer;
+  transition: border-color .14s, background .14s;
+  text-align: center;
+}
+.lib-card:hover {
+  border-color: var(--key);
+  background: rgba(10,132,255,.06);
+}
+.lib-card-icon { font-size: 2rem; line-height: 1; }
+.lib-card-label {
+  font-size: .84rem; font-weight: 500; color: var(--text); line-height: 1.4;
+}
+.lib-card-id {
+  font-size: .72rem; color: var(--muted);
+}
+.lib-empty {
+  grid-column: 1 / -1;
+  padding: 60px 0; text-align: center; color: var(--muted);
+  font-size: .9rem;
+}
   </style>
 </head>
 <body>
@@ -193,6 +225,91 @@ function buildTabs() {
   });
 }
 buildTabs();
+
+// 카드 빌드
+function buildCards() {
+  var main = document.getElementById("libMain");
+  var grid = document.createElement("div");
+  grid.className = "lib-grid";
+  grid.id = "libGrid";
+  main.appendChild(grid);
+
+  Object.keys(SHOWME_REGISTRY).forEach(function(id) {
+    var meta = SHOWME_REGISTRY[id];
+    var card = document.createElement("div");
+    card.className = "lib-card";
+    card.dataset.id = id;
+    card.dataset.cat = CATEGORY_MAP[id] || "기타";
+
+    var icon = document.createElement("span");
+    icon.className = "lib-card-icon";
+    icon.textContent = meta.icon;
+
+    var label = document.createElement("span");
+    label.className = "lib-card-label";
+    label.textContent = meta.label;
+
+    var idEl = document.createElement("span");
+    idEl.className = "lib-card-id";
+    idEl.textContent = id;
+
+    card.appendChild(icon);
+    card.appendChild(label);
+    card.appendChild(idEl);
+    card.addEventListener("click", function() { openShowMe(id); });
+    grid.appendChild(card);
+  });
+
+  updateCount();
+}
+
+// 필터
+function filterCards() {
+  var query = document.getElementById("libSearch").value.toLowerCase().trim();
+  var activeCat = document.querySelector(".lib-tab.is-active").dataset.cat;
+  var cards = document.querySelectorAll(".lib-card");
+  var visible = 0;
+
+  cards.forEach(function(card) {
+    var id    = card.dataset.id;
+    var meta  = SHOWME_REGISTRY[id];
+    var cat   = card.dataset.cat;
+
+    var matchCat   = activeCat === "전체" || cat === activeCat;
+    var matchQuery = !query
+      || meta.label.toLowerCase().includes(query)
+      || id.toLowerCase().includes(query);
+
+    card.style.display = (matchCat && matchQuery) ? "" : "none";
+    if (matchCat && matchQuery) visible++;
+  });
+
+  updateCount(visible);
+
+  var grid = document.getElementById("libGrid");
+  var empty = grid.querySelector(".lib-empty");
+  if (visible === 0) {
+    if (!empty) {
+      var el = document.createElement("p");
+      el.className = "lib-empty";
+      el.textContent = "검색 결과가 없습니다";
+      grid.appendChild(el);
+    }
+  } else {
+    if (empty) empty.remove();
+  }
+}
+
+function updateCount(n) {
+  var total = Object.keys(SHOWME_REGISTRY).length;
+  var shown = (n === undefined) ? total : n;
+  document.getElementById("libCount").textContent =
+    shown === total ? total + "개 도구" : shown + " / " + total + "개";
+}
+
+document.getElementById("libSearch").addEventListener("input", filterCards);
+
+buildCards();
   </script>
 </body>
 </html>
