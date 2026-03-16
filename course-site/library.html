@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>도구 라이브러리 — RPD</title>
+  <link rel="stylesheet" href="assets/tokens.css" />
+  <style>
+/* ── Layout ── */
+.lib-header {
+  position: sticky; top: 0; z-index: 10;
+  background: rgba(10,10,10,.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+  padding: 0 20px;
+}
+.lib-header-inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 18px 0;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.lib-back {
+  color: var(--muted); font-size: .84rem;
+  transition: color .14s;
+}
+.lib-back:hover { color: var(--text); }
+.lib-title {
+  margin: 0; font-size: clamp(1.4rem, 3vw, 2rem);
+  font-family: var(--font-display); font-weight: 650;
+  letter-spacing: -.02em;
+}
+.lib-subtitle {
+  margin: 4px 0 0; color: var(--muted-strong); font-size: .9rem;
+}
+.lib-search-wrap {
+  display: flex; align-items: center; gap: 12px;
+}
+.lib-search {
+  flex: 1; padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.05);
+  color: var(--text); font: inherit; font-size: .9rem;
+  outline: none; transition: border-color .14s;
+}
+.lib-search:focus { border-color: var(--key); }
+.lib-search::placeholder { color: var(--muted); }
+.lib-count {
+  font-size: .8rem; color: var(--muted); white-space: nowrap;
+}
+.lib-main {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 24px 20px 80px;
+}
+.lib-tabs {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex; gap: 0;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--line);
+}
+.lib-tabs::-webkit-scrollbar { display: none; }
+.lib-tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted); cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none; font-family: inherit;
+}
+.lib-tab:hover { color: var(--muted-strong); }
+.lib-tab.is-active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+.lib-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+.lib-card {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 8px; padding: 18px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  cursor: pointer;
+  transition: border-color .14s, background .14s;
+  text-align: center;
+  font-family: inherit;
+}
+.lib-card:hover {
+  border-color: var(--key);
+  background: rgba(10,132,255,.06);
+}
+.lib-card-icon { font-size: 2rem; line-height: 1; }
+.lib-card-label {
+  font-size: .84rem; font-weight: 500; color: var(--text); line-height: 1.4;
+}
+.lib-card-id {
+  font-size: .72rem; color: var(--muted);
+}
+.lib-empty {
+  grid-column: 1 / -1;
+  padding: 60px 0; text-align: center; color: var(--muted);
+  font-size: .9rem;
+}
+.showme-overlay {
+  display: none; position: fixed; inset: 0;
+  z-index: 100;
+  background: rgba(0,0,0,.72);
+  backdrop-filter: blur(8px);
+  justify-content: center; align-items: center;
+  padding: 20px;
+}
+.showme-overlay.is-open { display: flex; }
+.showme-modal {
+  width: min(720px, 100%);
+  height: min(85vh, 640px);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255,255,255,.12);
+  background: var(--surface);
+  box-shadow: 0 24px 80px rgba(0,0,0,.6);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  animation: showme-in .22s ease;
+}
+@keyframes showme-in {
+  from { opacity: 0; transform: scale(.97) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.showme-modal-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
+.showme-modal-title { font-size: .9rem; font-weight: 600; color: var(--text); }
+.showme-close {
+  display: grid; place-items: center;
+  width: 32px; height: 32px; border-radius: 8px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong); cursor: pointer;
+  transition: background .14s, color .14s;
+}
+.showme-close:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.showme-iframe { flex: 1; width: 100%; border: none; background: var(--bg); }
+@media (max-width: 720px) {
+  .showme-overlay { padding: 0; }
+  .showme-modal { width: 100%; height: 100%; border-radius: 0; border: none; }
+}
+@media (max-width: 600px) {
+  .lib-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
+  .lib-card { padding: 14px 8px; }
+  .lib-card-icon { font-size: 1.6rem; }
+  .lib-card-label { font-size: .78rem; }
+  .lib-card-id { display: none; }
+  .lib-main { padding: 16px 12px 60px; }
+}
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="lib-header">
+      <div class="lib-header-inner">
+        <a href="index.html" class="lib-back">← 홈</a>
+        <div>
+          <h1 class="lib-title">도구 라이브러리</h1>
+          <p class="lib-subtitle">Blender 도구·모디파이어 개념 카드 모음</p>
+        </div>
+        <div class="lib-search-wrap">
+          <input
+            class="lib-search"
+            id="libSearch"
+            type="search"
+            aria-label="도구 검색"
+            placeholder="예: Array, Mirror, UV..."
+            autocomplete="off"
+          />
+          <span class="lib-count" id="libCount"></span>
+        </div>
+      </div>
+    </header>
+    <nav class="lib-tabs" id="libTabs" role="tablist" aria-label="카테고리 필터"></nav>
+    <main class="lib-main" id="libMain"></main>
+
+    <!-- Show Me Modal -->
+    <div class="showme-overlay" id="showmeOverlay" aria-hidden="true">
+      <div class="showme-modal" role="dialog" aria-modal="true" aria-labelledby="showmeTitle">
+        <div class="showme-modal-header">
+          <span class="showme-modal-title" id="showmeTitle"></span>
+          <button class="showme-close" id="showmeClose" aria-label="닫기" type="button">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <iframe class="showme-iframe" id="showmeIframe"
+                sandbox="allow-scripts allow-same-origin"
+                title="Show Me Widget"></iframe>
+      </div>
+    </div>
+  </div>
+  <script src="assets/showme/_registry.js"></script>
+  <script>
+// 카테고리 매핑 — ID → 카테고리명
+const CATEGORY_MAP = {
+  "viewport-navigation": "Edit Mode",
+  "transform-grs":       "Edit Mode",
+  "edit-mode":           "Edit Mode",
+  "edit-mode-tools":     "Edit Mode",
+  "extrude":             "Edit Mode",
+  "loop-cut":            "Edit Mode",
+  "inset":               "Edit Mode",
+  "bevel-tool":          "Edit Mode",
+
+  "array-modifier":          "Generate Modifiers",
+  "bevel-modifier":          "Generate Modifiers",
+  "boolean-modifier":        "Generate Modifiers",
+  "build-modifier":          "Generate Modifiers",
+  "curve-to-tube":           "Generate Modifiers",
+  "decimate-modifier":       "Generate Modifiers",
+  "edge-split-modifier":     "Generate Modifiers",
+  "mask-modifier":           "Generate Modifiers",
+  "mirror-modifier":         "Generate Modifiers",
+  "multiresolution-modifier":"Generate Modifiers",
+  "remesh-modifier":         "Generate Modifiers",
+  "scatter-on-surface":      "Generate Modifiers",
+  "screw-modifier":          "Generate Modifiers",
+  "skin-modifier":           "Generate Modifiers",
+  "solidify-modifier":       "Generate Modifiers",
+  "subdivision-surface":     "Generate Modifiers",
+  "triangulate-modifier":    "Generate Modifiers",
+  "volume-to-mesh":          "Generate Modifiers",
+  "weld-modifier":           "Generate Modifiers",
+  "wireframe-modifier":      "Generate Modifiers",
+
+  "weighted-normal":    "Normals",
+
+  "transform-apply":        "기타",
+  "simple-deform":          "기타",
+  "bevel-tool-vs-modifier": "기타",
+  "join-separate":          "기타",
+  "origin-vs-3dcursor":     "기타",
+
+  "sculpt-basics":      "Sculpting",
+
+  "material-basics":    "Material",
+  "principled-bsdf":    "Material",
+  "shader-editor":      "Material",
+
+  "uv-unwrapping":      "UV",
+  "uv-editor":          "UV",
+
+  "light-types":        "Lighting",
+  "hdri-lighting":      "Lighting",
+  "three-point-light":  "Lighting",
+
+  "keyframe-basics":    "Animation",
+  "graph-editor":       "Animation",
+
+  "armature-basics":    "Rigging",
+  "weight-paint":       "Rigging",
+
+  "render-settings":    "Rendering",
+  "compositing-basics": "Rendering",
+};
+
+const CATEGORY_ORDER = [
+  "전체", "Edit Mode", "Generate Modifiers", "Normals",
+  "Sculpting", "Material", "UV", "Lighting",
+  "Animation", "Rigging", "Rendering", "기타"
+];
+
+function buildTabs() {
+  var tabsEl = document.getElementById("libTabs");
+  CATEGORY_ORDER.forEach(function(cat, i) {
+    var btn = document.createElement("button");
+    btn.className = "lib-tab" + (i === 0 ? " is-active" : "");
+    btn.textContent = cat;
+    btn.dataset.cat = cat;
+    btn.setAttribute("role", "tab");
+    btn.setAttribute("aria-selected", i === 0 ? "true" : "false");
+    btn.addEventListener("click", function() {
+      document.querySelectorAll(".lib-tab").forEach(function(t) {
+        t.classList.remove("is-active");
+        t.setAttribute("aria-selected", "false");
+      });
+      btn.classList.add("is-active");
+      btn.setAttribute("aria-selected", "true");
+      if (typeof filterCards === "function") filterCards();
+    });
+    tabsEl.appendChild(btn);
+  });
+}
+buildTabs();
+
+// 카드 빌드
+function buildCards() {
+  var main = document.getElementById("libMain");
+  var grid = document.createElement("div");
+  grid.className = "lib-grid";
+  grid.id = "libGrid";
+  main.appendChild(grid);
+
+  Object.keys(SHOWME_REGISTRY).forEach(function(id) {
+    var meta = SHOWME_REGISTRY[id];
+    var card = document.createElement("button");
+    card.className = "lib-card";
+    card.setAttribute("type", "button");
+    card.dataset.id = id;
+    card.dataset.cat = CATEGORY_MAP[id] || "기타";
+
+    var icon = document.createElement("span");
+    icon.className = "lib-card-icon";
+    icon.textContent = meta.icon;
+
+    var label = document.createElement("span");
+    label.className = "lib-card-label";
+    label.textContent = meta.label;
+
+    var idEl = document.createElement("span");
+    idEl.className = "lib-card-id";
+    idEl.textContent = id;
+
+    card.appendChild(icon);
+    card.appendChild(label);
+    card.appendChild(idEl);
+    card.addEventListener("click", function() { openShowMe(id); });
+    grid.appendChild(card);
+  });
+
+  updateCount();
+}
+
+// 필터
+function filterCards() {
+  var query = document.getElementById("libSearch").value.toLowerCase().trim();
+  var activeCat = document.querySelector(".lib-tab.is-active").dataset.cat;
+  var cards = document.querySelectorAll(".lib-card");
+  var visible = 0;
+
+  cards.forEach(function(card) {
+    var id    = card.dataset.id;
+    var meta  = SHOWME_REGISTRY[id];
+    var cat   = card.dataset.cat;
+
+    var matchCat   = activeCat === "전체" || cat === activeCat;
+    var matchQuery = !query
+      || meta.label.toLowerCase().includes(query)
+      || id.toLowerCase().includes(query);
+
+    card.style.display = (matchCat && matchQuery) ? "" : "none";
+    if (matchCat && matchQuery) visible++;
+  });
+
+  updateCount(visible);
+
+  var grid = document.getElementById("libGrid");
+  var empty = grid.querySelector(".lib-empty");
+  if (visible === 0) {
+    if (!empty) {
+      var el = document.createElement("p");
+      el.className = "lib-empty";
+      el.textContent = "검색 결과가 없습니다";
+      grid.appendChild(el);
+    }
+  } else {
+    if (empty) empty.remove();
+  }
+}
+
+function updateCount(n) {
+  var total = Object.keys(SHOWME_REGISTRY).length;
+  var shown = (n === undefined) ? total : n;
+  document.getElementById("libCount").textContent =
+    shown === total ? total + "개 도구" : shown + " / " + total + "개";
+}
+
+document.getElementById("libSearch").addEventListener("input", filterCards);
+
+buildCards();
+
+function openShowMe(widgetId) {
+  var meta = SHOWME_REGISTRY[widgetId] || { label: widgetId, icon: "📖" };
+  document.getElementById("showmeTitle").textContent = meta.icon + " " + meta.label;
+  document.getElementById("showmeIframe").src =
+    "assets/showme/" + widgetId + ".html?wid=" + widgetId;
+  var overlay = document.getElementById("showmeOverlay");
+  overlay.classList.add("is-open");
+  overlay.setAttribute("aria-hidden", "false");
+  setTimeout(function() {
+    document.getElementById("showmeClose").focus();
+  }, 50);
+}
+
+function closeShowMe() {
+  var overlay = document.getElementById("showmeOverlay");
+  overlay.classList.remove("is-open");
+  overlay.setAttribute("aria-hidden", "true");
+  document.getElementById("showmeIframe").src = "";
+}
+
+document.getElementById("showmeClose").addEventListener("click", closeShowMe);
+document.getElementById("showmeOverlay").addEventListener("click", function(e) {
+  if (e.target === this) closeShowMe();
+});
+document.addEventListener("keydown", function(e) {
+  if (e.key === "Escape") closeShowMe();
+});
+  </script>
+</body>
+</html>
