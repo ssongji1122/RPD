@@ -371,6 +371,7 @@ const CURRICULUM = [
     "week": 3,
     "title": "기초 모델링 1 — Edit + Modifier",
     "subtitle": "기본형 · 대칭 · 곡면 · 반복",
+    "summary": "레고 조립처럼, Edit Mode로 블록을 깎고 Modifier로 대칭·곡면·반복 효과를 얹는 흐름을 배워요.",
     "duration": "~3시간",
     "topics": [
       "Edit Mode: Extrude / Loop Cut / Inset / Bevel",
