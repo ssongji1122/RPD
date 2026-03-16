@@ -109,6 +109,51 @@
   padding: 60px 0; text-align: center; color: var(--muted);
   font-size: .9rem;
 }
+.showme-overlay {
+  display: none; position: fixed; inset: 0;
+  z-index: 100;
+  background: rgba(0,0,0,.72);
+  backdrop-filter: blur(8px);
+  justify-content: center; align-items: center;
+  padding: 20px;
+}
+.showme-overlay.is-open { display: flex; }
+.showme-modal {
+  width: min(720px, 100%);
+  height: min(85vh, 640px);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255,255,255,.12);
+  background: var(--surface);
+  box-shadow: 0 24px 80px rgba(0,0,0,.6);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  animation: showme-in .22s ease;
+}
+@keyframes showme-in {
+  from { opacity: 0; transform: scale(.97) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.showme-modal-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
+.showme-modal-title { font-size: .9rem; font-weight: 600; color: var(--text); }
+.showme-close {
+  display: grid; place-items: center;
+  width: 32px; height: 32px; border-radius: 8px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong); cursor: pointer;
+  transition: background .14s, color .14s;
+}
+.showme-close:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.showme-iframe { flex: 1; width: 100%; border: none; background: var(--bg); }
+@media (max-width: 720px) {
+  .showme-overlay { padding: 0; }
+  .showme-modal { width: 100%; height: 100%; border-radius: 0; border: none; }
+}
   </style>
 </head>
 <body>
@@ -134,6 +179,23 @@
     </header>
     <nav class="lib-tabs" id="libTabs" role="tablist"></nav>
     <main class="lib-main" id="libMain"></main>
+
+    <!-- Show Me Modal -->
+    <div class="showme-overlay" id="showmeOverlay" aria-hidden="true">
+      <div class="showme-modal">
+        <div class="showme-modal-header">
+          <span class="showme-modal-title" id="showmeTitle"></span>
+          <button class="showme-close" id="showmeClose" aria-label="닫기" type="button">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <iframe class="showme-iframe" id="showmeIframe"
+                sandbox="allow-scripts allow-same-origin"
+                title="Show Me Widget"></iframe>
+      </div>
+    </div>
   </div>
   <script src="assets/showme/_registry.js"></script>
   <script>
@@ -310,6 +372,31 @@ function updateCount(n) {
 document.getElementById("libSearch").addEventListener("input", filterCards);
 
 buildCards();
+
+function openShowMe(widgetId) {
+  var meta = SHOWME_REGISTRY[widgetId] || { label: widgetId, icon: "📖" };
+  document.getElementById("showmeTitle").textContent = meta.icon + " " + meta.label;
+  document.getElementById("showmeIframe").src =
+    "assets/showme/" + widgetId + ".html?wid=" + widgetId;
+  var overlay = document.getElementById("showmeOverlay");
+  overlay.classList.add("is-open");
+  overlay.setAttribute("aria-hidden", "false");
+}
+
+function closeShowMe() {
+  var overlay = document.getElementById("showmeOverlay");
+  overlay.classList.remove("is-open");
+  overlay.setAttribute("aria-hidden", "true");
+  document.getElementById("showmeIframe").src = "";
+}
+
+document.getElementById("showmeClose").addEventListener("click", closeShowMe);
+document.getElementById("showmeOverlay").addEventListener("click", function(e) {
+  if (e.target === this) closeShowMe();
+});
+document.addEventListener("keydown", function(e) {
+  if (e.key === "Escape") closeShowMe();
+});
   </script>
 </body>
 </html>
