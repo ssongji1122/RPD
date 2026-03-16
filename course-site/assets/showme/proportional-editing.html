@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — Proportional Editing 이해</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 0; font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+.tabs { display: flex; gap: 0; border-bottom: 1px solid var(--line); padding: 0 16px; background: var(--bg-soft); overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { padding: 12px 16px; font-size: .84rem; font-weight: 500; color: var(--muted); cursor: pointer; border: none; border-bottom: 2px solid transparent; white-space: nowrap; transition: color .14s, border-color .14s; background: none; font-family: inherit; }
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active { color: var(--key-soft); border-bottom-color: var(--key); }
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+.concept-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.concept-card { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); padding: 18px; }
+.concept-card h3 { margin: 0 0 8px; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+.concept-card p { margin: 0; color: var(--muted-strong); font-size: .88rem; line-height: 1.7; }
+.concept-card ul { margin: 8px 0 0; padding-left: 16px; color: var(--muted-strong); font-size: .85rem; line-height: 1.8; }
+.badge { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: .72rem; font-weight: 600; }
+.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: #fbbf24; }
+.badge-red   { background: rgba(239,68,68,.15);   color: #fca5a5; }
+.kbd { display: inline-block; padding: 3px 8px; border-radius: 6px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); color: var(--key-soft); font-size: .82rem; font-weight: 600; font-family: var(--font); }
+.demo-wrap { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); overflow: hidden; margin: 14px 0; }
+.demo-wrap canvas { display: block; width: 100%; }
+.demo-controls { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--line); flex-wrap: wrap; }
+.demo-hint { font-size: .78rem; color: var(--muted); text-align: center; padding: 6px 0 0; }
+.demo-btn { padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line-strong); background: rgba(255,255,255,.04); color: var(--muted-strong); font: inherit; font-size: .82rem; cursor: pointer; transition: background .14s, color .14s; }
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active { background: rgba(10,132,255,.14); color: var(--key-soft); border-color: rgba(10,132,255,.3); }
+.usage-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.usage-card { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); padding: 16px; }
+.usage-card h4 { margin: 0 0 8px; font-size: .92rem; color: var(--key-soft); }
+.usage-card ul { margin: 0; padding-left: 16px; color: var(--muted-strong); font-size: .85rem; line-height: 1.8; }
+.tip-box { border-radius: var(--radius-md); border: 1px solid rgba(10,132,255,.2); background: rgba(10,132,255,.06); padding: 14px 16px; margin-top: 14px; font-size: .86rem; color: var(--muted-strong); }
+.tip-box strong { color: var(--key-soft); }
+.combo-section { margin-top: 18px; }
+.combo-section h4 { margin: 0 0 10px; font-size: .92rem; color: var(--text); }
+.combo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.combo-card { border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--surface); padding: 12px 14px; }
+.combo-card .combo-name { font-size: .86rem; font-weight: 600; color: var(--key-soft); margin-bottom: 4px; }
+.combo-card .combo-desc { font-size: .8rem; color: var(--muted); line-height: 1.5; }
+.shortcut-list { margin-top: 16px; padding: 14px 16px; border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); }
+.shortcut-list h4 { margin: 0 0 10px; font-size: .9rem; color: var(--text); }
+.shortcut-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-size: .84rem; color: var(--muted-strong); }
+.shortcut-row + .shortcut-row { border-top: 1px solid var(--line); }
+.shortcut-keys { flex-shrink: 0; }
+.analogy { margin-top: 8px; padding: 10px 14px; border-radius: var(--radius-sm); background: rgba(245,158,11,.06); border: 1px solid rgba(245,158,11,.15); font-size: .82rem; color: #fbbf24; font-style: italic; }
+.quiz-progress { font-size: .78rem; color: var(--muted); margin-bottom: 12px; }
+.quiz-question { margin-bottom: 20px; padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); }
+.quiz-question h4 { margin: 0 0 12px; font-size: .94rem; }
+.quiz-option { display: block; width: 100%; padding: 10px 14px; margin-bottom: 6px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: rgba(255,255,255,.025); color: var(--text); font: inherit; font-size: .86rem; cursor: pointer; text-align: left; transition: background .14s, border-color .14s; }
+.quiz-option:hover { background: rgba(255,255,255,.06); border-color: var(--line-strong); }
+.quiz-option.correct { background: rgba(16,185,129,.12); border-color: rgba(16,185,129,.4); color: var(--success-soft); }
+.quiz-option.wrong { background: rgba(239,68,68,.1); border-color: rgba(239,68,68,.3); color: #fca5a5; }
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback { margin-top: 8px; padding: 10px 14px; border-radius: var(--radius-sm); font-size: .84rem; display: none; }
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: #fca5a5; }
+.quiz-score { text-align: center; padding: 20px; font-size: 1.1rem; font-weight: 600; }
+.quiz-retry { display: block; margin: 12px auto; padding: 10px 24px; border-radius: 999px; border: 1px solid var(--key); background: rgba(10,132,255,.12); color: var(--key-soft); font: inherit; font-size: .88rem; cursor: pointer; transition: background .14s; }
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+.doc-ref { margin-top: 16px; padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid rgba(10,132,255,.15); background: rgba(10,132,255,.04); display: flex; align-items: center; gap: 8px; }
+.doc-ref a { color: var(--key-soft); font-size: .84rem; text-decoration: none; line-height: 1.5; }
+.doc-ref a:hover { text-decoration: underline; }
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Tab Bar -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+</nav>
+
+<!-- TAB 1: 개념 이해 -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">O</span> Proportional Editing이란?</h3>
+      <p>하나의 버텍스를 움직일 때 주변 버텍스들도 같이 따라오는 기능이에요. 영향 반경을 조절해서 부드러운 언덕이나 파도 모양을 만들 수 있어요.</p>
+      <div class="analogy">물에 돌을 던지면 물결이 퍼지듯이, 하나를 건드리면 주변도 서서히 따라와요</div>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-amber">Shift+O</span> Falloff 종류</h3>
+      <ul>
+        <li><strong>Smooth</strong>: 가장 자연스럽게 감소 (기본, 언덕 모양)</li>
+        <li><strong>Sphere</strong>: 구형으로 균일하게 영향</li>
+        <li><strong>Root</strong>: 중앙이 더 강하게</li>
+        <li><strong>Sharp</strong>: 경계가 뚜렷하게</li>
+        <li><strong>Linear</strong>: 선형으로 균일하게 감소</li>
+      </ul>
+      <p style="margin-top:8px; font-size:.8rem; color:var(--muted);">Shift+O로 순환 전환 가능</p>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-green">Scroll</span> 반경 조절이 핵심</h3>
+      <p>O를 켜고 G를 누르면 이동 중에 스크롤로 영향 범위를 바꿀 수 있어요. 원이 크면 더 넓은 범위가, 작으면 좁은 범위만 따라와요. 반경을 조절하는 게 가장 중요해요.</p>
+      <div class="analogy">파급 범위를 내 손안에서 조절하는 거예요</div>
+    </div>
+  </div>
+
+  <div class="shortcut-list">
+    <h4>주요 단축키</h4>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">O</span></span>
+      <span>Proportional Editing 토글 (Object/Edit Mode 모두)</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Shift</span> + <span class="kbd">O</span></span>
+      <span>Falloff 타입 순환</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Scroll up/down</span></span>
+      <span>영향 반경 확대/축소 (변형 중에만)</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys">Header icon</span>
+      <span>3D Viewport 헤더의 동심원 아이콘 클릭</span>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/editors/3dview/controls/proportional_editing.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Proportional Editing
+    </a>
+  </div>
+</section>
+
+<!-- TAB 2: 시각적 비교 -->
+<section class="panel" id="panel-visual" role="tabpanel">
+  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
+    중앙 포인트를 드래그하면 주변 포인트들이 Smooth falloff로 따라와요. 반경을 조절하거나 Proportional을 껐다 켜 보세요.
+  </p>
+  <div class="demo-wrap">
+    <canvas id="demoCanvas" width="680" height="300"></canvas>
+    <div class="demo-controls">
+      <button class="demo-btn" id="btnRadiusUp">반경 크게</button>
+      <button class="demo-btn" id="btnRadiusDown">반경 작게</button>
+      <button class="demo-btn" id="btnPropToggle">Proportional ON</button>
+    </div>
+  </div>
+  <p class="demo-hint">중앙 포인트를 위아래로 드래그하세요. 점선 원이 영향 반경이에요.</p>
+</section>
+
+<!-- TAB 3: 언제 쓰나요? -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>필요할 때</h4>
+      <ul>
+        <li>부드러운 언덕/파도/지형 만들기</li>
+        <li>캐릭터 얼굴의 부드러운 변형</li>
+        <li>여러 버텍스를 자연스럽게 늘리기</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>안 쓰는 경우</h4>
+      <ul>
+        <li>딱딱한 하드서피스 모델링</li>
+        <li>정확한 형태가 필요한 기계류</li>
+        <li>Boolean 작업</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="combo-section">
+    <h4>자주 쓰는 조합</h4>
+    <div class="combo-grid">
+      <div class="combo-card">
+        <div class="combo-name">Proportional + Sculpt 준비</div>
+        <div class="combo-desc">기본 메쉬 변형 후 Sculpt Mode로 다듬기 전 큰 형태 잡기</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Sphere Falloff + Terrain</div>
+        <div class="combo-desc">지형이나 부드러운 오가닉 형태에서 자연스러운 굴곡 만들기</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>팁:</strong> Proportional Editing은 Object Mode에서도 작동해요. 여러 오브젝트 중 하나를 이동할 때 주변 오브젝트들도 따라오게 할 수 있어요. 단, 오브젝트 모드에서는 Smooth가 아닌 Connected 옵션도 확인해 보세요.
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/editors/3dview/controls/proportional_editing.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Proportional Editing
+    </a>
+  </div>
+</section>
+
+<!-- TAB 4: 퀴즈 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+// ── Tab Switching ──────────────────────────────
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(t) {
+      t.classList.remove("is-active");
+      t.setAttribute("aria-selected", "false");
+    });
+    document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("is-active"); });
+    tab.classList.add("is-active");
+    tab.setAttribute("aria-selected", "true");
+    document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+  });
+});
+
+// ── Quiz Engine (Safe DOM methods) ────────────
+function initQuiz(questions) {
+  var container = document.getElementById("quizArea");
+  var score = 0, answered = 0;
+  var scoreDiv = null;
+
+  var progress = document.createElement("div");
+  progress.className = "quiz-progress";
+  progress.textContent = "문제 0 / " + questions.length + " \u00b7 점수 0점";
+  container.appendChild(progress);
+
+  questions.forEach(function(q, qi) {
+    var div = document.createElement("div");
+    div.className = "quiz-question";
+
+    var heading = document.createElement("h4");
+    heading.textContent = "Q" + (qi + 1) + ". " + q.question;
+    div.appendChild(heading);
+
+    var fb = document.createElement("div");
+    fb.className = "quiz-feedback";
+
+    q.options.forEach(function(opt, oi) {
+      var btn = document.createElement("button");
+      btn.className = "quiz-option";
+      btn.textContent = opt;
+      btn.addEventListener("click", function() {
+        if (btn.disabled) return;
+        div.querySelectorAll(".quiz-option").forEach(function(b) { b.disabled = true; });
+        answered++;
+        if (oi === q.answer) {
+          btn.classList.add("correct");
+          fb.className = "quiz-feedback show correct-fb";
+          fb.textContent = "\u2705 " + q.explanation;
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
+          fb.className = "quiz-feedback show wrong-fb";
+          fb.textContent = "\u274c " + q.explanation;
+
+          var retryBtn = document.createElement("button");
+          retryBtn.className = "quiz-retry";
+          retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
+          retryBtn.textContent = "다시 풀기";
+          retryBtn.addEventListener("click", function() {
+            answered--;
+            div.querySelectorAll(".quiz-option").forEach(function(b) {
+              b.disabled = false;
+              b.classList.remove("wrong", "correct");
+            });
+            fb.className = "quiz-feedback";
+            fb.textContent = "";
+            retryBtn.remove();
+            if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+            progress.textContent = "문제 " + answered + " / " + questions.length + " \u00b7 점수 " + score + "점";
+          });
+          fb.appendChild(retryBtn);
+        }
+        progress.textContent = "문제 " + answered + " / " + questions.length + " \u00b7 점수 " + score + "점";
+        if (answered === questions.length) showScore();
+      });
+      div.appendChild(btn);
+    });
+
+    div.appendChild(fb);
+    container.appendChild(div);
+  });
+
+  function showScore() {
+    if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+    scoreDiv = document.createElement("div");
+    scoreDiv.className = "quiz-score";
+
+    var emoji = document.createElement("div");
+    emoji.style.cssText = "font-size:36px;margin-bottom:8px";
+    emoji.textContent = score === questions.length ? "\ud83c\udf89" : score >= Math.ceil(questions.length / 2) ? "\ud83d\udc4d" : "\ud83d\udcda";
+    scoreDiv.appendChild(emoji);
+
+    var result = document.createElement("div");
+    result.style.cssText = "font-size:18px;font-weight:500;margin-bottom:6px";
+    result.textContent = score + " / " + questions.length + " 정답";
+    scoreDiv.appendChild(result);
+
+    var msg = document.createElement("div");
+    msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
+    msg.textContent = score === questions.length ? "완벽합니다!" : "조금 더 연습하면 완벽해질 거예요!";
+    scoreDiv.appendChild(msg);
+
+    var saveBtn = document.createElement("button");
+    saveBtn.className = "quiz-retry";
+    saveBtn.style.cssText = "background:rgba(10,132,255,.18);border-color:var(--key);margin-bottom:8px";
+    saveBtn.textContent = "기록 저장하기";
+    saveBtn.addEventListener("click", function() {
+      try {
+        var wid = new URLSearchParams(location.search).get("wid")
+               || location.pathname.split("/").pop().replace(".html", "");
+        window.parent.postMessage({
+          type: "showme-quiz-complete",
+          widgetId: wid,
+          score: score,
+          total: questions.length,
+          pass: score >= Math.ceil(questions.length * 0.75)
+        }, "*");
+      } catch(e) {}
+      saveBtn.textContent = "저장 완료!";
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = ".5";
+    });
+    scoreDiv.appendChild(saveBtn);
+
+    var retry = document.createElement("button");
+    retry.className = "quiz-retry";
+    retry.textContent = "처음부터 다시";
+    retry.addEventListener("click", function() { location.reload(); });
+    scoreDiv.appendChild(retry);
+
+    container.appendChild(scoreDiv);
+  }
+}
+
+// ── Canvas Proportional Editing Demo ──────────
+(function() {
+  var canvas = document.getElementById("demoCanvas");
+  var ctx = canvas.getContext("2d");
+
+  var COLS = 10;
+  var ROWS = 8;
+  var propEnabled = true;
+  var radius = 160;
+  var isDragging = false;
+
+  // Grid layout
+  var padX = 60, padY = 30;
+  var gridW = canvas.width - padX * 2;
+  var gridH = canvas.height - padY * 2;
+  var cellW = gridW / (COLS - 1);
+  var cellH = gridH / (ROWS - 1);
+
+  // Center point index
+  var centerCol = Math.floor(COLS / 2);
+  var centerRow = Math.floor(ROWS / 2);
+  var centerIdx = centerRow * COLS + centerCol;
+
+  // Base positions
+  var basePoints = [];
+  for (var r = 0; r < ROWS; r++) {
+    for (var c = 0; c < COLS; c++) {
+      basePoints.push({
+        bx: padX + c * cellW,
+        by: padY + r * cellH
+      });
+    }
+  }
+
+  // Current offsets
+  var offsetY = 0;
+
+  function smoothFalloff(d, rad) {
+    if (d >= rad) return 0;
+    var t = 1 - d / rad;
+    return t * t * (3 - 2 * t); // Smooth step
+  }
+
+  function getPoints() {
+    var cx = basePoints[centerIdx].bx;
+    var cy = basePoints[centerIdx].by;
+    return basePoints.map(function(p, i) {
+      var dx = p.bx - cx;
+      var dy = p.by - cy;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      var influence = 0;
+      if (i === centerIdx) {
+        influence = 1;
+      } else if (propEnabled) {
+        influence = smoothFalloff(dist, radius);
+      }
+      return {
+        x: p.bx,
+        y: p.by + offsetY * influence
+      };
+    });
+  }
+
+  function draw() {
+    var w = canvas.width;
+    var h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    // Background
+    ctx.fillStyle = "#17181a";
+    ctx.fillRect(0, 0, w, h);
+
+    // Grid background
+    ctx.strokeStyle = "rgba(255,255,255,.03)";
+    ctx.lineWidth = 1;
+    for (var gx = 0; gx < w; gx += 40) {
+      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
+    }
+    for (var gy = 0; gy < h; gy += 40) {
+      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
+    }
+
+    var pts = getPoints();
+
+    // Draw edges (horizontal)
+    for (var row = 0; row < ROWS; row++) {
+      for (var col = 0; col < COLS - 1; col++) {
+        var i1 = row * COLS + col;
+        var i2 = row * COLS + col + 1;
+        var p1 = pts[i1], p2 = pts[i2];
+        ctx.strokeStyle = "rgba(255,255,255,.18)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.stroke();
+      }
+    }
+
+    // Draw edges (vertical)
+    for (var row = 0; row < ROWS - 1; row++) {
+      for (var col = 0; col < COLS; col++) {
+        var i1 = row * COLS + col;
+        var i2 = (row + 1) * COLS + col;
+        var p1 = pts[i1], p2 = pts[i2];
+        ctx.strokeStyle = "rgba(255,255,255,.18)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.stroke();
+      }
+    }
+
+    // Draw influence radius circle (dashed)
+    if (propEnabled) {
+      var cx = basePoints[centerIdx].bx;
+      var cy = basePoints[centerIdx].by + offsetY;
+      ctx.strokeStyle = "rgba(10,132,255,.5)";
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([6, 4]);
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    // Draw vertices
+    pts.forEach(function(p, i) {
+      var cx = basePoints[centerIdx].bx;
+      var cy = basePoints[centerIdx].by;
+      var dx = basePoints[i].bx - cx;
+      var dy = basePoints[i].by - cy;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      var influence = 0;
+      if (i === centerIdx) {
+        influence = 1;
+      } else if (propEnabled) {
+        influence = smoothFalloff(dist, radius);
+      }
+
+      if (i === centerIdx) {
+        ctx.fillStyle = "#f59e0b";
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 6, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (influence > 0) {
+        var alpha = 0.3 + influence * 0.7;
+        ctx.fillStyle = "rgba(10,132,255," + alpha + ")";
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.fillStyle = "rgba(255,255,255,.25)";
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    });
+
+    // Labels
+    ctx.font = "bold 12px sans-serif";
+    ctx.textAlign = "left";
+    if (propEnabled) {
+      ctx.fillStyle = "rgba(10,132,255,.8)";
+      ctx.fillText("Proportional ON — Smooth Falloff", 14, 22);
+    } else {
+      ctx.fillStyle = "rgba(245,158,11,.8)";
+      ctx.fillText("Proportional OFF — 선택한 버텍스만 이동", 14, 22);
+    }
+
+    ctx.fillStyle = "rgba(255,255,255,.2)";
+    ctx.font = "11px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("중앙 포인트(주황)를 위아래로 드래그하세요", w / 2, h - 14);
+  }
+
+  function getEventPos(e) {
+    var rect = canvas.getBoundingClientRect();
+    var scaleY = canvas.height / rect.height;
+    var clientY;
+    if (e.touches && e.touches.length > 0) {
+      clientY = e.touches[0].clientY;
+    } else {
+      clientY = e.clientY;
+    }
+    return { y: (clientY - rect.top) * scaleY };
+  }
+
+  var dragStartY = 0;
+  var dragStartOffset = 0;
+
+  function onDown(e) {
+    e.preventDefault();
+    isDragging = true;
+    dragStartY = getEventPos(e).y;
+    dragStartOffset = offsetY;
+  }
+
+  function onMove(e) {
+    if (!isDragging) return;
+    e.preventDefault();
+    var pos = getEventPos(e);
+    offsetY = dragStartOffset + (pos.y - dragStartY);
+    offsetY = Math.max(-100, Math.min(100, offsetY));
+    draw();
+  }
+
+  function onUp() {
+    isDragging = false;
+  }
+
+  canvas.addEventListener("mousedown", onDown);
+  canvas.addEventListener("mousemove", onMove);
+  canvas.addEventListener("mouseup", onUp);
+  canvas.addEventListener("mouseleave", onUp);
+  canvas.addEventListener("touchstart", onDown, { passive: false });
+  canvas.addEventListener("touchmove", onMove, { passive: false });
+  canvas.addEventListener("touchend", onUp);
+  canvas.addEventListener("touchcancel", onUp);
+
+  document.getElementById("btnRadiusUp").addEventListener("click", function() {
+    radius = Math.min(300, radius + 30);
+    draw();
+  });
+
+  document.getElementById("btnRadiusDown").addEventListener("click", function() {
+    radius = Math.max(40, radius - 30);
+    draw();
+  });
+
+  var btnPropToggle = document.getElementById("btnPropToggle");
+  btnPropToggle.classList.add("is-active");
+  btnPropToggle.addEventListener("click", function() {
+    propEnabled = !propEnabled;
+    if (propEnabled) {
+      btnPropToggle.textContent = "Proportional ON";
+      btnPropToggle.classList.add("is-active");
+    } else {
+      btnPropToggle.textContent = "Proportional OFF";
+      btnPropToggle.classList.remove("is-active");
+    }
+    draw();
+  });
+
+  draw();
+})();
+
+// ── Quiz Data ─────────────────────────────────
+initQuiz([
+  {
+    question: "Proportional Editing 단축키는?",
+    options: [
+      "P",
+      "O",
+      "Ctrl + P",
+      "Alt + O"
+    ],
+    answer: 1,
+    explanation: "O 키로 토글해요. 켜지면 헤더에 동심원 아이콘이 활성화돼요."
+  },
+  {
+    question: "Proportional Editing 중 영향 반경을 조절하는 방법은?",
+    options: [
+      "N 패널에서 숫자 입력",
+      "변형 중(G/R/S 누른 뒤) 스크롤 휠",
+      "Shift + O",
+      "Properties에서 설정"
+    ],
+    answer: 1,
+    explanation: "G/R/S를 누른 상태에서 스크롤 휠을 돌리면 영향 반경 원이 커지거나 작아져요."
+  },
+  {
+    question: "자연스러운 언덕 형태를 만들 때 가장 적합한 Falloff는?",
+    options: [
+      "Sharp",
+      "Linear",
+      "Smooth",
+      "Constant"
+    ],
+    answer: 2,
+    explanation: "Smooth Falloff이 가장 자연스러운 곡선을 만들어요. 기본값이기도 해서 대부분의 경우에 적합해요."
+  },
+  {
+    question: "Proportional Editing을 켠 상태에서 하나의 버텍스만 정확히 이동하려면?",
+    options: [
+      "Shift를 누르고 이동",
+      "반경을 최소로 줄이거나 O로 OFF 후 이동",
+      "Alt를 누르고 이동",
+      "불가능하다"
+    ],
+    answer: 1,
+    explanation: "스크롤로 영향 반경을 최소한으로 줄이거나, O 키로 OFF하면 선택한 것만 이동해요."
+  }
+]);
+</script>
+
+</body>
+</html>

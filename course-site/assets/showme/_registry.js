@@ -12,6 +12,10 @@ const SHOWME_REGISTRY = {
   "blender-preferences":    { label: "Preferences 설정",        icon: "⚙️" },
   "viewport-navigation":    { label: "화면 조작 원리",          icon: "🧭" },
   "transform-grs":          { label: "G/R/S 변형 이해",         icon: "↔️" },
+  "transform-orientation":  { label: "Transform Orientation 이해", icon: "🧭" },
+  "pivot-point":            { label: "Pivot Point 이해",        icon: "🎯" },
+  "snap":                   { label: "Snapping 이해",           icon: "🧲" },
+  "viewport-shading":       { label: "Viewport Shading 이해",   icon: "💡" },
   "edit-mode":              { label: "Edit Mode 이해",          icon: "✏️" },
 
   // ── Edit Mode Tools (기능별 라이브러리) ──
@@ -46,7 +50,8 @@ const SHOWME_REGISTRY = {
   // ── Normals ──
   "weighted-normal":        { label: "Weighted Normal 이해",    icon: "💡" },
 
-  // ── Week 4: Detail & Cleanup ──
+  // ── Week 3–4: Transform & Cleanup ──
+  "proportional-editing":   { label: "Proportional Editing 이해", icon: "〰️" },
   "transform-apply":        { label: "Apply Transform 이해",    icon: "✅" },
   "simple-deform":          { label: "Simple Deform 이해",      icon: "🌀" },
   "bevel-tool-vs-modifier": { label: "Bevel 비교",              icon: "⚖️" },
