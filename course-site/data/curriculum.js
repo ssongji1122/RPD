@@ -375,11 +375,11 @@ const CURRICULUM = [
     "topics": [
       "Reference Image로 작업 준비",
       "Edit Mode: Extrude / Loop Cut / Inset / Bevel",
-      "Mirror Modifier",
+      "Mirror",
       "Subdivision Surface",
-      "Solidify Modifier",
-      "Array Modifier",
-      "Boolean Modifier",
+      "Solidify",
+      "Array",
+      "Boolean",
       "Bevel Modifier + Weighted Normal",
       "Modifier Stack 순서와 Apply"
     ],
@@ -422,7 +422,7 @@ const CURRICULUM = [
         "link": "https://docs.blender.org/manual/en/latest/modeling/meshes/tools/extrude_region.html"
       },
       {
-        "title": "Mirror Modifier",
+        "title": "Mirror",
         "copy": "X축을 기준으로 반쪽을 대칭 복사해요. 한쪽만 만들면 작업량이 반으로 줄어요. Clipping을 켜면 중앙 정점이 넘어가지 않게 붙잡아줘요.",
         "goal": [
           "Mirror를 추가하고 Clipping을 설정한다"
@@ -485,7 +485,7 @@ const CURRICULUM = [
         "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/subdivision_surface.html"
       },
       {
-        "title": "Solidify Modifier",
+        "title": "Solidify",
         "copy": "종이처럼 얇은 면(Plane)에 두께를 줘서 판 형태로 만들어요. 로봇의 장갑판이나 외장 패널을 만들 때 유용해요.",
         "goal": [
           "Solidify로 면에 두께를 준다"
@@ -502,7 +502,7 @@ const CURRICULUM = [
             "detail": "두께가 안쪽/양쪽/바깥쪽으로 붙는 차이 확인"
           }
         ],
-        "image": "assets/images/week03/subdivision-surface.png",
+        "image": "assets/images/week03/solidify-modifier.png",
         "done": [
           "Plane이 두께 있는 판으로 바뀌었다"
         ],
@@ -510,7 +510,7 @@ const CURRICULUM = [
         "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/solidify.html"
       },
       {
-        "title": "Array Modifier",
+        "title": "Array",
         "copy": "같은 부품을 일정 간격으로 복제해요. Count로 개수, Offset으로 간격을 조절하면 반복 파츠를 한 번에 만들 수 있어요.",
         "goal": [
           "Array로 반복 구조를 만든다"
@@ -527,7 +527,7 @@ const CURRICULUM = [
             "detail": "Relative vs Constant 차이 비교"
           }
         ],
-        "image": "assets/images/week03/array-boolean-detail.png",
+        "image": "assets/images/week03/array-modifier.png",
         "done": [
           "같은 형태가 일정 간격으로 반복된다"
         ],
@@ -535,7 +535,7 @@ const CURRICULUM = [
         "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/array.html"
       },
       {
-        "title": "Boolean Modifier",
+        "title": "Boolean",
         "copy": "두 오브젝트가 겹치는 부분을 기준으로 자르거나 합쳐요. Difference는 구멍을 뚫고, Union은 합치고, Intersect는 겹치는 부분만 남겨요.",
         "goal": [
           "Boolean Difference로 구멍을 뚫는다"
