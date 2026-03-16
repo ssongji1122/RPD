@@ -115,12 +115,55 @@ STEP_MAP = {
 
 매핑에 없는 주차/스텝은 curriculum.js의 `references[]` URL을 fallback으로 사용.
 
+### Week 3 도구/모디파이어 개별 레퍼런스
+
+툴 이름은 Blender 공식 문서 페이지 제목 그대로 사용.
+
+#### Edit Mode 기본 도구
+
+| Blender 공식 이름 | 파일명 | 문서 URL |
+|------------------|--------|---------|
+| Extrude Region | `base-form.png` | `.../modeling/meshes/tools/extrude_region.html` |
+| Loop Cut | `loop-cut.png` | `.../modeling/meshes/tools/loop.html` |
+| Inset Faces | `inset-faces.png` | `.../modeling/meshes/editing/face/inset_faces.html` |
+| Bevel Edges | `bevel-tool.png` | `.../modeling/meshes/editing/edge/bevel.html` |
+
+#### Generate Modifiers
+
+| Blender 공식 이름 | 파일명 | 문서 URL |
+|------------------|--------|---------|
+| Mirror Modifier | `mirror-modifier.png` | `.../modeling/modifiers/generate/mirror.html` |
+| Subdivision Surface Modifier | `subdivision-surface.png` | `.../modeling/modifiers/generate/subdivision_surface.html` |
+| Solidify Modifier | `solidify-modifier.png` | `.../modeling/modifiers/generate/solidify.html` |
+| Array Modifier | `array-modifier.png` | `.../modeling/modifiers/generate/array.html` |
+| Boolean Modifier | `array-boolean-detail.png` | `.../modeling/modifiers/generate/booleans.html` |
+| Bevel Modifier | `bevel-weighted-normal.png` | `.../modeling/modifiers/generate/bevel.html` |
+| Decimate Modifier | `decimate.png` | `.../modeling/modifiers/generate/decimate.html` |
+
+#### Deform Modifiers
+
+| Blender 공식 이름 | 파일명 | 문서 URL |
+|------------------|--------|---------|
+| Simple Deform Modifier | `simple-deform.png` | `.../modeling/modifiers/deform/simple_deform.html` |
+
+#### Normals Modifiers
+
+| Blender 공식 이름 | 파일명 | 문서 URL |
+|------------------|--------|---------|
+| Weighted Normal Modifier | `weighted-normal.png` | `.../modeling/modifiers/normals/weighted_normal.html` |
+
+---
+
 ### Blender 공식 문서 URL 패턴
 
 | 카테고리 | URL 패턴 |
 |----------|----------|
 | Generate 모디파이어 | `https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/{name}.html` |
-| Mesh 도구 | `https://docs.blender.org/manual/en/latest/modeling/meshes/tools/{tool}.html` |
+| Deform 모디파이어 | `https://docs.blender.org/manual/en/latest/modeling/modifiers/deform/{name}.html` |
+| Normals 모디파이어 | `https://docs.blender.org/manual/en/latest/modeling/modifiers/normals/{name}.html` |
+| Mesh 편집 도구 (Face) | `https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/{tool}.html` |
+| Mesh 편집 도구 (Edge) | `https://docs.blender.org/manual/en/latest/modeling/meshes/editing/edge/{tool}.html` |
+| Mesh 도구 (toolbar) | `https://docs.blender.org/manual/en/latest/modeling/meshes/tools/{tool}.html` |
 | Shader 노드 | `https://docs.blender.org/manual/en/latest/render/shader_nodes/shader/{name}.html` |
 | 에디터 | `https://docs.blender.org/manual/en/latest/editors/{editor}.html` |
 | 애니메이션 | `https://docs.blender.org/manual/en/latest/animation/{topic}/introduction.html` |
