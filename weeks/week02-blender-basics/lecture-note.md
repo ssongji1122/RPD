@@ -1031,7 +1031,7 @@ Step 6: 여유가 되면 Ctrl+J로 합치기, P로 분리하기도 시도
 
 Blender를 처음 열면 옵션이 너무 많아서 압도돼요. 일단 수업과 같은 세팅으로 맞춰두면 헷갈릴 일이 줄어요.
 
-![프리퍼런스 세팅](../../course-site/assets/images/week-02/step-0.png)
+![프리퍼런스 세팅](../../course-site/assets/images/week02/ui-overview.png)
 
 배울 것
 

@@ -45,6 +45,7 @@ CURRICULUM_JS = COURSE_SITE / "data" / "curriculum.js"
 OVERRIDES_JSON = COURSE_SITE / "data" / "overrides.json"
 NOTION_JSON = COURSE_SITE / "data" / "curriculum-notion.json"
 IMAGES_DIR = COURSE_SITE / "assets" / "images"
+VIDEOS_DIR = COURSE_SITE / "assets" / "videos"
 NOTION_TOKEN: str | None = os.environ.get("NOTION_TOKEN")
 
 # Admin-owned fields
@@ -661,6 +662,14 @@ class AdminHandler(BaseHTTPRequestHandler):
             self._handle_upload(week_num, step_idx)
             return
 
+        # POST /api/upload-video/{weekNum}/{videoIdx}
+        video_upload_match = re.match(r"^/api/upload-video/(\d+)/(\d+)$", path)
+        if video_upload_match:
+            week_num = int(video_upload_match.group(1))
+            video_idx = int(video_upload_match.group(2))
+            self._handle_video_upload(week_num, video_idx)
+            return
+
         # POST /api/notion-push/{weekNum}
         notion_push_match = re.match(r"^/api/notion-push/(\d+)$", path)
         if notion_push_match:
@@ -847,6 +856,89 @@ class AdminHandler(BaseHTTPRequestHandler):
         week_key = str(week_num)
         overrides.setdefault("weeks", {}).setdefault(week_key, {}).setdefault("steps", {}).setdefault(str(step_idx), {})
         overrides["weeks"][week_key]["steps"][str(step_idx)]["image"] = relative_path
+        write_overrides(overrides)
+        regenerate_curriculum_js()
+
+        self._send_json({"ok": True, "path": relative_path})
+
+    def _handle_video_upload(self, week_num: int, video_idx: int) -> None:
+        content_type = self.headers.get("Content-Type", "")
+        if "multipart/form-data" not in content_type:
+            self._send_error_json(400, "Expected multipart/form-data")
+            return
+
+        body = self._read_body()
+        try:
+            fields = parse_multipart(body, content_type)
+        except Exception as exc:
+            self._send_error_json(400, f"Multipart parse error: {exc}")
+            return
+
+        if "video" not in fields:
+            self._send_error_json(400, 'No field named "video" found')
+            return
+
+        filename, file_data = fields["video"]
+        if not filename:
+            self._send_error_json(400, "No filename provided")
+            return
+
+        ext = os.path.splitext(filename)[1].lower()
+        if not ext:
+            ext = ".mp4"
+
+        allowed_ext = {".mp4", ".webm", ".mov", ".ogg", ".avi"}
+        if ext not in allowed_ext:
+            self._send_error_json(
+                400, f"Unsupported video type: {ext}. Allowed: {sorted(allowed_ext)}"
+            )
+            return
+
+        # Validate curriculum state — use merged data for video index check
+        try:
+            data = get_merged_curriculum()
+        except Exception as exc:
+            self._send_error_json(500, f"Read curriculum failed: {exc}")
+            return
+
+        week_entry = None
+        for entry in data:
+            if entry.get("week") == week_num:
+                week_entry = entry
+                break
+
+        if week_entry is None:
+            self._send_error_json(404, f"Week {week_num} not found in curriculum")
+            return
+
+        videos = week_entry.get("videos", [])
+        if video_idx < 0 or video_idx >= len(videos):
+            self._send_error_json(
+                400,
+                f"Video index {video_idx} out of range (week {week_num} has {len(videos)} videos)",
+            )
+            return
+
+        # Build destination path and write file
+        week_dir = VIDEOS_DIR / f"week-{week_num:02d}"
+        week_dir.mkdir(parents=True, exist_ok=True)
+        dest_filename = f"video-{video_idx}{ext}"
+        dest_path = week_dir / dest_filename
+        dest_path.write_bytes(file_data)
+
+        # Relative path from course-site/ root
+        relative_path = f"assets/videos/week-{week_num:02d}/{dest_filename}"
+
+        # Save to overrides.json (videos is an admin-owned field)
+        overrides = read_overrides()
+        week_key = str(week_num)
+        if week_key not in overrides.get("weeks", {}):
+            overrides.setdefault("weeks", {})[week_key] = {}
+        week_ovr = overrides["weeks"][week_key]
+        ovr_videos = week_ovr.get("videos", videos[:])  # init from current if needed
+        if video_idx < len(ovr_videos):
+            ovr_videos[video_idx]["url"] = relative_path
+        week_ovr["videos"] = ovr_videos
         write_overrides(overrides)
         regenerate_curriculum_js()
 

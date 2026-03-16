@@ -276,6 +276,23 @@
       display: none;
     }
 
+    /* ── Video upload ─────────────────────────────────── */
+    .video-upload-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 12px; border-radius: 999px;
+      border: 1px solid rgba(147,197,253,.18);
+      background: transparent; color: var(--muted-strong);
+      cursor: pointer; font: inherit; font-size: .78rem;
+      transition: border-color .15s, color .15s;
+      white-space: nowrap;
+    }
+    .video-upload-btn:hover {
+      border-color: rgba(147,197,253,.36); color: var(--text);
+    }
+    .video-upload-btn input[type="file"] {
+      display: none;
+    }
+
     /* ── Table editor (shortcuts, docs, videos) ───────── */
     .table-editor { display: grid; gap: 8px; }
     .table-editor-row {
@@ -941,7 +958,13 @@
           '<div class="preview-link-edit">',
           '<div class="link-fields">',
           '<input class="edit-inline" data-video-field="title" data-idx="', i, '" value="', esc(v.title), '" placeholder="영상 제목" style="font-size:.88rem" />',
-          '<input class="edit-inline" data-video-field="url" data-idx="', i, '" value="', esc(v.url), '" placeholder="URL" style="font-size:.78rem;color:var(--muted)" />',
+          '<div style="display:flex;gap:6px;align-items:center">',
+          '<input class="edit-inline" data-video-field="url" data-idx="', i, '" value="', esc(v.url), '" placeholder="URL 또는 업로드" style="font-size:.78rem;color:var(--muted);flex:1" />',
+          '<label class="video-upload-btn">',
+          '&#127916; 업로드',
+          '<input type="file" accept="video/*" data-upload-video="', i, '" data-week="', w.week, '" />',
+          '</label>',
+          '</div>',
           '</div>',
           '<button class="btn-icon danger" data-remove="videos" data-idx="', i, '" type="button">&times;</button>',
           '</div>'
@@ -1382,6 +1405,15 @@
         if (file) uploadImage(weekNum, si, file);
         return;
       }
+
+      // Video upload
+      if (el.dataset.uploadVideo !== undefined) {
+        var vi = parseInt(el.dataset.uploadVideo, 10);
+        var weekNum = parseInt(el.dataset.week, 10);
+        var file = el.files[0];
+        if (file) uploadVideo(weekNum, vi, file);
+        return;
+      }
     });
 
     editorInner.addEventListener("click", function(e) {
@@ -1545,6 +1577,27 @@
         toast("이미지 업로드 완료", "success");
       } catch (e) {
         toast("이미지 업로드 실패: " + e.message, "error");
+      }
+    }
+
+    // ─── Video upload ────────────────────────────────────
+    async function uploadVideo(weekNum, videoIdx, file) {
+      var form = new FormData();
+      form.append("video", file);
+      try {
+        var res = await fetch("/api/upload-video/" + weekNum + "/" + videoIdx, {
+          method: "POST",
+          headers: uploadApiHeaders(),
+          body: form,
+        });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        var data = await res.json();
+        curriculum[selectedIdx].videos[videoIdx].url = data.path;
+        markDirty();
+        renderEditor();
+        toast("영상 업로드 완료", "success");
+      } catch (e) {
+        toast("영상 업로드 실패: " + e.message, "error");
       }
     }
 
