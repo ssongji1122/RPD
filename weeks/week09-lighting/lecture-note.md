@@ -386,81 +386,132 @@ Set the background to pure white. Make shadows very soft."
 
 > 이 섹션은 `course-site/data/curriculum.js` 기준으로 자동 갱신됩니다.
 
-- 핵심 키워드: 빛의 종류 · HDRI · 조명 연출
+- 핵심 키워드: 빛의 종류 · HDRI · 3점 조명 · 카메라
 - 예상 시간: ~3시간
 
 ### 실습 단계
 
 #### 1. Light 종류 탐색
 
-요리사 스튜디오에서 조명을 세팅하듯, 어떤 조명을 쓰냐에 따라 분위기가 완전히 달라져요. 동일한 오브젝트라도 조명만 바꾸면 다른 작품처럼 보여요.
+사진관에서 조명을 세팅하듯, 어떤 조명을 쓰냐에 따라 분위기가 완전히 달라져요. 같은 로봇이라도 조명만 바꾸면 다른 작품처럼 보여요.
 
 ![Light 종류 탐색](../../course-site/assets/images/week09/light-types.png)
 
 배울 것
 
-- 각 Light 타입의 특성을 안다
+- 4가지 Light 타입의 특성을 안다
+- Energy와 Color를 조절한다
 
 체크해볼 것
 
-- Shift+A → Light → 4종류 각각 추가해보기
-- Energy/Color 값 조절해보기
+- Shift+A → Light → Point Light 추가 (전구처럼 모든 방향으로 빛)
+- Sun Light로 전환해서 비교 (태양처럼 평행한 빛, 위치 무관)
+- Area Light 추가해서 부드러운 그림자 확인 (스튜디오 조명 느낌)
+- Spot Light로 무대 조명 효과 만들기 (Radius로 범위 조절)
 
 #### 2. HDRI 환경 조명
 
-360도 파노라마 사진이 전구 역할을 해요. 텍스처 하나로 자연스러운 환경 조명을 만들 수 있어요.
+360도 파노라마 사진이 전구 역할을 해요. HDRI 파일 하나로 자연스러운 환경 조명과 반사가 동시에 생겨요. 실외 씬에 특히 효과적이에요.
 
 ![HDRI 환경 조명](../../course-site/assets/images/week09/hdri-world.png)
 
 배울 것
 
 - HDRI의 역할과 장점을 안다
+- HDRI를 교체해서 분위기를 바꾼다
 
 체크해볼 것
 
-- World Properties → Environment Texture 추가
-- HDRI 이미지 파일 연결 (Poly Haven 등)
+- Poly Haven에서 HDRI 파일 다운로드 (polyhaven.com → HDRIs)
+- World Properties → Surface → Environment Texture 추가
+- HDRI 이미지 파일 열기 (.exr 또는 .hdr 파일)
+- 다른 HDRI로 교체해서 분위기 비교 (실내/실외/석양 등)
 
 #### 3. 3점 조명 세팅
 
-사진 체울린 사진처럼 Key(주), Fill(보조), Rim(윤곽) 세 개만 잘 놓으면 어떤 오브젝트도 입체감 있게 보여요.
+프로 사진사들이 꼭 쓰는 방법이에요. Key(주), Fill(보조), Rim(윤곽) 세 개만 잘 놓으면 어떤 오브젝트도 입체감 있게 보여요.
 
 ![3점 조명 세팅](../../course-site/assets/images/week09/three-point-light.png)
 
 배울 것
 
 - 3점 조명의 원리를 이해한다
+- 직접 3점 조명을 세팅한다
 
 체크해볼 것
 
-- Key Light (주 광원) 배치 (오브젝트 앞 45도 위치)
-- Fill Light (보조 광원) 배치 (반대편 낮게)
-- Rim Light (윤곽 광원) 배치 (뒤쪽에서 윤곽 강조)
+- Key Light 배치 — 오브젝트 앞 45도 위 (가장 밝은 주 광원)
+- Fill Light 배치 — Key 반대편, Energy 절반 (그림자가 너무 어두운 걸 보완)
+- Rim Light 배치 — 뒤쪽에서 윤곽 강조 (배경과 오브젝트를 분리하는 효과)
+
+#### 4. 카메라 세팅
+
+조명을 아무리 잘 잡아도 카메라 앵글이 안 좋으면 소용없어요. 카메라 위치와 렌즈를 조절하면 같은 씬도 완전히 다르게 보여요.
+
+![카메라 세팅](../../course-site/assets/images/week09/camera-setup.png)
+
+배울 것
+
+- 카메라를 원하는 위치에 세팅한다
+
+체크해볼 것
+
+- Numpad 0으로 카메라 뷰 전환
+- Ctrl+Numpad 0으로 현재 시점을 카메라로 설정 (직접 돌아다니다가 마음에 드는 앵글에서)
+- Focal Length 조절해서 원근감 비교 (35mm(넓은) vs 85mm(망원) 차이)
+
+#### 5. 분위기 연출 실험
+
+조명 색온도(따뜻/차가움)와 세기를 바꿔서 같은 로봇으로 낮/저녁/밤 분위기를 만들어요. 같은 오브젝트인데 사진 3장이 완전히 달라 보이면 성공이에요.
+
+![분위기 연출 실험](../../course-site/assets/images/week09/mood-lighting.png)
+
+배울 것
+
+- 조명으로 분위기를 의도적으로 바꾼다
+
+체크해볼 것
+
+- 따뜻한 색(주황) Key Light로 석양 분위기 만들기 (Color Temp 약 3200K 느낌)
+- 차가운 색(파랑) 한 개로 밤 분위기 만들기 (Energy 낮추고 Rim만 강하게)
 
 ### 핵심 단축키
 
 - `Shift + A → Light`: 조명 추가
 - `Z → Rendered`: 렌더 미리보기
 - `Shift + Z`: Rendered/Solid 토글
-- `Ctrl + Numpad 0`: 현재 시점 → 카메라
 - `Numpad 0`: 카메라 뷰 전환
+- `Ctrl + Numpad 0`: 현재 시점 → 카메라
+- `N → Camera Lock to View`: 카메라 따라다니기
 
 ### 과제 한눈에 보기
 
 - 과제명: 조명 포트폴리오
-- 설명: 동일한 오브젝트에 3가지 다른 조명 분위기 렌더 이미지를 제출합니다.
+- 설명: 동일한 오브젝트에 3가지 다른 조명 분위기 렌더 이미지를 제출해요.
 - 제출 체크:
   - 낮/저녁/밤 또는 다른 3가지 분위기 렌더
+  - 각 렌더의 조명 구성 간단 메모
+  - 카메라 구도 의식적으로 설정
   - .blend 파일
 
 ### 자주 막히는 지점
 
-- 빛이 너무 강함 → Energy 값 줄이기
-- 그림자 없음 → Shadow 설정 확인
+- 빛이 너무 강함 → Energy 값 줄이기 (Area Light은 100~500W 정도)
+- 그림자가 안 보임 → Rendered 모드에서만 정확히 보여요
+- HDRI가 안 보임 → World Properties에서 연결 확인, Rendered 모드 전환
+- 배경이 너무 밝음 → HDRI Strength 값 줄이기
+- 카메라 뷰가 안 바뀜 → Numpad 0이 아닌 일반 0을 누른 건 아닌지 확인
+
+### 공식 영상 튜토리얼
+
+- [Blender Studio - Lighting Fundamentals](https://studio.blender.org/training/blender-2-8-fundamentals/lighting/)
 
 ### 공식 문서
 
 - [Lighting](https://docs.blender.org/manual/en/latest/render/lights/light_object.html)
+- [World Environment](https://docs.blender.org/manual/en/latest/render/lights/world.html)
+- [Camera](https://docs.blender.org/manual/en/latest/render/cameras.html)
+- [Depth of Field](https://docs.blender.org/manual/en/latest/render/cameras.html#depth-of-field)
 <!-- AUTO:CURRICULUM-SYNC:END -->
 
 ## 참고 자료
