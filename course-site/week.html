@@ -307,6 +307,16 @@
     }
     .student-badge.is-active { display: inline-flex; }
     .student-badge:hover { background: rgba(10,132,255,.15); }
+    /* ── Guest button ── */
+    .guest-btn {
+      display: block; width: 100%; margin-top: 14px;
+      padding: 9px 0; border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.1);
+      background: transparent; color: var(--muted);
+      font-size: .82rem; cursor: pointer;
+      transition: color .14s, border-color .14s;
+    }
+    .guest-btn:hover { color: var(--text); border-color: rgba(255,255,255,.25); }
   </style>
 </head>
 <body>
@@ -380,6 +390,7 @@
                type="text" placeholder="학번 8자리" maxlength="8" inputmode="numeric"
                autocomplete="off">
         <div class="student-login-preview" id="studentLoginPreview"></div>
+        <button class="guest-btn" type="button" onclick="loginAsGuest()">학번 없이 둘러보기</button>
       </div>
     </div>
   </div>
@@ -807,6 +818,10 @@
       var params = new URLSearchParams(location.search);
       params.set("sid", sid);
       location.search = params.toString();
+    }
+
+    function loginAsGuest() {
+      document.getElementById("studentLoginOverlay").classList.add("is-hidden");
     }
 
     function switchStudent() {
