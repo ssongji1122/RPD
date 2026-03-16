@@ -100,9 +100,11 @@ body {
   padding: 3px 9px; border-radius: 999px;
   font-size: .72rem; font-weight: 600;
 }
-.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
-.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
-.badge-amber { background: rgba(245,158,11,.15);  color: #fbbf24; }
+.badge-blue   { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green  { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber  { background: rgba(245,158,11,.15);  color: #fbbf24; }
+.badge-purple { background: rgba(168,85,247,.15);  color: #c4b5fd; }
+.badge-cyan   { background: rgba(6,182,212,.15);   color: #67e8f9; }
 /* ── Keyboard Shortcut ── */
 .kbd {
   display: inline-block;
@@ -364,6 +366,14 @@ body {
       <h3><span class="badge badge-green">Alt+E</span> Normal 방향 Extrude</h3>
       <p>Alt+E로 면의 법선(Normal) 방향을 따라 균일하게 돌출합니다. 여러 면을 동시에 선택했을 때, 각 면이 자신의 법선 방향으로 개별적으로 뽑혀 나옵니다. 곡면에 균일한 두께를 줄 때 특히 유용합니다.</p>
     </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-purple">Manifold</span> Extrude Manifold</h3>
+      <p>돌출 후 내부에 남는 면(interior face)을 자동으로 제거해 메시를 항상 매니폴드(2-매니폴드) 상태로 유지합니다. 기존 지오메트리 안으로 뽑거나 인접한 메시를 합칠 때 Region 대신 사용하면 위상 오류 없이 깨끗한 결과를 얻을 수 있어요.</p>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-cyan">Ctrl+RMB</span> Extrude to Cursor</h3>
+      <p>3D 뷰포트에서 <strong>마우스를 클릭한 위치</strong>까지 선택된 지오메트리를 곧장 뽑아냅니다. Blender의 3D Cursor 오브젝트(Shift+RMB로 배치하는 다트)가 아니라, 클릭 순간 마우스 포인터가 가리키는 뷰포트 위치가 끝점이 됩니다.</p>
+    </div>
   </div>
 
   <div class="analogy">찰흙에서 손가락으로 잡아당기면 새로운 형태가 늘어나오는 것, 그게 Extrude예요</div>
@@ -381,6 +391,10 @@ body {
     <div class="shortcut-row">
       <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">RMB</span></span>
       <span>Extrude to Cursor &mdash; 커서 위치까지 뽑기</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Alt</span> + <span class="kbd">E</span> &rarr; Manifold</span>
+      <span>Extrude Manifold &mdash; 내부 면 자동 제거로 클린 메시 유지</span>
     </div>
     <div class="shortcut-row">
       <span class="shortcut-keys"><span class="kbd">E</span> &rarr; <span class="kbd">ESC</span></span>
@@ -406,6 +420,8 @@ body {
       <button class="demo-btn is-active" id="btnRegion">Region (E)</button>
       <button class="demo-btn" id="btnNormals">Along Normals (Alt+E)</button>
       <button class="demo-btn" id="btnIndividual">Individual</button>
+      <button class="demo-btn" id="btnManifold">Manifold</button>
+      <button class="demo-btn" id="btnCursor">To Cursor (Ctrl+RMB)</button>
       <button class="demo-btn" id="btnReset">초기화</button>
     </div>
   </div>
@@ -433,6 +449,20 @@ body {
         <p style="margin:4px 0;color:var(--muted-strong);">Along Normals와 방향은 같지만 면들이 서로 연결되지 않고 별개 형태로 분리되어 뽑혀 나옵니다.</p>
       </div>
     </div>
+    <div id="desc-manifold" style="display:none;">
+      <div style="background:rgba(168,85,247,.06);border:1px solid rgba(168,85,247,.18);border-radius:12px;padding:14px 16px;font-size:.85rem;">
+        <span class="badge badge-purple" style="margin-bottom:6px;display:inline-block;">Extrude Manifold — 내부 면 자동 제거</span>
+        <p style="margin:4px 0;color:var(--muted-strong);">위로 뽑힌 뒤 <strong>원본 면이 자동으로 제거</strong>됩니다(빨간 점선). 내부 면이 남지 않아 항상 매니폴드 메시를 유지합니다.</p>
+        <p style="margin:4px 0;color:var(--muted-strong);">Region은 원본 면이 그대로 남아 내부 면(Interior Face)이 생기지만, Manifold는 이를 자동으로 제거해 렌더링 오류와 위상 문제를 방지합니다.</p>
+      </div>
+    </div>
+    <div id="desc-cursor" style="display:none;">
+      <div style="background:rgba(6,182,212,.06);border:1px solid rgba(6,182,212,.18);border-radius:12px;padding:14px 16px;font-size:.85rem;">
+        <span class="badge badge-cyan" style="margin-bottom:6px;display:inline-block;">To Cursor (Ctrl+RMB) — 마우스 클릭 위치로 돌출</span>
+        <p style="margin:4px 0;color:var(--muted-strong);"><strong>마우스를 클릭한 위치</strong>까지 선택 면이 일직선으로 뻗어나갑니다. Blender 3D Cursor 오브젝트가 아니라 <strong>클릭 순간 마우스 포인터 위치</strong>가 끝점입니다.</p>
+        <p style="margin:4px 0;color:var(--muted-strong);">화면에서 Face B(파란 면)가 동심원 클릭 표시 방향으로 돌출되는 걸 확인하세요. 수치 없이 클릭 한 번으로 길이를 지정할 수 있어 파이프·케이블 배치에 유용합니다.</p>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -455,6 +485,24 @@ body {
         <li>곡면의 디테일 추가</li>
         <li>선택한 면 모두 균일하게 돌출</li>
         <li>벽체 두께 부여</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>Extrude Manifold</h4>
+      <ul>
+        <li>인접 메시 안으로 뚫고 들어가기</li>
+        <li>Boolean 없이 두 메시 합치기</li>
+        <li>내부 면 오류 없는 클린 모델링</li>
+        <li>게임 에셋 최적화 토폴로지 유지</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>To Cursor (Ctrl+RMB)</h4>
+      <ul>
+        <li>파이프·케이블 경로 빠르게 배치</li>
+        <li>수치 없이 클릭만으로 길이 지정</li>
+        <li>건축 모델 정확한 끝점 연결</li>
+        <li>스냅과 함께 그리드 정렬 돌출</li>
       </ul>
     </div>
   </div>
@@ -724,6 +772,67 @@ function initQuiz(questions) {
         ctx.font = "bold 11px sans-serif"; ctx.textAlign = "center";
         ctx.fillText("전체가 위로 ↑", midX, midY - amt - 18);
 
+      } else if (mode === "manifold") {
+        // Manifold: closed box extruded upward; original face auto-dissolved
+        var bx1 = 145, bx2 = 535, by1 = 218, by2 = 282;
+        var mScale = amt * 0.75; // 0→90 maps to 0→67.5px upward
+        var purple = [168, 85, 247];
+        // Extension wall (fill)
+        ctx.fillStyle = rgba(purple, 0.10);
+        ctx.strokeStyle = rgba(purple, 0.22);
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(bx1, by1); ctx.lineTo(bx2, by1);
+        ctx.lineTo(bx2, by1 - mScale); ctx.lineTo(bx1, by1 - mScale);
+        ctx.closePath(); ctx.fill(); ctx.stroke();
+        // New top face (extruded)
+        ctx.strokeStyle = rgba(purple, 0.92);
+        ctx.lineWidth = 3; ctx.lineCap = "round";
+        ctx.beginPath(); ctx.moveTo(bx1, by1 - mScale); ctx.lineTo(bx2, by1 - mScale); ctx.stroke();
+        ctx.fillStyle = rgba(purple, 0.85);
+        ctx.font = "bold 11px sans-serif"; ctx.textAlign = "center";
+        ctx.fillText("새 면 ↑", (bx1 + bx2) / 2, by1 - mScale - 10);
+        // Upward arrow
+        drawArrow((bx1 + bx2) / 2, by1 - 4, (bx1 + bx2) / 2, by1 - mScale + 6, "rgba(255,255,255,.5)", 2);
+        // Dissolved original face (dashed red)
+        ctx.save();
+        ctx.strokeStyle = "rgba(239,68,68,.65)";
+        ctx.lineWidth = 1.5; ctx.setLineDash([5, 5]);
+        ctx.beginPath(); ctx.moveTo(bx1 + 12, by1); ctx.lineTo(bx2 - 12, by1); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = "rgba(239,68,68,.72)";
+        ctx.font = "10px sans-serif"; ctx.textAlign = "center";
+        ctx.fillText("✕ 원본 면 제거됨 (내부 면 방지)", (bx1 + bx2) / 2, by1 + 13);
+        ctx.restore();
+
+      } else if (mode === "cursor") {
+        // Cursor: only face B (flat top) extrudes toward cursor
+        var curX = 560, curY = 68;
+        var fB = faces[1]; // { ax:220, ay:185, bx:460, by:185 }
+        var fcx = (fB.ax + fB.bx) / 2, fcy = fB.ay;
+        var ddx = curX - fcx, ddy = curY - fcy;
+        var ddist = Math.sqrt(ddx * ddx + ddy * ddy);
+        var ndx = ddx / ddist, ndy = ddy / ddist;
+        var cScale = amt * (ddist / 90); // at amt=90 → nearly at cursor
+        var ex = ndx * cScale, ey = ndy * cScale;
+        var cyan = [6, 182, 212];
+        // Extrusion parallelogram (face B)
+        ctx.fillStyle = rgba(cyan, 0.12);
+        ctx.strokeStyle = rgba(cyan, 0.28);
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(fB.ax, fB.ay); ctx.lineTo(fB.bx, fB.by);
+        ctx.lineTo(fB.bx + ex, fB.by + ey); ctx.lineTo(fB.ax + ex, fB.ay + ey);
+        ctx.closePath(); ctx.fill(); ctx.stroke();
+        // New face at cursor position
+        ctx.strokeStyle = rgba(cyan, 0.92);
+        ctx.lineWidth = 3; ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(fB.ax + ex, fB.ay + ey); ctx.lineTo(fB.bx + ex, fB.by + ey);
+        ctx.stroke();
+        // Direction arrow
+        drawArrow(fcx, fcy - 4, fcx + ex * 0.7, fcy + ey * 0.7, rgba(cyan, 0.85), 2);
+
       } else {
         // Along Normals / Individual — each face extrudes along its own normal
         // Both modes use FULL parallelograms (no shrink); junction handling differs
@@ -810,25 +919,82 @@ function initQuiz(questions) {
       });
     }
 
-    // ── Base faces (drawn on top) ──
-    faces.forEach(function(f) {
-      ctx.strokeStyle = rgba(f.cr, amt > 1 ? 0.55 : 0.95);
-      ctx.lineWidth = 4; ctx.lineCap = "round";
-      ctx.beginPath(); ctx.moveTo(f.ax, f.ay); ctx.lineTo(f.bx, f.by); ctx.stroke();
+    // ── Cursor & Manifold: always draw cursor/box even at amt=0 ──
+    if (mode === "cursor") {
+      var curX0 = 560, curY0 = 68;
+      var fB0 = faces[1];
+      var fcx0 = (fB0.ax + fB0.bx) / 2, fcy0 = fB0.ay;
+      var cyan0 = [6, 182, 212];
+      // Trajectory dotted line
+      ctx.save();
+      ctx.strokeStyle = rgba(cyan0, 0.30);
+      ctx.lineWidth = 1; ctx.setLineDash([4, 5]);
+      ctx.beginPath(); ctx.moveTo(fcx0, fcy0); ctx.lineTo(curX0, curY0); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+      // Mouse click indicator (concentric circles — NOT 3D Cursor)
+      ctx.strokeStyle = rgba(cyan0, 0.9);
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(curX0, curY0, 10, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = rgba(cyan0, 0.9);
+      ctx.beginPath(); ctx.arc(curX0, curY0, 4, 0, Math.PI * 2); ctx.fill();
+      ctx.save();
+      ctx.strokeStyle = rgba(cyan0, 0.35);
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(curX0, curY0, 17, 0, Math.PI * 2); ctx.stroke();
+      ctx.restore();
+      ctx.fillStyle = rgba(cyan0, 0.85);
+      ctx.font = "bold 10px sans-serif"; ctx.textAlign = "left";
+      ctx.fillText("마우스 클릭 위치", curX0 + 22, curY0 + 4);
+    }
 
-      // Label inside the hill (inward = -normal direction)
-      var mx = (f.ax + f.bx) / 2 - f.nx * 22;
-      var my = (f.ay + f.by) / 2 - f.ny * 22;
-      ctx.font = "11px sans-serif"; ctx.textAlign = "center";
-      ctx.fillStyle = rgba(f.cr, 0.75);
-      ctx.fillText(f.label, mx, my + 4);
-    });
+    if (mode === "manifold") {
+      // Draw closed box (base scene for manifold)
+      var mbx1 = 145, mbx2 = 535, mby1 = 218, mby2 = 282;
+      ctx.strokeStyle = "rgba(168,85,247,.55)";
+      ctx.fillStyle = "rgba(168,85,247,.07)";
+      ctx.lineWidth = 3; ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(mbx1, mby1); ctx.lineTo(mbx2, mby1);
+      ctx.lineTo(mbx2, mby2); ctx.lineTo(mbx1, mby2);
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+      // Selected face label (top edge)
+      if (amt <= 1) {
+        ctx.fillStyle = "rgba(168,85,247,.75)";
+        ctx.font = "bold 11px sans-serif"; ctx.textAlign = "center";
+        ctx.fillText("선택된 면 (위로 돌출)", (mbx1 + mbx2) / 2, mby1 - 10);
+        ctx.strokeStyle = "rgba(168,85,247,.95)";
+        ctx.lineWidth = 3.5;
+        ctx.beginPath(); ctx.moveTo(mbx1, mby1); ctx.lineTo(mbx2, mby1); ctx.stroke();
+      } else {
+        // Bottom face label
+        ctx.fillStyle = "rgba(168,85,247,.55)";
+        ctx.font = "11px sans-serif"; ctx.textAlign = "center";
+        ctx.fillText("기존 메시 (닫힌 박스)", (mbx1 + mbx2) / 2, mby2 - 10);
+      }
+    }
+
+    // ── Base hill faces (only for region / normals / individual / cursor) ──
+    if (mode !== "manifold") {
+      faces.forEach(function(f) {
+        ctx.strokeStyle = rgba(f.cr, amt > 1 ? 0.55 : 0.95);
+        ctx.lineWidth = 4; ctx.lineCap = "round";
+        ctx.beginPath(); ctx.moveTo(f.ax, f.ay); ctx.lineTo(f.bx, f.by); ctx.stroke();
+
+        // Label inside the hill (inward = -normal direction)
+        var mx = (f.ax + f.bx) / 2 - f.nx * 22;
+        var my = (f.ay + f.by) / 2 - f.ny * 22;
+        ctx.font = "11px sans-serif"; ctx.textAlign = "center";
+        ctx.fillStyle = rgba(f.cr, 0.75);
+        ctx.fillText(f.label, mx, my + 4);
+      });
+    }
 
     // Mode label
     ctx.font = "bold 12px sans-serif"; ctx.textAlign = "left";
     ctx.fillStyle = "rgba(255,255,255,.42)";
-    var modeLabels = { region: "Region (E)", normals: "Along Normals (Alt+E)", individual: "Individual Faces" };
-    ctx.fillText(modeLabels[mode], 14, 22);
+    var modeLabels = { region: "Region (E)", normals: "Along Normals (Alt+E)", individual: "Individual Faces", manifold: "Extrude Manifold", cursor: "To Cursor (Ctrl+RMB)" };
+    ctx.fillText(modeLabels[mode] || mode, 14, 22);
 
     // Ground reference line
     ctx.strokeStyle = "rgba(255,255,255,.07)";
@@ -884,10 +1050,12 @@ function initQuiz(questions) {
   var btnRegion     = document.getElementById("btnRegion");
   var btnNormals    = document.getElementById("btnNormals");
   var btnIndividual = document.getElementById("btnIndividual");
-  var allBtns = [btnRegion, btnNormals, btnIndividual];
+  var btnManifold   = document.getElementById("btnManifold");
+  var btnCursor     = document.getElementById("btnCursor");
+  var allBtns = [btnRegion, btnNormals, btnIndividual, btnManifold, btnCursor];
 
   function updateDesc(m) {
-    ["region", "normals", "individual"].forEach(function(id) {
+    ["region", "normals", "individual", "manifold", "cursor"].forEach(function(id) {
       var el = document.getElementById("desc-" + id);
       if (el) el.style.display = (id === m) ? "block" : "none";
     });
@@ -904,6 +1072,8 @@ function initQuiz(questions) {
   btnRegion.addEventListener("click",     function() { setMode("region",     btnRegion);     });
   btnNormals.addEventListener("click",    function() { setMode("normals",    btnNormals);    });
   btnIndividual.addEventListener("click", function() { setMode("individual", btnIndividual); });
+  btnManifold.addEventListener("click",   function() { setMode("manifold",   btnManifold);   });
+  btnCursor.addEventListener("click",     function() { setMode("cursor",     btnCursor);     });
   document.getElementById("btnReset").addEventListener("click", function() { extrudeAmount = 0; animPaused = false; });
 
   draw();
