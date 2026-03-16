@@ -6,6 +6,7 @@
 
 const SHOWME_REGISTRY = {
   // ── Week 2: Interface & Fundamentals ──
+  "blender-preferences":    { label: "Preferences 설정",        icon: "⚙️" },
   "viewport-navigation":    { label: "화면 조작 원리",          icon: "🧭" },
   "transform-grs":          { label: "G/R/S 변형 이해",         icon: "↔️" },
   "edit-mode":              { label: "Edit Mode 이해",          icon: "✏️" },

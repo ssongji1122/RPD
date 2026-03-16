@@ -150,6 +150,7 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week02/ui-overview.png",
+        "showme": "blender-preferences",
         "done": [
           "Preferences를 직접 열 수 있다",
           "필요 시 Emulate 설정을 켰다"
