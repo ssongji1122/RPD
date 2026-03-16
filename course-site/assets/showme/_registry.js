@@ -5,6 +5,9 @@
 // ============================================================
 
 const SHOWME_REGISTRY = {
+  // ── Week 3: Reference Setup ──
+  "image-reference":        { label: "이미지 레퍼런스 설정",      icon: "🖼️" },
+
   // ── Week 2: Interface & Fundamentals ──
   "blender-preferences":    { label: "Preferences 설정",        icon: "⚙️" },
   "viewport-navigation":    { label: "화면 조작 원리",          icon: "🧭" },
