@@ -54,6 +54,29 @@
   margin: 0 auto;
   padding: 24px 20px 80px;
 }
+.lib-tabs {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex; gap: 0;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--line);
+}
+.lib-tabs::-webkit-scrollbar { display: none; }
+.lib-tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted); cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none; font-family: inherit;
+}
+.lib-tab:hover { color: var(--muted-strong); }
+.lib-tab.is-active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
   </style>
 </head>
 <body>
@@ -77,8 +100,99 @@
         </div>
       </div>
     </header>
+    <nav class="lib-tabs" id="libTabs" role="tablist"></nav>
     <main class="lib-main" id="libMain"></main>
   </div>
   <script src="assets/showme/_registry.js"></script>
+  <script>
+// 카테고리 매핑 — ID → 카테고리명
+const CATEGORY_MAP = {
+  "viewport-navigation": "Edit Mode",
+  "transform-grs":       "Edit Mode",
+  "edit-mode":           "Edit Mode",
+  "edit-mode-tools":     "Edit Mode",
+  "extrude":             "Edit Mode",
+  "loop-cut":            "Edit Mode",
+  "inset":               "Edit Mode",
+  "bevel-tool":          "Edit Mode",
+
+  "array-modifier":          "Generate Modifiers",
+  "bevel-modifier":          "Generate Modifiers",
+  "boolean-modifier":        "Generate Modifiers",
+  "build-modifier":          "Generate Modifiers",
+  "curve-to-tube":           "Generate Modifiers",
+  "decimate-modifier":       "Generate Modifiers",
+  "edge-split-modifier":     "Generate Modifiers",
+  "mask-modifier":           "Generate Modifiers",
+  "mirror-modifier":         "Generate Modifiers",
+  "multiresolution-modifier":"Generate Modifiers",
+  "remesh-modifier":         "Generate Modifiers",
+  "scatter-on-surface":      "Generate Modifiers",
+  "screw-modifier":          "Generate Modifiers",
+  "skin-modifier":           "Generate Modifiers",
+  "solidify-modifier":       "Generate Modifiers",
+  "subdivision-surface":     "Generate Modifiers",
+  "triangulate-modifier":    "Generate Modifiers",
+  "volume-to-mesh":          "Generate Modifiers",
+  "weld-modifier":           "Generate Modifiers",
+  "wireframe-modifier":      "Generate Modifiers",
+
+  "weighted-normal":    "Normals",
+
+  "transform-apply":        "기타",
+  "simple-deform":          "기타",
+  "bevel-tool-vs-modifier": "기타",
+  "join-separate":          "기타",
+  "origin-vs-3dcursor":     "기타",
+
+  "sculpt-basics":      "Sculpting",
+
+  "material-basics":    "Material",
+  "principled-bsdf":    "Material",
+  "shader-editor":      "Material",
+
+  "uv-unwrapping":      "UV",
+  "uv-editor":          "UV",
+
+  "light-types":        "Lighting",
+  "hdri-lighting":      "Lighting",
+  "three-point-light":  "Lighting",
+
+  "keyframe-basics":    "Animation",
+  "graph-editor":       "Animation",
+
+  "armature-basics":    "Rigging",
+  "weight-paint":       "Rigging",
+
+  "render-settings":    "Rendering",
+  "compositing-basics": "Rendering",
+};
+
+const CATEGORY_ORDER = [
+  "전체", "Edit Mode", "Generate Modifiers", "Normals",
+  "Sculpting", "Material", "UV", "Lighting",
+  "Animation", "Rigging", "Rendering", "기타"
+];
+
+function buildTabs() {
+  var tabsEl = document.getElementById("libTabs");
+  CATEGORY_ORDER.forEach(function(cat, i) {
+    var btn = document.createElement("button");
+    btn.className = "lib-tab" + (i === 0 ? " is-active" : "");
+    btn.textContent = cat;
+    btn.dataset.cat = cat;
+    btn.setAttribute("role", "tab");
+    btn.addEventListener("click", function() {
+      document.querySelectorAll(".lib-tab").forEach(function(t) {
+        t.classList.remove("is-active");
+      });
+      btn.classList.add("is-active");
+      if (typeof filterCards === "function") filterCards();
+    });
+    tabsEl.appendChild(btn);
+  });
+}
+buildTabs();
+  </script>
 </body>
 </html>
