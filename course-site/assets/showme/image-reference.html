@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — 이미지 레퍼런스 설정</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Tab Navigation ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+
+/* ── Tab Panels ── */
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+
+/* ── Concept Cards ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card h3 {
+  margin: 0 0 8px; font-size: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.concept-card p {
+  margin: 0; color: var(--muted-strong);
+  font-size: .88rem; line-height: 1.7;
+}
+.concept-card ul {
+  margin: 8px 0 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
+}
+
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: .72rem; font-weight: 600;
+}
+.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: #fbbf24; }
+.badge-red   { background: rgba(239,68,68,.15);   color: #fca5a5; }
+
+/* ── Keyboard Shortcut ── */
+.kbd {
+  display: inline-block;
+  padding: 3px 8px; border-radius: 6px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  color: var(--key-soft);
+  font-size: .82rem; font-weight: 600;
+  font-family: var(--font);
+}
+
+/* ── Canvas / Demo ── */
+.demo-wrap {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+  margin: 14px 0;
+}
+.demo-wrap canvas {
+  display: block; width: 100%;
+}
+.demo-controls {
+  display: flex; gap: 8px; padding: 12px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.demo-hint {
+  font-size: .78rem; color: var(--muted);
+  text-align: center; padding: 6px 0 0;
+}
+.demo-btn {
+  padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .82rem;
+  cursor: pointer;
+  transition: background .14s, color .14s;
+}
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active {
+  background: rgba(10,132,255,.14);
+  color: var(--key-soft);
+  border-color: rgba(10,132,255,.3);
+}
+
+/* ── Usage Grid ── */
+.usage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.usage-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 16px;
+}
+.usage-card h4 {
+  margin: 0 0 8px; font-size: .92rem;
+  color: var(--key-soft);
+}
+.usage-card ul {
+  margin: 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem;
+  line-height: 1.8;
+}
+
+/* ── Tip / Warn Box ── */
+.tip-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(10,132,255,.2);
+  background: rgba(10,132,255,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+}
+.tip-box strong { color: var(--key-soft); }
+.warn-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(245,158,11,.2);
+  background: rgba(245,158,11,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+}
+.warn-box strong { color: #fbbf24; }
+
+/* ── Combo Section ── */
+.combo-section {
+  margin-top: 18px;
+}
+.combo-section h4 {
+  margin: 0 0 10px;
+  font-size: .92rem;
+  color: var(--text);
+}
+.combo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.combo-card {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 12px 14px;
+}
+.combo-card .combo-name {
+  font-size: .86rem;
+  font-weight: 600;
+  color: var(--key-soft);
+  margin-bottom: 4px;
+}
+.combo-card .combo-desc {
+  font-size: .8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ── Shortcut Reference ── */
+.shortcut-list {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.shortcut-list h4 {
+  margin: 0 0 10px;
+  font-size: .9rem;
+  color: var(--text);
+}
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: .84rem;
+  color: var(--muted-strong);
+}
+.shortcut-row + .shortcut-row {
+  border-top: 1px solid var(--line);
+}
+.shortcut-keys {
+  flex-shrink: 0;
+}
+.analogy {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(245,158,11,.06);
+  border: 1px solid rgba(245,158,11,.15);
+  font-size: .82rem;
+  color: #fbbf24;
+  font-style: italic;
+}
+
+/* ── Compare Table ── */
+.compare-table {
+  width: 100%; border-collapse: collapse;
+  font-size: .84rem; margin-top: 14px;
+}
+.compare-table th {
+  padding: 8px 10px; text-align: left;
+  color: var(--muted); font-weight: 500;
+  border-bottom: 1px solid var(--line-strong);
+}
+.compare-table td {
+  padding: 9px 10px; color: var(--muted-strong);
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+.compare-table tr:last-child td { border-bottom: none; }
+.compare-table td:first-child { color: var(--key-soft); font-weight: 600; white-space: nowrap; }
+
+/* ── Quiz ── */
+.quiz-progress {
+  font-size: .78rem; color: var(--muted);
+  margin-bottom: 12px;
+}
+.quiz-question {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.quiz-question h4 {
+  margin: 0 0 12px; font-size: .94rem;
+}
+.quiz-option {
+  display: block; width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.025);
+  color: var(--text);
+  font: inherit; font-size: .86rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background .14s, border-color .14s;
+}
+.quiz-option:hover {
+  background: rgba(255,255,255,.06);
+  border-color: var(--line-strong);
+}
+.quiz-option.correct {
+  background: rgba(16,185,129,.12);
+  border-color: rgba(16,185,129,.4);
+  color: var(--success-soft);
+}
+.quiz-option.wrong {
+  background: rgba(239,68,68,.1);
+  border-color: rgba(239,68,68,.3);
+  color: #fca5a5;
+}
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback {
+  margin-top: 8px; padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: .84rem;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: #fca5a5; }
+
+.quiz-score {
+  text-align: center; padding: 20px;
+  font-size: 1.1rem; font-weight: 600;
+}
+.quiz-retry {
+  display: block; margin: 12px auto;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--key);
+  background: rgba(10,132,255,.12);
+  color: var(--key-soft);
+  font: inherit; font-size: .88rem;
+  cursor: pointer;
+  transition: background .14s;
+}
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+
+/* ── Official Doc Reference ── */
+.doc-ref {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(10,132,255,.15);
+  background: rgba(10,132,255,.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-ref a {
+  color: var(--key-soft);
+  font-size: .84rem;
+  text-decoration: none;
+  line-height: 1.5;
+}
+.doc-ref a:hover { text-decoration: underline; }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+  .compare-table { font-size: .78rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Tab Bar -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+</nav>
+
+<!-- TAB 1: 개념 이해 -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <div class="concept-grid">
+
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">모델링용</span> Reference</h3>
+      <p>뷰포트에 반투명하게 떠 있는 가이드 이미지입니다. 편집에 전혀 영향을 주지 않으며, 렌더링에 포함되지 않습니다.</p>
+      <ul>
+        <li>선택은 되지만 메쉬가 아님</li>
+        <li>N 패널에서 투명도(Opacity) 조절 가능</li>
+        <li>Outliner에서 선택 잠금 가능</li>
+        <li>로봇 모델링 가이드로 가장 적합</li>
+      </ul>
+      <div class="analogy">스케치북 위에 트레이싱지 올려놓은 것처럼, 밑그림만 보이고 건드릴 수 없어요</div>
+    </div>
+
+    <div class="concept-card">
+      <h3><span class="badge badge-amber">카메라 배경</span> Background</h3>
+      <p>카메라 배경에 딱 붙는 이미지입니다. Camera View(Numpad 0)에서만 보입니다.</p>
+      <ul>
+        <li>배경 합성, VFX 매핑에 사용</li>
+        <li>일반 뷰포트에서는 보이지 않음</li>
+        <li>카메라와 연동되어 항상 정렬됨</li>
+        <li>렌더링에 포함되지 않음</li>
+      </ul>
+      <div class="analogy">카메라 뷰파인더 뒤에 붙여 놓은 배경 사진이에요</div>
+    </div>
+
+    <div class="concept-card">
+      <h3><span class="badge badge-green">실제 메쉬</span> Mesh Plane</h3>
+      <p>이미지가 텍스처로 입혀진 실제 메쉬 면입니다. Edit Mode에서 편집할 수 있습니다.</p>
+      <ul>
+        <li>렌더링에 포함됨</li>
+        <li>UV 자동 설정</li>
+        <li>나무·잎사귀 등 실제 오브젝트로 활용</li>
+        <li>Solidify, Array 등 Modifier 적용 가능</li>
+      </ul>
+      <div class="analogy">이미지를 종이처럼 오려서 3D 공간에 세워 놓은 거예요</div>
+    </div>
+
+    <div class="concept-card">
+      <h3><span class="badge badge-red">빈 슬롯</span> Empty Image</h3>
+      <p>이미지가 없는 빈 Empty 오브젝트입니다. 나중에 이미지를 할당할 수 있는 자리만 만들어 둡니다.</p>
+      <ul>
+        <li>이미지 플레이스홀더로 사용</li>
+        <li>Properties에서 이미지 나중에 할당</li>
+        <li>파이프라인 초기 구조 잡을 때 유용</li>
+        <li>Reference와 동일한 방식으로 동작</li>
+      </ul>
+      <div class="analogy">액자 틀만 걸어 두고 사진은 나중에 끼워 넣는 거예요</div>
+    </div>
+
+  </div>
+
+  <div class="shortcut-list">
+    <h4>주요 단축키</h4>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Shift</span> + <span class="kbd">A</span> → Image → Reference</span>
+      <span>레퍼런스 이미지 추가</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Numpad 1</span> / <span class="kbd">3</span> / <span class="kbd">7</span></span>
+      <span>Front / Right / Top 직교뷰 전환</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">N</span> 패널 → Item</span>
+      <span>위치·크기·투명도(Opacity) 조절</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">H</span> / <span class="kbd">Alt</span>+<span class="kbd">H</span></span>
+      <span>레퍼런스 숨기기 / 다시 보이기</span>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/editors/3dview/display/overlays.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — 3D View Overlays & Image Empty
+    </a>
+  </div>
+</section>
+
+<!-- TAB 2: 시각적 비교 -->
+<section class="panel" id="panel-visual" role="tabpanel">
+  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
+    버튼을 클릭해 각 이미지 타입의 특성을 확인하세요.
+  </p>
+  <div class="demo-wrap">
+    <canvas id="demoCanvas" width="680" height="320"></canvas>
+    <div class="demo-controls">
+      <button class="demo-btn is-active" id="btnRef">Reference</button>
+      <button class="demo-btn" id="btnBg">Background</button>
+      <button class="demo-btn" id="btnMesh">Mesh Plane</button>
+      <button class="demo-btn" id="btnEmpty">Empty Image</button>
+    </div>
+  </div>
+  <p class="demo-hint">각 타입을 선택하면 해당 타입의 시각적 특성과 설명이 표시됩니다.</p>
+
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>타입</th>
+        <th>뷰포트 표시</th>
+        <th>렌더링</th>
+        <th>메쉬 편집</th>
+        <th>주 용도</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Reference</td>
+        <td>항상 보임 (반투명)</td>
+        <td>포함 안 됨</td>
+        <td>불가</td>
+        <td>모델링 가이드</td>
+      </tr>
+      <tr>
+        <td>Background</td>
+        <td>Camera View만</td>
+        <td>포함 안 됨</td>
+        <td>불가</td>
+        <td>VFX·배경 합성</td>
+      </tr>
+      <tr>
+        <td>Mesh Plane</td>
+        <td>항상 보임 (불투명)</td>
+        <td>포함됨</td>
+        <td>가능</td>
+        <td>실제 오브젝트</td>
+      </tr>
+      <tr>
+        <td>Empty Image</td>
+        <td>점선 아이콘만</td>
+        <td>포함 안 됨</td>
+        <td>불가</td>
+        <td>플레이스홀더</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- TAB 3: 언제 쓰나요? -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>Reference를 쓸 때</h4>
+      <ul>
+        <li>로봇 모델링 가이드 이미지</li>
+        <li>캐릭터 전면/측면 ortho 레퍼런스</li>
+        <li>비율을 맞춰야 하는 모든 모델링</li>
+        <li>건축 도면 tracing</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>다른 타입을 쓸 때</h4>
+      <ul>
+        <li><strong style="color:var(--muted-strong)">Background</strong>: VFX, 카메라 매핑, 배경 합성</li>
+        <li><strong style="color:var(--muted-strong)">Mesh Plane</strong>: 실제 오브젝트로 필요할 때 (나무, 잎사귀 등)</li>
+        <li><strong style="color:var(--muted-strong)">Empty Image</strong>: 나중에 교체할 이미지 플레이스홀더</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>팁:</strong> 레퍼런스 추가 후 N 패널에서 투명도(Opacity)를 0.3~0.5로 낮추면 모델링 도중 메쉬와 구분이 쉬워요. Outliner에서 자물쇠 아이콘을 클릭해 선택 방지하면 실수로 이동시키는 걸 막을 수 있어요.
+  </div>
+
+  <div class="warn-box">
+    <strong>주의:</strong> 레퍼런스 이미지는 특정 뷰(Numpad 1=정면, Numpad 3=우측면)에서 추가해야 해당 뷰에 정렬됩니다. Object Mode에서 추가하세요.
+  </div>
+
+  <div class="combo-section">
+    <h4>레퍼런스 세팅 흐름</h4>
+    <div class="combo-grid">
+      <div class="combo-card">
+        <div class="combo-name">정면 + 측면 두 장</div>
+        <div class="combo-desc">Numpad 1에서 정면 Reference 추가 → Numpad 3에서 측면 Reference 추가 → 크기 맞춰 정렬</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Reference + Mirror</div>
+        <div class="combo-desc">정면 레퍼런스로 비율 잡기 → Mirror Modifier로 한쪽만 편집해 대칭 완성</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/editors/3dview/display/overlays.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — 3D View Overlays & Image Empty
+    </a>
+  </div>
+</section>
+
+<!-- TAB 4: 퀴즈 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+// ── Tab Switching ──────────────────────────────
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(t) {
+      t.classList.remove("is-active");
+      t.setAttribute("aria-selected", "false");
+    });
+    document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("is-active"); });
+    tab.classList.add("is-active");
+    tab.setAttribute("aria-selected", "true");
+    document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+  });
+});
+
+// ── Quiz Engine (Safe DOM methods) ────────────
+function initQuiz(questions) {
+  var container = document.getElementById("quizArea");
+  var score = 0, answered = 0;
+  var scoreDiv = null;
+
+  var progress = document.createElement("div");
+  progress.className = "quiz-progress";
+  progress.textContent = "문제 0 / " + questions.length + " \u00b7 점수 0점";
+  container.appendChild(progress);
+
+  questions.forEach(function(q, qi) {
+    var div = document.createElement("div");
+    div.className = "quiz-question";
+
+    var heading = document.createElement("h4");
+    heading.textContent = "Q" + (qi + 1) + ". " + q.question;
+    div.appendChild(heading);
+
+    var fb = document.createElement("div");
+    fb.className = "quiz-feedback";
+
+    q.options.forEach(function(opt, oi) {
+      var btn = document.createElement("button");
+      btn.className = "quiz-option";
+      btn.textContent = opt;
+      btn.addEventListener("click", function() {
+        if (btn.disabled) return;
+        div.querySelectorAll(".quiz-option").forEach(function(b) { b.disabled = true; });
+        answered++;
+        if (oi === q.answer) {
+          btn.classList.add("correct");
+          fb.className = "quiz-feedback show correct-fb";
+          fb.textContent = "\u2705 " + q.explanation;
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
+          fb.className = "quiz-feedback show wrong-fb";
+          fb.textContent = "\u274c " + q.explanation;
+
+          var retryBtn = document.createElement("button");
+          retryBtn.className = "quiz-retry";
+          retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
+          retryBtn.textContent = "다시 풀기";
+          retryBtn.addEventListener("click", function() {
+            answered--;
+            div.querySelectorAll(".quiz-option").forEach(function(b) {
+              b.disabled = false;
+              b.classList.remove("wrong", "correct");
+            });
+            fb.className = "quiz-feedback";
+            fb.textContent = "";
+            retryBtn.remove();
+            if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+            progress.textContent = "문제 " + answered + " / " + questions.length + " \u00b7 점수 " + score + "점";
+          });
+          fb.appendChild(retryBtn);
+        }
+        progress.textContent = "문제 " + answered + " / " + questions.length + " \u00b7 점수 " + score + "점";
+        if (answered === questions.length) showScore();
+      });
+      div.appendChild(btn);
+    });
+
+    div.appendChild(fb);
+    container.appendChild(div);
+  });
+
+  function showScore() {
+    if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+
+    scoreDiv = document.createElement("div");
+    scoreDiv.className = "quiz-score";
+
+    var emoji = document.createElement("div");
+    emoji.style.cssText = "font-size:36px;margin-bottom:8px";
+    emoji.textContent = score === questions.length ? "\ud83c\udf89" : score >= Math.ceil(questions.length / 2) ? "\ud83d\udc4d" : "\ud83d\udcda";
+    scoreDiv.appendChild(emoji);
+
+    var result = document.createElement("div");
+    result.style.cssText = "font-size:18px;font-weight:500;margin-bottom:6px";
+    result.textContent = score + " / " + questions.length + " 정답";
+    scoreDiv.appendChild(result);
+
+    var msg = document.createElement("div");
+    msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
+    msg.textContent = score === questions.length ? "완벽합니다!" : "조금 더 연습하면 완벽해질 거예요!";
+    scoreDiv.appendChild(msg);
+
+    var saveBtn = document.createElement("button");
+    saveBtn.className = "quiz-retry";
+    saveBtn.style.cssText = "background:rgba(10,132,255,.18);border-color:var(--key);margin-bottom:8px";
+    saveBtn.textContent = "기록 저장하기";
+    saveBtn.addEventListener("click", function() {
+      try {
+        var wid = new URLSearchParams(location.search).get("wid")
+               || location.pathname.split("/").pop().replace(".html", "");
+        window.parent.postMessage({
+          type: "showme-quiz-complete",
+          widgetId: wid,
+          score: score,
+          total: questions.length,
+          pass: score >= Math.ceil(questions.length * 0.75)
+        }, "*");
+      } catch(e) {}
+      saveBtn.textContent = "저장 완료!";
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = ".5";
+    });
+    scoreDiv.appendChild(saveBtn);
+
+    var retry = document.createElement("button");
+    retry.className = "quiz-retry";
+    retry.textContent = "처음부터 다시";
+    retry.addEventListener("click", function() { location.reload(); });
+    scoreDiv.appendChild(retry);
+
+    container.appendChild(scoreDiv);
+  }
+}
+
+// ── Canvas Image Type Demo ────────────────────
+(function() {
+  var canvas = document.getElementById("demoCanvas");
+  var ctx = canvas.getContext("2d");
+  var activeType = "reference";
+
+  var W = canvas.width;
+  var H = canvas.height;
+
+  var types = {
+    reference: {
+      label: "Reference",
+      color: "#0a84ff",
+      colorAlpha: "rgba(10,132,255,",
+      badge: "모델링용",
+      desc: "뷰포트에 반투명하게 떠 있는 가이드",
+      tags: ["렌더 ✕", "메쉬 아님", "항상 보임", "Opacity 조절 가능"],
+      tagColors: ["rgba(239,68,68,.7)", "rgba(161,161,170,.7)", "rgba(10,132,255,.7)", "rgba(16,185,129,.7)"]
+    },
+    background: {
+      label: "Background",
+      color: "#f59e0b",
+      colorAlpha: "rgba(245,158,11,",
+      badge: "카메라 배경",
+      desc: "Camera View(Numpad 0)에서만 보임",
+      tags: ["렌더 ✕", "Camera View만", "VFX 합성", "카메라 연동"],
+      tagColors: ["rgba(239,68,68,.7)", "rgba(245,158,11,.7)", "rgba(142,197,255,.7)", "rgba(245,158,11,.7)"]
+    },
+    mesh: {
+      label: "Mesh Plane",
+      color: "#10b981",
+      colorAlpha: "rgba(16,185,129,",
+      badge: "실제 메쉬",
+      desc: "실제 메쉬로 렌더링에 포함됨",
+      tags: ["렌더 ○", "Edit Mode 편집 가능", "UV 자동 설정", "Modifier 적용 가능"],
+      tagColors: ["rgba(16,185,129,.8)", "rgba(16,185,129,.7)", "rgba(142,197,255,.7)", "rgba(142,197,255,.7)"]
+    },
+    empty: {
+      label: "Empty Image",
+      color: "#a1a1aa",
+      colorAlpha: "rgba(161,161,170,",
+      badge: "빈 슬롯",
+      desc: "이미지 없는 빈 자리 — 나중에 할당",
+      tags: ["렌더 ✕", "이미지 없음", "플레이스홀더", "나중에 할당"],
+      tagColors: ["rgba(239,68,68,.7)", "rgba(161,161,170,.7)", "rgba(245,158,11,.7)", "rgba(142,197,255,.7)"]
+    }
+  };
+
+  function drawRobotSilhouette(cx, cy, scale, alpha) {
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = "rgba(200,200,200,0.6)";
+    ctx.lineWidth = 1.5;
+    // Head
+    ctx.strokeRect(cx - 18 * scale, cy - 60 * scale, 36 * scale, 28 * scale);
+    // Body
+    ctx.strokeRect(cx - 26 * scale, cy - 28 * scale, 52 * scale, 50 * scale);
+    // Arms
+    ctx.strokeRect(cx - 46 * scale, cy - 26 * scale, 18 * scale, 40 * scale);
+    ctx.strokeRect(cx + 28 * scale, cy - 26 * scale, 18 * scale, 40 * scale);
+    // Legs
+    ctx.strokeRect(cx - 24 * scale, cy + 24 * scale, 20 * scale, 36 * scale);
+    ctx.strokeRect(cx + 4 * scale, cy + 24 * scale, 20 * scale, 36 * scale);
+    ctx.restore();
+  }
+
+  function drawCameraFrame(cx, cy, w, h, alpha) {
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    // Camera body
+    ctx.strokeStyle = "#f59e0b";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(cx - w/2, cy - h/2, w, h);
+    // Corner marks
+    var c = 14;
+    ctx.lineWidth = 3;
+    [[-1,-1],[1,-1],[1,1],[-1,1]].forEach(function(d) {
+      var x = cx + d[0] * w/2;
+      var y = cy + d[1] * h/2;
+      ctx.beginPath();
+      ctx.moveTo(x, y + d[1]*(-c));
+      ctx.lineTo(x, y);
+      ctx.lineTo(x + d[0]*(-c), y);
+      ctx.stroke();
+    });
+    ctx.restore();
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Background
+    ctx.fillStyle = "#17181a";
+    ctx.fillRect(0, 0, W, H);
+
+    // Grid
+    ctx.strokeStyle = "rgba(255,255,255,.04)";
+    ctx.lineWidth = 1;
+    for (var gx = 40; gx < W; gx += 40) {
+      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke();
+    }
+    for (var gy = 40; gy < H; gy += 40) {
+      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke();
+    }
+
+    var t = types[activeType];
+    var cx = W / 2;
+    var cy = H / 2 - 10;
+
+    if (activeType === "reference") {
+      // Blue semi-transparent image layer + robot silhouette on top
+      var rw = 200, rh = 160;
+      var rx = cx - rw/2, ry = cy - rh/2 - 10;
+
+      // Image placeholder (semi-transparent)
+      ctx.fillStyle = "rgba(10,132,255,.08)";
+      ctx.strokeStyle = "rgba(10,132,255,.5)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect ? ctx.roundRect(rx, ry, rw, rh, 8) : (function(){ctx.rect(rx,ry,rw,rh);})();
+      ctx.fill();
+      ctx.stroke();
+
+      // Image grid pattern (reference blueprint feel)
+      ctx.strokeStyle = "rgba(10,132,255,.12)";
+      ctx.lineWidth = 1;
+      for (var ix = rx+20; ix < rx+rw; ix += 20) {
+        ctx.beginPath(); ctx.moveTo(ix, ry); ctx.lineTo(ix, ry+rh); ctx.stroke();
+      }
+      for (var iy = ry+20; iy < ry+rh; iy += 20) {
+        ctx.beginPath(); ctx.moveTo(rx, iy); ctx.lineTo(rx+rw, iy); ctx.stroke();
+      }
+
+      // "IMAGE" label inside
+      ctx.fillStyle = "rgba(10,132,255,.4)";
+      ctx.font = "bold 13px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("REFERENCE IMAGE", cx, ry + rh/2 - 6);
+      ctx.font = "11px sans-serif";
+      ctx.fillStyle = "rgba(10,132,255,.3)";
+      ctx.fillText("(반투명 · 편집 불가)", cx, ry + rh/2 + 12);
+
+      // Robot silhouette on top (representing model being built over reference)
+      drawRobotSilhouette(cx, cy, 1.1, 0.85);
+
+      // "Opacity" label
+      ctx.fillStyle = "rgba(10,132,255,.7)";
+      ctx.font = "11px sans-serif";
+      ctx.textAlign = "left";
+      ctx.fillText("Opacity: 0.4", rx, ry - 8);
+
+    } else if (activeType === "background") {
+      // Camera frame around entire area
+      drawCameraFrame(cx, cy - 10, 340, 220, 0.9);
+
+      // Background image inside
+      var bw = 300, bh = 180;
+      ctx.fillStyle = "rgba(245,158,11,.07)";
+      ctx.fillRect(cx - bw/2, cy - bh/2 - 10, bw, bh);
+
+      // Horizon line
+      ctx.strokeStyle = "rgba(245,158,11,.3)";
+      ctx.lineWidth = 1;
+      ctx.setLineDash([6,4]);
+      ctx.beginPath();
+      ctx.moveTo(cx - bw/2, cy);
+      ctx.lineTo(cx + bw/2, cy);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // "Camera View Only" label
+      ctx.fillStyle = "rgba(245,158,11,.8)";
+      ctx.font = "bold 14px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("Camera View Only", cx, cy - 35);
+      ctx.font = "11px sans-serif";
+      ctx.fillStyle = "rgba(245,158,11,.55)";
+      ctx.fillText("Numpad 0 에서만 표시됩니다", cx, cy - 16);
+
+      // Camera icon
+      ctx.fillStyle = "rgba(245,158,11,.6)";
+      ctx.font = "28px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("📷", cx, cy + 40);
+
+      // Outside camera frame indicator
+      ctx.fillStyle = "rgba(161,161,170,.4)";
+      ctx.font = "11px sans-serif";
+      ctx.fillText("← 일반 뷰포트에서는 보이지 않음", cx, H - 16);
+
+    } else if (activeType === "mesh") {
+      // Solid mesh plane with texture grid
+      var mw = 200, mh = 150;
+      var mx = cx - mw/2, my = cy - mh/2 - 10;
+
+      // Solid fill
+      ctx.fillStyle = "rgba(16,185,129,.15)";
+      ctx.strokeStyle = "rgba(16,185,129,.8)";
+      ctx.lineWidth = 2.5;
+      ctx.fillRect(mx, my, mw, mh);
+      ctx.strokeRect(mx, my, mw, mh);
+
+      // UV grid (checkerboard feel)
+      var gs = 25;
+      for (var gi = 0; gi < Math.ceil(mw/gs); gi++) {
+        for (var gj = 0; gj < Math.ceil(mh/gs); gj++) {
+          if ((gi + gj) % 2 === 0) {
+            ctx.fillStyle = "rgba(16,185,129,.08)";
+            ctx.fillRect(mx + gi*gs, my + gj*gs, Math.min(gs, mw - gi*gs), Math.min(gs, mh - gj*gs));
+          }
+        }
+      }
+
+      // Edge vertex dots (edit mode feel)
+      var corners = [[mx,my],[mx+mw,my],[mx+mw,my+mh],[mx,my+mh]];
+      corners.forEach(function(c) {
+        ctx.beginPath();
+        ctx.arc(c[0], c[1], 5, 0, Math.PI*2);
+        ctx.fillStyle = "#10b981";
+        ctx.fill();
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      });
+
+      ctx.fillStyle = "rgba(16,185,129,.85)";
+      ctx.font = "bold 13px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("렌더링 포함 ○", cx, my - 10);
+
+      ctx.fillStyle = "rgba(16,185,129,.6)";
+      ctx.font = "11px sans-serif";
+      ctx.fillText("Edit Mode에서 편집 가능 · UV 자동", cx, my + mh + 18);
+
+      // "Mesh" badge
+      ctx.fillStyle = "rgba(16,185,129,.5)";
+      ctx.font = "10px sans-serif";
+      ctx.textAlign = "left";
+      ctx.fillText("MESH", mx + 6, my + 14);
+
+    } else if (activeType === "empty") {
+      // Dashed rectangle placeholder
+      var ew = 200, eh = 150;
+      var ex = cx - ew/2, ey = cy - eh/2 - 10;
+
+      ctx.strokeStyle = "rgba(161,161,170,.5)";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([10, 7]);
+      ctx.strokeRect(ex, ey, ew, eh);
+      ctx.setLineDash([]);
+
+      // Diagonal cross
+      ctx.strokeStyle = "rgba(161,161,170,.2)";
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(ex, ey); ctx.lineTo(ex+ew, ey+eh); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(ex+ew, ey); ctx.lineTo(ex, ey+eh); ctx.stroke();
+
+      // "?" in center
+      ctx.fillStyle = "rgba(161,161,170,.5)";
+      ctx.font = "bold 40px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("?", cx, cy + 6);
+
+      ctx.fillStyle = "rgba(161,161,170,.7)";
+      ctx.font = "bold 12px sans-serif";
+      ctx.fillText("이미지 없음", cx, ey - 10);
+
+      ctx.fillStyle = "rgba(161,161,170,.5)";
+      ctx.font = "11px sans-serif";
+      ctx.fillText("Properties에서 이미지 나중에 할당", cx, ey + eh + 18);
+    }
+
+    // Type label top-right
+    ctx.fillStyle = t.color;
+    ctx.font = "bold 13px sans-serif";
+    ctx.textAlign = "right";
+    ctx.fillText(t.label, W - 14, 24);
+    ctx.fillStyle = "rgba(255,255,255,.4)";
+    ctx.font = "11px sans-serif";
+    ctx.fillText(t.desc, W - 14, 40);
+
+    // Tag pills bottom
+    var tagY = H - 10;
+    var tagX = 14;
+    t.tags.forEach(function(tag, i) {
+      var tw = ctx.measureText(tag).width + 16;
+      ctx.fillStyle = t.tagColors[i] || "rgba(161,161,170,.5)";
+      ctx.beginPath();
+      if (ctx.roundRect) {
+        ctx.roundRect(tagX, tagY - 20, tw, 20, 10);
+      } else {
+        ctx.rect(tagX, tagY - 20, tw, 20);
+      }
+      ctx.fill();
+      ctx.fillStyle = "#fff";
+      ctx.font = "bold 10px sans-serif";
+      ctx.textAlign = "left";
+      ctx.fillText(tag, tagX + 8, tagY - 5);
+      tagX += tw + 8;
+    });
+  }
+
+  var btnIds = ["btnRef", "btnBg", "btnMesh", "btnEmpty"];
+  var typeKeys = ["reference", "background", "mesh", "empty"];
+
+  btnIds.forEach(function(id, i) {
+    document.getElementById(id).addEventListener("click", function() {
+      activeType = typeKeys[i];
+      btnIds.forEach(function(bid) {
+        document.getElementById(bid).classList.remove("is-active");
+      });
+      this.classList.add("is-active");
+      draw();
+    });
+  });
+
+  draw();
+})();
+
+// ── Quiz Data ─────────────────────────────────
+initQuiz([
+  {
+    question: "모델링 가이드 이미지로 가장 적합한 타입은?",
+    options: ["Background", "Reference", "Mesh Plane", "Empty Image"],
+    answer: 1,
+    explanation: "Reference는 뷰포트에서 항상 보이고 편집에 영향을 주지 않아 모델링 가이드로 가장 적합합니다."
+  },
+  {
+    question: "Background 이미지가 보이는 뷰는?",
+    options: ["Perspective 뷰 전체", "Camera View(Numpad 0)에서만", "모든 직교 뷰", "Material Preview에서만"],
+    answer: 1,
+    explanation: "Background 이미지는 카메라 뷰(Numpad 0)에서만 보입니다. VFX나 배경 합성에 주로 사용됩니다."
+  },
+  {
+    question: "Mesh Plane으로 이미지를 추가하면 Reference와 다른 점은?",
+    options: ["투명도 조절 불가", "렌더링에 포함되고 실제 메쉬로 존재", "카메라 뷰에서만 보임", "크기 조절 불가"],
+    answer: 1,
+    explanation: "Mesh Plane은 실제 메쉬(폴리곤 면)로 생성되어 렌더링에 포함됩니다. Reference는 메쉬가 아니라 렌더링되지 않습니다."
+  },
+  {
+    question: "레퍼런스 이미지를 정면에 정렬하려면 어느 뷰에서 추가해야 하나요?",
+    options: ["Perspective(숫자패드 5)", "Top(숫자패드 7)", "Front(숫자패드 1)", "Camera(숫자패드 0)"],
+    answer: 2,
+    explanation: "Numpad 1(Front View) 상태에서 Reference를 추가하면 이미지가 정면(Y=0 평면)에 정렬됩니다."
+  },
+  {
+    question: "모델링 중 레퍼런스를 실수로 이동시키지 않으려면?",
+    options: ["Hide (H)로 숨기기", "Outliner에서 선택 잠금(자물쇠 아이콘)", "Delete 후 재추가", "Render 끄기"],
+    answer: 1,
+    explanation: "Outliner에서 레퍼런스 오브젝트의 선택 잠금 아이콘(화살표)을 끄면 뷰포트에서 선택이 되지 않아 실수를 방지할 수 있습니다."
+  }
+]);
+</script>
+
+</body>
+</html>
