@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>단축키 DB — RPD</title>
+  <meta name="description" content="Blender 단축키 전체 검색 — Robot Product Design" />
+  <link rel="stylesheet" href="assets/tokens.css" />
+  <style>
+    .hero {
+      padding: 56px 0 28px; text-align: center;
+    }
+    .hero-card { display: grid; gap: 10px; justify-items: center; width: 100%; }
+    .hero h1 {
+      margin: 0; font-family: var(--font-display);
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 660; letter-spacing: -.028em; line-height: 1.12;
+    }
+    .hero p {
+      max-width: 560px; margin: 0;
+      color: var(--muted); font-size: clamp(.92rem, 1.5vw, 1rem);
+      line-height: 1.7;
+    }
+
+    /* Search bar */
+    .search-wrap {
+      position: sticky; top: 62px; z-index: 40;
+      padding: 12px 0;
+      background: rgba(10,10,10,.92);
+      backdrop-filter: blur(14px);
+    }
+    .search-inner {
+      width: min(var(--max-width), calc(100% - 32px));
+      margin: 0 auto;
+    }
+    .search-input {
+      width: 100%; padding: 12px 18px 12px 44px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--text); font-family: var(--font-body); font-size: .94rem;
+      outline: none;
+      transition: border-color .18s;
+    }
+    .search-input:focus { border-color: rgba(10,132,255,.5); }
+    .search-input::placeholder { color: var(--muted); }
+    .search-icon {
+      position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+      color: var(--muted); pointer-events: none; font-size: 1rem;
+    }
+    .search-field { position: relative; }
+
+    /* Category filter chips */
+    .filter-chips {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-top: 12px;
+    }
+    .filter-chip {
+      padding: 6px 14px; border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color: var(--muted-strong); font-size: .82rem; font-weight: 500;
+      cursor: pointer;
+      transition: background .14s, border-color .14s, color .14s;
+    }
+    .filter-chip:hover {
+      border-color: rgba(147,197,253,.28);
+      background: rgba(255,255,255,.06);
+    }
+    .filter-chip.is-active {
+      background: rgba(10,132,255,.14);
+      border-color: rgba(10,132,255,.4);
+      color: var(--key-soft);
+    }
+
+    /* View toggle */
+    .view-toggle {
+      display: flex; gap: 8px; margin-top: 12px;
+    }
+    .view-btn {
+      padding: 6px 16px; border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color: var(--muted-strong); font-size: .82rem; font-weight: 500;
+      cursor: pointer;
+      transition: background .14s, border-color .14s, color .14s;
+    }
+    .view-btn:hover { background: rgba(255,255,255,.06); border-color: rgba(147,197,253,.28); }
+    .view-btn.is-active {
+      background: rgba(10,132,255,.14);
+      border-color: rgba(10,132,255,.4);
+      color: var(--key-soft);
+    }
+
+    /* Category groups */
+    .cat-group { margin-bottom: 28px; }
+    .cat-group-header {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--line);
+    }
+    .cat-group-label {
+      font-size: 1.1rem; font-weight: 620;
+      color: var(--text); font-family: var(--font-display);
+    }
+    .cat-group-count {
+      font-size: .76rem; color: var(--muted);
+      padding: 2px 8px; border-radius: 999px;
+      background: rgba(255,255,255,.05);
+    }
+
+    /* Shortcut rows */
+    .shortcut-row {
+      display: flex; align-items: center; gap: 14px;
+      flex-wrap: wrap;
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      transition: background .12s;
+    }
+    .shortcut-row:hover { background: rgba(255,255,255,.03); }
+    .shortcut-row-keys { min-width: 160px; flex-shrink: 0; }
+    .shortcut-row-action {
+      flex: 1; color: var(--muted-strong); font-size: .9rem; line-height: 1.5;
+    }
+    .sc-week-badge {
+      display: inline-flex; align-items: center;
+      padding: 3px 8px; border-radius: 999px;
+      background: rgba(10,132,255,.1);
+      border: 1px solid rgba(10,132,255,.2);
+      color: var(--key-soft); font-size: .72rem; font-weight: 600;
+      text-decoration: none; flex-shrink: 0;
+      transition: background .14s, border-color .14s;
+    }
+    .sc-week-badge:hover {
+      background: rgba(10,132,255,.2);
+      border-color: rgba(10,132,255,.4);
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center; padding: 60px 20px;
+      color: var(--muted); font-size: .94rem;
+    }
+
+    /* Stats bar */
+    .stats-bar {
+      display: flex; gap: 18px; flex-wrap: wrap;
+      justify-content: center; margin-top: 14px;
+    }
+    .stat-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 12px; border-radius: 999px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.08);
+      color: var(--muted-strong); font-size: .8rem;
+    }
+
+    /* ── Keyboard view ────────────────────────────── */
+    .page-shell { overflow: visible !important; }
+    .kbd-svg-wrap { overflow-x: auto; padding: 8px 0 16px; }
+
+    /* Key detail panel */
+    .kbd-detail-panel {
+      margin-top: 20px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+    }
+    .kbd-detail-title {
+      font-size: .9rem; font-weight: 620; color: var(--text);
+      margin-bottom: 14px;
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    }
+    .kbd-detail-key-badge {
+      font-family: var(--font-mono, monospace);
+      background: rgba(10,132,255,.15);
+      border: 1px solid rgba(10,132,255,.35);
+      color: var(--key-soft);
+      padding: 2px 10px; border-radius: 6px; font-size: .9rem;
+    }
+
+    .shortcut-row-detail {
+      flex-basis: 100%;
+      font-size: .82rem; color: var(--muted);
+      line-height: 1.6;
+      padding: 6px 0 2px 0;
+    }
+
+    @media (max-width: 720px) {
+      .shortcut-row { flex-wrap: wrap; gap: 8px; }
+      .shortcut-row-keys { min-width: unset; }
+      .view-toggle { display: none; }
+      .kbd-view-section { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand">
+          <div class="brand-badge">R</div>
+          <div class="brand-copy">
+            <strong>Blender Shortcuts DB</strong>
+            <span>Robot Product Design · 2026</span>
+          </div>
+        </div>
+        <a href="index.html" class="btn btn-ghost" style="font-size:.84rem">&larr; 전체 목록</a>
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-card">
+        <div class="eyebrow">Blender Shortcuts</div>
+        <h1>단축키 DB</h1>
+        <p>수업에서 다루는 모든 Blender 단축키를 한 곳에서 검색하세요.</p>
+        <div class="stats-bar" id="statsBar"></div>
+      </div>
+    </section>
+
+    <!-- Search + View Toggle -->
+    <div class="search-wrap">
+      <div class="search-inner">
+        <div class="search-field">
+          <span class="search-icon" aria-hidden="true">&#x1F50D;</span>
+          <input type="text" class="search-input" id="searchInput"
+                 placeholder="단축키 또는 기능 검색... (예: Ctrl+R, Extrude, 이동)"
+                 autocomplete="off" aria-label="단축키 검색" />
+        </div>
+        <div class="filter-chips" id="filterChips" role="group" aria-label="카테고리 필터"></div>
+        <div class="view-toggle" id="viewToggle" role="group" aria-label="보기 방식">
+          <button class="view-btn is-active" data-view="list">목록</button>
+          <button class="view-btn" data-view="kbd">&#x2328; 키보드</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Keyboard view (hidden by default) -->
+    <section class="content-block kbd-view-section" id="kbdView" style="display:none"></section>
+    <!-- Key detail panel (below keyboard) -->
+    <section class="content-block" id="kbdDetailSection" style="display:none"></section>
+
+    <!-- List view -->
+    <section class="content-block" id="shortcutsContent"></section>
+
+    <!-- Footer -->
+    <footer class="page-footer">
+      <div>Robot Product Design 2026 · <a href="index.html" style="color:var(--key-soft)">&larr; 전체 목록</a></div>
+    </footer>
+
+  </div>
+
+  <script src="data/curriculum.js"></script>
+  <script>
+    // ═══════════════════════════════════════════════════
+    //  Shortcuts DB — Build, Filter, Render
+    //  Data source: curriculum.js (trusted static data)
+    // ═══════════════════════════════════════════════════
+
+    // 1. Build the complete shortcuts database
+    function buildDB() {
+      var db = [];
+      CURRICULUM.forEach(function(w) {
+        if (!w.shortcuts || !w.shortcuts.length) return;
+        w.shortcuts.forEach(function(s) {
+          db.push({
+            keys: s.keys,
+            action: s.action,
+            detail: s.detail || "",
+            category: s.category || "general",
+            week: w.week
+          });
+        });
+      });
+      return db;
+    }
+
+    var fullDB = buildDB();
+
+    // 2. Stats
+    var statsEl = document.getElementById("statsBar");
+    var catCounts = {};
+    fullDB.forEach(function(s) {
+      catCounts[s.category] = (catCounts[s.category] || 0) + 1;
+    });
+    var weekSet = {};
+    fullDB.forEach(function(s) { weekSet[s.week] = true; });
+    var weekCount = Object.keys(weekSet).length;
+    statsEl.textContent = "";
+    [fullDB.length + "개 단축키", Object.keys(catCounts).length + "개 카테고리", weekCount + "개 주차"].forEach(function(t) {
+      var span = document.createElement("span");
+      span.className = "stat-chip";
+      span.textContent = t;
+      statsEl.appendChild(span);
+    });
+
+    // 3. Render filter chips
+    var chipContainer = document.getElementById("filterChips");
+    var activeFilter = "all";
+    var currentView = "list";
+
+    function renderChips() {
+      var sorted = Object.keys(SHORTCUT_CATEGORIES).sort(function(a, b) {
+        return SHORTCUT_CATEGORIES[a].order - SHORTCUT_CATEGORIES[b].order;
+      });
+
+      chipContainer.textContent = "";
+
+      var allBtn = document.createElement("button");
+      allBtn.className = "filter-chip" + (activeFilter === "all" ? " is-active" : "");
+      allBtn.dataset.cat = "all";
+      allBtn.textContent = "전체";
+      chipContainer.appendChild(allBtn);
+
+      sorted.forEach(function(cat) {
+        if (!catCounts[cat]) return;
+        var btn = document.createElement("button");
+        btn.className = "filter-chip" + (activeFilter === cat ? " is-active" : "");
+        btn.dataset.cat = cat;
+        btn.textContent = SHORTCUT_CATEGORIES[cat].label + " (" + catCounts[cat] + ")";
+        chipContainer.appendChild(btn);
+      });
+
+      chipContainer.querySelectorAll(".filter-chip").forEach(function(btn) {
+        btn.addEventListener("click", function() {
+          activeFilter = this.dataset.cat;
+          renderChips();
+          if (currentView === "kbd") renderKeyboard();
+          else renderShortcuts();
+        });
+      });
+    }
+
+    // 4. Filter logic
+    function filterDB(db, query, cat) {
+      var filtered = db;
+      if (cat && cat !== "all") {
+        filtered = filtered.filter(function(s) { return s.category === cat; });
+      }
+      if (query) {
+        var q = query.toLowerCase();
+        filtered = filtered.filter(function(s) {
+          return s.keys.toLowerCase().includes(q) || s.action.toLowerCase().includes(q);
+        });
+      }
+      return filtered;
+    }
+
+    // 5. Group by category
+    function groupByCategory(items) {
+      var groups = {};
+      var order = [];
+      items.forEach(function(s) {
+        if (!groups[s.category]) {
+          groups[s.category] = [];
+          order.push(s.category);
+        }
+        groups[s.category].push(s);
+      });
+      order.sort(function(a, b) {
+        var oa = SHORTCUT_CATEGORIES[a] ? SHORTCUT_CATEGORIES[a].order : 99;
+        var ob = SHORTCUT_CATEGORIES[b] ? SHORTCUT_CATEGORIES[b].order : 99;
+        return oa - ob;
+      });
+      return { groups: groups, order: order };
+    }
+
+    // 6. Render shortcuts (list view) using safe DOM methods
+    var contentEl = document.getElementById("shortcutsContent");
+
+    function renderShortcuts() {
+      var query = document.getElementById("searchInput").value.trim();
+      var filtered = filterDB(fullDB, query, activeFilter);
+
+      contentEl.textContent = "";
+
+      if (filtered.length === 0) {
+        var empty = document.createElement("div");
+        empty.className = "empty-state";
+        empty.textContent = "검색 결과가 없습니다. 다른 키워드로 시도해보세요.";
+        contentEl.appendChild(empty);
+        return;
+      }
+
+      var result = groupByCategory(filtered);
+
+      result.order.forEach(function(cat) {
+        var items = result.groups[cat];
+        var catInfo = SHORTCUT_CATEGORIES[cat] || { label: cat, order: 99 };
+
+        var group = document.createElement("div");
+        group.className = "cat-group";
+
+        var header = document.createElement("div");
+        header.className = "cat-group-header";
+        var label = document.createElement("span");
+        label.className = "cat-group-label";
+        label.textContent = catInfo.label;
+        var count = document.createElement("span");
+        count.className = "cat-group-count";
+        count.textContent = items.length + "개";
+        header.appendChild(label);
+        header.appendChild(count);
+        group.appendChild(header);
+
+        items.forEach(function(s) {
+          group.appendChild(makeShortcutRow(s));
+        });
+
+        contentEl.appendChild(group);
+      });
+    }
+
+    function makeShortcutRow(s) {
+      var row = document.createElement("div");
+      row.className = "shortcut-row";
+
+      var keysDiv = document.createElement("div");
+      keysDiv.className = "shortcut-row-keys";
+      var kbd = document.createElement("kbd");
+      kbd.className = "shortcut-key";
+      kbd.textContent = s.keys;
+      keysDiv.appendChild(kbd);
+
+      var actionDiv = document.createElement("div");
+      actionDiv.className = "shortcut-row-action";
+      actionDiv.textContent = s.action;
+
+      var badge = document.createElement("a");
+      badge.className = "sc-week-badge";
+      badge.href = "week.html?week=" + s.week;
+      badge.textContent = "W" + String(s.week).padStart(2, "0");
+
+      row.appendChild(keysDiv);
+      row.appendChild(actionDiv);
+      row.appendChild(badge);
+
+      if (s.detail) {
+        var detailDiv = document.createElement("div");
+        detailDiv.className = "shortcut-row-detail";
+        detailDiv.textContent = s.detail;
+        row.appendChild(detailDiv);
+      }
+      return row;
+    }
+
+    // ═══════════════════════════════════════════════════
+    //  Keyboard View
+    // ═══════════════════════════════════════════════════
+
+    // QWERTY layout definition: {k: keyId, l: display label, w: optional width class}
+    // ═══════════════════════════════════════════════════
+    //  SVG Keyboard Layout Data
+    //  Each row: [y, h, [ [keyId, label, widthUnits], ... ]]
+    //  null keyId = invisible spacer
+    // ═══════════════════════════════════════════════════
+    var U = 40, KH = 34, FH = 28, G = 4;
+    var NP_X0 = 598, NP_Y0 = 46;
+    var MOUSE_X0 = 598, MOUSE_Y0 = 210;
+    var NS = "http://www.w3.org/2000/svg";
+
+    var KBD_SVG = [
+      [10,  FH, [ ["ESC","Esc",1.5],[null,"",0.5],["F1","F1",1],["F2","F2",1],["F3","F3",1],["F4","F4",1],[null,"",0.25],["F5","F5",1],["F6","F6",1],["F7","F7",1],["F8","F8",1],[null,"",0.25],["F9","F9",1],["F10","F10",1],["F11","F11",1],["F12","F12",1] ]],
+      [46,  KH, [ ["TILDE","`",1],["1","1",1],["2","2",1],["3","3",1],["4","4",1],["5","5",1],["6","6",1],["7","7",1],["8","8",1],["9","9",1],["0","0",1],["MINUS","-",1],["EQ","=",1] ]],
+      [84,  KH, [ ["TAB","Tab",1.5],["Q","Q",1],["W","W",1],["E","E",1],["R","R",1],["T","T",1],["Y","Y",1],["U","U",1],["I","I",1],["O","O",1],["P","P",1],["LBRACKET","[",1],["RBRACKET","]",1] ]],
+      [122, KH, [ ["A","A",1],["S","S",1],["D","D",1],["F","F",1],["G","G",1],["H","H",1],["J","J",1],["K","K",1],["L","L",1],["SEMI",";",1],["QUOTE","'",1] ]],
+      [160, KH, [ ["Z","Z",1],["X","X",1],["C","C",1],["V","V",1],["B","B",1],["N","N",1],["M","M",1],["COMMA",",",1],["DOT",".",1],["SLASH","/",1] ]],
+      [198, KH, [ ["CTRL","Ctrl",1.5],["ALT","Alt",1.25],["SPACE","Space",6.5],["ALT","Alt",1.25],["CTRL","Ctrl",1.5] ]],
+    ];
+
+    var NP_SVG = [
+      [NP_Y0,           KH, [ ["NP7","7",1],["NP8","8",1],["NP9","9",1],["NPMINUS","\u2212",1] ]],
+      [NP_Y0+38,        KH, [ ["NP4","4",1],["NP5","5",1],["NP6","6",1],["NPPLUS","+",1] ]],
+      [NP_Y0+38*2,      KH, [ ["NP1","1",1],["NP2","2",1],["NP3","3",1] ]],
+      [NP_Y0+38*3,      KH, [ ["NP0","0",2],["NPDOT",".",1] ]],
+    ];
+
+    var MOUSE_SVG = [
+      [MOUSE_Y0, KH, [ ["LMB","LMB",1],["MMB","MMB",1],["RMB","RMB",1],["SCROLL","\u21d5",1.25] ]],
+    ];
+
+    // Normalize a raw key token string to a keyId
+    function rawKeyToId(k) {
+      if (!k) return null;
+      var ku = k.toUpperCase().trim();
+      if (ku.startsWith("NUMPAD ")) {
+        var npk = ku.slice(7).trim();
+        if (npk === "." || npk === "DOT" || npk === "PERIOD") return "NPDOT";
+        if (npk === "+" || npk === "PLUS") return "NPPLUS";
+        if (npk === "-" || npk === "MINUS" || npk === "\u2212") return "NPMINUS";
+        return "NP" + npk;
+      }
+      if (k === "\u2190" || ku === "LEFT")  return "LARROW";
+      if (k === "\u2192" || ku === "RIGHT") return "RARROW";
+      if (ku.includes("MMB"))    return "MMB";
+      if (ku === "\uC2A4\uD06C\uB864" || ku === "SCROLL") return "SCROLL"; // 스크롤
+      if (ku.includes("\uD074\uB9AD") || ku === "LMB") return "LMB"; // 클릭
+      if (ku === "CTRL")  return "CTRL";
+      if (ku === "SHIFT") return "SHIFT";
+      if (ku === "ALT")   return "ALT";
+      if (ku === "TAB")   return "TAB";
+      if (ku === "SPACE") return "SPACE";
+      if (ku === "ESC" || ku === "ESCAPE") return "ESC";
+      if (/^F\d{1,2}$/.test(ku)) return ku;
+      if (/^[A-Z0-9]$/.test(ku)) return ku;
+      return null;
+    }
+
+    // Extract physical key IDs from a shortcut keys string
+    function shortcutToKeyIds(keysStr) {
+      // Strip parenthetical notes: "(Sculpt)", "(UV Editor)", etc.
+      var s = keysStr.replace(/\s*\([^)]*\)/g, "").trim();
+      // Strip " → ..." arrow notation (keep left side only)
+      s = s.split(/\s*\u2192\s*/)[0].trim();
+      // Split by " + " to separate modifiers from main key
+      var parts = s.split(/\s*\+\s*/);
+      var mainPart = parts[parts.length - 1].trim();
+      // Handle "/" separated variants: "X / Y / Z", "Numpad 1/3/7"
+      var variants = mainPart.split(/\s*\/\s*/);
+      // If first variant starts with "Numpad", carry that prefix to bare digits
+      var numpadPrefix = /^numpad\s+/i.test(variants[0]) ? "Numpad " : "";
+      var ids = [];
+      variants.forEach(function(v, vi) {
+        var raw = v.trim();
+        if (vi > 0 && numpadPrefix && /^\d+$/.test(raw)) raw = numpadPrefix + raw;
+        var id = rawKeyToId(raw);
+        if (id) ids.push(id);
+      });
+      // Edge case: standalone modifier (e.g. "Ctrl (Sculpt)" → after strip → "Ctrl")
+      if (ids.length === 0 && parts.length === 1) {
+        var id = rawKeyToId(parts[0].trim());
+        if (id) ids.push(id);
+      }
+      return ids;
+    }
+
+    // Build keyId → [shortcut, ...] map from a filtered DB
+    function buildKeyMap(db) {
+      var map = {};
+      db.forEach(function(s) {
+        shortcutToKeyIds(s.keys).forEach(function(id) {
+          if (!map[id]) map[id] = [];
+          map[id].push(s);
+        });
+      });
+      return map;
+    }
+
+    var selectedKeyId = null;
+    var kbdEl = document.getElementById("kbdView");
+
+    // Create SVG element with attributes
+    function svgEl(tag, attrs) {
+      var el = document.createElementNS(NS, tag);
+      Object.keys(attrs).forEach(function(k) { el.setAttribute(k, attrs[k]); });
+      return el;
+    }
+
+    function renderKeyboard() {
+      var query = document.getElementById("searchInput").value.trim();
+      var filtered = filterDB(fullDB, query, activeFilter);
+      var kmap = buildKeyMap(filtered);
+
+      kbdEl.textContent = "";
+
+      // ── SVG canvas ──────────────────────────────────
+      var svg = svgEl("svg", {
+        viewBox: "0 0 764 258",
+        width: "100%",
+        style: "max-width:764px;display:block",
+        "aria-label": "Blender 키보드 단축키 맵",
+      });
+
+      // Keyboard body
+      svg.appendChild(svgEl("rect", { x:4, y:4, width:576, height:246, rx:12,
+        fill:"rgba(255,255,255,0.025)", stroke:"rgba(255,255,255,0.07)", "stroke-width":1 }));
+
+      // Extras body (numpad + mouse)
+      svg.appendChild(svgEl("rect", { x:590, y:38, width:170, height:214, rx:10,
+        fill:"rgba(255,255,255,0.025)", stroke:"rgba(255,255,255,0.07)", "stroke-width":1 }));
+
+      // Section labels
+      function addSvgLabel(txt, x, y) {
+        var t = svgEl("text", { x:x, y:y, "text-anchor":"middle",
+          fill:"rgba(255,255,255,0.22)", "font-size":"8",
+          "font-family":"var(--font-body,sans-serif)", "letter-spacing":"0.07em" });
+        t.textContent = txt;
+        svg.appendChild(t);
+      }
+      addSvgLabel("NUMPAD", NP_X0 + 59, NP_Y0 - 8);
+      addSvgLabel("\ub9c8\uc6b0\uc2a4", MOUSE_X0 + 58, MOUSE_Y0 - 8);
+
+      // ── Core key renderer ────────────────────────────
+      function renderRows(rows, x0) {
+        rows.forEach(function(row) {
+          var ry = row[0], rh = row[1], keys = row[2];
+          var cx = x0;
+          keys.forEach(function(kd) {
+            var kid = kd[0], lbl = kd[1], units = kd[2];
+            var kw = units * U - G;
+            var kx = cx;
+            cx += units * U;
+            if (!kid) return;
+
+            var scs = kmap[kid];
+            var hasSc = !!(scs && scs.length);
+            var isSel = selectedKeyId === kid;
+
+            var fill   = isSel ? "rgba(10,132,255,0.42)" : hasSc ? "rgba(10,132,255,0.16)" : "rgba(255,255,255,0.055)";
+            var stroke = isSel ? "rgba(10,132,255,0.95)" : hasSc ? "rgba(10,132,255,0.55)" : "rgba(255,255,255,0.11)";
+            var tFill  = isSel ? "#ffffff" : hasSc ? "rgba(100,178,255,1)" : "rgba(255,255,255,0.40)";
+            var fSize  = rh <= FH ? 8 : 9;
+
+            // Key body
+            svg.appendChild(svgEl("rect", { x:kx, y:ry, width:kw, height:rh, rx:5,
+              fill:fill, stroke:stroke, "stroke-width":1 }));
+
+            // Key label
+            var t = svgEl("text", { x:kx + kw/2, y:ry + rh/2 + 3.5,
+              "text-anchor":"middle", fill:tFill,
+              "font-size":fSize, "font-family":"var(--font-mono,monospace)" });
+            t.textContent = lbl;
+            svg.appendChild(t);
+
+            // Badge
+            if (hasSc) {
+              var bx = kx + kw - 5, by = ry + 5;
+              svg.appendChild(svgEl("circle", { cx:bx, cy:by, r:6.5,
+                fill:"rgba(10,132,255,0.95)" }));
+              var bt = svgEl("text", { x:bx, y:by + 3.5, "text-anchor":"middle",
+                fill:"#fff", "font-size":"6.5", "font-weight":"700",
+                "font-family":"var(--font-body,sans-serif)" });
+              bt.textContent = scs.length;
+              svg.appendChild(bt);
+            }
+
+            // Invisible hit area (on top) for clickable keys
+            if (hasSc) {
+              var hit = svgEl("rect", { x:kx, y:ry, width:kw, height:rh, rx:5,
+                fill:"transparent", cursor:"pointer", "data-kid":kid });
+              (function(k) {
+                hit.addEventListener("click", function() {
+                  var wasSel = selectedKeyId === k;
+                  selectedKeyId = wasSel ? null : k;
+                  renderKeyboard();
+                  if (!wasSel) {
+                    var d = document.getElementById("kbdDetail");
+                    if (d) d.scrollIntoView({ behavior:"smooth", block:"nearest" });
+                  }
+                });
+              }(kid));
+              svg.appendChild(hit);
+            }
+          });
+        });
+      }
+
+      renderRows(KBD_SVG, 10);
+      renderRows(NP_SVG, NP_X0);
+      renderRows(MOUSE_SVG, MOUSE_X0);
+
+      var wrap = document.createElement("div");
+      wrap.className = "kbd-svg-wrap";
+      wrap.appendChild(svg);
+      kbdEl.appendChild(wrap);
+
+      // Detail panel (use external section to avoid overflow clipping)
+      var detailHolder = document.getElementById("kbdDetailSection");
+      detailHolder.textContent = "";
+
+      if (selectedKeyId && kmap[selectedKeyId]) {
+        renderKeyDetail(selectedKeyId, kmap);
+      } else if (!kmap[selectedKeyId]) {
+        selectedKeyId = null;
+      }
+    }
+
+    // Find display label for a keyId
+    function keyIdToLabel(keyId) {
+      var found = keyId;
+      KBD_SVG.concat(NP_SVG).concat(MOUSE_SVG).forEach(function(row) {
+        row[2].forEach(function(kd) { if (kd[0] === keyId) found = kd[1]; });
+      });
+      return found;
+    }
+
+    // Render the detail panel for a selected key
+    function renderKeyDetail(keyId, kmap) {
+      var detailHolder = document.getElementById("kbdDetailSection");
+      if (!detailHolder) return;
+      detailHolder.textContent = "";
+      detailHolder.style.display = "none";
+
+      var scs = kmap[keyId];
+      if (!scs || scs.length === 0) return;
+      detailHolder.style.display = "";
+
+      var panel = document.createElement("div");
+      panel.className = "kbd-detail-panel";
+
+      var title = document.createElement("div");
+      title.className = "kbd-detail-title";
+      var badge = document.createElement("span");
+      badge.className = "kbd-detail-key-badge";
+      badge.textContent = keyIdToLabel(keyId);
+      var countText = document.createTextNode("\uAC00 \uC0AC\uC6A9\uB41C \uB2E8\uCD95\uD0A4 (" + scs.length + "\uAC1C)"); // "가 사용된 단축키 (N개)"
+      title.appendChild(badge);
+      title.appendChild(countText);
+      panel.appendChild(title);
+
+      scs.forEach(function(s) {
+        panel.appendChild(makeShortcutRow(s));
+      });
+
+      detailHolder.appendChild(panel);
+      // Scroll panel into view
+      panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    // ── View toggle logic ─────────────────────────────
+    function switchView(view) {
+      currentView = view;
+      var listEl = document.getElementById("shortcutsContent");
+      document.querySelectorAll(".view-btn").forEach(function(btn) {
+        btn.classList.toggle("is-active", btn.dataset.view === view);
+      });
+      var detailSection = document.getElementById("kbdDetailSection");
+      if (view === "kbd") {
+        listEl.style.display = "none";
+        kbdEl.style.display = "";
+        renderKeyboard();
+      } else {
+        kbdEl.style.display = "none";
+        detailSection.style.display = "none";
+        listEl.style.display = "";
+        renderShortcuts();
+      }
+    }
+
+    document.getElementById("viewToggle").addEventListener("click", function(e) {
+      var btn = e.target.closest(".view-btn");
+      if (btn && btn.dataset.view && btn.dataset.view !== currentView) {
+        switchView(btn.dataset.view);
+      }
+    });
+
+    // ── Init ─────────────────────────────────────────
+    renderChips();
+    renderShortcuts();
+
+    document.getElementById("searchInput").addEventListener("input", function() {
+      if (currentView === "kbd") renderKeyboard();
+      else renderShortcuts();
+    });
+  </script>
+</body>
+</html>
+
