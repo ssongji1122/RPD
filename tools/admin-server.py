@@ -924,8 +924,8 @@ class AdminHandler(BaseHTTPRequestHandler):
     # -- static file serving -----------------------------------------------
 
     def _serve_static(self, path: str) -> None:
-        # Default: / -> admin.html
-        if path == "/" or path == "":
+        # Default: / or /admin -> admin.html
+        if path in ("/", "", "/admin"):
             path = "/admin.html"
 
         # Security: prevent directory traversal
