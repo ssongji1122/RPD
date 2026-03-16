@@ -207,6 +207,27 @@ section, .section-inner {
   margin-top: 14px;
 }
 
+/* Step download buttons */
+.step-downloads {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  margin-top: 10px;
+}
+.step-dl-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font-size: .82rem; font-weight: 500;
+  text-decoration: none;
+  transition: background .14s, color .14s;
+}
+.step-dl-btn:hover {
+  background: rgba(10,132,255,.12);
+  color: var(--key-soft);
+  border-color: rgba(10,132,255,.3);
+}
+
 /* Status pill */
 .status-pill {
   display: inline-flex; align-items: center; gap: 8px;
