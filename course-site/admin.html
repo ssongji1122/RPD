@@ -604,10 +604,8 @@
             <span>&#9679;</span> 저장되지 않은 변경
           </div>
           <div class="notion-sync-group" id="notionGroup" style="display:none">
-            <button class="btn btn-ghost" id="notionPullBtn" type="button" title="Notion에서 동기화">&#128260; 지금 동기화</button>
-            <button class="btn btn-ghost" id="notionPushAllBtn" type="button" title="curriculum.js → Notion 전체 push">&#128640; 전체 Push</button>
+            <button class="btn btn-ghost" id="notionPushAllBtn" type="button" title="curriculum.js → Notion 전체 push">&#128640; Notion Push</button>
           </div>
-          <!-- Auto-sync toggle removed: Notion is now source of truth -->
           <button class="btn btn-ghost" id="previewBtn" type="button">미리보기 &#8599;</button>
           <button class="btn btn-primary" id="saveBtn" type="button">&#128190; 저장</button>
         </div>
@@ -676,12 +674,6 @@
     var dirtyWeeks = {};
     var authToken = sessionStorage.getItem("rpd-admin-token") || "";
     var notionConfigured = false;
-    var hasNotion = false;
-    var ownership = null;
-
-    // Notion-owned field lists (used when hasNotion is true)
-    var NOTION_WEEK_FIELDS = ["title", "subtitle", "duration", "topics", "assignment", "shortcuts", "mistakes", "docs"];
-    var NOTION_STEP_FIELDS = ["title", "copy", "goal", "tasks"];
 
     // ─── DOM refs ────────────────────────────────────────
     var sidebarList    = document.getElementById("sidebarList");
@@ -698,12 +690,10 @@
     var sidebarEl      = document.getElementById("sidebar");
     var sidebarOverlay = document.getElementById("sidebarOverlay");
     var notionGroup    = document.getElementById("notionGroup");
-    var notionPullBtn  = document.getElementById("notionPullBtn");
     var notionPushAllBtn = document.getElementById("notionPushAllBtn");
     var pushAllOverlay   = document.getElementById("pushAllOverlay");
     var pushAllLog       = document.getElementById("pushAllLog");
     var pushAllCloseBtn  = document.getElementById("pushAllCloseBtn");
-    // Sync review and auto-sync removed (Notion is now source of truth)
 
     // ─── Helpers ─────────────────────────────────────────
 
@@ -753,25 +743,6 @@
       return h;
     }
 
-    // Auto-sync checkbox removed (Notion is source of truth)
-
-    function isNotionField(fieldName) {
-      return hasNotion && NOTION_WEEK_FIELDS.indexOf(fieldName) !== -1;
-    }
-
-    function isNotionStepField(fieldName) {
-      return hasNotion && NOTION_STEP_FIELDS.indexOf(fieldName) !== -1;
-    }
-
-    /** Wraps HTML in a notion-field div when the field is Notion-owned */
-    function notionWrap(fieldName, html, isStepField) {
-      var isOwned = isStepField ? isNotionStepField(fieldName) : isNotionField(fieldName);
-      if (!isOwned) return html;
-      return '<div class="notion-field">' + html + '</div>';
-    }
-
-    // findWeekIndex, getWeekByNumber, normalize/diff/review functions removed
-    // (Notion is now source of truth, save flow simplified)
 
     async function performCurriculumSave() {
       saveBtn.disabled = true;
@@ -801,15 +772,6 @@
     function buildEditorHTML(w) {
       var parts = [];
 
-      // ── Info banner (Notion integration) ──
-      if (hasNotion) {
-        parts.push(
-          '<div class="notion-info-banner">',
-          '\uD83D\uDCDD \uD68C\uC0C9 \uD544\uB4DC\uB294 \uB178\uC158\uC5D0\uC11C \uAD00\uB9AC\uB429\uB2C8\uB2E4. \uC218\uC815\uD558\uB824\uBA74 \uB178\uC158\uC5D0\uC11C \uD3B8\uC9D1\uD558\uC138\uC694.',
-          '</div>'
-        );
-      }
-
       // ── Admin control bar (status selector, admin-only) ──
       parts.push(
         '<div class="admin-ctrl-bar">',
@@ -828,18 +790,12 @@
         '<div class="preview-hero-card">',
         '<div class="eyebrow">Week ', esc(String(w.week).padStart(2,"0")), ' · RPD</div>'
       );
-      parts.push(notionWrap("title",
-        '<h1 style="margin:0"><input class="edit-h1" data-field="title" value="' + esc(w.title) + '" placeholder="주차 제목" /></h1>'
-      ));
-      parts.push(notionWrap("subtitle",
-        '<p style="max-width:640px;margin:0"><textarea class="edit-p" data-field="subtitle" rows="2" placeholder="부제목 (선택)">' + esc(w.subtitle || "") + '</textarea></p>'
-      ));
+      parts.push('<h1 style="margin:0"><input class="edit-h1" data-field="title" value="' + esc(w.title) + '" placeholder="주차 제목" /></h1>');
+      parts.push('<p style="max-width:640px;margin:0"><textarea class="edit-p" data-field="subtitle" rows="2" placeholder="부제목 (선택)">' + esc(w.subtitle || "") + '</textarea></p>');
       parts.push(
         '<div class="preview-hero-meta">'
       );
-      parts.push(notionWrap("duration",
-        '<span class="meta-chip">\u23F1 <input class="edit-chip" data-field="duration" value="' + esc(w.duration) + '" placeholder="시간" /></span>'
-      ));
+      parts.push('<span class="meta-chip">\u23F1 <input class="edit-chip" data-field="duration" value="' + esc(w.duration) + '" placeholder="시간" /></span>');
       parts.push(
         '<span class="meta-chip">\uD83D\uDCCB ', w.steps.length, '단계 실습</span>',
         '</div>',
@@ -867,7 +823,7 @@
         '<button class="btn-add" data-add="topics" type="button" style="margin-top:10px">+ 주제 추가</button>',
         '</div>'
       );
-      parts.push(notionWrap("topics", topicsHTML.join("")));
+      parts.push(topicsHTML.join(""));
 
       // ── STEPS ───────────────────────────────────────────
       parts.push(
@@ -910,7 +866,7 @@
         '<button class="btn-add" data-add="shortcuts" type="button" style="margin-top:10px">+ 단축키 추가</button>',
         '</div>'
       );
-      parts.push(notionWrap("shortcuts", shortcutsHTML.join("")));
+      parts.push(shortcutsHTML.join(""));
 
       // ── EXPLORE ─────────────────────────────────────────
       var explore = w.explore || [];
@@ -958,7 +914,7 @@
         '</details>',
         '</div>'
       );
-      parts.push(notionWrap("mistakes", mistakesHTML.join("")));
+      parts.push(mistakesHTML.join(""));
 
       // ── VIDEOS ──────────────────────────────────────────
       var videos = w.videos || [];
@@ -1014,7 +970,7 @@
         '<button class="btn-add" data-add="docs" type="button" style="margin-top:8px">+ 문서 추가</button>',
         '</div>'
       );
-      parts.push(notionWrap("docs", docsHTML.join("")));
+      parts.push(docsHTML.join(""));
 
       // ── ASSIGNMENT ──────────────────────────────────────
       var a = w.assignment || { title: "", description: "", checklist: [] };
@@ -1044,7 +1000,7 @@
         '</div>',
         '</div>'
       );
-      parts.push(notionWrap("assignment", assignmentHTML.join("")));
+      parts.push(assignmentHTML.join(""));
 
       return parts.join("");
     }
@@ -1066,7 +1022,7 @@
         '<div class="step-header">',
         '<div class="step-title-group">',
         '<div class="step-number">', (si + 1), '</div>',
-        notionWrap("title", titleCopyHTML, true),
+        titleCopyHTML,
         '</div>',
         '<div class="step-header-admin">',
         '<button class="btn-icon" data-move-step="up" data-idx="', si, '" type="button" title="위로">&#8593;</button>',
@@ -1116,7 +1072,7 @@
         '</div>',
         '<button class="btn-add" data-task-add data-step="', si, '" type="button" style="margin-top:6px">+ 작업 추가</button>'
       );
-      parts.push(notionWrap("tasks", tasksHTML.join(""), true));
+      parts.push(tasksHTML.join(""));
 
       parts.push('</article>');
     }
@@ -1185,19 +1141,9 @@
     });
 
     // ─── Data loading ────────────────────────────────────
-    /** Parse API response: supports both bare array (old) and envelope (new) */
+    /** Parse API response: supports both bare array and { data } envelope */
     function parseCurriculumResponse(result) {
-      if (Array.isArray(result)) {
-        // Old format: bare array
-        curriculum = result;
-        hasNotion = false;
-        ownership = null;
-      } else {
-        // New format: { data, hasNotion, ownership }
-        curriculum = result.data || result;
-        hasNotion = result.hasNotion || false;
-        ownership = result.ownership || null;
-      }
+      curriculum = Array.isArray(result) ? result : (result.data || result);
     }
 
     async function loadCurriculum() {
@@ -1635,42 +1581,6 @@
         notionGroup.style.display = "none";
       }
     }
-
-    notionPullBtn.addEventListener("click", async function() {
-      if (!curriculum[selectedIdx]) return;
-      var weekNum = curriculum[selectedIdx].week;
-
-      notionPullBtn.disabled = true;
-      notionPullBtn.textContent = "\u23F3 \uB3D9\uAE30\uD654 \uC911...";
-
-      try {
-        var res = await fetch("/api/notion-pull/" + weekNum, {
-          method: "POST",
-          headers: apiHeaders(),
-        });
-        var data = await res.json();
-        if (!res.ok || !data.ok) {
-          toast("\uB3D9\uAE30\uD654 \uC2E4\uD328: " + (data.error || "Unknown error"), "error");
-          return;
-        }
-
-        toast("Week " + weekNum + " \uB3D9\uAE30\uD654 \uC644\uB8CC", "success");
-
-        // Reload curriculum to reflect synced data
-        var reloadRes = await fetch("/api/curriculum", { headers: apiHeaders() });
-        if (reloadRes.ok) {
-          var result = await reloadRes.json();
-          parseCurriculumResponse(result);
-          renderSidebar();
-          selectWeek(selectedIdx);
-        }
-      } catch(e) {
-        toast("Notion \uC5F0\uACB0 \uC2E4\uD328: " + e.message, "error");
-      } finally {
-        notionPullBtn.disabled = false;
-        notionPullBtn.textContent = "\uD83D\uDD04 \uC9C0\uAE08 \uB3D9\uAE30\uD654";
-      }
-    });
 
     notionPushAllBtn.addEventListener("click", async function() {
       pushAllLog.innerHTML = "<span style='color:#aaa'>전체 push 중...</span>";

@@ -254,6 +254,10 @@
 - Modifier를 너무 일찍 Apply함 → 마지막에만 확정
 - 파츠 관리가 헷갈림 → 움직일 파츠는 분리, 고정 파츠는 정리해서 묶기
 
+### 공식 영상 튜토리얼
+
+- [Blender Studio - Modifiers](https://studio.blender.org/training/blender-2-8-fundamentals/modifiers/)
+
 ### 공식 문서
 
 - [Bevel Tool](https://docs.blender.org/manual/en/latest/modeling/meshes/tools/bevel.html)

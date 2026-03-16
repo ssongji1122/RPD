@@ -29,8 +29,6 @@ from urllib.parse import unquote
 
 from notion_api import (
     load_notion_mapping,
-    fetch_notion_to_curriculum,
-    merge_curriculum,
     sync_week_to_notion,
     NOTION_API,
 )
@@ -42,15 +40,9 @@ ROOT = Path(__file__).resolve().parent.parent
 COURSE_SITE = ROOT / "course-site"
 WEEKS_DIR = ROOT / "weeks"
 CURRICULUM_JS = COURSE_SITE / "data" / "curriculum.js"
-OVERRIDES_JSON = COURSE_SITE / "data" / "overrides.json"
-NOTION_JSON = COURSE_SITE / "data" / "curriculum-notion.json"
 IMAGES_DIR = COURSE_SITE / "assets" / "images"
 VIDEOS_DIR = COURSE_SITE / "assets" / "videos"
 NOTION_TOKEN: str | None = os.environ.get("NOTION_TOKEN")
-
-# Admin-owned fields
-ADMIN_WEEK_FIELDS = {"status", "summary", "videos", "explore"}
-ADMIN_STEP_FIELDS = {"image", "done", "showme", "link"}
 
 # ---------------------------------------------------------------------------
 # Auth
@@ -229,44 +221,6 @@ def write_curriculum(data: list[dict]) -> None:
     CURRICULUM_JS.write_text(content, encoding="utf-8")
     sync_lecture_notes(data)
 
-
-def read_overrides() -> dict:
-    """Read overrides.json."""
-    if not OVERRIDES_JSON.exists():
-        return {"_comment": "어드민 전용 필드. 노션 동기화 시 이 값이 우선함.", "weeks": {}}
-    return json.loads(OVERRIDES_JSON.read_text(encoding="utf-8"))
-
-
-def write_overrides(overrides: dict) -> None:
-    """Write overrides.json."""
-    OVERRIDES_JSON.write_text(
-        json.dumps(overrides, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-    )
-
-
-def read_notion_data() -> list[dict] | None:
-    """Read curriculum-notion.json if it exists."""
-    if not NOTION_JSON.exists():
-        return None
-    return json.loads(NOTION_JSON.read_text(encoding="utf-8"))
-
-
-
-def get_merged_curriculum() -> list[dict]:
-    """Get final curriculum: notion + overrides merged. Falls back to curriculum.js if no notion data."""
-    notion_data = read_notion_data()
-    if notion_data is None:
-        # Fallback: no curriculum-notion.json yet, use existing curriculum.js
-        return read_curriculum()
-    overrides = read_overrides()
-    return merge_curriculum(notion_data, overrides)
-
-
-def regenerate_curriculum_js() -> None:
-    """Regenerate curriculum.js from notion + overrides."""
-    merged = get_merged_curriculum()
-    write_curriculum(merged)
 
 
 def _find_lecture_note_path(week_num: int) -> Path | None:
@@ -587,19 +541,8 @@ class AdminHandler(BaseHTTPRequestHandler):
         # API: GET /api/curriculum
         if path == "/api/curriculum":
             try:
-                data = get_merged_curriculum()
-                has_notion = NOTION_JSON.exists()
-                self._send_json({
-                    "data": data,
-                    "hasNotion": has_notion,
-                    "ownership": {
-                        "notion": ["title", "subtitle", "duration", "topics",
-                                  "steps.title", "steps.copy", "steps.goal", "steps.tasks",
-                                  "assignment", "shortcuts", "mistakes", "docs"],
-                        "admin": ["status", "summary", "videos", "explore",
-                                 "steps.image", "steps.done", "steps.showme", "steps.link"]
-                    }
-                })
+                data = read_curriculum()
+                self._send_json({"data": data})
             except Exception as exc:
                 self._send_error_json(500, str(exc))
             return
@@ -626,11 +569,6 @@ class AdminHandler(BaseHTTPRequestHandler):
         # PUT /api/curriculum
         if path == "/api/curriculum":
             self._handle_put_curriculum()
-            return
-
-        # PUT /api/overrides
-        if path == "/api/overrides":
-            self._handle_put_overrides()
             return
 
         # PUT /api/week/{n}/status
@@ -682,19 +620,12 @@ class AdminHandler(BaseHTTPRequestHandler):
             self._handle_notion_push_all()
             return
 
-        # POST /api/notion-pull/{weekNum}
-        notion_pull_match = re.match(r"^/api/notion-pull/(\d+)$", path)
-        if notion_pull_match:
-            week_num = int(notion_pull_match.group(1))
-            self._handle_notion_pull(week_num)
-            return
-
         self._send_error_json(404, "Not found")
 
     # -- API handlers ------------------------------------------------------
 
     def _handle_put_curriculum(self) -> None:
-        """Handle full curriculum save. Extracts admin fields to overrides.json."""
+        """Handle full curriculum save — writes directly to curriculum.js."""
         body = self._read_body()
         try:
             data = json.loads(body)
@@ -706,85 +637,7 @@ class AdminHandler(BaseHTTPRequestHandler):
             self._send_error_json(400, "Body must be a JSON array")
             return
 
-        # Extract admin-owned fields into overrides
-        overrides = read_overrides()
-        for week in data:
-            week_num = str(week.get("week", ""))
-            if not week_num:
-                continue
-            week_ov = overrides.get("weeks", {}).get(week_num, {})
-
-            for field in ADMIN_WEEK_FIELDS:
-                if field in week:
-                    week_ov[field] = week[field]
-
-            steps = week.get("steps", [])
-            steps_ov = week_ov.get("steps", {})
-            for idx, step in enumerate(steps):
-                step_ov = steps_ov.get(str(idx), {})
-                for field in ADMIN_STEP_FIELDS:
-                    if field in step:
-                        step_ov[field] = step[field]
-                if step_ov:
-                    steps_ov[str(idx)] = step_ov
-            if steps_ov:
-                week_ov["steps"] = steps_ov
-            if week_ov:
-                overrides.setdefault("weeks", {})[week_num] = week_ov
-
-        write_overrides(overrides)
-        regenerate_curriculum_js()
-        self._send_json({"ok": True})
-
-    def _handle_put_overrides(self) -> None:
-        """Save admin override fields."""
-        body = self._read_body()
-        try:
-            payload = json.loads(body)
-        except json.JSONDecodeError as exc:
-            self._send_error_json(400, f"Invalid JSON: {exc}")
-            return
-
-        week_num = str(payload.get("weekNum", ""))
-        field = payload.get("field", "")
-        value = payload.get("value")
-        step_idx = payload.get("stepIdx")
-
-        if not week_num or not field:
-            self._send_error_json(400, "weekNum and field are required")
-            return
-
-        # Validate field ownership (admin fields + "copy" for text overrides)
-        if step_idx is not None:
-            allowed = ADMIN_STEP_FIELDS | {"copy"}
-            if field not in allowed:
-                self._send_error_json(
-                    400, f"Field '{field}' is not an admin-owned step field"
-                )
-                return
-        else:
-            allowed = ADMIN_WEEK_FIELDS | {"copy"}
-            if field not in allowed:
-                self._send_error_json(
-                    400, f"Field '{field}' is not an admin-owned week field"
-                )
-                return
-
-        overrides = read_overrides()
-        if week_num not in overrides.get("weeks", {}):
-            overrides.setdefault("weeks", {})[week_num] = {}
-
-        if step_idx is not None:
-            # Step-level override
-            step_key = str(step_idx)
-            overrides["weeks"][week_num].setdefault("steps", {}).setdefault(step_key, {})
-            overrides["weeks"][week_num]["steps"][step_key][field] = value
-        else:
-            # Week-level override
-            overrides["weeks"][week_num][field] = value
-
-        write_overrides(overrides)
-        regenerate_curriculum_js()
+        write_curriculum(data)
         self._send_json({"ok": True})
 
     def _handle_put_week_status(self, week_num: int) -> None:
@@ -802,11 +655,12 @@ class AdminHandler(BaseHTTPRequestHandler):
             )
             return
 
-        overrides = read_overrides()
-        week_key = str(week_num)
-        overrides.setdefault("weeks", {}).setdefault(week_key, {})["status"] = new_status
-        write_overrides(overrides)
-        regenerate_curriculum_js()
+        curriculum = read_curriculum()
+        for week in curriculum:
+            if week.get("week") == week_num:
+                week["status"] = new_status
+                break
+        write_curriculum(curriculum)
         self._send_json({"ok": True, "week": week_num, "status": new_status})
 
     def _handle_upload(self, week_num: int, step_idx: int) -> None:
@@ -856,13 +710,15 @@ class AdminHandler(BaseHTTPRequestHandler):
         # Relative path from course-site/ root
         relative_path = f"assets/images/week-{week_num:02d}/{dest_filename}"
 
-        # Save image path to overrides.json
-        overrides = read_overrides()
-        week_key = str(week_num)
-        overrides.setdefault("weeks", {}).setdefault(week_key, {}).setdefault("steps", {}).setdefault(str(step_idx), {})
-        overrides["weeks"][week_key]["steps"][str(step_idx)]["image"] = relative_path
-        write_overrides(overrides)
-        regenerate_curriculum_js()
+        # Save image path directly to curriculum.js
+        curriculum = read_curriculum()
+        for week in curriculum:
+            if week.get("week") == week_num:
+                steps = week.get("steps", [])
+                if step_idx < len(steps):
+                    steps[step_idx]["image"] = relative_path
+                break
+        write_curriculum(curriculum)
 
         self._send_json({"ok": True, "path": relative_path})
 
@@ -899,9 +755,9 @@ class AdminHandler(BaseHTTPRequestHandler):
             )
             return
 
-        # Validate curriculum state — use merged data for video index check
+        # Validate curriculum state
         try:
-            data = get_merged_curriculum()
+            data = read_curriculum()
         except Exception as exc:
             self._send_error_json(500, f"Read curriculum failed: {exc}")
             return
@@ -934,18 +790,15 @@ class AdminHandler(BaseHTTPRequestHandler):
         # Relative path from course-site/ root
         relative_path = f"assets/videos/week-{week_num:02d}/{dest_filename}"
 
-        # Save to overrides.json (videos is an admin-owned field)
-        overrides = read_overrides()
-        week_key = str(week_num)
-        if week_key not in overrides.get("weeks", {}):
-            overrides.setdefault("weeks", {})[week_key] = {}
-        week_ovr = overrides["weeks"][week_key]
-        ovr_videos = week_ovr.get("videos", videos[:])  # init from current if needed
-        if video_idx < len(ovr_videos):
-            ovr_videos[video_idx]["url"] = relative_path
-        week_ovr["videos"] = ovr_videos
-        write_overrides(overrides)
-        regenerate_curriculum_js()
+        # Save video URL directly to curriculum.js
+        curriculum = read_curriculum()
+        for week in curriculum:
+            if week.get("week") == week_num:
+                week_videos = week.get("videos", [])
+                if video_idx < len(week_videos):
+                    week_videos[video_idx]["url"] = relative_path
+                break
+        write_curriculum(curriculum)
 
         self._send_json({"ok": True, "path": relative_path})
 
@@ -1018,45 +871,6 @@ class AdminHandler(BaseHTTPRequestHandler):
 
         success_count = sum(1 for r in results if r["ok"])
         self._send_json({"results": results, "success_count": success_count, "total": len(results)})
-
-    def _handle_notion_pull(self, week_num: int) -> None:
-        """Pull data from Notion and update curriculum-notion.json."""
-        if not NOTION_TOKEN:
-            self._send_error_json(503, "NOTION_TOKEN not configured")
-            return
-
-        notion_data = read_notion_data()
-        if notion_data is None:
-            self._send_error_json(404, "curriculum-notion.json not found")
-            return
-
-        existing = None
-        for entry in notion_data:
-            if entry.get("week") == week_num:
-                existing = entry
-                break
-        if not existing:
-            existing = {"week": week_num}
-
-        try:
-            updated = fetch_notion_to_curriculum(week_num, existing)
-            # Update curriculum-notion.json
-            for i, entry in enumerate(notion_data):
-                if entry.get("week") == week_num:
-                    notion_data[i] = updated
-                    break
-            else:
-                notion_data.append(updated)
-                notion_data.sort(key=lambda w: w.get("week", 0))
-
-            NOTION_JSON.write_text(
-                json.dumps(notion_data, ensure_ascii=False, indent=2) + "\n",
-                encoding="utf-8",
-            )
-            regenerate_curriculum_js()
-            self._send_json({"ok": True, "week": updated})
-        except Exception as exc:
-            self._send_error_json(500, f"Notion fetch failed: {exc}")
 
     def _handle_notion_quiz(self) -> None:
         """Log a Show Me quiz completion to the Notion 제출/공개피드백 database."""

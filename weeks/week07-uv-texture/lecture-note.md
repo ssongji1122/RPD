@@ -188,85 +188,131 @@
 
 > 이 섹션은 `course-site/data/curriculum.js` 기준으로 자동 갱신됩니다.
 
-- 핵심 키워드: UV 펼치기 · 텍스처 매핑
+- 핵심 키워드: UV 펼치기 · 텍스처 매핑 · AI 이미지 활용
 - 예상 시간: ~3시간
 
 ### 실습 단계
 
-#### 1. Seam 설정
+#### 1. UV 개념 이해
 
-종이 박스를 펼치면 평평해지죠. UV Unwrap도 3D 메쉬를 종이처럼 바닥에 펼치는 거예요. 그 위에 이미지를 올리면 텍스처가 입혀져요.
+옷을 만들려면 원단을 재단하잖아요. UV도 마찬가지예요. 3D 표면을 2D로 펼쳐야 이미지를 정확하게 붙일 수 있어요. Seam은 가위로 자르는 선이에요.
 
-![Seam 설정](../../course-site/assets/images/week07/uv-seam.png)
+![UV 개념 이해](../../course-site/assets/images/week07/uv-seam.png)
 
 배울 것
 
-- Seam의 역할을 이해한다
+- UV가 왜 필요한지 이해한다
+- Seam의 역할을 안다
 
 체크해볼 것
 
-- Edit Mode → Edge Select 모드
-- Edge 선택 후 Ctrl+E → Mark Seam
+- Edit Mode → Edge Select 모드(3) 전환
+- 큐브의 모서리를 선택해서 Ctrl+E → Mark Seam (빨간 선이 보이면 성공)
+- 잘못 표시한 Seam을 Ctrl+E → Clear Seam으로 지우기
 
 #### 2. Unwrap & UV Editor
 
-Seam을 그은 경계선대로 메쉬가 펼쳐져서 UV Editor에 2D로 나와요. 여기 보이는 모양대로 이미지가 입혀져요.
+Seam을 그은 경계선대로 메쉬가 펼쳐져서 UV Editor에 2D로 나와요. 종이 상자를 펼친 것처럼 생겼어요. 여기 보이는 모양대로 이미지가 입혀져요.
 
 ![Unwrap & UV Editor](../../course-site/assets/images/week07/uv-editor.png)
 
 배울 것
 
 - UV가 어떻게 펼쳐지는지 이해한다
+- UV Editor에서 섬을 조작한다
 
 체크해볼 것
 
-- U → Unwrap 실행
-- UV Editor 열어서 결과 확인
-- UV 섬 이동/크기 조절해보기
+- 전체 선택(A) 후 U → Unwrap 실행
+- UV Editor 열어서 펼쳐진 결과 확인 (화면 분할 또는 워크스페이스 UV Editing)
+- L로 UV Island 개별 선택 후 G/S/R로 이동/크기/회전
+- 겹치는 UV 섬이 없는지 확인 (겹치면 텍스처가 이상하게 보여요)
 
-#### 3. AI Texture 적용
+#### 3. Smart UV Project로 빠른 펼침
 
-AI가 만든 이미지를 메쉬 표면에 붙이는 거예요. UV가 제대로 펼쳐져 있어야 이미지가 자연스럽게 입혀져요.
+Seam을 하나하나 그리기 귀찮을 때가 있어요. Smart UV Project는 자동으로 적당히 잘라서 펼쳐줘요. 정밀하진 않지만 초안으로 충분해요.
 
-![AI Texture 적용](../../course-site/assets/images/week07/ai-texture.png)
+![Smart UV Project로 빠른 펼침](../../course-site/assets/images/week07/smart-uv.png)
+
+배울 것
+
+- 수동 Unwrap과 자동 Unwrap을 비교한다
+
+체크해볼 것
+
+- 전체 선택 후 U → Smart UV Project 실행 (Angle Limit 66° 정도가 기본값)
+- 수동 Unwrap 결과와 나란히 비교해보기 (어떤 게 더 깔끔한지 확인)
+
+#### 4. AI Texture 생성 및 적용
+
+AI가 만든 이미지를 메쉬 표면에 붙이는 거예요. UV가 제대로 펼쳐져 있어야 이미지가 자연스럽게 입혀져요. 재단이 잘 된 옷감 위에 프린트하는 것과 같아요.
+
+![AI Texture 생성 및 적용](../../course-site/assets/images/week07/ai-texture.png)
 
 배울 것
 
 - Image Texture 노드 사용법을 안다
+- AI 생성 이미지를 재질에 연결한다
 
 체크해볼 것
 
-- AI 텍스처 이미지 파일 저장 (Stable Diffusion, Adobe Firefly 등)
-- Shader Editor → Image Texture 노드 추가
-- 이미지 파일 연결 후 Base Color에 연결
+- AI 텍스처 이미지 파일 저장 (Adobe Firefly, Stable Diffusion 등)
+- Shader Editor → Shift+A → Image Texture 노드 추가
+- Open으로 이미지 불러와서 Base Color에 연결
+- Material Preview에서 결과 확인 (텍스처가 늘어나면 UV를 다시 조정)
+
+#### 5. Texture Painting 맛보기
+
+UV가 펼쳐진 위에 직접 색을 칠할 수도 있어요. 3D 뷰에서 바로 칠하면 UV 위치가 자동으로 맞아서 편해요.
+
+![Texture Painting 맛보기](../../course-site/assets/images/week07/texture-paint.png)
+
+배울 것
+
+- Texture Paint 모드의 존재를 안다
+
+체크해볼 것
+
+- Image Editor에서 New → 빈 이미지 생성 (1024×1024) (Base Color 노드에 연결)
+- Texture Paint 모드로 전환해서 표면에 직접 색 칠하기 (브러시 색과 크기 바꿔가며 실험)
 
 ### 핵심 단축키
 
 - `U`: UV Unwrap 메뉴
 - `Ctrl + E → Mark Seam`: UV Seam 지정
+- `Ctrl + E → Clear Seam`: UV Seam 제거
 - `L`: UV Editor에서 Island 선택
 - `P`: UV Pin 고정
 - `A`: UV 전체 선택
-- `S + X/Y + 0`: UV Island 정렬
+- `S + X/Y + 0`: UV Island 축 정렬
 
 ### 과제 한눈에 보기
 
 - 과제명: 텍스처 입힌 소품
-- 설명: Seam → Unwrap → AI Texture 순서로 텍스처를 입힌 소품을 제출합니다.
+- 설명: Seam → Unwrap → AI Texture 순서로 텍스처를 입힌 소품을 제출해요. UV Editor 스크린샷도 함께.
 - 제출 체크:
   - UV Unwrap이 완료된 .blend
   - AI 텍스처 이미지 포함
-  - 렌더 이미지 1장
+  - UV Editor 스크린샷 1장
+  - 렌더 이미지 2장 이상
 
 ### 자주 막히는 지점
 
-- 텍스처가 늘어남 → Seam 위치 조정 필요
-- 연결 끊김 → UV Map이 Material과 동일한지 확인
+- 텍스처가 늘어남 → Seam 위치를 조정하거나 UV 섬 크기를 맞추기
+- 텍스처가 뒤집혀 보임 → UV Editor에서 해당 섬 선택 후 S → Y → -1
+- UV가 겹침 → UV Editor에서 섬이 서로 겹치지 않게 배치
+- 이미지가 흐림 → 텍스처 해상도가 너무 낮으면 1024×1024 이상으로
+- 연결이 안 됨 → UV Map 이름이 Material과 동일한지 확인
+
+### 공식 영상 튜토리얼
+
+- [Blender Studio - UV Unwrapping](https://studio.blender.org/training/blender-2-8-fundamentals/uv-unwrapping/)
 
 ### 공식 문서
 
 - [UV Unwrapping](https://docs.blender.org/manual/en/latest/modeling/meshes/uv/unwrapping/index.html)
 - [UV Editor](https://docs.blender.org/manual/en/latest/editors/uv/introduction.html)
+- [Image Texture Node](https://docs.blender.org/manual/en/latest/render/shader_nodes/textures/image.html)
 - [Texture Painting](https://docs.blender.org/manual/en/latest/sculpt_paint/texture_paint/index.html)
 <!-- AUTO:CURRICULUM-SYNC:END -->
 
