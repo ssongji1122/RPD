@@ -1676,6 +1676,7 @@
       pushAllLog.innerHTML = "<span style='color:#aaa'>전체 push 중...</span>";
       pushAllOverlay.style.display = "flex";
       notionPushAllBtn.disabled = true;
+      notionPushAllBtn.textContent = "\u23F3 Push \uc911...";
 
       try {
         var res = await fetch("/api/notion-push-all", {
@@ -1694,20 +1695,26 @@
           var color = r.ok ? "#6f6" : "#f66";
           var detail = r.ok ? "" : " — " + esc(r.error || "");
           return "<span style='color:" + color + "'>" + icon + " Week " +
-            String(r.week).padStart(2, "0") + ": " + esc(r.title) + detail + "</span>";
+            esc(String(r.week).padStart(2, "0")) + ": " + esc(r.title) + detail + "</span>";
         });
         lines.push("");
-        lines.push("<strong>완료: " + data.success_count + "/" + data.total + " 성공</strong>");
+        lines.push("<strong>완료: " + esc(String(data.success_count)) + "/" + esc(String(data.total)) + " 성공</strong>");
         pushAllLog.innerHTML = lines.join("<br>");
       } catch(e) {
         pushAllLog.innerHTML = "<span style='color:#f66'>연결 실패: " + esc(e.message) + "</span>";
       } finally {
         notionPushAllBtn.disabled = false;
+        notionPushAllBtn.textContent = "\uD83D\uDE80 \uc804\uccb4 Push";
       }
     });
 
     pushAllCloseBtn.addEventListener("click", function() {
       pushAllOverlay.style.display = "none";
+    });
+    document.addEventListener("keydown", function(e) {
+      if (e.key === "Escape" && pushAllOverlay.style.display !== "none") {
+        pushAllOverlay.style.display = "none";
+      }
     });
 
     // ─── Init ────────────────────────────────────────────
