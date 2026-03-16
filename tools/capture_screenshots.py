@@ -20,11 +20,25 @@ from pathlib import Path
 
 STEP_MAP = {
     # Week 3: 기초 모델링 1 - Modifier
+    # ── curriculum.js step 이미지 (기존) ──────────────────────────────────────
     (3, 0): ("base-form",              "https://docs.blender.org/manual/en/latest/modeling/meshes/tools/extrude_region.html"),
     (3, 1): ("mirror-modifier",        "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html"),
     (3, 2): ("subdivision-surface",    "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/subdivision_surface.html"),
     (3, 3): ("array-boolean-detail",   "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/booleans.html"),
     (3, 4): ("bevel-weighted-normal",  "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/bevel.html"),
+    # ── 도구/모디파이어 개별 이미지 (Notion 섹션별) ─────────────────────────────
+    # Edit Mode 기본 도구
+    (3, 10): ("loop-cut",              "https://docs.blender.org/manual/en/latest/modeling/meshes/tools/loop.html"),
+    (3, 11): ("inset-faces",           "https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/inset_faces.html"),
+    (3, 12): ("bevel-tool",            "https://docs.blender.org/manual/en/latest/modeling/meshes/editing/edge/bevel.html"),
+    # Generate Modifiers
+    (3, 13): ("solidify-modifier",     "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/solidify.html"),
+    (3, 14): ("array-modifier",        "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/array.html"),
+    (3, 15): ("decimate",              "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/decimate.html"),
+    # Deform Modifiers
+    (3, 16): ("simple-deform",         "https://docs.blender.org/manual/en/latest/modeling/modifiers/deform/simple_deform.html"),
+    # Normals Modifiers
+    (3, 17): ("weighted-normal",       "https://docs.blender.org/manual/en/latest/modeling/modifiers/normals/weighted_normal.html"),
 
     # Week 4: 기초 모델링 2 - 하드서피스 디테일
     (4, 0): ("transform-apply",      "https://docs.blender.org/manual/en/latest/scene_layout/object/editing/apply.html"),
