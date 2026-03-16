@@ -366,64 +366,109 @@ Mixamo에 업로드하기 위한 FBX Export 설정:
 
 > 이 섹션은 `course-site/data/curriculum.js` 기준으로 자동 갱신됩니다.
 
-- 핵심 키워드: Mixamo 자동 리깅 · 애니메이션 임포트
+- 핵심 키워드: Mixamo 자동 리깅 · FBX 워크플로우 · NLA
 - 예상 시간: ~3시간
 
 ### 실습 단계
 
-#### 1. Mixamo 업로드
+#### 1. 익스포트 준비
 
-AI가 파일을 불러와서 자동으로 뼈대를 넣어줘요. 수동으로 본을 하나하나 넣던 시간이 없어져요.
+Mixamo에 올리기 전에 메쉬를 깔끔하게 정리해야 해요. Modifier를 Apply하고, 파츠를 하나로 합치고, Transform을 정리하는 거예요.
 
-![Mixamo 업로드](../../course-site/assets/images/week12/mixamo-upload.png)
-
-배울 것
-
-- Mixamo 워크플로우를 안다
-
-체크해볼 것
-
-- Blender에서 .obj 또는 .fbx 익스포트
-- Mixamo.com 에 파일 업로드
-- 자동 리깅 후 확인
-
-#### 2. 애니메이션 다운로드 및 임포트
-
-Mixamo에서 걷기, 달리기, 춤추기 등 애니메이션을 골라서 Blender로 가져와요.
-
-![애니메이션 다운로드 및 임포트](../../course-site/assets/images/week12/mixamo-import.png)
+![익스포트 준비](../../course-site/assets/images/week12/export-prep.png)
 
 배울 것
 
-- FBX 임포트 방식을 안다
+- Mixamo 업로드용 메쉬를 준비한다
 
 체크해볼 것
 
-- Mixamo에서 애니메이션 선택 후 FBX 다운로드
-- Blender → File → Import → FBX
-- Dope Sheet에서 애니메이션 재생 확인
+- 모든 파츠 선택 → Ctrl+J로 합치기 (Mixamo는 단일 메쉬를 선호해요)
+- Ctrl+A → All Transforms 적용 (Scale/Rotation이 꼬이면 리깅도 꼬여요)
+- File → Export → FBX 내보내기 (Apply Scalings: FBX All)
+
+#### 2. Mixamo 자동 리깅
+
+AI가 메쉬를 분석해서 자동으로 뼈대를 넣어줘요. 수동으로 본을 하나하나 넣던 시간이 없어져요. 관절 마커를 맞춰주기만 하면 돼요.
+
+![Mixamo 자동 리깅](../../course-site/assets/images/week12/mixamo-upload.png)
+
+배울 것
+
+- Mixamo 자동 리깅 워크플로우를 안다
+
+체크해볼 것
+
+- Mixamo.com 접속 후 FBX 파일 업로드 (Adobe 계정 필요 (무료))
+- Auto Rigger에서 관절 마커(턱/손목/팔꿈치/무릎/사타구니) 맞추기 (정확할수록 결과가 좋아요)
+- 리깅 결과 미리보기에서 이상한 부분 확인
+
+#### 3. 애니메이션 선택 및 임포트
+
+Mixamo에서 걷기, 달리기, 춤추기 등 수백 가지 무료 애니메이션을 골라서 Blender로 가져와요. 리깅된 캐릭터에 바로 적용돼요.
+
+![애니메이션 선택 및 임포트](../../course-site/assets/images/week12/mixamo-import.png)
+
+배울 것
+
+- Mixamo 애니메이션을 Blender에서 재생한다
+
+체크해볼 것
+
+- Mixamo Animations 탭에서 걷기/달리기/춤 골라보기 (미리보기로 확인 후 다운로드)
+- FBX로 다운로드 (With Skin 옵션) (Keyframe Reduction: None 추천)
+- Blender → File → Import → FBX로 가져오기
+- Space로 애니메이션 재생 확인 (Timeline 범위를 맞춰야 보여요)
+
+#### 4. NLA Editor로 애니메이션 관리
+
+NLA Editor는 애니메이션 클립을 레이어처럼 쌓고 이어 붙이는 곳이에요. 걷기 → 달리기 → 정지를 순서대로 이어 붙이면 하나의 긴 애니메이션이 돼요.
+
+![NLA Editor로 애니메이션 관리](../../course-site/assets/images/week12/nla-editor.png)
+
+배울 것
+
+- NLA Editor의 기본 개념을 이해한다
+
+체크해볼 것
+
+- NLA Editor 열기 (Editor Type → Nonlinear Animation)
+- 애니메이션 스트립 확인 및 드래그로 이동 (Action을 NLA 스트립으로 Push Down)
 
 ### 핵심 단축키
 
 - `Ctrl + J`: 오브젝트 합치기 (Join)
 - `Ctrl + A → All Transforms`: Transform 적용
-- `Shift + Ctrl + M`: Merge by Distance
+- `M (Merge by Distance)`: 중복 정점 제거
+- `Space`: 애니메이션 재생/정지
+- `Shift + N`: 법선 재계산
 
 ### 과제 한눈에 보기
 
 - 과제명: AI 리깅 캐릭터 애니메이션
-- 설명: Mixamo로 리깅된 캐릭터의 애니메이션이 재생되는 Blender 파일과 렌더 영상.
+- 설명: Mixamo로 리깅된 캐릭터에 애니메이션 2가지 이상을 적용해요.
 - 제출 체크:
-  - 애니메이션 재생 영상 or GIF
+  - 리깅 과정 스크린샷 (Mixamo 마커 화면)
+  - 애니메이션 2가지 재생 영상 or GIF
+  - 수동 리깅 vs Mixamo 차이 한 줄 메모
   - .blend 파일
 
 ### 자주 막히는 지점
 
-- FBX 임포트가 회전됨 → Import 설정에서 Forward/Up 방향 확인
+- FBX 임포트가 회전됨 → Import 설정에서 Manual Orientation, Forward: -Z, Up: Y
+- 메쉬가 너무 큼/작음 → Import 시 Scale 조절 또는 Ctrl+A
+- Mixamo 업로드 실패 → 메쉬에 구멍이나 뒤집힌 법선 확인 (Shift+N)
+- 애니메이션이 슬로우 모션 → Frame Rate가 24fps와 맞는지 확인
+- 관절이 이상하게 꺾임 → Mixamo 마커 위치를 더 정확히 맞추고 재시도
+
+### 공식 영상 튜토리얼
+
+- [Blender Studio - Importing Animations](https://studio.blender.org/training/blender-2-8-fundamentals/importing/)
 
 ### 공식 문서
 
 - [Import/Export](https://docs.blender.org/manual/en/latest/files/import_export/index.html)
+- [FBX Import](https://docs.blender.org/manual/en/latest/addons/import_export/scene_fbx.html)
 - [NLA Editor](https://docs.blender.org/manual/en/latest/editors/nla/index.html)
 <!-- AUTO:CURRICULUM-SYNC:END -->
 

@@ -382,65 +382,116 @@ Blender 5.0에서는 리깅 워크플로우에 몇 가지 개선이 있습니다
 
 > 이 섹션은 `course-site/data/curriculum.js` 기준으로 자동 갱신됩니다.
 
-- 핵심 키워드: Armature · 본 구조 · 웨이트 페인팅
+- 핵심 키워드: Armature · 본 구조 · 웨이트 페인팅 · 포즈
 - 예상 시간: ~3시간
 
 ### 실습 단계
 
-#### 1. Armature 추가
+#### 1. Armature 추가와 본 만들기
 
-인형에 철사 뼈대를 넣는 것처럼, 메쉬 안에 Bone(뼈)을 만들어요. 뼈를 움직이면 연결된 메쉬도 따라와요.
+마리오네트 인형에 철사 뼈대를 넣는 것처럼, 메쉬 안에 Bone(뼈)을 만들어요. 뼈를 움직이면 연결된 메쉬도 따라와요. 부모 뼈가 움직이면 자식 뼈도 같이 움직여요.
 
-![Armature 추가](../../course-site/assets/images/week11/armature-structure.png)
+![Armature 추가와 본 만들기](../../course-site/assets/images/week11/armature-structure.png)
 
 배울 것
 
 - Armature 구조를 이해한다
+- 부모-자식 관계를 만든다
 
 체크해볼 것
 
-- Shift+A → Armature → Single Bone
-- Edit Mode로 본 추가 (E로 Extrude)
+- Shift+A → Armature → Single Bone (몸통 뼈 하나가 생겨요)
+- Edit Mode에서 E로 본 확장 (팔, 다리 방향) (부모-자식 관계가 자동으로 연결돼요)
+- Subdivide로 중간에 관절 추가 (팔 뼈를 2개로 나누면 팔꿈치가 됨)
+- Bone 이름 정리 (Properties → Bone) (spine, arm.L, leg.R 같은 규칙)
 
-#### 2. 메쉬 연결
+#### 2. 메쉬와 연결 (Skinning)
 
-메쉬(피부)와 Armature(뼈대)를 연결하는 거예요. Ctrl+P로 붙여놓으면 본을 움직일 때 메쉬도 따라와요.
+피부(메쉬)와 뼈대(Armature)를 연결하는 거예요. Ctrl+P로 붙여놓으면 본을 움직일 때 메쉬도 따라와요. Blender가 어떤 메쉬가 어떤 뼈를 따라갈지 자동으로 계산해줘요.
 
-![메쉬 연결](../../course-site/assets/images/week11/mesh-skinning.png)
+![메쉬와 연결 (Skinning)](../../course-site/assets/images/week11/mesh-skinning.png)
 
 배울 것
 
 - Armature Parent의 개념을 이해한다
+- Automatic Weights를 적용한다
 
 체크해볼 것
 
-- Mesh → Armature 순서로 선택
-- Ctrl+P → With Automatic Weights
-- Pose Mode에서 본 회전해보기 (R키)
+- Mesh 먼저 선택 → Shift+클릭으로 Armature 추가 선택 (순서 중요: 메쉬 먼저, Armature 나중에)
+- Ctrl+P → With Automatic Weights 선택 (Blender가 자동으로 Weight를 계산)
+- Armature 선택 후 Ctrl+Tab → Pose Mode 전환 (본이 파란색이면 Pose Mode)
+
+#### 3. Pose Mode로 포즈 잡기
+
+피규어 관절을 돌리듯 본을 하나씩 회전시켜서 포즈를 만들어요. 팔을 들거나, 고개를 숙이거나, 다리를 벌리거나.
+
+![Pose Mode로 포즈 잡기](../../course-site/assets/images/week11/pose-mode.png)
+
+배울 것
+
+- Pose Mode에서 본을 조작한다
+- 원하는 포즈를 만든다
+
+체크해볼 것
+
+- Pose Mode에서 팔 본 선택 → R → X로 들어올리기
+- 여러 본을 조합해서 인사하는 포즈 만들기 (팔 올리고, 고개 약간 숙이기)
+- Alt+R로 선택한 본 회전 초기화 (전체 리셋은 A → Alt+R)
+
+#### 4. Weight Paint 수정
+
+자동 Weight가 완벽하지 않을 때가 있어요. 팔을 올렸는데 몸통이 같이 딸려온다면 Weight를 직접 수정해줘야 해요. 빨강이 강한 영향, 파랑이 약한 영향이에요.
+
+![Weight Paint 수정](../../course-site/assets/images/week11/weight-paint.png)
+
+배울 것
+
+- Weight Paint의 색 의미를 안다
+- 문제 부분을 직접 수정한다
+
+체크해볼 것
+
+- 메쉬 선택 → Ctrl+Tab → Weight Paint 모드 전환 (빨강=1.0(강한 영향), 파랑=0.0(영향 없음))
+- 문제 있는 본 Vertex Group 선택 후 브러시로 칠하기 (Weight: 0으로 칠하면 영향 제거)
+- Pose Mode로 돌아가서 수정 결과 확인 (반복: 수정 → 확인 → 수정)
 
 ### 핵심 단축키
 
 - `Shift + A → Armature`: 뼈대 추가
-- `Ctrl + P`: Armature Deform 연결
 - `E`: Bone 확장 (Edit Mode)
+- `Ctrl + P`: Armature Deform 연결
 - `Alt + P`: Parent 해제
 - `Ctrl + Tab`: Pose Mode 전환
+- `Alt + R`: Rotation 초기화 (Pose)
+- `Alt + G`: Location 초기화 (Pose)
 
 ### 과제 한눈에 보기
 
 - 과제명: 기본 캐릭터 리깅
-- 설명: 간단한 캐릭터 메쉬에 Armature를 연결하고 포즈 3가지를 스크린샷으로 제출합니다.
+- 설명: 간단한 캐릭터 메쉬에 Armature를 연결하고 포즈 3가지를 스크린샷으로 제출해요.
 - 제출 체크:
+  - 뼈대 구조 스크린샷 1장 (Edit Mode)
   - 포즈 3가지 스크린샷
+  - Weight Paint 수정 전후 비교 (선택)
   - 리깅된 .blend 파일
 
 ### 자주 막히는 지점
 
-- Weight Paint가 이상 → Automatic Weights 재설정
+- Automatic Weights 오류 → 메쉬에 구멍이 있거나 중복 정점 있음. Merge by Distance 먼저
+- 팔을 들면 몸이 딸려옴 → Weight Paint에서 해당 본의 Weight를 0으로 칠하기
+- 본이 안 움직임 → Pose Mode인지 확인 (Edit Mode에서는 구조만 바뀜)
+- 포즈가 뒤틀림 → 본 방향이 이상하면 Edit Mode에서 Recalculate Roll
+- 메쉬가 안 따라옴 → Parent가 제대로 됐는지 Outliner에서 확인
+
+### 공식 영상 튜토리얼
+
+- [Blender Studio - Armature and Rigging](https://studio.blender.org/training/blender-2-8-fundamentals/armature-and-rigging/)
 
 ### 공식 문서
 
 - [Armatures](https://docs.blender.org/manual/en/latest/animation/armatures/index.html)
 - [Skinning](https://docs.blender.org/manual/en/latest/animation/armatures/skinning/index.html)
 - [Weight Paint](https://docs.blender.org/manual/en/latest/sculpt_paint/weight_paint/index.html)
+- [Pose Mode](https://docs.blender.org/manual/en/latest/animation/armatures/posing/index.html)
 <!-- AUTO:CURRICULUM-SYNC:END -->
