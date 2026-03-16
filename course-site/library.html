@@ -92,6 +92,7 @@
   cursor: pointer;
   transition: border-color .14s, background .14s;
   text-align: center;
+  font-family: inherit;
 }
 .lib-card:hover {
   border-color: var(--key);
@@ -178,6 +179,7 @@
             class="lib-search"
             id="libSearch"
             type="search"
+            aria-label="도구 검색"
             placeholder="예: Array, Mirror, UV..."
             autocomplete="off"
           />
@@ -185,12 +187,12 @@
         </div>
       </div>
     </header>
-    <nav class="lib-tabs" id="libTabs" role="tablist"></nav>
+    <nav class="lib-tabs" id="libTabs" role="tablist" aria-label="카테고리 필터"></nav>
     <main class="lib-main" id="libMain"></main>
 
     <!-- Show Me Modal -->
     <div class="showme-overlay" id="showmeOverlay" aria-hidden="true">
-      <div class="showme-modal">
+      <div class="showme-modal" role="dialog" aria-modal="true" aria-labelledby="showmeTitle">
         <div class="showme-modal-header">
           <span class="showme-modal-title" id="showmeTitle"></span>
           <button class="showme-close" id="showmeClose" aria-label="닫기" type="button">
@@ -284,11 +286,14 @@ function buildTabs() {
     btn.textContent = cat;
     btn.dataset.cat = cat;
     btn.setAttribute("role", "tab");
+    btn.setAttribute("aria-selected", i === 0 ? "true" : "false");
     btn.addEventListener("click", function() {
       document.querySelectorAll(".lib-tab").forEach(function(t) {
         t.classList.remove("is-active");
+        t.setAttribute("aria-selected", "false");
       });
       btn.classList.add("is-active");
+      btn.setAttribute("aria-selected", "true");
       if (typeof filterCards === "function") filterCards();
     });
     tabsEl.appendChild(btn);
@@ -306,8 +311,9 @@ function buildCards() {
 
   Object.keys(SHOWME_REGISTRY).forEach(function(id) {
     var meta = SHOWME_REGISTRY[id];
-    var card = document.createElement("div");
+    var card = document.createElement("button");
     card.className = "lib-card";
+    card.setAttribute("type", "button");
     card.dataset.id = id;
     card.dataset.cat = CATEGORY_MAP[id] || "기타";
 
@@ -389,6 +395,9 @@ function openShowMe(widgetId) {
   var overlay = document.getElementById("showmeOverlay");
   overlay.classList.add("is-open");
   overlay.setAttribute("aria-hidden", "false");
+  setTimeout(function() {
+    document.getElementById("showmeClose").focus();
+  }, 50);
 }
 
 function closeShowMe() {
