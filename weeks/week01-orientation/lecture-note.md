@@ -142,6 +142,10 @@ blender.org에서 다운로드 후 실행 확인.
 
 - 설치 중 권한 오류 → 관리자 권한으로 재설치
 - 한글 경로에 설치하면 오류 → 영어 경로 사용
+
+### 공식 문서
+
+- [Blender 설치 가이드](https://docs.blender.org/manual/en/latest/getting_started/installing/index.html)
 <!-- AUTO:CURRICULUM-SYNC:END -->
 
 ## 참고 자료
