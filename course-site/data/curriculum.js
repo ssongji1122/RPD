@@ -415,6 +415,11 @@ const CURRICULUM = [
           "모델링 도중 레퍼런스가 방해되지 않는다"
         ],
         "image": "assets/images/week03/robot-ref-front.png",
+        "downloads": [
+          { "label": "정면 (Front)", "url": "assets/images/week03/robot-ref-front.png" },
+          { "label": "측면 (Side)",  "url": "assets/images/week03/robot-ref-side.png" },
+          { "label": "후면 (Back)",  "url": "assets/images/week03/robot-ref-back.png" }
+        ],
         "showme": "image-reference",
         "link": "https://docs.blender.org/manual/en/latest/editors/3dview/display/overlays.html"
       },
