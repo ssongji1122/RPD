@@ -535,3 +535,38 @@ def fetch_notion_to_curriculum(
         result["docs"] = docs
 
     return result
+
+
+# ---------------------------------------------------------------------------
+# Merge: notion data + overrides
+# ---------------------------------------------------------------------------
+def merge_curriculum(notion_data: list[dict], overrides: dict) -> list[dict]:
+    """Merge Notion snapshot with admin overrides.
+
+    - Week-level: any key in override (except 'steps') replaces the notion value.
+    - Step-level: shallow merge by index ``{**notion_step, **override_step}``.
+    - Uses deepcopy to prevent mutation of source data.
+    """
+    import copy
+
+    weeks_ov = overrides.get("weeks", {})
+    result = []
+    for week in notion_data:
+        week_num = str(week["week"])
+        ov = weeks_ov.get(week_num, {})
+        if not ov:
+            result.append(copy.deepcopy(week))
+            continue
+        merged = copy.deepcopy(week)
+        for key, val in ov.items():
+            if key == "steps":
+                continue
+            merged[key] = copy.deepcopy(val)
+        steps_ov = ov.get("steps", {})
+        if steps_ov and "steps" in merged:
+            for idx, step in enumerate(merged["steps"]):
+                step_ov = steps_ov.get(str(idx), {})
+                if step_ov:
+                    merged["steps"][idx] = {**step, **copy.deepcopy(step_ov)}
+        result.append(merged)
+    return result

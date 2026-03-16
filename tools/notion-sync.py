@@ -16,7 +16,6 @@ Exit codes:
 from __future__ import annotations
 
 import argparse
-import copy
 import json
 import sys
 from pathlib import Path
@@ -25,7 +24,9 @@ from pathlib import Path
 # Import shared Notion API helpers
 # ---------------------------------------------------------------------------
 sys.path.insert(0, str(Path(__file__).parent))
-from notion_api import fetch_notion_to_curriculum, get_notion_token, load_notion_mapping
+from notion_api import (
+    fetch_notion_to_curriculum, get_notion_token, load_notion_mapping, merge_curriculum,
+)
 
 # ---------------------------------------------------------------------------
 # Paths
@@ -100,46 +101,6 @@ def fetch_all_weeks(token: str) -> list[dict]:
 
 
 # ---------------------------------------------------------------------------
-# Merge
-# ---------------------------------------------------------------------------
-def merge(notion_data: list[dict], overrides: dict) -> list[dict]:
-    """Merge Notion data with admin overrides.
-
-    Override rules:
-      - Week-level: for any key in the override (except "steps"), replace value
-      - Step-level: for each step index, shallow merge {**notion_step, **override_step}
-    """
-    override_weeks = overrides.get("weeks", {})
-    merged: list[dict] = []
-
-    for week in notion_data:
-        week_copy = copy.deepcopy(week)
-        week_num = str(week_copy.get("week", ""))
-        week_override = override_weeks.get(week_num, {})
-
-        if not week_override:
-            merged.append(week_copy)
-            continue
-
-        # Apply week-level overrides (everything except "steps")
-        for key, value in week_override.items():
-            if key == "steps":
-                continue
-            week_copy[key] = copy.deepcopy(value)
-
-        # Apply step-level overrides
-        step_overrides = week_override.get("steps", {})
-        if step_overrides and "steps" in week_copy:
-            steps = week_copy["steps"]
-            for idx_str, step_override in step_overrides.items():
-                idx = int(idx_str)
-                if idx < len(steps):
-                    steps[idx] = {**steps[idx], **copy.deepcopy(step_override)}
-
-        merged.append(week_copy)
-
-    return merged
-
 
 # ---------------------------------------------------------------------------
 # Write curriculum.js
@@ -248,7 +209,7 @@ def main() -> int:
 
         old_js = _file_content(CURRICULUM_JS)
 
-        merged = merge(notion_data, overrides)
+        merged = merge_curriculum(notion_data, overrides)
         write_curriculum_js(merged)
 
         new_js = _file_content(CURRICULUM_JS)
