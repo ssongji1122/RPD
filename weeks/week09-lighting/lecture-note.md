@@ -395,6 +395,8 @@ Set the background to pure white. Make shadows very soft."
 
 요리사 스튜디오에서 조명을 세팅하듯, 어떤 조명을 쓰냐에 따라 분위기가 완전히 달라져요. 동일한 오브젝트라도 조명만 바꾸면 다른 작품처럼 보여요.
 
+![Light 종류 탐색](../../course-site/assets/images/week09/light-types.png)
+
 배울 것
 
 - 각 Light 타입의 특성을 안다
@@ -407,6 +409,8 @@ Set the background to pure white. Make shadows very soft."
 #### 2. HDRI 환경 조명
 
 360도 파노라마 사진이 전구 역할을 해요. 텍스처 하나로 자연스러운 환경 조명을 만들 수 있어요.
+
+![HDRI 환경 조명](../../course-site/assets/images/week09/hdri-world.png)
 
 배울 것
 
@@ -421,6 +425,8 @@ Set the background to pure white. Make shadows very soft."
 
 사진 체울린 사진처럼 Key(주), Fill(보조), Rim(윤곽) 세 개만 잘 놓으면 어떤 오브젝트도 입체감 있게 보여요.
 
+![3점 조명 세팅](../../course-site/assets/images/week09/three-point-light.png)
+
 배울 것
 
 - 3점 조명의 원리를 이해한다
@@ -430,6 +436,14 @@ Set the background to pure white. Make shadows very soft."
 - Key Light (주 광원) 배치 (오브젝트 앞 45도 위치)
 - Fill Light (보조 광원) 배치 (반대편 낮게)
 - Rim Light (윤곽 광원) 배치 (뒤쪽에서 윤곽 강조)
+
+### 핵심 단축키
+
+- `Shift + A → Light`: 조명 추가
+- `Z → Rendered`: 렌더 미리보기
+- `Shift + Z`: Rendered/Solid 토글
+- `Ctrl + Numpad 0`: 현재 시점 → 카메라
+- `Numpad 0`: 카메라 뷰 전환
 
 ### 과제 한눈에 보기
 
