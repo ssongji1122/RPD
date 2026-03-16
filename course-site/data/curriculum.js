@@ -321,34 +321,22 @@ const CURRICULUM = [
       }
     ],
     "shortcuts": [
-      {
-        "keys": "MMB Drag",
-        "action": "Orbit (시점 회전)"
-      },
-      {
-        "keys": "Shift + MMB",
-        "action": "Pan (시점 이동)"
-      },
-      {
-        "keys": "Scroll",
-        "action": "Zoom (확대/축소)"
-      },
-      {
-        "keys": "Numpad 1/3/7",
-        "action": "Front/Right/Top View"
-      },
-      {
-        "keys": "G / R / S",
-        "action": "Grab / Rotate / Scale"
-      },
-      {
-        "keys": "G + X/Y/Z",
-        "action": "축 고정 이동"
-      },
-      {
-        "keys": "Tab",
-        "action": "Object ↔ Edit Mode 전환"
-      }
+      { "keys": "MMB Drag", "action": "Orbit (시점 회전)", "detail": "마우스 가운데 버튼을 누른 채 드래그하면 3D 뷰포트 시점이 회전합니다. 모델을 여러 각도에서 확인할 때 가장 자주 쓰는 조작입니다.", "category": "navigation" },
+      { "keys": "Shift + MMB", "action": "Pan (시점 이동)", "detail": "Shift를 누른 채 가운데 버튼 드래그로 시점을 상하좌우로 평행 이동합니다. 줌 레벨은 유지됩니다.", "category": "navigation" },
+      { "keys": "Scroll", "action": "Zoom (확대/축소)", "detail": "마우스 휠을 위로 굴리면 확대, 아래로 굴리면 축소됩니다. 커서 위치 기준으로 줌됩니다.", "category": "navigation" },
+      { "keys": "Numpad 1/3/7", "action": "Front/Right/Top View", "detail": "Numpad 1은 정면(Front), 3은 우측(Right), 7은 위(Top) 정투영 뷰로 전환합니다. 정확한 위치 잡기에 필수입니다.", "category": "navigation" },
+      { "keys": "Numpad 5", "action": "Perspective ↔ Orthographic 전환", "detail": "원근감이 있는 Perspective 뷰와 평행 투영인 Orthographic 뷰를 토글합니다. 모델링 시 Ortho 뷰가 정확합니다.", "category": "navigation" },
+      { "keys": "Numpad 2/4/6/8", "action": "Orbit 상/하/좌/우 회전", "detail": "MMB 드래그 없이 키패드로 뷰를 15° 단위로 회전합니다. 2=아래, 8=위, 4=왼쪽, 6=오른쪽.", "category": "navigation" },
+      { "keys": "Numpad .", "action": "Frame Selected (선택 오브젝트 포커스)", "detail": "선택한 오브젝트가 화면 중앙에 오도록 뷰를 자동 조정합니다. 모델을 잃어버렸을 때 유용합니다.", "category": "navigation" },
+      { "keys": "Ctrl + Numpad 1/3/7", "action": "Back/Left/Bottom View", "detail": "Ctrl을 함께 누르면 반대편 뷰로 전환됩니다. 1=후면(Back), 3=좌측(Left), 7=아래(Bottom).", "category": "navigation" },
+      { "keys": "Shift + Numpad 4/6", "action": "Roll (뷰 좌우 기울이기)", "detail": "현재 시점을 기준으로 카메라를 좌우로 기울입니다(Roll). 4=반시계, 6=시계 방향.", "category": "navigation" },
+      { "keys": "Numpad Plus", "action": "Zoom In", "detail": "뷰를 단계적으로 확대합니다. 스크롤 휠의 대안입니다.", "category": "navigation" },
+      { "keys": "Numpad Minus", "action": "Zoom Out", "detail": "뷰를 단계적으로 축소합니다. 스크롤 휠의 대안입니다.", "category": "navigation" },
+      { "keys": "G", "action": "Grab (이동)", "detail": "선택한 오브젝트나 요소를 자유롭게 이동합니다. G 후 마우스를 움직이고 클릭으로 확정, ESC로 취소합니다.", "category": "transform" },
+      { "keys": "R", "action": "Rotate (회전)", "detail": "선택한 오브젝트나 요소를 회전합니다. R 후 마우스를 움직이고 클릭으로 확정합니다. R을 두 번 누르면 트랙볼 회전 모드가 됩니다.", "category": "transform" },
+      { "keys": "S", "action": "Scale (크기 조절)", "detail": "선택한 오브젝트나 요소의 크기를 조절합니다. S 후 마우스를 움직이고 클릭으로 확정합니다. 숫자 입력으로 정확한 배율 적용도 가능합니다.", "category": "transform" },
+      { "keys": "G + X/Y/Z", "action": "축 고정 이동", "detail": "G로 이동 모드에 들어간 뒤 X, Y, Z 키를 누르면 해당 축 방향으로만 이동이 제한됩니다. 정밀한 위치 조정에 필수입니다.", "category": "transform" },
+      { "keys": "Tab", "action": "Object ↔ Edit Mode 전환", "detail": "Object Mode(전체 오브젝트 조작)와 Edit Mode(점/선/면 편집) 사이를 전환합니다. 모델링의 가장 기본적인 전환입니다.", "category": "general" }
     ],
     "status": "done",
     "summary": "Blender 인터페이스, 화면 조작, G/R/S 변형, Extrude/Bevel/LoopCut 실습.",
@@ -373,12 +361,15 @@ const CURRICULUM = [
     "subtitle": "기본형 · 대칭 · 곡면 · 반복",
     "duration": "~3시간",
     "topics": [
+      "Reference Image로 작업 준비",
       "Edit Mode: Extrude / Loop Cut / Inset / Bevel",
-      "Mirror — 대칭 모델링",
-      "Subdivision Surface / Solidify — 곡면과 두께",
-      "Array / Boolean — 반복과 구멍",
-      "Bevel Modifier / Weighted Normal — 마무리",
-      "Modifier Stack 순서와 Apply 타이밍"
+      "Mirror Modifier",
+      "Subdivision Surface",
+      "Solidify Modifier",
+      "Array Modifier",
+      "Boolean Modifier",
+      "Bevel Modifier + Weighted Normal",
+      "Modifier Stack 순서와 Apply"
     ],
     "steps": [
       {
@@ -425,67 +416,62 @@ const CURRICULUM = [
       },
       {
         "title": "기본형 만들기",
-        "copy": "레고 블록을 직접 깎아 원하는 형태를 만들어요. Extrude로 덩어리를 뽑고, Loop Cut으로 나누고, Inset과 Bevel로 다듬는 게 기본 흐름이에요.",
+        "copy": "레퍼런스를 보면서 Tab으로 Edit Mode에 들어가 Extrude로 덩어리를 뽑고, Loop Cut으로 나누고, Inset과 Bevel로 다듬는 게 기본 흐름이에요.",
         "goal": [
-          "Edit Mode 도구 흐름을 안다",
-          "기본형을 직접 만든다"
+          "Reference Image를 뷰포트에 배치한다",
+          "Edit Mode 도구 4가지를 실제로 써본다"
         ],
         "tasks": [
           {
             "id": "w3-t1",
-            "label": "Tab으로 Edit Mode 진입",
-            "detail": "Object Mode ↔ Edit Mode 전환"
+            "label": "Shift+A → Image → Reference로 참고 이미지 불러오기",
+            "detail": "Data 탭에서 Opacity 조절"
           },
           {
             "id": "w3-t2",
-            "label": "Extrude로 팔이나 다리 위치 뽑기",
-            "detail": "E로 면을 돌출"
+            "label": "Extrude (E)로 덩어리 뽑기",
+            "detail": "면 선택 후 E → G+축 고정으로 방향 제어"
           },
           {
             "id": "w3-t3",
-            "label": "Loop Cut으로 관절 위치 나누기",
-            "detail": "Ctrl+R로 분할선 추가"
+            "label": "Loop Cut (Ctrl+R)으로 분할선 추가하기",
+            "detail": "스크롤로 루프 개수 조절"
           },
           {
             "id": "w3-t4",
-            "label": "Inset과 Bevel로 패널과 모서리 다듬기",
-            "detail": "I, Ctrl+B 사용"
+            "label": "Inset (I)과 Bevel (Ctrl+B)로 패널·모서리 다듬기",
+            "detail": "Bevel은 스크롤로 세그먼트 추가"
           }
         ],
         "image": "assets/images/week03/base-form.png",
         "done": [
-          "몸통과 주요 덩어리가 잡혔다",
-          "도구를 바꿔가며 형태를 만들 수 있다"
+          "Reference Image가 뷰포트에 깔려 있다",
+          "기본 형태가 잡혔다"
         ],
         "showme": "edit-mode-tools",
         "link": "https://docs.blender.org/manual/en/latest/modeling/meshes/tools/extrude_region.html"
       },
       {
         "title": "Mirror Modifier",
-        "copy": "거울 앞에 서면 반대편이 자동으로 따라오죠? Mirror가 그거예요. 한쪽만 만들면 작업량이 반으로 줄어요.",
+        "copy": "X축을 기준으로 반쪽을 대칭 복사해요. 한쪽만 만들면 작업량이 반으로 줄어요. Clipping을 켜면 중앙 정점이 넘어가지 않게 붙잡아줘요.",
         "goal": [
-          "Mirror 역할과 기본 설정을 이해한다"
+          "Mirror를 추가하고 Clipping을 설정한다"
         ],
         "tasks": [
           {
             "id": "w3-t5",
-            "label": "절반을 지우고 Mirror 추가하기",
-            "detail": "Add Modifier → Mirror"
+            "label": "절반 지우고 Add Modifier → Mirror 추가하기",
+            "detail": "Axis: X 확인"
           },
           {
             "id": "w3-t6",
-            "label": "Clipping 켜기",
+            "label": "Clipping 옵션 켜기",
             "detail": "중심선 버텍스가 넘어가지 않게 고정"
           },
           {
             "id": "w3-t7",
-            "label": "한쪽만 Extrude해서 자동 대칭 확인",
-            "detail": ""
-          },
-          {
-            "id": "w3-t8",
-            "label": "중심선이 벌어지면 S + X + 0 써보기",
-            "detail": "X축 0으로 다시 정렬"
+            "label": "한쪽만 Extrude해서 대칭 반영 확인하기",
+            "detail": "중심선 벌어지면 S+X+0으로 정렬"
           }
         ],
         "image": "assets/images/week03/mirror-modifier.png",
@@ -497,139 +483,200 @@ const CURRICULUM = [
         "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html"
       },
       {
-        "title": "곡면과 두께",
-        "copy": "각진 레고 블록에 사포를 대면 모서리가 둥글어지듯이, Subdivision은 표면을 부드럽게 만들어요. Solidify는 색종이를 두꺼운 판지로 바꾸는 거예요.",
+        "title": "Subdivision Surface",
+        "copy": "면을 잘게 쪼개서 표면을 둥글고 매끄럽게 만들어요. 단, 전부 뭉개지는 걸 막으려면 날카운 모서리 옆에 Support Loop (Ctrl+R)를 추가하거나 Edge Crease (Shift+E)를 줘야 해요.",
         "goal": [
-          "Subdivision과 Solidify를 구분해 쓴다",
-          "곡면과 두께를 조절한다"
+          "Subdivision Level을 조절한다",
+          "Support Loop과 Edge Crease로 형태를 보존한다"
         ],
         "tasks": [
           {
+            "id": "w3-t8",
+            "label": "Subdivision Surface 추가하고 Ctrl+1/2/3으로 레벨 비교하기",
+            "detail": "Viewport와 Render 레벨 차이 확인"
+          },
+          {
             "id": "w3-t9",
-            "label": "Subdivision Surface 추가하기",
-            "detail": "Ctrl+1/2/3으로 레벨 바꿔보기"
+            "label": "날카운 모서리 옆에 Support Loop 추가하기",
+            "detail": "Ctrl+R로 모서리 근처에 루프 2개 — 형태가 살아나는 것 확인"
           },
           {
             "id": "w3-t10",
-            "label": "Shift+E로 날카로운 모서리 남기기",
-            "detail": "Edge Crease"
-          },
-          {
-            "id": "w3-t11",
-            "label": "Plane에 Solidify로 두께 주기",
-            "detail": "Thickness와 Offset 비교"
+            "label": "Shift+E로 Edge Crease 적용 후 Support Loop와 비교하기",
+            "detail": "두 방법의 차이를 눈으로 확인"
           }
         ],
         "image": "assets/images/week03/subdivision-surface.png",
         "done": [
-          "큰 덩어리가 부드러워졌다",
-          "패널에 두께가 생겼다"
+          "표면이 부드러워졌다",
+          "날카운 모서리가 유지되는 방법을 2가지 써봤다"
         ],
-        "showme": [
-          "subdivision-surface",
-          "solidify-modifier"
-        ],
+        "showme": "subdivision-surface",
         "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/subdivision_surface.html"
       },
       {
-        "title": "반복과 구멍",
-        "copy": "복사기로 같은 부품을 줄줄이 찍어내는 게 Array, 쿠키 틀로 반죽에서 모양을 빼내는 게 Boolean이에요. 디테일을 빠르게 늘릴 때 유용해요.",
+        "title": "Solidify Modifier",
+        "copy": "종이처럼 얇은 면(Plane)에 두께를 줘서 판 형태로 만들어요. 로봇의 장갑판이나 외장 패널을 만들 때 유용해요.",
         "goal": [
-          "Array와 Boolean을 구분해 쓴다"
+          "Solidify로 면에 두께를 준다"
         ],
         "tasks": [
           {
-            "id": "w3-t12",
-            "label": "Array로 같은 부품 5개 반복하기",
-            "detail": "Count와 Offset 바꿔보기"
+            "id": "w3-t11",
+            "label": "Plane에 Solidify 추가하고 Thickness 조절하기",
+            "detail": "양수/음수로 방향 변화 확인"
           },
           {
+            "id": "w3-t12",
+            "label": "Offset 값을 -1 / 0 / 1로 바꿔보기",
+            "detail": "두께가 안쪽/양쪽/바깥쪽으로 붙는 차이 확인"
+          }
+        ],
+        "image": "assets/images/week03/subdivision-surface.png",
+        "done": [
+          "Plane이 두께 있는 판으로 바뀌었다"
+        ],
+        "showme": "solidify-modifier",
+        "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/solidify.html"
+      },
+      {
+        "title": "Array Modifier",
+        "copy": "같은 부품을 일정 간격으로 복제해요. Count로 개수, Offset으로 간격을 조절하면 반복 파츠를 한 번에 만들 수 있어요.",
+        "goal": [
+          "Array로 반복 구조를 만든다"
+        ],
+        "tasks": [
+          {
             "id": "w3-t13",
-            "label": "Boolean Difference로 홈 하나 만들기",
-            "detail": "커터 오브젝트를 겹치게 두기"
+            "label": "Array 추가하고 Count를 5로 설정하기",
+            "detail": "Relative Offset으로 간격 조절"
           },
           {
             "id": "w3-t14",
-            "label": "Solidify나 Array를 기존 형태에 추가해보기",
-            "detail": "반복이나 패널 중 하나 더 실험"
+            "label": "Constant Offset으로 X/Y/Z 방향 바꿔보기",
+            "detail": "Relative vs Constant 차이 비교"
           }
         ],
         "image": "assets/images/week03/array-boolean-detail.png",
         "done": [
-          "반복 구조가 생겼다",
-          "구멍이나 홈이 하나 이상 만들어졌다"
+          "같은 형태가 일정 간격으로 반복된다"
         ],
-        "showme": [
-          "array-modifier",
-          "boolean-modifier"
-        ],
-        "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/booleans.html"
+        "showme": "array-modifier",
+        "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/array.html"
       },
       {
-        "title": "마무리 손질",
-        "copy": "Ctrl+B가 '이 모서리 하나만 다듬기'라면, Bevel Modifier는 '전체 모서리를 한 번에 정리'예요. Weighted Normal은 형태가 아니라 빛이 닿는 느낌(음영)을 정리해줘요.",
+        "title": "Boolean Modifier",
+        "copy": "두 오브젝트가 겹치는 부분을 기준으로 자르거나 합쳐요. Difference는 구멍을 뚫고, Union은 합치고, Intersect는 겹치는 부분만 남겨요.",
         "goal": [
-          "필수 추가 Modifier를 안다"
+          "Boolean Difference로 구멍을 뚫는다"
         ],
         "tasks": [
           {
             "id": "w3-t15",
-            "label": "Bevel Modifier로 모서리 둥글게 만들기",
-            "detail": "전체적인 하드서피스 느낌 확인"
+            "label": "커터 오브젝트를 겹치게 두고 Boolean Difference 추가하기",
+            "detail": "Solver: Exact 선택"
           },
           {
             "id": "w3-t16",
-            "label": "Weighted Normal로 음영 정리하기",
-            "detail": "Bevel과 같이 넣으면 차이가 잘 보임"
-          },
+            "label": "커터를 이동해서 구멍 위치 조절하기",
+            "detail": "커터가 완전히 관통해야 깔끔하게 잘림"
+          }
+        ],
+        "image": "assets/images/week03/array-boolean-detail.png",
+        "done": [
+          "메쉬에 구멍이나 홈이 만들어졌다"
+        ],
+        "showme": "boolean-modifier",
+        "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/booleans.html"
+      },
+      {
+        "title": "Bevel Modifier",
+        "copy": "전체 모서리를 한꺼번에 둥글게 깎아줘요. Ctrl+B가 '모서리 하나씩 수동 다듬기'라면, Bevel Modifier는 '전체 자동 정리'예요.",
+        "goal": [
+          "Bevel Modifier를 추가하고 Amount/Segments를 조절한다"
+        ],
+        "tasks": [
           {
             "id": "w3-t17",
-            "label": "Ctrl+B와 Bevel Modifier 차이 보기",
-            "detail": "부분 수정과 전체 정리 흐름 비교"
+            "label": "Bevel Modifier 추가하고 Amount와 Segments 조절하기",
+            "detail": "Segments가 높을수록 부드러움"
+          },
+          {
+            "id": "w3-t18",
+            "label": "Limit Method를 Angle로 바꿔서 날카운 모서리만 적용하기",
+            "detail": "30°~60° 사이 실험"
           }
         ],
         "image": "assets/images/week03/bevel-weighted-normal.png",
         "done": [
-          "Bevel Modifier나 Weighted Normal을 확인했다",
-          "언제 쓰는지 말할 수 있다"
+          "전체 모서리가 자연스럽게 둥글어졌다"
         ],
         "showme": "bevel-modifier",
         "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/bevel.html"
+      },
+      {
+        "title": "Weighted Normal",
+        "copy": "형태는 바꾸지 않고, 빛이 닿는 느낌(음영)만 정리해줘요. Bevel Modifier 바로 아래에 넣으면 하드서피스가 훨씬 깔끔해져요.",
+        "goal": [
+          "Weighted Normal을 추가해서 음영 차이를 확인한다"
+        ],
+        "tasks": [
+          {
+            "id": "w3-t19",
+            "label": "Weighted Normal 추가 전/후 음영 비교하기",
+            "detail": "Bevel Modifier 아래에 배치"
+          },
+          {
+            "id": "w3-t20",
+            "label": "Face Strength Mode 켜보기",
+            "detail": "Keep Sharp와 함께 쓰면 효과가 더 잘 보임"
+          }
+        ],
+        "image": "assets/images/week03/bevel-weighted-normal.png",
+        "done": [
+          "음영이 깔끔하게 정리됐다"
+        ],
+        "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/modify/weighted_normal.html"
+      },
+      {
+        "title": "Modifier Stack 정리",
+        "copy": "Modifier는 위에서 아래로 순서대로 적용돼요. Mirror → Subdivision → Bevel 순서가 바뀌면 결과도 달라져요. Apply는 '되돌릴 수 없는 확정'이라 마지막에만 써요.",
+        "goal": [
+          "Modifier 순서가 결과에 미치는 영향을 이해한다",
+          "Apply 타이밍을 안다"
+        ],
+        "tasks": [
+          {
+            "id": "w3-t21",
+            "label": "Modifier 순서를 드래그로 바꿔보고 결과 차이 확인하기",
+            "detail": "Mirror ↔ Subdivision 위치 교환"
+          },
+          {
+            "id": "w3-t22",
+            "label": "Apply 전에 Ctrl+A로 Transform 정리하기",
+            "detail": "Scale이 1이 아니면 Modifier 결과가 달라짐"
+          }
+        ],
+        "image": "assets/images/week03/bevel-weighted-normal.png",
+        "done": [
+          "순서를 바꿨을 때 결과가 달라지는 것을 확인했다",
+          "Apply는 마지막에만 하는 이유를 안다"
+        ],
+        "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/introduction.html"
       }
     ],
     "shortcuts": [
-      {
-        "keys": "E",
-        "action": "Extrude (면/선 돌출)"
-      },
-      {
-        "keys": "Ctrl + R",
-        "action": "Loop Cut (루프 분할)"
-      },
-      {
-        "keys": "I",
-        "action": "Inset (면 안쪽에 새 면)"
-      },
-      {
-        "keys": "Ctrl + B",
-        "action": "Bevel (모서리 둥글게)"
-      },
-      {
-        "keys": "Ctrl + 1/2/3",
-        "action": "Subdivision Level 빠른 설정"
-      },
-      {
-        "keys": "Shift + E",
-        "action": "Edge Crease (날카로운 모서리 유지)"
-      },
-      {
-        "keys": "Ctrl + A",
-        "action": "Apply All Transforms (Modifier 전에 필수)"
-      },
-      {
-        "keys": "S + X + 0",
-        "action": "Mirror 중심선 X축 0 정렬"
-      }
+      { "keys": "Shift + A", "action": "Add 메뉴 (Image → Reference로 참고 이미지 추가)", "category": "general" },
+      { "keys": "1 / 2 / 3", "action": "Vertex / Edge / Face 선택 모드 전환", "category": "modeling" },
+      { "keys": "E", "action": "Extrude (면/선 돌출)", "detail": "선택한 면이나 선을 바깥으로 밀어내어 새로운 지오메트리를 생성합니다. 모델링에서 형태를 확장하는 가장 기본적인 도구입니다.", "category": "modeling" },
+      { "keys": "Alt + E", "action": "Extrude Along Normals (면 방향으로 돌출)", "category": "modeling" },
+      { "keys": "Ctrl + R", "action": "Loop Cut (루프 분할)", "detail": "오브젝트에 새로운 엣지 루프를 추가하여 면을 분할합니다. 마우스 휠로 분할 수를 조절할 수 있습니다.", "category": "modeling" },
+      { "keys": "I", "action": "Inset (면 안쪽에 새 면)", "detail": "선택한 면 안쪽에 한 단계 작은 면을 만듭니다. 디테일 추가나 Extrude 전 준비 단계로 활용합니다.", "category": "modeling" },
+      { "keys": "Ctrl + B", "action": "Bevel (모서리 둥글게)", "detail": "선택한 엣지를 둥글게 깎아 부드러운 모서리를 만듭니다. 마우스 휠로 세그먼트 수를 늘릴 수 있습니다.", "category": "modeling" },
+      { "keys": "Ctrl + 1/2/3", "action": "Subdivision Level 빠른 설정", "detail": "Subdivision Surface Modifier의 레벨을 빠르게 1/2/3으로 설정합니다. 숫자가 클수록 면이 부드러워지지만 무거워집니다.", "category": "modifier" },
+      { "keys": "Shift + E", "action": "Edge Crease (날카로운 모서리 유지)", "detail": "Subdivision Surface 적용 시 특정 엣지의 날카로움을 유지합니다. 값이 1이면 완전히 날카롭고, 0이면 부드럽습니다.", "category": "modeling" },
+      { "keys": "Ctrl + A", "action": "Apply All Transforms (Modifier 전에 필수)", "detail": "위치/회전/스케일 값을 현재 상태로 확정합니다. Modifier 적용이나 내보내기 전에 반드시 실행해야 올바른 결과가 나옵니다.", "category": "object" },
+      { "keys": "S + X + 0", "action": "Mirror 중심선 X축 0 정렬", "detail": "선택한 버텍스의 X좌표를 0으로 만들어 Mirror Modifier의 중심선에 정확히 맞춥니다. 대칭 모델링의 필수 기법입니다.", "category": "modifier" }
     ],
     "assignment": {
       "title": "Edit + Modifier 로봇",
@@ -644,11 +691,13 @@ const CURRICULUM = [
     },
     "mistakes": [
       "중심선이 벌어짐 → Mirror의 Clipping 확인",
+      "Subdivision 추가했더니 형태가 다 뭉개짐 → 날카운 모서리 옆에 Support Loop 추가 (Ctrl+R)",
       "너무 둥글어짐 → Subdivision Level 낮추고 Shift+E 써보기",
       "두께나 간격이 이상함 → Ctrl+A로 Scale 먼저 정리",
       "Modifier를 너무 일찍 Apply함 → Apply는 마지막에만",
-      "Boolean이 이상함 → 커터가 실제로 겹치는지 확인",
-      "음영이 지저분함 → Weighted Normal 추가해보기"
+      "Boolean이 이상함 → 커터가 실제로 겹치는지 확인, Exact 모드 시도",
+      "음영이 지저분함 → Weighted Normal 추가해보기",
+      "Mirror 순서가 이상함 → Mirror는 스택 맨 위 (Subdivision 아래)"
     ],
     "docs": [
       {
@@ -682,6 +731,10 @@ const CURRICULUM = [
       {
         "title": "Simple Deform",
         "url": "https://docs.blender.org/manual/en/latest/modeling/modifiers/deform/simple_deform.html"
+      },
+      {
+        "title": "Skin Modifier",
+        "url": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/skin.html"
       },
       {
         "title": "Decimate",
@@ -728,6 +781,10 @@ const CURRICULUM = [
       {
         "title": "반복 파츠 만들기",
         "hint": "Cube 또는 Cylinder → Array로 6~10개 반복"
+      },
+      {
+        "title": "Skin Modifier로 손가락 만들기",
+        "hint": "점과 선만으로 뼈대를 만들고 Skin으로 두께 추가 → Ctrl+A로 각 정점 굵기 조절"
       },
       {
         "title": "하드서피스 음영 정리",
@@ -914,26 +971,11 @@ const CURRICULUM = [
       }
     ],
     "shortcuts": [
-      {
-        "keys": "I",
-        "action": "Inset (면 안쪽에 디테일 시작점 만들기)"
-      },
-      {
-        "keys": "Ctrl + B",
-        "action": "Bevel (특정 모서리 직접 다듬기)"
-      },
-      {
-        "keys": "Ctrl + A",
-        "action": "Apply All Transforms (Modifier 전 수치 정리)"
-      },
-      {
-        "keys": "P",
-        "action": "Separate (선택 파츠 분리)"
-      },
-      {
-        "keys": "Ctrl + J",
-        "action": "Join (오브젝트 합치기)"
-      }
+      { "keys": "I", "action": "Inset (면 안쪽에 디테일 시작점 만들기)", "detail": "복잡한 제품 표면에 버튼, 홈, 장식 등의 디테일을 추가할 때 먼저 Inset으로 면을 분리합니다.", "category": "modeling" },
+      { "keys": "Ctrl + B", "action": "Bevel (특정 모서리 직접 다듬기)", "detail": "Subdivision 없이 특정 엣지만 둥글게 처리할 때 사용합니다. 제품의 라운드 처리에 적합합니다.", "category": "modeling" },
+      { "keys": "Ctrl + A", "action": "Apply All Transforms (Modifier 전 수치 정리)", "detail": "스케일이나 회전 값을 정리하여 Modifier가 의도대로 작동하게 합니다. 특히 Mirror, Array 적용 전 필수입니다.", "category": "object" },
+      { "keys": "P", "action": "Separate (선택 파츠 분리)", "detail": "Edit Mode에서 선택한 면/선/점을 별도 오브젝트로 분리합니다. 제품의 부품별 관리에 사용합니다.", "category": "object" },
+      { "keys": "Ctrl + J", "action": "Join (오브젝트 합치기)", "detail": "여러 오브젝트를 하나로 합칩니다. 마지막에 선택한 오브젝트가 Active가 되고 나머지가 그 안으로 합쳐집니다.", "category": "object" }
     ],
     "assignment": {
       "title": "로봇 디테일 정리",
@@ -1190,38 +1232,14 @@ const CURRICULUM = [
       "Import 메쉬가 너무 작거나 큼 → S로 크기 맞추고 Ctrl+A로 Scale 적용"
     ],
     "shortcuts": [
-      {
-        "keys": "Ctrl + Tab",
-        "action": "Sculpt Mode 전환"
-      },
-      {
-        "keys": "F",
-        "action": "브러시 크기 조절"
-      },
-      {
-        "keys": "Shift + F",
-        "action": "브러시 강도 조절"
-      },
-      {
-        "keys": "Ctrl (hold)",
-        "action": "브러시 반전 (파내기)"
-      },
-      {
-        "keys": "Shift (hold)",
-        "action": "Smooth 임시 전환"
-      },
-      {
-        "keys": "Ctrl + R (Sculpt)",
-        "action": "Voxel Remesh"
-      },
-      {
-        "keys": "Ctrl + Z",
-        "action": "되돌리기"
-      },
-      {
-        "keys": "X",
-        "action": "Draw 브러시 빠른 선택"
-      }
+      { "keys": "Ctrl + Tab", "action": "Sculpt Mode 전환", "detail": "Object Mode에서 Sculpt Mode로 빠르게 전환합니다. 파이 메뉴가 나타나면 Sculpt Mode를 선택합니다.", "category": "general" },
+      { "keys": "F", "action": "브러시 크기 조절", "detail": "F를 누른 채 마우스를 좌우로 움직여 브러시 크기를 실시간으로 조절합니다. 넓은 면은 크게, 디테일은 작게.", "category": "sculpt" },
+      { "keys": "Shift + F", "action": "브러시 강도 조절", "detail": "Shift+F를 누른 채 마우스를 움직여 브러시 압력(Strength)을 조절합니다. 미세한 표현에는 낮은 강도를 사용합니다.", "category": "sculpt" },
+      { "keys": "Ctrl (hold)", "action": "브러시 반전 (파내기)", "detail": "Ctrl을 누르고 있으면 현재 브러시의 효과가 반전됩니다. Draw 브러시는 올리기 → 파내기로 바뀝니다.", "category": "sculpt" },
+      { "keys": "Shift (hold)", "action": "Smooth 임시 전환", "detail": "Shift를 누르고 있으면 현재 브러시와 무관하게 임시로 Smooth 브러시로 전환됩니다. 울퉁불퉁한 표면을 다듬을 때 사용합니다.", "category": "sculpt" },
+      { "keys": "Ctrl + R (Sculpt)", "action": "Voxel Remesh", "category": "sculpt" },
+      { "keys": "Ctrl + Z", "action": "되돌리기", "detail": "직전 작업을 취소합니다. Sculpt에서 브러시 스트로크를 잘못했을 때 바로 되돌릴 수 있습니다. 여러 번 눌러 연속 취소 가능.", "category": "general" },
+      { "keys": "X", "action": "Draw 브러시 빠른 선택", "category": "sculpt" }
     ],
     "docs": [
       {
@@ -1455,34 +1473,13 @@ const CURRICULUM = [
       "여러 Material 할당이 안 됨 → Edit Mode에서 면을 선택한 뒤 Assign 버튼"
     ],
     "shortcuts": [
-      {
-        "keys": "Z",
-        "action": "Shading 모드 전환 파이 메뉴"
-      },
-      {
-        "keys": "Shift + A",
-        "action": "Shader Editor 노드 추가"
-      },
-      {
-        "keys": "Ctrl + Shift + Click",
-        "action": "Viewer Node 연결 (미리보기)"
-      },
-      {
-        "keys": "Ctrl + T",
-        "action": "Texture Mapping 자동 연결"
-      },
-      {
-        "keys": "M",
-        "action": "노드 Frame 그룹 만들기"
-      },
-      {
-        "keys": "H",
-        "action": "노드 숨기기/접기"
-      },
-      {
-        "keys": "Ctrl + Right Click",
-        "action": "노드 연결선 끊기"
-      }
+      { "keys": "Z", "action": "Shading 모드 전환 파이 메뉴", "detail": "Wireframe, Solid, Material Preview, Rendered 네 가지 뷰포트 셰이딩 모드를 파이 메뉴로 빠르게 전환합니다.", "category": "material" },
+      { "keys": "Shift + A", "action": "Shader Editor 노드 추가", "detail": "Shader Editor에서 새로운 노드를 추가합니다. 텍스처, 컬러, 수학 연산 등 다양한 노드를 검색하여 넣을 수 있습니다.", "category": "material" },
+      { "keys": "Ctrl + Shift + Click", "action": "Viewer Node 연결", "detail": "노드를 Ctrl+Shift+클릭하면 Viewer Node가 자동 연결되어 해당 노드의 출력을 미리 볼 수 있습니다. 디버깅에 필수입니다.", "category": "material" },
+      { "keys": "Ctrl + T", "action": "Texture Mapping 자동 연결", "detail": "Image Texture 노드에 Mapping + Texture Coordinate 노드를 자동으로 연결합니다. 텍스처 위치/크기/회전 조절이 가능해집니다.", "category": "material" },
+      { "keys": "M", "action": "Frame 그룹 만들기", "detail": "선택한 노드들을 Frame으로 묶어 정리합니다. 복잡한 노드 트리를 기능별로 그룹화하여 가독성을 높입니다.", "category": "general" },
+      { "keys": "H", "action": "노드 숨기기/접기", "detail": "선택한 노드를 접어서 컴팩트하게 만듭니다. 사용하지 않는 소켓이 숨겨져 노드 트리가 깔끔해집니다.", "category": "general" },
+      { "keys": "Ctrl + Right Click", "action": "노드 연결선 끊기", "category": "material" }
     ],
     "docs": [
       {
@@ -1713,34 +1710,13 @@ const CURRICULUM = [
       "연결이 안 됨 → UV Map 이름이 Material과 동일한지 확인"
     ],
     "shortcuts": [
-      {
-        "keys": "U",
-        "action": "UV Unwrap 메뉴"
-      },
-      {
-        "keys": "Ctrl + E → Mark Seam",
-        "action": "UV Seam 지정"
-      },
-      {
-        "keys": "Ctrl + E → Clear Seam",
-        "action": "UV Seam 제거"
-      },
-      {
-        "keys": "L",
-        "action": "UV Editor에서 Island 선택"
-      },
-      {
-        "keys": "P",
-        "action": "UV Pin 고정"
-      },
-      {
-        "keys": "A",
-        "action": "UV 전체 선택"
-      },
-      {
-        "keys": "S + X/Y + 0",
-        "action": "UV Island 축 정렬"
-      }
+      { "keys": "U", "action": "UV Unwrap 메뉴", "detail": "Edit Mode에서 UV 매핑 메뉴를 엽니다. Smart UV Project, Unwrap, Cube Projection 등 다양한 언랩 방식을 선택합니다.", "category": "uv" },
+      { "keys": "Ctrl + E → Mark Seam", "action": "UV Seam 지정", "detail": "선택한 엣지를 UV Seam으로 지정합니다. 전개도의 절개선 역할로, 어디서 잘라 펼칠지 결정합니다.", "category": "uv" },
+      { "keys": "Ctrl + E → Clear Seam", "action": "UV Seam 제거", "category": "uv" },
+      { "keys": "L", "action": "UV Editor에서 Island 선택", "detail": "UV Editor에서 커서 아래의 UV Island(펼쳐진 면 그룹) 전체를 한번에 선택합니다.", "category": "uv" },
+      { "keys": "P", "action": "UV Pin 고정", "detail": "선택한 UV 정점을 고정하여 다시 Unwrap해도 위치가 변하지 않게 합니다. 부분 수정 시 유용합니다.", "category": "uv" },
+      { "keys": "A", "action": "UV 전체 선택", "detail": "UV Editor의 모든 UV 정점을 선택합니다. 전체 Island를 한번에 이동/스케일할 때 사용합니다.", "category": "uv" },
+      { "keys": "S + X/Y + 0", "action": "UV Island 정렬", "detail": "UV 정점을 X축 또는 Y축 방향으로 일렬 정렬합니다. 깔끔한 UV 레이아웃을 만드는 데 필수적입니다.", "category": "uv" }
     ],
     "docs": [
       {
@@ -2028,30 +2004,12 @@ const CURRICULUM = [
       "카메라 뷰가 안 바뀜 → Numpad 0이 아닌 일반 0을 누른 건 아닌지 확인"
     ],
     "shortcuts": [
-      {
-        "keys": "Shift + A → Light",
-        "action": "조명 추가"
-      },
-      {
-        "keys": "Z → Rendered",
-        "action": "렌더 미리보기"
-      },
-      {
-        "keys": "Shift + Z",
-        "action": "Rendered/Solid 토글"
-      },
-      {
-        "keys": "Numpad 0",
-        "action": "카메라 뷰 전환"
-      },
-      {
-        "keys": "Ctrl + Numpad 0",
-        "action": "현재 시점 → 카메라"
-      },
-      {
-        "keys": "N → Camera Lock to View",
-        "action": "카메라 따라다니기"
-      }
+      { "keys": "Shift + A → Light", "action": "조명 추가", "detail": "Point, Sun, Spot, Area 네 종류의 조명을 씬에 추가합니다. 조명 종류에 따라 빛의 퍼짐과 그림자가 달라집니다.", "category": "render" },
+      { "keys": "Z → Rendered", "action": "렌더 미리보기", "detail": "Z 파이 메뉴에서 Rendered를 선택하면 뷰포트에서 실시간 렌더 결과를 확인합니다. 조명과 재질을 바로 확인 가능합니다.", "category": "render" },
+      { "keys": "Shift + Z", "action": "Rendered/Solid 토글", "detail": "Rendered 뷰와 Solid 뷰를 빠르게 토글합니다. 렌더 결과 확인 후 바로 모델링 뷰로 돌아갈 때 편리합니다.", "category": "render" },
+      { "keys": "Numpad 0", "action": "카메라 뷰 전환", "detail": "활성 카메라 시점으로 전환합니다. 렌더링 결과물과 동일한 프레이밍을 뷰포트에서 확인합니다.", "category": "navigation" },
+      { "keys": "Ctrl + Numpad 0", "action": "현재 시점 → 카메라", "detail": "현재 보고 있는 뷰포트 시점을 활성 카메라의 위치/각도로 설정합니다. 원하는 구도를 잡은 뒤 카메라에 적용합니다.", "category": "navigation" },
+      { "keys": "N → Camera Lock to View", "action": "카메라 따라다니기", "category": "navigation" }
     ],
     "docs": [
       {
@@ -2272,34 +2230,13 @@ const CURRICULUM = [
       "속도가 너무 일정해서 어색 → Graph Editor에서 Ease In/Out 넣기"
     ],
     "shortcuts": [
-      {
-        "keys": "I",
-        "action": "Insert Keyframe"
-      },
-      {
-        "keys": "Alt + I",
-        "action": "Delete Keyframe"
-      },
-      {
-        "keys": "Space",
-        "action": "재생/정지"
-      },
-      {
-        "keys": "← / →",
-        "action": "이전/다음 프레임"
-      },
-      {
-        "keys": "Shift + ← / →",
-        "action": "시작/끝 프레임으로 이동"
-      },
-      {
-        "keys": "T",
-        "action": "Interpolation 변경 (Bezier/Linear)"
-      },
-      {
-        "keys": "V",
-        "action": "핸들 타입 변경 (Free/Auto)"
-      }
+      { "keys": "I", "action": "Insert Keyframe", "detail": "현재 프레임에 키프레임을 삽입합니다. 위치, 회전, 스케일 등 애니메이션할 속성을 선택하는 메뉴가 나타납니다.", "category": "general" },
+      { "keys": "Alt + I", "action": "Delete Keyframe", "detail": "현재 프레임의 키프레임을 삭제합니다. 잘못 찍은 키프레임이나 불필요한 키프레임을 정리할 때 사용합니다.", "category": "general" },
+      { "keys": "Space", "action": "재생/정지", "detail": "타임라인의 애니메이션을 재생하거나 정지합니다. 현재 프레임부터 재생이 시작됩니다.", "category": "general" },
+      { "keys": "← / →", "action": "이전/다음 프레임", "detail": "타임라인에서 한 프레임씩 앞뒤로 이동합니다. 키프레임 간의 변화를 정밀하게 확인할 때 사용합니다.", "category": "general" },
+      { "keys": "Shift + ← / →", "action": "시작/끝 프레임", "detail": "타임라인의 맨 처음 또는 맨 끝 프레임으로 이동합니다. 빠른 탐색에 유용합니다.", "category": "general" },
+      { "keys": "T", "action": "Interpolation 변경", "detail": "키프레임 간 보간 방식을 변경합니다. Linear(균일), Bezier(부드럽게), Constant(즉시 전환) 등을 선택합니다.", "category": "general" },
+      { "keys": "V", "action": "핸들 타입 변경 (Free/Auto)", "category": "general" }
     ],
     "docs": [
       {
@@ -2503,34 +2440,13 @@ const CURRICULUM = [
       "메쉬가 안 따라옴 → Parent가 제대로 됐는지 Outliner에서 확인"
     ],
     "shortcuts": [
-      {
-        "keys": "Shift + A → Armature",
-        "action": "뼈대 추가"
-      },
-      {
-        "keys": "E",
-        "action": "Bone 확장 (Edit Mode)"
-      },
-      {
-        "keys": "Ctrl + P",
-        "action": "Armature Deform 연결"
-      },
-      {
-        "keys": "Alt + P",
-        "action": "Parent 해제"
-      },
-      {
-        "keys": "Ctrl + Tab",
-        "action": "Pose Mode 전환"
-      },
-      {
-        "keys": "Alt + R",
-        "action": "Rotation 초기화 (Pose)"
-      },
-      {
-        "keys": "Alt + G",
-        "action": "Location 초기화 (Pose)"
-      }
+      { "keys": "Shift + A → Armature", "action": "뼈대 추가", "detail": "씬에 Armature(뼈대)를 추가합니다. 캐릭터나 로봇 제품의 관절 움직임을 만들기 위한 첫 단계입니다.", "category": "rigging" },
+      { "keys": "E", "action": "Bone 확장 (Edit Mode)", "detail": "Armature Edit Mode에서 선택한 Bone의 끝에서 새로운 Bone을 연장합니다. 팔→손→손가락 같은 연쇄 구조를 만듭니다.", "category": "rigging" },
+      { "keys": "Ctrl + P", "action": "Armature Deform 연결", "detail": "메시 오브젝트를 Armature에 연결합니다. Automatic Weights를 선택하면 뼈대 영향 범위가 자동 계산됩니다.", "category": "rigging" },
+      { "keys": "Alt + P", "action": "Parent 해제", "detail": "오브젝트 간의 부모-자식 관계를 해제합니다. Armature 연결을 끊거나 그룹 관계를 풀 때 사용합니다.", "category": "rigging" },
+      { "keys": "Ctrl + Tab", "action": "Pose Mode 전환", "detail": "Armature를 선택한 상태에서 Pose Mode로 전환합니다. Bone을 움직여 포즈를 잡고 키프레임을 찍을 수 있습니다.", "category": "rigging" },
+      { "keys": "Alt + R", "action": "Rotation 초기화 (Pose)", "category": "rigging" },
+      { "keys": "Alt + G", "action": "Location 초기화 (Pose)", "category": "rigging" }
     ],
     "docs": [
       {
@@ -2723,26 +2639,11 @@ const CURRICULUM = [
       "관절이 이상하게 꺾임 → Mixamo 마커 위치를 더 정확히 맞추고 재시도"
     ],
     "shortcuts": [
-      {
-        "keys": "Ctrl + J",
-        "action": "오브젝트 합치기 (Join)"
-      },
-      {
-        "keys": "Ctrl + A → All Transforms",
-        "action": "Transform 적용"
-      },
-      {
-        "keys": "M (Merge by Distance)",
-        "action": "중복 정점 제거"
-      },
-      {
-        "keys": "Space",
-        "action": "애니메이션 재생/정지"
-      },
-      {
-        "keys": "Shift + N",
-        "action": "법선 재계산"
-      }
+      { "keys": "Ctrl + J", "action": "오브젝트 합치기 (Join)", "detail": "여러 파츠로 나뉜 오브젝트를 하나로 합칩니다. 최종 제출이나 내보내기 전에 정리 용도로 사용합니다.", "category": "object" },
+      { "keys": "Ctrl + A → All Transforms", "action": "Transform 적용", "detail": "오브젝트의 위치/회전/스케일을 현재 값으로 확정합니다. 내보내기(FBX 등) 전에 필수로 적용합니다.", "category": "object" },
+      { "keys": "Shift + Ctrl + M", "action": "Merge by Distance", "detail": "일정 거리 이내의 겹치는 버텍스를 자동 병합합니다. Join 후 이음새의 중복 정점을 정리할 때 사용합니다.", "category": "object" },
+      { "keys": "Space", "action": "애니메이션 재생/정지", "category": "general" },
+      { "keys": "Shift + N", "action": "법선 재계산", "category": "modeling" }
     ],
     "docs": [
       {
@@ -2956,30 +2857,12 @@ const CURRICULUM = [
       "노이즈가 심함 → Cycles Samples 올리거나 Denoising 켜기"
     ],
     "shortcuts": [
-      {
-        "keys": "F12",
-        "action": "이미지 렌더링"
-      },
-      {
-        "keys": "Ctrl + F12",
-        "action": "애니메이션 렌더링"
-      },
-      {
-        "keys": "F11",
-        "action": "마지막 렌더 결과 보기"
-      },
-      {
-        "keys": "Esc",
-        "action": "렌더 중지"
-      },
-      {
-        "keys": "Z → Rendered",
-        "action": "실시간 렌더 미리보기"
-      },
-      {
-        "keys": "Ctrl + B (카메라 뷰)",
-        "action": "렌더 영역 지정 (부분 렌더)"
-      }
+      { "keys": "F12", "action": "이미지 렌더링", "detail": "현재 카메라 뷰를 기준으로 한 장의 이미지를 렌더링합니다. 결과물은 별도 창에서 확인하고 저장합니다.", "category": "render" },
+      { "keys": "Ctrl + F12", "action": "애니메이션 렌더링", "detail": "설정된 프레임 범위의 전체 애니메이션을 렌더링합니다. Output 설정에서 저장 경로와 파일 형식을 미리 지정해야 합니다.", "category": "render" },
+      { "keys": "F11", "action": "마지막 렌더 결과 보기", "detail": "가장 최근에 렌더링한 이미지를 다시 표시합니다. 렌더 창을 닫았더라도 다시 확인할 수 있습니다.", "category": "render" },
+      { "keys": "Esc", "action": "렌더 중지", "category": "render" },
+      { "keys": "Z → Rendered", "action": "실시간 렌더 미리보기", "detail": "뷰포트에서 Eevee/Cycles 렌더 엔진의 결과를 실시간으로 확인합니다. 조명과 재질 조정 시 즉각적인 피드백을 받습니다.", "category": "render" },
+      { "keys": "Ctrl + B (카메라 뷰)", "action": "렌더 영역 지정", "detail": "카메라 뷰에서 특정 영역만 렌더링하도록 지정합니다. 전체 렌더 대신 일부분만 빠르게 확인할 때 유용합니다.", "category": "render" }
     ],
     "docs": [
       {
@@ -3137,5 +3020,24 @@ const CURRICULUM = [
   }
 ];
 
+// ============================================================
+// 단축키 카테고리 정의
+// ============================================================
+const SHORTCUT_CATEGORIES = {
+  general:    { label: "일반",      order: 0 },
+  navigation: { label: "화면 조작", order: 1 },
+  transform:  { label: "기본 변형", order: 2 },
+  modeling:   { label: "모델링",    order: 3 },
+  modifier:   { label: "Modifier",  order: 4 },
+  object:     { label: "오브젝트",  order: 5 },
+  sculpt:     { label: "Sculpt",    order: 6 },
+  material:   { label: "재질",      order: 7 },
+  uv:         { label: "UV",        order: 8 },
+  rigging:    { label: "리깅",      order: 9 },
+  render:     { label: "렌더링",    order: 10 },
+};
+
 // Node.js 환경 대응
-if (typeof module !== "undefined") module.exports = CURRICULUM;
+if (typeof module !== "undefined") {
+  module.exports = { CURRICULUM, SHORTCUT_CATEGORIES };
+}
