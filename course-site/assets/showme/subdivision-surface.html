@@ -1007,6 +1007,10 @@ function initQuiz(questions) {
   // Initial draw
   var initialShape = transformShape(getShapeForLevel(0));
   draw(initialShape);
+
+  // Auto-play: 로드 시 레벨 0→1→2 자동 시연 (한 번만)
+  setTimeout(function() { setLevel(1); }, 900);
+  setTimeout(function() { setLevel(2); }, 2300);
 })();
 
 // ── Quiz Data ─────────────────────────────────

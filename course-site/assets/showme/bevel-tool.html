@@ -615,14 +615,17 @@ function initQuiz(questions) {
   var cornerX = 340;
   var cornerY = 170;
   var edgeLen = 140;
-  var bevelSize = 50;
+  var bevelSize = 0;
+  var animDone = false;
+  var animTarget = 50;
 
   function reset() {
     segments = 1;
     profile = 0.5;
+    bevelSize = 0;
+    animDone = false;
     document.getElementById("btnSegLabel").textContent = "Segments: 1";
     document.getElementById("btnProfileLabel").textContent = "Profile: 0.5";
-    draw();
   }
 
   function draw() {
@@ -855,7 +858,10 @@ function initQuiz(questions) {
   var btnProfilePlus = document.getElementById("btnProfilePlus");
   var btnProfileLabel = document.getElementById("btnProfileLabel");
 
+  function completeAnim() { animDone = true; bevelSize = animTarget; }
+
   btnSegMinus.addEventListener("click", function() {
+    completeAnim();
     if (segments > 1) {
       segments--;
       btnSegLabel.textContent = "Segments: " + segments;
@@ -864,6 +870,7 @@ function initQuiz(questions) {
   });
 
   btnSegPlus.addEventListener("click", function() {
+    completeAnim();
     if (segments < 6) {
       segments++;
       btnSegLabel.textContent = "Segments: " + segments;
@@ -872,6 +879,7 @@ function initQuiz(questions) {
   });
 
   btnProfileMinus.addEventListener("click", function() {
+    completeAnim();
     if (profile > 0.0) {
       profile = Math.round((profile - 0.1) * 10) / 10;
       if (profile < 0) profile = 0;
@@ -881,6 +889,7 @@ function initQuiz(questions) {
   });
 
   btnProfilePlus.addEventListener("click", function() {
+    completeAnim();
     if (profile < 1.0) {
       profile = Math.round((profile + 0.1) * 10) / 10;
       if (profile > 1) profile = 1;
@@ -891,7 +900,16 @@ function initQuiz(questions) {
 
   document.getElementById("btnReset").addEventListener("click", function() { reset(); });
 
-  draw();
+  // ── Animation loop ──
+  function animate() {
+    if (!animDone) {
+      bevelSize = Math.min(bevelSize + 0.55, animTarget);
+      if (bevelSize >= animTarget) { bevelSize = animTarget; animDone = true; }
+      draw();
+    }
+    requestAnimationFrame(animate);
+  }
+  animate();
 })();
 
 // ── Quiz Data ─────────────────────────────────

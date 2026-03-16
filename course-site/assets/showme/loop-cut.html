@@ -623,15 +623,18 @@ function initQuiz(questions) {
   var boxBottom = 260;
   var isoOffsetX = 60;
   var isoOffsetY = 40;
+  var scanX = boxLeft + 20;
+  var animDone = false;
 
   function reset() {
     cuts = 1;
     slideOffset = 0;
     slideMode = false;
+    animDone = false;
+    scanX = boxLeft + 20;
     document.getElementById("btnCutLabel").textContent = "분할 수: 1";
     document.getElementById("btnSlideToggle").textContent = "Edge Slide OFF";
     document.getElementById("btnSlideToggle").classList.remove("is-active");
-    draw();
   }
 
   function draw() {
@@ -740,13 +743,29 @@ function initQuiz(questions) {
       ctx.fillText("Edge Slide: " + (slideOffset > 0 ? "+" : "") + slideOffset.toFixed(2), w - 14, 22);
     }
 
+    // Scanning preview line (animation)
+    if (!animDone) {
+      ctx.strokeStyle = "rgba(245,158,11,.75)";
+      ctx.lineWidth = 2; ctx.setLineDash([5, 4]);
+      ctx.beginPath(); ctx.moveTo(scanX, boxTop); ctx.lineTo(scanX, boxBottom); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(scanX, boxTop); ctx.lineTo(scanX + isoOffsetX, boxTop - isoOffsetY); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = "rgba(245,158,11,1)";
+      ctx.beginPath(); ctx.arc(scanX, boxTop, 4, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(scanX, boxBottom, 4, 0, Math.PI * 2); ctx.fill();
+    }
+
     // Mode indicator
-    ctx.fillStyle = "rgba(255,255,255,.2)";
     ctx.font = "11px sans-serif";
     ctx.textAlign = "center";
-    if (slideMode) {
+    if (!animDone) {
+      ctx.fillStyle = "rgba(245,158,11,.55)";
+      ctx.fillText("Ctrl+R — 마우스 이동 중... (클릭하면 확정)", w / 2, h - 14);
+    } else if (slideMode) {
+      ctx.fillStyle = "rgba(255,255,255,.2)";
       ctx.fillText("좌우로 드래그하여 Edge Slide", w / 2, h - 14);
     } else {
+      ctx.fillStyle = "rgba(255,255,255,.2)";
       ctx.fillText("Ctrl+R 프리뷰 — +/- 로 분할 수 조절", w / 2, h - 14);
     }
 
@@ -777,6 +796,7 @@ function initQuiz(questions) {
   function onDown(e) {
     e.preventDefault();
     isDragging = true;
+    animDone = true;
     dragStartX = getEventPos(e).x;
   }
 
@@ -841,7 +861,20 @@ function initQuiz(questions) {
 
   document.getElementById("btnReset").addEventListener("click", function() { reset(); });
 
-  draw();
+  // ── Animation loop ──
+  function animate() {
+    if (!animDone) {
+      var targetX = (boxLeft + boxRight) / 2;
+      if (scanX < targetX) {
+        scanX = Math.min(scanX + 1.2, targetX);
+      } else {
+        animDone = true;
+      }
+      draw();
+    }
+    requestAnimationFrame(animate);
+  }
+  animate();
 })();
 
 // ── Quiz Data ─────────────────────────────────

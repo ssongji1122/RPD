@@ -844,12 +844,10 @@ function initQuiz(questions) {
     }
   }
 
-  // ── Animation loop ──
+  // ── Animation loop — one-way to 90, then stop ──
   function animate() {
-    if (!animPaused && !isDragging) {
-      extrudeAmount += animDir * 0.9;
-      if (extrudeAmount >= 90) { extrudeAmount = 90; animDir = -1; }
-      if (extrudeAmount <= 0)  { extrudeAmount = 0;  animDir =  1; }
+    if (!animPaused && !isDragging && extrudeAmount < 90) {
+      extrudeAmount = Math.min(extrudeAmount + 0.4, 90);
       draw();
     }
     requestAnimationFrame(animate);
@@ -896,7 +894,7 @@ function initQuiz(questions) {
   }
 
   function setMode(m, btn) {
-    mode = m; extrudeAmount = 0; animDir = 1; animPaused = false;
+    mode = m; extrudeAmount = 0; animPaused = false;
     if (resumeTimer) { clearTimeout(resumeTimer); resumeTimer = null; }
     allBtns.forEach(function(b) { b.classList.remove("is-active"); });
     btn.classList.add("is-active");
@@ -906,7 +904,7 @@ function initQuiz(questions) {
   btnRegion.addEventListener("click",     function() { setMode("region",     btnRegion);     });
   btnNormals.addEventListener("click",    function() { setMode("normals",    btnNormals);    });
   btnIndividual.addEventListener("click", function() { setMode("individual", btnIndividual); });
-  document.getElementById("btnReset").addEventListener("click", function() { extrudeAmount = 0; animDir = 1; animPaused = false; });
+  document.getElementById("btnReset").addEventListener("click", function() { extrudeAmount = 0; animPaused = false; });
 
   draw();
 })();
