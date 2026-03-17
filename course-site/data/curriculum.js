@@ -500,7 +500,7 @@ const CURRICULUM = [
           "Reference Image가 뷰포트에 깔려 있다",
           "기본 형태가 잡혔다"
         ],
-        "showme": ["extrude", "loop-cut", "inset", "bevel-tool"],
+        "showme": ["edit-mode-tools", "extrude", "loop-cut", "inset", "bevel-tool"],
         "link": "https://docs.blender.org/manual/en/latest/modeling/meshes/tools/extrude_region.html"
       },
       {
