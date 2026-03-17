@@ -30,6 +30,11 @@
   --radius-md:     18px;
   --radius-lg:     24px;
   --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+  /* 카드별 accent 색상 */
+  --accent-a:      #FF8C00;
+  --accent-a-soft: #FFB347;
+  --accent-b:      #5599FF;
+  --accent-b-soft: #88BBFF;
 }
 
 /* ── Reset ── */
@@ -105,9 +110,12 @@ body {
   padding: 3px 9px; border-radius: 999px;
   font-size: .72rem; font-weight: 600;
 }
-.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
-.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
-.badge-amber { background: rgba(245,158,11,.15);  color: #fbbf24; }
+.badge-blue   { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green  { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber  { background: rgba(245,158,11,.15);  color: #fbbf24; }
+.badge-red    { background: rgba(239,68,68,.15);   color: #fca5a5; }
+.badge-accent-a { background: rgba(255,140,0,.15); color: var(--accent-a-soft); }
+.badge-accent-b { background: rgba(85,153,255,.15); color: var(--accent-b-soft); }
 
 /* ── Keyboard Shortcut ── */
 .kbd {
@@ -120,41 +128,249 @@ body {
   font-family: var(--font);
 }
 
-/* ── Canvas / Demo ── */
-.demo-wrap {
+/* ── Analogy Box ── */
+.analogy {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(245,158,11,.06);
+  border: 1px solid rgba(245,158,11,.15);
+  font-size: .82rem;
+  color: #fbbf24;
+  font-style: italic;
+}
+
+/* ── Concept Card Accent Variants ── */
+.concept-card.accent-a {
+  border-color: rgba(255,140,0,.25);
+  background: rgba(255,140,0,.06);
+}
+.concept-card.accent-b {
+  border-color: rgba(85,153,255,.25);
+  background: rgba(85,153,255,.06);
+}
+
+/* ── Shortcut Reference ── */
+.shortcut-list {
+  margin-top: 16px;
+  padding: 14px 16px;
   border-radius: var(--radius-md);
   border: 1px solid var(--line);
   background: var(--surface);
-  overflow: hidden;
-  margin: 14px 0;
 }
-.demo-wrap canvas {
-  display: block; width: 100%;
+.shortcut-list h4 {
+  margin: 0 0 10px;
+  font-size: .9rem;
+  color: var(--text);
 }
-.demo-controls {
-  display: flex; gap: 8px; padding: 12px;
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: .84rem;
+  color: var(--muted-strong);
+}
+.shortcut-row + .shortcut-row {
   border-top: 1px solid var(--line);
-  flex-wrap: wrap;
 }
-.demo-hint {
-  font-size: .78rem; color: var(--muted);
-  text-align: center; padding: 6px 0 0;
+.shortcut-keys { flex-shrink: 0; }
+
+/* ══════════════════════════════════════════════════
+   Compare Table
+   ══════════════════════════════════════════════════ */
+.compare-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 16px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--line);
 }
-.demo-btn {
-  padding: 7px 14px; border-radius: 999px;
+.compare-table th,
+.compare-table td {
+  padding: 10px 14px;
+  font-size: .84rem;
+  line-height: 1.6;
+  text-align: left;
+}
+.compare-table thead th {
+  background: var(--surface-strong);
+  color: var(--text);
+  font-weight: 600;
+  font-size: .82rem;
+  border-bottom: 1px solid var(--line-strong);
+}
+.compare-table thead th:nth-child(2) { color: var(--accent-a-soft); }
+.compare-table thead th:nth-child(3) { color: var(--accent-b-soft); }
+.compare-table tbody td {
+  background: var(--surface);
+  color: var(--muted-strong);
+  border-bottom: 1px solid var(--line);
+}
+.compare-table tbody tr:last-child td { border-bottom: none; }
+.compare-table tbody td:first-child {
+  font-weight: 600;
+  color: var(--muted);
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  white-space: nowrap;
+}
+.compare-table .cell-a { border-left: 2px solid rgba(255,140,0,.3); }
+.compare-table .cell-b { border-left: 2px solid rgba(85,153,255,.3); }
+
+/* ══════════════════════════════════════════════════
+   Cause-Effect Flow
+   ══════════════════════════════════════════════════ */
+.cause-effect {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 16px 0;
+}
+.ce-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0;
+}
+.ce-cause, .ce-result {
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-size: .84rem;
+  line-height: 1.6;
+}
+.ce-cause {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--muted-strong);
+  text-align: right;
+}
+.ce-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  color: var(--muted);
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+.ce-result {
+  border: 1px solid var(--line);
+  color: var(--text);
+  font-weight: 500;
+}
+.ce-result.result-a {
+  background: rgba(255,140,0,.08);
+  border-color: rgba(255,140,0,.25);
+  color: var(--accent-a-soft);
+}
+.ce-result.result-b {
+  background: rgba(85,153,255,.08);
+  border-color: rgba(85,153,255,.25);
+  color: var(--accent-b-soft);
+}
+.ce-result.result-warn {
+  background: rgba(239,68,68,.08);
+  border-color: rgba(239,68,68,.25);
+  color: #fca5a5;
+}
+.ce-result.result-success {
+  background: rgba(16,185,129,.08);
+  border-color: rgba(16,185,129,.25);
+  color: var(--success-soft);
+}
+.ce-label {
+  font-size: .72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin-bottom: 4px;
+  display: block;
+}
+.ce-cause .ce-label { color: var(--muted); }
+.ce-result.result-a .ce-label { color: rgba(255,140,0,.6); }
+.ce-result.result-b .ce-label { color: rgba(85,153,255,.6); }
+
+/* ══════════════════════════════════════════════════
+   Scenario Selector
+   ══════════════════════════════════════════════════ */
+.scenario-nav {
+  display: flex; gap: 6px;
+  padding: 0 0 14px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.scenario-nav::-webkit-scrollbar { display: none; }
+.scenario-btn {
+  padding: 8px 14px; border-radius: 999px;
   border: 1px solid var(--line-strong);
   background: rgba(255,255,255,.04);
   color: var(--muted-strong);
-  font: inherit; font-size: .82rem;
+  font: inherit; font-size: .8rem;
   cursor: pointer;
-  transition: background .14s, color .14s;
+  transition: background .14s, color .14s, border-color .14s;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
-.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
-.demo-btn.is-active {
+.scenario-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.scenario-btn.is-active {
   background: rgba(10,132,255,.14);
   color: var(--key-soft);
   border-color: rgba(10,132,255,.3);
 }
+.scenario-desc {
+  font-size: .84rem;
+  color: var(--muted-strong);
+  margin-bottom: 10px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  line-height: 1.7;
+}
+
+/* ══════════════════════════════════════════════════
+   Before-After Split
+   ══════════════════════════════════════════════════ */
+.before-after {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  margin: 14px 0;
+}
+.ba-panel {
+  padding: 14px;
+  background: var(--surface);
+  position: relative;
+}
+.ba-panel + .ba-panel {
+  border-left: 1px solid var(--line-strong);
+}
+.ba-label {
+  font-size: .7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+.ba-label.label-before {
+  background: rgba(239,68,68,.12);
+  color: #fca5a5;
+}
+.ba-label.label-after {
+  background: rgba(16,185,129,.12);
+  color: var(--success-soft);
+}
+.ba-panel canvas { display: block; width: 100%; }
 
 /* ── Usage Grid ── */
 .usage-grid {
@@ -177,6 +393,8 @@ body {
   color: var(--muted-strong); font-size: .85rem;
   line-height: 1.8;
 }
+.usage-card.accent-a h4 { color: var(--accent-a-soft); }
+.usage-card.accent-b h4 { color: var(--accent-b-soft); }
 
 /* ── Tip Box ── */
 .tip-box {
@@ -190,10 +408,20 @@ body {
 }
 .tip-box strong { color: var(--key-soft); }
 
-/* ── Combo Section ── */
-.combo-section {
-  margin-top: 18px;
+/* ── Warn Box ── */
+.warn-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(239,68,68,.2);
+  background: rgba(239,68,68,.06);
+  padding: 14px 16px;
+  margin-top: 10px;
+  font-size: .86rem;
+  color: var(--muted-strong);
 }
+.warn-box strong { color: #fca5a5; }
+
+/* ── Combo Section ── */
+.combo-section { margin-top: 18px; }
 .combo-section h4 {
   margin: 0 0 10px;
   font-size: .92rem;
@@ -222,42 +450,11 @@ body {
   line-height: 1.5;
 }
 
-/* ── Shortcut Reference ── */
-.shortcut-list {
-  margin-top: 16px;
-  padding: 14px 16px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--line);
-  background: var(--surface);
-}
-.shortcut-list h4 {
-  margin: 0 0 10px;
-  font-size: .9rem;
-  color: var(--text);
-}
-.shortcut-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 6px 0;
-  font-size: .84rem;
-  color: var(--muted-strong);
-}
-.shortcut-row + .shortcut-row {
+/* ── Section Divider ── */
+.section-divider {
+  border: none;
   border-top: 1px solid var(--line);
-}
-.shortcut-keys {
-  flex-shrink: 0;
-}
-.analogy {
-  margin-top: 8px;
-  padding: 10px 14px;
-  border-radius: var(--radius-sm);
-  background: rgba(245,158,11,.06);
-  border: 1px solid rgba(245,158,11,.15);
-  font-size: .82rem;
-  color: #fbbf24;
-  font-style: italic;
+  margin: 18px 0;
 }
 
 /* ── Quiz ── */
@@ -355,6 +552,13 @@ body {
   .tabs { padding: 0 8px; }
   .tab { padding: 10px 12px; font-size: .8rem; }
   .panel { padding: 16px 12px; }
+  .ce-row { grid-template-columns: 1fr; gap: 4px; }
+  .ce-cause { text-align: left; }
+  .ce-arrow { transform: rotate(90deg); padding: 4px 0; }
+  .before-after { grid-template-columns: 1fr; }
+  .ba-panel + .ba-panel { border-left: none; border-top: 1px solid var(--line-strong); }
+  .compare-table { font-size: .78rem; }
+  .compare-table th, .compare-table td { padding: 8px 10px; }
 }
 </style>
 </head>
@@ -370,25 +574,29 @@ body {
 
 <!-- TAB 1: 개념 이해 -->
 <section class="panel is-active" id="panel-concept" role="tabpanel">
+  <p style="font-size:.9rem; color:var(--muted-strong); margin:0 0 14px;">
+    Subdivision Surface = 폴리곤을 수학적으로 세분화하여 부드럽게 만드는 모디파이어. Low-Poly 메쉬에서 고해상도 곡면을 생성합니다.
+  </p>
   <div class="concept-grid">
     <div class="concept-card">
-      <h3>Subdivision Surface란?</h3>
-      <p>메쉬를 세분화하여 부드럽게 만드는 모디파이어입니다. 각 면을 4개로 나누고 꼭짓점을 평균화하여 곡면을 생성합니다. Catmull-Clark 알고리즘을 사용합니다.</p>
-      <div class="analogy">각진 종이접기를 부드럽게 풍선처럼 부풀리는 것</div>
+      <h3><span class="badge badge-blue">알고리즘</span> Catmull-Clark</h3>
+      <p>각 폴리곤 페이스를 4개로 분할하고, 꼭짓점을 인근 점들의 가중 평균으로 이동시킵니다. 사각형 메쉬에 최적화된 방식입니다.</p>
+      <div class="analogy">각진 종이접기를 수학적으로 부풀려 매끄러운 풍선으로 만드는 것</div>
     </div>
-    <div class="concept-card">
-      <h3>Viewport vs Render 레벨</h3>
-      <p>Viewport 레벨은 작업 중 프리뷰용으로 보통 1~2를 사용합니다. Render 레벨은 최종 출력용으로 보통 2~3을 사용합니다. 레벨이 높을수록 부드럽지만 무거워집니다.</p>
+    <div class="concept-card accent-a">
+      <h3><span class="badge badge-accent-a">레벨</span> Viewport vs Render</h3>
+      <p>Viewport는 작업 속도를 위해 낮게, Render는 최종 품질을 위해 높게 설정합니다.</p>
       <ul>
-        <li>레벨 1: 면 수 4배</li>
-        <li>레벨 2: 면 수 16배</li>
-        <li>레벨 3: 면 수 64배</li>
+        <li>Level 0: 원본 (변화 없음)</li>
+        <li>Level 1: 폴리곤 4배</li>
+        <li>Level 2: 폴리곤 16배</li>
+        <li>Level 3: 폴리곤 64배</li>
       </ul>
     </div>
-    <div class="concept-card">
-      <h3>Crease (접기 강도)</h3>
-      <p><span class="kbd">Shift</span>+<span class="kbd">E</span>로 모서리에 Crease 값(0~1)을 설정합니다. 값이 1이면 해당 모서리가 날카롭게 유지됩니다. Edge Mean Crease로 Subdivision에서도 형태를 제어할 수 있습니다.</p>
-      <div class="analogy">부풀어 오르는 풍선에서 실로 꽉 묶은 부분만 날카롭게 남는 것</div>
+    <div class="concept-card accent-b">
+      <h3><span class="badge badge-accent-b">기술</span> Crease 엣지</h3>
+      <p>엣지를 선택 후 <span class="kbd">Shift</span>+<span class="kbd">E</span>로 Crease 값(0~1)을 설정합니다. 값이 1이면 Subdivision이 올라가도 그 모서리는 날카롭게 유지됩니다.</p>
+      <div class="analogy">풍선에서 실로 꽉 묶인 부분만 날카롭게 남는 것</div>
     </div>
   </div>
 
@@ -396,15 +604,15 @@ body {
     <h4>주요 단축키</h4>
     <div class="shortcut-row">
       <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">1</span> / <span class="kbd">2</span> / <span class="kbd">3</span></span>
-      <span>Subdivision 레벨 1/2/3 바로 적용</span>
+      <span>Subdivision 레벨 1/2/3 바로 적용 (오브젝트 모드)</span>
     </div>
     <div class="shortcut-row">
       <span class="shortcut-keys"><span class="kbd">Shift</span> + <span class="kbd">E</span></span>
-      <span>선택한 모서리에 Crease 설정</span>
+      <span>선택한 엣지에 Crease 값 설정 (Edge 모드)</span>
     </div>
     <div class="shortcut-row">
-      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">E</span> &rarr; Mark Sharp</span>
-      <span>날카로운 모서리 표시</span>
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">A</span> → Apply Scale</span>
+      <span>Subdivision 적용 전 스케일 초기화 필수</span>
     </div>
   </div>
 
@@ -417,39 +625,55 @@ body {
 
 <!-- TAB 2: 시각적 비교 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    버튼을 눌러 Subdivision 레벨에 따른 메쉬 변화를 확인하세요. Crease가 적용된 모서리(주황색)는 날카롭게 유지됩니다.
-  </p>
-  <div class="demo-wrap">
-    <canvas id="demoCanvas" width="680" height="300"></canvas>
-    <div class="demo-controls">
-      <button class="demo-btn is-active" id="btnLevel0">Level 0 (원본)</button>
-      <button class="demo-btn" id="btnLevel1">Level 1</button>
-      <button class="demo-btn" id="btnLevel2">Level 2</button>
-      <button class="demo-btn" id="btnCrease">Crease 표시</button>
-    </div>
+  <div class="scenario-nav" id="scenarioNav">
+    <button class="scenario-btn is-active" data-scene="level0">Level 0→1: 첫 세분화</button>
+    <button class="scenario-btn" data-scene="level2">Level 1→2: 더욱 부드럽게</button>
+    <button class="scenario-btn" data-scene="crease">Crease: 날카로운 엣지 유지</button>
   </div>
-  <p class="demo-hint">각 레벨에서 면이 4배씩 늘어나며 점점 부드러워집니다. Crease=1인 모서리는 레벨이 올라가도 날카롭게 유지됩니다.</p>
+  <div class="scenario-desc" id="sceneDesc">기본 8각형 메쉬에 Level 1 Subdivision을 적용합니다. 각 면이 4개로 분할되어 폴리곤 수가 4배가 됩니다.</div>
+  <div class="before-after" id="baWrap">
+    <div class="ba-panel"><span class="ba-label label-before">BEFORE</span><canvas id="cvBefore" width="320" height="220"></canvas></div>
+    <div class="ba-panel"><span class="ba-label label-after">AFTER</span><canvas id="cvAfter" width="320" height="220"></canvas></div>
+  </div>
+  <div class="cause-effect" id="ceFlow"></div>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->
 <section class="panel" id="panel-when" role="tabpanel">
   <div class="usage-grid">
-    <div class="usage-card">
-      <h4>Subdivision이 필요할 때</h4>
+    <div class="usage-card accent-a">
+      <h4>유기적 모델링</h4>
       <ul>
-        <li>유기적 캐릭터</li>
-        <li>부드러운 가구</li>
-        <li>자동차 보디</li>
-        <li>동물/생물</li>
+        <li>캐릭터 얼굴 / 신체 모델링</li>
+        <li>동물, 생물 형태</li>
+        <li>부드러운 가구 / 쿠션</li>
+        <li>자동차 차체 곡면</li>
+      </ul>
+    </div>
+    <div class="usage-card accent-b">
+      <h4>Hard Surface + Crease</h4>
+      <ul>
+        <li>칼날, 메탈 엣지 유지</li>
+        <li>로봇, 메카 부품의 날카로운 경계</li>
+        <li>헬멧, 방패 등 Crease 혼합</li>
+        <li>Support Edge 대신 Crease 활용</li>
       </ul>
     </div>
     <div class="usage-card">
-      <h4>Subdivision을 안 쓰는 경우</h4>
+      <h4>렌더 품질 설정</h4>
       <ul>
-        <li>건축물 (각진 형태)</li>
-        <li>저폴리 스타일</li>
-        <li>이미 폴리곤이 많은 모델</li>
+        <li>Viewport: 1~2 레벨 (작업 속도)</li>
+        <li>Render: 2~3 레벨 (최종 품질)</li>
+        <li>배경 오브젝트: Viewport 0, Render 1</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>Subdivision 안 쓰는 경우</h4>
+      <ul>
+        <li>건축물 (날카로운 각형 형태)</li>
+        <li>로우폴리 / 스타일라이즈드 아트</li>
+        <li>이미 폴리곤이 많은 임포트 메쉬</li>
+        <li>게임 최적화용 실시간 메쉬</li>
       </ul>
     </div>
   </div>
@@ -458,18 +682,30 @@ body {
     <h4>자주 쓰는 조합</h4>
     <div class="combo-grid">
       <div class="combo-card">
-        <div class="combo-name">Subdivision + Mirror</div>
-        <div class="combo-desc">대칭 캐릭터 모델링의 기본 조합. Mirror가 위, Subdivision이 아래 순서로 배치합니다.</div>
+        <div class="combo-name">Mirror + Subdivision</div>
+        <div class="combo-desc">Mirror가 위, Subdivision이 아래. 먼저 대칭을 잡고 나서 부드럽게 만드는 올바른 순서입니다.</div>
       </div>
       <div class="combo-card">
-        <div class="combo-name">Subdivision + Bevel</div>
-        <div class="combo-desc">Bevel로 지지 엣지(support edge)를 넣어 Subdivision 형태를 정밀하게 제어합니다.</div>
+        <div class="combo-name">Bevel + Subdivision</div>
+        <div class="combo-desc">Bevel로 지지 엣지(support edge)를 만들어 Subdivision 형태를 날카롭게 제어합니다.</div>
       </div>
     </div>
   </div>
 
+  <hr class="section-divider">
+
+  <p style="font-size:.88rem; font-weight:600; color:var(--text); margin:0 0 10px;">흔한 실수</p>
+  <div class="warn-box">
+    <strong>실수 1: Apply 후 파일 용량 폭증</strong><br>
+    Level 3+ 적용 시 수백만 폴리곤이 생성됩니다. Apply 전 레벨을 반드시 낮추세요.
+  </div>
+  <div class="warn-box">
+    <strong>실수 2: 모서리가 다 둥글게 됨</strong><br>
+    Crease 없이 Subdivision 적용 시 모든 모서리가 부드러워집니다. <span class="kbd">Shift</span>+<span class="kbd">E</span>로 날카운 엣지를 미리 지정하세요.
+  </div>
+
   <div class="tip-box">
-    <strong>팁:</strong> Subdivision 전에 반드시 Apply Scale(<span class="kbd">Ctrl</span>+<span class="kbd">A</span>)! 스케일이 (1,1,1)이 아니면 왜곡됩니다.
+    <strong>팁:</strong> Subdivision 적용 전 반드시 Apply Scale (<span class="kbd">Ctrl</span>+<span class="kbd">A</span>)! 스케일이 (1,1,1)이 아니면 서브디비전 결과가 왜곡됩니다.
   </div>
 
   <div class="doc-ref">
@@ -496,16 +732,252 @@ document.querySelectorAll(".tab").forEach(function(tab) {
     tab.classList.add("is-active");
     tab.setAttribute("aria-selected", "true");
     document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+    if (tab.dataset.tab === "visual") { initVisual(); }
   });
 });
+
+// ── Canvas helpers ─────────────────────────────
+function drawGrid(ctx, w, h) {
+  ctx.strokeStyle = "rgba(255,255,255,.04)";
+  ctx.lineWidth = 1;
+  var step = 30;
+  for (var gx = step; gx < w; gx += step) {
+    ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
+  }
+  for (var gy = step; gy < h; gy += step) {
+    ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
+  }
+}
+
+function drawBg(ctx, w, h) {
+  ctx.fillStyle = "#17181a";
+  ctx.fillRect(0, 0, w, h);
+  drawGrid(ctx, w, h);
+}
+
+function drawPoly(ctx, pts, w, h, fillColor, strokeColor, strokeW) {
+  if (pts.length < 2) return;
+  ctx.beginPath();
+  ctx.moveTo(pts[0].x * w, pts[0].y * h);
+  for (var i = 1; i < pts.length; i++) { ctx.lineTo(pts[i].x * w, pts[i].y * h); }
+  ctx.closePath();
+  ctx.fillStyle = fillColor;
+  ctx.fill();
+  ctx.strokeStyle = strokeColor;
+  ctx.lineWidth = strokeW || 2;
+  ctx.stroke();
+}
+
+function drawDots(ctx, pts, w, h, color, r) {
+  ctx.fillStyle = color;
+  pts.forEach(function(p) {
+    ctx.beginPath();
+    ctx.arc(p.x * w, p.y * h, r || 3, 0, Math.PI * 2);
+    ctx.fill();
+  });
+}
+
+function labelCanvas(ctx, text, x, y, color, size) {
+  ctx.fillStyle = color || "rgba(255,255,255,.55)";
+  ctx.font = (size || "bold 11px") + " sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText(text, x, y);
+}
+
+// ── 2D Catmull-Clark-like subdivision ─────────
+function subdivide2D(pts, levels) {
+  var res = pts.slice();
+  for (var l = 0; l < levels; l++) {
+    var n = res.length;
+    var next = [];
+    for (var i = 0; i < n; i++) {
+      var prev = res[(i - 1 + n) % n];
+      var curr = res[i];
+      var nx   = res[(i + 1) % n];
+      next.push({
+        x: curr.x * 0.5 + (prev.x + nx.x) * 0.25,
+        y: curr.y * 0.5 + (prev.y + nx.y) * 0.25
+      });
+      next.push({ x: (curr.x + nx.x) / 2, y: (curr.y + nx.y) / 2 });
+    }
+    res = next;
+  }
+  return res;
+}
+
+// Base 8-gon shape (normalized 0-1 centered around .5,.5)
+var baseHex = (function() {
+  var pts = [];
+  for (var i = 0; i < 8; i++) {
+    var a = (i / 8) * Math.PI * 2 - Math.PI / 8;
+    pts.push({ x: 0.5 + 0.38 * Math.cos(a), y: 0.5 + 0.38 * Math.sin(a) });
+  }
+  return pts;
+})();
+
+// ── Scenario Definitions ──────────────────────
+var scenarios = {
+  level0: {
+    desc: "기본 8각형 메쉬에 Level 1 Subdivision을 적용합니다. 각 면이 4개로 분할되어 폴리곤 수가 4배가 됩니다.",
+    ce: [
+      { cause: "Level 0 — 8 버텍스, 각진 형태", result: "변화 없음 (원본 유지)", resultClass: "result-b" },
+      { cause: "Level 1 적용 — Catmull-Clark 1회", result: "버텍스 4배, 곡면 생성", resultClass: "result-a" }
+    ],
+    before: function(ctx, w, h) {
+      drawBg(ctx, w, h);
+      var pts = baseHex;
+      drawPoly(ctx, pts, w, h, "rgba(10,132,255,.12)", "rgba(10,132,255,.6)", 2);
+      drawDots(ctx, pts, w, h, "rgba(10,132,255,.9)", 4);
+      labelCanvas(ctx, "Level 0 — 8 verts", 8, 18, "rgba(10,132,255,.8)", "bold 11px");
+      labelCanvas(ctx, "폴리곤 x1 (원본)", 8, 34, "rgba(160,160,170,.6)", "10px");
+    },
+    after: function(ctx, w, h) {
+      drawBg(ctx, w, h);
+      var pts = subdivide2D(baseHex, 1);
+      drawPoly(ctx, pts, w, h, "rgba(255,140,0,.12)", "rgba(255,140,0,.6)", 2);
+      drawDots(ctx, pts, w, h, "rgba(255,140,0,.85)", 3);
+      labelCanvas(ctx, "Level 1 — " + pts.length + " verts", 8, 18, "rgba(255,140,0,.9)", "bold 11px");
+      labelCanvas(ctx, "폴리곤 x4 증가", 8, 34, "rgba(255,179,71,.6)", "10px");
+    }
+  },
+  level2: {
+    desc: "Level 1에서 Level 2로 추가 세분화합니다. 폴리곤 수가 다시 4배 늘어나 원본의 16배가 됩니다. 곡면이 훨씬 부드러워집니다.",
+    ce: [
+      { cause: "Level 1 — 부드럽지만 면 수 부족", result: "Level 2 적용 → 폴리곤 x16", resultClass: "result-a" },
+      { cause: "Viewport 레벨 높임", result: "렌더 품질 향상 (렌더 시간 증가)", resultClass: "result-b" }
+    ],
+    before: function(ctx, w, h) {
+      drawBg(ctx, w, h);
+      var pts = subdivide2D(baseHex, 1);
+      drawPoly(ctx, pts, w, h, "rgba(10,132,255,.12)", "rgba(10,132,255,.6)", 2);
+      drawDots(ctx, pts, w, h, "rgba(10,132,255,.85)", 3);
+      labelCanvas(ctx, "Level 1 — " + pts.length + " verts", 8, 18, "rgba(10,132,255,.8)", "bold 11px");
+      labelCanvas(ctx, "폴리곤 x4", 8, 34, "rgba(160,160,170,.6)", "10px");
+    },
+    after: function(ctx, w, h) {
+      drawBg(ctx, w, h);
+      var pts = subdivide2D(baseHex, 2);
+      drawPoly(ctx, pts, w, h, "rgba(85,153,255,.14)", "rgba(85,153,255,.7)", 2);
+      drawDots(ctx, pts, w, h, "rgba(85,153,255,.8)", 2);
+      labelCanvas(ctx, "Level 2 — " + pts.length + " verts", 8, 18, "rgba(85,153,255,.9)", "bold 11px");
+      labelCanvas(ctx, "폴리곤 x16, 더욱 부드러움", 8, 34, "rgba(136,187,255,.6)", "10px");
+    }
+  },
+  crease: {
+    desc: "엣지에 Crease=1.0을 설정하면 Subdivision이 적용되어도 그 엣지는 날카롭게 유지됩니다. 오른쪽 상단 모서리에 Crease가 적용됩니다.",
+    ce: [
+      { cause: "Crease 없이 Subdivision 적용", result: "모든 모서리 둥글어짐", resultClass: "result-warn" },
+      { cause: "Shift+E → Crease=1.0 설정 후 Subdivision", result: "해당 엣지 날카롭게 유지", resultClass: "result-success" }
+    ],
+    before: function(ctx, w, h) {
+      drawBg(ctx, w, h);
+      var pts = subdivide2D(baseHex, 2);
+      drawPoly(ctx, pts, w, h, "rgba(239,68,68,.1)", "rgba(239,68,68,.5)", 2);
+      drawDots(ctx, pts, w, h, "rgba(239,68,68,.7)", 2);
+      labelCanvas(ctx, "Crease 없음 — Level 2", 8, 18, "rgba(239,68,68,.8)", "bold 11px");
+      labelCanvas(ctx, "모든 모서리 둥글어짐", 8, 34, "rgba(252,165,165,.5)", "10px");
+    },
+    after: function(ctx, w, h) {
+      drawBg(ctx, w, h);
+      var base = baseHex;
+      var creaseIdx = [1, 2];
+      var res = base.slice();
+      for (var l = 0; l < 2; l++) {
+        var nn = res.length;
+        var next = [];
+        for (var i = 0; i < nn; i++) {
+          var prev = res[(i - 1 + nn) % nn];
+          var curr = res[i];
+          var nx = res[(i + 1) % nn];
+          var isCrease = (l === 0 && (creaseIdx.indexOf(i) !== -1));
+          var sv = isCrease
+            ? { x: curr.x, y: curr.y }
+            : { x: curr.x * 0.5 + (prev.x + nx.x) * 0.25, y: curr.y * 0.5 + (prev.y + nx.y) * 0.25 };
+          next.push(sv);
+          next.push({ x: (curr.x + nx.x) / 2, y: (curr.y + nx.y) / 2 });
+        }
+        res = next;
+      }
+
+      drawPoly(ctx, res, w, h, "rgba(16,185,129,.12)", "rgba(16,185,129,.6)", 2);
+      drawDots(ctx, res, w, h, "rgba(16,185,129,.8)", 2);
+
+      var orig0 = base[creaseIdx[0]];
+      var orig1 = base[creaseIdx[1]];
+      ctx.strokeStyle = "rgba(245,158,11,.9)";
+      ctx.lineWidth = 3;
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.moveTo(orig0.x * w, orig0.y * h);
+      ctx.lineTo(orig1.x * w, orig1.y * h);
+      ctx.stroke();
+
+      ctx.fillStyle = "rgba(245,158,11,.9)";
+      ctx.font = "bold 10px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("Crease=1.0", ((orig0.x + orig1.x) / 2) * w + 20, ((orig0.y + orig1.y) / 2) * h - 6);
+
+      labelCanvas(ctx, "Crease 적용 — Level 2", 8, 18, "rgba(16,185,129,.9)", "bold 11px");
+      labelCanvas(ctx, "날카로운 엣지 유지", 8, 34, "rgba(110,231,183,.6)", "10px");
+    }
+  }
+};
+
+var currentScene = "level0";
+
+function buildCauseEffect(ceData) {
+  var container = document.getElementById("ceFlow");
+  while (container.firstChild) container.removeChild(container.firstChild);
+  ceData.forEach(function(item) {
+    var row = document.createElement("div"); row.className = "ce-row";
+    var cause = document.createElement("div"); cause.className = "ce-cause";
+    var lbl = document.createElement("span"); lbl.className = "ce-label"; lbl.textContent = "원인";
+    cause.appendChild(lbl); cause.appendChild(document.createTextNode(item.cause));
+    row.appendChild(cause);
+    var arr = document.createElement("div"); arr.className = "ce-arrow"; arr.textContent = "→"; row.appendChild(arr);
+    var res = document.createElement("div"); res.className = "ce-result " + item.resultClass;
+    var rLbl = document.createElement("span"); rLbl.className = "ce-label"; rLbl.textContent = "결과";
+    res.appendChild(rLbl); res.appendChild(document.createTextNode(item.result));
+    row.appendChild(res);
+    container.appendChild(row);
+  });
+}
+
+function renderBAPanels(scene) {
+  var cvB = document.getElementById("cvBefore");
+  var cvA = document.getElementById("cvAfter");
+  scene.before(cvB.getContext("2d"), cvB.width, cvB.height);
+  scene.after(cvA.getContext("2d"), cvA.width, cvA.height);
+}
+
+function switchScenario(key) {
+  currentScene = key;
+  var scene = scenarios[key];
+  document.getElementById("sceneDesc").textContent = scene.desc;
+  document.querySelectorAll(".scenario-btn").forEach(function(b) {
+    b.classList.toggle("is-active", b.dataset.scene === key);
+  });
+  renderBAPanels(scene);
+  buildCauseEffect(scene.ce);
+}
+
+document.querySelectorAll(".scenario-btn").forEach(function(btn) {
+  btn.addEventListener("click", function() { switchScenario(btn.dataset.scene); });
+  btn.addEventListener("touchend", function(e) { e.preventDefault(); switchScenario(btn.dataset.scene); });
+});
+
+var visualInited = false;
+function initVisual() {
+  switchScenario(currentScene);
+  visualInited = true;
+}
 
 // ── Quiz Engine (Safe DOM methods) ────────────
 function initQuiz(questions) {
   var container = document.getElementById("quizArea");
   var score = 0, answered = 0;
-  var scoreDiv = null; // track score section for updates
+  var scoreDiv = null;
 
-  // Progress indicator
   var progress = document.createElement("div");
   progress.className = "quiz-progress";
   progress.textContent = "문제 0 / " + questions.length + " \u00b7 점수 0점";
@@ -541,13 +1013,11 @@ function initQuiz(questions) {
           fb.className = "quiz-feedback show wrong-fb";
           fb.textContent = "\u274c " + q.explanation;
 
-          // Add retry button for wrong answers
           var retryBtn = document.createElement("button");
           retryBtn.className = "quiz-retry";
           retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
           retryBtn.textContent = "다시 풀기";
           retryBtn.addEventListener("click", function() {
-            // Reset this question
             answered--;
             div.querySelectorAll(".quiz-option").forEach(function(b) {
               b.disabled = false;
@@ -556,7 +1026,6 @@ function initQuiz(questions) {
             fb.className = "quiz-feedback";
             fb.textContent = "";
             retryBtn.remove();
-            // Remove score section if it was shown
             if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
             progress.textContent = "문제 " + answered + " / " + questions.length + " \u00b7 점수 " + score + "점";
           });
@@ -573,7 +1042,6 @@ function initQuiz(questions) {
   });
 
   function showScore() {
-    // Remove previous score section if exists (e.g. after retry)
     if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
 
     scoreDiv = document.createElement("div");
@@ -594,7 +1062,6 @@ function initQuiz(questions) {
     msg.textContent = score === questions.length ? "완벽합니다!" : "조금 더 연습하면 완벽해질 거예요!";
     scoreDiv.appendChild(msg);
 
-    // Save button — sends result to parent for Notion sync
     var saveBtn = document.createElement("button");
     saveBtn.className = "quiz-retry";
     saveBtn.style.cssText = "background:rgba(10,132,255,.18);border-color:var(--key);margin-bottom:8px";
@@ -627,437 +1094,37 @@ function initQuiz(questions) {
   }
 }
 
-// ── Canvas Subdivision Demo ───────────────────
-(function() {
-  var canvas = document.getElementById("demoCanvas");
-  var ctx = canvas.getContext("2d");
-  var currentLevel = 0;
-  var showCrease = false;
-  var animProgress = 1; // 0..1 for transitions
-  var animFrom = null;
-  var animTo = null;
-  var animFrameId = null;
-
-  // Original cube profile (2D cross-section, 8 vertices)
-  var baseShape = [
-    { x: 140, y: 60  },
-    { x: 260, y: 60  },
-    { x: 300, y: 80  },
-    { x: 300, y: 180 },
-    { x: 260, y: 220 },
-    { x: 140, y: 220 },
-    { x: 100, y: 180 },
-    { x: 100, y: 80  }
-  ];
-
-  // Crease edge: the edge between vertex 2 and 3 (top-right corner to bottom-right)
-  // This edge will stay sharp when Crease=1
-  var creaseEdge = [2, 3]; // indices
-
-  // Catmull-Clark-like subdivision for a 2D polygon
-  function subdivide(pts, level, creaseEdgeIndices) {
-    if (level === 0) return pts;
-
-    var result = pts;
-    for (var l = 0; l < level; l++) {
-      var n = result.length;
-      var newPts = [];
-
-      for (var i = 0; i < n; i++) {
-        var curr = result[i];
-        var next = result[(i + 1) % n];
-        var prev = result[(i - 1 + n) % n];
-        var next2 = result[(i + 2) % n];
-
-        // Check if current edge (i -> i+1) is a crease edge (only on first subdivision iteration for simplicity)
-        var isCreaseEdge = false;
-        if (l === 0 && creaseEdgeIndices) {
-          for (var c = 0; c < creaseEdgeIndices.length; c += 2) {
-            if ((i === creaseEdgeIndices[c] && ((i + 1) % n) === creaseEdgeIndices[c + 1]) ||
-                (i === creaseEdgeIndices[c + 1] && ((i + 1) % n) === creaseEdgeIndices[c])) {
-              isCreaseEdge = true;
-            }
-          }
-        }
-
-        // Smoothed vertex position (approximate Catmull-Clark for 2D)
-        var smoothX = curr.x * 0.5 + (prev.x + next.x) * 0.25;
-        var smoothY = curr.y * 0.5 + (prev.y + next.y) * 0.25;
-
-        // Edge midpoint (with slight smoothing)
-        var midX, midY;
-        if (isCreaseEdge && showCrease) {
-          // Sharp edge: just midpoint, no smoothing
-          midX = (curr.x + next.x) / 2;
-          midY = (curr.y + next.y) / 2;
-          // Also keep vertex sharp near crease
-          newPts.push({ x: curr.x, y: curr.y });
-        } else {
-          midX = (curr.x + next.x) / 2;
-          midY = (curr.y + next.y) / 2;
-          newPts.push({ x: smoothX, y: smoothY });
-        }
-
-        newPts.push({ x: midX, y: midY });
-      }
-
-      result = newPts;
-    }
-
-    return result;
-  }
-
-  // Pre-compute shapes for each level
-  function getShapeForLevel(level) {
-    return subdivide(baseShape, level, creaseEdge);
-  }
-
-  // Center the shape and scale for display
-  function transformShape(pts) {
-    // Find bounds
-    var minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-    pts.forEach(function(p) {
-      if (p.x < minX) minX = p.x;
-      if (p.x > maxX) maxX = p.x;
-      if (p.y < minY) minY = p.y;
-      if (p.y > maxY) maxY = p.y;
-    });
-
-    var shapeW = maxX - minX;
-    var shapeH = maxY - minY;
-    var cx = (minX + maxX) / 2;
-    var cy = (minY + maxY) / 2;
-
-    // Scale to fit nicely
-    var scale = Math.min(200 / shapeW, 200 / shapeH);
-    var offsetX = canvas.width / 2;
-    var offsetY = canvas.height / 2;
-
-    return pts.map(function(p) {
-      return {
-        x: (p.x - cx) * scale + offsetX,
-        y: (p.y - cy) * scale + offsetY
-      };
-    });
-  }
-
-  // Interpolate between two point arrays
-  function interpolateShapes(from, to, t) {
-    // Resample both to same number of points
-    var maxLen = Math.max(from.length, to.length);
-    var fromResampled = resamplePoints(from, maxLen);
-    var toResampled = resamplePoints(to, maxLen);
-
-    var result = [];
-    for (var i = 0; i < maxLen; i++) {
-      result.push({
-        x: fromResampled[i].x + (toResampled[i].x - fromResampled[i].x) * t,
-        y: fromResampled[i].y + (toResampled[i].y - fromResampled[i].y) * t
-      });
-    }
-    return result;
-  }
-
-  // Resample a polygon to have exactly N evenly-spaced points
-  function resamplePoints(pts, n) {
-    if (pts.length === n) return pts;
-    if (pts.length === 0) return [];
-
-    // Compute perimeter
-    var perimeter = 0;
-    var segs = [];
-    for (var i = 0; i < pts.length; i++) {
-      var j = (i + 1) % pts.length;
-      var dx = pts[j].x - pts[i].x;
-      var dy = pts[j].y - pts[i].y;
-      var len = Math.sqrt(dx * dx + dy * dy);
-      segs.push(len);
-      perimeter += len;
-    }
-
-    var step = perimeter / n;
-    var result = [];
-    var segIdx = 0;
-    var segT = 0; // how far along current segment
-
-    for (var k = 0; k < n; k++) {
-      var target = k * step;
-      var accum = 0;
-
-      // Walk segments to find position
-      var walked = 0;
-      for (var s = 0; s < pts.length; s++) {
-        if (walked + segs[s] >= target || s === pts.length - 1) {
-          var remain = target - walked;
-          var frac = segs[s] > 0 ? remain / segs[s] : 0;
-          var nxt = (s + 1) % pts.length;
-          result.push({
-            x: pts[s].x + (pts[nxt].x - pts[s].x) * frac,
-            y: pts[s].y + (pts[nxt].y - pts[s].y) * frac
-          });
-          break;
-        }
-        walked += segs[s];
-      }
-    }
-
-    return result;
-  }
-
-  function draw(pts) {
-    var w = canvas.width;
-    var h = canvas.height;
-    ctx.clearRect(0, 0, w, h);
-
-    // Background
-    ctx.fillStyle = "#17181a";
-    ctx.fillRect(0, 0, w, h);
-
-    // Grid lines (subtle)
-    ctx.strokeStyle = "rgba(255,255,255,.04)";
-    ctx.lineWidth = 1;
-    var step = 40;
-    for (var gx = step; gx < w; gx += step) {
-      ctx.beginPath();
-      ctx.moveTo(gx, 0);
-      ctx.lineTo(gx, h);
-      ctx.stroke();
-    }
-    for (var gy = step; gy < h; gy += step) {
-      ctx.beginPath();
-      ctx.moveTo(0, gy);
-      ctx.lineTo(w, gy);
-      ctx.stroke();
-    }
-
-    // Draw the polygon
-    if (pts.length < 2) return;
-
-    ctx.beginPath();
-    ctx.moveTo(pts[0].x, pts[0].y);
-    for (var i = 1; i < pts.length; i++) {
-      ctx.lineTo(pts[i].x, pts[i].y);
-    }
-    ctx.closePath();
-
-    ctx.fillStyle = "rgba(10,132,255,.15)";
-    ctx.fill();
-    ctx.strokeStyle = "rgba(10,132,255,.6)";
-    ctx.lineWidth = 2;
-    ctx.stroke();
-
-    // Draw vertices
-    pts.forEach(function(p) {
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(10,132,255,.9)";
-      ctx.fill();
-    });
-
-    // If showing crease, highlight the crease edge on the current shape
-    if (showCrease && currentLevel > 0) {
-      // Draw crease indicator on the original shape's edge position
-      var origTransformed = transformShape(baseShape);
-      var ci0 = creaseEdge[0];
-      var ci1 = creaseEdge[1];
-      ctx.beginPath();
-      ctx.moveTo(origTransformed[ci0].x, origTransformed[ci0].y);
-      ctx.lineTo(origTransformed[ci1].x, origTransformed[ci1].y);
-      ctx.strokeStyle = "rgba(245,158,11,.9)";
-      ctx.lineWidth = 3;
-      ctx.stroke();
-
-      // Crease label
-      var midCX = (origTransformed[ci0].x + origTransformed[ci1].x) / 2;
-      var midCY = (origTransformed[ci0].y + origTransformed[ci1].y) / 2;
-      ctx.fillStyle = "rgba(245,158,11,.9)";
-      ctx.font = "bold 11px sans-serif";
-      ctx.textAlign = "left";
-      ctx.fillText("Crease=1.0", midCX + 8, midCY);
-    }
-
-    // Level info
-    ctx.fillStyle = "rgba(10,132,255,.8)";
-    ctx.font = "bold 12px sans-serif";
-    ctx.textAlign = "left";
-    ctx.fillText("Level " + currentLevel, 14, 24);
-
-    // Vertex/face count info
-    var vertCount = pts.length;
-    var faceMultiplier = Math.pow(4, currentLevel);
-    ctx.fillStyle = "var(--muted)";
-    ctx.font = "11px sans-serif";
-    ctx.fillText("vertices: " + vertCount + "  |  faces: \u00d7" + faceMultiplier, 14, 42);
-
-    // Crease indicator
-    if (showCrease) {
-      ctx.fillStyle = "rgba(245,158,11,.7)";
-      ctx.font = "bold 11px sans-serif";
-      ctx.textAlign = "right";
-      ctx.fillText("Crease ON", w - 14, 24);
-    }
-  }
-
-  function setLevel(level) {
-    if (animFrameId) {
-      cancelAnimationFrame(animFrameId);
-      animFrameId = null;
-    }
-
-    var fromShape = transformShape(getShapeForLevel(currentLevel));
-    currentLevel = level;
-    var toShape = transformShape(getShapeForLevel(currentLevel));
-
-    animFrom = fromShape;
-    animTo = toShape;
-    animProgress = 0;
-
-    var startTime = performance.now();
-    var duration = 400; // ms
-
-    function animate(now) {
-      var elapsed = now - startTime;
-      animProgress = Math.min(elapsed / duration, 1);
-
-      // Ease out cubic
-      var t = 1 - Math.pow(1 - animProgress, 3);
-
-      var interpolated = interpolateShapes(animFrom, animTo, t);
-      draw(interpolated);
-
-      if (animProgress < 1) {
-        animFrameId = requestAnimationFrame(animate);
-      } else {
-        animFrameId = null;
-      }
-    }
-
-    animFrameId = requestAnimationFrame(animate);
-
-    // Update button states
-    updateButtons();
-  }
-
-  function updateButtons() {
-    var btns = [
-      document.getElementById("btnLevel0"),
-      document.getElementById("btnLevel1"),
-      document.getElementById("btnLevel2")
-    ];
-    btns.forEach(function(b, i) {
-      if (i === currentLevel) {
-        b.classList.add("is-active");
-      } else {
-        b.classList.remove("is-active");
-      }
-    });
-
-    var creaseBtn = document.getElementById("btnCrease");
-    if (showCrease) {
-      creaseBtn.classList.add("is-active");
-      creaseBtn.textContent = "Crease ON";
-    } else {
-      creaseBtn.classList.remove("is-active");
-      creaseBtn.textContent = "Crease 표시";
-    }
-  }
-
-  // Button event listeners
-  document.getElementById("btnLevel0").addEventListener("click", function() { setLevel(0); });
-  document.getElementById("btnLevel1").addEventListener("click", function() { setLevel(1); });
-  document.getElementById("btnLevel2").addEventListener("click", function() { setLevel(2); });
-  document.getElementById("btnCrease").addEventListener("click", function() {
-    showCrease = !showCrease;
-    updateButtons();
-    // Redraw current state
-    var currentShape = transformShape(getShapeForLevel(currentLevel));
-    draw(currentShape);
-  });
-
-  // Touch support on canvas — tap to cycle levels
-  function getEventPos(e) {
-    var rect = canvas.getBoundingClientRect();
-    var scaleX = canvas.width / rect.width;
-    var scaleY = canvas.height / rect.height;
-    var clientX, clientY;
-    if (e.touches && e.touches.length > 0) {
-      clientX = e.touches[0].clientX;
-      clientY = e.touches[0].clientY;
-    } else {
-      clientX = e.clientX;
-      clientY = e.clientY;
-    }
-    return {
-      x: (clientX - rect.left) * scaleX,
-      y: (clientY - rect.top) * scaleY
-    };
-  }
-
-  canvas.addEventListener("touchstart", function(e) {
-    e.preventDefault();
-    // Cycle through levels on tap
-    var nextLevel = (currentLevel + 1) % 3;
-    setLevel(nextLevel);
-  }, { passive: false });
-
-  canvas.addEventListener("touchmove", function(e) {
-    e.preventDefault();
-  }, { passive: false });
-
-  // Initial draw
-  var initialShape = transformShape(getShapeForLevel(0));
-  draw(initialShape);
-
-  // Auto-play: 로드 시 레벨 0→1→2 자동 시연 (한 번만)
-  setTimeout(function() { setLevel(1); }, 900);
-  setTimeout(function() { setLevel(2); }, 2300);
-})();
-
 // ── Quiz Data ─────────────────────────────────
 initQuiz([
   {
-    question: "Subdivision Surface\uAC00 \uC0AC\uC6A9\uD558\uB294 \uC54C\uACE0\uB9AC\uC998\uC740?",
-    options: [
-      "Loop Subdivision",
-      "Catmull-Clark",
-      "Doo-Sabin",
-      "Butterfly"
-    ],
+    question: "Subdivision Surface가 사용하는 기본 알고리즘은?",
+    options: ["Loop Subdivision", "Catmull-Clark", "Doo-Sabin", "Butterfly"],
     answer: 1,
-    explanation: "Blender\uC758 Subdivision Surface\uB294 Catmull-Clark \uC54C\uACE0\uB9AC\uC998\uC744 \uAE30\uBCF8\uC73C\uB85C \uC0AC\uC6A9\uD569\uB2C8\uB2E4. \uC0AC\uAC01\uD615 \uBA54\uC26C\uC5D0 \uCD5C\uC801\uD654\uB41C \uC138\uBD84\uD654 \uBC29\uBC95\uC785\uB2C8\uB2E4."
+    explanation: "Blender의 Subdivision Surface는 Catmull-Clark 알고리즘을 기본으로 사용합니다. 사각형 메쉬에 최적화된 세분화 방식입니다."
   },
   {
-    question: "Viewport Level 2\uB294 \uBA74 \uC218\uAC00 \uC6D0\uBCF8\uC758 \uBA87 \uBC30\uC778\uAC00\uC694?",
-    options: [
-      "4\uBC30",
-      "8\uBC30",
-      "16\uBC30",
-      "32\uBC30"
-    ],
+    question: "Level 2 Subdivision 적용 시 폴리곤 수는 원본의 몇 배인가요?",
+    options: ["4배", "8배", "16배", "32배"],
     answer: 2,
-    explanation: "\uB808\uBCA8\uB2F9 \uBA74 \uC218\uAC00 4\uBC30\uC529 \uB298\uC5B4\uB0A9\uB2C8\uB2E4. Level 1 = 4\uBC30, Level 2 = 4\u00d74 = 16\uBC30\uC785\uB2C8\uB2E4."
+    explanation: "레벨당 폴리곤 수가 4배씩 늘어납니다. Level 1 = 4배, Level 2 = 4×4 = 16배입니다."
   },
   {
-    question: "\uD2B9\uC815 \uBAA8\uC11C\uB9AC\uB97C \uB0A0\uCE74\uB85D\uAC8C \uC720\uC9C0\uD558\uB824\uBA74?",
-    options: [
-      "Ctrl+E\uB85C Edge Split \uC801\uC6A9",
-      "Shift+E\uB85C Crease 1.0 \uC124\uC815",
-      "Alt+S\uB85C Shrink/Fatten",
-      "Ctrl+B\uB85C Bevel \uCD94\uAC00"
-    ],
+    question: "특정 모서리를 날카롭게 유지하려면?",
+    options: ["Ctrl+E로 Edge Split 적용", "Shift+E로 Crease 1.0 설정", "Alt+S로 Shrink/Fatten", "Ctrl+B로 Bevel 추가"],
     answer: 1,
-    explanation: "Shift+E\uB85C \uBAA8\uC11C\uB9AC\uC5D0 Crease \uAC12\uC744 1.0\uC73C\uB85C \uC124\uC815\uD558\uBA74 Subdivision\uC5D0\uC11C\uB3C4 \uD574\uB2F9 \uBAA8\uC11C\uB9AC\uAC00 \uB0A0\uCE74\uB85D\uAC8C \uC720\uC9C0\uB429\uB2C8\uB2E4."
+    explanation: "Shift+E로 모서리에 Crease 값을 1.0으로 설정하면 Subdivision에서도 해당 모서리가 날카롭게 유지됩니다."
   },
   {
-    question: "Subdivision + Mirror \uC870\uD569 \uC2DC \uBAA8\uB514\uD30C\uC774\uC5B4 \uC21C\uC11C\uB294?",
-    options: [
-      "Subdivision\uC774 \uC704, Mirror\uAC00 \uC544\uB798",
-      "Mirror\uAC00 \uC704, Subdivision\uC774 \uC544\uB798",
-      "\uC21C\uC11C \uC0C1\uAD00\uC5C6\uC74C",
-      "\uB458 \uB2E4 Apply \uD6C4 \uC0AC\uC6A9"
-    ],
+    question: "Subdivision + Mirror 조합 시 올바른 모디파이어 순서는?",
+    options: ["Subdivision이 위, Mirror가 아래", "Mirror가 위, Subdivision이 아래", "순서 상관없음", "둘 다 Apply 후 사용"],
     answer: 1,
-    explanation: "Mirror\uAC00 \uC704\uC5D0, Subdivision\uC774 \uC544\uB798\uC5D0 \uC640\uC57C \uD569\uB2C8\uB2E4. \uBA3C\uC800 \uB300\uCE6D\uC744 \uC7A1\uACE0 \uB098\uC11C \uBD80\uB4DC\uB7FD\uAC8C \uB9CC\uB4DC\uB294 \uAC83\uC774 \uC62C\uBC14\uB978 \uC21C\uC11C\uC785\uB2C8\uB2E4."
+    explanation: "Mirror가 위에, Subdivision이 아래에 와야 합니다. 먼저 대칭을 잡고 나서 부드럽게 만드는 것이 올바른 순서입니다."
+  },
+  {
+    question: "Subdivision 적용 전 필수 선행 작업은?",
+    options: ["Materials 제거", "Apply Scale (Ctrl+A)", "UV Unwrap 완료", "Modifiers 모두 Apply"],
+    answer: 1,
+    explanation: "Apply Scale(Ctrl+A)로 스케일을 (1,1,1)로 초기화해야 합니다. 스케일이 적용되지 않으면 Subdivision 결과가 왜곡됩니다."
   }
 ]);
 </script>
