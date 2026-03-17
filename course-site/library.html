@@ -110,6 +110,35 @@
   padding: 60px 0; text-align: center; color: var(--muted);
   font-size: .9rem;
 }
+.lib-week-filter {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 12px 20px 0;
+  display: flex; gap: 6px; flex-wrap: wrap;
+}
+.lib-week-chip {
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: none;
+  color: var(--muted); font-size: .78rem; font-family: inherit;
+  cursor: pointer; white-space: nowrap;
+  transition: border-color .14s, color .14s, background .14s;
+}
+.lib-week-chip:hover { color: var(--muted-strong); border-color: var(--line-strong); }
+.lib-week-chip.is-active {
+  border-color: var(--key);
+  color: var(--key-soft);
+  background: rgba(10,132,255,.08);
+}
+.lib-card-week {
+  font-size: .68rem; color: var(--muted);
+  background: var(--overlay-white);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 1px 6px;
+  margin-top: 2px;
+}
 .showme-overlay {
   display: none; position: fixed; inset: 0;
   z-index: 100;
@@ -187,6 +216,7 @@
         </div>
       </div>
     </header>
+    <nav class="lib-week-filter" id="libWeekFilter" aria-label="주차 필터"></nav>
     <nav class="lib-tabs" id="libTabs" role="tablist" aria-label="카테고리 필터"></nav>
     <main class="lib-main" id="libMain"></main>
 
@@ -279,6 +309,41 @@ const CATEGORY_ORDER = [
   "Animation", "Rigging", "Rendering", "기타"
 ];
 
+const WEEKS_WITH_CARDS = [0, 2, 3, 4, 5, 6, 7, 9, 10, 11, 13];
+
+function buildWeekFilter() {
+  var el = document.getElementById("libWeekFilter");
+  var allChip = document.createElement("button");
+  allChip.className = "lib-week-chip is-active";
+  allChip.textContent = "전체 주차";
+  allChip.dataset.week = "all";
+  allChip.setAttribute("aria-pressed", "true");
+  allChip.addEventListener("click", function() { selectWeekChip(allChip); });
+  el.appendChild(allChip);
+
+  WEEKS_WITH_CARDS.forEach(function(w) {
+    var btn = document.createElement("button");
+    btn.className = "lib-week-chip";
+    btn.textContent = w === 0 ? "일반 개념" : "Week " + w;
+    btn.dataset.week = String(w);
+    btn.setAttribute("aria-pressed", "false");
+    btn.addEventListener("click", function() { selectWeekChip(btn); });
+    el.appendChild(btn);
+  });
+}
+
+function selectWeekChip(chip) {
+  document.querySelectorAll(".lib-week-chip").forEach(function(c) {
+    c.classList.remove("is-active");
+    c.setAttribute("aria-pressed", "false");
+  });
+  chip.classList.add("is-active");
+  chip.setAttribute("aria-pressed", "true");
+  if (typeof filterCards === "function") filterCards();
+}
+
+buildWeekFilter();
+
 function buildTabs() {
   var tabsEl = document.getElementById("libTabs");
   CATEGORY_ORDER.forEach(function(cat, i) {
@@ -333,6 +398,13 @@ function buildCards() {
     card.appendChild(icon);
     card.appendChild(label);
     card.appendChild(idEl);
+    var weekVal = meta.week;
+    if (weekVal !== undefined && weekVal > 0) {
+      var weekBadge = document.createElement("span");
+      weekBadge.className = "lib-card-week";
+      weekBadge.textContent = "W" + weekVal;
+      card.appendChild(weekBadge);
+    }
     card.addEventListener("click", function() { openShowMe(id); });
     grid.appendChild(card);
   });
@@ -356,9 +428,13 @@ function filterCards() {
     var matchQuery = !query
       || meta.label.toLowerCase().includes(query)
       || id.toLowerCase().includes(query);
+    var activeWeekEl = document.querySelector(".lib-week-chip.is-active");
+    var activeWeek = activeWeekEl ? activeWeekEl.dataset.week : "all";
+    var cardWeek = String(SHOWME_REGISTRY[id] && SHOWME_REGISTRY[id].week !== undefined ? SHOWME_REGISTRY[id].week : 0);
+    var matchWeek = activeWeek === "all" || cardWeek === activeWeek;
 
-    card.style.display = (matchCat && matchQuery) ? "" : "none";
-    if (matchCat && matchQuery) visible++;
+    card.style.display = (matchCat && matchWeek && matchQuery) ? "" : "none";
+    if (matchCat && matchWeek && matchQuery) visible++;
   });
 
   updateCount(visible);

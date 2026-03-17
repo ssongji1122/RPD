@@ -24,6 +24,30 @@
       line-height: 1.8; white-space: nowrap;
     }
 
+    /* Topic checklist */
+    .topic-progress { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .topic-progress-bar { flex: 1; height: 4px; border-radius: 2px; background: var(--line); }
+    .topic-progress-fill { height: 100%; border-radius: 2px; background: var(--key-soft); transition: width .35s ease; width: 0%; }
+    .topic-progress-label { font-size: .78rem; color: var(--muted); white-space: nowrap; }
+
+    .topic-check-list { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 16px; }
+    .topic-check-item { position: relative; }
+    .topic-check-item input[type="checkbox"] { position: absolute; opacity: 0; width: 0; height: 0; }
+    .topic-check-item label {
+      display: flex; align-items: baseline; gap: 7px;
+      padding: 5px 0;
+      color: var(--muted-strong); font-size: .82rem;
+      cursor: pointer;
+      transition: color .14s;
+      user-select: none;
+    }
+    .topic-check-item label::before {
+      content: "•"; flex-shrink: 0;
+      color: var(--line-strong); font-size: 1rem;
+      transition: color .14s;
+    }
+    .topic-check-item input:checked + label { color: var(--key-soft); }
+    .topic-check-item input:checked + label::before { color: var(--key-soft); }
 
     /* Nav between weeks */
     .week-nav {
@@ -497,6 +521,23 @@
       const videos = w.videos || [];
       const docs = w.docs || [];
 
+      // Topics (checkable chips with localStorage persistence)
+      const topicStorageKey = storageKey + "-topics";
+      const savedTopics = JSON.parse(localStorage.getItem(topicStorageKey) || "{}");
+      const topicTotal = w.topics.length;
+      const topicCheckedInit = w.topics.filter((_, i) => savedTopics["t" + i]).length;
+      const topicPills =
+        "<div class=\"topic-progress\">" +
+          "<div class=\"topic-progress-bar\"><div class=\"topic-progress-fill\" id=\"topicFill\" style=\"width:" + Math.round(topicCheckedInit / topicTotal * 100) + "%\"></div></div>" +
+          "<div class=\"topic-progress-label\" id=\"topicCount\">" + topicCheckedInit + " / " + topicTotal + "</div>" +
+        "</div>" +
+        "<div class=\"topic-check-list\">" +
+        w.topics.map((t, i) => {
+          const id = "tc-" + weekNum + "-" + i;
+          const chk = savedTopics["t" + i] ? " checked" : "";
+          return "<div class=\"topic-check-item\"><input type=\"checkbox\" id=\"" + id + "\"" + chk + " data-ti=\"" + i + "\" /><label for=\"" + id + "\">" + t + "</label></div>";
+        }).join("") +
+        "</div>";
 
       // Steps HTML
       const stepsHtml = w.steps.map((step, idx) => {
@@ -533,6 +574,21 @@
               </div>
               <div class="status-pill" data-step-status>진행 중</div>
             </div>
+            ${(() => {
+              if (!step.video) return "";
+              const src = typeof step.video === "string" ? step.video : step.video.src;
+              const caption = typeof step.video === "object" && step.video.caption ? step.video.caption : null;
+              const ytMatch = src.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([A-Za-z0-9_-]{11})/);
+              const videoEl = ytMatch
+                ? `<iframe class="step-video step-video-yt" src="https://www.youtube.com/embed/${ytMatch[1]}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
+                : `<video class="step-video" controls preload="metadata"><source src="${src}" type="video/mp4" /><source src="${src}" type="video/quicktime" /></video>`;
+              return `<figure class="step-video-figure">
+                ${videoEl}
+                ${caption ? `<figcaption class="step-video-caption">${caption}</figcaption>` : ""}
+              </figure>`;
+            })()}
+            <p class="step-copy">${step.copy}</p>
+            ${showmeHtml}
             ${step.images && step.images.length
               ? `<div class="step-images">${step.images.map((img, i) =>
                   `<img src="${img}" alt="${step.title} ${i + 1}" class="step-image" loading="lazy" />`
@@ -541,7 +597,6 @@
                   <img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" />
                   ${step.link ? `<figcaption><a href="${step.link}" target="_blank" rel="noopener noreferrer" class="doc-link">공식 문서 →</a></figcaption>` : ""}
                 </figure>` : ""}
-            ${step.video ? `<video class="step-video" controls preload="metadata"><source src="${step.video}" type="video/mp4" /><source src="${step.video}" type="video/quicktime" /></video>` : ""}
             ${step.clips && step.clips.length ? `
               <div class="clip-player" data-step-clips>
                 <video src="${step.clips[0].src}" autoplay loop muted playsinline
@@ -555,36 +610,107 @@
                 <div class="clip-player-hint">클릭하면 일시정지 · 다시 클릭하면 재생</div>
               </div>` : ""}
             ${step.downloads && step.downloads.length ? `<div class="step-downloads">${step.downloads.map(dl => `<a class="step-dl-btn" href="${dl.url}" download="${dl.url.split('/').pop()}" target="_blank" rel="noopener">⬇ ${dl.label}</a>`).join("")}</div>` : ""}
-            <p class="step-copy">${step.copy}</p>
-            ${showmeHtml}
-            <div class="task-list">${taskItems}</div>
+            <details class="task-accordion">
+              <summary class="task-accordion-summary">체크리스트 <span class="task-count">${step.tasks.length}</span></summary>
+              <div class="task-list">${taskItems}</div>
+            </details>
           </article>`;
       }).join("");
 
-      // Mistakes
-      const mistakesHtml = w.mistakes.length > 0 ? `
-        <section class="content-block" id="section-mistakes">
-          <div class="section-head"><h3>막히는 지점</h3></div>
-          <details class="card mistakes-section" open>
-            <summary>막혔을 때</summary>
-            <ul>${w.mistakes.map(m => `<li>${m}</li>`).join("")}</ul>
-          </details>
-        </section>` : "";
+      // 참고자료 아코디언
+      const practiceVideos = videos.filter(v => v.title.includes("[실습]"));
+      const officialVideos = videos.filter(v => !v.title.includes("[실습]"));
 
-      const renderResourceSection = (title, icon, items) => items.length > 0 ? `
-        <section class="content-block">
-          <div class="section-head"><h3>${title}</h3></div>
-          <div class="doc-links-row">
-            ${items.map(d => `
-              <a class="doc-link" href="${d.url}" target="_blank" rel="noopener noreferrer">
-                ${icon} ${d.title} ↗
-              </a>`).join("")}
-          </div>
-        </section>` : "";
+      const refSubsections = [
+        practiceVideos.length ? (
+          '<div class="ref-group">' +
+          '<h4 class="ref-group-title">📹 실습 영상</h4>' +
+          '<div class="ref-video-list">' +
+          practiceVideos.map(v =>
+            '<a class="ref-video-item" href="' + v.url + '" target="_blank" rel="noopener noreferrer">' +
+            '<span class="ref-video-title">' + v.title.replace("[실습] ", "") + ' ↗</span>' +
+            (v.description ? '<span class="ref-video-desc">' + v.description + '</span>' : '') +
+            '</a>'
+          ).join("") +
+          '</div></div>'
+        ) : "",
 
-      // Videos / Docs
-      const videosHtml = renderResourceSection("공식 영상 튜토리얼", "▶", videos);
-      const docsHtml = renderResourceSection("공식 문서", "📄", docs);
+        officialVideos.length ? (
+          '<div class="ref-group">' +
+          '<h4 class="ref-group-title">📚 공식 튜토리얼</h4>' +
+          '<div class="doc-links-row">' +
+          officialVideos.map(v =>
+            '<a class="doc-link" href="' + v.url + '" target="_blank" rel="noopener noreferrer">' +
+            '<span class="doc-link-main">▶ ' + v.title + ' ↗</span>' +
+            '</a>'
+          ).join("") +
+          '</div></div>'
+        ) : "",
+
+        docs.length ? (
+          '<div class="ref-group">' +
+          '<h4 class="ref-group-title">📄 공식 문서</h4>' +
+          '<div class="doc-links-row">' +
+          docs.map(d =>
+            '<a class="doc-link" href="' + d.url + '" target="_blank" rel="noopener noreferrer">' +
+            '<span class="doc-link-main">📄 ' + d.title + ' ↗</span>' +
+            '</a>'
+          ).join("") +
+          '</div></div>'
+        ) : "",
+
+        (w.shortcuts && w.shortcuts.length) ? (
+          '<div class="ref-group">' +
+          '<h4 class="ref-group-title">⌨️ 단축키</h4>' +
+          '<div class="shortcuts-compact">' +
+          w.shortcuts.map(s =>
+            '<div class="sc-row">' +
+            '<kbd class="sc-key">' + s.keys + '</kbd>' +
+            '<span class="sc-action">' + s.action + '</span>' +
+            '</div>'
+          ).join("") +
+          '</div></div>'
+        ) : "",
+
+        (w.explore && w.explore.length) ? (
+          '<div class="ref-group">' +
+          '<h4 class="ref-group-title">💡 더 해보기</h4>' +
+          '<ul class="ref-list">' +
+          w.explore.map(e =>
+            '<li><strong>' + e.title + '</strong>' +
+            (e.hint ? ' — <span class="ref-hint">' + e.hint + '</span>' : '') +
+            '</li>'
+          ).join("") +
+          '</ul></div>'
+        ) : "",
+
+        (w.mistakes && w.mistakes.length) ? (
+          '<div class="ref-group">' +
+          '<h4 class="ref-group-title">⚠️ 막히는 지점</h4>' +
+          '<ul class="ref-list">' +
+          w.mistakes.map(m => '<li>' + m + '</li>').join("") +
+          '</ul></div>'
+        ) : "",
+      ].filter(Boolean).join("");
+
+      const hasRef = refSubsections.length > 0;
+      const refMetaParts = [
+        practiceVideos.length ? "실습 영상 " + practiceVideos.length : "",
+        officialVideos.length ? "튜토리얼 " + officialVideos.length : "",
+        docs.length ? "문서 " + docs.length : "",
+        (w.shortcuts && w.shortcuts.length) ? "단축키 " + w.shortcuts.length : "",
+      ].filter(Boolean).join(" · ");
+      const refHtml = hasRef ? (
+        '<section class="content-block" id="section-reference">' +
+        '<details class="card ref-accordion">' +
+        '<summary class="ref-summary">' +
+        '<span class="ref-summary-title">이번 주 참고자료</span>' +
+        '<span class="ref-summary-meta">' + refMetaParts + '</span>' +
+        '</summary>' +
+        '<div class="ref-body">' + refSubsections + '</div>' +
+        '</details>' +
+        '</section>'
+      ) : "";
 
       // Assignment
       const assignmentCheckli = w.assignment.checklist.map(c => `<li>${c}</li>`).join("");
@@ -599,39 +725,6 @@
           </div>
         </section>`;
 
-      // Shortcuts cheatsheet
-      const shortcutsHtml = (w.shortcuts && w.shortcuts.length > 0) ? `
-        <section class="content-block" id="section-shortcuts">
-          <div class="section-head">
-            <h3>단축키 치트시트</h3>
-            <p>이번 주에 쓰는 핵심 단축키입니다. 외우지 말고 반복하세요.</p>
-          </div>
-          <div class="card shortcut-table-wrap">
-            <table class="shortcut-table">
-              <thead><tr><th>단축키</th><th>기능</th></tr></thead>
-              <tbody>
-                ${w.shortcuts.map(s => `<tr><td><kbd class="shortcut-key">${s.keys}</kbd></td><td>${s.action}</td></tr>`).join("")}
-              </tbody>
-            </table>
-          </div>
-        </section>` : "";
-
-      // Explore (더 해보기)
-      const exploreHtml = (w.explore && w.explore.length > 0) ? `
-        <section class="content-block" id="section-explore">
-          <div class="section-head">
-            <h3>더 해보기</h3>
-            <p>필수는 아니지만, 도전하면 실력이 빠르게 늡니다.</p>
-          </div>
-          <div class="explore-grid">
-            ${w.explore.map(e => `
-              <div class="explore-card">
-                <strong>${e.title}</strong>
-                <p>${e.hint}</p>
-              </div>`).join("")}
-          </div>
-        </section>` : "";
-
       // Full page — all data sourced from curriculum.js (trusted, no user input)
       document.getElementById("pageContent").innerHTML = `
         <!-- Hero -->
@@ -642,6 +735,12 @@
           </div>
         </section>
 
+        <!-- Topics -->
+        <section class="content-block">
+          <div class="section-head"><h3>이번 주</h3></div>
+          <div class="topic-list">${topicPills}</div>
+        </section>
+
         <!-- Lab (Steps) -->
         <section class="content-block" id="practice">
           <div class="section-head"><h3>실습</h3></div>
@@ -650,11 +749,7 @@
           </div>
         </section>
 
-        ${shortcutsHtml}
-        ${exploreHtml}
-        ${mistakesHtml}
-        ${videosHtml}
-        ${docsHtml}
+        ${refHtml}
         ${assignmentHtml}
 
         <!-- Week nav -->
@@ -684,7 +779,28 @@
 
       // Init progress engine
       initProgress(w.steps.length);
+      initTopicChecks(w.topics.length, topicStorageKey);
       initSidebar(w);
+    }
+
+    // ─── Topic check engine ──────────────────────────
+    function initTopicChecks(total, key) {
+      const fill  = document.getElementById("topicFill");
+      const count = document.getElementById("topicCount");
+      if (!fill || !count) return;
+      function updateTopicProgress() {
+        const all     = [...document.querySelectorAll(".topic-check-list input[type='checkbox']")];
+        const checked = all.filter(c => c.checked).length;
+        const pct     = total > 0 ? Math.round(checked / total * 100) : 0;
+        fill.style.width  = pct + "%";
+        count.textContent = checked + " / " + total;
+        const state = {};
+        all.forEach((c, i) => { state["t" + i] = c.checked; });
+        localStorage.setItem(key, JSON.stringify(state));
+      }
+      document.querySelectorAll(".topic-check-list input[type='checkbox']").forEach(cb => {
+        cb.addEventListener("change", updateTopicProgress);
+      });
     }
 
     // ─── Progress engine ─────────────────────────────
@@ -1059,10 +1175,8 @@
       w.steps.forEach(function(step, idx) {
         sections.push({ id: "step-" + idx, label: step.title, group: idx === 0 ? "실습" : null });
       });
-      if (w.shortcuts && w.shortcuts.length)  sections.push({ id: "section-shortcuts",  label: "단축키",      group: "참고" });
-      if (w.explore   && w.explore.length)    sections.push({ id: "section-explore",    label: "더 해보기",   group: null });
-      if (w.mistakes  && w.mistakes.length)   sections.push({ id: "section-mistakes",   label: "막히는 지점", group: null });
-      if (w.assignment)                        sections.push({ id: "section-assignment", label: "과제",        group: null });
+      if (hasRef)      sections.push({ id: "section-reference", label: "참고자료", group: "참고" });
+      if (w.assignment) sections.push({ id: "section-assignment", label: "과제",     group: null });
 
       // Collect unique Show Me widgets for this week
       var showmeSet = {};
