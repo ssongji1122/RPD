@@ -598,6 +598,29 @@ body {
       <p>엣지를 선택 후 <span class="kbd">Shift</span>+<span class="kbd">E</span>로 Crease 값(0~1)을 설정합니다. 값이 1이면 Subdivision이 올라가도 그 모서리는 날카롭게 유지됩니다.</p>
       <div class="analogy">풍선에서 실로 꽉 묶인 부분만 날카롭게 남는 것</div>
     </div>
+    <div class="concept-card" style="border-color:rgba(16,185,129,.25); background:rgba(16,185,129,.06); grid-column: 1 / -1;">
+      <h3><span class="badge" style="background:rgba(16,185,129,.18); color:#6ee7b7;">셰이딩</span> Shade Smooth &amp; Auto Smooth</h3>
+      <p style="margin:0 0 10px;">Subdivision은 <strong>지오메트리(폴리곤 수)</strong>를 늘리고, Shade Smooth는 <strong>노멀(빛 반사 방향)</strong>을 부드럽게 만듭니다. 두 가지는 독립적으로 작동합니다.</p>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:12px;">
+        <div style="background:var(--surface-strong); border-radius:10px; padding:12px; border:1px solid var(--line);">
+          <div style="font-weight:600; font-size:.82rem; color:var(--muted-strong); margin-bottom:6px;">Shade Flat</div>
+          <div style="font-size:.8rem; color:var(--muted);">각 페이스가 고유 노멀 사용 → 각진 패싯(faceted) 표면. 로우폴리 스타일에 사용.</div>
+        </div>
+        <div style="background:var(--surface-strong); border-radius:10px; padding:12px; border:1px solid rgba(16,185,129,.2);">
+          <div style="font-weight:600; font-size:.82rem; color:#6ee7b7; margin-bottom:6px;">Shade Smooth</div>
+          <div style="font-size:.8rem; color:var(--muted);">모든 엣지에서 노멀을 보간 → 완전 부드러운 표면. 날카로운 코너에서 얼룩 발생 가능.</div>
+        </div>
+        <div style="background:var(--surface-strong); border-radius:10px; padding:12px; border:1px solid rgba(10,132,255,.2);">
+          <div style="font-weight:600; font-size:.82rem; color:var(--key-soft); margin-bottom:6px;">Shade Smooth by Angle</div>
+          <div style="font-size:.8rem; color:var(--muted);">기준각(기본 30°) 이하 = 부드럽게, 초과 = 날카롭게. 자동으로 구분해주는 <strong>스마트 셰이딩</strong>.</div>
+        </div>
+      </div>
+      <div style="font-size:.82rem; color:var(--muted); background:var(--surface); border-radius:8px; padding:10px 12px; border-left:2px solid var(--key);">
+        <strong style="color:var(--key-soft);">적용 방법</strong> — 오브젝트 선택 후 우클릭 → <em>Shade Smooth by Angle</em>. 각도 임계값(Threshold)은 Operator 패널(<span class="kbd">F9</span>)에서 조정.<br>
+        <span style="color:var(--muted);">→ Modifier 스택에 <strong>Smooth by Angle</strong> 노드가 자동 추가됩니다.</span>
+      </div>
+      <div class="analogy" style="margin-top:10px;">조각상에 물감을 칠할 때 — Subdivision은 조각을 더 세밀하게 깎는 것, Shade Smooth는 광택제를 발라 빛이 부드럽게 반사되게 하는 것</div>
+    </div>
   </div>
 
   <div class="shortcut-list">

@@ -524,6 +524,8 @@ body {
     <button class="scenario-btn is-active" data-scene="individual">Individual Origins</button>
     <button class="scenario-btn" data-scene="median">Median Point</button>
     <button class="scenario-btn" data-scene="cursor">3D Cursor</button>
+    <button class="scenario-btn" data-scene="bbox">Bounding Box Center</button>
+    <button class="scenario-btn" data-scene="active">Active Element</button>
   </div>
   <div class="scenario-desc" id="sceneDesc"></div>
   <div class="before-after" id="baWrap">
@@ -788,6 +790,99 @@ var scenarios = {
       ctx.beginPath(); ctx.arc(cursorX, cursorY, r, 0, Math.PI*2); ctx.stroke();
       ctx.fillStyle = "#8ec5ff"; ctx.font = "9px sans-serif"; ctx.textAlign = "center";
       ctx.fillText("Cursor 기준 공전", cursorX, cursorY+22);
+    }
+  }
+  ,
+  bbox: {
+    desc: "Bounding Box Center: 선택한 오브젝트 전체를 감싸는 바운딩 박스의 정중앙을 기준으로 변환합니다. Median Point와 비슷하지만 더 규칙적인 중심을 사용해요.",
+    ce: [
+      { cause: "크기가 다른 3개 오브젝트 선택 → Pivot: Bounding Box → R 90°", result: "전체를 감싸는 직육면체 중심 기준으로 함께 공전 — 균등 바운딩 기준", resultClass: "result-a" },
+      { cause: "Bounding Box Center vs Median Point 차이", result: "Median = 각 Origin 평균. BBox = 전체 볼륨 중심 → 큰 오브젝트 쪽으로 치우치지 않음", resultClass: "result-b" }
+    ],
+    before: function(ctx, w, h) {
+      drawGrid(ctx, w, h);
+      // 크기가 다른 3개 오브젝트
+      var objs = [{x: w*0.22, y: h*0.45, w: 70, h: 50}, {x: w*0.55, y: h*0.38, w: 40, h: 30}, {x: w*0.72, y: h*0.6, w: 55, h: 40}];
+      objs.forEach(function(o) { drawBox(ctx, o.x, o.y, o.w, o.h, "#3a3a8a", "#6666cc"); drawOrigin(ctx, o.x, o.y, "#FF8C00"); });
+      // 바운딩 박스 표시
+      var minX = Math.min.apply(null, objs.map(function(o){return o.x-o.w/2;}));
+      var maxX = Math.max.apply(null, objs.map(function(o){return o.x+o.w/2;}));
+      var minY = Math.min.apply(null, objs.map(function(o){return o.y-o.h/2;}));
+      var maxY = Math.max.apply(null, objs.map(function(o){return o.y+o.h/2;}));
+      ctx.strokeStyle = "rgba(16,185,129,.5)"; ctx.lineWidth = 1; ctx.setLineDash([4,3]);
+      ctx.strokeRect(minX-4, minY-4, (maxX-minX)+8, (maxY-minY)+8);
+      ctx.setLineDash([]);
+      var bcx = (minX+maxX)/2, bcy = (minY+maxY)/2;
+      ctx.beginPath(); ctx.arc(bcx, bcy, 5, 0, Math.PI*2);
+      ctx.fillStyle = "#10b981"; ctx.fill();
+      ctx.fillStyle = "#6ee7b7"; ctx.font = "9px sans-serif"; ctx.textAlign = "center";
+      ctx.fillText("BBox Center", bcx, bcy+16);
+    },
+    after: function(ctx, w, h) {
+      drawGrid(ctx, w, h);
+      var objs = [{x: w*0.22, y: h*0.45, w: 70, h: 50}, {x: w*0.55, y: h*0.38, w: 40, h: 30}, {x: w*0.72, y: h*0.6, w: 55, h: 40}];
+      var minX = Math.min.apply(null, objs.map(function(o){return o.x-o.w/2;}));
+      var maxX = Math.max.apply(null, objs.map(function(o){return o.x+o.w/2;}));
+      var minY = Math.min.apply(null, objs.map(function(o){return o.y-o.h/2;}));
+      var maxY = Math.max.apply(null, objs.map(function(o){return o.y+o.h/2;}));
+      var bcx = (minX+maxX)/2, bcy = (minY+maxY)/2;
+      // 공전 궤도
+      objs.forEach(function(o) {
+        var dist = Math.sqrt((o.x-bcx)*(o.x-bcx)+(o.y-bcy)*(o.y-bcy));
+        ctx.strokeStyle = "rgba(16,185,129,.15)"; ctx.lineWidth=1; ctx.setLineDash([2,3]);
+        ctx.beginPath(); ctx.arc(bcx,bcy,dist,0,Math.PI*2); ctx.stroke(); ctx.setLineDash([]);
+        var ang = Math.atan2(o.y-bcy, o.x-bcx) + Math.PI/2;
+        var nx = bcx+dist*Math.cos(ang), ny = bcy+dist*Math.sin(ang);
+        ctx.save(); ctx.translate(nx,ny); ctx.rotate(Math.PI/2);
+        drawBox(ctx,0,0,o.w,o.h,"#4a4aaa","#9999ff"); ctx.restore();
+        drawOrigin(ctx,nx,ny,"#FF8C00");
+      });
+      ctx.beginPath(); ctx.arc(bcx,bcy,5,0,Math.PI*2);
+      ctx.fillStyle="#10b981"; ctx.fill();
+      ctx.fillStyle="#6ee7b7"; ctx.font="9px sans-serif"; ctx.textAlign="center";
+      ctx.fillText("BBox Center 기준 공전",bcx,bcy+18);
+    }
+  },
+  active: {
+    desc: "Active Element: 마지막으로 선택한 오브젝트(밝게 빛나는 것)의 Origin을 기준으로 나머지 오브젝트들이 공전합니다. 특정 오브젝트 기준 배열에 유용해요.",
+    ce: [
+      { cause: "오브젝트 A,B 선택 후 C를 마지막 선택(Active) → Pivot: Active → R 90°", result: "B와 A가 C의 Origin 주위를 공전 — C는 그 자리에서 자전", resultClass: "result-a" },
+      { cause: "Active Element를 바꾸고 싶을 때", result: "원하는 오브젝트를 마지막에 클릭(Shift+클릭으로 추가 선택 후 대상 클릭)", resultClass: "result-b" }
+    ],
+    before: function(ctx, w, h) {
+      drawGrid(ctx, w, h);
+      var A = {x:w*0.22, y:h*0.5}, B = {x:w*0.5, y:h*0.3}, C = {x:w*0.72, y:h*0.55};
+      // A, B — 일반 선택
+      drawBox(ctx,A.x,A.y,46,34,"#3a3a8a","#6666cc"); drawOrigin(ctx,A.x,A.y,"#FF8C00");
+      ctx.fillStyle="#a1a1aa"; ctx.font="9px sans-serif"; ctx.textAlign="center"; ctx.fillText("A",A.x,A.y+22);
+      drawBox(ctx,B.x,B.y,46,34,"#3a3a8a","#6666cc"); drawOrigin(ctx,B.x,B.y,"#FF8C00");
+      ctx.fillStyle="#a1a1aa"; ctx.fillText("B",B.x,B.y+22);
+      // C — Active (밝게)
+      ctx.shadowColor="rgba(255,165,0,.6)"; ctx.shadowBlur=12;
+      drawBox(ctx,C.x,C.y,46,34,"#6a5a1a","#FFB347"); ctx.shadowBlur=0;
+      drawOrigin(ctx,C.x,C.y,"#FF8C00");
+      ctx.fillStyle="#FFB347"; ctx.font="bold 9px sans-serif"; ctx.fillText("C (Active)",C.x,C.y+22);
+    },
+    after: function(ctx, w, h) {
+      drawGrid(ctx, w, h);
+      var A = {x:w*0.22, y:h*0.5}, B = {x:w*0.5, y:h*0.3}, C = {x:w*0.72, y:h*0.55};
+      // C는 그 자리에서만 자전
+      ctx.save(); ctx.translate(C.x,C.y); ctx.rotate(Math.PI/2);
+      ctx.shadowColor="rgba(255,165,0,.6)"; ctx.shadowBlur=12;
+      drawBox(ctx,0,0,46,34,"#6a5a1a","#FFB347"); ctx.shadowBlur=0; ctx.restore();
+      drawOrigin(ctx,C.x,C.y,"#FF8C00");
+      ctx.fillStyle="#FFB347"; ctx.font="bold 9px sans-serif"; ctx.textAlign="center"; ctx.fillText("C (Active)",C.x,C.y+22);
+      // A,B는 C 기준 공전
+      [A,B].forEach(function(p,i){
+        var dist=Math.sqrt((p.x-C.x)*(p.x-C.x)+(p.y-C.y)*(p.y-C.y));
+        ctx.strokeStyle="rgba(255,180,0,.2)"; ctx.lineWidth=1; ctx.setLineDash([2,3]);
+        ctx.beginPath(); ctx.arc(C.x,C.y,dist,0,Math.PI*2); ctx.stroke(); ctx.setLineDash([]);
+        var ang=Math.atan2(p.y-C.y,p.x-C.x)+Math.PI/2;
+        var nx=C.x+dist*Math.cos(ang), ny=C.y+dist*Math.sin(ang);
+        drawBox(ctx,nx,ny,46,34,"#4a4aaa","#9999ff"); drawOrigin(ctx,nx,ny,"#FF8C00");
+        ctx.fillStyle="#a1a1aa"; ctx.font="9px sans-serif"; ctx.textAlign="center";
+        ctx.fillText(i===0?"A":"B",nx,ny+22);
+      });
     }
   }
 };
