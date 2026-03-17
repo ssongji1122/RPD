@@ -33,6 +33,7 @@ from pathlib import Path
 NOTION_API = "https://api.notion.com/v1"
 ROOT = Path(__file__).resolve().parent.parent
 NOTION_MAPPING = ROOT / "tools" / "notion-mapping.json"
+SUPPLEMENTS_JSON = ROOT / "course-site" / "assets" / "showme" / "_supplements.json"
 
 
 # ---------------------------------------------------------------------------
@@ -53,6 +54,22 @@ def load_notion_mapping() -> dict:
     with open(NOTION_MAPPING, encoding="utf-8") as f:
         data = json.load(f)
     return data.get("weeks", {})
+
+
+def load_supplements() -> dict:
+    """Load showme supplement data from _supplements.json."""
+    if not SUPPLEMENTS_JSON.exists():
+        return {}
+    with open(SUPPLEMENTS_JSON, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def find_supplement_for_widget(widget_id: str, supplements: dict) -> dict | None:
+    """Return the supplement whose targets include widget_id, or None."""
+    for sup in supplements.values():
+        if widget_id in sup.get("targets", []):
+            return sup
+    return None
 
 
 # ---------------------------------------------------------------------------
@@ -253,6 +270,83 @@ def week_to_notion_blocks(week: dict) -> list[dict]:
                     "checked": False
                 }
             })
+
+        # Supplement toggle (if available)
+        showme_ids = step.get("showme", [])
+        if isinstance(showme_ids, str):
+            showme_ids = [showme_ids]
+        _supplements = load_supplements()
+        for sid in showme_ids:
+            sup = find_supplement_for_widget(sid, _supplements)
+            if not sup:
+                continue
+            toggle_children: list[dict] = []
+            if sup.get("analogy"):
+                a = sup["analogy"]
+                toggle_children.append({
+                    "object": "block",
+                    "type": "paragraph",
+                    "paragraph": {
+                        "rich_text": [
+                            {
+                                "type": "text",
+                                "text": {"content": f"{a.get('emoji', '')} {a['headline']}\n"},
+                                "annotations": {"bold": True},
+                            },
+                            {"type": "text", "text": {"content": a["body"]}},
+                        ]
+                    },
+                })
+            if sup.get("before_after"):
+                ba = sup["before_after"]
+                toggle_children.append({
+                    "object": "block",
+                    "type": "paragraph",
+                    "paragraph": {
+                        "rich_text": [
+                            {
+                                "type": "text",
+                                "text": {"content": "❌ Without: "},
+                                "annotations": {"bold": True},
+                            },
+                            {"type": "text", "text": {"content": ba["before"] + "\n"}},
+                            {
+                                "type": "text",
+                                "text": {"content": "✅ With: "},
+                                "annotations": {"bold": True},
+                            },
+                            {"type": "text", "text": {"content": ba["after"]}},
+                        ]
+                    },
+                })
+            if sup.get("takeaway"):
+                toggle_children.append({
+                    "object": "block",
+                    "type": "paragraph",
+                    "paragraph": {
+                        "rich_text": [
+                            {
+                                "type": "text",
+                                "text": {"content": f"→ {sup['takeaway']}"},
+                                "annotations": {"bold": True, "color": "blue"},
+                            }
+                        ]
+                    },
+                })
+            if toggle_children:
+                blocks.append({
+                    "object": "block",
+                    "type": "toggle",
+                    "toggle": {
+                        "rich_text": [
+                            {
+                                "type": "text",
+                                "text": {"content": sup.get("title", "아직 헷갈린다면?")},
+                            }
+                        ],
+                        "children": toggle_children,
+                    },
+                })
 
     append_link_section("공식 영상 튜토리얼", week.get("videos", []))
     append_link_section("공식 문서", week.get("docs", []))
