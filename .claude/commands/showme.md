@@ -191,3 +191,7 @@ window.parent.postMessage({
 | `course-site/assets/showme/edit-mode-tools.html` | 복합 참조 카드 (다중 도구) |
 | `course-site/week.html` | 모달 시스템, iframe 임베드 |
 | `course-site/data/curriculum.js` | 주차별 showme 필드 |
+| `course-site/assets/showme/_supplements.js` | 보충 설명 데이터 (프론트엔드 accordion) |
+| `course-site/assets/showme/_supplements.json` | 보충 설명 데이터 (Notion sync용) |
+
+> 보충 설명 생성은 `/brainstormC` 스킬 사용
