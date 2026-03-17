@@ -334,6 +334,24 @@ body {
   line-height: 1.5;
 }
 .doc-ref a:hover { text-decoration: underline; }
+
+.scenario-nav { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+.scenario-btn { padding:6px 14px; border-radius:20px; border:1px solid rgba(255,255,255,.15); background:transparent; color:#cbd5e1; cursor:pointer; font-size:13px; transition:all .2s; font-family:inherit; }
+.scenario-btn.active { background:rgba(99,102,241,.25); border-color:rgba(99,102,241,.5); color:#a5b4fc; }
+.before-after { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:12px 0; }
+.ba-panel { border-radius:12px; overflow:hidden; background:var(--surface); }
+.ba-panel canvas { width:100%; display:block; }
+.ba-label { text-align:center; font-size:11px; color:#94a3b8; padding:4px; background:rgba(0,0,0,.2); }
+.cause-effect { display:flex; flex-direction:column; gap:8px; margin:12px 0; }
+.ce-row { display:flex; align-items:center; gap:8px; }
+.ce-cause { background:rgba(99,102,241,.12); border:1px solid rgba(99,102,241,.25); border-radius:8px; padding:6px 12px; font-size:13px; flex:1; color:var(--muted-strong); }
+.ce-arrow { color:#64748b; font-size:16px; }
+.ce-result { border-radius:8px; padding:6px 12px; font-size:13px; flex:1.5; }
+.result-a { background:rgba(16,185,129,.1); border:1px solid rgba(16,185,129,.25); color:#6ee7b7; }
+.result-b { background:rgba(245,158,11,.1); border:1px solid rgba(245,158,11,.25); color:#fcd34d; }
+.result-c { background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.25); color:#fca5a5; }
+.scene-desc { font-size:.84rem; color:var(--muted-strong); margin-bottom:10px; padding:10px 14px; border-radius:var(--radius-sm); background:var(--surface); border:1px solid var(--line); line-height:1.7; }
+
 /* ── Responsive ── */
 @media (max-width: 600px) {
   .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
@@ -405,24 +423,23 @@ body {
 
 <!-- TAB 2: 시각적 비교 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    모드를 선택한 뒤 캔버스 위에서 드래그하여 변형해 보세요. 축 고정도 체험해 보세요.
-  </p>
-  <div class="demo-wrap">
-    <canvas id="demoCanvas" width="680" height="380"></canvas>
-    <div class="demo-controls">
-      <button class="demo-btn is-active" id="btnG">G (이동)</button>
-      <button class="demo-btn" id="btnR">R (회전)</button>
-      <button class="demo-btn" id="btnS">S (크기)</button>
-      <span style="width:1px;background:var(--line-strong);margin:0 4px"></span>
-      <button class="demo-btn" id="btnAxisX">X축 고정</button>
-      <button class="demo-btn" id="btnAxisY">Y축 고정</button>
-      <button class="demo-btn" id="btnAxisFree">자유</button>
-      <span style="width:1px;background:var(--line-strong);margin:0 4px"></span>
-      <button class="demo-btn" id="btnResetT">초기화</button>
+  <div class="scenario-nav" id="scenarioNav">
+    <button class="scenario-btn active" data-scene="grab">G — Grab (이동)</button>
+    <button class="scenario-btn" data-scene="rotate">R — Rotate (회전)</button>
+    <button class="scenario-btn" data-scene="scale">S — Scale (크기)</button>
+  </div>
+  <div class="scene-desc" id="scene-desc">G 키는 오브젝트를 이동합니다. 축 제한(X/Y/Z)을 누르면 해당 축으로만 이동할 수 있습니다.</div>
+  <div class="before-after">
+    <div class="ba-panel">
+      <canvas id="canvas-before" width="280" height="160"></canvas>
+      <div class="ba-label">적용 전</div>
+    </div>
+    <div class="ba-panel">
+      <canvas id="canvas-after" width="280" height="160"></canvas>
+      <div class="ba-label">적용 후</div>
     </div>
   </div>
-  <p class="demo-hint">모드 선택 후 캔버스를 드래그 | 축 고정으로 제한된 변형 체험</p>
+  <div class="cause-effect" id="cause-effect"></div>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->
@@ -615,251 +632,186 @@ function initQuiz(questions) {
   }
 }
 
-// ── Canvas G/R/S Transform Demo ──────────────
+// ── Transform GRS Scenario Visualization ────────────
 (function() {
-  var canvas = document.getElementById("demoCanvas");
-  var ctx = canvas.getContext("2d");
-  var W = canvas.width;
-  var H = canvas.height;
+  function drawBg(ctx, w, h) { ctx.fillStyle = "#1e293b"; ctx.fillRect(0,0,w,h); }
 
-  // Box state
-  var defaultState = { x: W / 2, y: H / 2, rotation: 0, scaleX: 1, scaleY: 1 };
-  var box = { x: defaultState.x, y: defaultState.y, rotation: defaultState.rotation, scaleX: defaultState.scaleX, scaleY: defaultState.scaleY };
-  var boxW = 100, boxH = 80;
-
-  // Current mode: "grab", "rotate", "scale"
-  var mode = "grab";
-  // Axis constraint: "free", "x", "y"
-  var axisLock = "free";
-
-  var dragging = false;
-  var lastX = 0, lastY = 0;
-  var startX = 0, startY = 0;
-
-  function setActiveBtn(btnId) {
-    ["btnG", "btnR", "btnS"].forEach(function(id) {
-      document.getElementById(id).classList.remove("is-active");
-    });
-    document.getElementById(btnId).classList.add("is-active");
+  function drawGrid(ctx, w, h) {
+    ctx.strokeStyle = "rgba(255,255,255,.04)"; ctx.lineWidth = 1;
+    for (var gx = 20; gx < w; gx += 20) { ctx.beginPath(); ctx.moveTo(gx,0); ctx.lineTo(gx,h); ctx.stroke(); }
+    for (var gy = 20; gy < h; gy += 20) { ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(w,gy); ctx.stroke(); }
   }
 
-  function setActiveAxis(btnId) {
-    ["btnAxisX", "btnAxisY", "btnAxisFree"].forEach(function(id) {
-      document.getElementById(id).classList.remove("is-active");
-    });
-    document.getElementById(btnId).classList.add("is-active");
+  function drawBox(ctx, cx, cy, bw, bh, r, g, b, alpha) {
+    ctx.fillStyle = 'rgba('+r+','+g+','+b+','+alpha+')';
+    ctx.strokeStyle = 'rgba('+r+','+g+','+b+',.7)'; ctx.lineWidth = 1.5;
+    ctx.fillRect(cx-bw/2, cy-bh/2, bw, bh); ctx.strokeRect(cx-bw/2, cy-bh/2, bw, bh);
   }
 
-  document.getElementById("btnG").addEventListener("click", function() { mode = "grab"; setActiveBtn("btnG"); });
-  document.getElementById("btnR").addEventListener("click", function() { mode = "rotate"; setActiveBtn("btnR"); });
-  document.getElementById("btnS").addEventListener("click", function() { mode = "scale"; setActiveBtn("btnS"); });
+  function drawOriginDot(ctx, cx, cy) {
+    ctx.beginPath(); ctx.arc(cx, cy, 4, 0, Math.PI*2); ctx.fillStyle = "#f97316"; ctx.fill();
+  }
 
-  document.getElementById("btnAxisX").addEventListener("click", function() { axisLock = "x"; setActiveAxis("btnAxisX"); });
-  document.getElementById("btnAxisY").addEventListener("click", function() { axisLock = "y"; setActiveAxis("btnAxisY"); });
-  document.getElementById("btnAxisFree").addEventListener("click", function() { axisLock = "free"; setActiveAxis("btnAxisFree"); });
+  function drawArrowLine(ctx, x1, y1, x2, y2, color) {
+    ctx.strokeStyle = color; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    var angle = Math.atan2(y2-y1, x2-x1);
+    ctx.fillStyle = color; ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2-12*Math.cos(angle-0.4), y2-12*Math.sin(angle-0.4));
+    ctx.lineTo(x2-12*Math.cos(angle+0.4), y2-12*Math.sin(angle+0.4));
+    ctx.closePath(); ctx.fill();
+  }
 
-  document.getElementById("btnResetT").addEventListener("click", function() {
-    box.x = defaultState.x;
-    box.y = defaultState.y;
-    box.rotation = defaultState.rotation;
-    box.scaleX = defaultState.scaleX;
-    box.scaleY = defaultState.scaleY;
-    draw();
+  function drawGrabBefore(ctx, w, h) {
+    drawBg(ctx, w, h); drawGrid(ctx, w, h);
+    drawBox(ctx, w/2, h/2, 60, 40, 99, 102, 241, 0.15);
+    drawOriginDot(ctx, w/2, h/2);
+    ctx.fillStyle = "#94a3b8"; ctx.font = "bold 10px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("G \ud0a4 \ub204\ub974\uae30 \uc804 (\uc6d0\ub798 \uc704\uce58)", w/2, 14);
+  }
+
+  function drawGrabAfter(ctx, w, h) {
+    drawBg(ctx, w, h); drawGrid(ctx, w, h);
+    var cx = w/2, cy = h/2, nx = cx+60, ny = cy-25;
+    ctx.globalAlpha = 0.15; drawBox(ctx, cx, cy, 60, 40, 99, 102, 241, 0.1); ctx.globalAlpha = 1;
+    ctx.setLineDash([4,4]); ctx.strokeStyle = "rgba(99,102,241,.4)"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(nx, ny); ctx.stroke(); ctx.setLineDash([]);
+    drawBox(ctx, nx, ny, 60, 40, 99, 102, 241, 0.25);
+    drawOriginDot(ctx, nx, ny);
+    drawArrowLine(ctx, cx+5, cy+5, nx-5, ny+5, "rgba(99,102,241,.8)");
+    ctx.fillStyle = "#a5b4fc"; ctx.font = "bold 9px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("G X \u2014 X\ucd95\uc73c\ub85c \uc774\ub3d9", cx, 14);
+    ctx.fillStyle = "#ef4444"; ctx.font = "9px sans-serif";
+    ctx.fillText("X", (cx+nx)/2-6, (cy+ny)/2-8);
+  }
+
+  function drawRotateBefore(ctx, w, h) {
+    drawBg(ctx, w, h); drawGrid(ctx, w, h);
+    drawBox(ctx, w/2, h/2, 70, 40, 245, 158, 11, 0.12);
+    drawOriginDot(ctx, w/2, h/2);
+    ctx.strokeStyle = "rgba(245,158,11,.2)"; ctx.lineWidth = 1; ctx.setLineDash([3,3]);
+    ctx.beginPath(); ctx.arc(w/2, h/2, 50, -Math.PI*0.5, Math.PI*0.5); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = "#f59e0b"; ctx.font = "bold 10px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("R \ud0a4 \ub204\ub974\uae30 \uc804 (0\ub3c4)", w/2, 14);
+  }
+
+  function drawRotateAfter(ctx, w, h) {
+    drawBg(ctx, w, h); drawGrid(ctx, w, h);
+    var cx = w/2, cy = h/2, angle = Math.PI/5;
+    ctx.globalAlpha = 0.15; drawBox(ctx, cx, cy, 70, 40, 245, 158, 11, 0.1); ctx.globalAlpha = 1;
+    ctx.save(); ctx.translate(cx, cy); ctx.rotate(angle);
+    ctx.fillStyle = "rgba(245,158,11,.2)"; ctx.strokeStyle = "rgba(245,158,11,.7)"; ctx.lineWidth = 1.5;
+    ctx.fillRect(-35,-20,70,40); ctx.strokeRect(-35,-20,70,40); ctx.restore();
+    drawOriginDot(ctx, cx, cy);
+    ctx.strokeStyle = "rgba(245,158,11,.6)"; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(cx, cy, 50, -angle/2, angle+angle/2); ctx.stroke();
+    var ax = cx + Math.cos(angle)*50, ay = cy + Math.sin(angle)*50;
+    drawArrowLine(ctx, ax-10*Math.cos(angle+0.5), ay-10*Math.sin(angle+0.5), ax, ay, "rgba(245,158,11,.8)");
+    ctx.fillStyle = "#fcd34d"; ctx.font = "bold 10px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("R Z 36 \u2014 Z\ucd95 36\ub3c4 \ud68c\uc804", cx, 14);
+  }
+
+  function drawScaleBefore(ctx, w, h) {
+    drawBg(ctx, w, h); drawGrid(ctx, w, h);
+    drawBox(ctx, w/2, h/2, 50, 35, 16, 185, 129, 0.12);
+    drawOriginDot(ctx, w/2, h/2);
+    ctx.fillStyle = "#10b981"; ctx.font = "bold 10px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("S \ud0a4 \ub204\ub974\uae30 \uc804 (\uc6d0\ub798 \ud06c\uae30)", w/2, 14);
+  }
+
+  function drawScaleAfter(ctx, w, h) {
+    drawBg(ctx, w, h); drawGrid(ctx, w, h);
+    var cx = w/2, cy = h/2;
+    ctx.globalAlpha = 0.15; drawBox(ctx, cx, cy, 50, 35, 16, 185, 129, 0.1); ctx.globalAlpha = 1;
+    drawBox(ctx, cx, cy, 90, 63, 16, 185, 129, 0.2);
+    drawOriginDot(ctx, cx, cy);
+    drawArrowLine(ctx, cx+25, cy, cx+50, cy, "rgba(16,185,129,.8)");
+    drawArrowLine(ctx, cx-25, cy, cx-50, cy, "rgba(16,185,129,.8)");
+    drawArrowLine(ctx, cx, cy+17, cx, cy+37, "rgba(16,185,129,.8)");
+    drawArrowLine(ctx, cx, cy-17, cx, cy-37, "rgba(16,185,129,.8)");
+    ctx.fillStyle = "#6ee7b7"; ctx.font = "bold 10px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("S 1.8 \u2014 1.8\ubc30 \ud655\ub300", cx, 14);
+  }
+
+  var scenarios = {
+    grab: {
+      desc: "G \ud0a4\ub294 \uc624\ube0c\uc81d\ud2b8\ub97c \uc774\ub3d9\ud569\ub2c8\ub2e4. G \ud0a4 \ud6c4 X/Y/Z\ub97c \ub204\ub974\uba74 \ud574\ub2f9 \ucd95\uc73c\ub85c\ub9cc \uc774\ub3d9\ud560 \uc218 \uc788\uc2b5\ub2c8\ub2e4.",
+      ce: [
+        { cause: "G \ud0a4", result: "\ubaa8\ub4e0 \ubc29\ud5a5\uc73c\ub85c \uc790\uc720 \uc774\ub3d9", resultClass: "result-a" },
+        { cause: "G \u2192 X/Y/Z", result: "\ud574\ub2f9 \ucd95\uc73c\ub85c\ub9cc \uc81c\ud55c \uc774\ub3d9", resultClass: "result-a" },
+        { cause: "G \u2192 X \u2192 \uc22b\uc790 \uc785\ub825", result: "\uc815\ud655\ud55c \uac70\ub9ac\ub85c \uc774\ub3d9", resultClass: "result-b" }
+      ],
+      before: drawGrabBefore,
+      after: drawGrabAfter
+    },
+    rotate: {
+      desc: "R \ud0a4\ub294 \uc624\ube0c\uc81d\ud2b8\ub97c \ud68c\uc804\ud569\ub2c8\ub2e4. R \ud6c4 X/Y/Z \ucd95\uc744 \uc9c0\uc815\ud558\uac70\ub098 \uc22b\uc790\ub97c \uc785\ub825\ud558\uba74 \uc815\ud655\ud55c \uac01\ub3c4\ub85c \ud68c\uc804\ud560 \uc218 \uc788\uc2b5\ub2c8\ub2e4.",
+      ce: [
+        { cause: "R \ud0a4", result: "\ud654\uba74 \ud3c9\uba74 \uae30\uc900 \ud68c\uc804 \uc2dc\uc791", resultClass: "result-a" },
+        { cause: "R \u2192 Z \u2192 45", result: "Z\ucd95 \uae30\uc900 45\ub3c4 \ud68c\uc804", resultClass: "result-a" },
+        { cause: "\ud53c\ubc97 \ud3ec\uc778\ud2b8 \uc9c0\uc815", result: "\ub2e4\ub978 \uc911\uc2ec\uc810\uc73c\ub85c \ud68c\uc804", resultClass: "result-b" }
+      ],
+      before: drawRotateBefore,
+      after: drawRotateAfter
+    },
+    scale: {
+      desc: "S \ud0a4\ub294 \uc624\ube0c\uc81d\ud2b8\uc758 \ud06c\uae30\ub97c \uc870\uc808\ud569\ub2c8\ub2e4. S \ud6c4 \uc22b\uce58\ub97c \uc785\ub825\ud558\uba74 \uc815\ud655\ud55c \ube44\uc728\ub85c \ud655\ub300/\ucd95\uc18c\ud560 \uc218 \uc788\uc2b5\ub2c8\ub2e4.",
+      ce: [
+        { cause: "S \ud0a4", result: "\ubaa8\ub4e0 \ucd95 \ub3d9\uc2dc \ud655\ub300/\ucd95\uc18c", resultClass: "result-a" },
+        { cause: "S \u2192 X \u2192 2", result: "X\ucd95 \ubc29\ud5a5\uc73c\ub85c 2\ubc30 \ud655\ub300", resultClass: "result-a" },
+        { cause: "S \u2192 0.5", result: "\ubaa8\ub4e0 \ucd95 \ubc18\uc73c\ub85c \ucd95\uc18c", resultClass: "result-b" }
+      ],
+      before: drawScaleBefore,
+      after: drawScaleAfter
+    }
+  };
+
+  function switchScenario(key) {
+    document.querySelectorAll('.scenario-btn').forEach(function(b) {
+      b.classList.toggle('active', b.dataset.scene === key);
+    });
+    var s = scenarios[key];
+    document.getElementById('scene-desc').textContent = s.desc;
+    buildCauseEffect(s.ce);
+    renderBAPanels(s);
+  }
+
+  function buildCauseEffect(ces) {
+    var el = document.getElementById('cause-effect');
+    while (el.firstChild) el.removeChild(el.firstChild);
+    ces.forEach(function(c) {
+      var row = document.createElement('div'); row.className = 'ce-row';
+      var cause = document.createElement('div'); cause.className = 'ce-cause'; cause.textContent = c.cause;
+      var arrow = document.createElement('div'); arrow.className = 'ce-arrow'; arrow.textContent = '\u2192';
+      var result = document.createElement('div'); result.className = 'ce-result ' + c.resultClass; result.textContent = c.result;
+      row.appendChild(cause); row.appendChild(arrow); row.appendChild(result);
+      el.appendChild(row);
+    });
+  }
+
+  function renderBAPanels(s) {
+    var bc = document.getElementById('canvas-before'), ac = document.getElementById('canvas-after');
+    var bx = bc.getContext('2d'), ax = ac.getContext('2d');
+    bc.width = bc.offsetWidth || 280; bc.height = 160;
+    ac.width = ac.offsetWidth || 280; ac.height = 160;
+    bx.clearRect(0, 0, bc.width, bc.height);
+    ax.clearRect(0, 0, ac.width, ac.height);
+    if (s.before) s.before(bx, bc.width, bc.height);
+    if (s.after) s.after(ax, ac.width, ac.height);
+  }
+
+  document.querySelectorAll('.scenario-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() { switchScenario(btn.dataset.scene); });
   });
 
-  function draw() {
-    ctx.clearRect(0, 0, W, H);
-
-    // Background
-    ctx.fillStyle = "#17181a";
-    ctx.fillRect(0, 0, W, H);
-
-    // Subtle grid
-    ctx.strokeStyle = "rgba(255,255,255,.04)";
-    ctx.lineWidth = 1;
-    var step = 40;
-    for (var gx = step; gx < W; gx += step) {
-      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke();
-    }
-    for (var gy = step; gy < H; gy += step) {
-      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke();
-    }
-
-    // Draw axis lines through box center
-    var axisLen = 160;
-    // X axis (red)
-    ctx.strokeStyle = axisLock === "x" ? "rgba(239,68,68,.8)" : "rgba(239,68,68,.3)";
-    ctx.lineWidth = axisLock === "x" ? 2 : 1;
-    ctx.beginPath(); ctx.moveTo(box.x - axisLen, box.y); ctx.lineTo(box.x + axisLen, box.y); ctx.stroke();
-    ctx.fillStyle = axisLock === "x" ? "rgba(239,68,68,.9)" : "rgba(239,68,68,.5)";
-    ctx.font = "bold 11px sans-serif";
-    ctx.textAlign = "left";
-    ctx.fillText("X", box.x + axisLen + 4, box.y + 4);
-
-    // Y axis (green) — screen Y is inverted
-    ctx.strokeStyle = axisLock === "y" ? "rgba(16,185,129,.8)" : "rgba(16,185,129,.3)";
-    ctx.lineWidth = axisLock === "y" ? 2 : 1;
-    ctx.beginPath(); ctx.moveTo(box.x, box.y - axisLen); ctx.lineTo(box.x, box.y + axisLen); ctx.stroke();
-    ctx.fillStyle = axisLock === "y" ? "rgba(16,185,129,.9)" : "rgba(16,185,129,.5)";
-    ctx.textAlign = "center";
-    ctx.fillText("Y", box.x, box.y - axisLen - 6);
-
-    // Draw the box
-    ctx.save();
-    ctx.translate(box.x, box.y);
-    ctx.rotate(box.rotation);
-    ctx.scale(box.scaleX, box.scaleY);
-
-    var hw = boxW / 2;
-    var hh = boxH / 2;
-
-    // Fill
-    ctx.fillStyle = "rgba(10,132,255,.2)";
-    ctx.fillRect(-hw, -hh, boxW, boxH);
-
-    // Border
-    ctx.strokeStyle = "rgba(142,197,255,.7)";
-    ctx.lineWidth = 2;
-    ctx.strokeRect(-hw, -hh, boxW, boxH);
-
-    // Corner vertices
-    var corners = [[-hw, -hh], [hw, -hh], [hw, hh], [-hw, hh]];
-    corners.forEach(function(c) {
-      ctx.beginPath();
-      ctx.arc(c[0], c[1], 4, 0, Math.PI * 2);
-      ctx.fillStyle = "#8ec5ff";
-      ctx.fill();
-      ctx.strokeStyle = "#fff";
-      ctx.lineWidth = 1;
-      ctx.stroke();
+  document.querySelectorAll('.tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      if (tab.dataset.tab === 'visual') { setTimeout(function() { switchScenario('grab'); }, 50); }
     });
+  });
 
-    // Diagonal cross for visual reference
-    ctx.strokeStyle = "rgba(255,255,255,.08)";
-    ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(-hw, -hh); ctx.lineTo(hw, hh); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(hw, -hh); ctx.lineTo(-hw, hh); ctx.stroke();
-
-    ctx.restore();
-
-    // Origin dot
-    ctx.beginPath();
-    ctx.arc(box.x, box.y, 5, 0, Math.PI * 2);
-    ctx.fillStyle = "#f59e0b";
-    ctx.fill();
-    ctx.strokeStyle = "#fff";
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
-
-    // Mode label
-    var modeLabel = mode === "grab" ? "G (이동)" : mode === "rotate" ? "R (회전)" : "S (크기)";
-    var axisLabel = axisLock === "x" ? " + X축 고정" : axisLock === "y" ? " + Y축 고정" : " (자유)";
-    ctx.fillStyle = "rgba(245,158,11,.7)";
-    ctx.font = "bold 12px sans-serif";
-    ctx.textAlign = "left";
-    ctx.fillText("모드: " + modeLabel + axisLabel, 12, 22);
-
-    // Info display
-    ctx.fillStyle = "rgba(255,255,255,.3)";
-    ctx.font = "11px sans-serif";
-    ctx.textAlign = "right";
-    var info = "위치: (" + Math.round(box.x - W / 2) + ", " + Math.round(-(box.y - H / 2)) + ")";
-    info += "  회전: " + Math.round(box.rotation * 180 / Math.PI) + "\u00b0";
-    info += "  크기: " + box.scaleX.toFixed(2) + "x" + box.scaleY.toFixed(2);
-    ctx.fillText(info, W - 12, 22);
-  }
-
-  function getEventPos(e) {
-    var rect = canvas.getBoundingClientRect();
-    var scaleX = canvas.width / rect.width;
-    var scaleY = canvas.height / rect.height;
-    var clientX, clientY;
-    if (e.touches && e.touches.length > 0) {
-      clientX = e.touches[0].clientX;
-      clientY = e.touches[0].clientY;
-    } else {
-      clientX = e.clientX;
-      clientY = e.clientY;
-    }
-    return {
-      x: (clientX - rect.left) * scaleX,
-      y: (clientY - rect.top) * scaleY
-    };
-  }
-
-  function onDown(e) {
-    e.preventDefault();
-    dragging = true;
-    var pos = getEventPos(e);
-    lastX = pos.x;
-    lastY = pos.y;
-    startX = pos.x;
-    startY = pos.y;
-  }
-
-  function onMove(e) {
-    if (!dragging) return;
-    e.preventDefault();
-    var pos = getEventPos(e);
-    var dx = pos.x - lastX;
-    var dy = pos.y - lastY;
-
-    if (mode === "grab") {
-      if (axisLock === "x") {
-        box.x += dx;
-      } else if (axisLock === "y") {
-        box.y += dy;
-      } else {
-        box.x += dx;
-        box.y += dy;
-      }
-      // Clamp
-      if (box.x < 20) box.x = 20;
-      if (box.x > W - 20) box.x = W - 20;
-      if (box.y < 20) box.y = 20;
-      if (box.y > H - 20) box.y = H - 20;
-    } else if (mode === "rotate") {
-      var angle1 = Math.atan2(lastY - box.y, lastX - box.x);
-      var angle2 = Math.atan2(pos.y - box.y, pos.x - box.x);
-      box.rotation += angle2 - angle1;
-    } else if (mode === "scale") {
-      var factor = 1 + dx * 0.005;
-      var factorY = 1 + dy * 0.005;
-      if (axisLock === "x") {
-        box.scaleX *= factor;
-      } else if (axisLock === "y") {
-        box.scaleY *= (1 - dy * 0.005);
-      } else {
-        box.scaleX *= factor;
-        box.scaleY *= factor;
-      }
-      // Clamp scale
-      if (box.scaleX < 0.2) box.scaleX = 0.2;
-      if (box.scaleX > 4) box.scaleX = 4;
-      if (box.scaleY < 0.2) box.scaleY = 0.2;
-      if (box.scaleY > 4) box.scaleY = 4;
-    }
-
-    lastX = pos.x;
-    lastY = pos.y;
-    draw();
-  }
-
-  function onUp() {
-    dragging = false;
-  }
-
-  canvas.addEventListener("mousedown", onDown);
-  canvas.addEventListener("mousemove", onMove);
-  canvas.addEventListener("mouseup", onUp);
-  canvas.addEventListener("mouseleave", onUp);
-  canvas.addEventListener("touchstart", onDown, { passive: false });
-  canvas.addEventListener("touchmove", onMove, { passive: false });
-  canvas.addEventListener("touchend", onUp);
-  canvas.addEventListener("touchcancel", onUp);
-
-  // Initial draw
-  draw();
+  switchScenario('grab');
 })();
 
 // ── Quiz Data ─────────────────────────────────
