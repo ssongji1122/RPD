@@ -856,8 +856,8 @@
         : { label: widgetId, icon: "\ud83d\udcd6" };
 
       title.textContent = meta.icon + " " + meta.label;
-      iframe.src = "assets/showme/" + widgetId + ".html?wid=" + widgetId;
       iframe.onload = function() { injectSupplement(iframe, widgetId); };
+      iframe.src = "assets/showme/" + widgetId + ".html?wid=" + widgetId;
       overlay.classList.add("is-open");
       overlay.removeAttribute("aria-hidden");
       document.body.style.overflow = "hidden";

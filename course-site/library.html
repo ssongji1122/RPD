@@ -490,11 +490,11 @@ function injectSupplement(iframe, widgetId) {
 function openShowMe(widgetId) {
   var meta = SHOWME_REGISTRY[widgetId] || { label: widgetId, icon: "📖" };
   document.getElementById("showmeTitle").textContent = meta.icon + " " + meta.label;
-  document.getElementById("showmeIframe").src =
-    "assets/showme/" + widgetId + ".html?wid=" + widgetId;
   document.getElementById("showmeIframe").onload = function() {
     injectSupplement(this, widgetId);
   };
+  document.getElementById("showmeIframe").src =
+    "assets/showme/" + widgetId + ".html?wid=" + widgetId;
   var overlay = document.getElementById("showmeOverlay");
   overlay.classList.add("is-open");
   overlay.setAttribute("aria-hidden", "false");
