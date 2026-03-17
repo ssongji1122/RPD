@@ -576,7 +576,10 @@
                 ? `<a href="${step.link}" target="_blank" rel="noopener noreferrer"><img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" /></a>`
                 : `<img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" />`) : ""}
             ${step.downloads && step.downloads.length ? `<div class="step-downloads">${step.downloads.map(dl => `<a class="step-dl-btn" href="${dl.url}" download="${dl.url.split('/').pop()}" target="_blank" rel="noopener">⬇ ${dl.label}</a>`).join("")}</div>` : ""}
-            <div class="task-list">${taskItems}</div>
+            <details class="task-accordion">
+              <summary class="task-accordion-summary">체크리스트 <span class="task-count">${step.tasks.length}</span></summary>
+              <div class="task-list">${taskItems}</div>
+            </details>
           </article>`;
       }).join("");
 
@@ -695,7 +698,6 @@
           <div class="hero-card">
             <div class="eyebrow">Week ${String(w.week).padStart(2,"0")} · RPD</div>
             <h1>${w.title}</h1>
-            ${w.subtitle ? `<p>${w.subtitle}</p>` : ""}
             <div class="hero-meta">
               <span class="meta-chip">⏱ ${w.duration}</span>
               <span class="meta-chip">📋 ${w.steps.length}단계 실습</span>

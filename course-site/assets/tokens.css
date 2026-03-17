@@ -327,7 +327,24 @@ section, .section-inner {
 .status-pill.locked   { background: var(--overlay-white); color: var(--muted); }
 
 /* Task list */
-.task-list { margin-top: 16px; display: grid; gap: 10px; }
+.task-accordion { margin-top: 16px; }
+.task-accordion > summary { list-style: none; }
+.task-accordion > summary::-webkit-details-marker { display: none; }
+.task-accordion-summary {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 0; cursor: pointer;
+  font-size: .82rem; font-weight: 600; color: var(--muted-strong);
+  user-select: none;
+}
+.task-accordion[open] > .task-accordion-summary { color: var(--text); }
+.task-count {
+  background: var(--overlay-white);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 1px 7px;
+  font-size: .74rem; color: var(--muted);
+}
+.task-list { display: grid; gap: 10px; padding-top: 10px; }
 .task-item {
   display: flex; align-items: start; gap: 12px;
   padding: 12px 14px;
