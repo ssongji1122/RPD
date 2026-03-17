@@ -521,6 +521,23 @@
       const videos = w.videos || [];
       const docs = w.docs || [];
 
+      // Topics (checkable chips with localStorage persistence)
+      const topicStorageKey = storageKey + "-topics";
+      const savedTopics = JSON.parse(localStorage.getItem(topicStorageKey) || "{}");
+      const topicTotal = w.topics.length;
+      const topicCheckedInit = w.topics.filter((_, i) => savedTopics["t" + i]).length;
+      const topicPills =
+        "<div class=\"topic-progress\">" +
+          "<div class=\"topic-progress-bar\"><div class=\"topic-progress-fill\" id=\"topicFill\" style=\"width:" + Math.round(topicCheckedInit / topicTotal * 100) + "%\"></div></div>" +
+          "<div class=\"topic-progress-label\" id=\"topicCount\">" + topicCheckedInit + " / " + topicTotal + "</div>" +
+        "</div>" +
+        "<div class=\"topic-check-list\">" +
+        w.topics.map((t, i) => {
+          const id = "tc-" + weekNum + "-" + i;
+          const chk = savedTopics["t" + i] ? " checked" : "";
+          return "<div class=\"topic-check-item\"><input type=\"checkbox\" id=\"" + id + "\"" + chk + " data-ti=\"" + i + "\" /><label for=\"" + id + "\">" + t + "</label></div>";
+        }).join("") +
+        "</div>";
 
       // Steps HTML
       const stepsHtml = w.steps.map((step, idx) => {
@@ -723,6 +740,12 @@
           </div>
         </section>
 
+        <!-- Topics -->
+        <section class="content-block">
+          <div class="section-head"><h3>이번 주</h3></div>
+          <div class="topic-list">${topicPills}</div>
+        </section>
+
         <!-- Lab (Steps) -->
         <section class="content-block" id="practice">
           <div class="section-head"><h3>실습</h3></div>
@@ -761,7 +784,28 @@
 
       // Init progress engine
       initProgress(w.steps.length);
+      initTopicChecks(w.topics.length, topicStorageKey);
       initSidebar(w);
+    }
+
+    // ─── Topic check engine ──────────────────────────
+    function initTopicChecks(total, key) {
+      const fill  = document.getElementById("topicFill");
+      const count = document.getElementById("topicCount");
+      if (!fill || !count) return;
+      function updateTopicProgress() {
+        const all     = [...document.querySelectorAll(".topic-check-list input[type='checkbox']")];
+        const checked = all.filter(c => c.checked).length;
+        const pct     = total > 0 ? Math.round(checked / total * 100) : 0;
+        fill.style.width  = pct + "%";
+        count.textContent = checked + " / " + total;
+        const state = {};
+        all.forEach((c, i) => { state["t" + i] = c.checked; });
+        localStorage.setItem(key, JSON.stringify(state));
+      }
+      document.querySelectorAll(".topic-check-list input[type='checkbox']").forEach(cb => {
+        cb.addEventListener("change", updateTopicProgress);
+      });
     }
 
     // ─── Progress engine ─────────────────────────────
