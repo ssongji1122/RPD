@@ -7,6 +7,12 @@
       "runtimeArgs": ["tools/admin-server.py"],
       "port": 8765,
       "autoPort": true
+    },
+    {
+      "name": "course-site-static",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8771", "--directory", "course-site"],
+      "port": 8771
     }
   ]
 }
