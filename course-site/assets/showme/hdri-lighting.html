@@ -162,6 +162,23 @@ body{margin:0;padding:0;font-family:var(--font);background:var(--bg);color:var(-
     </div>
   </div>
   <div class="cause-effect" id="cause-effect-hdri"></div>
+
+  <!-- 인터랙티브 데모 -->
+  <div style="margin-top:20px">
+    <div style="font-size:.85rem;color:var(--muted-strong);font-weight:600;margin-bottom:6px">인터랙티브 데모</div>
+    <div class="demo-wrap">
+      <canvas id="demoCanvas" width="680" height="300"></canvas>
+    </div>
+    <div class="demo-controls">
+      <div class="demo-slider-wrap">
+        <label>HDRI 회전</label>
+        <input type="range" id="rotSlider" min="0" max="360" value="45">
+        <span id="rotLabel" class="demo-stat">45°</span>
+      </div>
+      <button class="demo-btn" id="btnReset">리셋</button>
+    </div>
+    <div class="demo-hint">슬라이더로 HDRI 회전 각도를 조절하여 조명 방향 변화를 확인하세요.</div>
+  </div>
 </section>
 
 <!-- TAB 3 -->
