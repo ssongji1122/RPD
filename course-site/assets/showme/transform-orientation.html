@@ -30,75 +30,530 @@
   --radius-md:     18px;
   --radius-lg:     24px;
   --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+  /* 카드 색상 오버라이드 */
+  --accent-a:      #FF6B6B;
+  --accent-a-soft: #FF9999;
+  --accent-b:      #6EE7B7;
+  --accent-b-soft: #A7F3D0;
 }
+
+/* ── Reset ── */
 *, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 0; font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; }
-.tabs { display: flex; gap: 0; border-bottom: 1px solid var(--line); padding: 0 16px; background: var(--bg-soft); overflow-x: auto; -webkit-overflow-scrolling: touch; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Tab Navigation ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
 .tabs::-webkit-scrollbar { display: none; }
-.tab { padding: 12px 16px; font-size: .84rem; font-weight: 500; color: var(--muted); cursor: pointer; border: none; border-bottom: 2px solid transparent; white-space: nowrap; transition: color .14s, border-color .14s; background: none; font-family: inherit; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
 .tab:hover { color: var(--muted-strong); }
-.tab.is-active { color: var(--key-soft); border-bottom-color: var(--key); }
+.tab.is-active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+
+/* ── Tab Panels ── */
 .panel { display: none; padding: 20px 16px; }
 .panel.is-active { display: block; }
-.concept-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
-.concept-card { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); padding: 18px; }
-.concept-card h3 { margin: 0 0 8px; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
-.concept-card p { margin: 0; color: var(--muted-strong); font-size: .88rem; line-height: 1.7; }
-.concept-card ul { margin: 8px 0 0; padding-left: 16px; color: var(--muted-strong); font-size: .85rem; line-height: 1.8; }
-.badge { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: .72rem; font-weight: 600; }
-.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
-.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
-.badge-amber { background: rgba(245,158,11,.15);  color: #fbbf24; }
-.badge-red   { background: rgba(239,68,68,.15);   color: #fca5a5; }
-.kbd { display: inline-block; padding: 3px 8px; border-radius: 6px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); color: var(--key-soft); font-size: .82rem; font-weight: 600; font-family: var(--font); }
-.demo-wrap { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); overflow: hidden; margin: 14px 0; }
-.demo-wrap canvas { display: block; width: 100%; }
-.demo-controls { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--line); flex-wrap: wrap; }
-.demo-hint { font-size: .78rem; color: var(--muted); text-align: center; padding: 6px 0 0; }
-.demo-btn { padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line-strong); background: rgba(255,255,255,.04); color: var(--muted-strong); font: inherit; font-size: .82rem; cursor: pointer; transition: background .14s, color .14s; }
-.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
-.demo-btn.is-active { background: rgba(10,132,255,.14); color: var(--key-soft); border-color: rgba(10,132,255,.3); }
-.usage-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.usage-card { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); padding: 16px; }
-.usage-card h4 { margin: 0 0 8px; font-size: .92rem; color: var(--key-soft); }
-.usage-card ul { margin: 0; padding-left: 16px; color: var(--muted-strong); font-size: .85rem; line-height: 1.8; }
-.tip-box { border-radius: var(--radius-md); border: 1px solid rgba(10,132,255,.2); background: rgba(10,132,255,.06); padding: 14px 16px; margin-top: 14px; font-size: .86rem; color: var(--muted-strong); }
-.tip-box strong { color: var(--key-soft); }
-.combo-section { margin-top: 18px; }
-.combo-section h4 { margin: 0 0 10px; font-size: .92rem; color: var(--text); }
-.combo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.combo-card { border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--surface); padding: 12px 14px; }
-.combo-card .combo-name { font-size: .86rem; font-weight: 600; color: var(--key-soft); margin-bottom: 4px; }
-.combo-card .combo-desc { font-size: .8rem; color: var(--muted); line-height: 1.5; }
-.shortcut-list { margin-top: 16px; padding: 14px 16px; border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); }
-.shortcut-list h4 { margin: 0 0 10px; font-size: .9rem; color: var(--text); }
-.shortcut-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-size: .84rem; color: var(--muted-strong); }
-.shortcut-row + .shortcut-row { border-top: 1px solid var(--line); }
+
+/* ── Concept Cards ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card h3 {
+  margin: 0 0 8px; font-size: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.concept-card p {
+  margin: 0; color: var(--muted-strong);
+  font-size: .88rem; line-height: 1.7;
+}
+.concept-card ul {
+  margin: 8px 0 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
+}
+
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: .72rem; font-weight: 600;
+}
+.badge-blue   { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green  { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber  { background: rgba(245,158,11,.15);  color: #fbbf24; }
+.badge-red    { background: rgba(239,68,68,.15);   color: #fca5a5; }
+.badge-accent-a { background: rgba(255,107,107,.15); color: var(--accent-a-soft); }
+.badge-accent-b { background: rgba(110,231,183,.15); color: var(--accent-b-soft); }
+
+/* ── Keyboard Shortcut ── */
+.kbd {
+  display: inline-block;
+  padding: 3px 8px; border-radius: 6px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  color: var(--key-soft);
+  font-size: .82rem; font-weight: 600;
+  font-family: var(--font);
+}
+
+/* ── Analogy Box ── */
+.analogy {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(245,158,11,.06);
+  border: 1px solid rgba(245,158,11,.15);
+  font-size: .82rem;
+  color: #fbbf24;
+  font-style: italic;
+}
+
+/* ── Concept Card Accent Variants ── */
+.concept-card.accent-a {
+  border-color: rgba(255,107,107,.25);
+  background: rgba(255,107,107,.05);
+}
+.concept-card.accent-b {
+  border-color: rgba(110,231,183,.25);
+  background: rgba(110,231,183,.05);
+}
+
+/* ── Shortcut Reference ── */
+.shortcut-list {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.shortcut-list h4 {
+  margin: 0 0 10px;
+  font-size: .9rem;
+  color: var(--text);
+}
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: .84rem;
+  color: var(--muted-strong);
+}
+.shortcut-row + .shortcut-row {
+  border-top: 1px solid var(--line);
+}
 .shortcut-keys { flex-shrink: 0; }
-.analogy { margin-top: 8px; padding: 10px 14px; border-radius: var(--radius-sm); background: rgba(245,158,11,.06); border: 1px solid rgba(245,158,11,.15); font-size: .82rem; color: #fbbf24; font-style: italic; }
-.quiz-progress { font-size: .78rem; color: var(--muted); margin-bottom: 12px; }
-.quiz-question { margin-bottom: 20px; padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); }
-.quiz-question h4 { margin: 0 0 12px; font-size: .94rem; }
-.quiz-option { display: block; width: 100%; padding: 10px 14px; margin-bottom: 6px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: rgba(255,255,255,.025); color: var(--text); font: inherit; font-size: .86rem; cursor: pointer; text-align: left; transition: background .14s, border-color .14s; }
-.quiz-option:hover { background: rgba(255,255,255,.06); border-color: var(--line-strong); }
-.quiz-option.correct { background: rgba(16,185,129,.12); border-color: rgba(16,185,129,.4); color: var(--success-soft); }
-.quiz-option.wrong { background: rgba(239,68,68,.1); border-color: rgba(239,68,68,.3); color: #fca5a5; }
+
+/* ══════════════════════════════════════════════════
+   Compare Table
+   ══════════════════════════════════════════════════ */
+.compare-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 16px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+.compare-table th,
+.compare-table td {
+  padding: 10px 14px;
+  font-size: .84rem;
+  line-height: 1.6;
+  text-align: left;
+}
+.compare-table thead th {
+  background: var(--surface-strong);
+  color: var(--text);
+  font-weight: 600;
+  font-size: .82rem;
+  border-bottom: 1px solid var(--line-strong);
+}
+.compare-table thead th:nth-child(2) { color: var(--accent-a-soft); }
+.compare-table thead th:nth-child(3) { color: var(--accent-b-soft); }
+.compare-table tbody td {
+  background: var(--surface);
+  color: var(--muted-strong);
+  border-bottom: 1px solid var(--line);
+}
+.compare-table tbody tr:last-child td { border-bottom: none; }
+.compare-table tbody td:first-child {
+  font-weight: 600;
+  color: var(--muted);
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  white-space: nowrap;
+}
+.compare-table .cell-a { border-left: 2px solid rgba(255,107,107,.3); }
+.compare-table .cell-b { border-left: 2px solid rgba(110,231,183,.3); }
+
+/* ══════════════════════════════════════════════════
+   Cause-Effect Flow
+   ══════════════════════════════════════════════════ */
+.cause-effect {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 16px 0;
+}
+.ce-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0;
+}
+.ce-cause, .ce-result {
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-size: .84rem;
+  line-height: 1.6;
+}
+.ce-cause {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--muted-strong);
+  text-align: right;
+}
+.ce-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  color: var(--muted);
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+.ce-result {
+  border: 1px solid var(--line);
+  color: var(--text);
+  font-weight: 500;
+}
+.ce-result.result-a {
+  background: rgba(255,107,107,.08);
+  border-color: rgba(255,107,107,.25);
+  color: var(--accent-a-soft);
+}
+.ce-result.result-b {
+  background: rgba(110,231,183,.08);
+  border-color: rgba(110,231,183,.25);
+  color: var(--accent-b-soft);
+}
+.ce-result.result-warn {
+  background: rgba(239,68,68,.08);
+  border-color: rgba(239,68,68,.25);
+  color: #fca5a5;
+}
+.ce-result.result-success {
+  background: rgba(16,185,129,.08);
+  border-color: rgba(16,185,129,.25);
+  color: var(--success-soft);
+}
+.ce-label {
+  font-size: .72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin-bottom: 4px;
+  display: block;
+}
+.ce-cause .ce-label { color: var(--muted); }
+.ce-result.result-a .ce-label { color: rgba(255,107,107,.6); }
+.ce-result.result-b .ce-label { color: rgba(110,231,183,.6); }
+
+/* ══════════════════════════════════════════════════
+   Scenario Selector
+   ══════════════════════════════════════════════════ */
+.scenario-nav {
+  display: flex; gap: 6px;
+  padding: 0 0 14px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.scenario-nav::-webkit-scrollbar { display: none; }
+.scenario-btn {
+  padding: 8px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .8rem;
+  cursor: pointer;
+  transition: background .14s, color .14s, border-color .14s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.scenario-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.scenario-btn.is-active {
+  background: rgba(10,132,255,.14);
+  color: var(--key-soft);
+  border-color: rgba(10,132,255,.3);
+}
+.scenario-desc {
+  font-size: .84rem;
+  color: var(--muted-strong);
+  margin-bottom: 10px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  line-height: 1.7;
+}
+
+/* ══════════════════════════════════════════════════
+   Before-After Split
+   ══════════════════════════════════════════════════ */
+.before-after {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  margin: 14px 0;
+}
+.ba-panel {
+  padding: 14px;
+  background: var(--surface);
+  position: relative;
+}
+.ba-panel + .ba-panel {
+  border-left: 1px solid var(--line-strong);
+}
+.ba-label {
+  font-size: .7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+.ba-label.label-before {
+  background: rgba(239,68,68,.12);
+  color: #fca5a5;
+}
+.ba-label.label-after {
+  background: rgba(16,185,129,.12);
+  color: var(--success-soft);
+}
+.ba-panel canvas { display: block; width: 100%; }
+
+/* ── Usage Grid ── */
+.usage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.usage-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 16px;
+}
+.usage-card h4 {
+  margin: 0 0 8px; font-size: .92rem;
+  color: var(--key-soft);
+}
+.usage-card ul {
+  margin: 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem;
+  line-height: 1.8;
+}
+.usage-card.accent-a h4 { color: var(--accent-a-soft); }
+.usage-card.accent-b h4 { color: var(--accent-b-soft); }
+
+/* ── Tip Box ── */
+.tip-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(10,132,255,.2);
+  background: rgba(10,132,255,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+}
+.tip-box strong { color: var(--key-soft); }
+
+/* ── Combo Section ── */
+.combo-section { margin-top: 18px; }
+.combo-section h4 {
+  margin: 0 0 10px;
+  font-size: .92rem;
+  color: var(--text);
+}
+.combo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.combo-card {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 12px 14px;
+}
+.combo-card .combo-name {
+  font-size: .86rem;
+  font-weight: 600;
+  color: var(--key-soft);
+  margin-bottom: 4px;
+}
+.combo-card .combo-desc {
+  font-size: .8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ── Section Divider ── */
+.section-divider {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 18px 0;
+}
+
+/* ── Quiz ── */
+.quiz-progress {
+  font-size: .78rem; color: var(--muted);
+  margin-bottom: 12px;
+}
+.quiz-question {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.quiz-question h4 {
+  margin: 0 0 12px; font-size: .94rem;
+}
+.quiz-option {
+  display: block; width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.025);
+  color: var(--text);
+  font: inherit; font-size: .86rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background .14s, border-color .14s;
+}
+.quiz-option:hover {
+  background: rgba(255,255,255,.06);
+  border-color: var(--line-strong);
+}
+.quiz-option.correct {
+  background: rgba(16,185,129,.12);
+  border-color: rgba(16,185,129,.4);
+  color: var(--success-soft);
+}
+.quiz-option.wrong {
+  background: rgba(239,68,68,.1);
+  border-color: rgba(239,68,68,.3);
+  color: #fca5a5;
+}
 .quiz-option:disabled { cursor: default; opacity: .85; }
-.quiz-feedback { margin-top: 8px; padding: 10px 14px; border-radius: var(--radius-sm); font-size: .84rem; display: none; }
+.quiz-feedback {
+  margin-top: 8px; padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: .84rem;
+  display: none;
+}
 .quiz-feedback.show { display: block; }
 .quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
 .quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: #fca5a5; }
-.quiz-score { text-align: center; padding: 20px; font-size: 1.1rem; font-weight: 600; }
-.quiz-retry { display: block; margin: 12px auto; padding: 10px 24px; border-radius: 999px; border: 1px solid var(--key); background: rgba(10,132,255,.12); color: var(--key-soft); font: inherit; font-size: .88rem; cursor: pointer; transition: background .14s; }
+
+.quiz-score {
+  text-align: center; padding: 20px;
+  font-size: 1.1rem; font-weight: 600;
+}
+.quiz-retry {
+  display: block; margin: 12px auto;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--key);
+  background: rgba(10,132,255,.12);
+  color: var(--key-soft);
+  font: inherit; font-size: .88rem;
+  cursor: pointer;
+  transition: background .14s;
+}
 .quiz-retry:hover { background: rgba(10,132,255,.22); }
-.doc-ref { margin-top: 16px; padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid rgba(10,132,255,.15); background: rgba(10,132,255,.04); display: flex; align-items: center; gap: 8px; }
-.doc-ref a { color: var(--key-soft); font-size: .84rem; text-decoration: none; line-height: 1.5; }
+
+/* ── Official Doc Reference ── */
+.doc-ref {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(10,132,255,.15);
+  background: rgba(10,132,255,.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-ref a {
+  color: var(--key-soft);
+  font-size: .84rem;
+  text-decoration: none;
+  line-height: 1.5;
+}
 .doc-ref a:hover { text-decoration: underline; }
+.doc-ref-list {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.doc-ref-list .doc-ref { margin-top: 0; }
+
+/* ── Responsive ── */
 @media (max-width: 600px) {
   .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
   .tabs { padding: 0 8px; }
   .tab { padding: 10px 12px; font-size: .8rem; }
   .panel { padding: 16px 12px; }
+  .ce-row { grid-template-columns: 1fr; gap: 4px; }
+  .ce-cause { text-align: left; }
+  .ce-arrow { transform: rotate(90deg); padding: 4px 0; }
+  .before-after { grid-template-columns: 1fr; }
+  .ba-panel + .ba-panel { border-left: none; border-top: 1px solid var(--line-strong); }
+  .compare-table { font-size: .78rem; }
+  .compare-table th, .compare-table td { padding: 8px 10px; }
 }
 </style>
 </head>
@@ -114,26 +569,61 @@ body { margin: 0; padding: 0; font-family: var(--font); background: var(--bg); c
 
 <!-- TAB 1: 개념 이해 -->
 <section class="panel is-active" id="panel-concept" role="tabpanel">
+  <p style="font-size:.9rem; color:var(--muted-strong); margin:0 0 14px;">
+    <strong>Transform Orientation</strong>은 G/R/S 변환 시 "어느 방향이 X·Y·Z인지" 결정하는 설정이에요. 같은 G+X라도 Global이냐 Local이냐에 따라 이동 방향이 완전히 달라집니다.
+  </p>
+
   <div class="concept-grid">
     <div class="concept-card">
       <h3><span class="badge badge-blue">개념</span> Transform Orientation이란?</h3>
-      <p>G/R/S로 변형할 때 어느 방향이 기준이 될지 정하는 설정이에요. 같은 G+X를 눌러도 Global이냐 Local이냐에 따라 이동 방향이 달라져요.</p>
-      <div class="analogy">나침반처럼, 어느 방향이 '앞'인지 기준을 정해줘요</div>
+      <p>변환 축의 방향을 결정해요. 나침반처럼 "어느 방향이 앞(X)이고 위(Z)인지" 기준을 정하는 것이에요. 헤더 드롭다운 또는 <span class="kbd">,</span>(쉼표) 파이 메뉴로 전환합니다.</p>
+      <div class="analogy">비행기 조종사는 비행기의 '앞'을 기준으로 좌우/위아래를 판단해요. Global은 지도, Local은 기체 기준이에요.</div>
     </div>
-    <div class="concept-card">
-      <h3><span class="badge badge-amber">종류</span> 5가지 Orientation</h3>
+
+    <div class="concept-card accent-a">
+      <h3><span class="badge badge-accent-a">6가지 종류</span> 전체 목록</h3>
       <ul>
-        <li><strong>Global</strong>: 항상 세계 좌표 기준 (X=오른쪽, Z=위)</li>
-        <li><strong>Local</strong>: 오브젝트가 기울어진 방향 기준</li>
-        <li><strong>Normal</strong>: 선택한 면/엣지의 법선 방향 기준</li>
-        <li><strong>View</strong>: 현재 보고 있는 화면 기준</li>
-        <li><strong>Cursor</strong>: 3D Cursor 방향 기준</li>
+        <li><strong>Global</strong> — 월드 좌표축 기준 (항상 X=오른쪽, Z=위)</li>
+        <li><strong>Local</strong> — 오브젝트 자신의 축 (회전해도 오브젝트 기준 유지)</li>
+        <li><strong>Normal</strong> — 선택한 Face/Edge의 법선 방향 (Edit Mode)</li>
+        <li><strong>Gimbal</strong> — Euler 회전 기반 짐벌 축</li>
+        <li><strong>View</strong> — 현재 뷰포트 화면 기준</li>
+        <li><strong>Cursor</strong> — 3D Cursor 방향 기준</li>
       </ul>
     </div>
+
     <div class="concept-card">
-      <h3><span class="badge badge-red">주의</span> 언제 헷갈리나요?</h3>
-      <p>오브젝트를 회전시킨 뒤 G+Z로 올리려 하면 이상한 방향으로 가요. 이게 Global과 Local의 차이예요. Local로 바꾸면 오브젝트의 '위 방향'으로 움직여요.</p>
-      <div class="analogy">기울어진 테이블 위에서 '위로 올리기'는 Global 기준 Z가 아니라 Local 기준이에요</div>
+      <h3><span class="badge badge-amber">핵심 비교</span> Global vs Local vs Normal</h3>
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>항목</th>
+            <th>Global</th>
+            <th>Local</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>기준</td>
+            <td class="cell-a">월드 좌표</td>
+            <td class="cell-b">오브젝트 자체</td>
+          </tr>
+          <tr>
+            <td>오브젝트 회전 시</td>
+            <td class="cell-a">축 방향 불변</td>
+            <td class="cell-b">축도 함께 기울어짐</td>
+          </tr>
+          <tr>
+            <td>G+Z 결과</td>
+            <td class="cell-a">항상 월드 위</td>
+            <td class="cell-b">오브젝트의 '위'</td>
+          </tr>
+          <tr>
+            <td>Normal 용도</td>
+            <td class="cell-a" colspan="2" style="text-align:center;">선택 Face의 수직 방향 — 경사면에서 Extrude 시</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
@@ -141,58 +631,123 @@ body { margin: 0; padding: 0; font-family: var(--font); background: var(--bg); c
     <h4>주요 단축키</h4>
     <div class="shortcut-row">
       <span class="shortcut-keys"><span class="kbd">,</span></span>
-      <span>Transform Orientation 메뉴 열기</span>
+      <span>Transform Orientation 파이 메뉴 열기 (쉼표)</span>
     </div>
     <div class="shortcut-row">
       <span class="shortcut-keys">Header Dropdown</span>
-      <span>3D Viewport 상단 좌표계 클릭으로 전환</span>
+      <span>3D Viewport 상단 좌표계 아이콘 클릭으로 전환</span>
     </div>
     <div class="shortcut-row">
-      <span class="shortcut-keys"><span class="kbd">Alt</span> + <span class="kbd">Space</span></span>
-      <span>Orientation 메뉴 (구버전)</span>
+      <span class="shortcut-keys"><span class="kbd">G</span> / <span class="kbd">R</span> / <span class="kbd">S</span> → <span class="kbd">X</span> <span class="kbd">X</span></span>
+      <span>축 키를 두 번 누르면 Local 축으로 전환</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys">Custom + <span class="kbd">+</span></span>
+      <span>선택 기반 커스텀 오리엔테이션 저장</span>
     </div>
   </div>
 
   <div class="doc-ref">
+    <span>📖</span>
     <a href="https://docs.blender.org/manual/en/latest/editors/3dview/controls/orientation.html" target="_blank" rel="noopener">
-      📖 Blender 공식 문서 — Transform Orientation
+      Blender 공식 문서 — Transform Orientation
     </a>
   </div>
 </section>
 
 <!-- TAB 2: 시각적 비교 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    45도 기울어진 오브젝트에서 Global과 Local의 이동 축 방향 차이를 확인해 보세요.
-  </p>
-  <div class="demo-wrap">
-    <canvas id="demoCanvas" width="680" height="300"></canvas>
-    <div class="demo-controls">
-      <button class="demo-btn is-active" id="btnGlobal">Global 이동</button>
-      <button class="demo-btn" id="btnLocal">Local 이동</button>
-      <button class="demo-btn" id="btnReset">초기화</button>
+  <div class="scenario-nav" id="scenarioNav">
+    <button class="scenario-btn is-active" data-scene="global">Global</button>
+    <button class="scenario-btn" data-scene="local">Local</button>
+    <button class="scenario-btn" data-scene="normal">Normal</button>
+  </div>
+  <div class="scenario-desc" id="sceneDesc">설명 로딩 중...</div>
+  <div class="before-after" id="baWrap">
+    <div class="ba-panel">
+      <span class="ba-label label-before">BEFORE (G+X 전)</span>
+      <canvas id="cvBefore" width="320" height="220"></canvas>
+    </div>
+    <div class="ba-panel">
+      <span class="ba-label label-after">AFTER (G+X 적용)</span>
+      <canvas id="cvAfter" width="320" height="220"></canvas>
     </div>
   </div>
-  <p class="demo-hint">버튼을 눌러 Global과 Local 축의 방향 차이를 확인하세요.</p>
+  <div class="cause-effect" id="ceFlow"></div>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->
 <section class="panel" id="panel-when" role="tabpanel">
   <div class="usage-grid">
-    <div class="usage-card">
-      <h4>필요할 때</h4>
+    <div class="usage-card accent-a">
+      <h4>Global — 월드 기준</h4>
       <ul>
-        <li>오브젝트가 기울어진 방향으로 정확히 이동할 때 (Local)</li>
-        <li>법선 방향으로 면을 밀 때 (Normal)</li>
-        <li>현재 화면에서 위아래 이동 (View)</li>
+        <li>오브젝트를 월드 좌표 기준으로 정렬/배치</li>
+        <li>회전 없는 오브젝트에서 기본 이동</li>
+        <li>씬 전체 구조물 배치 (바닥, 벽 등)</li>
+      </ul>
+    </div>
+    <div class="usage-card accent-b">
+      <h4>Local — 오브젝트 기준</h4>
+      <ul>
+        <li>기울어진 오브젝트를 자신의 '앞뒤'로 이동</li>
+        <li>회전된 오브젝트를 자기 방향으로 밀기</li>
+        <li>G+Z Z (두 번) = Local Z 축 이동</li>
       </ul>
     </div>
     <div class="usage-card">
-      <h4>안 쓰는 경우</h4>
+      <h4>Normal — 법선 기준</h4>
       <ul>
-        <li>기본 형태 작업 시 Global로 충분</li>
-        <li>오브젝트가 회전 없이 기본 배치일 때</li>
+        <li>Edit Mode에서 경사면을 수직 방향으로 Extrude</li>
+        <li>구의 각 면을 방사형으로 밀기</li>
+        <li>굴곡면에서 정확한 돌출 방향 제어</li>
       </ul>
+    </div>
+    <div class="usage-card">
+      <h4>커스텀 Orientation</h4>
+      <ul>
+        <li>사용자 정의 방향 저장 후 재사용</li>
+        <li>Edge 선택 후 헤더 + 버튼으로 저장</li>
+        <li>비정규 각도 구조물 작업 시 유용</li>
+      </ul>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <div class="cause-effect">
+    <div class="ce-row">
+      <div class="ce-cause">
+        <span class="ce-label">흔한 실수</span>
+        G+X로 이동했는데 오브젝트가 대각선으로 움직임
+      </div>
+      <div class="ce-arrow">→</div>
+      <div class="ce-result result-warn">
+        <span class="ce-label">원인</span>
+        Local이 설정된 상태에서 오브젝트가 기울어져 있어서 Local X가 대각선 방향임
+      </div>
+    </div>
+    <div class="ce-row">
+      <div class="ce-cause">
+        <span class="ce-label">흔한 실수</span>
+        경사면에서 Extrude했는데 면이 비뚤어지게 돌출됨
+      </div>
+      <div class="ce-arrow">→</div>
+      <div class="ce-result result-warn">
+        <span class="ce-label">원인</span>
+        Global 기준으로 Extrude하면 경사면의 법선 방향이 아닌 월드 Z로 돌출됨
+      </div>
+    </div>
+    <div class="ce-row">
+      <div class="ce-cause">
+        <span class="ce-label">해결</span>
+        기울어진 오브젝트를 자기 앞뒤로 이동하고 싶을 때
+      </div>
+      <div class="ce-arrow">→</div>
+      <div class="ce-result result-success">
+        <span class="ce-label">해결책</span>
+        Local로 전환 후 G+Y (또는 G+Y Y) 적용
+      </div>
     </div>
   </div>
 
@@ -201,22 +756,31 @@ body { margin: 0; padding: 0; font-family: var(--font); background: var(--bg); c
     <div class="combo-grid">
       <div class="combo-card">
         <div class="combo-name">Local + G/R/S</div>
-        <div class="combo-desc">기울어진 오브젝트를 자기 방향으로 자연스럽게 이동</div>
+        <div class="combo-desc">기울어진 오브젝트를 자기 방향으로 자연스럽게 이동·회전·스케일</div>
       </div>
       <div class="combo-card">
         <div class="combo-name">Normal + Extrude</div>
-        <div class="combo-desc">굴곡진 표면의 법선 방향으로 면 돌출</div>
+        <div class="combo-desc">Edit Mode에서 경사면의 법선 방향으로 면 돌출 — 구나 굴곡 표면 작업</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">축 두 번 = Local 축</div>
+        <div class="combo-desc">G+X X처럼 축 키를 두 번 누르면 Local 기준 X 이동 (전환 없이 빠르게)</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">. (마침표) vs , (쉼표)</div>
+        <div class="combo-desc">마침표(.)는 Pivot Point(기준점), 쉼표(,)는 Orientation(방향) — 혼동 주의</div>
       </div>
     </div>
   </div>
 
   <div class="tip-box">
-    <strong>팁:</strong> Ctrl+X/Y/Z를 누르면 반대축으로 제한돼요. 그리고 두 번 눌러서 (예: <span class="kbd">X</span> <span class="kbd">X</span>) Local 모드로 빠르게 전환할 수 있어요.
+    <strong>빠른 Local 전환:</strong> Orientation을 바꾸지 않고도 <span class="kbd">G</span> → <span class="kbd">X</span> <span class="kbd">X</span>(두 번)처럼 축 키를 두 번 눌러서 임시 Local 모드로 이동할 수 있어요. 일회성 Local 이동에 매우 유용합니다.
   </div>
 
   <div class="doc-ref">
+    <span>📖</span>
     <a href="https://docs.blender.org/manual/en/latest/editors/3dview/controls/orientation.html" target="_blank" rel="noopener">
-      📖 Blender 공식 문서 — Transform Orientation
+      Blender 공식 문서 — Transform Orientation
     </a>
   </div>
 </section>
@@ -238,6 +802,7 @@ document.querySelectorAll(".tab").forEach(function(tab) {
     tab.classList.add("is-active");
     tab.setAttribute("aria-selected", "true");
     document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+    if (tab.dataset.tab === "visual") { initVisual(); }
   });
 });
 
@@ -363,220 +928,358 @@ function initQuiz(questions) {
   }
 }
 
-// ── Canvas Transform Orientation Demo ─────────
-(function() {
-  var canvas = document.getElementById("demoCanvas");
-  var ctx = canvas.getContext("2d");
+// ── Scenario Visual Engine ─────────────────────
 
-  // mode: "global" or "local"
-  var mode = "global";
-  var angle = Math.PI / 4; // 45 degrees tilt
-  var animFrame = null;
-  var arrowProgress = 0;
-  var arrowDir = 1;
-  var isAnimating = false;
+var OBJ_TILT = Math.PI * 0.25; // 45도 기울어진 오브젝트
 
-  var cx = canvas.width / 2;
-  var cy = canvas.height / 2;
-  var boxW = 100;
-  var boxH = 70;
+var scenarios = {
+  global: {
+    desc: "Global: 월드 좌표축(X=오른쪽, Y=안쪽, Z=위)을 기준으로 변환합니다. 오브젝트가 45° 기울어져 있어도 G+X는 항상 월드 오른쪽 방향으로 이동해요.",
+    ce: [
+      { cause: "오브젝트가 45° 기울어진 상태 → Orientation: Global → G+X 적용", result: "항상 월드 X축(오른쪽) 방향으로 이동 — 오브젝트 기울기 무관", resultClass: "result-a" },
+      { cause: "Global에서 G+Z 적용", result: "항상 월드 위(Z+) 방향으로 이동 — 기울어진 오브젝트도 수직으로 올라감", resultClass: "result-b" }
+    ],
+    before: function(ctx, w, h) {
+      drawCanvasBg(ctx, w, h);
+      var cx = w * 0.38, cy = h * 0.5;
+      drawAxesGlobal(ctx, cx, cy);
+      drawTiltedBox(ctx, cx, cy, OBJ_TILT, "Object (45° 회전)");
+      drawBottomLabel(ctx, w, h, "Global — 이동 전");
+    },
+    after: function(ctx, w, h) {
+      drawCanvasBg(ctx, w, h);
+      var cx = w * 0.38, cy = h * 0.5;
+      var movedCx = cx + 80;
+      drawAxesGlobal(ctx, movedCx, cy);
+      // Ghost
+      ctx.globalAlpha = 0.2;
+      drawTiltedBox(ctx, cx, cy, OBJ_TILT, "");
+      ctx.globalAlpha = 1;
+      // Arrow
+      drawMoveArrow(ctx, cx, cy, movedCx, cy, "#FF9999", "G+X");
+      drawTiltedBox(ctx, movedCx, cy, OBJ_TILT, "Object");
+      drawBottomLabel(ctx, w, h, "Global G+X — 월드 오른쪽으로 이동");
+    }
+  },
+  local: {
+    desc: "Local: 오브젝트 자신의 축을 기준으로 변환합니다. 오브젝트가 45° 기울어져 있다면 G+X는 기울어진 방향(오브젝트의 '앞')으로 이동해요.",
+    ce: [
+      { cause: "오브젝트가 45° 기울어진 상태 → Orientation: Local → G+X 적용", result: "오브젝트 자신의 X축(기울어진 앞 방향)으로 이동", resultClass: "result-success" },
+      { cause: "축 전환 없이 빠른 Local 이동", result: "G → X를 두 번(X X) 누르면 Local X 방향으로 임시 이동", resultClass: "result-b" }
+    ],
+    before: function(ctx, w, h) {
+      drawCanvasBg(ctx, w, h);
+      var cx = w * 0.38, cy = h * 0.5;
+      drawAxesLocal(ctx, cx, cy, OBJ_TILT);
+      drawTiltedBox(ctx, cx, cy, OBJ_TILT, "Object (45° 회전)");
+      drawBottomLabel(ctx, w, h, "Local — 이동 전 (빨간=Local X, 초록=Local Z)");
+    },
+    after: function(ctx, w, h) {
+      drawCanvasBg(ctx, w, h);
+      var cx = w * 0.38, cy = h * 0.5;
+      var dx = Math.cos(OBJ_TILT) * 80;
+      var dy = Math.sin(OBJ_TILT) * 80;
+      var movedCx = cx + dx, movedCy = cy + dy;
+      drawAxesLocal(ctx, movedCx, movedCy, OBJ_TILT);
+      // Ghost
+      ctx.globalAlpha = 0.2;
+      drawTiltedBox(ctx, cx, cy, OBJ_TILT, "");
+      ctx.globalAlpha = 1;
+      // Arrow (along local X)
+      drawMoveArrow(ctx, cx, cy, movedCx, movedCy, "#6EE7B7", "G+X(Local)");
+      drawTiltedBox(ctx, movedCx, movedCy, OBJ_TILT, "Object");
+      drawBottomLabel(ctx, w, h, "Local G+X — 오브젝트 기울기 방향으로 이동");
+    }
+  },
+  normal: {
+    desc: "Normal: Edit Mode에서 선택한 Face 또는 Edge의 법선(수직) 방향을 기준으로 변환합니다. 경사면에서 면을 수직으로 돌출(Extrude)할 때 필수예요.",
+    ce: [
+      { cause: "경사진 Face 선택 → Orientation: Normal → Extrude(E) 또는 G+Z 적용", result: "면의 법선 방향(경사면에 수직)으로 돌출 — 면이 비뚤어지지 않음", resultClass: "result-success" },
+      { cause: "Global에서 같은 경사면 Extrude하면", result: "월드 Z 방향으로 돌출되어 면이 비스듬히 늘어져 버림", resultClass: "result-warn" }
+    ],
+    before: function(ctx, w, h) {
+      drawCanvasBg(ctx, w, h);
+      var cx = w * 0.5, cy = h * 0.5;
+      // Draw slanted face (parallelogram)
+      drawSlopedFace(ctx, cx, cy, false);
+      drawNormalArrow(ctx, cx, cy, OBJ_TILT - Math.PI/2, "#6EE7B7", "Normal");
+      drawBottomLabel(ctx, w, h, "Normal — 경사면과 법선 방향");
+    },
+    after: function(ctx, w, h) {
+      drawCanvasBg(ctx, w, h);
+      var cx = w * 0.5, cy = h * 0.5;
+      drawSlopedFace(ctx, cx, cy, true);
+      drawBottomLabel(ctx, w, h, "Normal Extrude — 면의 수직 방향으로 정확히 돌출");
+    }
+  }
+};
 
-  function drawArrow(fromX, fromY, toX, toY, color, label) {
-    var dx = toX - fromX;
-    var dy = toY - fromY;
-    var len = Math.sqrt(dx * dx + dy * dy);
-    var ux = dx / len;
-    var uy = dy / len;
+function drawCanvasBg(ctx, w, h) {
+  ctx.fillStyle = "#17181a";
+  ctx.fillRect(0, 0, w, h);
+  ctx.strokeStyle = "rgba(255,255,255,.04)";
+  ctx.lineWidth = 1;
+  for (var gx = 30; gx < w; gx += 30) {
+    ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
+  }
+  for (var gy = 30; gy < h; gy += 30) {
+    ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
+  }
+}
 
-    ctx.strokeStyle = color;
+function drawTiltedBox(ctx, cx, cy, tilt, label) {
+  var s = 36;
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(tilt);
+  ctx.fillStyle = "rgba(10,132,255,.25)";
+  ctx.strokeStyle = "rgba(10,132,255,.8)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.roundRect(-s, -s, s*2, s*2, 5);
+  ctx.fill();
+  ctx.stroke();
+  if (label) {
+    ctx.rotate(-tilt); // keep label upright
+    ctx.fillStyle = "rgba(142,197,255,.8)";
+    ctx.font = "10px sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(label, 0, 0);
+  }
+  ctx.restore();
+}
+
+function drawAxesGlobal(ctx, cx, cy) {
+  var len = 42;
+  // X axis
+  drawAxisLine(ctx, cx, cy, cx + len, cy, "#FF9999", "X");
+  // Z axis (up)
+  drawAxisLine(ctx, cx, cy, cx, cy - len, "#6EE7B7", "Z");
+}
+
+function drawAxesLocal(ctx, cx, cy, tilt) {
+  var len = 42;
+  var lx = Math.cos(tilt), ly = Math.sin(tilt);
+  var lzx = -Math.sin(tilt), lzy = Math.cos(tilt);
+  drawAxisLine(ctx, cx, cy, cx + lx * len, cy + ly * len, "#FF9999", "X");
+  drawAxisLine(ctx, cx, cy, cx + lzx * len, cy - lzy * len, "#6EE7B7", "Z");
+}
+
+function drawAxisLine(ctx, x1, y1, x2, y2, color, label) {
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+  // arrowhead
+  var ang = Math.atan2(y2 - y1, x2 - x1);
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - 8 * Math.cos(ang - 0.35), y2 - 8 * Math.sin(ang - 0.35));
+  ctx.lineTo(x2 - 8 * Math.cos(ang + 0.35), y2 - 8 * Math.sin(ang + 0.35));
+  ctx.closePath();
+  ctx.fill();
+  if (label) {
+    ctx.font = "bold 10px sans-serif";
     ctx.fillStyle = color;
-    ctx.lineWidth = 2.5;
-    ctx.beginPath();
-    ctx.moveTo(fromX, fromY);
-    ctx.lineTo(toX, toY);
-    ctx.stroke();
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    var nx = Math.cos(ang), ny = Math.sin(ang);
+    ctx.fillText(label, x2 + nx * 10, y2 + ny * 10);
+  }
+}
 
-    // Arrowhead
-    var headLen = 12;
-    var headAngle = 0.4;
+function drawMoveArrow(ctx, x1, y1, x2, y2, color, label) {
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  ctx.setLineDash([5, 3]);
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  var ang = Math.atan2(y2 - y1, x2 - x1);
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - 10 * Math.cos(ang - 0.4), y2 - 10 * Math.sin(ang - 0.4));
+  ctx.lineTo(x2 - 10 * Math.cos(ang + 0.4), y2 - 10 * Math.sin(ang + 0.4));
+  ctx.closePath();
+  ctx.fill();
+  if (label) {
+    var mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+    ctx.font = "bold 11px sans-serif";
+    ctx.fillStyle = color;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "bottom";
+    ctx.fillText(label, mx, my - 4);
+  }
+  ctx.restore();
+}
+
+function drawNormalArrow(ctx, cx, cy, normalAngle, color, label) {
+  var len = 55;
+  var tx = cx + Math.cos(normalAngle) * len;
+  var ty = cy + Math.sin(normalAngle) * len;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(tx, ty);
+  ctx.stroke();
+  var ang = normalAngle;
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(tx, ty);
+  ctx.lineTo(tx - 10 * Math.cos(ang - 0.4), ty - 10 * Math.sin(ang - 0.4));
+  ctx.lineTo(tx - 10 * Math.cos(ang + 0.4), ty - 10 * Math.sin(ang + 0.4));
+  ctx.closePath();
+  ctx.fill();
+  if (label) {
+    ctx.font = "bold 11px sans-serif";
+    ctx.fillStyle = color;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(label, tx + Math.cos(ang) * 14, ty + Math.sin(ang) * 14);
+  }
+}
+
+function drawSlopedFace(ctx, cx, cy, extruded) {
+  // Draw a slanted quadrilateral representing a sloped face
+  var tilt = OBJ_TILT;
+  var fw = 80, fh = 28;
+  ctx.save();
+  ctx.translate(cx, cy);
+
+  // Face base
+  ctx.fillStyle = "rgba(10,132,255,.2)";
+  ctx.strokeStyle = "rgba(10,132,255,.7)";
+  ctx.lineWidth = 2;
+  ctx.save();
+  ctx.rotate(tilt);
+  ctx.beginPath();
+  ctx.rect(-fw/2, -fh/2, fw, fh);
+  ctx.fill();
+  ctx.stroke();
+  ctx.restore();
+
+  if (extruded) {
+    // Extrude direction: along normal (perpendicular to face = tilt - PI/2)
+    var normalAng = tilt - Math.PI/2;
+    var extLen = 55;
+    var nx = Math.cos(normalAng) * extLen, ny = Math.sin(normalAng) * extLen;
+    // Side faces
+    ctx.fillStyle = "rgba(110,231,183,.12)";
+    ctx.strokeStyle = "rgba(110,231,183,.5)";
+    ctx.lineWidth = 1.5;
+
+    // Left side
+    var lx = Math.cos(tilt) * (-fw/2), ly = Math.sin(tilt) * (-fw/2);
     ctx.beginPath();
-    ctx.moveTo(toX, toY);
-    ctx.lineTo(toX - headLen * (ux * Math.cos(headAngle) - uy * Math.sin(headAngle)),
-               toY - headLen * (uy * Math.cos(headAngle) + ux * Math.sin(headAngle)));
-    ctx.lineTo(toX - headLen * (ux * Math.cos(-headAngle) - uy * Math.sin(-headAngle)),
-               toY - headLen * (uy * Math.cos(-headAngle) + ux * Math.sin(-headAngle)));
+    ctx.moveTo(lx, ly);
+    ctx.lineTo(lx + nx, ly + ny);
+    ctx.lineTo(lx + nx + Math.cos(tilt)*fw, ly + ny + Math.sin(tilt)*fw);
+    ctx.lineTo(lx + Math.cos(tilt)*fw, ly + Math.sin(tilt)*fw);
     ctx.closePath();
     ctx.fill();
-
-    if (label) {
-      ctx.font = "bold 12px sans-serif";
-      ctx.fillStyle = color;
-      ctx.textAlign = "center";
-      ctx.fillText(label, toX + ux * 14, toY + uy * 14 + 4);
-    }
-  }
-
-  function drawBox() {
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.rotate(angle);
-    // Box fill
-    ctx.fillStyle = "rgba(10,132,255,.18)";
-    ctx.strokeStyle = "rgba(10,132,255,.8)";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.roundRect(-boxW / 2, -boxH / 2, boxW, boxH, 6);
-    ctx.fill();
     ctx.stroke();
 
-    // Center dot
+    // Top face (extruded)
+    ctx.fillStyle = "rgba(110,231,183,.25)";
+    ctx.strokeStyle = "rgba(110,231,183,.8)";
+    ctx.lineWidth = 2;
+    ctx.save();
+    ctx.translate(nx, ny);
+    ctx.rotate(tilt);
     ctx.beginPath();
-    ctx.arc(0, 0, 4, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(10,132,255,.9)";
+    ctx.rect(-fw/2, -fh/2, fw, fh);
     ctx.fill();
-
+    ctx.stroke();
     ctx.restore();
+
+    // Normal arrow
+    drawNormalArrow(ctx, 0, 0, normalAng, "#6EE7B7", "Extrude!");
   }
 
-  function draw() {
-    var w = canvas.width;
-    var h = canvas.height;
-    ctx.clearRect(0, 0, w, h);
+  ctx.restore();
+}
 
-    // Background
-    ctx.fillStyle = "#17181a";
-    ctx.fillRect(0, 0, w, h);
+function drawBottomLabel(ctx, w, h, text) {
+  ctx.fillStyle = "rgba(161,161,170,.75)";
+  ctx.font = "11px sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "alphabetic";
+  ctx.fillText(text, w / 2, h - 8);
+}
 
-    // Subtle grid
-    ctx.strokeStyle = "rgba(255,255,255,.04)";
-    ctx.lineWidth = 1;
-    var step = 40;
-    for (var gx = 0; gx < w; gx += step) {
-      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
-    }
-    for (var gy = 0; gy < h; gy += step) {
-      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
-    }
+var currentScene = "global";
+var visualInited = false;
 
-    // Draw box
-    drawBox();
-
-    var axisLen = 80;
-
-    if (mode === "global") {
-      // Global axes: always world-aligned
-      // X axis (rightward)
-      drawArrow(cx, cy, cx + axisLen, cy, "#ff6b6b", "X");
-      // Z axis (upward in canvas = negative Y)
-      drawArrow(cx, cy, cx, cy - axisLen, "#6bffb8", "Z");
-
-      // Label
-      ctx.font = "bold 13px sans-serif";
-      ctx.fillStyle = "rgba(255,107,107,.9)";
-      ctx.textAlign = "left";
-      ctx.fillText("Global Orientation", 14, 26);
-      ctx.font = "12px sans-serif";
-      ctx.fillStyle = "var(--muted)";
-      ctx.fillText("축이 항상 세계 좌표 기준 (오브젝트 기울기 무관)", 14, 44);
-
-      // Show that axes don't follow the box rotation — add annotation
-      ctx.font = "11px sans-serif";
-      ctx.fillStyle = "rgba(245,158,11,.7)";
-      ctx.textAlign = "center";
-      ctx.fillText("오브젝트가 45° 기울어져도 G+X는 오른쪽으로 이동", cx, h - 16);
-
-    } else {
-      // Local axes: aligned to box rotation
-      var lx = Math.cos(angle);
-      var ly = Math.sin(angle);
-      var lzx = -Math.sin(angle);
-      var lzy = Math.cos(angle); // perpendicular, but canvas Y is flipped
-
-      // Local X (along box's length direction)
-      drawArrow(cx, cy, cx + lx * axisLen, cy + ly * axisLen, "#ff6b6b", "X");
-      // Local Z (perpendicular, along box's height = rotated up)
-      drawArrow(cx, cy, cx + lzx * axisLen, cy - lzy * axisLen, "#6bffb8", "Z");
-
-      // Label
-      ctx.font = "bold 13px sans-serif";
-      ctx.fillStyle = "rgba(110,231,183,.9)";
-      ctx.textAlign = "left";
-      ctx.fillText("Local Orientation", 14, 26);
-      ctx.font = "12px sans-serif";
-      ctx.fillStyle = "var(--muted)";
-      ctx.fillText("축이 오브젝트 회전에 따라 기울어짐", 14, 44);
-
-      ctx.font = "11px sans-serif";
-      ctx.fillStyle = "rgba(245,158,11,.7)";
-      ctx.textAlign = "center";
-      ctx.fillText("오브젝트가 45° 기울어지면 G+Z도 45° 기울어진 방향으로 이동", cx, h - 16);
-    }
-
-    // Mode indicator badge in top right
-    ctx.font = "bold 11px sans-serif";
-    ctx.textAlign = "right";
-    ctx.fillStyle = mode === "global" ? "rgba(255,107,107,.8)" : "rgba(110,231,183,.8)";
-    ctx.fillText(mode === "global" ? "● Global" : "● Local", w - 14, 26);
-  }
-
-  // Initial draw
-  draw();
-
-  // Button controls
-  var btnGlobal = document.getElementById("btnGlobal");
-  var btnLocal = document.getElementById("btnLocal");
-
-  btnGlobal.addEventListener("click", function() {
-    mode = "global";
-    btnGlobal.classList.add("is-active");
-    btnLocal.classList.remove("is-active");
-    draw();
+function buildCauseEffect(ceData) {
+  var container = document.getElementById("ceFlow");
+  while (container.firstChild) container.removeChild(container.firstChild);
+  ceData.forEach(function(item) {
+    var row = document.createElement("div"); row.className = "ce-row";
+    var cause = document.createElement("div"); cause.className = "ce-cause";
+    var lbl = document.createElement("span"); lbl.className = "ce-label"; lbl.textContent = "상황/조건";
+    cause.appendChild(lbl); cause.appendChild(document.createTextNode(item.cause));
+    row.appendChild(cause);
+    var arr = document.createElement("div"); arr.className = "ce-arrow"; arr.textContent = "→"; row.appendChild(arr);
+    var res = document.createElement("div"); res.className = "ce-result " + item.resultClass;
+    var rLbl = document.createElement("span"); rLbl.className = "ce-label"; rLbl.textContent = "결과";
+    res.appendChild(rLbl); res.appendChild(document.createTextNode(item.result));
+    row.appendChild(res);
+    container.appendChild(row);
   });
+}
 
-  btnLocal.addEventListener("click", function() {
-    mode = "local";
-    btnLocal.classList.add("is-active");
-    btnGlobal.classList.remove("is-active");
-    draw();
-  });
+function renderBAPanels(scene) {
+  var cvB = document.getElementById("cvBefore");
+  var cvA = document.getElementById("cvAfter");
+  scene.before(cvB.getContext("2d"), cvB.width, cvB.height);
+  scene.after(cvA.getContext("2d"), cvA.width, cvA.height);
+}
 
-  document.getElementById("btnReset").addEventListener("click", function() {
-    mode = "global";
-    btnGlobal.classList.add("is-active");
-    btnLocal.classList.remove("is-active");
-    draw();
+function switchScenario(key) {
+  currentScene = key;
+  var scene = scenarios[key];
+  document.getElementById("sceneDesc").textContent = scene.desc;
+  document.querySelectorAll(".scenario-btn").forEach(function(b) {
+    b.classList.toggle("is-active", b.dataset.scene === key);
   });
+  renderBAPanels(scene);
+  buildCauseEffect(scene.ce);
+}
 
-  // Touch support — tap canvas to toggle
-  canvas.addEventListener("click", function() {
-    if (mode === "global") {
-      mode = "local";
-      btnLocal.classList.add("is-active");
-      btnGlobal.classList.remove("is-active");
-    } else {
-      mode = "global";
-      btnGlobal.classList.add("is-active");
-      btnLocal.classList.remove("is-active");
-    }
-    draw();
-  });
-})();
+document.querySelectorAll(".scenario-btn").forEach(function(btn) {
+  btn.addEventListener("click", function() { switchScenario(btn.dataset.scene); });
+  btn.addEventListener("touchend", function(e) { e.preventDefault(); switchScenario(btn.dataset.scene); });
+});
+
+function initVisual() {
+  if (!visualInited) { visualInited = true; }
+  switchScenario(currentScene);
+}
 
 // ── Quiz Data ─────────────────────────────────
 initQuiz([
   {
-    question: "G + Z를 눌렀는데 오브젝트가 이상한 방향으로 이동해요. 원인은?",
+    question: "G + Z를 눌렀는데 오브젝트가 대각선으로 이동해요. 가장 가능성 높은 원인은?",
     options: [
       "3D Cursor가 이동됨",
-      "Transform Orientation이 Local로 설정됨",
+      "Orientation이 Local인데 오브젝트가 기울어져 있어서",
       "Edit Mode로 진입하지 않았음",
       "Pivot Point가 잘못됨"
     ],
     answer: 1,
-    explanation: "오브젝트가 회전되어 있을 때 Local 기준에서는 Z가 오브젝트의 '위' 방향이에요. Global로 바꾸면 세계 기준 Z로 이동해요."
+    explanation: "오브젝트가 회전되어 있을 때 Local 기준에서는 Z가 오브젝트의 '위' 방향(기울어진 방향)이에요. Global로 바꾸면 세계 기준 Z로 이동해요."
   },
   {
-    question: "면을 선택하고 그 면의 법선 방향으로 Extrude하려면 어떤 Orientation이 필요한가요?",
+    question: "경사면에서 면을 수직으로 Extrude하려면 어떤 Orientation이 필요한가요?",
     options: [
       "Global",
       "Local",
@@ -584,29 +1287,40 @@ initQuiz([
       "View"
     ],
     answer: 2,
-    explanation: "Normal Orientation은 선택한 면/엣지의 법선(수직) 방향을 기준으로 해요. 면 바깥쪽으로 Extrude할 때 유용해요."
+    explanation: "Normal Orientation은 선택한 Face/Edge의 법선(수직) 방향을 기준으로 해요. 경사면을 수직으로 돌출할 때 필수예요."
   },
   {
-    question: "Transform Orientation을 빠르게 전환하는 방법은?",
+    question: "Transform Orientation 파이 메뉴를 여는 단축키는?",
     options: [
-      "N 키 패널에서 변경",
+      "N키 패널에서 변경",
       "쉼표(,) 키 또는 헤더 드롭다운",
       "Ctrl + Alt + T",
-      "오브젝트 우클릭 메뉴"
+      "마침표(.) 키"
     ],
     answer: 1,
-    explanation: "쉼표(,) 키로 빠르게 메뉴를 열거나, 3D Viewport 상단의 좌표계 드롭다운을 클릭해서 전환해요."
+    explanation: "쉼표(,) 키로 Orientation 파이 메뉴를 열거나, 3D Viewport 헤더의 좌표계 드롭다운으로 전환해요. 마침표(.)는 Pivot Point예요."
   },
   {
-    question: "같은 키(G+X)를 눌러도 Global과 Local 결과가 달라지는 경우는?",
+    question: "Orientation 전환 없이 한 번만 Local X 방향으로 이동하려면?",
+    options: [
+      "G → X → Enter",
+      "G → X → X (축 키 두 번)",
+      "G → Alt + X",
+      "Local로 전환 후 G → X → Global로 재전환"
+    ],
+    answer: 1,
+    explanation: "G → X를 두 번(X X) 누르면 임시로 Local X 방향 이동이 돼요. Orientation을 바꾸지 않고 일회성 Local 이동에 유용해요."
+  },
+  {
+    question: "Global과 Local이 동일하게 동작하는 경우는?",
     options: [
       "오브젝트가 회전되어 있을 때",
+      "오브젝트에 회전이 없을 때 (기본 배치 상태)",
       "Edit Mode일 때만",
-      "오브젝트가 2개 이상일 때",
-      "항상 같다"
+      "두 개 이상 선택했을 때"
     ],
-    answer: 0,
-    explanation: "오브젝트가 회전되어 있으면 Local의 X축은 Global의 X와 다른 방향이에요. 오브젝트가 회전 없이 기본 상태면 Global과 Local은 같아요."
+    answer: 1,
+    explanation: "오브젝트에 회전이 없으면 Local 축이 Global 축과 동일해요. 기울어지거나 회전된 오브젝트에서만 두 Orientation이 달라져요."
   }
 ]);
 </script>

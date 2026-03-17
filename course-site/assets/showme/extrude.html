@@ -336,12 +336,30 @@ body {
   line-height: 1.5;
 }
 .doc-ref a:hover { text-decoration: underline; }
+/* ── Scenario Nav ── */
+.scenario-nav{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.scenario-btn{padding:6px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.15);background:transparent;color:#cbd5e1;cursor:pointer;font-size:13px;transition:all .2s;font-family:var(--font)}
+.scenario-btn.active{background:rgba(99,102,241,.25);border-color:rgba(99,102,241,.5);color:#a5b4fc}
+.before-after{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.ba-panel{border-radius:12px;overflow:hidden}
+.ba-panel canvas{width:100%;display:block}
+.ba-label{text-align:center;font-size:11px;color:#94a3b8;padding:4px;background:rgba(0,0,0,.2)}
+.cause-effect{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.ce-row{display:flex;align-items:center;gap:8px}
+.ce-cause{background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);border-radius:8px;padding:6px 12px;font-size:13px;flex:1}
+.ce-arrow{color:#64748b;font-size:16px}
+.ce-result{border-radius:8px;padding:6px 12px;font-size:13px;flex:1.5}
+.result-a{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:#6ee7b7}
+.result-b{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);color:#fcd34d}
+.result-c{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:#fca5a5}
+.scene-desc-box{font-size:.84rem;color:var(--muted-strong);margin-bottom:10px;padding:10px 14px;border-radius:var(--radius-sm);background:var(--surface);border:1px solid var(--line);line-height:1.7}
 /* ── Responsive ── */
 @media (max-width: 600px) {
   .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
   .tabs { padding: 0 8px; }
   .tab { padding: 10px 12px; font-size: .8rem; }
   .panel { padding: 16px 12px; }
+  .before-after{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -411,60 +429,25 @@ body {
 
 <!-- TAB 2: 시각적 비교 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    세 면의 기울기를 주목하세요 — 모드별로 돌출 방향이 어떻게 달라지는지 드래그로 확인하세요.
-  </p>
-  <div class="demo-wrap">
-    <canvas id="demoCanvas" width="680" height="320"></canvas>
-    <div class="demo-controls">
-      <button class="demo-btn is-active" id="btnRegion">Region (E)</button>
-      <button class="demo-btn" id="btnNormals">Along Normals (Alt+E)</button>
-      <button class="demo-btn" id="btnIndividual">Individual</button>
-      <button class="demo-btn" id="btnManifold">Manifold</button>
-      <button class="demo-btn" id="btnCursor">To Cursor (Ctrl+RMB)</button>
-      <button class="demo-btn" id="btnReset">초기화</button>
+  <div class="scenario-nav" id="scenarioNavEX">
+    <button class="scenario-btn active" data-scene="region" onclick="switchScenarioEX('region')">Region (E)</button>
+    <button class="scenario-btn" data-scene="normals" onclick="switchScenarioEX('normals')">Along Normals</button>
+    <button class="scenario-btn" data-scene="individual" onclick="switchScenarioEX('individual')">Individual</button>
+  </div>
+  <div class="scene-desc-box" id="scene-desc-ex">선택한 면 전체가 하나의 덩어리로 묶여 위(Z축) 방향으로 돌출됩니다. 가장 기본적인 Extrude 방식입니다.</div>
+  <div class="before-after">
+    <div class="ba-panel">
+      <canvas id="canvas-before-ex" height="160"></canvas>
+      <div class="ba-label">Extrude 전</div>
+    </div>
+    <div class="ba-panel">
+      <canvas id="canvas-after-ex" height="160"></canvas>
+      <div class="ba-label" id="ba-label-after-ex">Extrude 후</div>
     </div>
   </div>
-  <p class="demo-hint">자동으로 애니메이션됩니다 — 드래그로 직접 조작할 수도 있어요.</p>
-  <!-- Mode descriptions -->
-  <div style="margin-top:12px;">
-    <div id="desc-region" style="display:block;">
-      <div style="background:rgba(10,132,255,.06);border:1px solid rgba(10,132,255,.18);border-radius:12px;padding:14px 16px;font-size:.85rem;">
-        <span class="badge badge-blue" style="margin-bottom:6px;display:inline-block;">Region (E) — 영역 돌출</span>
-        <p style="margin:4px 0;color:var(--muted-strong);">선택된 <strong>모든 면이 하나의 덩어리</strong>로 묶여 전체가 같은 방향(전역 위쪽)으로 돌출됩니다.</p>
-        <p style="margin:4px 0;color:var(--muted-strong);">기울어진 Face A·C도 위쪽으로 뽑히므로 연결된 하나의 박스 형태로 결과가 나옵니다. 면 간 경계가 합쳐집니다.</p>
-      </div>
-    </div>
-    <div id="desc-normals" style="display:none;">
-      <div style="background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.18);border-radius:12px;padding:14px 16px;font-size:.85rem;">
-        <span class="badge badge-green" style="margin-bottom:6px;display:inline-block;">Along Normals (Alt+E) — 법선 방향 돌출</span>
-        <p style="margin:4px 0;color:var(--muted-strong);"><strong>각 면이 자신의 법선(수직 방향)으로</strong> 개별 돌출됩니다. Region과의 핵심 차이입니다!</p>
-        <p style="margin:4px 0;color:var(--muted-strong);">→ <strong style="color:rgba(16,185,129,.9)">Face A</strong>는 왼쪽 위, <strong style="color:rgba(10,132,255,.9)">Face B</strong>는 바로 위, <strong style="color:rgba(245,158,11,.9)">Face C</strong>는 오른쪽 위로 뽑힙니다. 곡면·갑옷에 균일한 두께를 줄 때 필수입니다.</p>
-      </div>
-    </div>
-    <div id="desc-individual" style="display:none;">
-      <div style="background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.18);border-radius:12px;padding:14px 16px;font-size:.85rem;">
-        <span class="badge badge-amber" style="margin-bottom:6px;display:inline-block;">Individual Faces — 개별 면 돌출</span>
-        <p style="margin:4px 0;color:var(--muted-strong);">각 면이 <strong>완전히 독립적으로</strong> 자신의 법선 방향으로 돌출됩니다. 공유 엣지가 분리되어 면 사이에 틈이 생깁니다.</p>
-        <p style="margin:4px 0;color:var(--muted-strong);">Along Normals와 방향은 같지만 면들이 서로 연결되지 않고 별개 형태로 분리되어 뽑혀 나옵니다.</p>
-      </div>
-    </div>
-    <div id="desc-manifold" style="display:none;">
-      <div style="background:rgba(168,85,247,.06);border:1px solid rgba(168,85,247,.18);border-radius:12px;padding:14px 16px;font-size:.85rem;">
-        <span class="badge badge-purple" style="margin-bottom:6px;display:inline-block;">Extrude Manifold — 내부 면 자동 제거</span>
-        <p style="margin:4px 0;color:var(--muted-strong);">위로 뽑힌 뒤 <strong>원본 면이 자동으로 제거</strong>됩니다(빨간 점선). 내부 면이 남지 않아 항상 매니폴드 메시를 유지합니다.</p>
-        <p style="margin:4px 0;color:var(--muted-strong);">Region은 원본 면이 그대로 남아 내부 면(Interior Face)이 생기지만, Manifold는 이를 자동으로 제거해 렌더링 오류와 위상 문제를 방지합니다.</p>
-      </div>
-    </div>
-    <div id="desc-cursor" style="display:none;">
-      <div style="background:rgba(6,182,212,.06);border:1px solid rgba(6,182,212,.18);border-radius:12px;padding:14px 16px;font-size:.85rem;">
-        <span class="badge badge-cyan" style="margin-bottom:6px;display:inline-block;">To Cursor (Ctrl+RMB) — 마우스 클릭 위치로 돌출</span>
-        <p style="margin:4px 0;color:var(--muted-strong);"><strong>마우스를 클릭한 위치</strong>까지 선택 면이 일직선으로 뻗어나갑니다. Blender 3D Cursor 오브젝트가 아니라 <strong>클릭 순간 마우스 포인터 위치</strong>가 끝점입니다.</p>
-        <p style="margin:4px 0;color:var(--muted-strong);">화면에서 Face B(파란 면)가 동심원 클릭 표시 방향으로 돌출되는 걸 확인하세요. 수치 없이 클릭 한 번으로 길이를 지정할 수 있어 파이프·케이블 배치에 유용합니다.</p>
-      </div>
-    </div>
-  </div>
+  <div class="cause-effect" id="cause-effect-ex"></div>
 </section>
+
 
 <!-- TAB 3: 언제 쓰나요? -->
 <section class="panel" id="panel-when" role="tabpanel">
@@ -672,6 +655,244 @@ function initQuiz(questions) {
     container.appendChild(scoreDiv);
   }
 }
+
+// ── Extrude Scenario Visualization ──────────────────────
+var scenariosEX = {
+  region: {
+    desc: '선택한 면 전체가 하나의 덩어리로 묶여 위(Z축) 방향으로 돌출됩니다. 가장 기본적인 Extrude 방식입니다.',
+    label: 'Region 돌출 후',
+    ce: [
+      { cause: 'E 키 → 면 선택', result: '면 전체가 하나로 묶여 위로 돌출', resultClass: 'result-a' },
+      { cause: '기울어진 면 포함', result: '모든 면이 같은 방향(전역 Z축)으로 이동', resultClass: 'result-a' },
+      { cause: '공유 엣지 존재', result: '면 사이 경계가 합쳐져 단일 형태', resultClass: 'result-a' }
+    ],
+    before: function(ctx, w, h) {
+      ctx.clearRect(0, 0, w, h);
+      var cx = w / 2, cy = h / 2 + 20;
+      // Draw flat L-shaped face (top view)
+      ctx.strokeStyle = 'rgba(99,102,241,0.6)';
+      ctx.fillStyle = 'rgba(99,102,241,0.15)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(cx - 60, cy - 10);
+      ctx.lineTo(cx + 60, cy - 10);
+      ctx.lineTo(cx + 60, cy + 30);
+      ctx.lineTo(cx + 10, cy + 30);
+      ctx.lineTo(cx + 10, cy + 60);
+      ctx.lineTo(cx - 60, cy + 60);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      // Label
+      ctx.fillStyle = 'rgba(148,163,184,0.8)';
+      ctx.font = '11px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('선택된 면 (여러 개)', cx, cy - 20);
+      ctx.fillStyle = 'rgba(99,102,241,0.9)';
+      ctx.font = 'bold 12px sans-serif';
+      ctx.fillText('E', cx, cy + 25);
+    },
+    after: function(ctx, w, h) {
+      ctx.clearRect(0, 0, w, h);
+      var cx = w / 2, cy = h / 2 + 30;
+      var lift = 50;
+      // Bottom face
+      ctx.strokeStyle = 'rgba(99,102,241,0.4)';
+      ctx.fillStyle = 'rgba(99,102,241,0.08)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(cx - 60, cy - 10); ctx.lineTo(cx + 60, cy - 10);
+      ctx.lineTo(cx + 60, cy + 30); ctx.lineTo(cx + 10, cy + 30);
+      ctx.lineTo(cx + 10, cy + 60); ctx.lineTo(cx - 60, cy + 60);
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+      // Side walls (extrude up)
+      ctx.strokeStyle = 'rgba(99,102,241,0.5)'; ctx.lineWidth = 1;
+      var pts = [[cx-60,cy-10],[cx+60,cy-10],[cx+60,cy+30],[cx+10,cy+30],[cx+10,cy+60],[cx-60,cy+60]];
+      pts.forEach(function(p) {
+        ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(p[0], p[1] - lift); ctx.stroke();
+      });
+      // Top face (extruded)
+      ctx.fillStyle = 'rgba(10,132,255,0.25)';
+      ctx.strokeStyle = 'rgba(10,132,255,0.8)'; ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(cx-60,cy-10-lift); ctx.lineTo(cx+60,cy-10-lift);
+      ctx.lineTo(cx+60,cy+30-lift); ctx.lineTo(cx+10,cy+30-lift);
+      ctx.lineTo(cx+10,cy+60-lift); ctx.lineTo(cx-60,cy+60-lift);
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = 'rgba(148,163,184,0.8)';
+      ctx.font = '11px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('하나의 덩어리로 위로 돌출', cx, cy - 10 - lift - 10);
+    }
+  },
+  normals: {
+    desc: '각 면이 자신의 법선(수직) 방향으로 개별 돌출됩니다. 곡면·갑옷에 균일한 두께를 줄 때 필수입니다.',
+    label: 'Along Normals 후',
+    ce: [
+      { cause: 'Alt+E → Along Normals', result: '각 면이 자신의 법선 방향으로 돌출', resultClass: 'result-b' },
+      { cause: '경사진 면 선택', result: '면마다 다른 방향으로 각자 뻗음', resultClass: 'result-b' },
+      { cause: '공유 엣지 유지', result: '서로 연결된 상태로 균일한 두께 생성', resultClass: 'result-b' }
+    ],
+    before: function(ctx, w, h) {
+      ctx.clearRect(0, 0, w, h);
+      var cx = w / 2, cy = h / 2 + 10;
+      // Three angled faces (like a curved surface cross-section)
+      var faces = [
+        { pts: [[cx-70,cy+20],[cx-20,cy+20],[cx-20,cy-10],[cx-70,cy-10]], color: 'rgba(16,185,129,', label: 'A' },
+        { pts: [[cx-20,cy+20],[cx+20,cy+20],[cx+20,cy-20],[cx-20,cy-10]], color: 'rgba(10,132,255,', label: 'B' },
+        { pts: [[cx+20,cy+20],[cx+70,cy+20],[cx+70,cy-10],[cx+20,cy-20]], color: 'rgba(245,158,11,', label: 'C' }
+      ];
+      faces.forEach(function(f) {
+        ctx.fillStyle = f.color + '0.15)'; ctx.strokeStyle = f.color + '0.7)'; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(f.pts[0][0],f.pts[0][1]);
+        f.pts.slice(1).forEach(function(p){ ctx.lineTo(p[0],p[1]); });
+        ctx.closePath(); ctx.fill(); ctx.stroke();
+        var midX = f.pts.reduce(function(a,p){return a+p[0];},0)/4;
+        var midY = f.pts.reduce(function(a,p){return a+p[1];},0)/4;
+        ctx.fillStyle = f.color + '1)'; ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'center';
+        ctx.fillText(f.label, midX, midY + 4);
+      });
+      ctx.fillStyle = 'rgba(148,163,184,0.7)'; ctx.font = '11px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('곡면의 세 면 선택됨', cx, cy + 45);
+    },
+    after: function(ctx, w, h) {
+      ctx.clearRect(0, 0, w, h);
+      var cx = w / 2, cy = h / 2 + 20;
+      // Three faces extruded in their own normal directions
+      var faceData = [
+        { from: [[cx-70,cy+20],[cx-20,cy+20],[cx-20,cy-10],[cx-70,cy-10]], dx: -18, dy: -30, color: 'rgba(16,185,129,', label: 'A' },
+        { from: [[cx-20,cy+20],[cx+20,cy+20],[cx+20,cy-20],[cx-20,cy-10]], dx: 0, dy: -35, color: 'rgba(10,132,255,', label: 'B' },
+        { from: [[cx+20,cy+20],[cx+70,cy+20],[cx+70,cy-10],[cx+20,cy-20]], dx: 18, dy: -30, color: 'rgba(245,158,11,', label: 'C' }
+      ];
+      faceData.forEach(function(f) {
+        // Original face
+        ctx.fillStyle = f.color + '0.08)'; ctx.strokeStyle = f.color + '0.35)'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(f.from[0][0],f.from[0][1]);
+        f.from.slice(1).forEach(function(p){ ctx.lineTo(p[0],p[1]); }); ctx.closePath(); ctx.fill(); ctx.stroke();
+        // Extruded top face
+        var top = f.from.map(function(p){ return [p[0]+f.dx, p[1]+f.dy]; });
+        ctx.fillStyle = f.color + '0.25)'; ctx.strokeStyle = f.color + '0.8)'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(top[0][0],top[0][1]);
+        top.slice(1).forEach(function(p){ ctx.lineTo(p[0],p[1]); }); ctx.closePath(); ctx.fill(); ctx.stroke();
+        // Arrow showing normal direction
+        var midBx = f.from.reduce(function(a,p){return a+p[0];},0)/4;
+        var midBy = f.from.reduce(function(a,p){return a+p[1];},0)/4;
+        ctx.strokeStyle = f.color + '0.6)'; ctx.lineWidth = 1; ctx.setLineDash([3,3]);
+        ctx.beginPath(); ctx.moveTo(midBx, midBy); ctx.lineTo(midBx+f.dx, midBy+f.dy); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = f.color + '0.9)'; ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center';
+        var midTx = top.reduce(function(a,p){return a+p[0];},0)/4;
+        var midTy = top.reduce(function(a,p){return a+p[1];},0)/4;
+        ctx.fillText(f.label, midTx, midTy + 4);
+      });
+      ctx.fillStyle = 'rgba(148,163,184,0.7)'; ctx.font = '11px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('각자 법선 방향으로 돌출', cx, cy + 45);
+    }
+  },
+  individual: {
+    desc: '각 면이 완전히 독립적으로 자신의 법선 방향으로 돌출됩니다. 공유 엣지가 분리되어 면 사이에 틈이 생깁니다.',
+    label: 'Individual 후',
+    ce: [
+      { cause: 'Alt+E → Individual Faces', result: '각 면이 독립적으로 분리되어 돌출', resultClass: 'result-warn' },
+      { cause: '공유 엣지 분리됨', result: '면 사이에 틈(Gap) 발생', resultClass: 'result-warn' },
+      { cause: 'Along Normals와 방향 동일', result: '연결 없이 별개 형태로 분리됨', resultClass: 'result-warn' }
+    ],
+    before: function(ctx, w, h) {
+      ctx.clearRect(0, 0, w, h);
+      var cx = w / 2, cy = h / 2 + 10;
+      // Three adjacent flat faces sharing edges
+      var faces = [
+        { x: cx - 65, y: cy - 15, w: 45, h: 50, color: 'rgba(16,185,129,', label: 'A' },
+        { x: cx - 20, y: cy - 15, w: 45, h: 50, color: 'rgba(10,132,255,', label: 'B' },
+        { x: cx + 25, y: cy - 15, w: 45, h: 50, color: 'rgba(245,158,11,', label: 'C' }
+      ];
+      faces.forEach(function(f) {
+        ctx.fillStyle = f.color + '0.15)'; ctx.strokeStyle = f.color + '0.7)'; ctx.lineWidth = 1.5;
+        ctx.fillRect(f.x, f.y, f.w, f.h); ctx.strokeRect(f.x, f.y, f.w, f.h);
+        ctx.fillStyle = f.color + '1)'; ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'center';
+        ctx.fillText(f.label, f.x + f.w/2, f.y + f.h/2 + 4);
+      });
+      ctx.fillStyle = 'rgba(148,163,184,0.7)'; ctx.font = '11px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('인접한 3개 면 (공유 엣지)', cx, cy + 50);
+    },
+    after: function(ctx, w, h) {
+      ctx.clearRect(0, 0, w, h);
+      var cx = w / 2, cy = h / 2 + 25;
+      var lift = 40, spread = 6;
+      // Three faces now separated (Individual extrude - gap between them)
+      var faces = [
+        { x: cx - 65 - spread, y: cy - 15, w: 43, h: 48, dx: -spread, dy: -lift, color: 'rgba(16,185,129,', label: 'A' },
+        { x: cx - 20, y: cy - 15, w: 43, h: 48, dx: 0, dy: -lift, color: 'rgba(10,132,255,', label: 'B' },
+        { x: cx + 25 + spread, y: cy - 15, w: 43, h: 48, dx: spread, dy: -lift, color: 'rgba(245,158,11,', label: 'C' }
+      ];
+      faces.forEach(function(f) {
+        // Base (dim)
+        ctx.fillStyle = f.color + '0.06)'; ctx.strokeStyle = f.color + '0.3)'; ctx.lineWidth = 1;
+        ctx.fillRect(f.x, f.y, f.w, f.h); ctx.strokeRect(f.x, f.y, f.w, f.h);
+        // Side walls
+        ctx.strokeStyle = f.color + '0.4)'; ctx.lineWidth = 1;
+        [[f.x, f.y], [f.x+f.w, f.y], [f.x+f.w, f.y+f.h], [f.x, f.y+f.h]].forEach(function(p) {
+          ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(p[0]+f.dx, p[1]+f.dy); ctx.stroke();
+        });
+        // Top face (extruded, separated)
+        ctx.fillStyle = f.color + '0.25)'; ctx.strokeStyle = f.color + '0.85)'; ctx.lineWidth = 2;
+        ctx.fillRect(f.x+f.dx, f.y+f.dy, f.w, f.h); ctx.strokeRect(f.x+f.dx, f.y+f.dy, f.w, f.h);
+        ctx.fillStyle = f.color + '0.9)'; ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center';
+        ctx.fillText(f.label, f.x+f.dx+f.w/2, f.y+f.dy+f.h/2+4);
+      });
+      // Show gaps with warning marks
+      ctx.fillStyle = 'rgba(239,68,68,0.8)'; ctx.font = '10px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('틈', cx - 22, cy - 15 - lift + 24);
+      ctx.fillText('틈', cx + 22, cy - 15 - lift + 24);
+      ctx.fillStyle = 'rgba(148,163,184,0.7)'; ctx.font = '11px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('면 사이 틈 발생 — 분리된 형태', cx, cy + 50);
+    }
+  }
+};
+
+function buildCauseEffectEX(ces) {
+  var el = document.getElementById('cause-effect-ex');
+  while (el.firstChild) el.removeChild(el.firstChild);
+  ces.forEach(function(c) {
+    var row = document.createElement('div'); row.className = 'ce-row';
+    var cause = document.createElement('div'); cause.className = 'ce-cause'; cause.textContent = c.cause;
+    var arrow = document.createElement('div'); arrow.className = 'ce-arrow'; arrow.textContent = '\u2192';
+    var result = document.createElement('div'); result.className = 'ce-result ' + c.resultClass; result.textContent = c.result;
+    row.appendChild(cause); row.appendChild(arrow); row.appendChild(result);
+    el.appendChild(row);
+  });
+}
+
+function renderBAPanelsEX(scene) {
+  var bc = document.getElementById('canvas-before-ex');
+  var ac = document.getElementById('canvas-after-ex');
+  bc.width = bc.offsetWidth || 280; ac.width = ac.offsetWidth || 280;
+  scene.before(bc.getContext('2d'), bc.width, bc.height);
+  scene.after(ac.getContext('2d'), ac.width, ac.height);
+  var lbl = document.getElementById('ba-label-after-ex');
+  if (lbl) lbl.textContent = scene.label;
+}
+
+function switchScenarioEX(key) {
+  var scene = scenariosEX[key];
+  if (!scene) return;
+  document.querySelectorAll('#scenarioNavEX .scenario-btn').forEach(function(b) {
+    b.classList.toggle('active', b.dataset.scene === key);
+  });
+  var desc = document.getElementById('scene-desc-ex');
+  if (desc) desc.textContent = scene.desc;
+  buildCauseEffectEX(scene.ce);
+  renderBAPanelsEX(scene);
+}
+
+document.querySelectorAll('.tab-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    if (btn.dataset.panel === 'visual') {
+      setTimeout(function() { switchScenarioEX('region'); }, 50);
+    }
+  });
+});
+
+switchScenarioEX('region');
 
 // ── Canvas Extrude Demo ──────────────────────
 (function() {

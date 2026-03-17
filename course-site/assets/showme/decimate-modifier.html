@@ -389,6 +389,24 @@ body {
 }
 .doc-ref a:hover { text-decoration: underline; }
 
+/* ── Scenario Nav ── */
+.scenario-nav { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+.scenario-btn { padding:6px 14px; border-radius:20px; border:1px solid rgba(255,255,255,.15); background:transparent; color:#cbd5e1; cursor:pointer; font-size:13px; transition:all .2s; font-family:var(--font); }
+.scenario-btn.active { background:rgba(99,102,241,.25); border-color:rgba(99,102,241,.5); color:#a5b4fc; }
+.before-after { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:12px 0; }
+.ba-panel { border-radius:12px; overflow:hidden; }
+.ba-panel canvas { width:100%; display:block; }
+.ba-label { text-align:center; font-size:11px; color:#94a3b8; padding:4px; background:rgba(0,0,0,.2); }
+.cause-effect { display:flex; flex-direction:column; gap:8px; margin:12px 0; }
+.ce-row { display:flex; align-items:center; gap:8px; }
+.ce-cause { background:rgba(99,102,241,.12); border:1px solid rgba(99,102,241,.25); border-radius:8px; padding:6px 12px; font-size:13px; flex:1; }
+.ce-arrow { color:#64748b; font-size:16px; }
+.ce-result { border-radius:8px; padding:6px 12px; font-size:13px; flex:1.5; }
+.result-a { background:rgba(16,185,129,.1); border:1px solid rgba(16,185,129,.25); color:#6ee7b7; }
+.result-b { background:rgba(245,158,11,.1); border:1px solid rgba(245,158,11,.25); color:#fcd34d; }
+.result-c { background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.25); color:#fca5a5; }
+.scene-desc-box { font-size:.84rem; color:var(--muted-strong); margin-bottom:10px; padding:10px 14px; border-radius:var(--radius-sm); background:var(--surface); border:1px solid var(--line); line-height:1.7; }
+
 /* ── Responsive ── */
 @media (max-width: 600px) {
   .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
@@ -397,6 +415,7 @@ body {
   .panel { padding: 16px 12px; }
   .demo-controls { flex-direction: column; }
   .demo-slider-wrap { width: 100%; }
+  .before-after { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -447,22 +466,23 @@ body {
 
 <!-- TAB 2: 시각적 비교 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    슬라이더를 움직여 Ratio를 변경하면 폴리곤이 줄어드는 과정을 확인할 수 있습니다.
-  </p>
-  <div class="demo-wrap">
-    <canvas id="demoCanvas" width="680" height="300"></canvas>
-    <div class="demo-controls">
-      <div class="demo-slider-wrap">
-        <label for="ratioSlider">Ratio</label>
-        <input type="range" id="ratioSlider" min="0.05" max="1.0" step="0.05" value="1.0">
-        <span class="demo-stat" id="ratioValue">1.00</span>
-      </div>
-      <span class="demo-stat" id="faceCount"></span>
-      <button class="demo-btn" id="btnReset">초기화</button>
+  <div class="scenario-nav" id="scenarioNav">
+    <button class="scenario-btn active" data-scene="collapse" onclick="switchScenario('collapse')">Collapse 모드</button>
+    <button class="scenario-btn" data-scene="unsubdivide" onclick="switchScenario('unsubdivide')">Un-Subdivide</button>
+    <button class="scenario-btn" data-scene="planar" onclick="switchScenario('planar')">Planar 모드</button>
+  </div>
+  <div class="scene-desc-box" id="scene-desc">가장 일반적인 방식. 인접한 꼭짓점을 점진적으로 병합하여 폴리곤 수를 줄입니다. Ratio로 감소 비율을 제어합니다.</div>
+  <div class="before-after">
+    <div class="ba-panel">
+      <canvas id="canvas-before" height="160"></canvas>
+      <div class="ba-label">원본 (High Poly)</div>
+    </div>
+    <div class="ba-panel">
+      <canvas id="canvas-after" height="160"></canvas>
+      <div class="ba-label">Decimate 적용 후 (Low Poly)</div>
     </div>
   </div>
-  <p class="demo-hint">Ratio를 1.0에서 0.1로 줄여 보세요. 삼각형이 줄어들면서 형태가 단순해집니다.</p>
+  <div class="cause-effect" id="cause-effect"></div>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->
@@ -660,169 +680,148 @@ function initQuiz(questions) {
   }
 }
 
-// ── Canvas Decimate Demo ──────────────────────
+// ── Decimate Scenario Visualization ──────────
+var scenarios = {
+  collapse: {
+    desc: "가장 일반적인 방식. 인접한 꼭짓점을 점진적으로 병합하여 폴리곤 수를 줄입니다. Ratio로 감소 비율을 제어합니다.",
+    ce: [
+      { cause: "Ratio 1.0 — 원본 그대로 유지", result: "고밀도 메쉬, 높은 폴리 수", resultClass: "result-b" },
+      { cause: "Ratio 0.3 적용", result: "폴리곤 70% 감소 → 형태는 유지", resultClass: "result-a" }
+    ],
+    before: function(ctx, w, h) {
+      ctx.fillStyle = "#17181a"; ctx.fillRect(0,0,w,h);
+      var cx=w/2, cy=h/2, r=Math.min(w,h)*0.35;
+      var seg=24;
+      ctx.strokeStyle="rgba(10,132,255,.6)"; ctx.lineWidth=1.2;
+      for(var i=0;i<seg;i++){
+        var a1=(i/seg)*Math.PI*2-Math.PI/2, a2=((i+1)/seg)*Math.PI*2-Math.PI/2;
+        ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+Math.cos(a1)*r,cy+Math.sin(a1)*r); ctx.lineTo(cx+Math.cos(a2)*r,cy+Math.sin(a2)*r); ctx.closePath();
+        ctx.fillStyle="hsla("+(i*15)+",40%,30%,.15)"; ctx.fill(); ctx.stroke();
+        ctx.beginPath(); ctx.arc(cx+Math.cos(a1)*r,cy+Math.sin(a1)*r,2.5,0,Math.PI*2); ctx.fillStyle="rgba(10,132,255,.8)"; ctx.fill();
+      }
+      ctx.fillStyle="rgba(10,132,255,.7)"; ctx.font="bold 11px sans-serif"; ctx.textAlign="left"; ctx.fillText("High Poly — "+seg+"\uAC1C \uBA74",8,16);
+    },
+    after: function(ctx, w, h) {
+      ctx.fillStyle = "#17181a"; ctx.fillRect(0,0,w,h);
+      var cx=w/2, cy=h/2, r=Math.min(w,h)*0.35;
+      var seg=7;
+      ctx.strokeStyle="rgba(16,185,129,.6)"; ctx.lineWidth=1.5;
+      for(var i=0;i<seg;i++){
+        var a1=(i/seg)*Math.PI*2-Math.PI/2, a2=((i+1)/seg)*Math.PI*2-Math.PI/2;
+        ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+Math.cos(a1)*r,cy+Math.sin(a1)*r); ctx.lineTo(cx+Math.cos(a2)*r,cy+Math.sin(a2)*r); ctx.closePath();
+        ctx.fillStyle="rgba(16,185,129,.1)"; ctx.fill(); ctx.stroke();
+        ctx.beginPath(); ctx.arc(cx+Math.cos(a1)*r,cy+Math.sin(a1)*r,3.5,0,Math.PI*2); ctx.fillStyle="rgba(16,185,129,.9)"; ctx.fill();
+      }
+      ctx.fillStyle="rgba(16,185,129,.8)"; ctx.font="bold 11px sans-serif"; ctx.textAlign="left"; ctx.fillText("Low Poly — "+seg+"\uAC1C \uBA74 (Ratio 0.3)",8,16);
+    }
+  },
+  unsubdivide: {
+    desc: "Subdivision\uC758 \uC5ED\uC5F0\uC0B0\uC785\uB2C8\uB2E4. \uADE0\uC77C\uD558\uAC8C \uBD84\uD560\uB41C \uBA54\uC26C\uB97C \uC6D0\uB798 \uB2E8\uACC4\uB85C \uB418\uB3CC\uB9BD\uB2C8\uB2E4. Iterations \uC218\uCE58\uB85C \uBA87 \uB2E8\uACC4 \uB418\uB3CC\uB9B4\uC9C0 \uC124\uC815\uD569\uB2C8\uB2E4.",
+    ce: [
+      { cause: "Subdivide 2\uD68C \uC801\uC6A9\uB41C \uADE0\uC77C\uD55C \uBA54\uC26C", result: "Un-Subdivide \u2192 \uC774\uC804 \uB2E8\uACC4 \uBCF5\uC6D0", resultClass: "result-a" },
+      { cause: "\uBD88\uADE0\uC77C\uD55C \uBA54\uC26C\uC5D0 \uC801\uC6A9 \uC2DC", result: "\uC608\uC0C1\uCE58 \uBABB\uD55C \uACB0\uACFC \uBC1C\uC0DD \uAC00\uB2A5", resultClass: "result-c" }
+    ],
+    before: function(ctx, w, h) {
+      ctx.fillStyle = "#17181a"; ctx.fillRect(0,0,w,h);
+      var ox=w/2-50, oy=h/2-50, sz=100, sub=4, step=sz/sub;
+      ctx.fillStyle="rgba(99,102,241,.06)"; ctx.fillRect(ox,oy,sz,sz);
+      ctx.strokeStyle="rgba(99,102,241,.5)"; ctx.lineWidth=1;
+      for(var i=0;i<=sub;i++){
+        ctx.beginPath(); ctx.moveTo(ox+i*step,oy); ctx.lineTo(ox+i*step,oy+sz); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(ox,oy+i*step); ctx.lineTo(ox+sz,oy+i*step); ctx.stroke();
+      }
+      ctx.strokeStyle="rgba(99,102,241,.8)"; ctx.lineWidth=2; ctx.strokeRect(ox,oy,sz,sz);
+      ctx.fillStyle="rgba(99,102,241,.7)"; ctx.font="bold 11px sans-serif"; ctx.textAlign="left"; ctx.fillText("Subdivide "+sub+"x \u2014 "+(sub+1)*(sub+1)+"\uAC1C \uAF2D\uC9D3\uC810",8,16);
+    },
+    after: function(ctx, w, h) {
+      ctx.fillStyle = "#17181a"; ctx.fillRect(0,0,w,h);
+      var ox=w/2-50, oy=h/2-50, sz=100, sub=1, step=sz/sub;
+      ctx.fillStyle="rgba(16,185,129,.08)"; ctx.fillRect(ox,oy,sz,sz);
+      ctx.strokeStyle="rgba(16,185,129,.9)"; ctx.lineWidth=2.5; ctx.strokeRect(ox,oy,sz,sz);
+      for(var vi=0;vi<=sub;vi++) for(var vj=0;vj<=sub;vj++){
+        ctx.beginPath(); ctx.arc(ox+vi*step,oy+vj*step,3.5,0,Math.PI*2); ctx.fillStyle="rgba(16,185,129,.9)"; ctx.fill();
+      }
+      ctx.fillStyle="rgba(16,185,129,.8)"; ctx.font="bold 11px sans-serif"; ctx.textAlign="left"; ctx.fillText("Un-Subdivide \uD6C4 \u2014 4\uAC1C \uAF2D\uC9D3\uC810",8,16);
+    }
+  },
+  planar: {
+    desc: "\uAC19\uC740 \uD3C9\uBA74(\uD3C9\uD0C4\uD55C \uD45C\uBA74)\uC5D0 \uC788\uB294 \uBA74\uB4E4\uC744 \uD558\uB098\uB85C \uBCD1\uD569\uD569\uB2C8\uB2E4. \uD3C9\uD3C9\uD55C \uD45C\uBA74\uC758 \uBD88\uD544\uC694\uD55C \uC5E3\uC9C0\uB97C \uC81C\uAC70\uD560 \uB54C \uAC00\uC7A5 \uD6A8\uACFC\uC801\uC785\uB2C8\uB2E4.",
+    ce: [
+      { cause: "\uD3C9\uD3C9\uD55C \uBA74 \uC704\uC758 \uBD88\uD544\uC694\uD55C \uC5E3\uC9C0 \uB2E4\uC218", result: "Planar \u2192 \uB3D9\uC77C \uD3C9\uBA74 \uBA74\uB4E4 \uBCD1\uD569", resultClass: "result-a" },
+      { cause: "\uACE1\uBA74 \uC624\uBE0C\uC81D\uD2B8\uC5D0 Planar \uC801\uC6A9", result: "\uAC01\uC9C4 \uACB0\uACFC \u2014 Collapse\uAC00 \uB354 \uC801\uD569", resultClass: "result-c" }
+    ],
+    before: function(ctx, w, h) {
+      ctx.fillStyle = "#17181a"; ctx.fillRect(0,0,w,h);
+      var ox=w/2-100, oy=h/2-28, rw=200, rh=56;
+      ctx.fillStyle="rgba(245,158,11,.06)"; ctx.fillRect(ox,oy,rw,rh);
+      ctx.strokeStyle="rgba(245,158,11,.5)"; ctx.lineWidth=1;
+      ctx.strokeRect(ox,oy,rw,rh);
+      var cols=5;
+      for(var i=1;i<cols;i++){ ctx.beginPath(); ctx.moveTo(ox+i*(rw/cols),oy); ctx.lineTo(ox+i*(rw/cols),oy+rh); ctx.stroke(); }
+      ctx.beginPath(); ctx.moveTo(ox,oy+rh/2); ctx.lineTo(ox+rw,oy+rh/2); ctx.stroke();
+      ctx.fillStyle="rgba(245,158,11,.7)"; ctx.font="bold 11px sans-serif"; ctx.textAlign="left"; ctx.fillText("\uD3C9\uBA74 \uC704 \uBD88\uD544\uC694\uD55C \uC5E3\uC9C0 \uB2E4\uC218",8,16);
+    },
+    after: function(ctx, w, h) {
+      ctx.fillStyle = "#17181a"; ctx.fillRect(0,0,w,h);
+      var ox=w/2-100, oy=h/2-28, rw=200, rh=56;
+      ctx.fillStyle="rgba(16,185,129,.1)"; ctx.fillRect(ox,oy,rw,rh);
+      ctx.strokeStyle="rgba(16,185,129,.9)"; ctx.lineWidth=2.5; ctx.strokeRect(ox,oy,rw,rh);
+      [[ox,oy],[ox+rw,oy],[ox+rw,oy+rh],[ox,oy+rh]].forEach(function(pt){ ctx.beginPath(); ctx.arc(pt[0],pt[1],4,0,Math.PI*2); ctx.fillStyle="rgba(16,185,129,.9)"; ctx.fill(); });
+      ctx.fillStyle="rgba(16,185,129,.8)"; ctx.font="bold 11px sans-serif"; ctx.textAlign="left"; ctx.fillText("Planar \uC801\uC6A9 \uD6C4 \u2014 \uD558\uB098\uC758 \uBA74",8,16);
+    }
+  }
+};
+
+function buildCauseEffect(ces) {
+  var el = document.getElementById('cause-effect');
+  while(el.firstChild) el.removeChild(el.firstChild);
+  ces.forEach(function(c){
+    var row = document.createElement('div'); row.className = 'ce-row';
+    var cause = document.createElement('div'); cause.className = 'ce-cause'; cause.textContent = c.cause;
+    var arrow = document.createElement('div'); arrow.className = 'ce-arrow'; arrow.textContent = '\u2192';
+    var result = document.createElement('div'); result.className = 'ce-result ' + c.resultClass; result.textContent = c.result;
+    row.appendChild(cause); row.appendChild(arrow); row.appendChild(result);
+    el.appendChild(row);
+  });
+}
+
+function renderBAPanels(s) {
+  var bc=document.getElementById('canvas-before'), ac=document.getElementById('canvas-after');
+  var bx=bc.getContext('2d'), ax=ac.getContext('2d');
+  bc.width=bc.offsetWidth||280; bc.height=160; ac.width=ac.offsetWidth||280; ac.height=160;
+  bx.clearRect(0,0,bc.width,bc.height); ax.clearRect(0,0,ac.width,ac.height);
+  if(s.before) s.before(bx, bc.width, bc.height);
+  if(s.after) s.after(ax, ac.width, ac.height);
+}
+
+function switchScenario(key) {
+  document.querySelectorAll('.scenario-btn').forEach(function(b){ b.classList.toggle('active', b.dataset.scene===key); });
+  var s = scenarios[key];
+  document.getElementById('scene-desc').textContent = s.desc;
+  buildCauseEffect(s.ce);
+  renderBAPanels(s);
+}
+
+document.querySelectorAll(".tab").forEach(function(tab){
+  tab.addEventListener("click", function(){
+    if(tab.dataset.tab==="visual") { setTimeout(function(){ switchScenario('collapse'); },50); }
+  });
+});
+
+// ── Auto-init visual tab ──────────────────────
+document.querySelectorAll(".tab").forEach(function(tab){
+  tab.addEventListener("click", function(){
+    if(tab.dataset.tab==="visual"){ setTimeout(function(){ switchScenario('collapse'); },50); }
+  });
+});
+
+// ── Placeholder (old demo removed) ───────────
 (function() {
   var canvas = document.getElementById("demoCanvas");
+  if(!canvas) return;
   var ctx = canvas.getContext("2d");
-  var slider = document.getElementById("ratioSlider");
-  var ratioDisplay = document.getElementById("ratioValue");
-  var faceCountDisplay = document.getElementById("faceCount");
-
-  // Generate a circle-like shape with many triangles
-  var centerX = canvas.width / 2;
-  var centerY = canvas.height / 2;
-  var radius = 110;
-  var maxSegments = 32;
-
-  // Generate base vertices (circle outline)
-  function generateCircleVerts(segments) {
-    var pts = [];
-    for (var i = 0; i < segments; i++) {
-      var angle = (Math.PI * 2 * i) / segments - Math.PI / 2;
-      pts.push({
-        x: centerX + Math.cos(angle) * radius,
-        y: centerY + Math.sin(angle) * radius
-      });
-    }
-    return pts;
-  }
-
-  // Generate triangles from center to perimeter
-  function generateTriangles(perimeterVerts) {
-    var tris = [];
-    for (var i = 0; i < perimeterVerts.length; i++) {
-      var next = (i + 1) % perimeterVerts.length;
-      tris.push({
-        a: { x: centerX, y: centerY },
-        b: { x: perimeterVerts[i].x, y: perimeterVerts[i].y },
-        c: { x: perimeterVerts[next].x, y: perimeterVerts[next].y }
-      });
-    }
-    return tris;
-  }
-
-  // Decimate: merge adjacent triangles to simulate polygon reduction
-  function decimateTriangles(ratio) {
-    var allVerts = generateCircleVerts(maxSegments);
-    var totalTris = allVerts.length;
-    var targetTris = Math.max(3, Math.round(totalTris * ratio));
-
-    // Pick evenly spaced vertices from the full set
-    var reducedVerts = [];
-    for (var i = 0; i < targetTris; i++) {
-      var idx = Math.round((i * maxSegments) / targetTris) % maxSegments;
-      reducedVerts.push(allVerts[idx]);
-    }
-    return generateTriangles(reducedVerts);
-  }
-
-  function draw(ratio) {
-    var w = canvas.width;
-    var h = canvas.height;
-    ctx.clearRect(0, 0, w, h);
-
-    // Background
-    ctx.fillStyle = "#17181a";
-    ctx.fillRect(0, 0, w, h);
-
-    // Grid lines (subtle)
-    ctx.strokeStyle = "rgba(255,255,255,.04)";
-    ctx.lineWidth = 1;
-    var step = 40;
-    for (var gx = step; gx < w; gx += step) {
-      ctx.beginPath();
-      ctx.moveTo(gx, 0);
-      ctx.lineTo(gx, h);
-      ctx.stroke();
-    }
-    for (var gy = step; gy < h; gy += step) {
-      ctx.beginPath();
-      ctx.moveTo(0, gy);
-      ctx.lineTo(w, gy);
-      ctx.stroke();
-    }
-
-    var tris = decimateTriangles(ratio);
-    var faceCount = tris.length;
-
-    // Draw each triangle
-    tris.forEach(function(tri, i) {
-      // Fill with alternating subtle colors
-      var hue = (i * 137) % 360;
-      ctx.beginPath();
-      ctx.moveTo(tri.a.x, tri.a.y);
-      ctx.lineTo(tri.b.x, tri.b.y);
-      ctx.lineTo(tri.c.x, tri.c.y);
-      ctx.closePath();
-      ctx.fillStyle = "hsla(" + hue + ", 60%, 50%, 0.12)";
-      ctx.fill();
-
-      // Stroke edges
-      ctx.strokeStyle = "rgba(10,132,255,.5)";
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-    });
-
-    // Draw vertices
-    var drawnVerts = {};
-    tris.forEach(function(tri) {
-      [tri.a, tri.b, tri.c].forEach(function(v) {
-        var key = Math.round(v.x) + "," + Math.round(v.y);
-        if (!drawnVerts[key]) {
-          drawnVerts[key] = true;
-          ctx.beginPath();
-          ctx.arc(v.x, v.y, 3, 0, Math.PI * 2);
-          ctx.fillStyle = "rgba(10,132,255,.9)";
-          ctx.fill();
-        }
-      });
-    });
-
-    // Ratio label
-    ctx.fillStyle = "rgba(245,158,11,.7)";
-    ctx.font = "bold 12px sans-serif";
-    ctx.textAlign = "left";
-    ctx.fillText("Ratio: " + ratio.toFixed(2), 14, 22);
-
-    // Face count label
-    ctx.fillStyle = "rgba(16,185,129,.7)";
-    ctx.textAlign = "right";
-    ctx.fillText("Faces: " + faceCount, w - 14, 22);
-
-    // Quality indicator
-    var quality;
-    if (ratio >= 0.8) quality = "High Quality";
-    else if (ratio >= 0.4) quality = "Medium";
-    else quality = "Low Poly";
-    ctx.fillStyle = "rgba(255,255,255,.3)";
-    ctx.textAlign = "center";
-    ctx.font = "11px sans-serif";
-    ctx.fillText(quality, centerX, h - 12);
-
-    // Update stats
-    ratioDisplay.textContent = ratio.toFixed(2);
-    faceCountDisplay.textContent = "Faces: " + faceCount;
-  }
-
-  // Slider interaction
-  function onSliderInput() {
-    var ratio = parseFloat(slider.value);
-    draw(ratio);
-  }
-
-  slider.addEventListener("input", onSliderInput);
-
-  // Touch-friendly: also listen for change
-  slider.addEventListener("change", onSliderInput);
-
-  // Reset button
-  document.getElementById("btnReset").addEventListener("click", function() {
-    slider.value = "1.0";
-    draw(1.0);
-  });
-
-  // Initial draw
-  draw(1.0);
+  if(!ctx) return;
+  // old demo elements removed — new scenario system handles visualization
 })();
 
 // ── Quiz Data ─────────────────────────────────
