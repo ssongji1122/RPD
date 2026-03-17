@@ -29,12 +29,21 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash(python3 -m http.server:*), Ba
 
 ### 새 카드 생성 표준 절차
 
-#### Step 1: 사전 확인
+#### Step 1: 리서치 브리프 확인
+
+`claudedocs/research/{widget-id}-brief.md` 존재 시 자동 참조:
+- **개념탭**: 브리프 §1 공식정의 + §7 비유 활용
+- **퀴즈탭**: 브리프 §5 학생혼란포인트에서 문제 출제
+- **단축키**: 브리프 §3에서 검증된 단축키 사용
+- **흔한 실수**: 브리프 §6 "증상→해결" 활용
+- 없으면 → `⚠️ 리서치 브리프가 없습니다. /rpd-research {id} 먼저 실행하면 더 정확한 카드를 만들 수 있어요.`
+
+#### Step 2: 사전 확인
 1. `course-site/assets/showme/{widget-id}.html` 이미 존재하는지 확인
 2. `_registry.js`에 해당 ID 등록 여부 확인
 3. Blender 공식 문서 URL 확인: `https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/{name}.html`
 
-#### Step 2: HTML 생성
+#### Step 3: HTML 생성
 
 **파일 위치**: `course-site/assets/showme/{widget-id}.html`
 
@@ -110,14 +119,14 @@ window.parent.postMessage({
 }, "*");
 ```
 
-#### Step 3: 레지스트리 등록
+#### Step 4: 레지스트리 등록
 
 `course-site/assets/showme/_registry.js`에 추가:
 ```javascript
 "widget-id": { label: "한글 라벨", icon: "이모지" },
 ```
 
-#### Step 4: curriculum.js 연결 (선택)
+#### Step 5: curriculum.js 연결 (선택)
 
 해당 주차의 step에 `showme` 필드 추가:
 ```javascript
@@ -127,7 +136,7 @@ window.parent.postMessage({
 "showme": ["widget-id-1", "widget-id-2"]
 ```
 
-#### Step 5: 검증 체크리스트
+#### Step 6: 검증 체크리스트
 - [ ] 파일 존재: `course-site/assets/showme/{id}.html`
 - [ ] `initQuiz` 포함
 - [ ] `postMessage` 포함
