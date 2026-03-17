@@ -21,7 +21,7 @@
     .hero p {
       max-width: 720px; margin: 0;
       color: var(--muted-strong); font-size: clamp(.98rem, 1.6vw, 1.06rem);
-      line-height: 1.8;
+      line-height: 1.8; white-space: nowrap;
     }
     .hero-meta { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; }
     .meta-chip {
@@ -612,6 +612,7 @@
           <div class="hero-card">
             <div class="eyebrow">Week ${String(w.week).padStart(2,"0")} · RPD</div>
             <h1>${w.title}</h1>
+            ${w.subtitle ? `<p>${w.subtitle}</p>` : ""}
             <div class="hero-meta">
               <span class="meta-chip">⏱ ${w.duration}</span>
               <span class="meta-chip">📋 ${w.steps.length}단계 실습</span>
