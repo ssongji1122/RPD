@@ -324,7 +324,7 @@ const CURRICULUM = [
           "Z Pie Menu로 빠르게 모드 전환이 된다",
           "Solid와 Material Preview 차이를 말할 수 있다"
         ],
-        "showme": "viewport-shading"
+        "showme": ["viewport-shading", "xray-opacity"]
       }
     ],
     "assignment": {
