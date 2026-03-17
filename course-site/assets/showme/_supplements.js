@@ -4,7 +4,7 @@
 // targets 배열로 여러 카드에서 재사용 가능
 // ============================================================
 
-var SHOWME_SUPPLEMENTS = {
+const SHOWME_SUPPLEMENTS = {
   // /brainstormC 스킬로 항목 추가
   // 구조:
   // "supplement-id": {
