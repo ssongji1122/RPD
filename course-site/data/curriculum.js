@@ -875,6 +875,14 @@ const CURRICULUM = [
     "summary": "레고 조립처럼, Edit Mode로 블록을 깎고 Modifier로 대칭·곡면·반복 효과를 얹는 흐름을 배워요.",
     "videos": [
       {
+        "title": "[실습] 민트 로봇 레퍼런스 이미지 설정",
+        "url": "https://youtu.be/-U82eI3eiQ0"
+      },
+      {
+        "title": "[실습] 민트 로봇 헤드 Mirror 모델링",
+        "url": "https://youtu.be/FIY9RBLdYcA"
+      },
+      {
         "title": "Blender Studio - Modeling Introduction",
         "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modeling-introduction/"
       },
