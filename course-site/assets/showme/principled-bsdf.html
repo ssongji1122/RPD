@@ -414,20 +414,56 @@ body {
 
 <!-- TAB 2: 시각적 비교 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    프리셋 버튼을 눌러 다양한 재질의 Principled BSDF 파라미터를 비교하세요.
-  </p>
-  <div class="demo-wrap">
-    <canvas id="demoCanvas" width="680" height="380"></canvas>
+<style>
+.scenario-nav{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.scenario-btn{padding:6px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.15);background:transparent;color:#cbd5e1;cursor:pointer;font-size:13px;transition:all .2s;font-family:inherit}
+.scenario-btn.active{background:rgba(99,102,241,.25);border-color:rgba(99,102,241,.5);color:#a5b4fc}
+.before-after{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.ba-panel{border-radius:12px;overflow:hidden}
+.ba-panel canvas{width:100%;display:block}
+.ba-label{text-align:center;font-size:11px;color:#94a3b8;padding:4px;background:rgba(0,0,0,.2)}
+.cause-effect{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.ce-row{display:flex;align-items:center;gap:8px}
+.ce-cause{background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);border-radius:8px;padding:6px 12px;font-size:13px;flex:1}
+.ce-arrow{color:#64748b;font-size:16px}
+.ce-result{border-radius:8px;padding:6px 12px;font-size:13px;flex:1.5}
+.result-a{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:#6ee7b7}
+.result-b{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);color:#fcd34d}
+.result-c{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:#fca5a5}
+</style>
+  <div class="scenario-nav">
+    <button class="scenario-btn active" data-scene="metallic" onclick="switchScenarioPB('metallic')">Metallic vs 비금속</button>
+    <button class="scenario-btn" data-scene="roughness" onclick="switchScenarioPB('roughness')">Roughness 변화</button>
+    <button class="scenario-btn" data-scene="glass" onclick="switchScenarioPB('glass')">유리 재질</button>
+  </div>
+  <div id="scene-desc-pb" style="font-size:.84rem;color:var(--muted-strong);margin-bottom:10px;padding:10px 14px;border-radius:12px;background:var(--surface);border:1px solid var(--line);">시나리오를 선택하세요.</div>
+  <div class="before-after">
+    <div class="ba-panel">
+      <div class="ba-label">BEFORE</div>
+      <canvas id="pb-before" width="320" height="160"></canvas>
+    </div>
+    <div class="ba-panel">
+      <div class="ba-label">AFTER</div>
+      <canvas id="pb-after" width="320" height="160"></canvas>
+    </div>
+  </div>
+  <div class="cause-effect" id="cause-effect-pb"></div>
+
+  <!-- 인터랙티브 데모 -->
+  <div style="margin-top:20px">
+    <div style="font-size:.85rem;color:var(--muted-strong);font-weight:600;margin-bottom:6px">인터랙티브 데모</div>
+    <div class="demo-wrap">
+      <canvas id="demoCanvas" width="680" height="300"></canvas>
+    </div>
     <div class="demo-controls">
       <button class="demo-btn is-active" id="btnPlastic">플라스틱</button>
       <button class="demo-btn" id="btnMetal">금속</button>
       <button class="demo-btn" id="btnGlass">유리</button>
       <button class="demo-btn" id="btnSkin">피부</button>
-      <button class="demo-btn" id="btnReset">초기화</button>
+      <button class="demo-btn" id="btnReset">리셋</button>
     </div>
+    <div class="demo-hint">프리셋을 선택하여 Principled BSDF 파라미터와 구체 렌더링 결과를 확인하세요.</div>
   </div>
-  <p class="demo-hint">각 프리셋의 파라미터 값과 구체 렌더링 결과를 비교합니다.</p>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->
@@ -481,6 +517,147 @@ body {
 </section>
 
 <script>
+// ── Principled BSDF Visual Scenarios ──────────
+(function() {
+  var BG = '#1e293b';
+  function drawBg(ctx, w, h) { ctx.fillStyle = BG; ctx.fillRect(0, 0, w, h); }
+  function lbl(ctx, text, x, y, color) {
+    ctx.save(); ctx.font = 'bold 11px sans-serif'; ctx.fillStyle = color || '#94a3b8';
+    ctx.textAlign = 'center'; ctx.fillText(text, x, y); ctx.restore();
+  }
+  function drawSphere(ctx, cx, cy, r, baseColor, hlColor, hlSize) {
+    var grad = ctx.createRadialGradient(
+      cx - r * (hlSize || 0.3), cy - r * (hlSize || 0.3), r * 0.03,
+      cx, cy, r
+    );
+    grad.addColorStop(0, hlColor || 'rgba(255,255,255,0.7)');
+    grad.addColorStop(0.35, baseColor);
+    grad.addColorStop(1, 'rgba(0,0,0,0.7)');
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fillStyle = grad; ctx.fill();
+  }
+  function drawParamBar(ctx, x, y, w, h, val, label, barColor) {
+    ctx.fillStyle = '#0f172a'; ctx.fillRect(x, y, w, h);
+    ctx.fillStyle = barColor; ctx.fillRect(x, y, w * val, h);
+    ctx.strokeStyle = '#334155'; ctx.lineWidth = 1; ctx.strokeRect(x, y, w, h);
+    lbl(ctx, label + ': ' + val.toFixed(2), x + w / 2, y + h + 12, '#94a3b8');
+  }
+
+  var scenarios = {
+    metallic: {
+      desc: 'Metallic 파라미터는 0(비금속)과 1(금속)만 사용합니다. 중간값은 비현실적인 결과를 냅니다.',
+      ce: [
+        { cause: 'Metallic = 0', result: '표면 아래 빛 산란 — 플라스틱/비금속', cls: 'result-b' },
+        { cause: 'Metallic = 1', result: '환경광 반사 — 금속 특유의 색감', cls: 'result-a' }
+      ],
+      before: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        drawSphere(ctx, w/2, h/2 - 10, 52, '#3b82f6', 'rgba(255,255,255,0.6)');
+        drawParamBar(ctx, w/2 - 55, h - 32, 110, 10, 0.0, 'Metallic', '#6366f1');
+        lbl(ctx, 'Metallic 0 (비금속)', w/2, 16, '#93c5fd');
+      },
+      after: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        drawSphere(ctx, w/2, h/2 - 10, 52, '#1e3a5f', 'rgba(180,220,255,0.95)');
+        // extra env reflection
+        var env = ctx.createLinearGradient(w/2 - 40, h/2 - 30, w/2 + 30, h/2 + 20);
+        env.addColorStop(0, 'rgba(120,180,240,0)');
+        env.addColorStop(0.5, 'rgba(160,210,255,0.25)');
+        env.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.beginPath(); ctx.arc(w/2, h/2 - 10, 52, 0, Math.PI * 2);
+        ctx.fillStyle = env; ctx.fill();
+        drawParamBar(ctx, w/2 - 55, h - 32, 110, 10, 1.0, 'Metallic', '#6366f1');
+        lbl(ctx, 'Metallic 1 (금속)', w/2, 16, '#bfdbfe');
+      }
+    },
+    roughness: {
+      desc: 'Roughness는 표면 미세 거칠기를 제어합니다. 0은 거울, 1은 완전 무광입니다.',
+      ce: [
+        { cause: 'Roughness = 0', result: '선명한 거울 반사 (Glossy)', cls: 'result-a' },
+        { cause: 'Roughness = 1', result: '빛이 넓게 흩어짐 (Diffuse/무광)', cls: 'result-b' }
+      ],
+      before: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        drawSphere(ctx, w/2, h/2 - 10, 52, '#334155', 'rgba(255,255,255,0.98)');
+        drawParamBar(ctx, w/2 - 55, h - 32, 110, 10, 0.0, 'Roughness', '#10b981');
+        lbl(ctx, 'Roughness 0 (거울)', w/2, 16, '#e2e8f0');
+      },
+      after: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        var flatGrad = ctx.createRadialGradient(w/2, h/2 - 10, 5, w/2, h/2 - 10, 52);
+        flatGrad.addColorStop(0, '#94a3b8');
+        flatGrad.addColorStop(0.7, '#64748b');
+        flatGrad.addColorStop(1, '#475569');
+        ctx.beginPath(); ctx.arc(w/2, h/2 - 10, 52, 0, Math.PI * 2);
+        ctx.fillStyle = flatGrad; ctx.fill();
+        drawParamBar(ctx, w/2 - 55, h - 32, 110, 10, 1.0, 'Roughness', '#10b981');
+        lbl(ctx, 'Roughness 1 (무광)', w/2, 16, '#94a3b8');
+      }
+    },
+    glass: {
+      desc: 'Transmission=1, Roughness=0, IOR=1.45로 설정하면 유리 재질을 표현합니다.',
+      ce: [
+        { cause: 'Transmission = 0 (기본)', result: '불투명 — 내부 빛 통과 없음', cls: 'result-b' },
+        { cause: 'Transmission = 1, Roughness = 0', result: '투명 유리 — 굴절과 반사 표현', cls: 'result-a' }
+      ],
+      before: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        drawSphere(ctx, w/2, h/2 - 10, 52, '#3b82f6', 'rgba(255,255,255,0.5)');
+        drawParamBar(ctx, w/2 - 55, h - 32, 110, 10, 0.0, 'Transmission', '#f59e0b');
+        lbl(ctx, 'Transmission 0 (불투명)', w/2, 16, '#93c5fd');
+      },
+      after: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        // glass: translucent with rim and refraction hint
+        var glassGrad = ctx.createRadialGradient(w/2 - 15, h/2 - 25, 3, w/2, h/2 - 10, 52);
+        glassGrad.addColorStop(0, 'rgba(220,240,255,0.85)');
+        glassGrad.addColorStop(0.3, 'rgba(180,220,255,0.2)');
+        glassGrad.addColorStop(0.85, 'rgba(120,180,230,0.08)');
+        glassGrad.addColorStop(1, 'rgba(80,140,200,0.4)');
+        ctx.beginPath(); ctx.arc(w/2, h/2 - 10, 52, 0, Math.PI * 2);
+        ctx.fillStyle = glassGrad; ctx.fill();
+        // rim highlight
+        ctx.strokeStyle = 'rgba(200,230,255,0.7)'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(w/2, h/2 - 10, 52, 0, Math.PI * 2); ctx.stroke();
+        drawParamBar(ctx, w/2 - 55, h - 32, 110, 10, 1.0, 'Transmission', '#f59e0b');
+        lbl(ctx, 'Transmission 1 (투명 유리)', w/2, 16, '#bae6fd');
+      }
+    }
+  };
+
+  function buildCauseEffect(ceList) {
+    var c = document.getElementById('cause-effect-pb');
+    c.textContent = '';
+    ceList.forEach(function(item) {
+      var row = document.createElement('div'); row.className = 'ce-row';
+      var cause = document.createElement('span'); cause.className = 'ce-cause'; cause.textContent = item.cause;
+      var arrow = document.createElement('span'); arrow.className = 'ce-arrow'; arrow.textContent = '→';
+      var result = document.createElement('span'); result.className = 'ce-result ' + item.cls; result.textContent = item.result;
+      row.appendChild(cause); row.appendChild(arrow); row.appendChild(result);
+      c.appendChild(row);
+    });
+  }
+
+  function renderBAPanels(scene) {
+    var cvB = document.getElementById('pb-before');
+    var cvA = document.getElementById('pb-after');
+    scene.before(cvB.getContext('2d'), cvB.width, cvB.height);
+    scene.after(cvA.getContext('2d'), cvA.width, cvA.height);
+  }
+
+  window.switchScenarioPB = function(key) {
+    var scene = scenarios[key];
+    document.getElementById('scene-desc-pb').textContent = scene.desc;
+    document.querySelectorAll('#panel-visual .scenario-btn').forEach(function(b) {
+      b.classList.toggle('active', b.dataset.scene === key);
+    });
+    renderBAPanels(scene);
+    buildCauseEffect(scene.ce);
+  };
+
+  document.addEventListener('DOMContentLoaded', function() { switchScenarioPB('metallic'); });
+})();
+
 // ── Tab Switching ──────────────────────────────
 document.querySelectorAll(".tab").forEach(function(tab) {
   tab.addEventListener("click", function() {

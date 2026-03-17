@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Show Me — Apply Scale/Rotation 이해</title>
+<title>Show Me — Apply Transform 이해</title>
 <style>
 /* ══════════════════════════════════════════════════
    Show Me Widget — Standalone Dark Theme
@@ -30,6 +30,11 @@
   --radius-md:     18px;
   --radius-lg:     24px;
   --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+  /* 카드별 색상 */
+  --accent-a:      #FF8C00;
+  --accent-a-soft: #FFB347;
+  --accent-b:      #5599FF;
+  --accent-b-soft: #88BBFF;
 }
 
 /* ── Reset ── */
@@ -98,6 +103,14 @@ body {
   margin: 8px 0 0; padding-left: 16px;
   color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
 }
+.concept-card.accent-a {
+  border-color: rgba(255,140,0,.25);
+  background: rgba(255,140,0,.06);
+}
+.concept-card.accent-b {
+  border-color: rgba(85,153,255,.25);
+  background: rgba(85,153,255,.06);
+}
 
 /* ── Badge ── */
 .badge {
@@ -105,9 +118,12 @@ body {
   padding: 3px 9px; border-radius: 999px;
   font-size: .72rem; font-weight: 600;
 }
-.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
-.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
-.badge-amber { background: rgba(245,158,11,.15);  color: #fbbf24; }
+.badge-blue   { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green  { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber  { background: rgba(245,158,11,.15);  color: #fbbf24; }
+.badge-red    { background: rgba(239,68,68,.15);   color: #fca5a5; }
+.badge-accent-a { background: rgba(255,140,0,.15); color: var(--accent-a-soft); }
+.badge-accent-b { background: rgba(85,153,255,.15); color: var(--accent-b-soft); }
 
 /* ── Keyboard Shortcut ── */
 .kbd {
@@ -120,41 +136,233 @@ body {
   font-family: var(--font);
 }
 
-/* ── Canvas / Demo ── */
-.demo-wrap {
+/* ── Analogy Box ── */
+.analogy {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(245,158,11,.06);
+  border: 1px solid rgba(245,158,11,.15);
+  font-size: .82rem;
+  color: #fbbf24;
+  font-style: italic;
+}
+
+/* ── Shortcut Reference ── */
+.shortcut-list {
+  margin-top: 16px;
+  padding: 14px 16px;
   border-radius: var(--radius-md);
   border: 1px solid var(--line);
   background: var(--surface);
-  overflow: hidden;
-  margin: 14px 0;
 }
-.demo-wrap canvas {
-  display: block; width: 100%;
+.shortcut-list h4 {
+  margin: 0 0 10px;
+  font-size: .9rem;
+  color: var(--text);
 }
-.demo-controls {
-  display: flex; gap: 8px; padding: 12px;
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: .84rem;
+  color: var(--muted-strong);
+}
+.shortcut-row + .shortcut-row {
   border-top: 1px solid var(--line);
-  flex-wrap: wrap;
 }
-.demo-hint {
-  font-size: .78rem; color: var(--muted);
-  text-align: center; padding: 6px 0 0;
+.shortcut-keys { flex-shrink: 0; }
+
+/* ── Compare Table ── */
+.compare-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 16px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--line);
 }
-.demo-btn {
-  padding: 7px 14px; border-radius: 999px;
+.compare-table th,
+.compare-table td {
+  padding: 10px 14px;
+  font-size: .84rem;
+  line-height: 1.6;
+  text-align: left;
+}
+.compare-table thead th {
+  background: var(--surface-strong);
+  color: var(--text);
+  font-weight: 600;
+  font-size: .82rem;
+  border-bottom: 1px solid var(--line-strong);
+}
+.compare-table thead th:nth-child(2) { color: var(--accent-a-soft); }
+.compare-table thead th:nth-child(3) { color: var(--accent-b-soft); }
+.compare-table tbody td {
+  background: var(--surface);
+  color: var(--muted-strong);
+  border-bottom: 1px solid var(--line);
+}
+.compare-table tbody tr:last-child td { border-bottom: none; }
+.compare-table tbody td:first-child {
+  font-weight: 600;
+  color: var(--muted);
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  white-space: nowrap;
+}
+.compare-table .cell-a { border-left: 2px solid rgba(255,140,0,.3); }
+.compare-table .cell-b { border-left: 2px solid rgba(85,153,255,.3); }
+
+/* ── Cause-Effect Flow ── */
+.cause-effect {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 16px 0;
+}
+.ce-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0;
+}
+.ce-cause, .ce-result {
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-size: .84rem;
+  line-height: 1.6;
+}
+.ce-cause {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--muted-strong);
+  text-align: right;
+}
+.ce-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  color: var(--muted);
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+.ce-result {
+  border: 1px solid var(--line);
+  color: var(--text);
+  font-weight: 500;
+}
+.ce-result.result-a {
+  background: rgba(255,140,0,.08);
+  border-color: rgba(255,140,0,.25);
+  color: var(--accent-a-soft);
+}
+.ce-result.result-b {
+  background: rgba(85,153,255,.08);
+  border-color: rgba(85,153,255,.25);
+  color: var(--accent-b-soft);
+}
+.ce-result.result-warn {
+  background: rgba(239,68,68,.08);
+  border-color: rgba(239,68,68,.25);
+  color: #fca5a5;
+}
+.ce-result.result-success {
+  background: rgba(16,185,129,.08);
+  border-color: rgba(16,185,129,.25);
+  color: var(--success-soft);
+}
+.ce-label {
+  font-size: .72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin-bottom: 4px;
+  display: block;
+}
+.ce-cause .ce-label { color: var(--muted); }
+.ce-result.result-a .ce-label { color: rgba(255,140,0,.6); }
+.ce-result.result-b .ce-label { color: rgba(85,153,255,.6); }
+.ce-result.result-warn .ce-label { color: rgba(239,68,68,.5); }
+.ce-result.result-success .ce-label { color: rgba(16,185,129,.5); }
+
+/* ── Scenario Selector ── */
+.scenario-nav {
+  display: flex; gap: 6px;
+  padding: 0 0 14px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.scenario-nav::-webkit-scrollbar { display: none; }
+.scenario-btn {
+  padding: 8px 14px; border-radius: 999px;
   border: 1px solid var(--line-strong);
   background: rgba(255,255,255,.04);
   color: var(--muted-strong);
-  font: inherit; font-size: .82rem;
+  font: inherit; font-size: .8rem;
   cursor: pointer;
-  transition: background .14s, color .14s;
+  transition: background .14s, color .14s, border-color .14s;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
-.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
-.demo-btn.is-active {
+.scenario-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.scenario-btn.is-active {
   background: rgba(10,132,255,.14);
   color: var(--key-soft);
   border-color: rgba(10,132,255,.3);
 }
+.scenario-desc {
+  font-size: .84rem;
+  color: var(--muted-strong);
+  margin-bottom: 10px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  line-height: 1.7;
+}
+
+/* ── Before-After Split ── */
+.before-after {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  margin: 14px 0;
+}
+.ba-panel {
+  padding: 14px;
+  background: var(--surface);
+  position: relative;
+}
+.ba-panel + .ba-panel {
+  border-left: 1px solid var(--line-strong);
+}
+.ba-label {
+  font-size: .7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+.ba-label.label-before {
+  background: rgba(239,68,68,.12);
+  color: #fca5a5;
+}
+.ba-label.label-after {
+  background: rgba(16,185,129,.12);
+  color: var(--success-soft);
+}
+.ba-panel canvas { display: block; width: 100%; }
 
 /* ── Usage Grid ── */
 .usage-grid {
@@ -177,6 +385,8 @@ body {
   color: var(--muted-strong); font-size: .85rem;
   line-height: 1.8;
 }
+.usage-card.accent-a h4 { color: var(--accent-a-soft); }
+.usage-card.accent-b h4 { color: var(--accent-b-soft); }
 
 /* ── Tip Box ── */
 .tip-box {
@@ -191,9 +401,7 @@ body {
 .tip-box strong { color: var(--key-soft); }
 
 /* ── Combo Section ── */
-.combo-section {
-  margin-top: 18px;
-}
+.combo-section { margin-top: 18px; }
 .combo-section h4 {
   margin: 0 0 10px;
   font-size: .92rem;
@@ -222,42 +430,11 @@ body {
   line-height: 1.5;
 }
 
-/* ── Shortcut Reference ── */
-.shortcut-list {
-  margin-top: 16px;
-  padding: 14px 16px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--line);
-  background: var(--surface);
-}
-.shortcut-list h4 {
-  margin: 0 0 10px;
-  font-size: .9rem;
-  color: var(--text);
-}
-.shortcut-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 6px 0;
-  font-size: .84rem;
-  color: var(--muted-strong);
-}
-.shortcut-row + .shortcut-row {
+/* ── Section Divider ── */
+.section-divider {
+  border: none;
   border-top: 1px solid var(--line);
-}
-.shortcut-keys {
-  flex-shrink: 0;
-}
-.analogy {
-  margin-top: 8px;
-  padding: 10px 14px;
-  border-radius: var(--radius-sm);
-  background: rgba(245,158,11,.06);
-  border: 1px solid rgba(245,158,11,.15);
-  font-size: .82rem;
-  color: #fbbf24;
-  font-style: italic;
+  margin: 18px 0;
 }
 
 /* ── Quiz ── */
@@ -355,6 +532,13 @@ body {
   .tabs { padding: 0 8px; }
   .tab { padding: 10px 12px; font-size: .8rem; }
   .panel { padding: 16px 12px; }
+  .ce-row { grid-template-columns: 1fr; gap: 4px; }
+  .ce-cause { text-align: left; }
+  .ce-arrow { transform: rotate(90deg); padding: 4px 0; }
+  .before-after { grid-template-columns: 1fr; }
+  .ba-panel + .ba-panel { border-left: none; border-top: 1px solid var(--line-strong); }
+  .compare-table { font-size: .78rem; }
+  .compare-table th, .compare-table td { padding: 8px 10px; }
 }
 </style>
 </head>
@@ -370,20 +554,23 @@ body {
 
 <!-- TAB 1: 개념 이해 -->
 <section class="panel is-active" id="panel-concept" role="tabpanel">
+  <p style="font-size:.9rem; color:var(--muted-strong); margin:0 0 14px;">
+    <strong>Apply Transform</strong>이란 Object Mode에서 설정한 Scale·Rotation 값을 메쉬 데이터에 실제로 "굽는(bake)" 작업입니다.
+  </p>
   <div class="concept-grid">
-    <div class="concept-card">
-      <h3>Apply Transform이란? <span class="badge badge-blue">필수</span></h3>
-      <p><span class="kbd">Ctrl</span>+<span class="kbd">A</span>로 오브젝트의 Transform 값을 "기본값"으로 초기화합니다. Scale이 (2, 1, 1)인 박스에 Apply Scale을 하면, 현재 크기가 그대로 유지되면서 Scale 값이 (1, 1, 1)로 리셋됩니다.</p>
-      <div class="analogy">줄자의 눈금을 현재 위치에서 0으로 다시 세팅하는 것과 같아요</div>
+    <div class="concept-card accent-a">
+      <h3>Apply Transform이란? <span class="badge badge-accent-a">핵심</span></h3>
+      <p>Object Mode의 Scale/Rotation은 메쉬에 실제 적용되지 않은 상태입니다. <span class="kbd">Ctrl</span>+<span class="kbd">A</span> → Apply Scale을 하면 현재 크기 모양은 유지되면서 Scale 값이 <code>(1, 1, 1)</code>로 초기화됩니다.</p>
+      <div class="analogy">줄자의 눈금을 현재 위치에서 0으로 다시 세팅하는 것 — 물리적 위치는 그대로, 기준점만 이동</div>
     </div>
-    <div class="concept-card">
-      <h3>왜 Apply해야 하나요? <span class="badge badge-amber">주의</span></h3>
-      <p>Scale이 1이 아닌 상태에서 Modifier를 적용하면 예상치 못한 결과가 나옵니다.</p>
+    <div class="concept-card accent-b">
+      <h3>왜 Apply해야 하나요? <span class="badge badge-red">주의</span></h3>
+      <p>Scale이 <code>(1, 1, 1)</code>이 아닌 상태에서 Modifier를 추가하면 Blender는 "메쉬 자체 크기"가 아닌 "변환 후 크기"를 기준으로 계산합니다.</p>
       <ul>
-        <li>Bevel이 한쪽으로 찌그러짐</li>
-        <li>Array가 비균일하게 복제됨</li>
-        <li>Subdivision Surface가 비대칭으로 부풀어 오름</li>
-        <li>물리 시뮬레이션의 크기가 엉뚱해짐</li>
+        <li>Mirror Modifier — 비대칭으로 나옴</li>
+        <li>Bevel — 한쪽으로 찌그러짐</li>
+        <li>Subdivision Surface — 균일하지 않게 부풀음</li>
+        <li>Physics 시뮬레이션 — 크기·방향 오동작</li>
       </ul>
     </div>
   </div>
@@ -392,15 +579,19 @@ body {
     <h4>주요 단축키</h4>
     <div class="shortcut-row">
       <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">A</span></span>
-      <span>Apply 메뉴 열기</span>
+      <span>Apply 메뉴 열기 (Object Mode)</span>
     </div>
     <div class="shortcut-row">
-      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">A</span> &rarr; <span class="kbd">S</span></span>
-      <span>Apply Scale만 적용</span>
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span>+<span class="kbd">A</span> → Scale</span>
+      <span>Apply Scale만 적용 — Scale을 (1,1,1)로 리셋</span>
     </div>
     <div class="shortcut-row">
-      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">A</span> &rarr; <span class="kbd">R</span></span>
-      <span>Apply Rotation만 적용</span>
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span>+<span class="kbd">A</span> → Rotation</span>
+      <span>Apply Rotation만 적용 — Rotation을 (0,0,0)으로 리셋</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span>+<span class="kbd">A</span> → All Transforms</span>
+      <span>Scale + Rotation + Location 모두 적용</span>
     </div>
     <div class="shortcut-row">
       <span class="shortcut-keys"><span class="kbd">N</span></span>
@@ -408,71 +599,150 @@ body {
     </div>
   </div>
 
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>항목</th>
+        <th>Apply 전</th>
+        <th>Apply 후</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Scale 값</td>
+        <td class="cell-a">(2, 1, 1) — 비균일</td>
+        <td class="cell-b">(1, 1, 1) — 초기화</td>
+      </tr>
+      <tr>
+        <td>메쉬 모양</td>
+        <td class="cell-a">겉보기 동일</td>
+        <td class="cell-b">겉보기 동일 (변화 없음)</td>
+      </tr>
+      <tr>
+        <td>Bevel Modifier</td>
+        <td class="cell-a">X축 방향으로 찌그러짐</td>
+        <td class="cell-b">균일하게 적용</td>
+      </tr>
+      <tr>
+        <td>Mirror Modifier</td>
+        <td class="cell-a">비대칭 발생 가능</td>
+        <td class="cell-b">정확한 대칭</td>
+      </tr>
+      <tr>
+        <td>Physics</td>
+        <td class="cell-a">크기·질량 계산 오류</td>
+        <td class="cell-b">정상 동작</td>
+      </tr>
+    </tbody>
+  </table>
+
   <div class="doc-ref">
     <a href="https://docs.blender.org/manual/en/latest/scene_layout/object/editing/apply.html" target="_blank" rel="noopener">
-      📖 Blender 공식 문서 — Apply Object Transformations
+      Blender 공식 문서 — Apply Object Transformations
     </a>
   </div>
 </section>
 
 <!-- TAB 2: 시각적 비교 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    Scale이 적용되지 않은 박스 vs Apply 후 박스에 동일한 Bevel Modifier를 적용한 비교입니다.
-  </p>
-  <div class="demo-wrap">
-    <canvas id="demoCanvas" width="680" height="300"></canvas>
-    <div class="demo-controls">
-      <button class="demo-btn is-active" id="btnBevel">Bevel 비교</button>
-      <button class="demo-btn" id="btnArray">Array 비교</button>
-      <button class="demo-btn" id="btnReset">초기화</button>
+  <div class="scenario-nav" id="scenarioNav">
+    <button class="scenario-btn is-active" data-scene="scale">Apply Scale</button>
+    <button class="scenario-btn" data-scene="rotation">Apply Rotation</button>
+    <button class="scenario-btn" data-scene="all">Apply All</button>
+  </div>
+  <div class="scenario-desc" id="sceneDesc">초기 설명</div>
+  <div class="before-after" id="baWrap">
+    <div class="ba-panel">
+      <span class="ba-label label-before">BEFORE</span>
+      <canvas id="cvBefore" width="320" height="220"></canvas>
+    </div>
+    <div class="ba-panel">
+      <span class="ba-label label-after">AFTER</span>
+      <canvas id="cvAfter" width="320" height="220"></canvas>
     </div>
   </div>
-  <p class="demo-hint">좌: Scale(2,1,1) 미적용 / 우: Apply Scale 후 — 같은 Modifier인데 결과가 다릅니다.</p>
+  <div class="cause-effect" id="ceFlow"></div>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->
 <section class="panel" id="panel-when" role="tabpanel">
   <div class="usage-grid">
-    <div class="usage-card">
+    <div class="usage-card accent-a">
       <h4>반드시 Apply해야 할 때</h4>
       <ul>
-        <li>Modifier 추가 전 (Bevel, Array 등)</li>
-        <li>물리 시뮬레이션 적용 전</li>
+        <li>Mirror Modifier 추가 전</li>
+        <li>Bevel / Array Modifier 추가 전</li>
         <li>UV Unwrap 전</li>
-        <li>다른 파일로 Export 할 때</li>
+        <li>Physics (Cloth, Rigid Body) 적용 전</li>
+        <li>다른 파일로 Export 전</li>
         <li>Boolean 연산 전</li>
       </ul>
     </div>
-    <div class="usage-card">
+    <div class="usage-card accent-b">
       <h4>Apply 안 해도 되는 경우</h4>
       <ul>
         <li>단순 렌더링만 할 때</li>
-        <li>아직 모델링 초기 단계</li>
-        <li>Linked/Instanced 오브젝트</li>
+        <li>모델링 초기 스케치 단계</li>
+        <li>Linked / Instanced 오브젝트</li>
+        <li>Scale이 이미 (1,1,1)인 경우</li>
       </ul>
     </div>
   </div>
-  <div class="tip-box">
-    <strong>팁:</strong> 모델링을 시작하기 전에 습관적으로 <span class="kbd">Ctrl</span>+<span class="kbd">A</span> &rarr; All Transforms를 적용하세요. N-패널에서 Scale이 (1, 1, 1), Rotation이 (0, 0, 0)인지 항상 확인하는 것이 좋습니다.
+
+  <hr class="section-divider">
+
+  <div class="cause-effect">
+    <div class="ce-row">
+      <div class="ce-cause"><span class="ce-label">원인</span>Scale이 균일하지 않은 상태 (2, 1, 1)</div>
+      <div class="ce-arrow">→</div>
+      <div class="ce-result result-warn"><span class="ce-label">결과</span>Mirror Modifier 비대칭 발생</div>
+    </div>
+    <div class="ce-row">
+      <div class="ce-cause"><span class="ce-label">원인</span>Scale이 (1, 1, 1)이 아닌 상태</div>
+      <div class="ce-arrow">→</div>
+      <div class="ce-result result-warn"><span class="ce-label">결과</span>Subdivision Surface 균일하지 않음</div>
+    </div>
+    <div class="ce-row">
+      <div class="ce-cause"><span class="ce-label">원인</span>Rotation 미적용 상태</div>
+      <div class="ce-arrow">→</div>
+      <div class="ce-result result-warn"><span class="ce-label">결과</span>Physics 시뮬레이션 방향 오류</div>
+    </div>
+    <div class="ce-row">
+      <div class="ce-cause"><span class="ce-label">원인</span>Apply Scale 후 Bevel 적용</div>
+      <div class="ce-arrow">→</div>
+      <div class="ce-result result-success"><span class="ce-label">결과</span>모든 모서리에 균일한 Bevel</div>
+    </div>
   </div>
+
   <div class="combo-section">
-    <h4>Apply와 관련된 흔한 실수</h4>
+    <h4>흔한 실수 & 해결법</h4>
     <div class="combo-grid">
       <div class="combo-card">
-        <div class="combo-name">Bevel이 찌그러진다</div>
-        <div class="combo-desc">비균일 Scale(예: 2,1,1) 상태에서 Bevel을 추가하면 한쪽만 넓게 깎입니다. Apply Scale로 해결됩니다.</div>
+        <div class="combo-name">Mirror Modifier가 비대칭으로 나옴</div>
+        <div class="combo-desc">Scale이 균일하지 않아서 발생. <span class="kbd">Ctrl</span>+<span class="kbd">A</span> → Apply Scale로 해결.</div>
       </div>
       <div class="combo-card">
-        <div class="combo-name">Array 간격이 다르다</div>
-        <div class="combo-desc">Scale이 1이 아닌 축 방향으로 Array하면 간격이 비균일해집니다. Apply 후 다시 설정하세요.</div>
+        <div class="combo-name">Cloth / Rigid Body가 이상하게 날아감</div>
+        <div class="combo-desc">Scale이 1이 아니면 Physics가 실제 크기를 잘못 읽음. Apply Scale 후 시뮬레이션 재설정.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Bevel이 한쪽으로 찌그러짐</div>
+        <div class="combo-desc">비균일 Scale 상태에서 Bevel 적용 시 발생. Apply Scale 필수.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Array 간격이 균일하지 않음</div>
+        <div class="combo-desc">Scale이 1이 아닌 축 방향으로 Array하면 간격 비균일. Apply 후 재설정.</div>
       </div>
     </div>
   </div>
 
+  <div class="tip-box">
+    <strong>팁:</strong> 모델링 시작 전 습관적으로 <span class="kbd">Ctrl</span>+<span class="kbd">A</span> → All Transforms를 적용하세요. N-패널에서 Scale이 <code>(1, 1, 1)</code>, Rotation이 <code>(0, 0, 0)</code>인지 항상 확인하세요.
+  </div>
+
   <div class="doc-ref">
     <a href="https://docs.blender.org/manual/en/latest/scene_layout/object/editing/apply.html" target="_blank" rel="noopener">
-      📖 Blender 공식 문서 — Apply Object Transformations
+      Blender 공식 문서 — Apply Object Transformations
     </a>
   </div>
 </section>
@@ -494,10 +764,242 @@ document.querySelectorAll(".tab").forEach(function(tab) {
     tab.classList.add("is-active");
     tab.setAttribute("aria-selected", "true");
     document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+    if (tab.dataset.tab === "visual") { initVisual(); }
   });
 });
 
-// ── Quiz Engine (Safe DOM methods) ────────────
+// ── Scenario Data ──────────────────────────────
+var scenarios = {
+  scale: {
+    desc: "Apply Scale: 비균일 Scale(2, 1, 1) 상태에서 Bevel Modifier를 추가했을 때 BEFORE(비대칭)와 AFTER(균일) 차이를 확인합니다.",
+    ce: [
+      { cause: "Scale (2, 1, 1) 상태에서 Bevel 추가", result: "X축 방향으로 Bevel이 2배 넓어짐 (찌그러짐)", resultClass: "result-warn" },
+      { cause: "Apply Scale 후 동일한 Bevel 추가", result: "모든 모서리에 균일한 Bevel 적용", resultClass: "result-success" }
+    ],
+    before: function(ctx, w, h) {
+      drawCanvasBg(ctx, w, h);
+      drawLabel(ctx, w, h, "Scale(2,1,1) — Apply 전", "#ef4444");
+      var cx = w / 2, cy = h / 2 + 10;
+      var bw = 160, bh = 80;
+      drawBevelCorners(ctx, cx, cy, bw, bh, 22, 11, "rgba(239,68,68,0.85)");
+      drawScaleInfo(ctx, cx, cy + bh / 2 + 22, "Scale: (2, 1, 1)", "#ef4444");
+      drawAnnotation(ctx, cx, cy - bh / 2 - 22, "Bevel이 X축으로 찌그러짐", "#ef4444");
+    },
+    after: function(ctx, w, h) {
+      drawCanvasBg(ctx, w, h);
+      drawLabel(ctx, w, h, "Apply Scale → (1,1,1)", "#10b981");
+      var cx = w / 2, cy = h / 2 + 10;
+      var bw = 160, bh = 80;
+      drawBevelCorners(ctx, cx, cy, bw, bh, 14, 14, "rgba(16,185,129,0.85)");
+      drawScaleInfo(ctx, cx, cy + bh / 2 + 22, "Scale: (1, 1, 1)", "#10b981");
+      drawAnnotation(ctx, cx, cy - bh / 2 - 22, "균일한 Bevel 적용", "#10b981");
+    }
+  },
+  rotation: {
+    desc: "Apply Rotation: Rotation이 45도인 상태에서 Physics를 적용하면 오브젝트의 '실제 방향'이 달라 시뮬레이션이 엉뚱하게 동작합니다.",
+    ce: [
+      { cause: "Rotation 45° 미적용 상태에서 Physics 추가", result: "Blender 내부 축과 실제 방향이 달라 시뮬레이션 오동작", resultClass: "result-warn" },
+      { cause: "Apply Rotation → Rotation (0, 0, 0) 후 Physics", result: "올바른 방향으로 Physics 시뮬레이션 동작", resultClass: "result-success" }
+    ],
+    before: function(ctx, w, h) {
+      drawCanvasBg(ctx, w, h);
+      drawLabel(ctx, w, h, "Rotation 45° — Apply 전", "#f59e0b");
+      var cx = w / 2, cy = h / 2 + 10;
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(Math.PI / 4);
+      ctx.strokeStyle = "rgba(245,158,11,0.85)";
+      ctx.fillStyle = "rgba(245,158,11,0.12)";
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.rect(-55, -35, 110, 70); ctx.fill(); ctx.stroke();
+      ctx.restore();
+      drawAxisArrow(ctx, cx, cy, 50, 0, "#ef4444", "X");
+      drawAxisArrow(ctx, cx, cy, 0, -50, "#10b981", "Y");
+      drawAnnotation(ctx, cx, cy + 68, "내부 축 ≠ 오브젝트 방향", "#f59e0b");
+      drawScaleInfo(ctx, cx, cy + 84, "Rotation: (0, 0, 45°) 미적용", "#f59e0b");
+    },
+    after: function(ctx, w, h) {
+      drawCanvasBg(ctx, w, h);
+      drawLabel(ctx, w, h, "Apply Rotation → (0, 0, 0)", "#10b981");
+      var cx = w / 2, cy = h / 2 + 10;
+      ctx.strokeStyle = "rgba(16,185,129,0.85)";
+      ctx.fillStyle = "rgba(16,185,129,0.12)";
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.rect(cx - 55, cy - 35, 110, 70); ctx.fill(); ctx.stroke();
+      drawAxisArrow(ctx, cx, cy, 50, 0, "#ef4444", "X");
+      drawAxisArrow(ctx, cx, cy, 0, -50, "#10b981", "Y");
+      drawAnnotation(ctx, cx, cy + 68, "내부 축 = 오브젝트 방향", "#10b981");
+      drawScaleInfo(ctx, cx, cy + 84, "Rotation: (0, 0, 0) 초기화", "#10b981");
+    }
+  },
+  all: {
+    desc: "Apply All: Scale과 Rotation을 동시에 적용합니다. 모델링 시작 전 또는 Modifier 추가 전에 All Transforms를 적용하는 것이 권장됩니다.",
+    ce: [
+      { cause: "Scale + Rotation 모두 미적용 상태", result: "Modifier, Physics, UV 등 모든 후속 작업에 오류 가능성", resultClass: "result-warn" },
+      { cause: "Ctrl+A → All Transforms 적용", result: "Scale (1,1,1) + Rotation (0,0,0) 동시 초기화 — 안전한 상태", resultClass: "result-success" }
+    ],
+    before: function(ctx, w, h) {
+      drawCanvasBg(ctx, w, h);
+      drawLabel(ctx, w, h, "All Transforms — Apply 전", "#ef4444");
+      var cx = w / 2, cy = h / 2 + 10;
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(Math.PI / 6);
+      ctx.scale(1.6, 0.8);
+      ctx.strokeStyle = "rgba(239,68,68,0.8)";
+      ctx.fillStyle = "rgba(239,68,68,0.1)";
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.rect(-50, -35, 100, 70); ctx.fill(); ctx.stroke();
+      ctx.restore();
+      drawAnnotation(ctx, cx, cy + 72, "Scale+Rotation 모두 미적용", "#ef4444");
+      ctx.fillStyle = "#f59e0b";
+      ctx.font = "9px monospace";
+      ctx.textAlign = "left";
+      ctx.fillText("Scale: (1.6, 0.8, 1)", cx - 80, cy - 55);
+      ctx.fillText("Rot: 30°", cx + 20, cy + 44);
+    },
+    after: function(ctx, w, h) {
+      drawCanvasBg(ctx, w, h);
+      drawLabel(ctx, w, h, "Apply All Transforms", "#10b981");
+      var cx = w / 2, cy = h / 2 + 10;
+      ctx.strokeStyle = "rgba(16,185,129,0.85)";
+      ctx.fillStyle = "rgba(16,185,129,0.12)";
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.rect(cx - 55, cy - 35, 110, 70); ctx.fill(); ctx.stroke();
+      drawAxisArrow(ctx, cx, cy, 40, 0, "#ef4444", "X");
+      drawAxisArrow(ctx, cx, cy, 0, -40, "#10b981", "Y");
+      drawAnnotation(ctx, cx, cy + 72, "Scale (1,1,1) + Rotation (0,0,0)", "#10b981");
+      ctx.fillStyle = "#10b981";
+      ctx.font = "9px monospace";
+      ctx.textAlign = "left";
+      ctx.fillText("Scale: (1, 1, 1)", cx - 60, cy - 55);
+    }
+  }
+};
+
+var currentScene = "scale";
+
+// ── Canvas Helper Functions ────────────────────
+function drawCanvasBg(ctx, w, h) {
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = "#17181a";
+  ctx.fillRect(0, 0, w, h);
+  ctx.strokeStyle = "rgba(255,255,255,.04)";
+  ctx.lineWidth = 1;
+  for (var gx = 30; gx < w; gx += 30) {
+    ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
+  }
+  for (var gy = 30; gy < h; gy += 30) {
+    ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
+  }
+}
+
+function drawLabel(ctx, w, h, text, color) {
+  ctx.fillStyle = color;
+  ctx.font = "bold 11px sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText(text, w / 2, 18);
+}
+
+function drawBevelCorners(ctx, cx, cy, bw, bh, bx, by, color) {
+  var x1 = cx - bw / 2, y1 = cy - bh / 2;
+  var x2 = cx + bw / 2, y2 = cy + bh / 2;
+  ctx.strokeStyle = color;
+  ctx.fillStyle = color.replace("0.85", "0.1").replace("0.8", "0.1");
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(x1 + bx, y1);
+  ctx.lineTo(x2 - bx, y1);
+  ctx.quadraticCurveTo(x2, y1, x2, y1 + by);
+  ctx.lineTo(x2, y2 - by);
+  ctx.quadraticCurveTo(x2, y2, x2 - bx, y2);
+  ctx.lineTo(x1 + bx, y2);
+  ctx.quadraticCurveTo(x1, y2, x1, y2 - by);
+  ctx.lineTo(x1, y1 + by);
+  ctx.quadraticCurveTo(x1, y1, x1 + bx, y1);
+  ctx.closePath();
+  ctx.fill(); ctx.stroke();
+}
+
+function drawScaleInfo(ctx, cx, y, text, color) {
+  ctx.fillStyle = color;
+  ctx.font = "10px monospace";
+  ctx.textAlign = "center";
+  ctx.fillText(text, cx, y);
+}
+
+function drawAnnotation(ctx, cx, y, text, color) {
+  ctx.fillStyle = color;
+  ctx.font = "11px sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText(text, cx, y);
+}
+
+function drawAxisArrow(ctx, cx, cy, dx, dy, color, label) {
+  ctx.strokeStyle = color;
+  ctx.fillStyle = color;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(cx + dx, cy + dy);
+  ctx.stroke();
+  var angle = Math.atan2(dy, dx);
+  ctx.beginPath();
+  ctx.moveTo(cx + dx, cy + dy);
+  ctx.lineTo(cx + dx - 8 * Math.cos(angle - 0.4), cy + dy - 8 * Math.sin(angle - 0.4));
+  ctx.lineTo(cx + dx - 8 * Math.cos(angle + 0.4), cy + dy - 8 * Math.sin(angle + 0.4));
+  ctx.closePath();
+  ctx.fill();
+  ctx.font = "bold 10px sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText(label, cx + dx + (dx > 0 ? 10 : -10), cy + dy + (dy < 0 ? -6 : 10));
+}
+
+// ── Cause-Effect Builder ───────────────────────
+function buildCauseEffect(ceData) {
+  var container = document.getElementById("ceFlow");
+  while (container.firstChild) container.removeChild(container.firstChild);
+  ceData.forEach(function(item) {
+    var row = document.createElement("div"); row.className = "ce-row";
+    var cause = document.createElement("div"); cause.className = "ce-cause";
+    var lbl = document.createElement("span"); lbl.className = "ce-label"; lbl.textContent = "원인";
+    cause.appendChild(lbl); cause.appendChild(document.createTextNode(item.cause));
+    row.appendChild(cause);
+    var arr = document.createElement("div"); arr.className = "ce-arrow"; arr.textContent = "→"; row.appendChild(arr);
+    var res = document.createElement("div"); res.className = "ce-result " + item.resultClass;
+    var rLbl = document.createElement("span"); rLbl.className = "ce-label"; rLbl.textContent = "결과";
+    res.appendChild(rLbl); res.appendChild(document.createTextNode(item.result));
+    row.appendChild(res);
+    container.appendChild(row);
+  });
+}
+
+function renderBAPanels(scene) {
+  var cvB = document.getElementById("cvBefore");
+  var cvA = document.getElementById("cvAfter");
+  scene.before(cvB.getContext("2d"), cvB.width, cvB.height);
+  scene.after(cvA.getContext("2d"), cvA.width, cvA.height);
+}
+
+function switchScenario(key) {
+  currentScene = key;
+  var scene = scenarios[key];
+  document.getElementById("sceneDesc").textContent = scene.desc;
+  document.querySelectorAll(".scenario-btn").forEach(function(b) {
+    b.classList.toggle("is-active", b.dataset.scene === key);
+  });
+  renderBAPanels(scene);
+  buildCauseEffect(scene.ce);
+}
+
+document.querySelectorAll(".scenario-btn").forEach(function(btn) {
+  btn.addEventListener("click", function() { switchScenario(btn.dataset.scene); });
+  btn.addEventListener("touchend", function(e) { e.preventDefault(); switchScenario(btn.dataset.scene); });
+});
+
+function initVisual() { switchScenario(currentScene); }
+
+// ── Quiz Engine ────────────────────────────────
 function initQuiz(questions) {
   var container = document.getElementById("quizArea");
   var score = 0, answered = 0;
@@ -505,7 +1007,7 @@ function initQuiz(questions) {
 
   var progress = document.createElement("div");
   progress.className = "quiz-progress";
-  progress.textContent = "\uBB38\uC81C 0 / " + questions.length + " \u00b7 \uC810\uC218 0\uC810";
+  progress.textContent = "문제 0 / " + questions.length + " · 점수 0점";
   container.appendChild(progress);
 
   questions.forEach(function(q, qi) {
@@ -537,26 +1039,23 @@ function initQuiz(questions) {
           div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
           fb.className = "quiz-feedback show wrong-fb";
           fb.textContent = "\u274c " + q.explanation;
-
           var retryBtn = document.createElement("button");
           retryBtn.className = "quiz-retry";
           retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
-          retryBtn.textContent = "\uB2E4\uC2DC \uD480\uAE30";
+          retryBtn.textContent = "다시 풀기";
           retryBtn.addEventListener("click", function() {
             answered--;
             div.querySelectorAll(".quiz-option").forEach(function(b) {
-              b.disabled = false;
-              b.classList.remove("wrong", "correct");
+              b.disabled = false; b.classList.remove("wrong", "correct");
             });
-            fb.className = "quiz-feedback";
-            fb.textContent = "";
+            fb.className = "quiz-feedback"; fb.textContent = "";
             retryBtn.remove();
             if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
-            progress.textContent = "\uBB38\uC81C " + answered + " / " + questions.length + " \u00b7 \uC810\uC218 " + score + "\uC810";
+            progress.textContent = "문제 " + answered + " / " + questions.length + " · 점수 " + score + "점";
           });
           fb.appendChild(retryBtn);
         }
-        progress.textContent = "\uBB38\uC81C " + answered + " / " + questions.length + " \u00b7 \uC810\uC218 " + score + "\uC810";
+        progress.textContent = "문제 " + answered + " / " + questions.length + " · 점수 " + score + "점";
         if (answered === questions.length) showScore();
       });
       div.appendChild(btn);
@@ -568,7 +1067,6 @@ function initQuiz(questions) {
 
   function showScore() {
     if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
-
     scoreDiv = document.createElement("div");
     scoreDiv.className = "quiz-score";
 
@@ -579,18 +1077,18 @@ function initQuiz(questions) {
 
     var result = document.createElement("div");
     result.style.cssText = "font-size:18px;font-weight:500;margin-bottom:6px";
-    result.textContent = score + " / " + questions.length + " \uC815\uB2F5";
+    result.textContent = score + " / " + questions.length + " 정답";
     scoreDiv.appendChild(result);
 
     var msg = document.createElement("div");
     msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
-    msg.textContent = score === questions.length ? "\uC644\uBCBD\uD569\uB2C8\uB2E4!" : "\uC870\uAE08 \uB354 \uC5F0\uC2B5\uD558\uBA74 \uC644\uBCBD\uD574\uC9C8 \uAC70\uC608\uC694!";
+    msg.textContent = score === questions.length ? "완벽합니다!" : "조금 더 연습하면 완벽해질 거예요!";
     scoreDiv.appendChild(msg);
 
     var saveBtn = document.createElement("button");
     saveBtn.className = "quiz-retry";
     saveBtn.style.cssText = "background:rgba(10,132,255,.18);border-color:var(--key);margin-bottom:8px";
-    saveBtn.textContent = "\uAE30\uB85D \uC800\uC7A5\uD558\uAE30";
+    saveBtn.textContent = "기록 저장하기";
     saveBtn.addEventListener("click", function() {
       try {
         var wid = new URLSearchParams(location.search).get("wid")
@@ -603,7 +1101,7 @@ function initQuiz(questions) {
           pass: score >= Math.ceil(questions.length * 0.75)
         }, "*");
       } catch(e) {}
-      saveBtn.textContent = "\uC800\uC7A5 \uC644\uB8CC!";
+      saveBtn.textContent = "저장 완료!";
       saveBtn.disabled = true;
       saveBtn.style.opacity = ".5";
     });
@@ -611,7 +1109,7 @@ function initQuiz(questions) {
 
     var retry = document.createElement("button");
     retry.className = "quiz-retry";
-    retry.textContent = "\uCC98\uC74C\uBD80\uD130 \uB2E4\uC2DC";
+    retry.textContent = "처음부터 다시";
     retry.addEventListener("click", function() { location.reload(); });
     scoreDiv.appendChild(retry);
 
@@ -619,231 +1117,51 @@ function initQuiz(questions) {
   }
 }
 
-// ── Canvas Apply Transform Demo ────────────────
-(function() {
-  var canvas = document.getElementById("demoCanvas");
-  var ctx = canvas.getContext("2d");
-  var mode = "bevel"; // "bevel" or "array"
-  var animT = 0;
-  var animId = null;
-
-  function drawGrid() {
-    var w = canvas.width, h = canvas.height;
-    ctx.strokeStyle = "rgba(255,255,255,.04)";
-    ctx.lineWidth = 1;
-    for (var gx = 40; gx < w; gx += 40) {
-      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
-    }
-    for (var gy = 40; gy < h; gy += 40) {
-      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
-    }
-  }
-
-  function drawBox(cx, cy, w, h, color, label) {
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 2;
-    ctx.fillStyle = color.replace(")", ",.15)").replace("rgb", "rgba");
-    ctx.beginPath();
-    ctx.rect(cx - w / 2, cy - h / 2, w, h);
-    ctx.fill();
-    ctx.stroke();
-
-    if (label) {
-      ctx.fillStyle = color;
-      ctx.font = "bold 11px sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText(label, cx, cy - h / 2 - 8);
-    }
-  }
-
-  function drawBevelCorners(cx, cy, w, h, bevelSize, color) {
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 2;
-    ctx.fillStyle = color.replace(")", ",.1)").replace("rgb", "rgba");
-    var x1 = cx - w / 2, y1 = cy - h / 2;
-    var x2 = cx + w / 2, y2 = cy + h / 2;
-    var b = bevelSize;
-    ctx.beginPath();
-    ctx.moveTo(x1 + b, y1);
-    ctx.lineTo(x2 - b, y1);
-    ctx.quadraticCurveTo(x2, y1, x2, y1 + b);
-    ctx.lineTo(x2, y2 - b);
-    ctx.quadraticCurveTo(x2, y2, x2 - b, y2);
-    ctx.lineTo(x1 + b, y2);
-    ctx.quadraticCurveTo(x1, y2, x1, y2 - b);
-    ctx.lineTo(x1, y1 + b);
-    ctx.quadraticCurveTo(x1, y1, x1 + b, y1);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-  }
-
-  function drawScaleLabel(cx, cy, scaleX, scaleY, scaleZ) {
-    ctx.fillStyle = "rgba(255,255,255,.5)";
-    ctx.font = "10px monospace";
-    ctx.textAlign = "center";
-    ctx.fillText("Scale: (" + scaleX + ", " + scaleY + ", " + scaleZ + ")", cx, cy + 60);
-  }
-
-  function draw() {
-    var w = canvas.width, h = canvas.height;
-    ctx.clearRect(0, 0, w, h);
-    ctx.fillStyle = "#17181a";
-    ctx.fillRect(0, 0, w, h);
-    drawGrid();
-
-    var leftCx = w * 0.25;
-    var rightCx = w * 0.75;
-    var cy = h * 0.45;
-
-    // Divider
-    ctx.strokeStyle = "rgba(255,255,255,.1)";
-    ctx.lineWidth = 1;
-    ctx.setLineDash([6, 4]);
-    ctx.beginPath(); ctx.moveTo(w / 2, 0); ctx.lineTo(w / 2, h); ctx.stroke();
-    ctx.setLineDash([]);
-
-    // Labels
-    ctx.fillStyle = "rgba(239,68,68,.8)";
-    ctx.font = "bold 12px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("Scale(2,1,1) — Apply 안 함", leftCx, 22);
-
-    ctx.fillStyle = "rgba(16,185,129,.8)";
-    ctx.fillText("Apply Scale 후 (1,1,1)", rightCx, 22);
-
-    var pulse = Math.sin(animT * 0.03) * 0.5 + 0.5;
-
-    if (mode === "bevel") {
-      // Left: non-uniform scale, bevel distorted
-      var bevelAmt = 8 + pulse * 12;
-      drawBevelCorners(leftCx, cy, 160, 80, bevelAmt * 2, "rgb(239,68,68)"); // X bevel is 2x
-      drawScaleLabel(leftCx, cy, 2, 1, 1);
-
-      // Annotation
-      ctx.fillStyle = "rgba(239,68,68,.6)";
-      ctx.font = "11px sans-serif";
-      ctx.fillText("Bevel이 X축으로 찌그러짐", leftCx, cy + 75);
-
-      // Right: uniform scale, bevel correct
-      drawBevelCorners(rightCx, cy, 160, 80, bevelAmt, "rgb(16,185,129)");
-      drawScaleLabel(rightCx, cy, 1, 1, 1);
-
-      ctx.fillStyle = "rgba(16,185,129,.6)";
-      ctx.font = "11px sans-serif";
-      ctx.fillText("Bevel이 균일하게 적용됨", rightCx, cy + 75);
-    } else {
-      // Array mode
-      var count = 3;
-      var spacingL = 70; // stretched because scale X=2
-      var spacingR = 55;
-      for (var i = 0; i < count; i++) {
-        var alpha = 1 - i * 0.2;
-        // Left: non-uniform spacing
-        var lx = leftCx - (count - 1) * spacingL / 2 + i * spacingL;
-        ctx.globalAlpha = alpha;
-        drawBox(lx, cy, 50, 70, "rgb(239,68,68)", i === 0 ? "원본" : "복제 " + i);
-        ctx.globalAlpha = 1;
-
-        // Right: uniform spacing
-        var rx = rightCx - (count - 1) * spacingR / 2 + i * spacingR;
-        ctx.globalAlpha = alpha;
-        drawBox(rx, cy, 50, 70, "rgb(16,185,129)", i === 0 ? "원본" : "복제 " + i);
-        ctx.globalAlpha = 1;
-      }
-      drawScaleLabel(leftCx, cy + 10, 2, 1, 1);
-      drawScaleLabel(rightCx, cy + 10, 1, 1, 1);
-
-      ctx.fillStyle = "rgba(239,68,68,.6)";
-      ctx.font = "11px sans-serif";
-      ctx.fillText("Array 간격 비균일", leftCx, cy + 85);
-
-      ctx.fillStyle = "rgba(16,185,129,.6)";
-      ctx.fillText("Array 간격 균일", rightCx, cy + 85);
-    }
-
-    animT++;
-    animId = requestAnimationFrame(draw);
-  }
-
-  // Demo controls
-  document.getElementById("btnBevel").addEventListener("click", function() {
-    mode = "bevel";
-    document.querySelectorAll(".demo-btn").forEach(function(b) { b.classList.remove("is-active"); });
-    this.classList.add("is-active");
-  });
-  // Touch
-  document.getElementById("btnBevel").addEventListener("touchend", function(e) {
-    e.preventDefault(); this.click();
-  });
-
-  document.getElementById("btnArray").addEventListener("click", function() {
-    mode = "array";
-    document.querySelectorAll(".demo-btn").forEach(function(b) { b.classList.remove("is-active"); });
-    this.classList.add("is-active");
-  });
-  document.getElementById("btnArray").addEventListener("touchend", function(e) {
-    e.preventDefault(); this.click();
-  });
-
-  document.getElementById("btnReset").addEventListener("click", function() {
-    mode = "bevel";
-    animT = 0;
-    document.querySelectorAll(".demo-btn").forEach(function(b) { b.classList.remove("is-active"); });
-    document.getElementById("btnBevel").classList.add("is-active");
-  });
-  document.getElementById("btnReset").addEventListener("touchend", function(e) {
-    e.preventDefault(); this.click();
-  });
-
-  draw();
-})();
-
-// ── Quiz Data ─────────────────────────────────
+// ── Quiz Data ──────────────────────────────────
 initQuiz([
   {
-    question: "Ctrl+A \u2192 Apply Scale\uC744 \uD558\uBA74 \uC5B4\uB5A4 \uBCC0\uD654\uAC00 \uC0DD\uAE30\uB098\uC694?",
+    question: "Ctrl+A → Apply Scale을 하면 어떤 변화가 생기나요?",
     options: [
-      "\uC624\uBE0C\uC81D\uD2B8 \uD06C\uAE30\uAC00 1\uB85C \uC904\uC5B4\uB4E0\uB2E4",
-      "\uD604\uC7AC \uD06C\uAE30\uB294 \uC720\uC9C0\uB418\uBA70 Scale \uAC12\uC774 (1,1,1)\uB85C \uB9AC\uC14B\uB41C\uB2E4",
-      "\uC624\uBE0C\uC81D\uD2B8\uAC00 \uC6D0\uC810\uC73C\uB85C \uC774\uB3D9\uD55C\uB2E4",
-      "\uBAA8\uB4E0 Modifier\uAC00 \uC0AD\uC81C\uB41C\uB2E4"
+      "오브젝트 크기가 1로 줄어든다",
+      "현재 크기는 유지되며 Scale 값이 (1,1,1)로 리셋된다",
+      "오브젝트가 원점으로 이동한다",
+      "모든 Modifier가 삭제된다"
     ],
     answer: 1,
-    explanation: "Apply Scale\uC740 \uD604\uC7AC \uBAA8\uC591\uC744 \uADF8\uB300\uB85C \uC720\uC9C0\uD558\uBA74\uC11C Scale \uAC12\uB9CC (1,1,1)\uB85C \uCD08\uAE30\uD654\uD569\uB2C8\uB2E4. \uD06C\uAE30 \uC790\uCCB4\uB294 \uBCC0\uD558\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4."
+    explanation: "Apply Scale은 현재 모양을 그대로 유지하면서 Scale 값만 (1,1,1)로 초기화합니다. 크기 자체는 변하지 않습니다."
   },
   {
-    question: "Scale\uC774 (2,1,1)\uC778 \uC0C1\uD0DC\uC5D0\uC11C Bevel Modifier\uB97C \uCD94\uAC00\uD558\uBA74?",
+    question: "Scale이 (2,1,1)인 상태에서 Bevel Modifier를 추가하면?",
     options: [
-      "Bevel\uC774 \uBAA8\uB4E0 \uBAA8\uC11C\uB9AC\uC5D0 \uADE0\uC77C\uD558\uAC8C \uC801\uC6A9\uB41C\uB2E4",
-      "Bevel\uC774 X\uCD95\uC73C\uB85C \uB298\uC5B4\uB098 \uBE44\uADE0\uC77C\uD558\uAC8C \uC801\uC6A9\uB41C\uB2E4",
-      "Bevel\uC774 \uC801\uC6A9\uB418\uC9C0 \uC54A\uB294\uB2E4",
-      "\uC624\uBE0C\uC81D\uD2B8\uAC00 \uC0AC\uB77C\uC9C4\uB2E4"
+      "Bevel이 모든 모서리에 균일하게 적용된다",
+      "Bevel이 X축 방향으로 넓어져 비균일하게 적용된다",
+      "Bevel이 적용되지 않는다",
+      "오브젝트가 사라진다"
     ],
     answer: 1,
-    explanation: "\uBE44\uADE0\uC77C Scale \uC0C1\uD0DC\uC5D0\uC11C\uB294 Bevel\uC774 Scale\uC774 \uD070 \uCD95 \uBC29\uD5A5\uC73C\uB85C \uB354 \uB113\uAC8C \uAE4E\uC5EC \uBE44\uB300\uCE6D\uC801\uC73C\uB85C \uBCF4\uC785\uB2C8\uB2E4."
+    explanation: "비균일 Scale 상태에서는 Bevel이 Scale이 큰 축 방향으로 더 넓게 깎여 비대칭적으로 보입니다."
   },
   {
-    question: "\uB2E4\uC74C \uC911 Apply Transform\uC774 \uD544\uC218\uAC00 \uC544\uB2CC \uACBD\uC6B0\uB294?",
+    question: "Mirror Modifier가 비대칭으로 나올 때 가장 먼저 확인해야 할 것은?",
     options: [
-      "Bevel Modifier \uCD94\uAC00 \uC804",
-      "UV Unwrap \uC804",
-      "\uB2E8\uC21C \uB80C\uB354\uB9C1\uB9CC \uD560 \uB54C",
-      "Boolean \uC5F0\uC0B0 \uC804"
+      "Mirror Axis 설정",
+      "N-패널에서 Scale이 (1,1,1)인지 확인",
+      "Edit Mode 진입 여부",
+      "Viewport Overlay 설정"
+    ],
+    answer: 1,
+    explanation: "Mirror Modifier 비대칭의 가장 흔한 원인은 Scale 미적용입니다. Ctrl+A → Apply Scale로 해결합니다."
+  },
+  {
+    question: "다음 중 Apply Transform이 필수가 아닌 경우는?",
+    options: [
+      "Bevel Modifier 추가 전",
+      "UV Unwrap 전",
+      "단순 렌더링만 할 때",
+      "Boolean 연산 전"
     ],
     answer: 2,
-    explanation: "\uB2E8\uC21C\uD788 \uB80C\uB354\uB9C1\uB9CC \uD560 \uACBD\uC6B0\uC5D0\uB294 Scale \uAC12\uC774 1\uC774 \uC544\uB2C8\uC5B4\uB3C4 \uC2DC\uAC01\uC801 \uACB0\uACFC\uC5D0 \uD070 \uBB38\uC81C\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4."
-  },
-  {
-    question: "N-\uD328\uB110\uC5D0\uC11C Scale \uAC12\uC744 \uD655\uC778\uD588\uB354\uB2C8 (1, 1, 1)\uC774 \uC544\uB2C8\uC5C8\uC2B5\uB2C8\uB2E4. \uC5B4\uB5BB\uAC8C \uD574\uC57C \uD558\uB098\uC694?",
-    options: [
-      "Edit Mode\uC5D0\uC11C \uD06C\uAE30\uB97C \uC218\uB3D9\uC73C\uB85C \uC870\uC808\uD55C\uB2E4",
-      "Ctrl+A \u2192 All Transforms\uB97C \uC801\uC6A9\uD55C\uB2E4",
-      "\uC624\uBE0C\uC81D\uD2B8\uB97C \uC0AD\uC81C\uD558\uACE0 \uB2E4\uC2DC \uB9CC\uB4E0\uB2E4",
-      "\uBB34\uC2DC\uD558\uACE0 \uACC4\uC18D \uC791\uC5C5\uD55C\uB2E4"
-    ],
-    answer: 1,
-    explanation: "Ctrl+A \u2192 All Transforms\uB97C \uC801\uC6A9\uD558\uBA74 Scale, Rotation, Location \uBAA8\uB450 \uCD08\uAE30\uD654\uB429\uB2C8\uB2E4. \uAC00\uC7A5 \uAE30\uBCF8\uC801\uC774\uACE0 \uD655\uC2E4\uD55C \uBC29\uBC95\uC785\uB2C8\uB2E4."
+    explanation: "단순 렌더링만 할 경우에는 Scale 값이 1이 아니어도 시각적 결과에 큰 문제가 없습니다."
   }
 ]);
 </script>

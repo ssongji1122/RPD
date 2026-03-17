@@ -1,0 +1,56 @@
+{
+  "_comment": "Notion ↔ 웹 동기화 설정. 주차 번호 → Notion 페이지 ID 매핑",
+  "_description": "이 파일은 notion-sync.js와 web-to-notion.js에서 사용됩니다. 각 주차의 Notion 페이지 ID를 정의합니다.",
+  "weeks": {
+    "1": "31354d654971812e9f48f392f2de551b",
+    "2": "31354d6549718179a709cabf829a5971",
+    "3": "31354d6549718193a446f3b9d02fb790",
+    "4": "31354d65497181918ca1edc92c8f505b",
+    "5": "31354d654971811e85feed7681421e37",
+    "6": "31354d654971818c8cb5e7814445e3eb",
+    "7": "31354d65497181c29479db65ac5c441c",
+    "8": "31354d65497181d2ad00cf0c3620a143",
+    "9": "31354d654971819a8d55c976c875a2a1",
+    "10": "31354d65497181c5a994e2a02edea25b",
+    "11": "31354d6549718135a3c2d960d69a7fb3",
+    "12": "31354d6549718174bb74c528a6913fc0",
+    "13": "31354d6549718153b7d1c5063f558c4f",
+    "14": "31354d65497181b38ab1e64c5ca3151a",
+    "15": "31354d654971813dbf3dfc91cef9c1c6"
+  },
+  "mapping": {
+    "_description": "Notion 콘텐츠 → overrides.json 필드 매핑",
+    "sections": {
+      "요약": "summary",
+      "summary": "summary",
+      "비디오": "videos",
+      "video": "videos",
+      "videos": "videos",
+      "단계": "steps",
+      "step": "steps",
+      "steps": "steps",
+      "탐색": "explore",
+      "explore": "explore",
+      "상태": "status",
+      "status": "status"
+    },
+    "statusValues": {
+      "done": "done",
+      "완료": "done",
+      "active": "active",
+      "진행중": "active",
+      "활성": "active",
+      "upcoming": "upcoming",
+      "예정": "upcoming"
+    },
+    "blockTypes": {
+      "paragraph": "text content",
+      "heading_1": "section heading",
+      "heading_2": "subsection heading",
+      "heading_3": "item heading",
+      "bulleted_list_item": "checklist item",
+      "bookmark": "video link",
+      "image": "step image"
+    }
+  }
+}

@@ -347,19 +347,23 @@ body {
 
 <!-- TAB 2: 시각적 비교 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    노드를 드래그하여 연결 관계를 확인해보세요. 선을 따라가면 데이터 흐름을 이해할 수 있어요.
-  </p>
-  <div class="demo-wrap">
-    <canvas id="demoCanvas" width="680" height="360"></canvas>
-    <div class="demo-controls">
-      <button class="demo-btn is-active" id="btnBasic">기본 구성</button>
-      <button class="demo-btn" id="btnTexture">텍스처 연결</button>
-      <button class="demo-btn" id="btnMix">Mix Shader</button>
-      <button class="demo-btn" id="btnReset">초기화</button>
+  <div class="scenario-nav" id="scenarioNav">
+    <button class="scenario-btn active" data-scene="basic">기본 노드</button>
+    <button class="scenario-btn" data-scene="texture">텍스쳐 연결</button>
+    <button class="scenario-btn" data-scene="mix">Mix Shader</button>
+  </div>
+  <div class="scene-desc" id="scene-desc">기본 노드 구성: Principled BSDF → Material Output. 모든 Blender 셰이더의 출발점입니다.</div>
+  <div class="before-after">
+    <div class="ba-panel">
+      <canvas id="canvas-before" width="280" height="160"></canvas>
+      <div class="ba-label">적용 전</div>
+    </div>
+    <div class="ba-panel">
+      <canvas id="canvas-after" width="280" height="160"></canvas>
+      <div class="ba-label">적용 후</div>
     </div>
   </div>
-  <p class="demo-hint">노드를 드래그해서 위치를 변경할 수 있어요. 각 구성 버튼으로 다른 노드 연결 패턴을 확인하세요.</p>
+  <div class="cause-effect" id="cause-effect"></div>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->
@@ -548,260 +552,183 @@ function initQuiz(questions) {
   }
 }
 
-// ── Canvas Node Editor Demo ────────────────────
+// ── Shader Editor Scenario Visualization ────────────
 (function() {
-  var canvas = document.getElementById("demoCanvas");
-  var ctx = canvas.getContext("2d");
-  var dragging = -1;
-  var dragOffX = 0, dragOffY = 0;
+  function drawBg(ctx, w, h) { ctx.fillStyle = "#1e293b"; ctx.fillRect(0,0,w,h); }
 
-  // Node definitions
-  var presets = {
-    basic: [
-      { id: "pbsdf", label: "Principled BSDF", x: 100, y: 100, w: 180, h: 80, color: "rgba(10,132,255,.3)", inputs: ["Base Color", "Metallic", "Roughness"], outputs: ["BSDF"] },
-      { id: "output", label: "Material Output", x: 420, y: 120, w: 160, h: 60, color: "rgba(16,185,129,.3)", inputs: ["Surface"], outputs: [] }
-    ],
-    texture: [
-      { id: "texcoord", label: "Tex Coordinate", x: 20, y: 40, w: 150, h: 60, color: "rgba(245,158,11,.25)", inputs: [], outputs: ["UV"] },
-      { id: "mapping", label: "Mapping", x: 30, y: 160, w: 140, h: 60, color: "rgba(245,158,11,.25)", inputs: ["Vector"], outputs: ["Vector"] },
-      { id: "imgtex", label: "Image Texture", x: 230, y: 60, w: 160, h: 70, color: "rgba(168,85,247,.3)", inputs: ["Vector"], outputs: ["Color"] },
-      { id: "pbsdf", label: "Principled BSDF", x: 230, y: 200, w: 180, h: 80, color: "rgba(10,132,255,.3)", inputs: ["Base Color", "Metallic", "Roughness"], outputs: ["BSDF"] },
-      { id: "output", label: "Material Output", x: 500, y: 180, w: 160, h: 60, color: "rgba(16,185,129,.3)", inputs: ["Surface"], outputs: [] }
-    ],
-    mix: [
-      { id: "pbsdf1", label: "Principled BSDF", x: 30, y: 30, w: 170, h: 70, color: "rgba(10,132,255,.3)", inputs: ["Base Color"], outputs: ["BSDF"] },
-      { id: "pbsdf2", label: "Principled BSDF", x: 30, y: 200, w: 170, h: 70, color: "rgba(10,132,255,.3)", inputs: ["Base Color"], outputs: ["BSDF"] },
-      { id: "mix", label: "Mix Shader", x: 300, y: 110, w: 150, h: 80, color: "rgba(239,68,68,.25)", inputs: ["Fac", "Shader", "Shader"], outputs: ["Shader"] },
-      { id: "output", label: "Material Output", x: 520, y: 130, w: 160, h: 60, color: "rgba(16,185,129,.3)", inputs: ["Surface"], outputs: [] }
-    ]
+  function drawGridLines(ctx, w, h) {
+    ctx.strokeStyle = "rgba(255,255,255,.04)"; ctx.lineWidth = 1;
+    for (var gx = 20; gx < w; gx += 20) { ctx.beginPath(); ctx.moveTo(gx,0); ctx.lineTo(gx,h); ctx.stroke(); }
+    for (var gy = 20; gy < h; gy += 20) { ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(w,gy); ctx.stroke(); }
+  }
+
+  function drawNode(ctx, x, y, title, inputs, outputs, color) {
+    var nw = 128, nh = 20 + Math.max(inputs.length, outputs.length) * 18 + 8;
+    ctx.fillStyle = color || "rgba(30,41,59,.9)";
+    ctx.strokeStyle = "rgba(99,102,241,.5)"; ctx.lineWidth = 1;
+    if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(x, y, nw, nh, 4); ctx.fill(); ctx.stroke(); }
+    else { ctx.fillRect(x, y, nw, nh); ctx.strokeRect(x, y, nw, nh); }
+    ctx.fillStyle = "rgba(99,102,241,.3)";
+    if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(x, y, nw, 20, [4,4,0,0]); ctx.fill(); }
+    else { ctx.fillRect(x, y, nw, 20); }
+    ctx.fillStyle = "#e2e8f0"; ctx.font = "bold 9px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText(title, x + nw/2, y + 13);
+    inputs.forEach(function(inp, i) {
+      var py = y + 28 + i*18;
+      ctx.beginPath(); ctx.arc(x, py, 4, 0, Math.PI*2); ctx.fillStyle = "#a5b4fc"; ctx.fill();
+      ctx.fillStyle = "#94a3b8"; ctx.font = "8px sans-serif"; ctx.textAlign = "left";
+      ctx.fillText(inp, x+8, py+3);
+    });
+    outputs.forEach(function(out, i) {
+      var py = y + 28 + i*18;
+      ctx.beginPath(); ctx.arc(x+nw, py, 4, 0, Math.PI*2); ctx.fillStyle = "#6ee7b7"; ctx.fill();
+      ctx.fillStyle = "#94a3b8"; ctx.font = "8px sans-serif"; ctx.textAlign = "right";
+      ctx.fillText(out, x+nw-8, py+3);
+    });
+    return { x: x, y: y, w: nw, h: nh };
+  }
+
+  function drawWire(ctx, x1, y1, x2, y2, color) {
+    ctx.strokeStyle = color || "rgba(165,180,252,.6)"; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(x1, y1);
+    var mx = (x1+x2)/2;
+    ctx.bezierCurveTo(mx, y1, mx, y2, x2, y2); ctx.stroke();
+  }
+
+  function drawEmptyEditor(ctx, w, h) {
+    drawBg(ctx, w, h); drawGridLines(ctx, w, h);
+    ctx.fillStyle = "#64748b"; ctx.font = "11px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("\ub178\ub4dc \uc5c6\uc74c (\ube48 Shader Editor)", w/2, h/2);
+    ctx.fillStyle = "#475569"; ctx.font = "10px sans-serif";
+    ctx.fillText("Add \u2192 Shader \u2192 Principled BSDF", w/2, h/2+16);
+  }
+
+  function drawBasicAfter(ctx, w, h) {
+    drawBg(ctx, w, h); drawGridLines(ctx, w, h);
+    var n1 = drawNode(ctx, 18, 45, "Principled BSDF", ["Base Color","Metallic","Roughness"], ["BSDF"]);
+    var n2 = drawNode(ctx, w-150, 58, "Material Output", ["Surface","Volume"], []);
+    drawWire(ctx, n1.x+n1.w, n1.y+28, n2.x, n2.y+28, "rgba(110,231,183,.7)");
+    ctx.fillStyle = "#a5b4fc"; ctx.font = "bold 9px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("\uae30\ubcf8 PBR \uc18c\uc7ac \uc5f0\uacb0", w/2, h-8);
+  }
+
+  function drawTextureBefore(ctx, w, h) {
+    drawBg(ctx, w, h); drawGridLines(ctx, w, h);
+    drawNode(ctx, 18, 58, "Principled BSDF", ["Base Color","Metallic"], ["BSDF"]);
+    var n2 = drawNode(ctx, w-150, 58, "Material Output", ["Surface"], []);
+    ctx.fillStyle = "#f59e0b"; ctx.font = "10px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("\ub2e8\uc0c9 BSDF\ub9cc \uc788\uc74c", w/2, h-8);
+  }
+
+  function drawTextureAfter(ctx, w, h) {
+    drawBg(ctx, w, h); drawGridLines(ctx, w, h);
+    var nt = drawNode(ctx, 8, 18, "Image Texture", ["Vector"], ["Color","Alpha"], "rgba(16,185,129,.2)");
+    var nb = drawNode(ctx, 8, 90, "Principled BSDF", ["Base Color","Roughness"], ["BSDF"]);
+    var no = drawNode(ctx, w-148, 55, "Material Output", ["Surface"], []);
+    drawWire(ctx, nt.x+nt.w, nt.y+28, nb.x, nb.y+28, "rgba(251,191,36,.7)");
+    drawWire(ctx, nb.x+nb.w, nb.y+28, no.x, no.y+28, "rgba(110,231,183,.7)");
+    ctx.fillStyle = "#fcd34d"; ctx.font = "bold 9px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("\ud14d\uc2a4\ucc98 \u2192 BSDF Base Color", w/2, h-8);
+  }
+
+  function drawMixBefore(ctx, w, h) {
+    drawBg(ctx, w, h); drawGridLines(ctx, w, h);
+    drawNode(ctx, 18, 58, "Principled BSDF", ["Base Color"], ["BSDF"]);
+    ctx.fillStyle = "#64748b"; ctx.font = "10px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("\ub2e8\uc77c \uc18c\uc7ac\ub9cc \uc874\uc7ac", w/2, h-8);
+  }
+
+  function drawMixAfter(ctx, w, h) {
+    drawBg(ctx, w, h); drawGridLines(ctx, w, h);
+    var na = drawNode(ctx, 6, 8, "BSDF Diffuse", ["Color"], ["BSDF"], "rgba(59,130,246,.2)");
+    var nb = drawNode(ctx, 6, 72, "BSDF Glossy", ["Color","Rough"], ["BSDF"], "rgba(245,158,11,.2)");
+    var nm = drawNode(ctx, w/2-65, 38, "Mix Shader", ["Fac","Shader","Shader"], ["Shader"], "rgba(99,102,241,.2)");
+    var no = drawNode(ctx, w-148, 53, "Material Output", ["Surface"], []);
+    drawWire(ctx, na.x+na.w, na.y+28, nm.x, nm.y+46, "rgba(147,197,253,.6)");
+    drawWire(ctx, nb.x+nb.w, nb.y+28, nm.x, nm.y+64, "rgba(251,191,36,.6)");
+    drawWire(ctx, nm.x+nm.w, nm.y+28, no.x, no.y+28, "rgba(110,231,183,.7)");
+    ctx.fillStyle = "#a5b4fc"; ctx.font = "bold 9px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("Diffuse + Glossy Mix \uc18c\uc7ac", w/2, h-8);
+  }
+
+  var scenarios = {
+    basic: {
+      desc: "\uae30\ubcf8 \ub178\ub4dc \uad6c\uc131: Principled BSDF \u2192 Material Output. \ubaa8\ub4e0 Blender \uc170\uc774\ub354\uc758 \ucd9c\ubc1c\uc810\uc785\ub2c8\ub2e4.",
+      ce: [
+        { cause: "Principled BSDF \ucd94\uac00", result: "\ud558\ub098\uc758 \ub178\ub4dc\ub85c \uc2e4\uc9c8\uac10 \uc81c\uc5b4", resultClass: "result-a" },
+        { cause: "Material Output \uc5f0\uacb0", result: "\uc624\ube0c\uc81d\ud2b8\uc5d0 \uc18c\uc7ac \ud65c\uc131\ud654", resultClass: "result-a" },
+        { cause: "Base Color \uac12 \ubcc0\uacbd", result: "\uac1d\uccb4 \uc0c9\uc0c1 \ubcc0\uacbd", resultClass: "result-b" }
+      ],
+      before: drawEmptyEditor,
+      after: drawBasicAfter
+    },
+    texture: {
+      desc: "Image Texture \ub178\ub4dc\ub97c Principled BSDF\uc758 Base Color\uc5d0 \uc5f0\uacb0\ud558\uba74 \ud14d\uc2a4\uccd0 \uc774\ubbf8\uc9c0\uac00 \uc18c\uc7ac\ub85c \uc801\uc6a9\ub429\ub2c8\ub2e4.",
+      ce: [
+        { cause: "Image Texture \ub178\ub4dc \ucd94\uac00", result: "\uc774\ubbf8\uc9c0 \ud30c\uc77c \ub85c\ub4dc", resultClass: "result-a" },
+        { cause: "Color \uc5f0\uacb0 \u2192 Base Color", result: "\ud14d\uc2a4\uccd0\uac00 \uc18c\uc7ac\uc5d0 \ud45c\uc2dc\ub428", resultClass: "result-a" },
+        { cause: "UV \ub9f5 \uc5c6\uc74c", result: "\ud14d\uc2a4\uccd0 \uc801\uc6a9 \ubd88\uac00", resultClass: "result-c" }
+      ],
+      before: drawTextureBefore,
+      after: drawTextureAfter
+    },
+    mix: {
+      desc: "Mix Shader\ub85c \ub450 \uac1c\uc758 \uc170\uc774\ub354\ub97c \ud63c\ud569\ud560 \uc218 \uc788\uc2b5\ub2c8\ub2e4. Fac \uac12\uc73c\ub85c \ube44\uc728\uc744 \uc870\uc808\ud558\uc5ec \ub2e4\uc591\ud55c \uc18c\uc7ac\ub97c \ud45c\ud604\ud569\ub2c8\ub2e4.",
+      ce: [
+        { cause: "Mix Shader \ucd94\uac00", result: "2\uac1c \uc170\uc774\ub354 \ud63c\ud569 \uac00\ub2a5", resultClass: "result-a" },
+        { cause: "Fac \uac12 0 \u2192 1 \uc870\uc808", result: "\uc170\uc774\ub354 A\uc5d0\uc11c B\ub85c \ube44\uc728 \ubcc0\ud654", resultClass: "result-b" },
+        { cause: "Diffuse + Glossy \ud63c\ud569", result: "\ubc18\uad11 \uc18c\uc7ac \ud45c\ud604", resultClass: "result-a" }
+      ],
+      before: drawMixBefore,
+      after: drawMixAfter
+    }
   };
 
-  var connections = {
-    basic: [
-      { from: "pbsdf", fromIdx: 0, to: "output", toIdx: 0 }
-    ],
-    texture: [
-      { from: "texcoord", fromIdx: 0, to: "mapping", toIdx: 0 },
-      { from: "mapping", fromIdx: 0, to: "imgtex", toIdx: 0 },
-      { from: "imgtex", fromIdx: 0, to: "pbsdf", toIdx: 0 },
-      { from: "pbsdf", fromIdx: 0, to: "output", toIdx: 0 }
-    ],
-    mix: [
-      { from: "pbsdf1", fromIdx: 0, to: "mix", toIdx: 1 },
-      { from: "pbsdf2", fromIdx: 0, to: "mix", toIdx: 2 },
-      { from: "mix", fromIdx: 0, to: "output", toIdx: 0 }
-    ]
-  };
-
-  var currentPreset = "basic";
-  var nodes = [];
-
-  function loadPreset(name) {
-    currentPreset = name;
-    nodes = presets[name].map(function(n) {
-      return { id: n.id, label: n.label, x: n.x, y: n.y, w: n.w, h: n.h, color: n.color, inputs: n.inputs.slice(), outputs: n.outputs.slice() };
+  function switchScenario(key) {
+    document.querySelectorAll('.scenario-btn').forEach(function(b) {
+      b.classList.toggle('active', b.dataset.scene === key);
     });
-    draw();
+    var s = scenarios[key];
+    document.getElementById('scene-desc').textContent = s.desc;
+    buildCauseEffect(s.ce);
+    renderBAPanels(s);
   }
 
-  function getNodeById(id) {
-    for (var i = 0; i < nodes.length; i++) {
-      if (nodes[i].id === id) return nodes[i];
-    }
-    return null;
-  }
-
-  function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#17181a";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Grid
-    ctx.strokeStyle = "rgba(255,255,255,.03)";
-    ctx.lineWidth = 1;
-    for (var gx = 20; gx < canvas.width; gx += 20) {
-      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, canvas.height); ctx.stroke();
-    }
-    for (var gy = 20; gy < canvas.height; gy += 20) {
-      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(canvas.width, gy); ctx.stroke();
-    }
-
-    // Draw connections
-    var conns = connections[currentPreset] || [];
-    conns.forEach(function(c) {
-      var fromNode = getNodeById(c.from);
-      var toNode = getNodeById(c.to);
-      if (fromNode === null || toNode === null) return;
-
-      var fx = fromNode.x + fromNode.w;
-      var fy = fromNode.y + 30 + c.fromIdx * 18;
-      var tx = toNode.x;
-      var ty = toNode.y + 30 + c.toIdx * 18;
-
-      ctx.beginPath();
-      ctx.moveTo(fx, fy);
-      var cx1 = fx + 60;
-      var cx2 = tx - 60;
-      ctx.bezierCurveTo(cx1, fy, cx2, ty, tx, ty);
-      ctx.strokeStyle = "rgba(10,132,255,.6)";
-      ctx.lineWidth = 2.5;
-      ctx.stroke();
-
-      // Arrow dot at end
-      ctx.beginPath();
-      ctx.arc(tx, ty, 4, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(10,132,255,.8)";
-      ctx.fill();
+  function buildCauseEffect(ces) {
+    var el = document.getElementById('cause-effect');
+    while (el.firstChild) el.removeChild(el.firstChild);
+    ces.forEach(function(c) {
+      var row = document.createElement('div'); row.className = 'ce-row';
+      var cause = document.createElement('div'); cause.className = 'ce-cause'; cause.textContent = c.cause;
+      var arrow = document.createElement('div'); arrow.className = 'ce-arrow'; arrow.textContent = '\u2192';
+      var result = document.createElement('div'); result.className = 'ce-result ' + c.resultClass; result.textContent = c.result;
+      row.appendChild(cause); row.appendChild(arrow); row.appendChild(result);
+      el.appendChild(row);
     });
+  }
 
-    // Draw nodes
-    nodes.forEach(function(n, i) {
-      // Shadow
-      ctx.fillStyle = "rgba(0,0,0,.3)";
-      ctx.fillRect(n.x + 3, n.y + 3, n.w, n.h);
+  function renderBAPanels(s) {
+    var bc = document.getElementById('canvas-before'), ac = document.getElementById('canvas-after');
+    var bx = bc.getContext('2d'), ax = ac.getContext('2d');
+    bc.width = bc.offsetWidth || 280; bc.height = 160;
+    ac.width = ac.offsetWidth || 280; ac.height = 160;
+    bx.clearRect(0, 0, bc.width, bc.height);
+    ax.clearRect(0, 0, ac.width, ac.height);
+    if (s.before) s.before(bx, bc.width, bc.height);
+    if (s.after) s.after(ax, ac.width, ac.height);
+  }
 
-      // Node body
-      ctx.fillStyle = n.color;
-      ctx.fillRect(n.x, n.y, n.w, n.h);
-      ctx.strokeStyle = (dragging === i) ? "rgba(10,132,255,.8)" : "rgba(255,255,255,.15)";
-      ctx.lineWidth = (dragging === i) ? 2 : 1;
-      ctx.strokeRect(n.x, n.y, n.w, n.h);
+  document.querySelectorAll('.scenario-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() { switchScenario(btn.dataset.scene); });
+  });
 
-      // Title bar
-      ctx.fillStyle = "rgba(0,0,0,.3)";
-      ctx.fillRect(n.x, n.y, n.w, 22);
-
-      // Title text
-      ctx.fillStyle = "#f5f5f7";
-      ctx.font = "bold 11px sans-serif";
-      ctx.textAlign = "left";
-      ctx.fillText(n.label, n.x + 8, n.y + 15);
-
-      // Input ports
-      ctx.font = "10px sans-serif";
-      ctx.fillStyle = "rgba(255,255,255,.6)";
-      n.inputs.forEach(function(inp, ii) {
-        var py = n.y + 30 + ii * 18;
-        ctx.beginPath();
-        ctx.arc(n.x, py, 5, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(255,255,255,.2)";
-        ctx.fill();
-        ctx.strokeStyle = "rgba(255,255,255,.3)";
-        ctx.lineWidth = 1;
-        ctx.stroke();
-        ctx.fillStyle = "rgba(255,255,255,.6)";
-        ctx.textAlign = "left";
-        ctx.fillText(inp, n.x + 10, py + 4);
-      });
-
-      // Output ports
-      n.outputs.forEach(function(out, oi) {
-        var py = n.y + 30 + oi * 18;
-        ctx.beginPath();
-        ctx.arc(n.x + n.w, py, 5, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(10,132,255,.4)";
-        ctx.fill();
-        ctx.strokeStyle = "rgba(10,132,255,.5)";
-        ctx.lineWidth = 1;
-        ctx.stroke();
-        ctx.fillStyle = "rgba(255,255,255,.6)";
-        ctx.textAlign = "right";
-        ctx.fillText(out, n.x + n.w - 10, py + 4);
-      });
+  document.querySelectorAll('.tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      if (tab.dataset.tab === 'visual') { setTimeout(function() { switchScenario('basic'); }, 50); }
     });
-
-    // Data flow label
-    ctx.fillStyle = "rgba(255,255,255,.3)";
-    ctx.font = "11px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("\u2192 \uB370\uC774\uD130 \uD750\uB984 \u2192", canvas.width / 2, canvas.height - 12);
-  }
-
-  function getEventPos(e) {
-    var rect = canvas.getBoundingClientRect();
-    var scaleX = canvas.width / rect.width;
-    var scaleY = canvas.height / rect.height;
-    var clientX, clientY;
-    if (e.touches && e.touches.length > 0) {
-      clientX = e.touches[0].clientX;
-      clientY = e.touches[0].clientY;
-    } else {
-      clientX = e.clientX;
-      clientY = e.clientY;
-    }
-    return {
-      x: (clientX - rect.left) * scaleX,
-      y: (clientY - rect.top) * scaleY
-    };
-  }
-
-  function findNode(pos) {
-    for (var i = nodes.length - 1; i >= 0; i--) {
-      var n = nodes[i];
-      if (pos.x >= n.x && pos.x <= n.x + n.w && pos.y >= n.y && pos.y <= n.y + n.h) {
-        return i;
-      }
-    }
-    return -1;
-  }
-
-  function onDown(e) {
-    e.preventDefault();
-    var pos = getEventPos(e);
-    dragging = findNode(pos);
-    if (dragging >= 0) {
-      dragOffX = pos.x - nodes[dragging].x;
-      dragOffY = pos.y - nodes[dragging].y;
-      draw();
-    }
-  }
-
-  function onMove(e) {
-    if (dragging < 0) return;
-    e.preventDefault();
-    var pos = getEventPos(e);
-    nodes[dragging].x = Math.max(0, Math.min(canvas.width - nodes[dragging].w, pos.x - dragOffX));
-    nodes[dragging].y = Math.max(0, Math.min(canvas.height - nodes[dragging].h, pos.y - dragOffY));
-    draw();
-  }
-
-  function onUp() {
-    if (dragging >= 0) {
-      dragging = -1;
-      draw();
-    }
-  }
-
-  canvas.addEventListener("mousedown", onDown);
-  canvas.addEventListener("mousemove", onMove);
-  canvas.addEventListener("mouseup", onUp);
-  canvas.addEventListener("mouseleave", onUp);
-  canvas.addEventListener("touchstart", onDown, { passive: false });
-  canvas.addEventListener("touchmove", onMove, { passive: false });
-  canvas.addEventListener("touchend", onUp);
-  canvas.addEventListener("touchcancel", onUp);
-
-  // Preset buttons
-  document.getElementById("btnBasic").addEventListener("click", function() {
-    loadPreset("basic");
-    document.querySelectorAll(".demo-controls .demo-btn").forEach(function(b) { b.classList.remove("is-active"); });
-    this.classList.add("is-active");
-  });
-  document.getElementById("btnTexture").addEventListener("click", function() {
-    loadPreset("texture");
-    document.querySelectorAll(".demo-controls .demo-btn").forEach(function(b) { b.classList.remove("is-active"); });
-    this.classList.add("is-active");
-  });
-  document.getElementById("btnMix").addEventListener("click", function() {
-    loadPreset("mix");
-    document.querySelectorAll(".demo-controls .demo-btn").forEach(function(b) { b.classList.remove("is-active"); });
-    this.classList.add("is-active");
-  });
-  document.getElementById("btnReset").addEventListener("click", function() {
-    loadPreset(currentPreset);
   });
 
-  loadPreset("basic");
+  switchScenario('basic');
 })();
 
 // ── Quiz Data ─────────────────────────────────
