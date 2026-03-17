@@ -421,22 +421,53 @@ const CURRICULUM = [
     ],
     "steps": [
       {
-        "title": "기본형 만들기",
-        "copy": "레퍼런스를 보면서 Tab으로 Edit Mode에 들어가 Extrude로 덩어리를 뽑고, Loop Cut으로 나누고, Inset과 Bevel로 다듬는 게 기본 흐름이에요.",
+        "title": "레퍼런스 이미지 설정",
+        "copy": "Shift+A → Image로 정면·측면·후면 레퍼런스를 불러와요. Orthographic 뷰(Numpad 1/3)에 맞춰 배치하고, Opacity를 낮추면 모델링 가이드로 쓸 수 있어요.",
         "goal": [
           "Reference Image를 뷰포트에 배치한다",
-          "Edit Mode 도구 4가지를 실제로 써본다"
+          "Orthographic 뷰에서 정렬한다"
         ],
         "tasks": [
           {
             "id": "w3-t1",
-            "label": "Shift+A → Image → Reference로 참고 이미지 불러오기",
-            "detail": "Data 탭에서 Opacity 조절"
+            "label": "Shift+A → Image → Reference로 정면 이미지 불러오기",
+            "detail": "Downloads에서 robot-ref-front.png 선택"
           },
           {
+            "id": "w3-t1b",
+            "label": "측면·후면 이미지도 추가하기",
+            "detail": "각각 Numpad 3, Ctrl+Numpad 1 뷰에서 추가"
+          },
+          {
+            "id": "w3-t1c",
+            "label": "Opacity를 0.3으로 낮추고 크기 조절하기",
+            "detail": "Properties > Object Data > Opacity"
+          }
+        ],
+        "clips": [
+          { "label": "이미지 불러오기", "src": "assets/clips/week03/ref-import.mp4" },
+          { "label": "3장 배치", "src": "assets/clips/week03/ref-position.mp4" },
+          { "label": "Opacity · 정렬", "src": "assets/clips/week03/ref-opacity.mp4" }
+        ],
+        "done": [
+          "3장의 Reference Image가 뷰포트에 깔려 있다",
+          "Orthographic 뷰에서 레퍼런스와 3D 커서가 정렬되어 있다"
+        ],
+        "showme": "image-reference",
+        "link": "https://docs.blender.org/manual/en/latest/editors/3dview/display/overlays.html"
+      },
+      {
+        "title": "기본형 만들기",
+        "copy": "Cube를 레퍼런스에 맞춰 스케일하고, Edit Mode에서 Edge Slide로 형태를 잡아요. X-Ray(Alt+Z)를 켜면 레퍼런스를 투시하면서 작업할 수 있어요.",
+        "goal": [
+          "Cube를 레퍼런스 비율에 맞게 스케일한다",
+          "Edit Mode에서 형태를 다듬는다"
+        ],
+        "tasks": [
+          {
             "id": "w3-t2",
-            "label": "Extrude (E)로 덩어리 뽑기",
-            "detail": "면 선택 후 E → G+축 고정으로 방향 제어"
+            "label": "Cube를 머리 크기에 맞게 S로 스케일하기",
+            "detail": "Alt+Z로 X-Ray 켜서 레퍼런스 확인"
           },
           {
             "id": "w3-t3",
@@ -445,14 +476,18 @@ const CURRICULUM = [
           },
           {
             "id": "w3-t4",
-            "label": "Inset (I)과 Bevel (Ctrl+B)로 패널·모서리 다듬기",
-            "detail": "Bevel은 스크롤로 세그먼트 추가"
+            "label": "Edge Slide (G+G)로 엣지를 레퍼런스에 맞추기",
+            "detail": "정면·측면 뷰를 번갈아 확인"
           }
+        ],
+        "clips": [
+          { "label": "Cube 스케일", "src": "assets/clips/week03/head-scale.mp4" },
+          { "label": "Edge Slide", "src": "assets/clips/week03/head-edit.mp4" }
         ],
         "image": "assets/images/week03/base-form.png",
         "done": [
-          "Reference Image가 뷰포트에 깔려 있다",
-          "기본 형태가 잡혔다"
+          "Cube가 머리 레퍼런스와 비슷한 비율이다",
+          "Edge가 주요 윤곽선에 맞게 배치되었다"
         ],
         "showme": "edit-mode-tools",
         "link": "https://docs.blender.org/manual/en/latest/modeling/meshes/tools/extrude_region.html"
@@ -480,12 +515,15 @@ const CURRICULUM = [
             "detail": "중심선 벌어지면 S+X+0으로 정렬"
           }
         ],
+        "clips": [
+          { "label": "Mirror 워크플로우", "src": "assets/clips/week03/mirror-setup.mp4" }
+        ],
         "image": "assets/images/week03/mirror-modifier.png",
         "done": [
           "한쪽을 움직이면 반대쪽도 같이 바뀐다",
           "Clipping으로 중심선이 벌어지지 않는다"
         ],
-        "showme": "mirror-modifier",
+        "showme": ["mirror-modifier", "mirror-workflow"],
         "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html"
       },
       {

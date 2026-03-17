@@ -146,6 +146,49 @@
     }
     .btn-showme.is-complete::before { content: "✅ "; }
 
+    /* ── Clip Player ── */
+    .clip-player {
+      border-radius: var(--radius-md);
+      border: 1px solid var(--line);
+      background: var(--surface);
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+    .clip-player video {
+      display: block; width: 100%;
+      border-radius: var(--radius-md) var(--radius-md) 0 0;
+      cursor: pointer;
+    }
+    .clip-tabs {
+      display: flex; gap: 0;
+      border-top: 1px solid var(--line);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .clip-tabs::-webkit-scrollbar { display: none; }
+    .clip-tab {
+      flex: 1; min-width: 0;
+      padding: 9px 14px;
+      font: inherit; font-size: .78rem; font-weight: 500;
+      color: var(--muted);
+      background: none; border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      white-space: nowrap;
+      text-align: center;
+      transition: color .14s, border-color .14s, background .14s;
+    }
+    .clip-tab:hover { color: var(--muted-strong); background: rgba(255,255,255,.03); }
+    .clip-tab.is-active {
+      color: var(--key-soft);
+      border-bottom-color: var(--key);
+      background: rgba(10,132,255,.04);
+    }
+    .clip-player-hint {
+      font-size: .72rem; color: var(--muted);
+      text-align: center; padding: 4px 0 6px;
+    }
+
     /* ── Show Me Modal ── */
     .showme-overlay {
       display: none; position: fixed; inset: 0;
@@ -464,6 +507,18 @@
             ${step.image ? (step.link
               ? `<a href="${step.link}" target="_blank" rel="noopener noreferrer"><img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" /></a>`
               : `<img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" />`) : ""}
+            ${step.clips && step.clips.length ? `
+              <div class="clip-player" data-step-clips>
+                <video src="${step.clips[0].src}" autoplay loop muted playsinline
+                       onclick="this.paused ? this.play() : this.pause()"
+                       title="클릭하면 일시정지/재생"></video>
+                ${step.clips.length > 1 ? `
+                  <div class="clip-tabs">${step.clips.map((c, ci) =>
+                    `<button class="clip-tab${ci === 0 ? ' is-active' : ''}" type="button"
+                             data-clip-src="${c.src}" data-clip-idx="${ci}">${c.label}</button>`
+                  ).join('')}</div>` : ''}
+                <div class="clip-player-hint">클릭하면 일시정지 · 다시 클릭하면 재생</div>
+              </div>` : ""}
             ${step.downloads && step.downloads.length ? `<div class="step-downloads">${step.downloads.map(dl => `<a class="step-dl-btn" href="${dl.url}" download="${dl.url.split('/').pop()}" target="_blank" rel="noopener">⬇ ${dl.label}</a>`).join("")}</div>` : ""}
             <p class="step-copy">${step.copy}</p>
             ${showmeHtml}
@@ -578,6 +633,19 @@
 
         <div style="height:60px"></div>
       `;
+
+      // ─── Clip tab switching ───
+      document.querySelectorAll(".clip-player").forEach(function(player) {
+        player.querySelectorAll(".clip-tab").forEach(function(tab) {
+          tab.addEventListener("click", function() {
+            player.querySelectorAll(".clip-tab").forEach(function(t) { t.classList.remove("is-active"); });
+            tab.classList.add("is-active");
+            var video = player.querySelector("video");
+            video.src = tab.dataset.clipSrc;
+            video.play();
+          });
+        });
+      });
 
       // Init progress engine
       initProgress(w.steps.length);
