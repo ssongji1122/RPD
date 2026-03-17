@@ -4,8 +4,14 @@
     {
       "name": "course-site",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["tools/admin-server.py"],
-      "port": 8765,
+      "runtimeArgs": ["tools/admin-server.py", "--port", "8766"],
+      "port": 8766
+    },
+    {
+      "name": "course-site-static",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "--directory", "course-site"],
+      "port": 8770,
       "autoPort": true
     }
   ]
