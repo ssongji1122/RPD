@@ -349,6 +349,24 @@ body {
 }
 .doc-ref a:hover { text-decoration: underline; }
 
+
+.scenario-nav { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+.scenario-btn { padding:6px 14px; border-radius:20px; border:1px solid rgba(255,255,255,.15); background:transparent; color:#cbd5e1; cursor:pointer; font-size:13px; transition:all .2s; font-family:inherit; }
+.scenario-btn.active { background:rgba(99,102,241,.25); border-color:rgba(99,102,241,.5); color:#a5b4fc; }
+.before-after { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:12px 0; }
+.ba-panel { border-radius:12px; overflow:hidden; background:var(--surface); }
+.ba-panel canvas { width:100%; display:block; }
+.ba-label { text-align:center; font-size:11px; color:#94a3b8; padding:4px; background:rgba(0,0,0,.2); }
+.cause-effect { display:flex; flex-direction:column; gap:8px; margin:12px 0; }
+.ce-row { display:flex; align-items:center; gap:8px; }
+.ce-cause { background:rgba(99,102,241,.12); border:1px solid rgba(99,102,241,.25); border-radius:8px; padding:6px 12px; font-size:13px; flex:1; color:var(--muted-strong); }
+.ce-arrow { color:#64748b; font-size:16px; }
+.ce-result { border-radius:8px; padding:6px 12px; font-size:13px; flex:1.5; }
+.result-a { background:rgba(16,185,129,.1); border:1px solid rgba(16,185,129,.25); color:#6ee7b7; }
+.result-b { background:rgba(245,158,11,.1); border:1px solid rgba(245,158,11,.25); color:#fcd34d; }
+.result-c { background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.25); color:#fca5a5; }
+.scene-desc { font-size:.84rem; color:var(--muted-strong); margin-bottom:10px; padding:10px 14px; border-radius:var(--radius-sm); background:var(--surface); border:1px solid var(--line); line-height:1.7; }
+
 /* ── Responsive ── */
 @media (max-width: 600px) {
   .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
@@ -413,19 +431,23 @@ body {
 
 <!-- TAB 2: 시각적 비교 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    각 조명을 ON/OFF 토글하여 그림자와 하이라이트 변화를 관찰하세요.
-  </p>
-  <div class="demo-wrap">
-    <canvas id="demoCanvas" width="680" height="380"></canvas>
-    <div class="demo-controls">
-      <button class="demo-btn is-active" id="btnKey">Key Light</button>
-      <button class="demo-btn is-active" id="btnFill">Fill Light</button>
-      <button class="demo-btn is-active" id="btnRim">Rim Light</button>
-      <button class="demo-btn" id="btnReset">초기화</button>
+  <div class="scenario-nav" id="scenarioNav">
+    <button class="scenario-btn active" data-scene="key">Key Light</button>
+    <button class="scenario-btn" data-scene="fill">Key + Fill</button>
+    <button class="scenario-btn" data-scene="full">3점 조명</button>
+  </div>
+  <div class="scene-desc" id="scene-desc">Key Light는 주광원으로 가장 밝고 강한 빛입니다. 피사체의 형태를 규정하고 주 그림자를 만듭니다.</div>
+  <div class="before-after">
+    <div class="ba-panel">
+      <canvas id="canvas-before" width="280" height="160"></canvas>
+      <div class="ba-label">적용 전</div>
+    </div>
+    <div class="ba-panel">
+      <canvas id="canvas-after" width="280" height="160"></canvas>
+      <div class="ba-label">적용 후</div>
     </div>
   </div>
-  <p class="demo-hint">각 버튼을 클릭하여 조명을 ON/OFF하면 피사체의 명암 변화를 볼 수 있습니다.</p>
+  <div class="cause-effect" id="cause-effect"></div>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->
@@ -623,205 +645,158 @@ function initQuiz(questions) {
   }
 }
 
-// ── Canvas 3-Point Lighting Demo ────────────────
+// ── Three-Point Light Scenario Visualization ────────────
 (function() {
-  var canvas = document.getElementById("demoCanvas");
-  var ctx = canvas.getContext("2d");
-  var W = canvas.width, H = canvas.height;
+  function drawBg(ctx, w, h) { ctx.fillStyle = "#1e293b"; ctx.fillRect(0,0,w,h); }
 
-  var lights = {
-    key:  { on: true, x: 200, y: 100, color: [255, 240, 220], intensity: 1.0, label: "Key Light" },
-    fill: { on: true, x: 500, y: 160, color: [180, 210, 255], intensity: 0.5, label: "Fill Light" },
-    rim:  { on: true, x: 340, y: 340, color: [255, 255, 255], intensity: 0.7, label: "Rim Light" }
-  };
-
-  var subjectX = 340, subjectY = 190, subjectR = 60;
-
-  function draw() {
-    ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = "#111214";
-    ctx.fillRect(0, 0, W, H);
-
-    // Floor plane
-    ctx.fillStyle = "#1a1b1e";
-    ctx.beginPath();
-    ctx.moveTo(0, H * 0.7); ctx.lineTo(W, H * 0.7); ctx.lineTo(W, H); ctx.lineTo(0, H);
-    ctx.closePath(); ctx.fill();
-
-    // Floor grid
-    ctx.strokeStyle = "rgba(255,255,255,.03)";
-    ctx.lineWidth = 1;
-    for (var gx = 0; gx < W; gx += 40) { ctx.beginPath(); ctx.moveTo(gx, H * 0.7); ctx.lineTo(gx, H); ctx.stroke(); }
-    for (var gy = H * 0.7; gy < H; gy += 20) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke(); }
-
-    // Compute lighting
-    var totalLight = { r: 15, g: 15, b: 18 };
-    var shadowIntensity = 0;
-    var rimStrength = 0;
-
-    if (lights.key.on) {
-      totalLight.r += lights.key.color[0] * lights.key.intensity * 0.5;
-      totalLight.g += lights.key.color[1] * lights.key.intensity * 0.5;
-      totalLight.b += lights.key.color[2] * lights.key.intensity * 0.5;
-      shadowIntensity += 0.6;
-    }
-    if (lights.fill.on) {
-      totalLight.r += lights.fill.color[0] * lights.fill.intensity * 0.4;
-      totalLight.g += lights.fill.color[1] * lights.fill.intensity * 0.4;
-      totalLight.b += lights.fill.color[2] * lights.fill.intensity * 0.4;
-      shadowIntensity -= 0.2;
-    }
-    if (lights.rim.on) {
-      rimStrength = 0.8;
-      totalLight.r += 20; totalLight.g += 20; totalLight.b += 20;
-    }
-    totalLight.r = Math.min(255, totalLight.r);
-    totalLight.g = Math.min(255, totalLight.g);
-    totalLight.b = Math.min(255, totalLight.b);
-
-    // Shadow
-    if (shadowIntensity > 0) {
-      ctx.fillStyle = "rgba(0,0,0," + Math.min(0.5, shadowIntensity * 0.4) + ")";
-      ctx.beginPath();
-      ctx.ellipse(lights.key.on ? subjectX + 30 : subjectX, H * 0.7 + 5, subjectR * 1.2, subjectR * 0.3, 0, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    // Subject sphere
-    var baseR = Math.floor(totalLight.r * 0.6);
-    var baseG = Math.floor(totalLight.g * 0.55);
-    var baseB = Math.floor(totalLight.b * 0.55);
-
-    var gradient = ctx.createRadialGradient(subjectX - 15, subjectY - 15, subjectR * 0.1, subjectX, subjectY, subjectR);
-    if (lights.key.on) {
-      gradient.addColorStop(0, "rgb(" + Math.min(255, baseR + 120) + "," + Math.min(255, baseG + 100) + "," + Math.min(255, baseB + 80) + ")");
-      gradient.addColorStop(0.5, "rgb(" + baseR + "," + baseG + "," + baseB + ")");
-      gradient.addColorStop(1, "rgb(" + Math.floor(baseR * 0.3) + "," + Math.floor(baseG * 0.3) + "," + Math.floor(baseB * 0.3) + ")");
-    } else {
-      var flat = Math.floor((baseR + baseG + baseB) / 3 * 0.4);
-      gradient.addColorStop(0, "rgb(" + (flat + 20) + "," + (flat + 20) + "," + (flat + 20) + ")");
-      gradient.addColorStop(1, "rgb(" + Math.floor(flat * 0.5) + "," + Math.floor(flat * 0.5) + "," + Math.floor(flat * 0.5) + ")");
-    }
-    ctx.beginPath(); ctx.arc(subjectX, subjectY, subjectR, 0, Math.PI * 2);
-    ctx.fillStyle = gradient; ctx.fill();
-
-    // Fill light side
-    if (lights.fill.on) {
-      var fillGrad = ctx.createRadialGradient(subjectX + 25, subjectY, subjectR * 0.2, subjectX + 15, subjectY, subjectR * 0.9);
-      fillGrad.addColorStop(0, "rgba(" + lights.fill.color[0] + "," + lights.fill.color[1] + "," + lights.fill.color[2] + ",0.15)");
-      fillGrad.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.beginPath(); ctx.arc(subjectX, subjectY, subjectR, 0, Math.PI * 2);
-      ctx.fillStyle = fillGrad; ctx.fill();
-    }
-
-    // Key highlight
-    if (lights.key.on) {
-      var hlGrad = ctx.createRadialGradient(subjectX - 20, subjectY - 15, 2, subjectX - 20, subjectY - 15, subjectR * 0.5);
-      hlGrad.addColorStop(0, "rgba(255,255,255,0.42)");
-      hlGrad.addColorStop(1, "rgba(255,255,255,0)");
-      ctx.beginPath(); ctx.arc(subjectX, subjectY, subjectR, 0, Math.PI * 2);
-      ctx.fillStyle = hlGrad; ctx.fill();
-    }
-
-    // Rim glow
-    if (lights.rim.on) {
-      ctx.save();
-      ctx.beginPath(); ctx.arc(subjectX, subjectY, subjectR, 0, Math.PI * 2); ctx.clip();
-      var rimGrad = ctx.createRadialGradient(subjectX, subjectY + subjectR * 0.8, subjectR * 0.1, subjectX, subjectY, subjectR * 1.1);
-      rimGrad.addColorStop(0, "rgba(255,255,255," + (rimStrength * 0.5) + ")");
-      rimGrad.addColorStop(0.3, "rgba(255,255,255," + (rimStrength * 0.15) + ")");
-      rimGrad.addColorStop(1, "rgba(255,255,255,0)");
-      ctx.fillStyle = rimGrad;
-      ctx.fillRect(subjectX - subjectR, subjectY, subjectR * 2, subjectR * 1.2);
-      ctx.restore();
-
-      ctx.beginPath(); ctx.arc(subjectX, subjectY, subjectR + 2, Math.PI * 0.3, Math.PI * 0.7);
-      ctx.strokeStyle = "rgba(255,255,255," + (rimStrength * 0.35) + ")";
-      ctx.lineWidth = 4; ctx.stroke();
-    }
-
-    // Draw light sources
-    var lightEntries = [
-      { key: "key", data: lights.key, labelColor: "#fbbf24" },
-      { key: "fill", data: lights.fill, labelColor: "#8ec5ff" },
-      { key: "rim", data: lights.rim, labelColor: "#6ee7b7" }
-    ];
-
-    lightEntries.forEach(function(entry) {
-      var light = entry.data;
-      if (!light.on) {
-        ctx.beginPath(); ctx.arc(light.x, light.y, 10, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(100,100,100,.2)"; ctx.fill();
-        ctx.strokeStyle = "rgba(100,100,100,.3)"; ctx.lineWidth = 1; ctx.stroke();
-        ctx.fillStyle = "rgba(100,100,100,.4)"; ctx.font = "10px sans-serif"; ctx.textAlign = "center";
-        ctx.fillText("OFF", light.x, light.y - 16);
-        ctx.fillText(light.label, light.x, light.y + 24);
-        return;
-      }
-
-      // Light beam
-      var dx = subjectX - light.x, dy = subjectY - light.y;
-      var dist = Math.sqrt(dx * dx + dy * dy);
-      var angle = Math.atan2(dy, dx);
-      var spread = 0.3;
-
-      var beamGrad = ctx.createLinearGradient(light.x, light.y, subjectX, subjectY);
-      beamGrad.addColorStop(0, "rgba(" + light.color[0] + "," + light.color[1] + "," + light.color[2] + "," + (light.intensity * 0.12) + ")");
-      beamGrad.addColorStop(1, "rgba(" + light.color[0] + "," + light.color[1] + "," + light.color[2] + ",0)");
-
-      ctx.beginPath();
-      ctx.moveTo(light.x, light.y);
-      ctx.lineTo(light.x + Math.cos(angle - spread) * dist * 0.9, light.y + Math.sin(angle - spread) * dist * 0.9);
-      ctx.lineTo(light.x + Math.cos(angle + spread) * dist * 0.9, light.y + Math.sin(angle + spread) * dist * 0.9);
-      ctx.closePath();
-      ctx.fillStyle = beamGrad; ctx.fill();
-
-      // Light glow
-      var glowGrad = ctx.createRadialGradient(light.x, light.y, 2, light.x, light.y, 20);
-      glowGrad.addColorStop(0, "rgba(" + light.color[0] + "," + light.color[1] + "," + light.color[2] + "," + (light.intensity * 0.8) + ")");
-      glowGrad.addColorStop(0.5, "rgba(" + light.color[0] + "," + light.color[1] + "," + light.color[2] + "," + (light.intensity * 0.2) + ")");
-      glowGrad.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.beginPath(); ctx.arc(light.x, light.y, 20, 0, Math.PI * 2);
-      ctx.fillStyle = glowGrad; ctx.fill();
-
-      ctx.beginPath(); ctx.arc(light.x, light.y, 8, 0, Math.PI * 2);
-      ctx.fillStyle = "rgb(" + light.color[0] + "," + light.color[1] + "," + light.color[2] + ")";
-      ctx.fill(); ctx.strokeStyle = "#fff"; ctx.lineWidth = 1.5; ctx.stroke();
-
-      ctx.fillStyle = entry.labelColor;
-      ctx.font = "bold 11px sans-serif"; ctx.textAlign = "center";
-      ctx.fillText(light.label, light.x, light.y - 16);
-    });
-
-    ctx.fillStyle = "rgba(255,255,255,.4)"; ctx.font = "11px sans-serif"; ctx.textAlign = "center";
-    ctx.fillText("Subject", subjectX, subjectY + subjectR + 20);
-
-    var activeCount = (lights.key.on ? 1 : 0) + (lights.fill.on ? 1 : 0) + (lights.rim.on ? 1 : 0);
-    ctx.fillStyle = "rgba(255,255,255,.4)"; ctx.font = "11px sans-serif"; ctx.textAlign = "left";
-    ctx.fillText(activeCount + "/3 lights active", 12, 18);
+  function drawSubjectBase(ctx, cx, cy) {
+    ctx.beginPath(); ctx.arc(cx, cy, 28, 0, Math.PI*2);
+    ctx.fillStyle = "rgba(30,41,59,.8)"; ctx.fill();
+    ctx.strokeStyle = "rgba(148,163,184,.2)"; ctx.lineWidth = 1; ctx.stroke();
   }
 
-  document.getElementById("btnKey").addEventListener("click", function() {
-    lights.key.on = !lights.key.on;
-    document.getElementById("btnKey").classList.toggle("is-active", lights.key.on); draw();
-  });
-  document.getElementById("btnFill").addEventListener("click", function() {
-    lights.fill.on = !lights.fill.on;
-    document.getElementById("btnFill").classList.toggle("is-active", lights.fill.on); draw();
-  });
-  document.getElementById("btnRim").addEventListener("click", function() {
-    lights.rim.on = !lights.rim.on;
-    document.getElementById("btnRim").classList.toggle("is-active", lights.rim.on); draw();
-  });
-  document.getElementById("btnReset").addEventListener("click", function() {
-    lights.key.on = true; lights.fill.on = true; lights.rim.on = true;
-    document.getElementById("btnKey").classList.add("is-active");
-    document.getElementById("btnFill").classList.add("is-active");
-    document.getElementById("btnRim").classList.add("is-active");
-    draw();
+  function drawBeam(ctx, lx, ly, cx, cy, r, g, b, alpha) {
+    var dist = Math.sqrt((lx-cx)*(lx-cx)+(ly-cy)*(ly-cy))*1.2;
+    var grad = ctx.createRadialGradient(lx, ly, 0, lx, ly, dist);
+    grad.addColorStop(0, 'rgba('+r+','+g+','+b+','+alpha+')');
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = grad;
+    var angle = Math.atan2(cy-ly, cx-lx);
+    ctx.beginPath(); ctx.moveTo(lx, ly);
+    ctx.arc(lx, ly, 120, angle-0.5, angle+0.5); ctx.closePath(); ctx.fill();
+  }
+
+  function drawIcon(ctx, x, y, label, color) {
+    ctx.beginPath(); ctx.arc(x, y, 10, 0, Math.PI*2); ctx.fillStyle = color; ctx.fill();
+    ctx.fillStyle = "#1e293b"; ctx.font = "bold 8px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText(label, x, y+3);
+  }
+
+  function drawKeyOnly(ctx, w, h) {
+    drawBg(ctx, w, h);
+    var cx = w/2, cy = h/2, kx = cx-88, ky = cy-58;
+    drawBeam(ctx, kx, ky, cx, cy, 255, 235, 180, 0.5);
+    drawSubjectBase(ctx, cx, cy);
+    var lg = ctx.createRadialGradient(cx-12, cy-8, 2, cx, cy, 28);
+    lg.addColorStop(0, "rgba(255,235,180,.9)"); lg.addColorStop(0.5, "rgba(100,80,40,.6)"); lg.addColorStop(1, "rgba(0,0,0,.8)");
+    ctx.beginPath(); ctx.arc(cx, cy, 28, 0, Math.PI*2); ctx.fillStyle = lg; ctx.fill();
+    drawIcon(ctx, kx, ky, "K", "#fbbf24");
+    ctx.fillStyle = "#fbbf24"; ctx.font = "bold 9px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("Key Light\ub9cc (\uac15\ud55c \uadf8\ub9bc\uc790)", cx, h-8);
+  }
+
+  function drawKeyFill(ctx, w, h) {
+    drawBg(ctx, w, h);
+    var cx = w/2, cy = h/2, kx = cx-88, ky = cy-58, fx = cx+78, fy = cy-28;
+    drawBeam(ctx, kx, ky, cx, cy, 255, 235, 180, 0.45);
+    drawBeam(ctx, fx, fy, cx, cy, 180, 210, 255, 0.2);
+    drawSubjectBase(ctx, cx, cy);
+    var lg = ctx.createRadialGradient(cx-10, cy-6, 3, cx, cy, 28);
+    lg.addColorStop(0, "rgba(255,235,180,.85)"); lg.addColorStop(0.4, "rgba(80,100,140,.5)"); lg.addColorStop(1, "rgba(20,30,50,.4)");
+    ctx.beginPath(); ctx.arc(cx, cy, 28, 0, Math.PI*2); ctx.fillStyle = lg; ctx.fill();
+    drawIcon(ctx, kx, ky, "K", "#fbbf24");
+    drawIcon(ctx, fx, fy, "F", "#93c5fd");
+    ctx.fillStyle = "#93c5fd"; ctx.font = "bold 9px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("Key + Fill (\uadf8\ub9bc\uc790 \ubd80\ub4dc\ub7ec\uc6cc\uc9d0)", cx, h-8);
+  }
+
+  function drawFullThreePoint(ctx, w, h) {
+    drawBg(ctx, w, h);
+    var cx = w/2, cy = h/2, kx = cx-88, ky = cy-58, fx = cx+78, fy = cy-28, rx = cx+8, ry = cy+72;
+    drawBeam(ctx, kx, ky, cx, cy, 255, 235, 180, 0.4);
+    drawBeam(ctx, fx, fy, cx, cy, 180, 210, 255, 0.18);
+    drawBeam(ctx, rx, ry, cx, cy, 255, 180, 180, 0.35);
+    drawSubjectBase(ctx, cx, cy);
+    var lg = ctx.createRadialGradient(cx-10, cy-6, 3, cx, cy, 28);
+    lg.addColorStop(0, "rgba(255,240,200,.9)"); lg.addColorStop(0.5, "rgba(100,130,180,.4)"); lg.addColorStop(1, "rgba(50,20,10,.3)");
+    ctx.beginPath(); ctx.arc(cx, cy, 28, 0, Math.PI*2); ctx.fillStyle = lg; ctx.fill();
+    ctx.strokeStyle = "rgba(255,150,150,.8)"; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(cx, cy, 28, Math.PI*0.3, Math.PI*0.9); ctx.stroke();
+    drawIcon(ctx, kx, ky, "K", "#fbbf24");
+    drawIcon(ctx, fx, fy, "F", "#93c5fd");
+    drawIcon(ctx, rx, ry, "R", "#fca5a5");
+    ctx.fillStyle = "#6ee7b7"; ctx.font = "bold 9px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("3\uc810 \uc870\uba85 \uc644\uc131 (K+F+Rim)", cx, h-8);
+  }
+
+  var scenarios = {
+    key: {
+      desc: "Key Light\ub294 \uc8fc\uad11\uc6d0\uc73c\ub85c \uac00\uc7a5 \ubc1d\uace0 \uac15\ud55c \ube5b\uc785\ub2c8\ub2e4. \ud53c\uc0ac\uccb4\uc758 \ud615\ud0dc\ub97c \uaddc\uc815\ud558\uace0 \uc8fc \uadf8\ub9bc\uc790\ub97c \ub9cc\ub4ed\ub2c8\ub2e4.",
+      ce: [
+        { cause: "Key Light \uc804\uba74 \ubc30\uce58", result: "\ud53c\uc0ac\uccb4 \uc8fc\ubd80 \uc870\uba85 \uc791\ub3d9", resultClass: "result-a" },
+        { cause: "Key \ubc1d\uae30 \uc99d\uac00", result: "\uadf8\ub9bc\uc790 \ub354 \uac15\ud558\uace0 \uae54\ub054", resultClass: "result-a" },
+        { cause: "Key\ub9cc \uc0ac\uc6a9", result: "\uadf8\ub9bc\uc790 \ud06c\uace0 \uac70\uce60 \ub300\ube44", resultClass: "result-c" }
+      ],
+      before: drawKeyOnly,
+      after: drawKeyOnly
+    },
+    fill: {
+      desc: "Fill Light\ub294 Key Light\uc758 \ubc18\ub300\ucabd\uc5d0 \ubc30\uce58\ud574 \uadf8\ub9bc\uc790\ub97c \ubd80\ub4dc\ub7fd\uac8c \ud569\ub2c8\ub2e4. Key\ubcf4\ub2e4 1/4~1/2 \uc218\uc900\uc73c\ub85c \uc57d\ud558\uac8c \uc124\uc815\ud569\ub2c8\ub2e4.",
+      ce: [
+        { cause: "Fill Light \ubc18\ub300\ucabd \ucd94\uac00", result: "\uadf8\ub9bc\uc790 \ubd80\ub4dc\ub7fd\uac8c, \ub514\ud14c\uc77c \uc0b4\uc544\ub0a8", resultClass: "result-a" },
+        { cause: "Fill \ubc1d\uae30 \ub108\ubb34 \ub192\uc74c", result: "\ud3c9\ud3c9\ud558\uace0 \ubb34\uae30\ub825\ud55c \uc870\uba85", resultClass: "result-c" },
+        { cause: "Fill \ubc1d\uae30 \ub108\ubb34 \ub099\uc74c", result: "\uadf8\ub9bc\uc790 \ub108\ubb34 \uac15\ud568", resultClass: "result-b" }
+      ],
+      before: drawKeyOnly,
+      after: drawKeyFill
+    },
+    full: {
+      desc: "3\uc810 \uc870\uba85\uc740 Key + Fill + Rim\uc744 \uacb0\ud569\ud55c \ud45c\uc900 \uae30\ubc95\uc785\ub2c8\ub2e4. Rim Light\ub294 \ud53c\uc0ac\uccb4 \ub9e4\ud2b8\ub97c \ubc30\uacbd\uacfc \ubd84\ub9ac\uc2dc\ucf1c \uc77c\uccb4\uac10\uc744 \ub192\uc785\ub2c8\ub2e4.",
+      ce: [
+        { cause: "Rim Light \ud53c\uc0ac\uccb4 \ub4a4\ucabd \ucd94\uac00", result: "\ub9f5\ub178\uc6b8\uccb4 \uc721\uacf3 \ubd84\ub9ac", resultClass: "result-a" },
+        { cause: "3\uac1c \uad11\uc6d0 \uc870\ud569", result: "\uc785\uccb4\uac10 \uc788\uace0 \uc804\ubb38\uc801\uc778 \uc870\uba85", resultClass: "result-a" },
+        { cause: "\ubaa8\ub4e0 \uad11\uc6d0 \uc81c\uac70", result: "\uc678\uae30\ub7fd\uace0 \ubb34\uac70\uc6b4 \ubd84\uc704\uae30", resultClass: "result-b" }
+      ],
+      before: drawKeyFill,
+      after: drawFullThreePoint
+    }
+  };
+
+  function switchScenario(key) {
+    document.querySelectorAll('.scenario-btn').forEach(function(b) {
+      b.classList.toggle('active', b.dataset.scene === key);
+    });
+    var s = scenarios[key];
+    document.getElementById('scene-desc').textContent = s.desc;
+    buildCauseEffect(s.ce);
+    renderBAPanels(s);
+  }
+
+  function buildCauseEffect(ces) {
+    var el = document.getElementById('cause-effect');
+    while (el.firstChild) el.removeChild(el.firstChild);
+    ces.forEach(function(c) {
+      var row = document.createElement('div'); row.className = 'ce-row';
+      var cause = document.createElement('div'); cause.className = 'ce-cause'; cause.textContent = c.cause;
+      var arrow = document.createElement('div'); arrow.className = 'ce-arrow'; arrow.textContent = '\u2192';
+      var result = document.createElement('div'); result.className = 'ce-result ' + c.resultClass; result.textContent = c.result;
+      row.appendChild(cause); row.appendChild(arrow); row.appendChild(result);
+      el.appendChild(row);
+    });
+  }
+
+  function renderBAPanels(s) {
+    var bc = document.getElementById('canvas-before'), ac = document.getElementById('canvas-after');
+    var bx = bc.getContext('2d'), ax = ac.getContext('2d');
+    bc.width = bc.offsetWidth || 280; bc.height = 160;
+    ac.width = ac.offsetWidth || 280; ac.height = 160;
+    bx.clearRect(0, 0, bc.width, bc.height);
+    ax.clearRect(0, 0, ac.width, ac.height);
+    if (s.before) s.before(bx, bc.width, bc.height);
+    if (s.after) s.after(ax, ac.width, ac.height);
+  }
+
+  document.querySelectorAll('.scenario-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() { switchScenario(btn.dataset.scene); });
   });
 
-  draw();
+  document.querySelectorAll('.tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      if (tab.dataset.tab === 'visual') { setTimeout(function() { switchScenario('key'); }, 50); }
+    });
+  });
+
+  switchScenario('key');
 })();
 
 // ── Quiz Data ─────────────────────────────────
