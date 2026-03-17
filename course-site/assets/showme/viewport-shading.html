@@ -30,75 +30,544 @@
   --radius-md:     18px;
   --radius-lg:     24px;
   --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+  /* 카드별 accent 색상 */
+  --accent-a:      #5599FF;
+  --accent-a-soft: #88BBFF;
+  --accent-b:      #10b981;
+  --accent-b-soft: #6ee7b7;
 }
+
+/* ── Reset ── */
 *, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 0; font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; }
-.tabs { display: flex; gap: 0; border-bottom: 1px solid var(--line); padding: 0 16px; background: var(--bg-soft); overflow-x: auto; -webkit-overflow-scrolling: touch; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Tab Navigation ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
 .tabs::-webkit-scrollbar { display: none; }
-.tab { padding: 12px 16px; font-size: .84rem; font-weight: 500; color: var(--muted); cursor: pointer; border: none; border-bottom: 2px solid transparent; white-space: nowrap; transition: color .14s, border-color .14s; background: none; font-family: inherit; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
 .tab:hover { color: var(--muted-strong); }
-.tab.is-active { color: var(--key-soft); border-bottom-color: var(--key); }
+.tab.is-active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+
+/* ── Tab Panels ── */
 .panel { display: none; padding: 20px 16px; }
 .panel.is-active { display: block; }
-.concept-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
-.concept-card { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); padding: 18px; }
-.concept-card h3 { margin: 0 0 8px; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
-.concept-card p { margin: 0; color: var(--muted-strong); font-size: .88rem; line-height: 1.7; }
-.concept-card ul { margin: 8px 0 0; padding-left: 16px; color: var(--muted-strong); font-size: .85rem; line-height: 1.8; }
-.badge { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: .72rem; font-weight: 600; }
-.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
-.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
-.badge-amber { background: rgba(245,158,11,.15);  color: #fbbf24; }
-.badge-red   { background: rgba(239,68,68,.15);   color: #fca5a5; }
-.kbd { display: inline-block; padding: 3px 8px; border-radius: 6px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); color: var(--key-soft); font-size: .82rem; font-weight: 600; font-family: var(--font); }
-.demo-wrap { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); overflow: hidden; margin: 14px 0; }
-.demo-wrap canvas { display: block; width: 100%; }
-.demo-controls { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--line); flex-wrap: wrap; }
-.demo-hint { font-size: .78rem; color: var(--muted); text-align: center; padding: 6px 0 0; }
-.demo-btn { padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line-strong); background: rgba(255,255,255,.04); color: var(--muted-strong); font: inherit; font-size: .82rem; cursor: pointer; transition: background .14s, color .14s; }
-.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
-.demo-btn.is-active { background: rgba(10,132,255,.14); color: var(--key-soft); border-color: rgba(10,132,255,.3); }
-.usage-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.usage-card { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); padding: 16px; }
-.usage-card h4 { margin: 0 0 8px; font-size: .92rem; color: var(--key-soft); }
-.usage-card ul { margin: 0; padding-left: 16px; color: var(--muted-strong); font-size: .85rem; line-height: 1.8; }
-.tip-box { border-radius: var(--radius-md); border: 1px solid rgba(10,132,255,.2); background: rgba(10,132,255,.06); padding: 14px 16px; margin-top: 14px; font-size: .86rem; color: var(--muted-strong); }
-.tip-box strong { color: var(--key-soft); }
-.combo-section { margin-top: 18px; }
-.combo-section h4 { margin: 0 0 10px; font-size: .92rem; color: var(--text); }
-.combo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.combo-card { border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--surface); padding: 12px 14px; }
-.combo-card .combo-name { font-size: .86rem; font-weight: 600; color: var(--key-soft); margin-bottom: 4px; }
-.combo-card .combo-desc { font-size: .8rem; color: var(--muted); line-height: 1.5; }
-.shortcut-list { margin-top: 16px; padding: 14px 16px; border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); }
-.shortcut-list h4 { margin: 0 0 10px; font-size: .9rem; color: var(--text); }
-.shortcut-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-size: .84rem; color: var(--muted-strong); }
-.shortcut-row + .shortcut-row { border-top: 1px solid var(--line); }
+
+/* ── Concept Cards ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card h3 {
+  margin: 0 0 8px; font-size: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.concept-card p {
+  margin: 0; color: var(--muted-strong);
+  font-size: .88rem; line-height: 1.7;
+}
+.concept-card ul {
+  margin: 8px 0 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
+}
+
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: .72rem; font-weight: 600;
+}
+.badge-blue   { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green  { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber  { background: rgba(245,158,11,.15);  color: #fbbf24; }
+.badge-red    { background: rgba(239,68,68,.15);   color: #fca5a5; }
+.badge-accent-a { background: rgba(85,153,255,.15); color: var(--accent-a-soft); }
+.badge-accent-b { background: rgba(16,185,129,.15); color: var(--accent-b-soft); }
+
+/* ── Keyboard Shortcut ── */
+.kbd {
+  display: inline-block;
+  padding: 3px 8px; border-radius: 6px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  color: var(--key-soft);
+  font-size: .82rem; font-weight: 600;
+  font-family: var(--font);
+}
+
+/* ── Analogy Box ── */
+.analogy {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(245,158,11,.06);
+  border: 1px solid rgba(245,158,11,.15);
+  font-size: .82rem;
+  color: #fbbf24;
+  font-style: italic;
+}
+
+/* ── Concept Card Accent Variants ── */
+.concept-card.accent-a {
+  border-color: rgba(85,153,255,.25);
+  background: rgba(85,153,255,.06);
+}
+.concept-card.accent-b {
+  border-color: rgba(16,185,129,.25);
+  background: rgba(16,185,129,.06);
+}
+
+/* ── Shortcut Reference ── */
+.shortcut-list {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.shortcut-list h4 {
+  margin: 0 0 10px;
+  font-size: .9rem;
+  color: var(--text);
+}
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: .84rem;
+  color: var(--muted-strong);
+}
+.shortcut-row + .shortcut-row {
+  border-top: 1px solid var(--line);
+}
 .shortcut-keys { flex-shrink: 0; }
-.analogy { margin-top: 8px; padding: 10px 14px; border-radius: var(--radius-sm); background: rgba(245,158,11,.06); border: 1px solid rgba(245,158,11,.15); font-size: .82rem; color: #fbbf24; font-style: italic; }
-.quiz-progress { font-size: .78rem; color: var(--muted); margin-bottom: 12px; }
-.quiz-question { margin-bottom: 20px; padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); }
-.quiz-question h4 { margin: 0 0 12px; font-size: .94rem; }
-.quiz-option { display: block; width: 100%; padding: 10px 14px; margin-bottom: 6px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: rgba(255,255,255,.025); color: var(--text); font: inherit; font-size: .86rem; cursor: pointer; text-align: left; transition: background .14s, border-color .14s; }
-.quiz-option:hover { background: rgba(255,255,255,.06); border-color: var(--line-strong); }
-.quiz-option.correct { background: rgba(16,185,129,.12); border-color: rgba(16,185,129,.4); color: var(--success-soft); }
-.quiz-option.wrong { background: rgba(239,68,68,.1); border-color: rgba(239,68,68,.3); color: #fca5a5; }
+
+/* ══════════════════════════════════════════════════
+   Compare Table
+   ══════════════════════════════════════════════════ */
+.compare-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 16px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+.compare-table th,
+.compare-table td {
+  padding: 10px 14px;
+  font-size: .84rem;
+  line-height: 1.6;
+  text-align: left;
+}
+.compare-table thead th {
+  background: var(--surface-strong);
+  color: var(--text);
+  font-weight: 600;
+  font-size: .82rem;
+  border-bottom: 1px solid var(--line-strong);
+}
+.compare-table thead th:nth-child(2) { color: var(--accent-a-soft); }
+.compare-table thead th:nth-child(3) { color: var(--accent-b-soft); }
+.compare-table tbody td {
+  background: var(--surface);
+  color: var(--muted-strong);
+  border-bottom: 1px solid var(--line);
+}
+.compare-table tbody tr:last-child td { border-bottom: none; }
+.compare-table tbody td:first-child {
+  font-weight: 600;
+  color: var(--muted);
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  white-space: nowrap;
+}
+.compare-table .cell-a { border-left: 2px solid rgba(85,153,255,.3); }
+.compare-table .cell-b { border-left: 2px solid rgba(16,185,129,.3); }
+
+/* ══════════════════════════════════════════════════
+   Cause-Effect Flow
+   ══════════════════════════════════════════════════ */
+.cause-effect {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 16px 0;
+}
+.ce-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0;
+}
+.ce-cause, .ce-result {
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-size: .84rem;
+  line-height: 1.6;
+}
+.ce-cause {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--muted-strong);
+  text-align: right;
+}
+.ce-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  color: var(--muted);
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+.ce-result {
+  border: 1px solid var(--line);
+  color: var(--text);
+  font-weight: 500;
+}
+.ce-result.result-a {
+  background: rgba(85,153,255,.08);
+  border-color: rgba(85,153,255,.25);
+  color: var(--accent-a-soft);
+}
+.ce-result.result-b {
+  background: rgba(16,185,129,.08);
+  border-color: rgba(16,185,129,.25);
+  color: var(--accent-b-soft);
+}
+.ce-result.result-warn {
+  background: rgba(239,68,68,.08);
+  border-color: rgba(239,68,68,.25);
+  color: #fca5a5;
+}
+.ce-result.result-success {
+  background: rgba(16,185,129,.08);
+  border-color: rgba(16,185,129,.25);
+  color: var(--success-soft);
+}
+.ce-label {
+  font-size: .72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin-bottom: 4px;
+  display: block;
+}
+.ce-cause .ce-label { color: var(--muted); }
+.ce-result.result-a .ce-label { color: rgba(85,153,255,.6); }
+.ce-result.result-b .ce-label { color: rgba(16,185,129,.6); }
+
+/* ══════════════════════════════════════════════════
+   Scenario Selector
+   ══════════════════════════════════════════════════ */
+.scenario-nav {
+  display: flex; gap: 6px;
+  padding: 0 0 14px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.scenario-nav::-webkit-scrollbar { display: none; }
+.scenario-btn {
+  padding: 8px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .8rem;
+  cursor: pointer;
+  transition: background .14s, color .14s, border-color .14s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.scenario-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.scenario-btn.is-active {
+  background: rgba(10,132,255,.14);
+  color: var(--key-soft);
+  border-color: rgba(10,132,255,.3);
+}
+.scenario-desc {
+  font-size: .84rem;
+  color: var(--muted-strong);
+  margin-bottom: 10px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  line-height: 1.7;
+}
+
+/* ══════════════════════════════════════════════════
+   Before-After Split
+   ══════════════════════════════════════════════════ */
+.before-after {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  margin: 14px 0;
+}
+.ba-panel {
+  padding: 14px;
+  background: var(--surface);
+  position: relative;
+}
+.ba-panel + .ba-panel {
+  border-left: 1px solid var(--line-strong);
+}
+.ba-label {
+  font-size: .7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+.ba-label.label-before {
+  background: rgba(239,68,68,.12);
+  color: #fca5a5;
+}
+.ba-label.label-after {
+  background: rgba(16,185,129,.12);
+  color: var(--success-soft);
+}
+.ba-panel canvas { display: block; width: 100%; }
+
+/* ── Usage Grid ── */
+.usage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.usage-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 16px;
+}
+.usage-card h4 {
+  margin: 0 0 8px; font-size: .92rem;
+  color: var(--key-soft);
+}
+.usage-card ul {
+  margin: 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem;
+  line-height: 1.8;
+}
+
+/* ── Usage Card Accent Variants ── */
+.usage-card.accent-a h4 { color: var(--accent-a-soft); }
+.usage-card.accent-b h4 { color: var(--accent-b-soft); }
+
+/* ── Tip Box ── */
+.tip-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(10,132,255,.2);
+  background: rgba(10,132,255,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+}
+.tip-box strong { color: var(--key-soft); }
+
+/* ── Warn Box ── */
+.warn-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(239,68,68,.2);
+  background: rgba(239,68,68,.06);
+  padding: 14px 16px;
+  margin-top: 10px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+}
+.warn-box strong { color: #fca5a5; }
+
+/* ── Combo Section ── */
+.combo-section { margin-top: 18px; }
+.combo-section h4 {
+  margin: 0 0 10px;
+  font-size: .92rem;
+  color: var(--text);
+}
+.combo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.combo-card {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 12px 14px;
+}
+.combo-card .combo-name {
+  font-size: .86rem;
+  font-weight: 600;
+  color: var(--key-soft);
+  margin-bottom: 4px;
+}
+.combo-card .combo-desc {
+  font-size: .8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ── Section Divider ── */
+.section-divider {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 18px 0;
+}
+
+/* ── Quiz ── */
+.quiz-progress {
+  font-size: .78rem; color: var(--muted);
+  margin-bottom: 12px;
+}
+.quiz-question {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.quiz-question h4 {
+  margin: 0 0 12px; font-size: .94rem;
+}
+.quiz-option {
+  display: block; width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.025);
+  color: var(--text);
+  font: inherit; font-size: .86rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background .14s, border-color .14s;
+}
+.quiz-option:hover {
+  background: rgba(255,255,255,.06);
+  border-color: var(--line-strong);
+}
+.quiz-option.correct {
+  background: rgba(16,185,129,.12);
+  border-color: rgba(16,185,129,.4);
+  color: var(--success-soft);
+}
+.quiz-option.wrong {
+  background: rgba(239,68,68,.1);
+  border-color: rgba(239,68,68,.3);
+  color: #fca5a5;
+}
 .quiz-option:disabled { cursor: default; opacity: .85; }
-.quiz-feedback { margin-top: 8px; padding: 10px 14px; border-radius: var(--radius-sm); font-size: .84rem; display: none; }
+.quiz-feedback {
+  margin-top: 8px; padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: .84rem;
+  display: none;
+}
 .quiz-feedback.show { display: block; }
 .quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
 .quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: #fca5a5; }
-.quiz-score { text-align: center; padding: 20px; font-size: 1.1rem; font-weight: 600; }
-.quiz-retry { display: block; margin: 12px auto; padding: 10px 24px; border-radius: 999px; border: 1px solid var(--key); background: rgba(10,132,255,.12); color: var(--key-soft); font: inherit; font-size: .88rem; cursor: pointer; transition: background .14s; }
+
+.quiz-score {
+  text-align: center; padding: 20px;
+  font-size: 1.1rem; font-weight: 600;
+}
+.quiz-retry {
+  display: block; margin: 12px auto;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--key);
+  background: rgba(10,132,255,.12);
+  color: var(--key-soft);
+  font: inherit; font-size: .88rem;
+  cursor: pointer;
+  transition: background .14s;
+}
 .quiz-retry:hover { background: rgba(10,132,255,.22); }
-.doc-ref { margin-top: 16px; padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid rgba(10,132,255,.15); background: rgba(10,132,255,.04); display: flex; align-items: center; gap: 8px; }
-.doc-ref a { color: var(--key-soft); font-size: .84rem; text-decoration: none; line-height: 1.5; }
+
+/* ── Official Doc Reference ── */
+.doc-ref {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(10,132,255,.15);
+  background: rgba(10,132,255,.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-ref a {
+  color: var(--key-soft);
+  font-size: .84rem;
+  text-decoration: none;
+  line-height: 1.5;
+}
 .doc-ref a:hover { text-decoration: underline; }
+.doc-ref-list {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.doc-ref-list .doc-ref { margin-top: 0; }
+
+/* ── Responsive ── */
 @media (max-width: 600px) {
   .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
   .tabs { padding: 0 8px; }
   .tab { padding: 10px 12px; font-size: .8rem; }
   .panel { padding: 16px 12px; }
+  .ce-row { grid-template-columns: 1fr; gap: 4px; }
+  .ce-cause { text-align: left; }
+  .ce-arrow { transform: rotate(90deg); padding: 4px 0; }
+  .before-after { grid-template-columns: 1fr; }
+  .ba-panel + .ba-panel { border-left: none; border-top: 1px solid var(--line-strong); }
+  .compare-table { font-size: .78rem; }
+  .compare-table th, .compare-table td { padding: 8px 10px; }
 }
 </style>
 </head>
@@ -114,45 +583,63 @@ body { margin: 0; padding: 0; font-family: var(--font); background: var(--bg); c
 
 <!-- TAB 1: 개념 이해 -->
 <section class="panel is-active" id="panel-concept" role="tabpanel">
+  <p style="font-size:.9rem; color:var(--muted-strong); margin:0 0 14px;">
+    Viewport Shading = 3D Viewport에서 오브젝트를 어떻게 표시할지 결정하는 4가지 모드. 작업 목적에 따라 골라 쓰면 생산성이 크게 향상됩니다.
+  </p>
   <div class="concept-grid">
-
     <div class="concept-card">
-      <h3><span class="badge badge-blue">개념</span> Viewport Shading이란?</h3>
-      <p>3D Viewport에서 모델을 어떻게 표시할지 결정하는 4가지 모드예요. 작업 종류에 따라 골라 쓰면 훨씬 편해요.</p>
-      <div class="analogy">사진 편집 앱에서 원본 보기 / 필터 미리보기 / 최종 결과 보기를 전환하는 것처럼요</div>
-    </div>
-
-    <div class="concept-card">
-      <h3><span class="badge badge-amber">비교</span> 4가지 모드 비교</h3>
+      <h3><span class="badge badge-blue">개요</span> 4가지 Shading 모드</h3>
       <ul>
-        <li>🔲 Wireframe (Alt+Z): 폴리곤 구조만 표시. 내부 구조 확인용</li>
-        <li>⬜ Solid (Z → Solid): 기본 단색 표시. 모델링 작업 시 기본값</li>
-        <li>🎨 Material Preview (Z → Material): HDRI 조명으로 재질 미리보기</li>
-        <li>🖥️ Rendered (Z → Rendered): 실제 렌더 결과를 실시간 표시. 느림</li>
+        <li>Wireframe — 엣지만 표시, 토폴로지 확인용</li>
+        <li>Solid — 기본 단색 표시, 모델링 작업의 기본값</li>
+        <li>Material Preview — HDRI 조명으로 재질 미리보기</li>
+        <li>Rendered — 실제 렌더 결과 실시간 미리보기</li>
+      </ul>
+      <div class="analogy">사진 편집 앱의 원본 보기 / 필터 미리보기 / 최종 결과 보기 전환과 같습니다</div>
+    </div>
+    <div class="concept-card accent-a">
+      <h3><span class="badge badge-accent-a">단축키</span> 빠른 전환</h3>
+      <p>헤더 우측 4개 아이콘으로 클릭 전환하거나 단축키를 사용합니다.</p>
+      <ul>
+        <li><span class="kbd">Z</span> — Shading Pie Menu 열기</li>
+        <li><span class="kbd">Alt</span>+<span class="kbd">Z</span> — Wireframe 토글 (Solid ↔ Wire)</li>
+        <li>헤더 우측 구(球) 아이콘 클릭 — 현재 모드 세부 설정</li>
       </ul>
     </div>
-
-    <div class="concept-card">
-      <h3><span class="badge badge-green">설정</span> Solid 모드 서브 설정</h3>
-      <p>Solid 모드에서도 헤더 오른쪽 구 아이콘을 클릭하면 Matcap 변경, Cavity 표시, X-Ray 켜기 등 세부 설정이 가능해요.</p>
-      <div class="analogy">기본 작업등 위에 렌즈 필터를 갈아 끼우는 것처럼 형태 파악을 돕는 설정들이에요</div>
+    <div class="concept-card accent-b">
+      <h3><span class="badge badge-accent-b">설정</span> Solid 모드 옵션</h3>
+      <p>Solid 모드에서 헤더 오른쪽 드롭다운으로 세부 설정이 가능합니다.</p>
+      <ul>
+        <li>MatCap — 재질감 시뮬레이션 (조명 없이)</li>
+        <li>Color: Material / Random / Object / Single</li>
+        <li>Cavity — 폴리곤 경계 강조 표시</li>
+        <li>X-Ray — 내부 구조 투과 보기</li>
+      </ul>
     </div>
-
+    <div class="concept-card">
+      <h3><span class="badge badge-amber">비교</span> Material Preview vs Rendered</h3>
+      <p>두 모드는 외관이 비슷하지만 조명 방식이 다릅니다.</p>
+      <ul>
+        <li>Material Preview: HDRI 환경 조명 사용 (씬 조명 무시)</li>
+        <li>Rendered: 실제 씬 조명/그림자/반사 계산</li>
+        <li>Material Preview가 훨씬 빠르고 재질 작업에 충분</li>
+      </ul>
+    </div>
   </div>
 
   <div class="shortcut-list">
     <h4>주요 단축키</h4>
     <div class="shortcut-row">
       <span class="shortcut-keys"><span class="kbd">Z</span></span>
-      <span>Shading Pie Menu 열기 (4가지 중 선택)</span>
+      <span>Shading Pie Menu 열기 — 4가지 모드 선택</span>
     </div>
     <div class="shortcut-row">
       <span class="shortcut-keys"><span class="kbd">Alt</span> + <span class="kbd">Z</span></span>
       <span>Solid ↔ Wireframe 빠른 전환</span>
     </div>
     <div class="shortcut-row">
-      <span class="shortcut-keys">Header icon (구 모양)</span>
-      <span>현재 모드의 세부 설정 패널</span>
+      <span class="shortcut-keys">Header 우측 구 아이콘</span>
+      <span>현재 Shading 모드의 세부 설정 패널 열기</span>
     </div>
   </div>
 
@@ -165,38 +652,57 @@ body { margin: 0; padding: 0; font-family: var(--font); background: var(--bg); c
 
 <!-- TAB 2: 시각적 비교 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    버튼을 눌러 각 Shading 모드를 시뮬레이션해 보세요.
-  </p>
-  <div class="demo-wrap">
-    <canvas id="demoCanvas" width="680" height="300"></canvas>
-    <div class="demo-controls">
-      <button class="demo-btn is-active" data-mode="wireframe">🔲 Wireframe</button>
-      <button class="demo-btn" data-mode="solid">⬜ Solid</button>
-      <button class="demo-btn" data-mode="material">🎨 Material Preview</button>
-      <button class="demo-btn" data-mode="rendered">🖥️ Rendered</button>
-    </div>
+  <div class="scenario-nav" id="scenarioNav">
+    <button class="scenario-btn is-active" data-scene="wireframe">Wireframe</button>
+    <button class="scenario-btn" data-scene="solid">Solid</button>
+    <button class="scenario-btn" data-scene="material">Material Preview</button>
+    <button class="scenario-btn" data-scene="rendered">Rendered</button>
   </div>
-  <p class="demo-hint" id="demoDesc">폴리곤 구조(와이어프레임)만 표시합니다. 내부 구조 확인이나 루프 파악에 유용해요.</p>
+  <div class="scenario-desc" id="sceneDesc">엣지와 버텍스만 표시합니다. 내부 구조, N-Gon 확인, 루프 셀렉트에 최적입니다.</div>
+  <div class="before-after" id="baWrap">
+    <div class="ba-panel"><span class="ba-label label-before">BEFORE</span><canvas id="cvBefore" width="320" height="220"></canvas></div>
+    <div class="ba-panel"><span class="ba-label label-after">AFTER</span><canvas id="cvAfter" width="320" height="220"></canvas></div>
+  </div>
+  <div class="cause-effect" id="ceFlow"></div>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->
 <section class="panel" id="panel-when" role="tabpanel">
   <div class="usage-grid">
-    <div class="usage-card">
-      <h4>필요할 때</h4>
+    <div class="usage-card accent-a">
+      <h4>Wireframe 모드</h4>
       <ul>
-        <li>Wireframe: 안쪽 폴리곤 확인, 겹치는 면 발견, 루프 구조 파악</li>
-        <li>Solid: 모델링 / 편집의 기본 작업 모드</li>
-        <li>Material Preview: 재질/UV 작업 시 색상 확인</li>
-        <li>Rendered: 최종 결과 확인 (느리므로 주의)</li>
+        <li>N-Gon(5각형 이상 면) 탐지</li>
+        <li>메쉬 관통 선택 (뒤쪽 버텍스도 선택)</li>
+        <li>토폴로지 / 엣지 루프 리뷰</li>
+        <li>겹치는 버텍스 발견</li>
       </ul>
     </div>
     <div class="usage-card">
-      <h4>안 쓰는 경우</h4>
+      <h4>Solid 모드</h4>
       <ul>
-        <li>Rendered 모드는 모델링 중엔 성능이 느려서 비추</li>
-        <li>Wireframe만으로는 재질 확인 불가</li>
+        <li>모델링 / 편집 작업의 기본 모드</li>
+        <li>빠른 성능, 형태 명확히 확인</li>
+        <li>MatCap으로 볼륨감 시뮬레이션</li>
+        <li>Cavity ON으로 폴리곤 경계 강조</li>
+      </ul>
+    </div>
+    <div class="usage-card accent-b">
+      <h4>Material Preview 모드</h4>
+      <ul>
+        <li>텍스처 UV 배치 실시간 확인</li>
+        <li>재질 색상 / 거칠기 빠른 체크</li>
+        <li>HDRI 환경 조명 선택 가능</li>
+        <li>Shader 노드 작업 시 기본 모드</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>Rendered 모드</h4>
+      <ul>
+        <li>최종 조명 / 그림자 / 반사 확인</li>
+        <li>렌더 전 결과 예측</li>
+        <li>Compositor / 후처리 효과 미리보기</li>
+        <li>성능 주의 — 간헐적으로만 사용 권장</li>
       </ul>
     </div>
   </div>
@@ -206,17 +712,29 @@ body { margin: 0; padding: 0; font-family: var(--font); background: var(--bg); c
     <div class="combo-grid">
       <div class="combo-card">
         <div class="combo-name">Solid + Cavity ON</div>
-        <div class="combo-desc">면 사이 경계를 더 명확히 표시해서 폴리곤 구조 파악이 쉬워요</div>
+        <div class="combo-desc">면 사이 경계를 강조해 폴리곤 구조 파악이 훨씬 쉬워집니다. Solid 세부 설정에서 Cavity 체크박스 활성화.</div>
       </div>
       <div class="combo-card">
         <div class="combo-name">Material Preview + HDRI</div>
-        <div class="combo-desc">재질 작업 시 반사/조명 효과를 사전에 확인</div>
+        <div class="combo-desc">재질 작업 시 반사/조명 효과를 사전에 확인합니다. 헤더 드롭다운에서 HDRI 환경 이미지를 교체할 수 있습니다.</div>
       </div>
     </div>
   </div>
 
+  <hr class="section-divider">
+
+  <p style="font-size:.88rem; font-weight:600; color:var(--text); margin:0 0 10px;">흔한 실수</p>
+  <div class="warn-box">
+    <strong>실수 1: Rendered 모드인데 아무것도 안 보임</strong><br>
+    씬에 카메라 또는 조명이 없거나, World 설정에 배경 색상이 없는 경우입니다. 조명과 World Background 색상을 먼저 확인하세요.
+  </div>
+  <div class="warn-box">
+    <strong>실수 2: Material Preview와 실제 렌더가 다름</strong><br>
+    LookDev(Material Preview)는 HDRI 환경 조명을 사용하고, Rendered는 실제 씬 조명을 사용합니다. 최종 결과는 반드시 Rendered 모드로 확인하세요.
+  </div>
+
   <div class="tip-box">
-    <strong>팁:</strong> Alt+Z가 Wireframe 토글이에요. 모델 안쪽에 버텍스가 겹치는지 확인하거나, 내부 구조를 볼 때 가장 빠른 방법이에요.
+    <strong>팁:</strong> <span class="kbd">Alt</span>+<span class="kbd">Z</span>가 Wireframe 토글입니다. 모델 안쪽에 버텍스가 겹치는지 확인하거나, 내부 구조를 볼 때 가장 빠른 방법입니다.
   </div>
 
   <div class="doc-ref">
@@ -243,153 +761,217 @@ document.querySelectorAll(".tab").forEach(function(tab) {
     tab.classList.add("is-active");
     tab.setAttribute("aria-selected", "true");
     document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+    if (tab.dataset.tab === "visual") { initVisual(); }
   });
 });
 
-// ── Viewport Shading Canvas Demo ──────────────
-(function() {
-  var canvas = document.getElementById("demoCanvas");
-  var ctx = canvas.getContext("2d");
-  var currentMode = "wireframe";
-  var raf = null;
+// ── Canvas Helpers ─────────────────────────────
+function drawBg(ctx, w, h, bgColor) {
+  ctx.fillStyle = bgColor || "#17181a";
+  ctx.fillRect(0, 0, w, h);
+}
 
-  var modeDescriptions = {
-    wireframe: "폴리곤 구조(와이어프레임)만 표시합니다. 내부 구조 확인이나 루프 파악에 유용해요.",
-    solid:     "기본 단색 표시 모드입니다. 모델링 작업 시 기본값으로 빠르고 안정적이에요.",
-    material:  "HDRI 조명을 활용해 재질을 미리봅니다. 재질/UV 작업 시 색상과 반사를 확인해요.",
-    rendered:  "실제 렌더 결과를 실시간으로 표시합니다. 가장 정확하지만 성능을 많이 씁니다."
-  };
+function drawGrid(ctx, w, h) {
+  ctx.strokeStyle = "rgba(255,255,255,.04)";
+  ctx.lineWidth = 1;
+  for (var gx = 30; gx < w; gx += 30) {
+    ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
+  }
+  for (var gy = 30; gy < h; gy += 30) {
+    ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
+  }
+}
 
-  var modeLabels = {
-    wireframe: "Wireframe",
-    solid:     "Solid",
-    material:  "Material Preview",
-    rendered:  "Rendered"
-  };
+// Draw a sphere-like shape at center
+function drawSphereWireframe(ctx, cx, cy, r) {
+  ctx.strokeStyle = "rgba(10,132,255,.75)";
+  ctx.lineWidth = 1.2;
+  ctx.setLineDash([]);
 
-  // Sphere drawing helpers
-  function drawBackground(mode) {
-    var w = canvas.width;
-    var h = canvas.height;
+  // Outer circle
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.stroke();
 
-    if (mode === "rendered") {
-      // Gradient sky
-      var grad = ctx.createLinearGradient(0, 0, 0, h);
-      grad.addColorStop(0, "#1a1a2e");
-      grad.addColorStop(1, "#0d0d1a");
-      ctx.fillStyle = grad;
-    } else {
-      ctx.fillStyle = "#17181a";
-    }
-    ctx.fillRect(0, 0, w, h);
-
-    // Subtle grid for wireframe / solid
-    if (mode === "wireframe" || mode === "solid") {
-      ctx.strokeStyle = "rgba(255,255,255,.04)";
-      ctx.lineWidth = 1;
-      var step = 40;
-      for (var gx = step; gx < w; gx += step) {
-        ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
-      }
-      for (var gy = step; gy < h; gy += step) {
-        ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
-      }
-    }
-
-    // Floor plane for rendered
-    if (mode === "rendered") {
-      ctx.fillStyle = "rgba(255,255,255,.03)";
-      ctx.fillRect(0, h * 0.72, w, h * 0.28);
-      ctx.strokeStyle = "rgba(255,255,255,.06)";
-      ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(0, h * 0.72); ctx.lineTo(w, h * 0.72); ctx.stroke();
-    }
+  // Latitude ellipses
+  var latLines = 5;
+  for (var i = 1; i < latLines; i++) {
+    var a = (i / latLines) * Math.PI;
+    var posY = cy - r * Math.cos(a);
+    var rx = r * Math.sin(a);
+    var ry = rx * 0.35;
+    ctx.beginPath();
+    ctx.ellipse(cx, posY, rx, ry, 0, 0, Math.PI * 2);
+    ctx.stroke();
   }
 
-  function drawSphere(mode, t) {
-    var w = canvas.width;
-    var h = canvas.height;
-    var cx = w / 2;
-    var cy = h / 2 - 10;
-    var r = Math.min(w, h) * 0.28;
+  // Longitude lines
+  var lonLines = 8;
+  for (var j = 0; j < lonLines; j++) {
+    var phi = (j / lonLines) * Math.PI * 2;
+    ctx.beginPath();
+    for (var k = 0; k <= 36; k++) {
+      var theta = (k / 36) * Math.PI;
+      var sx = cx + r * Math.sin(theta) * Math.cos(phi);
+      var sy = cy - r * Math.cos(theta);
+      var depth = Math.sin(theta) * Math.sin(phi);
+      ctx.globalAlpha = depth < 0 ? 0.18 : 0.72;
+      if (k === 0) ctx.moveTo(sx, sy);
+      else ctx.lineTo(sx, sy);
+    }
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
 
-    if (mode === "wireframe") {
-      // Draw wireframe sphere: latitude / longitude lines
-      ctx.strokeStyle = "rgba(10,132,255,.75)";
-      ctx.lineWidth = 1.2;
-      ctx.setLineDash([]);
-
-      // Outer circle
-      ctx.beginPath();
-      ctx.arc(cx, cy, r, 0, Math.PI * 2);
-      ctx.stroke();
-
-      // Latitude lines (ellipses projected)
-      var latLines = 6;
-      for (var i = 1; i < latLines; i++) {
-        var angle = (i / latLines) * Math.PI;
-        var sinA = Math.sin(angle);
-        var posY = cy - r * Math.cos(angle);
-        var rx = r * sinA;
-        var ry = rx * 0.35; // perspective flatten
+  // Vertex dots
+  ctx.fillStyle = "rgba(10,132,255,.9)";
+  for (var vi = 0; vi <= latLines; vi++) {
+    var va = (vi / latLines) * Math.PI;
+    for (var vj = 0; vj < lonLines; vj++) {
+      var vp = (vj / lonLines) * Math.PI * 2;
+      var vx = cx + r * Math.sin(va) * Math.cos(vp);
+      var vy = cy - r * Math.cos(va);
+      var vd = Math.sin(va) * Math.sin(vp);
+      if (vd >= -0.1) {
         ctx.beginPath();
-        ctx.ellipse(cx, posY, rx, ry, 0, 0, Math.PI * 2);
-        ctx.stroke();
+        ctx.arc(vx, vy, 2.5, 0, Math.PI * 2);
+        ctx.fill();
       }
+    }
+  }
+}
 
-      // Longitude lines
-      var lonLines = 8;
-      for (var j = 0; j < lonLines; j++) {
-        var phi = (j / lonLines) * Math.PI * 2;
-        ctx.beginPath();
-        for (var k = 0; k <= 40; k++) {
-          var theta = (k / 40) * Math.PI;
-          var sx = cx + r * Math.sin(theta) * Math.cos(phi);
-          var sy = cy - r * Math.cos(theta);
-          // simple depth-based opacity for back-face
-          var depth = Math.sin(theta) * Math.sin(phi);
-          ctx.globalAlpha = depth < 0 ? 0.2 : 0.75;
-          if (k === 0) ctx.moveTo(sx, sy);
-          else ctx.lineTo(sx, sy);
-        }
-        ctx.stroke();
-        ctx.globalAlpha = 1;
-      }
+function drawSphereSolid(ctx, cx, cy, r) {
+  var grad = ctx.createRadialGradient(cx - r * 0.3, cy - r * 0.35, r * 0.05, cx, cy, r);
+  grad.addColorStop(0, "#c0c2c8");
+  grad.addColorStop(0.5, "#7a7c82");
+  grad.addColorStop(1, "#3a3c40");
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.fillStyle = grad;
+  ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,.12)";
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+}
 
-      // Vertex dots at intersections (sample)
-      ctx.fillStyle = "rgba(10,132,255,.9)";
-      for (var vi = 0; vi <= latLines; vi++) {
-        var vAngle = (vi / latLines) * Math.PI;
-        for (var vj = 0; vj < lonLines; vj++) {
-          var vPhi = (vj / lonLines) * Math.PI * 2;
-          var vx = cx + r * Math.sin(vAngle) * Math.cos(vPhi);
-          var vy = cy - r * Math.cos(vAngle);
-          var vDepth = Math.sin(vAngle) * Math.sin(vPhi);
-          if (vDepth >= -0.1) {
-            ctx.beginPath();
-            ctx.arc(vx, vy, 2.5, 0, Math.PI * 2);
-            ctx.fill();
-          }
-        }
-      }
+function drawSphereMaterial(ctx, cx, cy, r) {
+  var grad = ctx.createRadialGradient(cx - r * 0.38, cy - r * 0.4, r * 0.04, cx + r * 0.1, cy + r * 0.1, r * 1.05);
+  grad.addColorStop(0, "rgba(255,255,255,0.95)");
+  grad.addColorStop(0.15, "rgba(160,200,255,0.9)");
+  grad.addColorStop(0.45, "rgba(80,140,230,0.85)");
+  grad.addColorStop(0.75, "rgba(40,90,180,0.9)");
+  grad.addColorStop(1, "rgba(10,30,80,1)");
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.fillStyle = grad;
+  ctx.fill();
 
-    } else if (mode === "solid") {
-      // Flat shaded sphere with basic diffuse light
-      var grad = ctx.createRadialGradient(cx - r * 0.3, cy - r * 0.35, r * 0.05, cx, cy, r);
-      grad.addColorStop(0, "#c0c2c8");
-      grad.addColorStop(0.5, "#7a7c82");
-      grad.addColorStop(1, "#3a3c40");
-      ctx.beginPath();
-      ctx.arc(cx, cy, r, 0, Math.PI * 2);
-      ctx.fillStyle = grad;
-      ctx.fill();
+  // HDRI bloom
+  var bloom = ctx.createRadialGradient(cx - r * 0.35, cy - r * 0.38, 0, cx - r * 0.35, cy - r * 0.38, r * 0.45);
+  bloom.addColorStop(0, "rgba(255,255,255,.55)");
+  bloom.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.fillStyle = bloom;
+  ctx.fill();
 
-      // Subtle rim
-      ctx.strokeStyle = "rgba(255,255,255,.12)";
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
+  ctx.strokeStyle = "rgba(100,160,255,.35)";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+}
 
-      // Silhouette edge lines for poly feel
+function drawSphereRendered(ctx, cx, cy, r, h) {
+  var grad = ctx.createRadialGradient(cx - r * 0.32, cy - r * 0.36, r * 0.02, cx + r * 0.15, cy + r * 0.2, r * 1.1);
+  grad.addColorStop(0, "rgba(240,240,245,0.98)");
+  grad.addColorStop(0.1, "rgba(180,185,200,0.95)");
+  grad.addColorStop(0.4, "rgba(80,82,90,0.95)");
+  grad.addColorStop(0.7, "rgba(30,30,36,1)");
+  grad.addColorStop(1, "rgba(8,8,12,1)");
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // Specular
+  var spec = ctx.createRadialGradient(cx - r * 0.3, cy - r * 0.35, 0, cx - r * 0.3, cy - r * 0.35, r * 0.28);
+  spec.addColorStop(0, "rgba(255,255,255,.88)");
+  spec.addColorStop(0.5, "rgba(255,255,255,.2)");
+  spec.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.fillStyle = spec;
+  ctx.fill();
+
+  // Drop shadow
+  var shadowGrad = ctx.createRadialGradient(cx, cy + r * 0.98, 0, cx, cy + r * 0.98, r * 0.7);
+  shadowGrad.addColorStop(0, "rgba(0,0,0,.55)");
+  shadowGrad.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.save();
+  ctx.scale(1, 0.3);
+  ctx.beginPath();
+  ctx.arc(cx, (cy + r * 0.98) / 0.3, r * 0.65, 0, Math.PI * 2);
+  ctx.fillStyle = shadowGrad;
+  ctx.fill();
+  ctx.restore();
+
+  ctx.strokeStyle = "rgba(60,65,80,.7)";
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+}
+
+function labelCanvas(ctx, text, x, y, color, size) {
+  ctx.fillStyle = color || "rgba(255,255,255,.55)";
+  ctx.font = (size || "bold 11px") + " sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText(text, x, y);
+}
+
+// ── Scenario Definitions ──────────────────────
+var scenarios = {
+  wireframe: {
+    desc: "엣지와 버텍스만 표시합니다. 내부 구조, N-Gon 확인, 루프 셀렉트에 최적입니다.",
+    ce: [
+      { cause: "Solid 모드 — 표면만 보임, 내부 구조 불명확", result: "Wireframe 전환 → 모든 엣지/버텍스 노출", resultClass: "result-a" },
+      { cause: "Alt+Z 단축키 사용", result: "뒤쪽 버텍스까지 선택 가능 (관통 선택)", resultClass: "result-b" }
+    ],
+    before: function(ctx, w, h) {
+      drawBg(ctx, w, h);
+      drawGrid(ctx, w, h);
+      var cx = w / 2, cy = h / 2 - 10, r = Math.min(w, h) * 0.28;
+      drawSphereSolid(ctx, cx, cy, r);
+      labelCanvas(ctx, "Solid 모드", 8, 18, "rgba(200,200,205,.7)", "bold 11px");
+      labelCanvas(ctx, "내부 구조 보이지 않음", 8, 34, "rgba(160,160,170,.5)", "10px");
+    },
+    after: function(ctx, w, h) {
+      drawBg(ctx, w, h);
+      drawGrid(ctx, w, h);
+      var cx = w / 2, cy = h / 2 - 10, r = Math.min(w, h) * 0.28;
+      drawSphereWireframe(ctx, cx, cy, r);
+      labelCanvas(ctx, "Wireframe 모드", 8, 18, "rgba(10,132,255,.8)", "bold 11px");
+      labelCanvas(ctx, "모든 엣지 / 루프 확인 가능", 8, 34, "rgba(142,197,255,.6)", "10px");
+    }
+  },
+  solid: {
+    desc: "기본 단색으로 표시합니다. 가장 빠른 성능으로 모델링 작업의 기본 모드입니다. MatCap, Cavity 등 옵션으로 형태 파악을 강화할 수 있습니다.",
+    ce: [
+      { cause: "Wireframe 모드 — 면이 투명, 볼륨감 없음", result: "Solid 전환 → 입체적 형태 확인", resultClass: "result-a" },
+      { cause: "Cavity ON 설정", result: "폴리곤 경계 강조 → 흐름 파악 용이", resultClass: "result-b" }
+    ],
+    before: function(ctx, w, h) {
+      drawBg(ctx, w, h);
+      drawGrid(ctx, w, h);
+      var cx = w / 2, cy = h / 2 - 10, r = Math.min(w, h) * 0.28;
+      drawSphereWireframe(ctx, cx, cy, r);
+      labelCanvas(ctx, "Wireframe 모드", 8, 18, "rgba(10,132,255,.6)", "bold 11px");
+      labelCanvas(ctx, "볼륨감 없음", 8, 34, "rgba(160,160,170,.5)", "10px");
+    },
+    after: function(ctx, w, h) {
+      drawBg(ctx, w, h);
+      drawGrid(ctx, w, h);
+      var cx = w / 2, cy = h / 2 - 10, r = Math.min(w, h) * 0.28;
+      drawSphereSolid(ctx, cx, cy, r);
+      // Cavity-like edge overlay
       ctx.strokeStyle = "rgba(0,0,0,.18)";
       ctx.lineWidth = 1;
       var edgeCount = 10;
@@ -400,164 +982,117 @@ document.querySelectorAll(".tab").forEach(function(tab) {
         ctx.lineTo(cx + r * Math.cos(ea), cy + r * Math.sin(ea));
         ctx.stroke();
       }
+      labelCanvas(ctx, "Solid 모드", 8, 18, "rgba(200,200,205,.8)", "bold 11px");
+      labelCanvas(ctx, "입체적 형태, 빠른 성능", 8, 34, "rgba(200,200,205,.5)", "10px");
+    }
+  },
+  material: {
+    desc: "HDRI 조명을 사용해 재질을 미리봅니다. 씬의 실제 조명은 무시하고 환경 이미지로 조명을 시뮬레이션합니다. 재질/텍스처 작업의 기본 모드입니다.",
+    ce: [
+      { cause: "Solid 모드 — 재질 색상/반사 확인 불가", result: "Material Preview → HDRI 조명으로 재질 미리보기", resultClass: "result-a" },
+      { cause: "씬 조명 없어도 HDRI로 조명 유지", result: "텍스처 / Shader 작업 실시간 피드백", resultClass: "result-b" }
+    ],
+    before: function(ctx, w, h) {
+      drawBg(ctx, w, h);
+      drawGrid(ctx, w, h);
+      var cx = w / 2, cy = h / 2 - 10, r = Math.min(w, h) * 0.28;
+      drawSphereSolid(ctx, cx, cy, r);
+      labelCanvas(ctx, "Solid 모드", 8, 18, "rgba(200,200,205,.6)", "bold 11px");
+      labelCanvas(ctx, "재질/반사 확인 불가", 8, 34, "rgba(160,160,170,.5)", "10px");
+    },
+    after: function(ctx, w, h) {
+      drawBg(ctx, w, h);
+      drawGrid(ctx, w, h);
+      var cx = w / 2, cy = h / 2 - 10, r = Math.min(w, h) * 0.28;
+      drawSphereMaterial(ctx, cx, cy, r);
+      labelCanvas(ctx, "Material Preview (LookDev)", 8, 18, "rgba(85,153,255,.9)", "bold 11px");
+      labelCanvas(ctx, "HDRI 조명, 재질 실시간 미리보기", 8, 34, "rgba(136,187,255,.6)", "10px");
+    }
+  },
+  rendered: {
+    desc: "실제 렌더 엔진(Cycles / EEVEE)으로 실시간 미리보기합니다. 가장 정확하지만 성능이 많이 필요합니다. 최종 검토 단계에 사용합니다.",
+    ce: [
+      { cause: "Material Preview — HDRI 조명, 씬 조명 무시", result: "Rendered → 실제 씬 조명 / 그림자 / 반사 반영", resultClass: "result-a" },
+      { cause: "고성능 GPU 없이 Rendered 모드 사용", result: "뷰포트 느려짐 → 모델링 작업 효율 저하", resultClass: "result-warn" }
+    ],
+    before: function(ctx, w, h) {
+      drawBg(ctx, w, h);
+      drawGrid(ctx, w, h);
+      var cx = w / 2, cy = h / 2 - 10, r = Math.min(w, h) * 0.28;
+      drawSphereMaterial(ctx, cx, cy, r);
+      labelCanvas(ctx, "Material Preview", 8, 18, "rgba(85,153,255,.7)", "bold 11px");
+      labelCanvas(ctx, "HDRI 조명 (씬 조명 무시)", 8, 34, "rgba(136,187,255,.5)", "10px");
+    },
+    after: function(ctx, w, h) {
+      // Render-like bg
+      var bgGrad = ctx.createLinearGradient(0, 0, 0, h);
+      bgGrad.addColorStop(0, "#1a1a2e");
+      bgGrad.addColorStop(1, "#0d0d1a");
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, w, h);
+      // Floor
+      ctx.fillStyle = "rgba(255,255,255,.03)";
+      ctx.fillRect(0, h * 0.72, w, h * 0.28);
+      ctx.strokeStyle = "rgba(255,255,255,.06)";
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(0, h * 0.72); ctx.lineTo(w, h * 0.72); ctx.stroke();
 
-    } else if (mode === "material") {
-      // Colorful sphere with HDRI-like reflection
-      var pulse = 0.5 + 0.5 * Math.sin(t * 0.015);
-      var grad2 = ctx.createRadialGradient(cx - r * 0.38, cy - r * 0.4, r * 0.04, cx + r * 0.1, cy + r * 0.1, r * 1.05);
-      grad2.addColorStop(0, "rgba(255,255,255,0.95)");
-      grad2.addColorStop(0.15, "rgba(160,200,255,0.9)");
-      grad2.addColorStop(0.45, "rgba(80,140,230,0.85)");
-      grad2.addColorStop(0.75, "rgba(40,90,180,0.9)");
-      grad2.addColorStop(1, "rgba(10,30,80,1)");
-      ctx.beginPath();
-      ctx.arc(cx, cy, r, 0, Math.PI * 2);
-      ctx.fillStyle = grad2;
-      ctx.fill();
-
-      // HDRI highlight bloom
-      var bloom = ctx.createRadialGradient(cx - r * 0.35, cy - r * 0.38, 0, cx - r * 0.35, cy - r * 0.38, r * 0.45);
-      bloom.addColorStop(0, "rgba(255,255,255," + (0.55 + pulse * 0.1) + ")");
-      bloom.addColorStop(1, "rgba(255,255,255,0)");
-      ctx.beginPath();
-      ctx.arc(cx, cy, r, 0, Math.PI * 2);
-      ctx.fillStyle = bloom;
-      ctx.fill();
-
-      // Subtle color fringe from HDRI environment
-      var envGrad = ctx.createLinearGradient(cx - r, cy, cx + r, cy);
-      envGrad.addColorStop(0, "rgba(255,150,80,.12)");
-      envGrad.addColorStop(0.5, "rgba(0,0,0,0)");
-      envGrad.addColorStop(1, "rgba(80,200,255,.1)");
-      ctx.beginPath();
-      ctx.arc(cx, cy, r, 0, Math.PI * 2);
-      ctx.fillStyle = envGrad;
-      ctx.fill();
-
-      // Rim
-      ctx.strokeStyle = "rgba(100,160,255,.35)";
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-    } else if (mode === "rendered") {
-      // Deep shadow + caustic-like render
-      var pulse2 = 0.5 + 0.5 * Math.sin(t * 0.012);
-      var grad3 = ctx.createRadialGradient(cx - r * 0.32, cy - r * 0.36, r * 0.02, cx + r * 0.15, cy + r * 0.2, r * 1.1);
-      grad3.addColorStop(0, "rgba(240,240,245,0.98)");
-      grad3.addColorStop(0.1, "rgba(180,185,200,0.95)");
-      grad3.addColorStop(0.4, "rgba(80,82,90,0.95)");
-      grad3.addColorStop(0.7, "rgba(30,30,36,1)");
-      grad3.addColorStop(1, "rgba(8,8,12,1)");
-      ctx.beginPath();
-      ctx.arc(cx, cy, r, 0, Math.PI * 2);
-      ctx.fillStyle = grad3;
-      ctx.fill();
-
-      // Specular hotspot
-      var spec = ctx.createRadialGradient(cx - r * 0.3, cy - r * 0.35, 0, cx - r * 0.3, cy - r * 0.35, r * 0.28);
-      spec.addColorStop(0, "rgba(255,255,255," + (0.88 + pulse2 * 0.07) + ")");
-      spec.addColorStop(0.5, "rgba(255,255,255,.2)");
-      spec.addColorStop(1, "rgba(255,255,255,0)");
-      ctx.beginPath();
-      ctx.arc(cx, cy, r, 0, Math.PI * 2);
-      ctx.fillStyle = spec;
-      ctx.fill();
-
-      // Drop shadow on floor
-      var shadowGrad = ctx.createRadialGradient(cx, cy + r * 0.98, 0, cx, cy + r * 0.98, r * 0.7);
-      shadowGrad.addColorStop(0, "rgba(0,0,0,.55)");
-      shadowGrad.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.save();
-      ctx.scale(1, 0.3);
-      ctx.beginPath();
-      ctx.arc(cx, (cy + r * 0.98) / 0.3, r * 0.65, 0, Math.PI * 2);
-      ctx.fillStyle = shadowGrad;
-      ctx.fill();
-      ctx.restore();
-
-      // Rim light from back
-      var rimGrad = ctx.createRadialGradient(cx + r * 0.72, cy + r * 0.4, r * 0.1, cx + r * 0.72, cy + r * 0.4, r * 0.55);
-      rimGrad.addColorStop(0, "rgba(140,180,255,.4)");
-      rimGrad.addColorStop(1, "rgba(140,180,255,0)");
-      ctx.beginPath();
-      ctx.arc(cx, cy, r, 0, Math.PI * 2);
-      ctx.fillStyle = rimGrad;
-      ctx.fill();
-
-      // Outline
-      ctx.strokeStyle = "rgba(60,65,80,.7)";
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
+      var cx = w / 2, cy = h / 2 - 10, r = Math.min(w, h) * 0.28;
+      drawSphereRendered(ctx, cx, cy, r, h);
+      labelCanvas(ctx, "Rendered 모드", 8, 18, "rgba(245,158,11,.8)", "bold 11px");
+      labelCanvas(ctx, "실제 조명 / 그림자 / 반사", 8, 34, "rgba(251,191,36,.5)", "10px");
     }
   }
+};
 
-  function drawModeLabel(mode) {
-    var w = canvas.width;
-    var h = canvas.height;
-    ctx.font = "bold 13px sans-serif";
-    ctx.textAlign = "left";
-    ctx.fillStyle = "rgba(255,255,255,.55)";
-    ctx.fillText(modeLabels[mode], 14, 22);
+var currentScene = "wireframe";
 
-    // Mode indicator dots
-    var modes = ["wireframe", "solid", "material", "rendered"];
-    var dotColors = {
-      wireframe: "rgba(10,132,255,.8)",
-      solid:     "rgba(200,200,205,.8)",
-      material:  "rgba(10,132,255,.8)",
-      rendered:  "rgba(245,158,11,.8)"
-    };
-    modes.forEach(function(m, i) {
-      ctx.beginPath();
-      ctx.arc(w - 20 - i * 18, 14, 5, 0, Math.PI * 2);
-      ctx.fillStyle = m === mode ? dotColors[m] : "rgba(255,255,255,.15)";
-      ctx.fill();
-    });
-  }
-
-  var tick = 0;
-  function render() {
-    tick++;
-    var w = canvas.width;
-    var h = canvas.height;
-    ctx.clearRect(0, 0, w, h);
-    drawBackground(currentMode);
-    drawSphere(currentMode, tick);
-    drawModeLabel(currentMode);
-    raf = requestAnimationFrame(render);
-  }
-
-  // Only animate material/rendered; freeze for wireframe/solid
-  var needsAnim = { wireframe: false, solid: false, material: true, rendered: true };
-
-  function startOrDraw() {
-    if (raf) { cancelAnimationFrame(raf); raf = null; }
-    if (needsAnim[currentMode]) {
-      render();
-    } else {
-      tick = 0;
-      var w = canvas.width; var h = canvas.height;
-      ctx.clearRect(0, 0, w, h);
-      drawBackground(currentMode);
-      drawSphere(currentMode, tick);
-      drawModeLabel(currentMode);
-    }
-  }
-
-  // Mode buttons
-  document.querySelectorAll(".demo-btn[data-mode]").forEach(function(btn) {
-    btn.addEventListener("click", function() {
-      document.querySelectorAll(".demo-btn[data-mode]").forEach(function(b) { b.classList.remove("is-active"); });
-      btn.classList.add("is-active");
-      currentMode = btn.dataset.mode;
-      document.getElementById("demoDesc").textContent = modeDescriptions[currentMode];
-      startOrDraw();
-    });
+function buildCauseEffect(ceData) {
+  var container = document.getElementById("ceFlow");
+  while (container.firstChild) container.removeChild(container.firstChild);
+  ceData.forEach(function(item) {
+    var row = document.createElement("div"); row.className = "ce-row";
+    var cause = document.createElement("div"); cause.className = "ce-cause";
+    var lbl = document.createElement("span"); lbl.className = "ce-label"; lbl.textContent = "원인";
+    cause.appendChild(lbl); cause.appendChild(document.createTextNode(item.cause));
+    row.appendChild(cause);
+    var arr = document.createElement("div"); arr.className = "ce-arrow"; arr.textContent = "→"; row.appendChild(arr);
+    var res = document.createElement("div"); res.className = "ce-result " + item.resultClass;
+    var rLbl = document.createElement("span"); rLbl.className = "ce-label"; rLbl.textContent = "결과";
+    res.appendChild(rLbl); res.appendChild(document.createTextNode(item.result));
+    row.appendChild(res);
+    container.appendChild(row);
   });
+}
 
-  // Initial draw
-  startOrDraw();
-})();
+function renderBAPanels(scene) {
+  var cvB = document.getElementById("cvBefore");
+  var cvA = document.getElementById("cvAfter");
+  scene.before(cvB.getContext("2d"), cvB.width, cvB.height);
+  scene.after(cvA.getContext("2d"), cvA.width, cvA.height);
+}
+
+function switchScenario(key) {
+  currentScene = key;
+  var scene = scenarios[key];
+  document.getElementById("sceneDesc").textContent = scene.desc;
+  document.querySelectorAll(".scenario-btn").forEach(function(b) {
+    b.classList.toggle("is-active", b.dataset.scene === key);
+  });
+  renderBAPanels(scene);
+  buildCauseEffect(scene.ce);
+}
+
+document.querySelectorAll(".scenario-btn").forEach(function(btn) {
+  btn.addEventListener("click", function() { switchScenario(btn.dataset.scene); });
+  btn.addEventListener("touchend", function(e) { e.preventDefault(); switchScenario(btn.dataset.scene); });
+});
+
+var visualInited = false;
+function initVisual() {
+  switchScenario(currentScene);
+  visualInited = true;
+}
 
 // ── Quiz Engine (Safe DOM methods) ────────────
 function initQuiz(questions) {
@@ -684,28 +1219,39 @@ function initQuiz(questions) {
 // ── Quiz Data ─────────────────────────────────
 initQuiz([
   {
-    question: "재질 작업 중 실시간으로 색상과 조명 효과를 확인하기 가장 좋은 모드는?",
+    question: "재질 작업 중 실시간으로 색상과 반사를 확인하기 가장 좋은 모드는?",
     options: ["Wireframe", "Solid", "Material Preview", "Rendered"],
     answer: 2,
-    explanation: "Material Preview는 HDRI 환경 조명을 사용해 재질을 빠르게 미리볼 수 있어요. Rendered보다 훨씬 빠르고 충분히 정확해요."
+    explanation: "Material Preview(LookDev)는 HDRI 환경 조명을 사용해 재질을 빠르게 미리볼 수 있습니다. Rendered보다 훨씬 빠르고 재질/텍스처 확인에 충분히 정확합니다."
   },
   {
     question: "Viewport Shading Pie Menu를 여는 단축키는?",
     options: ["Z", "Shift+Z", "Alt+Z", "Ctrl+Z"],
     answer: 0,
-    explanation: "Z 키를 누르면 4가지 Shading 모드를 선택하는 Pie Menu가 열려요."
+    explanation: "Z 키를 누르면 4가지 Shading 모드를 선택하는 Pie Menu가 열립니다. Alt+Z는 Wireframe 토글입니다."
   },
   {
     question: "Solid 모드에서 Alt+Z를 누르면?",
     options: ["Rendered 모드로 전환", "Wireframe 모드로 전환", "Material Preview로 전환", "X-Ray 설정 패널 열기"],
     answer: 1,
-    explanation: "Alt+Z는 Solid ↔ Wireframe을 빠르게 전환해요. 모델 내부 구조를 빠르게 확인할 때 자주 써요."
+    explanation: "Alt+Z는 Solid ↔ Wireframe을 빠르게 전환합니다. 모델 내부 구조를 확인하거나 관통 선택 시 자주 사용합니다."
   },
   {
-    question: "모델링 작업의 기본 모드로 가장 적합한 것은?",
-    options: ["Wireframe", "Solid", "Material Preview", "Rendered"],
+    question: "Material Preview와 Rendered 모드의 차이점은?",
+    options: [
+      "Material Preview가 더 정확한 결과를 보여준다",
+      "Rendered는 HDRI 조명을 사용한다",
+      "Material Preview는 씬 조명을 무시하고 HDRI를 사용한다",
+      "둘의 결과는 항상 동일하다"
+    ],
+    answer: 2,
+    explanation: "Material Preview는 HDRI 환경 조명을 사용하고 씬의 실제 조명을 무시합니다. Rendered는 씬의 실제 조명, 그림자, 반사를 계산합니다."
+  },
+  {
+    question: "Rendered 모드에서 아무것도 보이지 않는 가장 흔한 원인은?",
+    options: ["GPU 드라이버 문제", "씬에 카메라 또는 조명이 없음", "메쉬 스케일 문제", "UV가 없는 오브젝트"],
     answer: 1,
-    explanation: "Solid 모드가 기본 모델링 작업에 적합해요. 빠르고 안정적이며 형태를 명확히 볼 수 있어요."
+    explanation: "씬에 조명이 없거나 World Background 설정이 비어 있으면 Rendered 모드에서 아무것도 보이지 않습니다. 조명 추가 또는 World 배경 색상을 설정하세요."
   }
 ]);
 </script>

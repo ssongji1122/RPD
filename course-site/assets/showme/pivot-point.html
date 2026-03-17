@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Show Me — Pivot Point 이해</title>
+<title>Show Me — Pivot Point</title>
 <style>
 /* ══════════════════════════════════════════════════
    Show Me Widget — Standalone Dark Theme
@@ -30,75 +30,410 @@
   --radius-md:     18px;
   --radius-lg:     24px;
   --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+  /* Pivot Point 색상 오버라이드 */
+  --accent-a: #FF8C00;   /* Individual/Median 색상 */
+  --accent-b: #5599FF;   /* 3D Cursor 색상 */
 }
+
+/* ── Reset ── */
 *, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; padding: 0; font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; }
-.tabs { display: flex; gap: 0; border-bottom: 1px solid var(--line); padding: 0 16px; background: var(--bg-soft); overflow-x: auto; -webkit-overflow-scrolling: touch; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Tab Navigation ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
 .tabs::-webkit-scrollbar { display: none; }
-.tab { padding: 12px 16px; font-size: .84rem; font-weight: 500; color: var(--muted); cursor: pointer; border: none; border-bottom: 2px solid transparent; white-space: nowrap; transition: color .14s, border-color .14s; background: none; font-family: inherit; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
 .tab:hover { color: var(--muted-strong); }
-.tab.is-active { color: var(--key-soft); border-bottom-color: var(--key); }
+.tab.is-active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+
+/* ── Tab Panels ── */
 .panel { display: none; padding: 20px 16px; }
 .panel.is-active { display: block; }
-.concept-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
-.concept-card { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); padding: 18px; }
-.concept-card h3 { margin: 0 0 8px; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
-.concept-card p { margin: 0; color: var(--muted-strong); font-size: .88rem; line-height: 1.7; }
-.concept-card ul { margin: 8px 0 0; padding-left: 16px; color: var(--muted-strong); font-size: .85rem; line-height: 1.8; }
-.badge { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: .72rem; font-weight: 600; }
+
+/* ── Concept Cards ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card h3 {
+  margin: 0 0 8px; font-size: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.concept-card p {
+  margin: 0; color: var(--muted-strong);
+  font-size: .88rem; line-height: 1.7;
+}
+.concept-card ul {
+  margin: 8px 0 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
+}
+
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: .72rem; font-weight: 600;
+}
 .badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
 .badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
 .badge-amber { background: rgba(245,158,11,.15);  color: #fbbf24; }
-.badge-red   { background: rgba(239,68,68,.15);   color: #fca5a5; }
-.kbd { display: inline-block; padding: 3px 8px; border-radius: 6px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); color: var(--key-soft); font-size: .82rem; font-weight: 600; font-family: var(--font); }
-.demo-wrap { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); overflow: hidden; margin: 14px 0; }
-.demo-wrap canvas { display: block; width: 100%; }
-.demo-controls { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--line); flex-wrap: wrap; }
-.demo-hint { font-size: .78rem; color: var(--muted); text-align: center; padding: 6px 0 0; }
-.demo-btn { padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line-strong); background: rgba(255,255,255,.04); color: var(--muted-strong); font: inherit; font-size: .82rem; cursor: pointer; transition: background .14s, color .14s; }
-.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
-.demo-btn.is-active { background: rgba(10,132,255,.14); color: var(--key-soft); border-color: rgba(10,132,255,.3); }
-.usage-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.usage-card { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); padding: 16px; }
-.usage-card h4 { margin: 0 0 8px; font-size: .92rem; color: var(--key-soft); }
-.usage-card ul { margin: 0; padding-left: 16px; color: var(--muted-strong); font-size: .85rem; line-height: 1.8; }
-.tip-box { border-radius: var(--radius-md); border: 1px solid rgba(10,132,255,.2); background: rgba(10,132,255,.06); padding: 14px 16px; margin-top: 14px; font-size: .86rem; color: var(--muted-strong); }
+.badge-orange { background: rgba(255,140,0,.15); color: #FFB347; }
+
+/* ── Keyboard Shortcut ── */
+.kbd {
+  display: inline-block;
+  padding: 3px 8px; border-radius: 6px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  color: var(--key-soft);
+  font-size: .82rem; font-weight: 600;
+  font-family: var(--font);
+}
+
+/* ── Shortcut Row ── */
+.shortcut-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: .88rem;
+}
+.shortcut-row:last-child { border-bottom: none; }
+.shortcut-desc { color: var(--muted-strong); }
+
+/* ── Scenario Nav ── */
+.scenario-nav {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.scenario-btn {
+  padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .82rem;
+  cursor: pointer;
+  transition: background .14s, color .14s, border-color .14s;
+}
+.scenario-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.scenario-btn.is-active {
+  background: rgba(255,140,0,.14);
+  color: #FFB347;
+  border-color: rgba(255,140,0,.35);
+}
+
+/* ── Scenario Description ── */
+.scenario-desc {
+  font-size: .86rem;
+  color: var(--muted-strong);
+  margin-bottom: 14px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  min-height: 44px;
+}
+
+/* ── Before / After ── */
+.before-after {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.ba-panel {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+  position: relative;
+}
+.ba-panel canvas {
+  display: block; width: 100%;
+}
+.ba-label {
+  position: absolute; top: 8px; left: 8px;
+  font-size: .7rem; font-weight: 700;
+  padding: 2px 8px; border-radius: 999px;
+  letter-spacing: .05em;
+}
+.label-before {
+  background: rgba(161,161,170,.15);
+  color: var(--muted);
+}
+.label-after {
+  background: rgba(110,231,183,.15);
+  color: var(--success-soft);
+}
+
+/* ── Cause-Effect ── */
+.ce-row {
+  display: flex; align-items: flex-start; gap: 10px;
+  margin-bottom: 10px;
+  font-size: .85rem;
+}
+.ce-cause, .ce-result {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  line-height: 1.6;
+}
+.ce-cause {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--muted-strong);
+}
+.ce-arrow {
+  font-size: 1.1rem; color: var(--muted);
+  padding-top: 10px; flex-shrink: 0;
+}
+.ce-result {
+  border: 1px solid var(--line);
+}
+.result-a {
+  background: rgba(110,231,183,.07);
+  border-color: rgba(110,231,183,.2);
+  color: var(--success-soft);
+}
+.result-b {
+  background: rgba(85,153,255,.07);
+  border-color: rgba(85,153,255,.2);
+  color: #8ec5ff;
+}
+.ce-label {
+  display: inline-block;
+  font-size: .68rem; font-weight: 700;
+  padding: 1px 6px; border-radius: 4px;
+  background: rgba(255,255,255,.07);
+  color: var(--muted);
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+/* ── Usage Grid ── */
+.usage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.usage-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 16px;
+}
+.usage-card h4 {
+  margin: 0 0 8px; font-size: .92rem;
+  color: var(--key-soft);
+}
+.usage-card ul {
+  margin: 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem;
+  line-height: 1.8;
+}
+
+/* ── Combo Grid ── */
+.combo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+.combo-card {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 12px 14px;
+  font-size: .84rem;
+}
+.combo-card .combo-keys {
+  display: flex; align-items: center; gap: 6px;
+  margin-bottom: 6px;
+}
+.combo-card p {
+  margin: 0;
+  color: var(--muted-strong);
+  font-size: .82rem;
+  line-height: 1.6;
+}
+
+/* ── Tip Box ── */
+.tip-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(10,132,255,.2);
+  background: rgba(10,132,255,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+}
 .tip-box strong { color: var(--key-soft); }
-.combo-section { margin-top: 18px; }
-.combo-section h4 { margin: 0 0 10px; font-size: .92rem; color: var(--text); }
-.combo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.combo-card { border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--surface); padding: 12px 14px; }
-.combo-card .combo-name { font-size: .86rem; font-weight: 600; color: var(--key-soft); margin-bottom: 4px; }
-.combo-card .combo-desc { font-size: .8rem; color: var(--muted); line-height: 1.5; }
-.shortcut-list { margin-top: 16px; padding: 14px 16px; border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); }
-.shortcut-list h4 { margin: 0 0 10px; font-size: .9rem; color: var(--text); }
-.shortcut-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-size: .84rem; color: var(--muted-strong); }
-.shortcut-row + .shortcut-row { border-top: 1px solid var(--line); }
-.shortcut-keys { flex-shrink: 0; }
-.analogy { margin-top: 8px; padding: 10px 14px; border-radius: var(--radius-sm); background: rgba(245,158,11,.06); border: 1px solid rgba(245,158,11,.15); font-size: .82rem; color: #fbbf24; font-style: italic; }
-.quiz-progress { font-size: .78rem; color: var(--muted); margin-bottom: 12px; }
-.quiz-question { margin-bottom: 20px; padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); }
-.quiz-question h4 { margin: 0 0 12px; font-size: .94rem; }
-.quiz-option { display: block; width: 100%; padding: 10px 14px; margin-bottom: 6px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: rgba(255,255,255,.025); color: var(--text); font: inherit; font-size: .86rem; cursor: pointer; text-align: left; transition: background .14s, border-color .14s; }
-.quiz-option:hover { background: rgba(255,255,255,.06); border-color: var(--line-strong); }
-.quiz-option.correct { background: rgba(16,185,129,.12); border-color: rgba(16,185,129,.4); color: var(--success-soft); }
-.quiz-option.wrong { background: rgba(239,68,68,.1); border-color: rgba(239,68,68,.3); color: #fca5a5; }
+
+/* ── Quiz ── */
+.quiz-progress {
+  font-size: .78rem; color: var(--muted);
+  margin-bottom: 12px;
+}
+.quiz-question {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.quiz-question h4 {
+  margin: 0 0 12px; font-size: .94rem;
+}
+.quiz-option {
+  display: block; width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.025);
+  color: var(--text);
+  font: inherit; font-size: .86rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background .14s, border-color .14s;
+}
+.quiz-option:hover {
+  background: rgba(255,255,255,.06);
+  border-color: var(--line-strong);
+}
+.quiz-option.correct {
+  background: rgba(16,185,129,.12);
+  border-color: rgba(16,185,129,.4);
+  color: var(--success-soft);
+}
+.quiz-option.wrong {
+  background: rgba(239,68,68,.1);
+  border-color: rgba(239,68,68,.3);
+  color: #fca5a5;
+}
 .quiz-option:disabled { cursor: default; opacity: .85; }
-.quiz-feedback { margin-top: 8px; padding: 10px 14px; border-radius: var(--radius-sm); font-size: .84rem; display: none; }
+.quiz-feedback {
+  margin-top: 8px; padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: .84rem;
+  display: none;
+}
 .quiz-feedback.show { display: block; }
 .quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
 .quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: #fca5a5; }
-.quiz-score { text-align: center; padding: 20px; font-size: 1.1rem; font-weight: 600; }
-.quiz-retry { display: block; margin: 12px auto; padding: 10px 24px; border-radius: 999px; border: 1px solid var(--key); background: rgba(10,132,255,.12); color: var(--key-soft); font: inherit; font-size: .88rem; cursor: pointer; transition: background .14s; }
+
+.quiz-score {
+  text-align: center; padding: 20px;
+  font-size: 1.1rem; font-weight: 600;
+}
+.quiz-retry {
+  display: block; margin: 12px auto;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--key);
+  background: rgba(10,132,255,.12);
+  color: var(--key-soft);
+  font: inherit; font-size: .88rem;
+  cursor: pointer;
+  transition: background .14s;
+}
 .quiz-retry:hover { background: rgba(10,132,255,.22); }
-.doc-ref { margin-top: 16px; padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid rgba(10,132,255,.15); background: rgba(10,132,255,.04); display: flex; align-items: center; gap: 8px; }
-.doc-ref a { color: var(--key-soft); font-size: .84rem; text-decoration: none; line-height: 1.5; }
+
+/* ── Official Doc Reference ── */
+.doc-ref {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(10,132,255,.15);
+  background: rgba(10,132,255,.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-ref a {
+  color: var(--key-soft);
+  font-size: .84rem;
+  text-decoration: none;
+  line-height: 1.5;
+}
 .doc-ref a:hover { text-decoration: underline; }
+
+/* ── Comparison Table ── */
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 14px;
+  font-size: .84rem;
+}
+.compare-table thead { background: rgba(10,132,255,.06); }
+.compare-table th {
+  padding: 10px 14px; text-align: left;
+  color: var(--muted-strong); font-weight: 600;
+  font-size: .78rem; letter-spacing: .03em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--line-strong);
+}
+.compare-table td {
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted-strong); line-height: 1.6;
+}
+.compare-table tr:last-child td { border-bottom: none; }
+.compare-table tr:hover td { background: rgba(255,255,255,.02); }
+
+/* ── Section Divider ── */
+.section-divider {
+  margin: 20px 0 16px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--line);
+  font-size: .92rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* ── Responsive ── */
 @media (max-width: 600px) {
-  .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
+  .concept-grid, .usage-grid, .before-after, .combo-grid { grid-template-columns: 1fr; }
   .tabs { padding: 0 8px; }
   .tab { padding: 10px 12px; font-size: .8rem; }
   .panel { padding: 16px 12px; }
+  .compare-table { font-size: .78rem; }
+  .compare-table th, .compare-table td { padding: 6px 10px; }
+  .ce-row { flex-direction: column; }
+  .ce-arrow { padding-top: 0; align-self: center; }
 }
 </style>
 </head>
@@ -106,117 +441,195 @@ body { margin: 0; padding: 0; font-family: var(--font); background: var(--bg); c
 
 <!-- Tab Bar -->
 <nav class="tabs" role="tablist">
-  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
-  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
-  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
-  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+  <button class="tab is-active" data-tab="concept" role="tab">개념</button>
+  <button class="tab" data-tab="visual" role="tab">시각화</button>
+  <button class="tab" data-tab="when" role="tab">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab">퀴즈</button>
 </nav>
 
-<!-- TAB 1: 개념 이해 -->
+<!-- TAB 1: 개념 -->
 <section class="panel is-active" id="panel-concept" role="tabpanel">
+  <p style="font-size:.9rem; color:var(--muted-strong); margin:0 0 6px;">
+    Pivot Point는 회전(R)과 스케일(S) 변환의 '기준점'이에요. 어디를 중심으로 돌리느냐에 따라 완전히 다른 결과가 나옵니다.
+  </p>
+  <div class="shortcut-row" style="margin-bottom:14px; border:1px solid var(--line); border-radius:var(--radius-sm); padding:10px 14px; background:var(--surface);">
+    <span class="kbd">.</span>
+    <span class="shortcut-desc">Pivot Point 파이 메뉴 열기 (마침표)</span>
+  </div>
+
   <div class="concept-grid">
     <div class="concept-card">
-      <h3><span class="badge badge-blue">기본 개념</span> Pivot Point란?</h3>
-      <p>R(회전)이나 S(크기)를 할 때 '어느 점을 기준으로 돌릴지' 정하는 설정이에요. 같은 R키를 눌러도 Pivot이 오브젝트 자체냐 중앙이냐에 따라 결과가 완전히 달라요.</p>
-      <div class="analogy">회전목마를 중심축으로 돌리는지, 의자 자체를 뱅글뱅글 돌리는지의 차이예요</div>
+      <h3><span class="badge badge-orange">기본 개념</span> Pivot Point란?</h3>
+      <p>
+        회전(R)이나 스케일(S) 변환을 할 때 '어느 지점을 중심으로 움직일지' 결정하는 기준점입니다.<br><br>
+        마치 문이 열릴 때 경첩이 기준인 것처럼, Pivot Point를 어디에 두느냐에 따라 오브젝트의 움직임이 완전히 달라집니다.
+      </p>
     </div>
     <div class="concept-card">
-      <h3><span class="badge badge-amber">종류</span> 5가지 Pivot 종류</h3>
+      <h3><span class="badge badge-blue">6가지 옵션</span></h3>
       <ul>
-        <li><strong>Median Point</strong>: 선택된 것들의 평균 중심 (기본값)</li>
-        <li><strong>Individual Origins</strong>: 각각 자기 원점을 기준으로 회전/크기</li>
-        <li><strong>Active Element</strong>: 마지막으로 선택한 것이 기준</li>
-        <li><strong>3D Cursor</strong>: 3D Cursor 위치를 기준으로</li>
-        <li><strong>Bounding Box Center</strong>: 선택 영역 전체 바운딩 박스 중심</li>
+        <li><strong>Bounding Box Center</strong> — 선택 영역 전체 박스의 중심</li>
+        <li><strong>3D Cursor</strong> — 커서 위치를 기준점으로 사용</li>
+        <li><strong>Individual Origins</strong> — 각 오브젝트의 Origin 기준</li>
+        <li><strong>Median Point</strong> — 선택 오브젝트들의 평균 중심</li>
+        <li><strong>Active Element</strong> — 마지막 선택 오브젝트 기준</li>
+        <li><strong>Each Object</strong> — 편집 모드에서 각 오브젝트 개별</li>
       </ul>
     </div>
-    <div class="concept-card">
-      <h3><span class="badge badge-red">주의</span> Individual Origins 주의</h3>
-      <p>여러 오브젝트를 동시에 S(크기)로 줄이면, Median Point에서는 서로 모이고 Individual Origins에서는 각자 제자리에서 줄어요. 의도에 맞게 선택해야 해요.</p>
-      <div class="analogy">Median: 여러 풍선을 한 점으로 모아서 동시에 줄이기 / Individual: 각 풍선이 자기 위치에서 줄기</div>
-    </div>
   </div>
 
-  <div class="shortcut-list">
-    <h4>주요 단축키</h4>
-    <div class="shortcut-row">
-      <span class="shortcut-keys"><span class="kbd">.</span></span>
-      <span>Pivot Point 메뉴 열기 (마침표)</span>
-    </div>
-    <div class="shortcut-row">
-      <span class="shortcut-keys">Header Dropdown</span>
-      <span>3D Viewport 상단 점 아이콘 클릭</span>
-    </div>
-    <div class="shortcut-row">
-      <span class="shortcut-keys"><span class="kbd">Shift</span> + <span class="kbd">S</span></span>
-      <span>3D Cursor를 원점/선택 위치로 이동 (Pivot용 위치 설정)</span>
-    </div>
-  </div>
+  <div class="section-divider" style="margin-top:22px;">주요 옵션 비교</div>
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>옵션</th>
+        <th>기준</th>
+        <th>회전 시 동작</th>
+        <th>대표 용도</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Median Point</strong></td>
+        <td>선택 오브젝트들의 평균 중심</td>
+        <td>모든 오브젝트가 공통 중간점을 중심으로 함께 공전</td>
+        <td>그룹 전체를 한꺼번에 회전</td>
+      </tr>
+      <tr>
+        <td><strong>Individual Origins</strong></td>
+        <td>각 오브젝트 자신의 Origin</td>
+        <td>각 오브젝트가 제자리에서 개별 회전</td>
+        <td>여러 문/바퀴를 각자 돌릴 때</td>
+      </tr>
+      <tr>
+        <td><strong>Active Element</strong></td>
+        <td>마지막 선택(밝게 빛나는) 오브젝트</td>
+        <td>나머지가 Active 오브젝트 주위를 공전</td>
+        <td>특정 오브젝트 기준으로 배치 시</td>
+      </tr>
+    </tbody>
+  </table>
 
   <div class="doc-ref">
+    <span>📄</span>
     <a href="https://docs.blender.org/manual/en/latest/editors/3dview/controls/pivot_point/index.html" target="_blank" rel="noopener">
-      📖 Blender 공식 문서 — Pivot Point
+      공식 문서 — Blender Manual: Pivot Point
     </a>
   </div>
 </section>
 
-<!-- TAB 2: 시각적 비교 -->
+<!-- TAB 2: 시각화 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    버튼을 눌러 Pivot Point에 따라 회전이 어떻게 달라지는지 확인해보세요.
-  </p>
-  <div class="demo-wrap">
-    <canvas id="demoCanvas" width="680" height="300"></canvas>
-    <div class="demo-controls">
-      <button class="demo-btn is-active" id="btnMedian">Median Point</button>
-      <button class="demo-btn" id="btnIndividual">Individual Origins</button>
-    </div>
+  <div class="scenario-nav" id="scenarioNav">
+    <button class="scenario-btn is-active" data-scene="individual">Individual Origins</button>
+    <button class="scenario-btn" data-scene="median">Median Point</button>
+    <button class="scenario-btn" data-scene="cursor">3D Cursor</button>
   </div>
-  <p class="demo-hint">회전 기준점이 원으로 표시됩니다. 두 모드를 번갈아 눌러 차이를 확인하세요.</p>
+  <div class="scenario-desc" id="sceneDesc"></div>
+  <div class="before-after" id="baWrap">
+    <div class="ba-panel"><span class="ba-label label-before">BEFORE</span><canvas id="cvBefore" width="320" height="220"></canvas></div>
+    <div class="ba-panel"><span class="ba-label label-after">AFTER (회전)</span><canvas id="cvAfter" width="320" height="220"></canvas></div>
+  </div>
+  <div class="cause-effect" id="ceFlow"></div>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->
 <section class="panel" id="panel-when" role="tabpanel">
   <div class="usage-grid">
     <div class="usage-card">
-      <h4>Pivot이 필요할 때</h4>
+      <h4>Individual Origins — 문 여닫기</h4>
       <ul>
-        <li>여러 오브젝트를 각자 자기 위치에서 크기 조절 (Individual Origins)</li>
-        <li>특정 지점 기준으로 배열/회전 (3D Cursor)</li>
-        <li>오브젝트 그룹의 중심으로 돌리기 (Median Point)</li>
+        <li>여러 문을 선택 후 R 로 회전</li>
+        <li>각 문이 자신의 경첩(Origin) 기준 회전</li>
+        <li>Origin을 경첩 위치에 미리 배치해두는 게 핵심</li>
       </ul>
     </div>
     <div class="usage-card">
-      <h4>잘 안 쓰는 경우</h4>
+      <h4>3D Cursor — 행성 공전</h4>
       <ul>
-        <li>단일 오브젝트 변형 (큰 차이 없음)</li>
-        <li>기본 이동 작업</li>
+        <li>3D Cursor를 태양 위치에 배치 (Shift+RMB)</li>
+        <li>행성 선택 → Pivot: 3D Cursor → R</li>
+        <li>행성이 태양 주위를 공전하는 효과</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>Median Point — 그룹 회전</h4>
+      <ul>
+        <li>여러 오브젝트 선택 후 R</li>
+        <li>선택 군집 전체가 공통 중간점 기준으로 함께 회전</li>
+        <li>오브젝트들의 상대 위치가 유지됨</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>Active Element — 기준 오브젝트 설정</h4>
+      <ul>
+        <li>기준이 될 오브젝트를 마지막에 선택 (밝게 빛남)</li>
+        <li>Pivot: Active Element → R</li>
+        <li>나머지 오브젝트들이 Active 주위를 공전</li>
       </ul>
     </div>
   </div>
 
-  <div class="combo-section">
-    <h4>자주 쓰는 조합</h4>
-    <div class="combo-grid">
-      <div class="combo-card">
-        <div class="combo-name">3D Cursor + Pivot</div>
-        <div class="combo-desc">Shift+S → Cursor to World Origin 후 Pivot을 3D Cursor로 → 원점 기준 회전/크기</div>
+  <div class="section-divider">흔한 실수와 해결법</div>
+  <div id="whenCeFlow">
+    <div class="ce-row">
+      <div class="ce-cause">
+        <span class="ce-label">상황</span>R로 회전했는데 오브젝트가 화면 밖으로 날아감
       </div>
-      <div class="combo-card">
-        <div class="combo-name">Individual Origins + Scale</div>
-        <div class="combo-desc">Edit Mode에서 여러 면을 선택하고 각자 법선 방향으로 Inset하기</div>
+      <div class="ce-arrow">→</div>
+      <div class="ce-result result-b">
+        <span class="ce-label">원인/해결</span>Pivot이 3D Cursor이고 커서가 멀리 있었기 때문. <strong>Shift+C</strong>로 커서를 원점 리셋 후 재시도
       </div>
+    </div>
+    <div class="ce-row">
+      <div class="ce-cause">
+        <span class="ce-label">상황</span>여러 오브젝트를 같이 회전했는데 이상하게 뭉쳐짐
+      </div>
+      <div class="ce-arrow">→</div>
+      <div class="ce-result result-a">
+        <span class="ce-label">원인/해결</span>Pivot이 Median Point였기 때문. <strong>Individual Origins</strong>로 변경하면 각자 제자리에서 개별 회전
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider">단축키 조합 팁</div>
+  <div class="combo-grid">
+    <div class="combo-card">
+      <div class="combo-keys">
+        <span class="kbd">.</span>
+        <span style="color:var(--muted); font-size:.8rem;">+</span>
+        <span class="kbd">R</span>
+      </div>
+      <p>파이 메뉴에서 Pivot 선택 후 즉시 회전 — 작업 흐름 단축</p>
+    </div>
+    <div class="combo-card">
+      <div class="combo-keys">
+        <span class="kbd">.</span>
+        <span style="color:var(--muted); font-size:.8rem;">+</span>
+        <span class="kbd">S</span>
+      </div>
+      <p>Pivot 기준 스케일 변환 — 3D Cursor 방향으로 수축/확장</p>
+    </div>
+    <div class="combo-card">
+      <div class="combo-keys">
+        <span class="kbd">Shift</span>
+        <span style="color:var(--muted); font-size:.8rem;">+</span>
+        <span class="kbd">C</span>
+      </div>
+      <p>3D Cursor를 월드 원점으로 리셋 — 날아간 오브젝트 대응</p>
+    </div>
+    <div class="combo-card">
+      <div class="combo-keys">
+        <span class="kbd">Shift</span>
+        <span style="color:var(--muted); font-size:.8rem;">+</span>
+        <span class="kbd">RMB</span>
+      </div>
+      <p>3D Cursor를 클릭 위치에 배치 — 공전 기준점 설정</p>
     </div>
   </div>
 
   <div class="tip-box">
-    <strong>팁:</strong> 단축키 <code style="font-style:normal">.</code>(마침표)와 <code style="font-style:normal">,</code>(쉼표)가 헷갈려요. <strong>.</strong>은 Pivot Point, <strong>,</strong>는 Transform Orientation이에요. 마침표(.)는 기준점(Pivot), 쉼표(,)는 방향(Orientation)으로 외우세요.
-  </div>
-
-  <div class="doc-ref">
-    <a href="https://docs.blender.org/manual/en/latest/editors/3dview/controls/pivot_point/index.html" target="_blank" rel="noopener">
-      📖 Blender 공식 문서 — Pivot Point
-    </a>
+    <strong>팁:</strong> 작업 중 <span class="kbd" style="font-size:.78rem;">.</span>을 누르는 습관을 들이세요. Pivot 파이 메뉴는 블렌더에서 가장 자주 쓰는 단축키 중 하나입니다. 특히 여러 오브젝트를 다룰 때 Pivot 설정 하나로 작업 결과가 완전히 달라집니다.
   </div>
 </section>
 
@@ -229,18 +642,204 @@ body { margin: 0; padding: 0; font-family: var(--font); background: var(--bg); c
 // ── Tab Switching ──────────────────────────────
 document.querySelectorAll(".tab").forEach(function(tab) {
   tab.addEventListener("click", function() {
-    document.querySelectorAll(".tab").forEach(function(t) {
-      t.classList.remove("is-active");
-      t.setAttribute("aria-selected", "false");
-    });
+    document.querySelectorAll(".tab").forEach(function(t) { t.classList.remove("is-active"); });
     document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("is-active"); });
     tab.classList.add("is-active");
-    tab.setAttribute("aria-selected", "true");
-    document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+    var panelId = "panel-" + tab.dataset.tab;
+    document.getElementById(panelId).classList.add("is-active");
+    if (tab.dataset.tab === "visual") { initVisual(); }
   });
 });
 
-// ── Quiz Engine (Safe DOM methods) ────────────
+// ── Canvas Utilities ──────────────────────────
+function drawGrid(ctx, w, h) {
+  ctx.fillStyle = "#111118"; ctx.fillRect(0, 0, w, h);
+  ctx.strokeStyle = "rgba(255,255,255,.04)"; ctx.lineWidth = 0.5;
+  for (var x = 40; x < w; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+  for (var y = 40; y < h; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+}
+
+function drawBox(ctx, cx, cy, w, h, fillColor, strokeColor) {
+  ctx.fillStyle = fillColor || "#3a3a8a";
+  ctx.strokeStyle = strokeColor || "#6666cc";
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.roundRect(cx - w/2, cy - h/2, w, h, 3); ctx.fill(); ctx.stroke();
+}
+
+function drawOrigin(ctx, x, y, color) {
+  ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI*2);
+  ctx.fillStyle = color || "#FF8C00"; ctx.fill();
+  ctx.strokeStyle = "#fff"; ctx.lineWidth = 1; ctx.stroke();
+}
+
+// ── Scenarios ────────────────────────────────
+var scenarios = {
+  individual: {
+    desc: "Individual Origins: 각 오브젝트가 자신의 Origin을 중심으로 개별 회전합니다. 여러 오브젝트를 동시에 선택해도 각자 제자리에서 돌아요.",
+    ce: [
+      { cause: "3개 오브젝트 선택 → Pivot: Individual → R 45°", result: "각 오브젝트가 자신의 중심에서 45° 회전 — 위치 변화 없음", resultClass: "result-a" }
+    ],
+    before: function(ctx, w, h) {
+      drawGrid(ctx, w, h);
+      var positions = [{x: w*0.25, y: h*0.4}, {x: w*0.5, y: h*0.6}, {x: w*0.75, y: h*0.4}];
+      positions.forEach(function(p) {
+        drawBox(ctx, p.x, p.y, 50, 36, "#3a3a8a", "#6666cc");
+        drawOrigin(ctx, p.x, p.y, "#FF8C00");
+      });
+      ctx.fillStyle = "#a1a1aa"; ctx.font = "10px sans-serif"; ctx.textAlign = "center";
+      ctx.fillText("선택된 3개 오브젝트", w/2, h-10);
+    },
+    after: function(ctx, w, h) {
+      drawGrid(ctx, w, h);
+      var positions = [{x: w*0.25, y: h*0.4}, {x: w*0.5, y: h*0.6}, {x: w*0.75, y: h*0.4}];
+      positions.forEach(function(p, i) {
+        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate((i+1) * Math.PI / 6);
+        drawBox(ctx, 0, 0, 50, 36, "#4a4aaa", "#9999ff");
+        ctx.restore();
+        drawOrigin(ctx, p.x, p.y, "#FF8C00");
+      });
+      ctx.fillStyle = "#6ee7b7"; ctx.font = "10px sans-serif"; ctx.textAlign = "center";
+      ctx.fillText("각자 제자리에서 회전!", w/2, h-10);
+    }
+  },
+  median: {
+    desc: "Median Point: 선택한 모든 오브젝트들의 평균 중심점(바운딩 박스 중앙)을 기준으로 공전합니다.",
+    ce: [
+      { cause: "3개 오브젝트 선택 → Pivot: Median → R 90°", result: "공통 중간점 기준으로 3개가 함께 공전 — 군집 회전", resultClass: "result-a" }
+    ],
+    before: function(ctx, w, h) {
+      drawGrid(ctx, w, h);
+      var positions = [{x: w*0.25, y: h*0.35}, {x: w*0.55, y: h*0.55}, {x: w*0.7, y: h*0.3}];
+      var mx = 0, my = 0;
+      positions.forEach(function(p) { mx += p.x; my += p.y; });
+      mx /= 3; my /= 3;
+      positions.forEach(function(p) {
+        drawBox(ctx, p.x, p.y, 44, 32, "#3a3a8a", "#6666cc");
+        drawOrigin(ctx, p.x, p.y, "#FF8C00");
+      });
+      ctx.strokeStyle = "#0a84ff"; ctx.lineWidth = 1;
+      ctx.setLineDash([3,3]);
+      ctx.beginPath(); ctx.arc(mx, my, 20, 0, Math.PI*2); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = "#0a84ff"; ctx.font = "9px sans-serif"; ctx.textAlign = "center";
+      ctx.fillText("Median", mx, my+28);
+    },
+    after: function(ctx, w, h) {
+      drawGrid(ctx, w, h);
+      var positions = [{x: w*0.25, y: h*0.35}, {x: w*0.55, y: h*0.55}, {x: w*0.7, y: h*0.3}];
+      var mx = 0, my = 0;
+      positions.forEach(function(p) { mx += p.x; my += p.y; });
+      mx /= 3; my /= 3;
+      var dists = positions.map(function(p) { return Math.sqrt((p.x-mx)*(p.x-mx)+(p.y-my)*(p.y-my)); });
+      positions.forEach(function(p, i) {
+        var dx = p.x - mx, dy = p.y - my;
+        var nx = mx + (-dy), ny = my + dx;
+        drawBox(ctx, nx, ny, 44, 32, "#4a4aaa", "#9999ff");
+        drawOrigin(ctx, nx, ny, "#FF8C00");
+        ctx.strokeStyle = "rgba(10,132,255,.2)"; ctx.lineWidth = 1;
+        ctx.setLineDash([2,3]);
+        ctx.beginPath(); ctx.arc(mx, my, dists[i], 0, Math.PI*2); ctx.stroke();
+        ctx.setLineDash([]);
+      });
+      ctx.fillStyle = "#8ec5ff"; ctx.font = "9px sans-serif"; ctx.textAlign = "center";
+      ctx.fillText("Median 기준 공전", mx, my-22);
+    }
+  },
+  cursor: {
+    desc: "3D Cursor: 3D Cursor 위치를 기준점으로 회전/스케일합니다. 커서를 원하는 지점에 놓으면 그 지점 기준으로 공전해요.",
+    ce: [
+      { cause: "3D Cursor를 외부 지점에 배치 → Pivot: 3D Cursor → R", result: "오브젝트가 Cursor 주위를 공전 — 행성 공전처럼", resultClass: "result-b" },
+      { cause: "Pivot: 3D Cursor → S 0.5", result: "Cursor 방향으로 오브젝트가 수축 — 오브젝트 자체 크기도 변경", resultClass: "result-a" }
+    ],
+    before: function(ctx, w, h) {
+      drawGrid(ctx, w, h);
+      var cx = w*0.3, cy = h*0.5;
+      var cursorX = w*0.72, cursorY = h*0.45;
+      drawBox(ctx, cx, cy, 50, 36, "#3a3a8a", "#6666cc");
+      drawOrigin(ctx, cx, cy, "#FF8C00");
+      ctx.strokeStyle = "#5599FF"; ctx.lineWidth = 1.5;
+      var r = 8;
+      ctx.beginPath(); ctx.moveTo(cursorX, cursorY-r-3); ctx.lineTo(cursorX, cursorY+r+3); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cursorX-r-3, cursorY); ctx.lineTo(cursorX+r+3, cursorY); ctx.stroke();
+      ctx.beginPath(); ctx.arc(cursorX, cursorY, r, 0, Math.PI*2); ctx.stroke();
+      ctx.fillStyle = "#5599FF"; ctx.font = "9px sans-serif"; ctx.textAlign = "center";
+      ctx.fillText("3D Cursor", cursorX, cursorY+22);
+    },
+    after: function(ctx, w, h) {
+      drawGrid(ctx, w, h);
+      var cx = w*0.3, cy = h*0.5;
+      var cursorX = w*0.72, cursorY = h*0.45;
+      var dist = Math.sqrt((cx-cursorX)*(cx-cursorX)+(cy-cursorY)*(cy-cursorY));
+      var baseAngle = Math.atan2(cy-cursorY, cx-cursorX);
+      ctx.strokeStyle = "rgba(85,153,255,.2)"; ctx.lineWidth = 1;
+      ctx.setLineDash([3,3]);
+      ctx.beginPath(); ctx.arc(cursorX, cursorY, dist, 0, Math.PI*2); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.globalAlpha = 0.2; drawBox(ctx, cx, cy, 50, 36, "#3a3a8a", "#6666cc"); ctx.globalAlpha = 1;
+      var newAngle = baseAngle + Math.PI/2;
+      var nx = cursorX + dist * Math.cos(newAngle);
+      var ny = cursorY + dist * Math.sin(newAngle);
+      drawBox(ctx, nx, ny, 50, 36, "#4a4aaa", "#9999ff");
+      drawOrigin(ctx, nx, ny, "#FF8C00");
+      ctx.strokeStyle = "#5599FF"; ctx.lineWidth = 1.5;
+      var r = 8;
+      ctx.beginPath(); ctx.moveTo(cursorX, cursorY-r-3); ctx.lineTo(cursorX, cursorY+r+3); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cursorX-r-3, cursorY); ctx.lineTo(cursorX+r+3, cursorY); ctx.stroke();
+      ctx.beginPath(); ctx.arc(cursorX, cursorY, r, 0, Math.PI*2); ctx.stroke();
+      ctx.fillStyle = "#8ec5ff"; ctx.font = "9px sans-serif"; ctx.textAlign = "center";
+      ctx.fillText("Cursor 기준 공전", cursorX, cursorY+22);
+    }
+  }
+};
+var currentScene = "individual";
+
+// ── Cause-Effect Builder ──────────────────────
+function buildCauseEffect(ceData) {
+  var container = document.getElementById("ceFlow");
+  while (container.firstChild) container.removeChild(container.firstChild);
+  ceData.forEach(function(item) {
+    var row = document.createElement("div"); row.className = "ce-row";
+    var cause = document.createElement("div"); cause.className = "ce-cause";
+    var lbl = document.createElement("span"); lbl.className = "ce-label"; lbl.textContent = "상황/조건";
+    cause.appendChild(lbl); cause.appendChild(document.createTextNode(item.cause));
+    row.appendChild(cause);
+    var arr = document.createElement("div"); arr.className = "ce-arrow"; arr.textContent = "→"; row.appendChild(arr);
+    var res = document.createElement("div"); res.className = "ce-result " + item.resultClass;
+    var rLbl = document.createElement("span"); rLbl.className = "ce-label"; rLbl.textContent = "결과";
+    res.appendChild(rLbl); res.appendChild(document.createTextNode(item.result));
+    row.appendChild(res);
+    container.appendChild(row);
+  });
+}
+
+// ── Before/After Renderer ─────────────────────
+function renderBAPanels(scene) {
+  var cvB = document.getElementById("cvBefore");
+  var cvA = document.getElementById("cvAfter");
+  scene.before(cvB.getContext("2d"), cvB.width, cvB.height);
+  scene.after(cvA.getContext("2d"), cvA.width, cvA.height);
+}
+
+// ── Scenario Switch ───────────────────────────
+function switchScenario(key) {
+  currentScene = key;
+  var scene = scenarios[key];
+  document.getElementById("sceneDesc").textContent = scene.desc;
+  document.querySelectorAll(".scenario-btn").forEach(function(b) {
+    b.classList.toggle("is-active", b.dataset.scene === key);
+  });
+  renderBAPanels(scene);
+  buildCauseEffect(scene.ce);
+}
+
+document.querySelectorAll(".scenario-btn").forEach(function(btn) {
+  btn.addEventListener("click", function() { switchScenario(btn.dataset.scene); });
+  btn.addEventListener("touchend", function(e) { e.preventDefault(); switchScenario(btn.dataset.scene); });
+});
+
+function initVisual() { switchScenario(currentScene); }
+
+// ── Quiz Engine ───────────────────────────────
 function initQuiz(questions) {
   var container = document.getElementById("quizArea");
   var score = 0, answered = 0;
@@ -248,7 +847,7 @@ function initQuiz(questions) {
 
   var progress = document.createElement("div");
   progress.className = "quiz-progress";
-  progress.textContent = "문제 0 / " + questions.length + " \u00b7 점수 0점";
+  progress.textContent = "문제 0 / " + questions.length + " · 점수 0점";
   container.appendChild(progress);
 
   questions.forEach(function(q, qi) {
@@ -273,13 +872,13 @@ function initQuiz(questions) {
         if (oi === q.answer) {
           btn.classList.add("correct");
           fb.className = "quiz-feedback show correct-fb";
-          fb.textContent = "\u2705 " + q.explanation;
+          fb.textContent = "✅ " + q.explanation;
           score++;
         } else {
           btn.classList.add("wrong");
           div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
           fb.className = "quiz-feedback show wrong-fb";
-          fb.textContent = "\u274c " + q.explanation;
+          fb.textContent = "❌ " + q.explanation;
 
           var retryBtn = document.createElement("button");
           retryBtn.className = "quiz-retry";
@@ -295,11 +894,11 @@ function initQuiz(questions) {
             fb.textContent = "";
             retryBtn.remove();
             if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
-            progress.textContent = "문제 " + answered + " / " + questions.length + " \u00b7 점수 " + score + "점";
+            progress.textContent = "문제 " + answered + " / " + questions.length + " · 점수 " + score + "점";
           });
           fb.appendChild(retryBtn);
         }
-        progress.textContent = "문제 " + answered + " / " + questions.length + " \u00b7 점수 " + score + "점";
+        progress.textContent = "문제 " + answered + " / " + questions.length + " · 점수 " + score + "점";
         if (answered === questions.length) showScore();
       });
       div.appendChild(btn);
@@ -311,13 +910,12 @@ function initQuiz(questions) {
 
   function showScore() {
     if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
-
     scoreDiv = document.createElement("div");
     scoreDiv.className = "quiz-score";
 
     var emoji = document.createElement("div");
     emoji.style.cssText = "font-size:36px;margin-bottom:8px";
-    emoji.textContent = score === questions.length ? "\ud83c\udf89" : score >= Math.ceil(questions.length / 2) ? "\ud83d\udc4d" : "\ud83d\udcda";
+    emoji.textContent = score === questions.length ? "🎉" : score >= Math.ceil(questions.length / 2) ? "👍" : "📚";
     scoreDiv.appendChild(emoji);
 
     var result = document.createElement("div");
@@ -362,218 +960,62 @@ function initQuiz(questions) {
   }
 }
 
-// ── Canvas Pivot Point Demo ────────────────────
-(function() {
-  var canvas = document.getElementById("demoCanvas");
-  var ctx = canvas.getContext("2d");
-
-  // Pivot mode: "median" or "individual"
-  var pivotMode = "median";
-  var animId = null;
-  var angle = 0;
-
-  // Three squares: center positions, size
-  var objects = [
-    { cx: 170, cy: 150, size: 60 },
-    { cx: 340, cy: 150, size: 60 },
-    { cx: 510, cy: 150, size: 60 }
-  ];
-
-  // Colors for each object
-  var colors = [
-    { fill: "rgba(10,132,255,.35)", stroke: "rgba(10,132,255,.9)" },
-    { fill: "rgba(245,158,11,.3)", stroke: "rgba(245,158,11,.9)" },
-    { fill: "rgba(16,185,129,.3)", stroke: "rgba(16,185,129,.9)" }
-  ];
-
-  // Median center of all objects
-  function getMedianCenter() {
-    var sumX = 0, sumY = 0;
-    objects.forEach(function(o) { sumX += o.cx; sumY += o.cy; });
-    return { x: sumX / objects.length, y: sumY / objects.length };
-  }
-
-  function drawRotatedSquare(cx, cy, size, angle, fillColor, strokeColor) {
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.rotate(angle);
-    var half = size / 2;
-    ctx.beginPath();
-    ctx.rect(-half, -half, size, size);
-    ctx.fillStyle = fillColor;
-    ctx.fill();
-    ctx.strokeStyle = strokeColor;
-    ctx.lineWidth = 2;
-    ctx.stroke();
-    ctx.restore();
-  }
-
-  function drawPivotDot(x, y, color) {
-    ctx.beginPath();
-    ctx.arc(x, y, 7, 0, Math.PI * 2);
-    ctx.fillStyle = color || "rgba(255,255,255,.9)";
-    ctx.fill();
-    ctx.strokeStyle = "rgba(0,0,0,.5)";
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
-  }
-
-  function draw(ang) {
-    var w = canvas.width;
-    var h = canvas.height;
-    ctx.clearRect(0, 0, w, h);
-
-    // Background
-    ctx.fillStyle = "#17181a";
-    ctx.fillRect(0, 0, w, h);
-
-    // Subtle grid
-    ctx.strokeStyle = "rgba(255,255,255,.04)";
-    ctx.lineWidth = 1;
-    var step = 40;
-    for (var gx = step; gx < w; gx += step) {
-      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
-    }
-    for (var gy = step; gy < h; gy += step) {
-      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
-    }
-
-    if (pivotMode === "median") {
-      // All objects rotate around their shared median center
-      var med = getMedianCenter();
-
-      objects.forEach(function(o, i) {
-        // Rotate position around median
-        var dx = o.cx - med.x;
-        var dy = o.cy - med.y;
-        var rx = med.x + dx * Math.cos(ang) - dy * Math.sin(ang);
-        var ry = med.y + dx * Math.sin(ang) + dy * Math.cos(ang);
-        drawRotatedSquare(rx, ry, o.size, 0, colors[i].fill, colors[i].stroke);
-      });
-
-      // Draw pivot dot at median
-      drawPivotDot(med.x, med.y, "#ffffff");
-
-      // Pivot label
-      ctx.fillStyle = "rgba(255,255,255,.7)";
-      ctx.font = "bold 11px sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText("Median Center", med.x, med.y - 14);
-
-    } else {
-      // Each object rotates around its own center
-      objects.forEach(function(o, i) {
-        drawRotatedSquare(o.cx, o.cy, o.size, ang, colors[i].fill, colors[i].stroke);
-        // Pivot dot at each object center
-        drawPivotDot(o.cx, o.cy, colors[i].stroke);
-      });
-
-      // Labels for each pivot
-      ctx.font = "bold 11px sans-serif";
-      ctx.textAlign = "center";
-      objects.forEach(function(o, i) {
-        ctx.fillStyle = colors[i].stroke;
-        ctx.fillText("Origin " + (i + 1), o.cx, o.cy - o.size / 2 - 10);
-      });
-    }
-
-    // Mode label bottom
-    ctx.fillStyle = pivotMode === "median" ? "rgba(10,132,255,.8)" : "rgba(16,185,129,.8)";
-    ctx.font = "bold 12px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText(
-      pivotMode === "median" ? "Median Point — 공통 중심으로 회전" : "Individual Origins — 각자 중심으로 회전",
-      w / 2, h - 14
-    );
-  }
-
-  function animate() {
-    angle += 0.018;
-    draw(angle);
-    animId = requestAnimationFrame(animate);
-  }
-
-  // Start animation
-  animate();
-
-  // Button controls
-  var btnMedian = document.getElementById("btnMedian");
-  var btnIndividual = document.getElementById("btnIndividual");
-
-  btnMedian.addEventListener("click", function() {
-    pivotMode = "median";
-    angle = 0;
-    btnMedian.classList.add("is-active");
-    btnIndividual.classList.remove("is-active");
-  });
-  btnMedian.addEventListener("touchend", function(e) {
-    e.preventDefault();
-    pivotMode = "median";
-    angle = 0;
-    btnMedian.classList.add("is-active");
-    btnIndividual.classList.remove("is-active");
-  });
-
-  btnIndividual.addEventListener("click", function() {
-    pivotMode = "individual";
-    angle = 0;
-    btnIndividual.classList.add("is-active");
-    btnMedian.classList.remove("is-active");
-  });
-  btnIndividual.addEventListener("touchend", function(e) {
-    e.preventDefault();
-    pivotMode = "individual";
-    angle = 0;
-    btnIndividual.classList.add("is-active");
-    btnMedian.classList.remove("is-active");
-  });
-})();
-
 // ── Quiz Data ─────────────────────────────────
 initQuiz([
   {
-    question: "여러 오브젝트를 선택하고 S를 눌러 줄였더니 모두 한 점으로 모여들었어요. 어떻게 하면 각자 제자리에서 줄어들게 하나요?",
+    question: "문을 경첩 기준으로 열리게 회전시키려면 어떤 Pivot을 써야 할까요?",
     options: [
-      "Median Point로 변경",
-      "Individual Origins로 변경",
-      "Active Element로 변경",
-      "3D Cursor를 중앙으로 이동"
+      "Median Point",
+      "Bounding Box Center",
+      "3D Cursor (커서를 경첩에 배치) 또는 Individual Origins (Origin을 경첩에 배치)",
+      "Active Element"
     ],
-    answer: 1,
-    explanation: "Individual Origins로 설정하면 각 오브젝트가 자기 원점(Origin)을 기준으로 크기가 줄어요."
+    answer: 2,
+    explanation: "3D Cursor를 경첩 위치에 놓거나, 오브젝트 Origin을 경첩에 배치한 뒤 Individual Origins를 사용하면 문이 경첩 기준으로 회전합니다."
   },
   {
-    question: "Pivot Point 단축키는?",
+    question: "3개의 별을 각자 제자리에서 개별 회전시키려면?",
     options: [
-      ", (쉼표)",
-      ". (마침표)",
-      "Alt + P",
-      "Ctrl + Shift + P"
+      "Median Point",
+      "Individual Origins",
+      "3D Cursor",
+      "Bounding Box Center"
     ],
     answer: 1,
-    explanation: ". (마침표)를 누르면 Pivot Point 메뉴가 열려요. , (쉼표)는 Transform Orientation이에요."
+    explanation: "Individual Origins를 사용하면 각 오브젝트가 자신의 Origin을 중심으로 제자리에서 회전합니다."
   },
   {
-    question: "3D Cursor Pivot을 쓰는 주요 목적은?",
+    question: "Pivot Point 파이 메뉴 단축키는?",
     options: [
-      "빠른 렌더링",
-      "오브젝트를 특정 위치 기준으로 회전/크기 조절",
-      "UV 펼치기",
-      "Mirror Modifier 적용"
+      "P",
+      "Tab",
+      "Ctrl+P",
+      ". (마침표)"
     ],
-    answer: 1,
-    explanation: "3D Cursor를 원하는 위치에 놓고 Pivot을 3D Cursor로 설정하면, 그 지점을 기준으로 변형해요."
+    answer: 3,
+    explanation: "마침표(.)를 누르면 Pivot Point 파이 메뉴가 열립니다. 블렌더에서 가장 자주 쓰는 단축키 중 하나입니다."
   },
   {
-    question: "Median Point Pivot의 기본 동작은?",
+    question: "Median Point를 사용하면 여러 오브젝트는 어떻게 움직이나요?",
     options: [
-      "마지막 선택한 오브젝트 원점 기준",
-      "선택된 오브젝트들의 평균 중심 기준",
-      "화면 정중앙 기준",
-      "월드 원점(0,0,0) 기준"
+      "각자 제자리에서 개별 회전",
+      "Active 오브젝트 주위를 공전",
+      "공통 중간점을 기준으로 함께 공전",
+      "3D Cursor 방향으로 이동"
     ],
-    answer: 1,
-    explanation: "Median Point는 선택된 모든 것들의 평균 중심을 계산해서 그 점을 기준으로 변형해요. Blender의 기본값이에요."
+    answer: 2,
+    explanation: "Median Point는 선택된 오브젝트들의 평균 중심점을 계산해 그 지점 기준으로 모두 함께 공전합니다."
+  },
+  {
+    question: "Active Element Pivot은 어떤 오브젝트를 기준으로 삼나요?",
+    options: [
+      "가장 먼저 선택한 오브젝트",
+      "가장 크기가 큰 오브젝트",
+      "마지막에 선택한(밝게 빛나는) 오브젝트",
+      "씬의 중심에 가장 가까운 오브젝트"
+    ],
+    answer: 2,
+    explanation: "Active Element는 마지막으로 선택한 오브젝트(밝게 강조 표시됨)를 기준점으로 삼아 나머지 오브젝트들이 그 주위를 공전합니다."
   }
 ]);
 </script>
