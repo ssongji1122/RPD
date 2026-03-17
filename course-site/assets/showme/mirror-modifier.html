@@ -417,17 +417,54 @@ body {
 
 <!-- TAB 2: 시각적 비교 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    왼쪽 반의 꼭짓점을 드래그하면 오른쪽이 자동으로 미러됩니다.
-  </p>
-  <div class="demo-wrap">
-    <canvas id="demoCanvas" width="680" height="300"></canvas>
+<style>
+.scenario-nav{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.scenario-btn{padding:6px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.15);background:transparent;color:#cbd5e1;cursor:pointer;font-size:13px;transition:all .2s;font-family:inherit}
+.scenario-btn.active{background:rgba(99,102,241,.25);border-color:rgba(99,102,241,.5);color:#a5b4fc}
+.before-after{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.ba-panel{border-radius:12px;overflow:hidden}
+.ba-panel canvas{width:100%;display:block}
+.ba-label{text-align:center;font-size:11px;color:#94a3b8;padding:4px;background:rgba(0,0,0,.2)}
+.cause-effect{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.ce-row{display:flex;align-items:center;gap:8px}
+.ce-cause{background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);border-radius:8px;padding:6px 12px;font-size:13px;flex:1}
+.ce-arrow{color:#64748b;font-size:16px}
+.ce-result{border-radius:8px;padding:6px 12px;font-size:13px;flex:1.5}
+.result-a{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:#6ee7b7}
+.result-b{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);color:#fcd34d}
+.result-c{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:#fca5a5}
+</style>
+  <div class="scenario-nav">
+    <button class="scenario-btn active" data-scene="xaxis" onclick="switchScenarioMM('xaxis')">X축 미러</button>
+    <button class="scenario-btn" data-scene="clipping" onclick="switchScenarioMM('clipping')">Clipping ON/OFF</button>
+    <button class="scenario-btn" data-scene="apply" onclick="switchScenarioMM('apply')">Apply 전후</button>
+  </div>
+  <div id="scene-desc-mm" style="font-size:.84rem;color:var(--muted-strong);margin-bottom:10px;padding:10px 14px;border-radius:12px;background:var(--surface);border:1px solid var(--line);">시나리오를 선택하세요.</div>
+  <div class="before-after">
+    <div class="ba-panel">
+      <div class="ba-label">BEFORE</div>
+      <canvas id="mm-before" width="320" height="160"></canvas>
+    </div>
+    <div class="ba-panel">
+      <div class="ba-label">AFTER</div>
+      <canvas id="mm-after" width="320" height="160"></canvas>
+    </div>
+  </div>
+  <div class="cause-effect" id="cause-effect-mm"></div>
+
+  <!-- 인터랙티브 데모 -->
+  <div style="margin-top:20px">
+    <div style="font-size:.85rem;color:var(--muted-strong);font-weight:600;margin-bottom:6px">인터랙티브 데모 — 버텍스를 직접 드래그해보세요</div>
+    <p style="font-size:.82rem;color:var(--muted);margin:0 0 10px">파란 점을 드래그하면 초록색 미러가 실시간으로 반영됩니다.</p>
+    <div class="demo-wrap">
+      <canvas id="demoCanvas" width="680" height="320" style="cursor:grab"></canvas>
+    </div>
     <div class="demo-controls">
       <button class="demo-btn is-active" id="btnClipping">Clipping ON</button>
       <button class="demo-btn" id="btnReset">초기화</button>
     </div>
+    <div class="demo-hint">파란 점 드래그 → 초록 미러 실시간 반영 | Clipping 끄면 중심선을 넘길 수 있어요</div>
   </div>
-  <p class="demo-hint">꼭짓점을 드래그해 보세요. Clipping을 토글하면 중심선 넘기 동작이 달라집니다.</p>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->
@@ -481,6 +518,160 @@ body {
 </section>
 
 <script>
+// ── Mirror Modifier Visual Scenarios ──────────
+(function() {
+  var BG = '#1e293b';
+  function drawBg(ctx, w, h) { ctx.fillStyle = BG; ctx.fillRect(0, 0, w, h); }
+  function lbl(ctx, text, x, y, color) {
+    ctx.save(); ctx.font = 'bold 11px sans-serif'; ctx.fillStyle = color || '#94a3b8';
+    ctx.textAlign = 'center'; ctx.fillText(text, x, y); ctx.restore();
+  }
+  // Draw a simple half-shape (L-shaped polygon on left of center)
+  function drawHalfShape(ctx, cx, cy, color) {
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - 50);
+    ctx.lineTo(cx - 50, cy - 50);
+    ctx.lineTo(cx - 50, cy);
+    ctx.lineTo(cx - 20, cy);
+    ctx.lineTo(cx - 20, cy + 30);
+    ctx.lineTo(cx, cy + 30);
+    ctx.closePath();
+    ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = color.replace(')', ',0.15)').replace('rgb', 'rgba'); ctx.fill();
+  }
+  function mirrorShape(ctx, cx, cy, color) {
+    ctx.save(); ctx.scale(-1, 1); ctx.translate(-2 * cx, 0);
+    drawHalfShape(ctx, cx, cy, color);
+    ctx.restore();
+  }
+  function drawCenterLine(ctx, cx, h, dashed) {
+    ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 1.5;
+    if (dashed) ctx.setLineDash([5, 4]); else ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(cx, 10); ctx.lineTo(cx, h - 14); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  var scenarios = {
+    xaxis: {
+      desc: 'Mirror Modifier를 추가하면 오브젝트가 원점(Origin)을 기준으로 X축 대칭 복제됩니다.',
+      ce: [
+        { cause: '왼쪽 절반만 모델링', result: 'Mirror가 자동으로 오른쪽 복제', cls: 'result-a' },
+        { cause: '한쪽 버텍스 이동', result: '반대쪽도 대칭으로 자동 반영', cls: 'result-a' }
+      ],
+      before: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        drawCenterLine(ctx, w/2, h, true);
+        drawHalfShape(ctx, w/2, h/2, '#6366f1');
+        lbl(ctx, 'Mirror 없음 (절반만)', w/2, h - 10);
+      },
+      after: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        drawCenterLine(ctx, w/2, h, false);
+        drawHalfShape(ctx, w/2, h/2, '#6366f1');
+        mirrorShape(ctx, w/2, h/2, '#10b981');
+        lbl(ctx, 'Mirror 적용 (대칭)', w/2, h - 10, '#6ee7b7');
+      }
+    },
+    clipping: {
+      desc: 'Clipping ON이면 버텍스가 거울 축을 넘어갈 수 없습니다. OFF이면 반대편으로 이동 가능합니다.',
+      ce: [
+        { cause: 'Clipping ON', result: '버텍스가 중심선에서 멈춤 — 겹침 방지', cls: 'result-a' },
+        { cause: 'Clipping OFF', result: '버텍스가 반대편으로 넘어갈 수 있음', cls: 'result-b' }
+      ],
+      before: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        drawCenterLine(ctx, w/2, h, false);
+        // vertex trying to cross center (stopped at line)
+        ctx.fillStyle = '#f59e0b';
+        ctx.beginPath(); ctx.arc(w/2, h/2, 7, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(w/2 - 20, h/2); ctx.lineTo(w/2 - 4, h/2); ctx.stroke();
+        ctx.fillStyle = '#ef4444';
+        ctx.beginPath(); ctx.moveTo(w/2 - 4, h/2); ctx.lineTo(w/2 - 14, h/2 - 5); ctx.lineTo(w/2 - 14, h/2 + 5); ctx.fill();
+        lbl(ctx, 'Clipping ON: 중심선 정지', w/2, h - 10, '#fcd34d');
+      },
+      after: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        drawCenterLine(ctx, w/2, h, true);
+        // vertex past center (clipping off)
+        ctx.fillStyle = '#f59e0b';
+        ctx.beginPath(); ctx.arc(w/2 + 30, h/2, 7, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = '#10b981'; ctx.lineWidth = 1.5;
+        ctx.setLineDash([4, 3]);
+        ctx.beginPath(); ctx.arc(w/2 - 30, h/2, 7, 0, Math.PI * 2); ctx.stroke();
+        ctx.setLineDash([]);
+        lbl(ctx, 'Clipping OFF: 중심선 넘기 가능', w/2, h - 10, '#6ee7b7');
+      }
+    },
+    apply: {
+      desc: 'Apply를 누르면 미러 데이터가 실제 메시에 통합됩니다. 이후에는 대칭이 해제되어 독립 편집 가능합니다.',
+      ce: [
+        { cause: 'Apply 전', result: 'Mirror Modifier 활성 — 편집 즉시 반영', cls: 'result-a' },
+        { cause: 'Apply 후', result: '메시가 하나로 합쳐짐 — 비대칭 편집 가능', cls: 'result-b' }
+      ],
+      before: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        drawCenterLine(ctx, w/2, h, false);
+        drawHalfShape(ctx, w/2, h/2, '#6366f1');
+        mirrorShape(ctx, w/2, h/2, '#10b981');
+        // modifier stack indicator
+        ctx.fillStyle = 'rgba(99,102,241,0.15)';
+        ctx.fillRect(w/2 - 70, h - 35, 140, 20);
+        ctx.strokeStyle = '#6366f1'; ctx.lineWidth = 1;
+        ctx.strokeRect(w/2 - 70, h - 35, 140, 20);
+        lbl(ctx, 'Mirror Modifier 활성', w/2, h - 22, '#a5b4fc');
+      },
+      after: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        // Full symmetric shape as one mesh
+        ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2;
+        ctx.fillStyle = 'rgba(245,158,11,0.12)';
+        ctx.beginPath();
+        var cx = w/2, cy = h/2;
+        ctx.moveTo(cx - 50, cy - 50); ctx.lineTo(cx + 50, cy - 50);
+        ctx.lineTo(cx + 50, cy); ctx.lineTo(cx + 20, cy);
+        ctx.lineTo(cx + 20, cy + 30); ctx.lineTo(cx - 20, cy + 30);
+        ctx.lineTo(cx - 20, cy); ctx.lineTo(cx - 50, cy);
+        ctx.closePath();
+        ctx.fill(); ctx.stroke();
+        lbl(ctx, 'Apply 후 단일 메시', w/2, h - 10, '#fcd34d');
+      }
+    }
+  };
+
+  function buildCauseEffect(ceList) {
+    var c = document.getElementById('cause-effect-mm');
+    c.textContent = '';
+    ceList.forEach(function(item) {
+      var row = document.createElement('div'); row.className = 'ce-row';
+      var cause = document.createElement('span'); cause.className = 'ce-cause'; cause.textContent = item.cause;
+      var arrow = document.createElement('span'); arrow.className = 'ce-arrow'; arrow.textContent = '→';
+      var result = document.createElement('span'); result.className = 'ce-result ' + item.cls; result.textContent = item.result;
+      row.appendChild(cause); row.appendChild(arrow); row.appendChild(result);
+      c.appendChild(row);
+    });
+  }
+
+  function renderBAPanels(scene) {
+    var cvB = document.getElementById('mm-before');
+    var cvA = document.getElementById('mm-after');
+    scene.before(cvB.getContext('2d'), cvB.width, cvB.height);
+    scene.after(cvA.getContext('2d'), cvA.width, cvA.height);
+  }
+
+  window.switchScenarioMM = function(key) {
+    var scene = scenarios[key];
+    document.getElementById('scene-desc-mm').textContent = scene.desc;
+    document.querySelectorAll('#panel-visual .scenario-btn').forEach(function(b) {
+      b.classList.toggle('active', b.dataset.scene === key);
+    });
+    renderBAPanels(scene);
+    buildCauseEffect(scene.ce);
+  };
+
+  document.addEventListener('DOMContentLoaded', function() { switchScenarioMM('xaxis'); });
+})();
+
 // ── Tab Switching ──────────────────────────────
 document.querySelectorAll(".tab").forEach(function(tab) {
   tab.addEventListener("click", function() {

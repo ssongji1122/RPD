@@ -122,19 +122,55 @@ body{margin:0;padding:0;font-family:var(--font);background:var(--bg);color:var(-
 
 <!-- TAB 2 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem;color:var(--muted);margin:0 0 10px;">
-    재생 버튼을 눌러 구체의 이동 애니메이션을 확인하세요. 보간 타입에 따라 속도 변화가 달라집니다.
-  </p>
-  <div class="demo-wrap">
-    <canvas id="demoCanvas" width="680" height="300"></canvas>
-    <div class="demo-controls">
-      <button class="demo-btn is-active" id="btnBezier">Bezier (가감속)</button>
-      <button class="demo-btn" id="btnLinear">Linear (일정 속도)</button>
-      <button class="demo-btn" id="btnPlay">▶ 재생</button>
-      <button class="demo-btn" id="btnReset">초기화</button>
+<style>
+.scenario-nav{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.scenario-btn{padding:6px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.15);background:transparent;color:#cbd5e1;cursor:pointer;font-size:13px;transition:all .2s;font-family:inherit}
+.scenario-btn.active{background:rgba(99,102,241,.25);border-color:rgba(99,102,241,.5);color:#a5b4fc}
+.before-after{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.ba-panel{border-radius:12px;overflow:hidden}
+.ba-panel canvas{width:100%;display:block}
+.ba-label{text-align:center;font-size:11px;color:#94a3b8;padding:4px;background:rgba(0,0,0,.2)}
+.cause-effect{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.ce-row{display:flex;align-items:center;gap:8px}
+.ce-cause{background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);border-radius:8px;padding:6px 12px;font-size:13px;flex:1}
+.ce-arrow{color:#64748b;font-size:16px}
+.ce-result{border-radius:8px;padding:6px 12px;font-size:13px;flex:1.5}
+.result-a{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:#6ee7b7}
+.result-b{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);color:#fcd34d}
+.result-c{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:#fca5a5}
+</style>
+  <div class="scenario-nav">
+    <button class="scenario-btn active" data-scene="basic" onclick="switchScenarioKF('basic')">기본 키프레임</button>
+    <button class="scenario-btn" data-scene="interp" onclick="switchScenarioKF('interp')">보간 타입 비교</button>
+    <button class="scenario-btn" data-scene="timeline" onclick="switchScenarioKF('timeline')">타임라인 구조</button>
+  </div>
+  <div id="scene-desc-kf" style="font-size:.84rem;color:var(--muted-strong);margin-bottom:10px;padding:10px 14px;border-radius:12px;background:var(--surface);border:1px solid var(--line);">시나리오를 선택하세요.</div>
+  <div class="before-after">
+    <div class="ba-panel">
+      <div class="ba-label">BEFORE</div>
+      <canvas id="kf-before" width="320" height="160"></canvas>
+    </div>
+    <div class="ba-panel">
+      <div class="ba-label">AFTER</div>
+      <canvas id="kf-after" width="320" height="160"></canvas>
     </div>
   </div>
-  <p class="demo-hint">Bezier는 출발/도착이 부드럽고, Linear는 일정한 속도로 이동합니다.</p>
+  <div class="cause-effect" id="cause-effect-kf"></div>
+
+  <!-- 인터랙티브 데모 -->
+  <div style="margin-top:20px">
+    <div style="font-size:.85rem;color:var(--muted-strong);font-weight:600;margin-bottom:6px">인터랙티브 데모</div>
+    <div class="demo-wrap">
+      <canvas id="demoCanvas" width="680" height="300"></canvas>
+    </div>
+    <div class="demo-controls">
+      <button class="demo-btn is-active" id="btnBezier">Bezier</button>
+      <button class="demo-btn" id="btnLinear">Linear</button>
+      <button class="demo-btn" id="btnPlay">&#9654; 재생</button>
+      <button class="demo-btn" id="btnReset">리셋</button>
+    </div>
+    <div class="demo-hint">보간 타입을 선택하고 재생 버튼으로 애니메이션을 확인하세요.</div>
+  </div>
 </section>
 
 <!-- TAB 3 -->
@@ -187,6 +223,179 @@ body{margin:0;padding:0;font-family:var(--font);background:var(--bg);color:var(-
 </section>
 
 <script>
+// ── Keyframe Visual Scenarios ──────────────────
+(function() {
+  var BG = '#1e293b';
+  var currentScene = 'basic';
+
+  function drawBg(ctx, w, h) { ctx.fillStyle = BG; ctx.fillRect(0, 0, w, h); }
+  function lbl(ctx, text, x, y, color) {
+    ctx.save(); ctx.font = 'bold 11px sans-serif'; ctx.fillStyle = color || '#94a3b8';
+    ctx.textAlign = 'center'; ctx.fillText(text, x, y); ctx.restore();
+  }
+  function diamond(ctx, x, y, size, color) {
+    ctx.beginPath();
+    ctx.moveTo(x, y - size); ctx.lineTo(x + size, y);
+    ctx.lineTo(x, y + size); ctx.lineTo(x - size, y);
+    ctx.closePath();
+    ctx.fillStyle = color || '#f59e0b'; ctx.fill();
+  }
+
+  var scenarios = {
+    basic: {
+      desc: '타임라인의 특정 프레임에서 I를 눌러 키프레임을 삽입하면, 해당 시점의 오브젝트 상태가 기록됩니다.',
+      ce: [
+        { cause: '프레임 1에서 I 키 → Location', result: '시작 위치가 오렌지 다이아몬드로 기록됨', cls: 'result-a' },
+        { cause: '프레임 30에서 오브젝트 이동 후 I', result: '끝 위치에도 키프레임 삽입, 보간 생성', cls: 'result-a' }
+      ],
+      before: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        // timeline bar
+        ctx.fillStyle = '#1e2d3d'; ctx.fillRect(20, h/2 - 16, w - 40, 32);
+        ctx.strokeStyle = '#334155'; ctx.lineWidth = 1; ctx.strokeRect(20, h/2 - 16, w - 40, 32);
+        // tick marks
+        ctx.strokeStyle = '#475569'; ctx.lineWidth = 1;
+        for (var i = 0; i <= 10; i++) {
+          var tx = 20 + (w - 40) / 10 * i;
+          ctx.beginPath(); ctx.moveTo(tx, h/2 - 16); ctx.lineTo(tx, h/2 + 16); ctx.stroke();
+          if (i % 2 === 0) lbl(ctx, String(i * 6), tx, h/2 - 22, '#64748b');
+        }
+        // current frame indicator
+        ctx.strokeStyle = '#3b82f6'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(20, h/2 - 24); ctx.lineTo(20, h/2 + 24); ctx.stroke();
+        lbl(ctx, '키프레임 없음', w/2, h - 14);
+      },
+      after: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        ctx.fillStyle = '#1e2d3d'; ctx.fillRect(20, h/2 - 16, w - 40, 32);
+        ctx.strokeStyle = '#334155'; ctx.lineWidth = 1; ctx.strokeRect(20, h/2 - 16, w - 40, 32);
+        ctx.strokeStyle = '#475569'; ctx.lineWidth = 1;
+        for (var i = 0; i <= 10; i++) {
+          var tx = 20 + (w - 40) / 10 * i;
+          ctx.beginPath(); ctx.moveTo(tx, h/2 - 16); ctx.lineTo(tx, h/2 + 16); ctx.stroke();
+          if (i % 2 === 0) lbl(ctx, String(i * 6), tx, h/2 - 22, '#64748b');
+        }
+        // keyframes at frame 0 and frame 30
+        diamond(ctx, 20, h/2, 7, '#f59e0b');
+        diamond(ctx, 20 + (w - 40) / 2, h/2, 7, '#f59e0b');
+        // green channel line between them
+        ctx.strokeStyle = 'rgba(16,185,129,0.5)'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(20, h/2); ctx.lineTo(20 + (w - 40) / 2, h/2); ctx.stroke();
+        lbl(ctx, '키프레임 2개 삽입됨', w/2, h - 14, '#fcd34d');
+      }
+    },
+    interp: {
+      desc: 'Bezier 보간은 출발/도착이 부드럽고, Linear 보간은 일정 속도를 유지합니다.',
+      ce: [
+        { cause: 'Bezier 보간 (기본값)', result: '출발·도착에서 감속 — 자연스러운 움직임', cls: 'result-a' },
+        { cause: 'Linear 보간', result: '일정한 속도 — 기계적·반복 동작에 적합', cls: 'result-b' }
+      ],
+      before: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        var sx = 20, ex = w - 20, my = h/2;
+        // Bezier curve
+        ctx.strokeStyle = '#6366f1'; ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(sx, my + 50);
+        ctx.bezierCurveTo(sx + 60, my + 50, ex - 60, my - 50, ex, my - 50);
+        ctx.stroke();
+        // endpoints
+        ctx.fillStyle = '#f59e0b';
+        ctx.beginPath(); ctx.arc(sx, my + 50, 5, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(ex, my - 50, 5, 0, Math.PI * 2); ctx.fill();
+        lbl(ctx, 'Bezier (부드러운 가감속)', w/2, 18, '#a5b4fc');
+      },
+      after: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        var sx = 20, ex = w - 20, my = h/2;
+        // Linear line
+        ctx.strokeStyle = '#10b981'; ctx.lineWidth = 2.5;
+        ctx.beginPath(); ctx.moveTo(sx, my + 50); ctx.lineTo(ex, my - 50); ctx.stroke();
+        ctx.fillStyle = '#f59e0b';
+        ctx.beginPath(); ctx.arc(sx, my + 50, 5, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(ex, my - 50, 5, 0, Math.PI * 2); ctx.fill();
+        lbl(ctx, 'Linear (일정 속도)', w/2, 18, '#6ee7b7');
+      }
+    },
+    timeline: {
+      desc: '타임라인은 프레임 기반으로 구성됩니다. 키프레임 사이 구간에서 값이 자동 보간됩니다.',
+      ce: [
+        { cause: '키프레임 구간 사이 프레임', result: '자동 보간 — 직접 편집 불필요', cls: 'result-a' },
+        { cause: '키프레임 없는 프레임', result: '값이 고정 또는 최근 키프레임 값 유지', cls: 'result-b' }
+      ],
+      before: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        // draw empty timeline
+        ctx.fillStyle = '#0f172a'; ctx.fillRect(20, 40, w - 40, 80);
+        ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 1;
+        for (var i = 1; i < 10; i++) {
+          var tx = 20 + (w - 40) / 10 * i;
+          ctx.beginPath(); ctx.moveTo(tx, 40); ctx.lineTo(tx, 120); ctx.stroke();
+        }
+        lbl(ctx, '프레임 1', 20, 36, '#64748b');
+        lbl(ctx, '프레임 100', w - 20, 36, '#64748b');
+        lbl(ctx, '키프레임 없는 타임라인', w/2, h - 14);
+      },
+      after: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        ctx.fillStyle = '#0f172a'; ctx.fillRect(20, 40, w - 40, 80);
+        ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 1;
+        for (var i = 1; i < 10; i++) {
+          var tx = 20 + (w - 40) / 10 * i;
+          ctx.beginPath(); ctx.moveTo(tx, 40); ctx.lineTo(tx, 120); ctx.stroke();
+        }
+        // channel bars
+        ctx.fillStyle = 'rgba(99,102,241,0.3)'; ctx.fillRect(20, 55, (w - 40) * 0.8, 14);
+        ctx.fillStyle = 'rgba(16,185,129,0.3)'; ctx.fillRect(20, 75, (w - 40) * 0.8, 14);
+        ctx.fillStyle = 'rgba(245,158,11,0.3)'; ctx.fillRect(20, 95, (w - 40) * 0.8, 14);
+        // keyframe diamonds
+        var kfs = [0, 0.3, 0.6, 0.8];
+        kfs.forEach(function(k) {
+          var tx = 20 + (w - 40) * k;
+          diamond(ctx, tx, 62, 5, '#f59e0b');
+          diamond(ctx, tx, 82, 5, '#f59e0b');
+          diamond(ctx, tx, 102, 5, '#f59e0b');
+        });
+        lbl(ctx, 'X (파랑)  Y (초록)  Z (주황)', w/2, 130, '#94a3b8');
+        lbl(ctx, '키프레임 타임라인 구조', w/2, h - 14, '#a5b4fc');
+      }
+    }
+  };
+
+  function buildCauseEffect(ceList) {
+    var c = document.getElementById('cause-effect-kf');
+    c.textContent = '';
+    ceList.forEach(function(item) {
+      var row = document.createElement('div'); row.className = 'ce-row';
+      var cause = document.createElement('span'); cause.className = 'ce-cause'; cause.textContent = item.cause;
+      var arrow = document.createElement('span'); arrow.className = 'ce-arrow'; arrow.textContent = '→';
+      var result = document.createElement('span'); result.className = 'ce-result ' + item.cls; result.textContent = item.result;
+      row.appendChild(cause); row.appendChild(arrow); row.appendChild(result);
+      c.appendChild(row);
+    });
+  }
+
+  function renderBAPanels(scene) {
+    var cvB = document.getElementById('kf-before');
+    var cvA = document.getElementById('kf-after');
+    scene.before(cvB.getContext('2d'), cvB.width, cvB.height);
+    scene.after(cvA.getContext('2d'), cvA.width, cvA.height);
+  }
+
+  window.switchScenarioKF = function(key) {
+    currentScene = key;
+    var scene = scenarios[key];
+    document.getElementById('scene-desc-kf').textContent = scene.desc;
+    document.querySelectorAll('#panel-visual .scenario-btn').forEach(function(b) {
+      b.classList.toggle('active', b.dataset.scene === key);
+    });
+    renderBAPanels(scene);
+    buildCauseEffect(scene.ce);
+  };
+
+  document.addEventListener('DOMContentLoaded', function() { switchScenarioKF(currentScene); });
+})();
+
 document.querySelectorAll(".tab").forEach(function(tab){
   tab.addEventListener("click",function(){
     document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("is-active");t.setAttribute("aria-selected","false")});

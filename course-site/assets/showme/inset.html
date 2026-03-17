@@ -304,18 +304,54 @@ body {
 
 <!-- TAB 2: 시각적 비교 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    슬라이더를 움직여 Inset 양을 조절하고 두 모드의 차이를 비교하세요.
-  </p>
-  <div class="demo-wrap">
-    <canvas id="demoCanvas" width="680" height="340"></canvas>
-    <div class="demo-controls">
-      <button class="demo-btn is-active" id="btnNormal">일반 Inset</button>
-      <button class="demo-btn" id="btnIndividual">Individual (I→I)</button>
-      <button class="demo-btn" id="btnReset">초기화</button>
+<style>
+.scenario-nav{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.scenario-btn{padding:6px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.15);background:transparent;color:#cbd5e1;cursor:pointer;font-size:13px;transition:all .2s;font-family:inherit}
+.scenario-btn.active{background:rgba(99,102,241,.25);border-color:rgba(99,102,241,.5);color:#a5b4fc}
+.before-after{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.ba-panel{border-radius:12px;overflow:hidden}
+.ba-panel canvas{width:100%;display:block}
+.ba-label{text-align:center;font-size:11px;color:#94a3b8;padding:4px;background:rgba(0,0,0,.2)}
+.cause-effect{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.ce-row{display:flex;align-items:center;gap:8px}
+.ce-cause{background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);border-radius:8px;padding:6px 12px;font-size:13px;flex:1}
+.ce-arrow{color:#64748b;font-size:16px}
+.ce-result{border-radius:8px;padding:6px 12px;font-size:13px;flex:1.5}
+.result-a{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:#6ee7b7}
+.result-b{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);color:#fcd34d}
+.result-c{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:#fca5a5}
+</style>
+  <div class="scenario-nav" id="scenarioNav">
+    <button class="scenario-btn active" data-scene="normal" onclick="switchScenarioInset('normal')">일반 Inset (I)</button>
+    <button class="scenario-btn" data-scene="individual" onclick="switchScenarioInset('individual')">Individual (I→I)</button>
+    <button class="scenario-btn" data-scene="depth" onclick="switchScenarioInset('depth')">Inset + Depth</button>
+  </div>
+  <div id="scene-desc-inset" style="font-size:.84rem;color:var(--muted-strong);margin-bottom:10px;padding:10px 14px;border-radius:12px;background:var(--surface);border:1px solid var(--line);">시나리오를 선택하세요.</div>
+  <div class="before-after">
+    <div class="ba-panel">
+      <div class="ba-label">BEFORE</div>
+      <canvas id="inset-before" width="320" height="160"></canvas>
+    </div>
+    <div class="ba-panel">
+      <div class="ba-label">AFTER</div>
+      <canvas id="inset-after" width="320" height="160"></canvas>
     </div>
   </div>
-  <p class="demo-hint">캔버스를 좌우로 드래그하면 Inset 양이 변합니다.</p>
+  <div class="cause-effect" id="cause-effect-inset"></div>
+
+  <!-- 인터랙티브 데모 -->
+  <div style="margin-top:20px">
+    <div style="font-size:.85rem;color:var(--muted-strong);font-weight:600;margin-bottom:6px">인터랙티브 데모</div>
+    <div class="demo-wrap">
+      <canvas id="demoCanvas" width="680" height="300"></canvas>
+    </div>
+    <div class="demo-controls">
+      <button class="demo-btn is-active" id="btnNormal">일반 Inset</button>
+      <button class="demo-btn" id="btnIndividual">Individual</button>
+      <button class="demo-btn" id="btnReset">리셋</button>
+    </div>
+    <div class="demo-hint">드래그하거나 버튼을 눌러 Inset 방식을 비교해보세요.</div>
+  </div>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->
@@ -372,6 +408,190 @@ body {
 </section>
 
 <script>
+// ── Inset Visual Scenarios ─────────────────────
+(function() {
+  var BG = '#1e293b';
+  var currentScene = 'normal';
+
+  function drawBg(ctx, w, h) {
+    ctx.fillStyle = BG;
+    ctx.fillRect(0, 0, w, h);
+  }
+
+  function drawLabel(ctx, text, x, y, color) {
+    ctx.save();
+    ctx.font = 'bold 11px sans-serif';
+    ctx.fillStyle = color || '#94a3b8';
+    ctx.textAlign = 'center';
+    ctx.fillText(text, x, y);
+    ctx.restore();
+  }
+
+  function polygon(ctx, cx, cy, r, sides) {
+    ctx.beginPath();
+    for (var i = 0; i < sides; i++) {
+      var angle = (Math.PI * 2 / sides) * i - Math.PI / 2;
+      var x = cx + r * Math.cos(angle);
+      var y = cy + r * Math.sin(angle);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+  }
+
+  var scenarios = {
+    normal: {
+      desc: '하나의 면(Face)을 선택하고 I를 누르면 안쪽으로 균등하게 새 면이 생성됩니다.',
+      ce: [
+        { cause: '면 선택 → I 키 누름', result: '면 안쪽에 동일 비율 새 면 생성', cls: 'result-a' },
+        { cause: '마우스 이동으로 크기 조절', result: '외부 엣지와 내부 면 사이 루프 연결', cls: 'result-a' }
+      ],
+      before: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        ctx.strokeStyle = '#64748b'; ctx.lineWidth = 1.5;
+        polygon(ctx, w/2, h/2, 58, 4);
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(99,102,241,0.15)';
+        polygon(ctx, w/2, h/2, 58, 4);
+        ctx.fill();
+        drawLabel(ctx, '원본 면 (1개)', w/2, h - 12);
+      },
+      after: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        ctx.strokeStyle = '#64748b'; ctx.lineWidth = 1.5;
+        polygon(ctx, w/2, h/2, 58, 4);
+        ctx.stroke();
+        ctx.strokeStyle = '#6366f1'; ctx.lineWidth = 2;
+        polygon(ctx, w/2, h/2, 32, 4);
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(99,102,241,0.25)';
+        polygon(ctx, w/2, h/2, 32, 4);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(99,102,241,0.4)'; ctx.lineWidth = 1;
+        for (var i = 0; i < 4; i++) {
+          var angle = (Math.PI / 2) * i - Math.PI / 4;
+          var x1 = w/2 + 58 * Math.cos(angle), y1 = h/2 + 58 * Math.sin(angle);
+          var x2 = w/2 + 32 * Math.cos(angle), y2 = h/2 + 32 * Math.sin(angle);
+          ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+        }
+        drawLabel(ctx, 'Inset 후 (면 2개)', w/2, h - 12, '#a5b4fc');
+      }
+    },
+    individual: {
+      desc: '여러 면 선택 후 I → I를 누르면 각 면이 개별적으로 Inset됩니다.',
+      ce: [
+        { cause: '다중 면 선택 → I → I', result: '각 면이 독립적으로 안쪽 면 생성', cls: 'result-a' },
+        { cause: '일반 Inset은 전체 기준', result: 'Individual은 면마다 기준 중심 적용', cls: 'result-b' }
+      ],
+      before: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        ctx.strokeStyle = '#64748b'; ctx.lineWidth = 1.5;
+        var rects = [{x:40,y:40,s:70},{x:120,y:40,s:70},{x:80,y:115,s:70}];
+        rects.forEach(function(r) {
+          ctx.strokeRect(r.x, r.y, r.s, r.s);
+          ctx.fillStyle = 'rgba(99,102,241,0.12)';
+          ctx.fillRect(r.x, r.y, r.s, r.s);
+        });
+        drawLabel(ctx, '3개 면 선택됨', w/2, h - 12);
+      },
+      after: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        var rects = [{x:40,y:40,s:70},{x:120,y:40,s:70},{x:80,y:115,s:70}];
+        rects.forEach(function(r) {
+          ctx.strokeStyle = '#64748b'; ctx.lineWidth = 1.5;
+          ctx.strokeRect(r.x, r.y, r.s, r.s);
+          var pad = 14;
+          ctx.strokeStyle = '#6366f1'; ctx.lineWidth = 2;
+          ctx.strokeRect(r.x+pad, r.y+pad, r.s-pad*2, r.s-pad*2);
+          ctx.fillStyle = 'rgba(99,102,241,0.25)';
+          ctx.fillRect(r.x+pad, r.y+pad, r.s-pad*2, r.s-pad*2);
+        });
+        drawLabel(ctx, '각 면 개별 Inset', w/2, h - 12, '#a5b4fc');
+      }
+    },
+    depth: {
+      desc: 'Inset 중 Ctrl을 누르면 Depth가 조절됩니다. 들어간 깊이(Z축)를 동시에 적용해요.',
+      ce: [
+        { cause: 'I → Ctrl + 마우스 이동', result: '안쪽 면이 Z축으로 함께 이동 (홈/볼록)', cls: 'result-a' },
+        { cause: 'Depth 음수값 적용', result: 'Extrude 없이 요철 효과 직접 생성', cls: 'result-b' }
+      ],
+      before: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        ctx.strokeStyle = '#64748b'; ctx.lineWidth = 1.5;
+        polygon(ctx, w/2, h/2, 58, 4);
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(99,102,241,0.15)';
+        polygon(ctx, w/2, h/2, 58, 4);
+        ctx.fill();
+        drawLabel(ctx, '플랫 면 (Depth 없음)', w/2, h - 12);
+      },
+      after: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        ctx.strokeStyle = '#64748b'; ctx.lineWidth = 1.5;
+        polygon(ctx, w/2, h/2, 58, 4);
+        ctx.stroke();
+        ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2;
+        polygon(ctx, w/2, h/2 - 12, 32, 4);
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(245,158,11,0.2)';
+        polygon(ctx, w/2, h/2 - 12, 32, 4);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(245,158,11,0.5)'; ctx.lineWidth = 1;
+        for (var i = 0; i < 4; i++) {
+          var angle = (Math.PI / 2) * i - Math.PI / 4;
+          var x1 = w/2 + 58 * Math.cos(angle), y1 = h/2 + 58 * Math.sin(angle);
+          var x2 = w/2 + 32 * Math.cos(angle), y2 = (h/2 - 12) + 32 * Math.sin(angle);
+          ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+        }
+        drawLabel(ctx, 'Depth 적용 (Z이동)', w/2, h - 12, '#fcd34d');
+      }
+    }
+  };
+
+  function buildCauseEffect(ceList) {
+    var container = document.getElementById('cause-effect-inset');
+    container.textContent = '';
+    ceList.forEach(function(item) {
+      var row = document.createElement('div');
+      row.className = 'ce-row';
+      var cause = document.createElement('span');
+      cause.className = 'ce-cause';
+      cause.textContent = item.cause;
+      var arrow = document.createElement('span');
+      arrow.className = 'ce-arrow';
+      arrow.textContent = '→';
+      var result = document.createElement('span');
+      result.className = 'ce-result ' + item.cls;
+      result.textContent = item.result;
+      row.appendChild(cause);
+      row.appendChild(arrow);
+      row.appendChild(result);
+      container.appendChild(row);
+    });
+  }
+
+  function renderBAPanels(scene) {
+    var cvB = document.getElementById('inset-before');
+    var cvA = document.getElementById('inset-after');
+    scene.before(cvB.getContext('2d'), cvB.width, cvB.height);
+    scene.after(cvA.getContext('2d'), cvA.width, cvA.height);
+  }
+
+  window.switchScenarioInset = function(key) {
+    currentScene = key;
+    var scene = scenarios[key];
+    document.getElementById('scene-desc-inset').textContent = scene.desc;
+    document.querySelectorAll('#panel-visual .scenario-btn').forEach(function(b) {
+      b.classList.toggle('active', b.dataset.scene === key);
+    });
+    renderBAPanels(scene);
+    buildCauseEffect(scene.ce);
+  };
+
+  document.addEventListener('DOMContentLoaded', function() {
+    switchScenarioInset(currentScene);
+  });
+})();
+
 // ── Tab Switching ──────────────────────────────
 document.querySelectorAll(".tab").forEach(function(tab) {
   tab.addEventListener("click", function() {

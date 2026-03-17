@@ -220,6 +220,9 @@ const CURRICULUM = [
           "transform-grs",
           "transform-orientation",
           "pivot-point"
+        ],
+        "widgets": [
+          { "type": "showme", "id": "origin-vs-3dcursor" }
         ]
       },
       {
@@ -263,6 +266,10 @@ const CURRICULUM = [
           "loop-cut",
           "snap",
           "proportional-editing"
+        ],
+        "widgets": [
+          { "type": "showme", "id": "snap" },
+          { "type": "showme", "id": "proportional-editing" }
         ]
       },
       {
@@ -294,7 +301,10 @@ const CURRICULUM = [
           "Ctrl+B로 Bevel이 됐다",
           "결과물을 스크린샷으로 저장했다"
         ],
-        "showme": "bevel-tool"
+        "showme": "bevel-tool",
+        "widgets": [
+          { "type": "showme", "id": "box-rounding" }
+        ]
       },
       {
         "title": "뷰포트 셰이딩",
@@ -501,6 +511,9 @@ const CURRICULUM = [
           "기본 형태가 잡혔다"
         ],
         "showme": ["edit-mode-tools", "extrude", "loop-cut", "inset", "bevel-tool"],
+        "widgets": [
+          { "type": "showme", "id": "poly-circle" }
+        ],
         "link": "https://docs.blender.org/manual/en/latest/modeling/meshes/tools/extrude_region.html"
       },
       {
@@ -589,6 +602,9 @@ const CURRICULUM = [
           "Plane이 두께 있는 판으로 바뀌었다"
         ],
         "showme": "solidify-modifier",
+        "widgets": [
+          { "type": "showme", "id": "curve-to-tube" }
+        ],
         "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/solidify.html"
       },
       {
@@ -614,6 +630,11 @@ const CURRICULUM = [
           "같은 형태가 일정 간격으로 반복된다"
         ],
         "showme": "array-modifier",
+        "widgets": [
+          { "type": "showme", "id": "build-modifier" },
+          { "type": "showme", "id": "screw-modifier" },
+          { "type": "showme", "id": "scatter-on-surface" }
+        ],
         "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/array.html"
       },
       {
@@ -639,6 +660,9 @@ const CURRICULUM = [
           "메쉬에 구멍이나 홈이 만들어졌다"
         ],
         "showme": "boolean-modifier",
+        "widgets": [
+          { "type": "showme", "id": "wireframe-modifier" }
+        ],
         "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/booleans.html"
       },
       {
@@ -719,6 +743,10 @@ const CURRICULUM = [
           "Apply는 마지막에만 하는 이유를 안다"
         ],
         "showme": "transform-apply",
+        "widgets": [
+          { "type": "showme", "id": "simple-deform" },
+          { "type": "showme", "id": "skin-modifier" }
+        ],
         "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/introduction.html"
       },
       {
@@ -1082,7 +1110,10 @@ const CURRICULUM = [
           "평평한 외장 면이 더 깔끔하게 보인다",
           "언제 넣는지 설명할 수 있다"
         ],
-        "showme": "weighted-normal"
+        "showme": "weighted-normal",
+        "widgets": [
+          { "type": "showme", "id": "edge-split-modifier" }
+        ]
       },
       {
         "title": "Apply 시점과 최종 점검",
@@ -1112,7 +1143,11 @@ const CURRICULUM = [
           "언제 Ctrl+A를 쓰는지 안다",
           "Modifier Apply는 마지막에만 하는 흐름을 이해한다"
         ],
-        "showme": "join-separate"
+        "showme": "join-separate",
+        "widgets": [
+          { "type": "showme", "id": "triangulate-modifier" },
+          { "type": "showme", "id": "weld-modifier" }
+        ]
       }
     ],
     "shortcuts": [
@@ -1257,7 +1292,10 @@ const CURRICULUM = [
           "폴리곤 수가 절반 이하로 줄었다",
           "형태가 크게 무너지지 않았다"
         ],
-        "showme": "decimate-modifier"
+        "showme": "decimate-modifier",
+        "widgets": [
+          { "type": "showme", "id": "mask-modifier" }
+        ]
       },
       {
         "title": "Sculpt Mode 기초",
@@ -1356,7 +1394,10 @@ const CURRICULUM = [
           "Remesh 후 메쉬가 고르게 정리됐다",
           "AI + Sculpt 결과물 스크린샷을 저장했다"
         ],
-        "showme": "remesh-modifier"
+        "showme": "remesh-modifier",
+        "widgets": [
+          { "type": "showme", "id": "multiresolution-modifier" }
+        ]
       }
     ],
     "assignment": {
@@ -2873,7 +2914,10 @@ const CURRICULUM = [
         "done": [
           "같은 씬을 두 엔진으로 렌더해서 비교했다"
         ],
-        "showme": "render-settings"
+        "showme": "render-settings",
+        "widgets": [
+          { "type": "showme", "id": "volume-to-mesh" }
+        ]
       },
       {
         "title": "렌더 출력 설정",
