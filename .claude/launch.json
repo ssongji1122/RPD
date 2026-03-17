@@ -10,20 +10,8 @@
     {
       "name": "course-site-static",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "8770", "--directory", "course-site"],
+      "runtimeArgs": ["tools/serve-static.py"],
       "port": 8770
-    },
-    {
-      "name": "charming-khayyam-static",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "8891", "--directory", "/Users/ssongji/Developer/Workspace/RPD/.claude/worktrees/charming-khayyam/course-site"],
-      "port": 8891
-    },
-    {
-      "name": "objective-lumiere-static",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "8892", "--directory", "course-site"],
-      "port": 8892
     }
   ]
 }
