@@ -647,7 +647,7 @@
             ${w.subtitle ? `<p>${w.subtitle}</p>` : ""}
             <div class="hero-meta">
               <span class="meta-chip">⏱ ${w.duration}</span>
-              <span class="meta-chip">${w.steps.length}단계 실습</span>
+              <span class="meta-chip">${w.steps.length}단계 따라하기</span>
             </div>
           </div>
         </section>
@@ -660,7 +660,7 @@
 
         <!-- Lab (Steps) -->
         <section class="content-block" id="practice">
-          <div class="section-head"><h3>실습</h3></div>
+          <div class="section-head"><h3>따라하기</h3></div>
           <div class="lab">
             ${stepsHtml}
           </div>
@@ -981,7 +981,7 @@
       // Build section list (간소화: 개요 + 실습 스텝 + 부록만)
       var sections = [{ id: "hero-section", label: "개요", group: null }];
       w.steps.forEach(function(step, idx) {
-        sections.push({ id: "step-" + idx, label: (idx + 1) + ". " + step.title, group: idx === 0 ? "실습" : null });
+        sections.push({ id: "step-" + idx, label: (idx + 1) + ". " + step.title, group: idx === 0 ? "따라하기" : null });
       });
       // 부록 그룹: 있는 것만 표시
       var appendixStarted = false;
