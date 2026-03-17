@@ -203,8 +203,8 @@
     .showme-overlay.is-open { display: flex; }
 
     .showme-modal {
-      width: min(720px, 100%);
-      height: min(85vh, 640px);
+      width: min(960px, 92vw);
+      height: min(88vh, 800px);
       border-radius: var(--radius-lg);
       border: 1px solid var(--line-strong);
       background: var(--surface);
@@ -212,6 +212,11 @@
       display: flex; flex-direction: column;
       overflow: hidden;
       animation: showme-in .22s ease;
+      transition: width .25s ease, height .25s ease, border-radius .25s ease;
+    }
+    .showme-modal.is-maximized {
+      width: 100vw; height: 100vh;
+      border-radius: 0; border: none;
     }
     @keyframes showme-in {
       from { opacity: 0; transform: scale(.97) translateY(8px); }
@@ -227,7 +232,10 @@
     .showme-modal-title {
       font-size: .9rem; font-weight: 600; color: var(--text);
     }
-    .showme-close {
+    .showme-header-actions {
+      display: flex; align-items: center; gap: 6px;
+    }
+    .showme-resize, .showme-close {
       display: grid; place-items: center;
       width: 32px; height: 32px; border-radius: 8px;
       border: 1px solid var(--line);
@@ -235,20 +243,24 @@
       color: var(--muted-strong); cursor: pointer;
       transition: background .14s, color .14s;
     }
-    .showme-close:hover {
+    .showme-resize:hover, .showme-close:hover {
       background: var(--overlay-white-hover); color: var(--text);
     }
+    .showme-resize .icon-restore { display: none; }
+    .is-maximized .showme-resize .icon-maximize { display: none; }
+    .is-maximized .showme-resize .icon-restore { display: block; }
     .showme-iframe {
       flex: 1; width: 100%; border: none;
       background: var(--bg);
     }
 
-    @media (max-width: 720px) {
+    @media (max-width: 768px) {
       .showme-overlay { padding: 0; }
       .showme-modal {
         width: 100%; height: 100%;
         border-radius: 0; border: none;
       }
+      .showme-resize { display: none; }
     }
 
     /* ── Student Login Overlay ───────────────────── */
@@ -403,11 +415,22 @@
       <div class="showme-modal">
         <div class="showme-modal-header">
           <span class="showme-modal-title" id="showmeTitle"></span>
-          <button class="showme-close" id="showmeClose" aria-label="닫기" type="button">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-            </svg>
-          </button>
+          <div class="showme-header-actions">
+            <button class="showme-resize" id="showmeResize" aria-label="크기 전환" type="button">
+              <svg class="icon-maximize" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <rect x="2.5" y="2.5" width="11" height="11" rx="1.5" stroke="currentColor" stroke-width="1.4"/>
+              </svg>
+              <svg class="icon-restore" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <rect x="4.5" y="1.5" width="10" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/>
+                <rect x="1.5" y="4.5" width="10" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4" fill="var(--surface)"/>
+              </svg>
+            </button>
+            <button class="showme-close" id="showmeClose" aria-label="닫기" type="button">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
         </div>
         <iframe class="showme-iframe" id="showmeIframe" sandbox="allow-scripts allow-same-origin" title="Show Me Widget"></iframe>
       </div>
@@ -765,12 +788,20 @@
     function closeShowMe() {
       var overlay = document.getElementById("showmeOverlay");
       var iframe  = document.getElementById("showmeIframe");
+      var modal   = overlay.querySelector(".showme-modal");
       overlay.classList.remove("is-open");
       overlay.setAttribute("aria-hidden", "true");
+      modal.classList.remove("is-maximized");
       iframe.src = "about:blank";
       document.body.style.overflow = "";
     }
 
+    function toggleShowMeSize() {
+      var modal = document.querySelector(".showme-modal");
+      modal.classList.toggle("is-maximized");
+    }
+
+    document.getElementById("showmeResize").addEventListener("click", toggleShowMeSize);
     document.getElementById("showmeClose").addEventListener("click", closeShowMe);
     document.getElementById("showmeOverlay").addEventListener("click", function(e) {
       if (e.target === this) closeShowMe();
