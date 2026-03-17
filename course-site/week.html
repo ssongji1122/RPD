@@ -30,24 +30,24 @@
     .topic-progress-fill { height: 100%; border-radius: 2px; background: var(--key-soft); transition: width .35s ease; width: 0%; }
     .topic-progress-label { font-size: .78rem; color: var(--muted); white-space: nowrap; }
 
-    .topic-check-list { display: flex; flex-wrap: wrap; gap: 6px; }
+    .topic-check-list { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 16px; }
     .topic-check-item { position: relative; }
     .topic-check-item input[type="checkbox"] { position: absolute; opacity: 0; width: 0; height: 0; }
     .topic-check-item label {
-      display: inline-flex; align-items: center;
-      padding: 4px 10px; border-radius: 999px;
-      border: 1px solid var(--line);
-      background: var(--overlay-white);
-      color: var(--muted); font-size: .76rem;
+      display: flex; align-items: baseline; gap: 7px;
+      padding: 5px 0;
+      color: var(--muted-strong); font-size: .82rem;
       cursor: pointer;
-      transition: background .18s, border-color .18s, color .18s;
+      transition: color .14s;
       user-select: none;
     }
-    .topic-check-item input:checked + label {
-      background: rgba(10,132,255,.12);
-      border-color: rgba(10,132,255,.35);
-      color: var(--key-soft);
+    .topic-check-item label::before {
+      content: "•"; flex-shrink: 0;
+      color: var(--line-strong); font-size: 1rem;
+      transition: color .14s;
     }
+    .topic-check-item input:checked + label { color: var(--key-soft); }
+    .topic-check-item input:checked + label::before { color: var(--key-soft); }
 
     /* Nav between weeks */
     .week-nav {
