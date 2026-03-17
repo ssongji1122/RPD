@@ -659,7 +659,7 @@ const CURRICULUM = [
             "detail": "30°~60° 사이 실험"
           }
         ],
-        "image": "assets/images/week03/bevel-weighted-normal.png",
+        "image": "assets/images/week03/bevel-tool.png",
         "done": [
           "전체 모서리가 자연스럽게 둥글어졌다"
         ],
@@ -687,10 +687,11 @@ const CURRICULUM = [
             "detail": "Keep Sharp와 함께 쓰면 효과가 더 잘 보임"
           }
         ],
-        "image": "assets/images/week03/bevel-weighted-normal.png",
+        "image": "assets/images/week03/weighted-normal.png",
         "done": [
           "음영이 깔끔하게 정리됐다"
         ],
+        "showme": "weighted-normal",
         "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/modify/weighted_normal.html"
       },
       {
@@ -712,11 +713,12 @@ const CURRICULUM = [
             "detail": "Scale이 1이 아니면 Modifier 결과가 달라짐"
           }
         ],
-        "image": "assets/images/week03/bevel-weighted-normal.png",
+        "image": "assets/images/week03/modifier-stack.png",
         "done": [
           "순서를 바꿨을 때 결과가 달라지는 것을 확인했다",
           "Apply는 마지막에만 하는 이유를 안다"
         ],
+        "showme": "transform-apply",
         "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/introduction.html"
       },
       {
@@ -874,6 +876,14 @@ const CURRICULUM = [
     "status": "active",
     "summary": "레고 조립처럼, Edit Mode로 블록을 깎고 Modifier로 대칭·곡면·반복 효과를 얹는 흐름을 배워요.",
     "videos": [
+      {
+        "title": "[실습] 민트 로봇 레퍼런스 이미지 설정",
+        "url": "https://youtu.be/-U82eI3eiQ0"
+      },
+      {
+        "title": "[실습] 민트 로봇 헤드 Mirror 모델링",
+        "url": "https://youtu.be/FIY9RBLdYcA"
+      },
       {
         "title": "Blender Studio - Modeling Introduction",
         "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modeling-introduction/"
