@@ -349,40 +349,6 @@ body {
 }
 .doc-ref a:hover { text-decoration: underline; }
 
-/* ── Concept Canvas ── */
-.concept-canvas {
-  display: block;
-  width: 100%;
-  height: 110px;
-  border-radius: var(--radius-sm);
-  margin-bottom: 12px;
-  background: var(--bg);
-}
-
-/* ── Origin Steps ── */
-.origin-steps {
-  margin: 8px 0 0;
-  padding: 10px 14px;
-  border-radius: var(--radius-sm);
-  background: rgba(245,158,11,.06);
-  border: 1px solid rgba(245,158,11,.15);
-  font-size: .82rem;
-  color: #fbbf24;
-  list-style: none;
-}
-.origin-steps li {
-  padding: 3px 0 3px 16px;
-  display: block;
-  position: relative;
-  line-height: 1.6;
-}
-.origin-steps li::before {
-  content: "→";
-  position: absolute;
-  left: 0;
-  opacity: .6;
-}
-
 /* ── Responsive ── */
 @media (max-width: 600px) {
   .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
@@ -405,42 +371,21 @@ body {
 <!-- TAB 1: 개념 이해 -->
 <section class="panel is-active" id="panel-concept" role="tabpanel">
   <div class="concept-grid">
-
-    <!-- 카드 1: Mirror란? -->
     <div class="concept-card">
-      <canvas class="concept-canvas" id="cv-mirror" width="600" height="110"></canvas>
       <h3>Mirror Modifier란?</h3>
       <p>거울처럼 한쪽만 편집하면 반대쪽이 자동으로 따라오는 Modifier입니다. 좌우 대칭 모델을 만들 때 작업량을 절반으로 줄여줍니다.</p>
       <div class="analogy">거울 앞에서 한쪽을 바꾸면 반대쪽이 자동으로 따라와요</div>
     </div>
-
-    <!-- 카드 2: Clipping -->
     <div class="concept-card">
-      <canvas class="concept-canvas" id="cv-clipping" width="600" height="110"></canvas>
       <h3>Clipping이란?</h3>
       <p>중심선을 넘지 못하게 하는 옵션입니다. ON이면 중심 정점이 정확히 중앙에 고정되어, 양쪽이 깔끔하게 이어집니다.</p>
-      <div class="analogy">종이를 반으로 접으면 접힌 선이 경계가 돼요. Clipping은 그 선 너머로 펜이 못 넘어가게 막는 역할이에요</div>
+      <div class="analogy">종이를 반으로 접으면 접힌 선(중심선)이 경계가 돼요. Clipping은 그 선 너머로 펜이 못 넘어가게 막는 역할이에요</div>
     </div>
-
-    <!-- 카드 3: Origin -->
     <div class="concept-card">
-      <canvas class="concept-canvas" id="cv-origin" width="600" height="110"></canvas>
-      <h3>Origin(원점)이 핵심이에요 <span class="badge badge-amber">가장 흔한 실수</span></h3>
-      <p>Mirror는 <strong>오브젝트의 원점(Origin)을 기준</strong>으로 반전합니다. 원점이 메시 중앙에 없으면 미러가 엉뚱한 곳에 나타나요.</p>
-      <ul class="origin-steps">
-        <li><strong>중앙으로 이동:</strong> <span class="kbd">Shift+S</span> → Cursor to World Origin → 우클릭 → Set Origin → Origin to 3D Cursor</li>
-        <li><strong>원하는 위치로:</strong> 해당 요소 선택 → <span class="kbd">Shift+S</span> → Cursor to Selected → 우클릭 → Set Origin → Origin to 3D Cursor</li>
-      </ul>
+      <h3>Origin(원점)이 핵심이에요</h3>
+      <p>Mirror는 <strong>오브젝트의 원점(Origin)을 기준</strong>으로 반전합니다. 원점이 메시 중앙에 없으면 미러가 엉뚱한 곳에 나타나요. <span class="badge badge-amber">가장 흔한 실수</span></p>
+      <div class="analogy">Mirror 추가 전 반드시: <strong>Ctrl+A → All Transforms</strong> 적용 → 원점 확인 순서로 시작하세요</div>
     </div>
-
-    <!-- 카드 4: Transforms 미적용 -->
-    <div class="concept-card">
-      <canvas class="concept-canvas" id="cv-transforms" width="600" height="110"></canvas>
-      <h3>Transforms 미적용 시 문제</h3>
-      <p>Object Mode에서 회전·스케일 후 <strong>Ctrl+A (All Transforms)</strong>를 안 하면, 로컬 축이 월드 축과 달라져 미러 방향이 틀어집니다.</p>
-      <div class="analogy">Mirror 추가 전 순서: <strong>Ctrl+A → All Transforms</strong> 적용 → 원점 확인 → Mirror 추가</div>
-    </div>
-
   </div>
 
   <div class="shortcut-list">
@@ -472,17 +417,40 @@ body {
 
 <!-- TAB 2: 시각적 비교 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    왼쪽 반의 꼭짓점을 드래그하면 오른쪽이 자동으로 미러됩니다.
-  </p>
-  <div class="demo-wrap">
-    <canvas id="demoCanvas" width="680" height="300"></canvas>
-    <div class="demo-controls">
-      <button class="demo-btn is-active" id="btnClipping">Clipping ON</button>
-      <button class="demo-btn" id="btnReset">초기화</button>
+<style>
+.scenario-nav{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.scenario-btn{padding:6px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.15);background:transparent;color:#cbd5e1;cursor:pointer;font-size:13px;transition:all .2s;font-family:inherit}
+.scenario-btn.active{background:rgba(99,102,241,.25);border-color:rgba(99,102,241,.5);color:#a5b4fc}
+.before-after{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.ba-panel{border-radius:12px;overflow:hidden}
+.ba-panel canvas{width:100%;display:block}
+.ba-label{text-align:center;font-size:11px;color:#94a3b8;padding:4px;background:rgba(0,0,0,.2)}
+.cause-effect{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.ce-row{display:flex;align-items:center;gap:8px}
+.ce-cause{background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);border-radius:8px;padding:6px 12px;font-size:13px;flex:1}
+.ce-arrow{color:#64748b;font-size:16px}
+.ce-result{border-radius:8px;padding:6px 12px;font-size:13px;flex:1.5}
+.result-a{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:#6ee7b7}
+.result-b{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);color:#fcd34d}
+.result-c{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:#fca5a5}
+</style>
+  <div class="scenario-nav">
+    <button class="scenario-btn active" data-scene="xaxis" onclick="switchScenarioMM('xaxis')">X축 미러</button>
+    <button class="scenario-btn" data-scene="clipping" onclick="switchScenarioMM('clipping')">Clipping ON/OFF</button>
+    <button class="scenario-btn" data-scene="apply" onclick="switchScenarioMM('apply')">Apply 전후</button>
+  </div>
+  <div id="scene-desc-mm" style="font-size:.84rem;color:var(--muted-strong);margin-bottom:10px;padding:10px 14px;border-radius:12px;background:var(--surface);border:1px solid var(--line);">시나리오를 선택하세요.</div>
+  <div class="before-after">
+    <div class="ba-panel">
+      <div class="ba-label">BEFORE</div>
+      <canvas id="mm-before" width="320" height="160"></canvas>
+    </div>
+    <div class="ba-panel">
+      <div class="ba-label">AFTER</div>
+      <canvas id="mm-after" width="320" height="160"></canvas>
     </div>
   </div>
-  <p class="demo-hint">꼭짓점을 드래그해 보세요. Clipping을 토글하면 중심선 넘기 동작이 달라집니다.</p>
+  <div class="cause-effect" id="cause-effect-mm"></div>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->
@@ -536,6 +504,160 @@ body {
 </section>
 
 <script>
+// ── Mirror Modifier Visual Scenarios ──────────
+(function() {
+  var BG = '#1e293b';
+  function drawBg(ctx, w, h) { ctx.fillStyle = BG; ctx.fillRect(0, 0, w, h); }
+  function lbl(ctx, text, x, y, color) {
+    ctx.save(); ctx.font = 'bold 11px sans-serif'; ctx.fillStyle = color || '#94a3b8';
+    ctx.textAlign = 'center'; ctx.fillText(text, x, y); ctx.restore();
+  }
+  // Draw a simple half-shape (L-shaped polygon on left of center)
+  function drawHalfShape(ctx, cx, cy, color) {
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - 50);
+    ctx.lineTo(cx - 50, cy - 50);
+    ctx.lineTo(cx - 50, cy);
+    ctx.lineTo(cx - 20, cy);
+    ctx.lineTo(cx - 20, cy + 30);
+    ctx.lineTo(cx, cy + 30);
+    ctx.closePath();
+    ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = color.replace(')', ',0.15)').replace('rgb', 'rgba'); ctx.fill();
+  }
+  function mirrorShape(ctx, cx, cy, color) {
+    ctx.save(); ctx.scale(-1, 1); ctx.translate(-2 * cx, 0);
+    drawHalfShape(ctx, cx, cy, color);
+    ctx.restore();
+  }
+  function drawCenterLine(ctx, cx, h, dashed) {
+    ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 1.5;
+    if (dashed) ctx.setLineDash([5, 4]); else ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(cx, 10); ctx.lineTo(cx, h - 14); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  var scenarios = {
+    xaxis: {
+      desc: 'Mirror Modifier를 추가하면 오브젝트가 원점(Origin)을 기준으로 X축 대칭 복제됩니다.',
+      ce: [
+        { cause: '왼쪽 절반만 모델링', result: 'Mirror가 자동으로 오른쪽 복제', cls: 'result-a' },
+        { cause: '한쪽 버텍스 이동', result: '반대쪽도 대칭으로 자동 반영', cls: 'result-a' }
+      ],
+      before: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        drawCenterLine(ctx, w/2, h, true);
+        drawHalfShape(ctx, w/2, h/2, '#6366f1');
+        lbl(ctx, 'Mirror 없음 (절반만)', w/2, h - 10);
+      },
+      after: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        drawCenterLine(ctx, w/2, h, false);
+        drawHalfShape(ctx, w/2, h/2, '#6366f1');
+        mirrorShape(ctx, w/2, h/2, '#10b981');
+        lbl(ctx, 'Mirror 적용 (대칭)', w/2, h - 10, '#6ee7b7');
+      }
+    },
+    clipping: {
+      desc: 'Clipping ON이면 버텍스가 거울 축을 넘어갈 수 없습니다. OFF이면 반대편으로 이동 가능합니다.',
+      ce: [
+        { cause: 'Clipping ON', result: '버텍스가 중심선에서 멈춤 — 겹침 방지', cls: 'result-a' },
+        { cause: 'Clipping OFF', result: '버텍스가 반대편으로 넘어갈 수 있음', cls: 'result-b' }
+      ],
+      before: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        drawCenterLine(ctx, w/2, h, false);
+        // vertex trying to cross center (stopped at line)
+        ctx.fillStyle = '#f59e0b';
+        ctx.beginPath(); ctx.arc(w/2, h/2, 7, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(w/2 - 20, h/2); ctx.lineTo(w/2 - 4, h/2); ctx.stroke();
+        ctx.fillStyle = '#ef4444';
+        ctx.beginPath(); ctx.moveTo(w/2 - 4, h/2); ctx.lineTo(w/2 - 14, h/2 - 5); ctx.lineTo(w/2 - 14, h/2 + 5); ctx.fill();
+        lbl(ctx, 'Clipping ON: 중심선 정지', w/2, h - 10, '#fcd34d');
+      },
+      after: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        drawCenterLine(ctx, w/2, h, true);
+        // vertex past center (clipping off)
+        ctx.fillStyle = '#f59e0b';
+        ctx.beginPath(); ctx.arc(w/2 + 30, h/2, 7, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = '#10b981'; ctx.lineWidth = 1.5;
+        ctx.setLineDash([4, 3]);
+        ctx.beginPath(); ctx.arc(w/2 - 30, h/2, 7, 0, Math.PI * 2); ctx.stroke();
+        ctx.setLineDash([]);
+        lbl(ctx, 'Clipping OFF: 중심선 넘기 가능', w/2, h - 10, '#6ee7b7');
+      }
+    },
+    apply: {
+      desc: 'Apply를 누르면 미러 데이터가 실제 메시에 통합됩니다. 이후에는 대칭이 해제되어 독립 편집 가능합니다.',
+      ce: [
+        { cause: 'Apply 전', result: 'Mirror Modifier 활성 — 편집 즉시 반영', cls: 'result-a' },
+        { cause: 'Apply 후', result: '메시가 하나로 합쳐짐 — 비대칭 편집 가능', cls: 'result-b' }
+      ],
+      before: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        drawCenterLine(ctx, w/2, h, false);
+        drawHalfShape(ctx, w/2, h/2, '#6366f1');
+        mirrorShape(ctx, w/2, h/2, '#10b981');
+        // modifier stack indicator
+        ctx.fillStyle = 'rgba(99,102,241,0.15)';
+        ctx.fillRect(w/2 - 70, h - 35, 140, 20);
+        ctx.strokeStyle = '#6366f1'; ctx.lineWidth = 1;
+        ctx.strokeRect(w/2 - 70, h - 35, 140, 20);
+        lbl(ctx, 'Mirror Modifier 활성', w/2, h - 22, '#a5b4fc');
+      },
+      after: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        // Full symmetric shape as one mesh
+        ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2;
+        ctx.fillStyle = 'rgba(245,158,11,0.12)';
+        ctx.beginPath();
+        var cx = w/2, cy = h/2;
+        ctx.moveTo(cx - 50, cy - 50); ctx.lineTo(cx + 50, cy - 50);
+        ctx.lineTo(cx + 50, cy); ctx.lineTo(cx + 20, cy);
+        ctx.lineTo(cx + 20, cy + 30); ctx.lineTo(cx - 20, cy + 30);
+        ctx.lineTo(cx - 20, cy); ctx.lineTo(cx - 50, cy);
+        ctx.closePath();
+        ctx.fill(); ctx.stroke();
+        lbl(ctx, 'Apply 후 단일 메시', w/2, h - 10, '#fcd34d');
+      }
+    }
+  };
+
+  function buildCauseEffect(ceList) {
+    var c = document.getElementById('cause-effect-mm');
+    c.textContent = '';
+    ceList.forEach(function(item) {
+      var row = document.createElement('div'); row.className = 'ce-row';
+      var cause = document.createElement('span'); cause.className = 'ce-cause'; cause.textContent = item.cause;
+      var arrow = document.createElement('span'); arrow.className = 'ce-arrow'; arrow.textContent = '→';
+      var result = document.createElement('span'); result.className = 'ce-result ' + item.cls; result.textContent = item.result;
+      row.appendChild(cause); row.appendChild(arrow); row.appendChild(result);
+      c.appendChild(row);
+    });
+  }
+
+  function renderBAPanels(scene) {
+    var cvB = document.getElementById('mm-before');
+    var cvA = document.getElementById('mm-after');
+    scene.before(cvB.getContext('2d'), cvB.width, cvB.height);
+    scene.after(cvA.getContext('2d'), cvA.width, cvA.height);
+  }
+
+  window.switchScenarioMM = function(key) {
+    var scene = scenarios[key];
+    document.getElementById('scene-desc-mm').textContent = scene.desc;
+    document.querySelectorAll('#panel-visual .scenario-btn').forEach(function(b) {
+      b.classList.toggle('active', b.dataset.scene === key);
+    });
+    renderBAPanels(scene);
+    buildCauseEffect(scene.ce);
+  };
+
+  document.addEventListener('DOMContentLoaded', function() { switchScenarioMM('xaxis'); });
+})();
+
 // ── Tab Switching ──────────────────────────────
 document.querySelectorAll(".tab").forEach(function(tab) {
   tab.addEventListener("click", function() {
@@ -974,349 +1096,6 @@ initQuiz([
     explanation: "스케일이나 회전이 Apply 안 된 상태에서 Mirror를 추가하면 축이 틀어져요. Ctrl+A → All Transforms가 선행 필수예요."
   }
 ]);
-
-// ── Concept Canvas Animations ─────────────────
-(function() {
-  function px(canvas) {
-    // Set internal resolution to match display width
-    var w = canvas.offsetWidth || 300;
-    canvas.width = w;
-    canvas.height = 110;
-    return canvas.getContext('2d');
-  }
-
-  // ── Canvas 1: Mirror Demo ──────────────────
-  function animMirror(canvas) {
-    var ctx = px(canvas);
-    var W = canvas.width, H = canvas.height, cx = W / 2;
-    var t = 0;
-
-    // Left-half shape: 5 points (x measured leftward from cx)
-    var base = [
-      { dx: -6,  dy: -38 },
-      { dx: -44, dy: -22 },
-      { dx: -52, dy: 8   },
-      { dx: -38, dy: 34  },
-      { dx: -8,  dy: 40  }
-    ];
-
-    function frame() {
-      ctx.clearRect(0, 0, W, H);
-      ctx.fillStyle = '#111214';
-      ctx.fillRect(0, 0, W, H);
-
-      // Wobble vertex index 1
-      var wobble = Math.sin(t * 0.045) * 16;
-      var verts = base.map(function(v, i) {
-        return { x: cx + v.dx, y: H / 2 + v.dy + (i === 1 ? wobble : 0) };
-      });
-      var mirror = verts.map(function(v) { return { x: cx + (cx - v.x), y: v.y }; });
-
-      // Mirror shape (green, dashed)
-      ctx.beginPath();
-      ctx.moveTo(mirror[0].x, mirror[0].y);
-      mirror.forEach(function(v) { ctx.lineTo(v.x, v.y); });
-      ctx.closePath();
-      ctx.fillStyle = 'rgba(16,185,129,.1)';
-      ctx.fill();
-      ctx.strokeStyle = '#10b981';
-      ctx.lineWidth = 1.5;
-      ctx.setLineDash([4, 3]);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      // Original shape (blue)
-      ctx.beginPath();
-      ctx.moveTo(verts[0].x, verts[0].y);
-      verts.forEach(function(v) { ctx.lineTo(v.x, v.y); });
-      ctx.closePath();
-      ctx.fillStyle = 'rgba(10,132,255,.15)';
-      ctx.fill();
-      ctx.strokeStyle = '#0a84ff';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      // Moving vertex dot
-      ctx.beginPath();
-      ctx.arc(verts[1].x, verts[1].y, 5, 0, Math.PI * 2);
-      ctx.fillStyle = '#0a84ff';
-      ctx.fill();
-
-      // Mirror axis
-      ctx.strokeStyle = 'rgba(245,158,11,.35)';
-      ctx.lineWidth = 1;
-      ctx.setLineDash([4, 4]);
-      ctx.beginPath();
-      ctx.moveTo(cx, 4); ctx.lineTo(cx, H - 4);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      // Labels
-      ctx.font = '10px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillStyle = 'rgba(10,132,255,.8)';
-      ctx.fillText('✏️ 편집 중', cx - 38, H - 5);
-      ctx.fillStyle = 'rgba(16,185,129,.8)';
-      ctx.fillText('🪞 자동 미러', cx + 44, H - 5);
-      ctx.textAlign = 'left';
-
-      t++;
-      requestAnimationFrame(frame);
-    }
-    frame();
-  }
-
-  // ── Canvas 2: Clipping Demo ────────────────
-  function animClipping(canvas) {
-    var ctx = px(canvas);
-    var W = canvas.width, H = canvas.height, cx = W / 2;
-    var t = 0;
-    var CYCLE = 150; // frames per ON/OFF phase
-
-    function frame() {
-      ctx.clearRect(0, 0, W, H);
-      ctx.fillStyle = '#111214';
-      ctx.fillRect(0, 0, W, H);
-
-      var total = t % (CYCLE * 2);
-      var isOn  = total >= CYCLE;
-      var prog  = (total % CYCLE) / CYCLE;
-      var pp    = prog < .5 ? prog * 2 : 2 - prog * 2; // 0→1→0
-
-      var vx = cx - 68 + pp * (isOn ? 68 : 88);
-      var vy = H / 2;
-      var mvx = cx + (cx - vx);
-
-      // Crossed-center highlight when OFF
-      if (!isOn && vx > cx) {
-        ctx.fillStyle = 'rgba(239,68,68,.07)';
-        ctx.fillRect(cx, 0, W - cx, H);
-      }
-
-      // Center line
-      ctx.strokeStyle = isOn ? 'rgba(16,185,129,.55)' : 'rgba(255,255,255,.22)';
-      ctx.lineWidth = 1.5;
-      ctx.setLineDash([4, 4]);
-      ctx.beginPath();
-      ctx.moveTo(cx, 8); ctx.lineTo(cx, H - 8);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      var col = isOn ? '#10b981' : (vx > cx ? '#ef4444' : '#0a84ff');
-
-      // Mirror vertex (ghost)
-      ctx.beginPath();
-      ctx.arc(mvx, vy, 7, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(255,255,255,.12)';
-      ctx.fill();
-
-      // Main vertex
-      ctx.beginPath();
-      ctx.arc(vx, vy, 7, 0, Math.PI * 2);
-      ctx.fillStyle = col;
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(255,255,255,.25)';
-      ctx.lineWidth = 1;
-      ctx.stroke();
-
-      // Status
-      ctx.font = 'bold 11px sans-serif';
-      ctx.textAlign = 'center';
-      if (isOn) {
-        ctx.fillStyle = '#10b981';
-        ctx.fillText('Clipping ON — 중심선에서 멈춤 ✓', cx, 17);
-      } else {
-        ctx.fillStyle = vx > cx ? '#ef4444' : '#a1a1aa';
-        ctx.fillText('Clipping OFF' + (vx > cx ? ' — 경계 넘음 ✗' : ''), cx, 17);
-      }
-      ctx.textAlign = 'left';
-
-      t++;
-      requestAnimationFrame(frame);
-    }
-    frame();
-  }
-
-  // ── Canvas 3: Origin Position Demo ────────
-  function animOrigin(canvas) {
-    var ctx = px(canvas);
-    var W = canvas.width, H = canvas.height;
-    var t = 0;
-    var PHASE = 160;
-
-    function mesh(x, y, w, h, fill, stroke, dashed) {
-      ctx.beginPath();
-      ctx.rect(x - w / 2, y - h / 2, w, h);
-      ctx.fillStyle = fill;
-      ctx.fill();
-      ctx.strokeStyle = stroke;
-      ctx.lineWidth = 1.5;
-      if (dashed) ctx.setLineDash([3, 2]);
-      ctx.stroke();
-      ctx.setLineDash([]);
-    }
-
-    function originDot(x, y) {
-      ctx.strokeStyle = 'rgba(245,158,11,.45)';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(x - 9, y); ctx.lineTo(x + 9, y);
-      ctx.moveTo(x, y - 9); ctx.lineTo(x, y + 9);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.arc(x, y, 5, 0, Math.PI * 2);
-      ctx.fillStyle = '#f59e0b';
-      ctx.fill();
-    }
-
-    function frame() {
-      ctx.clearRect(0, 0, W, H);
-      ctx.fillStyle = '#111214';
-      ctx.fillRect(0, 0, W, H);
-
-      var total = t % (PHASE * 2);
-      var isBad = total < PHASE;
-
-      var meshX = W * .58, meshY = H / 2;
-      var mw = 52, mh = 58;
-      var origX = isBad ? W * .18 : meshX;
-      var origY = isBad ? H * .35 : meshY;
-      var mirX  = 2 * origX - meshX;
-
-      // Mirrored mesh
-      mesh(mirX, meshY, mw, mh,
-        isBad ? 'rgba(239,68,68,.1)' : 'rgba(16,185,129,.1)',
-        isBad ? '#ef4444'            : '#10b981',
-        true);
-
-      // Original mesh
-      mesh(meshX, meshY, mw, mh, 'rgba(10,132,255,.15)', '#0a84ff', false);
-
-      // Origin dot
-      originDot(origX, origY);
-
-      // Origin label
-      ctx.font = '9px sans-serif';
-      ctx.fillStyle = '#f59e0b';
-      ctx.textAlign = 'left';
-      ctx.fillText('Origin', origX + 7, origY - 7);
-
-      // Status
-      ctx.font = 'bold 11px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillStyle = isBad ? '#ef4444' : '#10b981';
-      ctx.fillText(isBad ? '원점이 메시 밖에 있어요 ✗' : '원점이 메시 중앙에 있어요 ✓', W / 2, 16);
-      ctx.textAlign = 'left';
-
-      t++;
-      requestAnimationFrame(frame);
-    }
-    frame();
-  }
-
-  // ── Canvas 4: Unapplied Transforms Demo ───
-  function animTransforms(canvas) {
-    var ctx = px(canvas);
-    var W = canvas.width, H = canvas.height;
-    var t = 0;
-    var PHASE = 160;
-    var ROT = 0.42; // ~24° visual rotation
-
-    function box(cx, cy, w, h, angle, fill, stroke, dashed) {
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.rotate(angle);
-      ctx.beginPath();
-      ctx.rect(-w / 2, -h / 2, w, h);
-      ctx.fillStyle = fill;
-      ctx.fill();
-      ctx.strokeStyle = stroke;
-      ctx.lineWidth = 1.5;
-      if (dashed) ctx.setLineDash([3, 2]);
-      ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.restore();
-    }
-
-    function axis(cx, cy, angle, color, label) {
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.rotate(angle);
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 1.5;
-      ctx.setLineDash([5, 3]);
-      ctx.beginPath();
-      ctx.moveTo(0, -52); ctx.lineTo(0, 52);
-      ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.font = 'bold 9px sans-serif';
-      ctx.fillStyle = color;
-      ctx.textAlign = 'left';
-      ctx.fillText(label, 4, -36);
-      ctx.restore();
-    }
-
-    function frame() {
-      ctx.clearRect(0, 0, W, H);
-      ctx.fillStyle = '#111214';
-      ctx.fillRect(0, 0, W, H);
-
-      var total = t % (PHASE * 2);
-      var isBad = total < PHASE;
-
-      var cx = W / 2, cy = H / 2;
-
-      if (isBad) {
-        // Unapplied: local axis tilted → mirror wrong
-        box(cx - 32, cy, 36, 52, ROT, 'rgba(10,132,255,.15)', '#0a84ff', false);
-        // Mirrored along tilted local axis (bad position)
-        box(cx + 52, cy - 22, 36, 52, ROT, 'rgba(239,68,68,.1)', '#ef4444', true);
-        // Show tilted axis
-        axis(cx, cy, ROT, 'rgba(245,158,11,.75)', '로컬X');
-        ctx.font = 'bold 11px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillStyle = '#ef4444';
-        ctx.fillText('Ctrl+A 미적용 → 미러 방향 틀어짐 ✗', cx, 16);
-        ctx.textAlign = 'left';
-      } else {
-        // Applied: local axis aligned with world → mirror correct
-        box(cx - 32, cy, 36, 52, ROT, 'rgba(10,132,255,.15)', '#0a84ff', false);
-        // Correct mirror (symmetric about world axis)
-        box(cx + 32, cy, 36, 52, -ROT, 'rgba(16,185,129,.1)', '#10b981', true);
-        // Show straight axis
-        axis(cx, cy, 0, 'rgba(16,185,129,.75)', '로컬X');
-        ctx.font = 'bold 11px sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillStyle = '#10b981';
-        ctx.fillText('Ctrl+A 적용 → 미러 방향 정상 ✓', cx, 16);
-        ctx.textAlign = 'left';
-      }
-
-      t++;
-      requestAnimationFrame(frame);
-    }
-    frame();
-  }
-
-  // Initialise all after DOM ready
-  function init() {
-    var c1 = document.getElementById('cv-mirror');
-    var c2 = document.getElementById('cv-clipping');
-    var c3 = document.getElementById('cv-origin');
-    var c4 = document.getElementById('cv-transforms');
-    if (c1) animMirror(c1);
-    if (c2) animClipping(c2);
-    if (c3) animOrigin(c3);
-    if (c4) animTransforms(c4);
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    // Small delay so canvas layout is computed
-    setTimeout(init, 50);
-  }
-})();
 </script>
 
 </body>

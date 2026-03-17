@@ -369,6 +369,24 @@ body {
   border: 2px solid #fff;
 }
 
+
+.scenario-nav { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+.scenario-btn { padding:6px 14px; border-radius:20px; border:1px solid rgba(255,255,255,.15); background:transparent; color:#cbd5e1; cursor:pointer; font-size:13px; transition:all .2s; font-family:inherit; }
+.scenario-btn.active { background:rgba(99,102,241,.25); border-color:rgba(99,102,241,.5); color:#a5b4fc; }
+.before-after { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:12px 0; }
+.ba-panel { border-radius:12px; overflow:hidden; background:var(--surface); }
+.ba-panel canvas { width:100%; display:block; }
+.ba-label { text-align:center; font-size:11px; color:#94a3b8; padding:4px; background:rgba(0,0,0,.2); }
+.cause-effect { display:flex; flex-direction:column; gap:8px; margin:12px 0; }
+.ce-row { display:flex; align-items:center; gap:8px; }
+.ce-cause { background:rgba(99,102,241,.12); border:1px solid rgba(99,102,241,.25); border-radius:8px; padding:6px 12px; font-size:13px; flex:1; color:var(--muted-strong); }
+.ce-arrow { color:#64748b; font-size:16px; }
+.ce-result { border-radius:8px; padding:6px 12px; font-size:13px; flex:1.5; }
+.result-a { background:rgba(16,185,129,.1); border:1px solid rgba(16,185,129,.25); color:#6ee7b7; }
+.result-b { background:rgba(245,158,11,.1); border:1px solid rgba(245,158,11,.25); color:#fcd34d; }
+.result-c { background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.25); color:#fca5a5; }
+.scene-desc { font-size:.84rem; color:var(--muted-strong); margin-bottom:10px; padding:10px 14px; border-radius:var(--radius-sm); background:var(--surface); border:1px solid var(--line); line-height:1.7; }
+
 /* ── Responsive ── */
 @media (max-width: 600px) {
   .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
@@ -442,19 +460,23 @@ body {
 
 <!-- TAB 2: 시각적 비교 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    슬라이더를 좌우로 드래그하여 Cycles(왼쪽)와 EEVEE(오른쪽) 렌더 결과를 비교하세요.
-  </p>
-  <div class="demo-wrap">
-    <canvas id="demoCanvas" width="680" height="380"></canvas>
-    <div class="demo-controls">
-      <span style="font-size:.82rem;color:var(--muted);">Cycles</span>
-      <input type="range" id="splitSlider" class="demo-slider" min="0" max="100" value="50">
-      <span style="font-size:.82rem;color:var(--muted);">EEVEE</span>
-      <button class="demo-btn" id="btnReset" style="margin-left:auto;">50/50</button>
+  <div class="scenario-nav" id="scenarioNav">
+    <button class="scenario-btn active" data-scene="eevee">EEVEE (빠름)</button>
+    <button class="scenario-btn" data-scene="cycles">Cycles (정확)</button>
+    <button class="scenario-btn" data-scene="quality">렌더 품질</button>
+  </div>
+  <div class="scene-desc" id="scene-desc">EEVEE는 실시간 렌더 엔진으로 빠른 프리뷰에 적합합니다.</div>
+  <div class="before-after">
+    <div class="ba-panel">
+      <canvas id="canvas-before" width="280" height="160"></canvas>
+      <div class="ba-label">적용 전</div>
+    </div>
+    <div class="ba-panel">
+      <canvas id="canvas-after" width="280" height="160"></canvas>
+      <div class="ba-label">적용 후</div>
     </div>
   </div>
-  <p class="demo-hint">왼쪽: Cycles (사실적 반사/그림자) | 오른쪽: EEVEE (빠르지만 근사)</p>
+  <div class="cause-effect" id="cause-effect"></div>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->
@@ -650,321 +672,193 @@ function initQuiz(questions) {
   }
 }
 
-// ── Canvas Cycles vs EEVEE Comparison Demo ────────
+// ── Render Settings Scenario Visualization ────────────
 (function() {
-  var canvas = document.getElementById("demoCanvas");
-  var ctx = canvas.getContext("2d");
-  var W = canvas.width, H = canvas.height;
-  var splitPos = 0.5; // 0=all Cycles, 1=all EEVEE
+  function drawBg(ctx, w, h) { ctx.fillStyle = "#1e293b"; ctx.fillRect(0,0,w,h); }
 
-  function drawScene(mode, clipX, clipW) {
-    // mode: "cycles" or "eevee"
-    ctx.save();
-    ctx.beginPath();
-    ctx.rect(clipX, 0, clipW, H);
-    ctx.clip();
-
-    // Background
-    if (mode === "cycles") {
-      // Cycles: smooth gradient sky with subtle color
-      var skyGrad = ctx.createLinearGradient(0, 0, 0, H * 0.65);
-      skyGrad.addColorStop(0, "#1a2340");
-      skyGrad.addColorStop(0.5, "#2a3a5c");
-      skyGrad.addColorStop(1, "#3d4a6a");
-      ctx.fillStyle = skyGrad;
-    } else {
-      // EEVEE: slightly banded sky
-      var skyGrad = ctx.createLinearGradient(0, 0, 0, H * 0.65);
-      skyGrad.addColorStop(0, "#1c2545");
-      skyGrad.addColorStop(0.4, "#2e3e60");
-      skyGrad.addColorStop(0.7, "#3a4868");
-      skyGrad.addColorStop(1, "#404e70");
-      ctx.fillStyle = skyGrad;
-    }
-    ctx.fillRect(0, 0, W, H * 0.65);
-
-    // Floor
-    if (mode === "cycles") {
-      var floorGrad = ctx.createLinearGradient(0, H * 0.65, 0, H);
-      floorGrad.addColorStop(0, "#3a3530");
-      floorGrad.addColorStop(1, "#252220");
-      ctx.fillStyle = floorGrad;
-    } else {
-      ctx.fillStyle = "#35302b";
-    }
-    ctx.fillRect(0, H * 0.65, W, H * 0.35);
-
-    // Floor grid / reflection
-    if (mode === "cycles") {
-      // Subtle reflection on floor
-      for (var i = 0; i < 8; i++) {
-        ctx.fillStyle = "rgba(100,120,160," + (0.03 - i * 0.003) + ")";
-        ctx.fillRect(0, H * 0.65 + i * 6, W, 6);
+  function drawEEVEEBefore(ctx, w, h) {
+    drawBg(ctx, w, h);
+    var cx = w/2, cy = h/2;
+    ctx.fillStyle = "#0f172a"; ctx.fillRect(0, 0, w, h);
+    ctx.fillStyle = "rgba(100,116,139,.3)"; ctx.fillRect(0, cy+30, w, h);
+    var grad = ctx.createRadialGradient(cx-10, cy-10, 5, cx, cy, 45);
+    grad.addColorStop(0, "#64748b"); grad.addColorStop(1, "#1e293b");
+    ctx.beginPath(); ctx.arc(cx, cy, 45, 0, Math.PI*2);
+    ctx.fillStyle = grad; ctx.fill();
+    for (var i = 0; i < 60; i++) {
+      var nx = cx - 45 + Math.random()*90, ny = cy - 45 + Math.random()*90;
+      var dx = nx-cx, dy = ny-cy;
+      if (dx*dx+dy*dy < 45*45) {
+        ctx.fillStyle = "rgba(255,255,255," + (Math.random()*0.3) + ")";
+        ctx.fillRect(nx, ny, 2, 2);
       }
     }
+    ctx.fillStyle = "#f59e0b"; ctx.font = "bold 10px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("EEVEE \ud504\ub9ac\ubdf0 (\uade0\uc77c\ud55c \uc870\uba85)", cx, 14);
+  }
 
-    // Main sphere
-    var sx = W * 0.35, sy = H * 0.42, sr = 65;
+  function drawEEVEEAfter(ctx, w, h) {
+    drawBg(ctx, w, h);
+    var cx = w/2, cy = h/2;
+    ctx.fillStyle = "#0f172a"; ctx.fillRect(0, 0, w, h);
+    ctx.fillStyle = "rgba(100,116,139,.3)"; ctx.fillRect(0, cy+30, w, h);
+    var grad = ctx.createRadialGradient(cx-15, cy-15, 8, cx, cy, 45);
+    grad.addColorStop(0, "#e2e8f0"); grad.addColorStop(0.6, "#94a3b8"); grad.addColorStop(1, "#1e293b");
+    ctx.beginPath(); ctx.arc(cx, cy, 45, 0, Math.PI*2); ctx.fillStyle = grad; ctx.fill();
+    var sg = ctx.createRadialGradient(cx+10, cy+35, 0, cx+10, cy+35, 30);
+    sg.addColorStop(0, "rgba(0,0,0,.4)"); sg.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = sg;
+    ctx.beginPath(); ctx.ellipse(cx+10, cy+32, 30, 10, 0, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = "#10b981"; ctx.font = "bold 10px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("EEVEE \ub80c\ub354 (\ube60\ub984, ~2\ucd08)", cx, 14);
+  }
 
-    // Cycles: proper soft shadow, accurate reflection
-    if (mode === "cycles") {
-      // Soft shadow
-      for (var si = 5; si >= 0; si--) {
-        ctx.beginPath();
-        ctx.ellipse(sx + 10, H * 0.65 + 8, sr * 1.1 + si * 3, sr * 0.2 + si * 1.5, 0, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(0,0,0," + (0.08 - si * 0.012) + ")";
-        ctx.fill();
+  function drawCyclesBefore(ctx, w, h) {
+    drawBg(ctx, w, h);
+    var cx = w/2, cy = h/2;
+    ctx.fillStyle = "#0a0a0a"; ctx.fillRect(0, 0, w, h);
+    for (var i = 0; i < 500; i++) {
+      var nx = Math.random()*w, ny = Math.random()*h;
+      ctx.fillStyle = "rgba(" + Math.floor(Math.random()*100) + "," + Math.floor(Math.random()*100) + "," + Math.floor(Math.random()*100) + ",.8)";
+      ctx.fillRect(nx, ny, 3, 3);
+    }
+    ctx.fillStyle = "rgba(15,23,42,.6)"; ctx.fillRect(0,0,w,h);
+    ctx.fillStyle = "#f59e0b"; ctx.font = "bold 10px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("Cycles \ub80c\ub354 \uc911... (\ub178\uc774\uc988)", cx, 14);
+    ctx.fillStyle = "rgba(245,158,11,.6)"; ctx.font = "12px sans-serif";
+    ctx.fillText("Sample: 32/512", cx, cy);
+  }
+
+  function drawCyclesAfter(ctx, w, h) {
+    drawBg(ctx, w, h);
+    var cx = w/2, cy = h/2;
+    ctx.fillStyle = "#050708"; ctx.fillRect(0, 0, w, h);
+    ctx.fillStyle = "#1a1a2e"; ctx.fillRect(0, cy+28, w, h-cy-28);
+    var grad = ctx.createRadialGradient(cx-20, cy-20, 3, cx, cy, 50);
+    grad.addColorStop(0, "#ffffff"); grad.addColorStop(0.15, "#e2e8f0");
+    grad.addColorStop(0.5, "#64748b"); grad.addColorStop(1, "#0f172a");
+    ctx.beginPath(); ctx.arc(cx, cy, 48, 0, Math.PI*2); ctx.fillStyle = grad; ctx.fill();
+    ctx.beginPath(); ctx.arc(cx-18, cy-18, 10, 0, Math.PI*2);
+    ctx.fillStyle = "rgba(255,255,255,.7)"; ctx.fill();
+    var sg = ctx.createRadialGradient(cx+8, cy+32, 0, cx+8, cy+32, 38);
+    sg.addColorStop(0, "rgba(0,0,0,.7)"); sg.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = sg;
+    ctx.beginPath(); ctx.ellipse(cx+8, cy+30, 38, 12, 0, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = "#10b981"; ctx.font = "bold 10px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("Cycles \ub80c\ub354 (\uc815\ud655, \uc0ac\uc2e4\uc801)", cx, 14);
+  }
+
+  function drawQualityBefore(ctx, w, h) {
+    drawBg(ctx, w, h);
+    var cx = w/2, cy = h/2;
+    ctx.fillStyle = "#0f172a"; ctx.fillRect(0,0,w,h);
+    var grad = ctx.createRadialGradient(cx-12, cy-12, 5, cx, cy, 45);
+    grad.addColorStop(0, "#94a3b8"); grad.addColorStop(1, "#1e293b");
+    ctx.beginPath(); ctx.arc(cx, cy, 45, 0, Math.PI*2); ctx.fillStyle = grad; ctx.fill();
+    for (var i = 0; i < 200; i++) {
+      var nx = cx - 45 + Math.random()*90, ny = cy - 45 + Math.random()*90;
+      var dx = nx-cx, dy = ny-cy;
+      if (dx*dx+dy*dy < 45*45) {
+        ctx.fillStyle = Math.random()>.5 ? "rgba(255,255,255,.5)" : "rgba(0,0,0,.5)";
+        ctx.fillRect(nx, ny, 2, 2);
       }
-    } else {
-      // EEVEE: sharper shadow
-      ctx.beginPath();
-      ctx.ellipse(sx + 12, H * 0.65 + 6, sr * 1.0, sr * 0.18, 0, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(0,0,0,0.35)";
-      ctx.fill();
     }
-
-    // Sphere with lighting
-    var sphereGrad = ctx.createRadialGradient(sx - 20, sy - 25, sr * 0.05, sx, sy, sr);
-    if (mode === "cycles") {
-      sphereGrad.addColorStop(0, "#e8ddd0");
-      sphereGrad.addColorStop(0.3, "#b8a898");
-      sphereGrad.addColorStop(0.7, "#6a5a50");
-      sphereGrad.addColorStop(1, "#2a2220");
-    } else {
-      sphereGrad.addColorStop(0, "#ddd0c0");
-      sphereGrad.addColorStop(0.35, "#b0a090");
-      sphereGrad.addColorStop(0.65, "#706058");
-      sphereGrad.addColorStop(1, "#302828");
-    }
-    ctx.beginPath(); ctx.arc(sx, sy, sr, 0, Math.PI * 2);
-    ctx.fillStyle = sphereGrad; ctx.fill();
-
-    // Specular highlight
-    var hlGrad = ctx.createRadialGradient(sx - 22, sy - 28, 2, sx - 22, sy - 28, 20);
-    hlGrad.addColorStop(0, mode === "cycles" ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.5)");
-    hlGrad.addColorStop(1, "rgba(255,255,255,0)");
-    ctx.beginPath(); ctx.arc(sx, sy, sr, 0, Math.PI * 2);
-    ctx.fillStyle = hlGrad; ctx.fill();
-
-    // Glass cube (right side)
-    var cubeX = W * 0.62, cubeY = H * 0.38, cubeW = 80, cubeH = 90;
-
-    if (mode === "cycles") {
-      // Cycles: proper glass with caustics hint
-      // Shadow with caustic color
-      ctx.beginPath();
-      ctx.ellipse(cubeX + cubeW / 2 + 5, H * 0.65 + 6, cubeW * 0.6, cubeH * 0.12, 0, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(0,0,0,0.12)";
-      ctx.fill();
-      // Caustic light spot
-      ctx.beginPath();
-      ctx.ellipse(cubeX + cubeW / 2 + 15, H * 0.65 + 4, 12, 5, 0.2, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(180,200,255,0.15)";
-      ctx.fill();
-
-      // Glass body
-      ctx.fillStyle = "rgba(180,210,240,0.12)";
-      ctx.fillRect(cubeX, cubeY, cubeW, cubeH);
-      ctx.strokeStyle = "rgba(200,220,255,0.4)";
-      ctx.lineWidth = 1.5;
-      ctx.strokeRect(cubeX, cubeY, cubeW, cubeH);
-
-      // Refraction lines inside
-      ctx.strokeStyle = "rgba(200,220,255,0.15)";
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(cubeX + 10, cubeY + 15);
-      ctx.lineTo(cubeX + cubeW - 15, cubeY + cubeH - 20);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(cubeX + 20, cubeY + 10);
-      ctx.lineTo(cubeX + cubeW - 10, cubeY + cubeH - 25);
-      ctx.stroke();
-
-      // Edge highlights
-      ctx.strokeStyle = "rgba(255,255,255,0.3)";
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(cubeX, cubeY); ctx.lineTo(cubeX + cubeW, cubeY);
-      ctx.stroke();
-    } else {
-      // EEVEE: flat-ish glass, no caustics
-      ctx.beginPath();
-      ctx.ellipse(cubeX + cubeW / 2 + 8, H * 0.65 + 5, cubeW * 0.5, cubeH * 0.1, 0, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(0,0,0,0.25)";
-      ctx.fill();
-
-      ctx.fillStyle = "rgba(160,190,220,0.08)";
-      ctx.fillRect(cubeX, cubeY, cubeW, cubeH);
-      ctx.strokeStyle = "rgba(180,200,230,0.25)";
-      ctx.lineWidth = 1.5;
-      ctx.strokeRect(cubeX, cubeY, cubeW, cubeH);
-
-      ctx.strokeStyle = "rgba(255,255,255,0.15)";
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.moveTo(cubeX, cubeY); ctx.lineTo(cubeX + cubeW, cubeY);
-      ctx.stroke();
-    }
-
-    // Metal cylinder (smaller)
-    var cylX = W * 0.48, cylY = H * 0.5, cylR = 22, cylH2 = 50;
-
-    if (mode === "cycles") {
-      // Shadow
-      ctx.beginPath();
-      ctx.ellipse(cylX + 5, H * 0.65 + 5, cylR * 1.3, cylR * 0.25, 0, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(0,0,0,0.15)";
-      ctx.fill();
-
-      // Metal body with environment reflection
-      var metalGrad = ctx.createLinearGradient(cylX - cylR, 0, cylX + cylR, 0);
-      metalGrad.addColorStop(0, "#3a3a40");
-      metalGrad.addColorStop(0.3, "#8a8a90");
-      metalGrad.addColorStop(0.5, "#c0c0c8");
-      metalGrad.addColorStop(0.7, "#707078");
-      metalGrad.addColorStop(1, "#2a2a30");
-      ctx.fillStyle = metalGrad;
-      ctx.fillRect(cylX - cylR, cylY - cylH2, cylR * 2, cylH2 * 2);
-
-      // Environment reflection band
-      ctx.fillStyle = "rgba(60,80,120,0.2)";
-      ctx.fillRect(cylX - cylR + 5, cylY - cylH2 + 10, cylR * 2 - 10, 8);
-    } else {
-      ctx.beginPath();
-      ctx.ellipse(cylX + 6, H * 0.65 + 4, cylR * 1.1, cylR * 0.2, 0, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(0,0,0,0.2)";
-      ctx.fill();
-
-      var metalGrad = ctx.createLinearGradient(cylX - cylR, 0, cylX + cylR, 0);
-      metalGrad.addColorStop(0, "#404048");
-      metalGrad.addColorStop(0.4, "#888890");
-      metalGrad.addColorStop(0.6, "#a0a0a8");
-      metalGrad.addColorStop(1, "#303038");
-      ctx.fillStyle = metalGrad;
-      ctx.fillRect(cylX - cylR, cylY - cylH2, cylR * 2, cylH2 * 2);
-    }
-
-    // Top ellipse of cylinder
-    ctx.beginPath();
-    ctx.ellipse(cylX, cylY - cylH2, cylR, cylR * 0.35, 0, 0, Math.PI * 2);
-    ctx.fillStyle = mode === "cycles" ? "#a0a0a8" : "#909098";
-    ctx.fill();
-    ctx.strokeStyle = "rgba(255,255,255,0.2)";
-    ctx.lineWidth = 1;
-    ctx.stroke();
-
-    // Label
-    ctx.fillStyle = mode === "cycles" ? "rgba(10,132,255,0.9)" : "rgba(16,185,129,0.9)";
-    ctx.font = "bold 14px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText(mode === "cycles" ? "Cycles" : "EEVEE", W / 2, 24);
-
-    // Info text
-    ctx.fillStyle = "rgba(255,255,255,.4)";
-    ctx.font = "11px sans-serif";
-    if (mode === "cycles") {
-      ctx.textAlign = "left";
-      ctx.fillText("Ray Tracing | 5min+", 12, H - 12);
-    } else {
-      ctx.textAlign = "right";
-      ctx.fillText("Rasterization | <1s", W - 12, H - 12);
-    }
-
-    ctx.restore();
+    ctx.fillStyle = "#ef4444"; ctx.font = "bold 10px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("\ub099\uc740 \uc0d8\ud50c (16) \u2014 \ub178\uc774\uc988 \ub9ce\uc74c", cx, 14);
   }
 
-  function draw() {
-    ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = "#17181a";
-    ctx.fillRect(0, 0, W, H);
-
-    var splitX = Math.floor(splitPos * W);
-
-    // Draw Cycles side (left)
-    if (splitX > 0) {
-      drawScene("cycles", 0, splitX);
-    }
-
-    // Draw EEVEE side (right)
-    if (splitX < W) {
-      drawScene("eevee", splitX, W - splitX);
-    }
-
-    // Split line
-    ctx.strokeStyle = "#fff";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(splitX, 0);
-    ctx.lineTo(splitX, H);
-    ctx.stroke();
-
-    // Split handle
-    ctx.beginPath();
-    ctx.arc(splitX, H / 2, 14, 0, Math.PI * 2);
-    ctx.fillStyle = "rgba(10,132,255,0.9)";
-    ctx.fill();
-    ctx.strokeStyle = "#fff";
-    ctx.lineWidth = 2;
-    ctx.stroke();
-
-    // Arrows on handle
-    ctx.fillStyle = "#fff";
-    ctx.font = "bold 12px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("\u25C0\u25B6", splitX, H / 2 + 4);
+  function drawQualityAfter(ctx, w, h) {
+    drawBg(ctx, w, h);
+    var cx = w/2, cy = h/2;
+    ctx.fillStyle = "#050708"; ctx.fillRect(0,0,w,h);
+    var grad = ctx.createRadialGradient(cx-18, cy-18, 4, cx, cy, 47);
+    grad.addColorStop(0, "#f1f5f9"); grad.addColorStop(0.2, "#cbd5e1");
+    grad.addColorStop(0.6, "#475569"); grad.addColorStop(1, "#0f172a");
+    ctx.beginPath(); ctx.arc(cx, cy, 47, 0, Math.PI*2); ctx.fillStyle = grad; ctx.fill();
+    ctx.beginPath(); ctx.arc(cx-16, cy-16, 8, 0, Math.PI*2);
+    ctx.fillStyle = "rgba(255,255,255,.6)"; ctx.fill();
+    ctx.fillStyle = "#10b981"; ctx.font = "bold 10px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("\ub192\uc740 \uc0d8\ud50c (512) \u2014 \ub178\uc774\uc988 \uc5c6\uc74c", cx, 14);
   }
 
-  var slider = document.getElementById("splitSlider");
-  slider.addEventListener("input", function() {
-    splitPos = parseInt(slider.value) / 100;
-    draw();
-  });
+  var scenarios = {
+    eevee: {
+      desc: "EEVEE\ub294 \uc2e4\uc2dc\uac04 \ub80c\ub354 \uc5d4\uc9c4\uc73c\ub85c \ube60\ub978 \ud504\ub9ac\ubdf0\uc5d0 \uc801\ud569\ud569\ub2c8\ub2e4. GPU \ub798\uc2a4\ud130\ub77c\uc774\uc81c\uc774\uc158 \ubc29\uc2dd\uc73c\ub85c \uc18d\ub3c4\uac00 \ube60\ub974\uc9c0\ub9cc \ubb3c\ub9ac \uae30\ubc18 \uad11\uc6d0 \uc2dc\ubbac\ub808\uc774\uc158\uc740 \uadfc\uc0ac\uce58\uc785\ub2c8\ub2e4.",
+      ce: [
+        { cause: "EEVEE \uc5d4\uc9c4 \uc120\ud0dd", result: "\ub80c\ub354 \uc18d\ub3c4 \ub9e4\uc6b0 \ube60\ub984 (GPU)", resultClass: "result-a" },
+        { cause: "\uad11\uc6d0 \uacc4\uc0b0 \ubc29\uc2dd", result: "\uadfc\uc0ac \uc870\uba85 (\uadf8\ub9bc\uc790 \uc815\ud655\ub3c4 \ub099\uc74c)", resultClass: "result-b" },
+        { cause: "\uc720\ub9ac/\uae08\uc18d \ubc18\uc0ac \ud45c\ud604", result: "Screen Space\ub9cc \uc9c0\uc6d0 (\uc81c\ud55c\uc801)", resultClass: "result-c" }
+      ],
+      before: drawEEVEEBefore,
+      after: drawEEVEEAfter
+    },
+    cycles: {
+      desc: "Cycles\ub294 \ubb3c\ub9ac \uae30\ubc18 \uacbd\ub85c \ucd94\uc801(Path Tracing) \ub80c\ub354\ub7ec\ub85c \uc0ac\uc2e4\uc801\uc778 \uacb0\uacfc\ub97c \ub0c5\ub2c8\ub2e4. \uadf8\ub9bc\uc790, \ubc18\uc0ac, \uad74\uc808\uae4c\uc9c0 \ubb3c\ub9ac\uc801\uc73c\ub85c \uc2dc\ubbac\ub808\uc774\uc158\ud558\ubbc0\ub85c \ub80c\ub354 \uc2dc\uac04\uc774 \uae41\ub2c8\ub2e4.",
+      ce: [
+        { cause: "Cycles \uc5d4\uc9c4 \uc120\ud0dd", result: "\uc0ac\uc2e4\uc801 Path Tracing \uac00\ub3d9", resultClass: "result-a" },
+        { cause: "\uc0d8\ud50c \uc218 \uc99d\uac00", result: "\ud488\uc9c8 \uc0c1\uc2b9, \ub80c\ub354 \uc2dc\uac04 \uc99d\uac00", resultClass: "result-b" },
+        { cause: "Denoiser \ud65c\uc131\ud654", result: "\ub178\uc774\uc988 \uc81c\uac70, \ub80c\ub354 \uc2dc\uac04 \ub2e8\ucd95", resultClass: "result-a" }
+      ],
+      before: drawCyclesBefore,
+      after: drawCyclesAfter
+    },
+    quality: {
+      desc: "\ub80c\ub354 \ud488\uc9c8\uc740 \uc0d8\ud50c \uc218\uc640 \uc9c1\uacb0\ub429\ub2c8\ub2e4. \ub099\uc740 \uc0d8\ud50c\uc740 \ub178\uc774\uc988\uac00 \ub9ce\uace0, \ub192\uc740 \uc0d8\ud50c\uc740 \ud3f4\ub974\uc9c0\ub9cc \uc2dc\uac04\uc774 \uae41\ub2c8\ub2e4. Denoiser\ub97c \ud65c\uc6a9\ud558\uba74 \ub099\uc740 \uc0d8\ud50c\ub85c\ub3c4 \uace0\ud488\uc9c8\uc744 \uc5bb\uc744 \uc218 \uc788\uc2b5\ub2c8\ub2e4.",
+      ce: [
+        { cause: "\uc0d8\ud50c \uc218 \ub099\uac8c (16~64)", result: "\ub178\uc774\uc988 \ub9ce\uc74c, \ube60\ub978 \ub80c\ub354", resultClass: "result-b" },
+        { cause: "\uc0d8\ud50c \uc218 \ub192\uac8c (512+)", result: "\ud488\uc9c8 \uc6b0\uc218, \ub80c\ub354 \uc2dc\uac04 \uae41\ub2c8\ub2e4", resultClass: "result-a" },
+        { cause: "Denoiser \ud65c\uc131\ud654", result: "32 \uc0d8\ud50c\ub85c 512 \ud488\uc9c8\ucc98\ub7fc \ubcf4\uc784", resultClass: "result-a" }
+      ],
+      before: drawQualityBefore,
+      after: drawQualityAfter
+    }
+  };
 
-  // Also allow dragging on canvas
-  var dragging = false;
-
-  function getEventPos(e) {
-    var rect = canvas.getBoundingClientRect();
-    var scaleX = canvas.width / rect.width;
-    var clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    return (clientX - rect.left) * scaleX;
+  function switchScenario(key) {
+    document.querySelectorAll('.scenario-btn').forEach(function(b) {
+      b.classList.toggle('active', b.dataset.scene === key);
+    });
+    var s = scenarios[key];
+    document.getElementById('scene-desc').textContent = s.desc;
+    buildCauseEffect(s.ce);
+    renderBAPanels(s);
   }
 
-  canvas.addEventListener("mousedown", function(e) {
-    var x = getEventPos(e);
-    if (Math.abs(x - splitPos * W) < 30) { dragging = true; e.preventDefault(); }
-  });
-  canvas.addEventListener("mousemove", function(e) {
-    if (!dragging) return;
-    e.preventDefault();
-    splitPos = Math.max(0.02, Math.min(0.98, getEventPos(e) / W));
-    slider.value = Math.round(splitPos * 100);
-    draw();
-  });
-  canvas.addEventListener("mouseup", function() { dragging = false; });
-  canvas.addEventListener("mouseleave", function() { dragging = false; });
+  function buildCauseEffect(ces) {
+    var el = document.getElementById('cause-effect');
+    while (el.firstChild) el.removeChild(el.firstChild);
+    ces.forEach(function(c) {
+      var row = document.createElement('div'); row.className = 'ce-row';
+      var cause = document.createElement('div'); cause.className = 'ce-cause'; cause.textContent = c.cause;
+      var arrow = document.createElement('div'); arrow.className = 'ce-arrow'; arrow.textContent = '\u2192';
+      var result = document.createElement('div'); result.className = 'ce-result ' + c.resultClass; result.textContent = c.result;
+      row.appendChild(cause); row.appendChild(arrow); row.appendChild(result);
+      el.appendChild(row);
+    });
+  }
 
-  canvas.addEventListener("touchstart", function(e) {
-    var x = getEventPos(e);
-    if (Math.abs(x - splitPos * W) < 40) { dragging = true; e.preventDefault(); }
-  }, { passive: false });
-  canvas.addEventListener("touchmove", function(e) {
-    if (!dragging) return;
-    e.preventDefault();
-    splitPos = Math.max(0.02, Math.min(0.98, getEventPos(e) / W));
-    slider.value = Math.round(splitPos * 100);
-    draw();
-  }, { passive: false });
-  canvas.addEventListener("touchend", function() { dragging = false; });
+  function renderBAPanels(s) {
+    var bc = document.getElementById('canvas-before'), ac = document.getElementById('canvas-after');
+    var bx = bc.getContext('2d'), ax = ac.getContext('2d');
+    bc.width = bc.offsetWidth || 280; bc.height = 160;
+    ac.width = ac.offsetWidth || 280; ac.height = 160;
+    bx.clearRect(0, 0, bc.width, bc.height);
+    ax.clearRect(0, 0, ac.width, ac.height);
+    if (s.before) s.before(bx, bc.width, bc.height);
+    if (s.after) s.after(ax, ac.width, ac.height);
+  }
 
-  document.getElementById("btnReset").addEventListener("click", function() {
-    splitPos = 0.5;
-    slider.value = 50;
-    draw();
+  document.querySelectorAll('.scenario-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() { switchScenario(btn.dataset.scene); });
   });
 
-  draw();
+  document.querySelectorAll('.tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      if (tab.dataset.tab === 'visual') { setTimeout(function() { switchScenario('eevee'); }, 50); }
+    });
+  });
+
+  switchScenario('eevee');
 })();
 
 // ── Quiz Data ─────────────────────────────────

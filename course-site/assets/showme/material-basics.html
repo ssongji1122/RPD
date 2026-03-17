@@ -431,30 +431,40 @@ body {
 
 <!-- TAB 2: 시각적 비교 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    슬라이더를 조절하여 Base Color, Metallic, Roughness가 구체 외관에 미치는 영향을 확인하세요.
-  </p>
-  <div class="demo-wrap">
-    <canvas id="demoCanvas" width="680" height="340"></canvas>
-    <div class="demo-controls">
-      <div class="demo-slider-group">
-        <label>Color</label>
-        <input type="color" id="sliderColor" value="#3b82f6">
-      </div>
-      <div class="demo-slider-group">
-        <label>Metallic</label>
-        <input type="range" id="sliderMetallic" min="0" max="100" value="0">
-        <span id="valMetallic">0.00</span>
-      </div>
-      <div class="demo-slider-group">
-        <label>Roughness</label>
-        <input type="range" id="sliderRoughness" min="0" max="100" value="50">
-        <span id="valRoughness">0.50</span>
-      </div>
-      <button class="demo-btn" id="btnReset">초기화</button>
+<style>
+.scenario-nav{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.scenario-btn{padding:6px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.15);background:transparent;color:#cbd5e1;cursor:pointer;font-size:13px;transition:all .2s;font-family:inherit}
+.scenario-btn.active{background:rgba(99,102,241,.25);border-color:rgba(99,102,241,.5);color:#a5b4fc}
+.before-after{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.ba-panel{border-radius:12px;overflow:hidden}
+.ba-panel canvas{width:100%;display:block}
+.ba-label{text-align:center;font-size:11px;color:#94a3b8;padding:4px;background:rgba(0,0,0,.2)}
+.cause-effect{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.ce-row{display:flex;align-items:center;gap:8px}
+.ce-cause{background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);border-radius:8px;padding:6px 12px;font-size:13px;flex:1}
+.ce-arrow{color:#64748b;font-size:16px}
+.ce-result{border-radius:8px;padding:6px 12px;font-size:13px;flex:1.5}
+.result-a{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:#6ee7b7}
+.result-b{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);color:#fcd34d}
+.result-c{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:#fca5a5}
+</style>
+  <div class="scenario-nav">
+    <button class="scenario-btn active" data-scene="color" onclick="switchScenarioMB('color')">기본 색상 적용</button>
+    <button class="scenario-btn" data-scene="metallic" onclick="switchScenarioMB('metallic')">Metallic 효과</button>
+    <button class="scenario-btn" data-scene="roughness" onclick="switchScenarioMB('roughness')">Roughness 비교</button>
+  </div>
+  <div id="scene-desc-mb" style="font-size:.84rem;color:var(--muted-strong);margin-bottom:10px;padding:10px 14px;border-radius:12px;background:var(--surface);border:1px solid var(--line);">시나리오를 선택하세요.</div>
+  <div class="before-after">
+    <div class="ba-panel">
+      <div class="ba-label">BEFORE</div>
+      <canvas id="mb-before" width="320" height="160"></canvas>
+    </div>
+    <div class="ba-panel">
+      <div class="ba-label">AFTER</div>
+      <canvas id="mb-after" width="320" height="160"></canvas>
     </div>
   </div>
-  <p class="demo-hint">Metallic을 올리면 금속 질감, Roughness를 낮추면 반사가 강해집니다.</p>
+  <div class="cause-effect" id="cause-effect-mb"></div>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->
@@ -508,6 +518,126 @@ body {
 </section>
 
 <script>
+// ── Material Basics Visual Scenarios ──────────
+(function() {
+  var BG = '#1e293b';
+  function drawBg(ctx, w, h) { ctx.fillStyle = BG; ctx.fillRect(0, 0, w, h); }
+  function lbl(ctx, text, x, y, color) {
+    ctx.save(); ctx.font = 'bold 11px sans-serif'; ctx.fillStyle = color || '#94a3b8';
+    ctx.textAlign = 'center'; ctx.fillText(text, x, y); ctx.restore();
+  }
+  function drawSphere(ctx, cx, cy, r, fillColor, specHighlight) {
+    // base sphere
+    var grad = ctx.createRadialGradient(cx - r * 0.3, cy - r * 0.3, r * 0.05, cx, cy, r);
+    grad.addColorStop(0, specHighlight || 'rgba(255,255,255,0.5)');
+    grad.addColorStop(0.4, fillColor);
+    grad.addColorStop(1, 'rgba(0,0,0,0.6)');
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fillStyle = grad; ctx.fill();
+  }
+
+  var scenarios = {
+    color: {
+      desc: 'Base Color로 오브젝트의 기본 색상을 설정합니다. Material을 추가하기 전과 후를 비교하세요.',
+      ce: [
+        { cause: 'Material 없음 (기본값)', result: '회색 기본 재질로 표시됨', cls: 'result-b' },
+        { cause: 'Base Color 설정', result: '원하는 색상으로 렌더링됨', cls: 'result-a' }
+      ],
+      before: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        drawSphere(ctx, w/2, h/2, 55, '#6b7280', 'rgba(200,200,200,0.4)');
+        lbl(ctx, 'Material 없음 (기본 회색)', w/2, h - 12);
+      },
+      after: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        drawSphere(ctx, w/2, h/2, 55, '#3b82f6', 'rgba(255,255,255,0.6)');
+        lbl(ctx, 'Base Color 적용 (파랑)', w/2, h - 12, '#93c5fd');
+      }
+    },
+    metallic: {
+      desc: 'Metallic 값을 1로 설정하면 금속 재질이 됩니다. 빛 반사 방식이 완전히 달라집니다.',
+      ce: [
+        { cause: 'Metallic = 0 (기본)', result: '비금속 — 표면 아래 빛 산란', cls: 'result-b' },
+        { cause: 'Metallic = 1', result: '금속 — 환경광 그대로 반사', cls: 'result-a' }
+      ],
+      before: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        drawSphere(ctx, w/2, h/2, 55, '#3b82f6', 'rgba(255,255,255,0.5)');
+        lbl(ctx, 'Metallic 0 (플라스틱)', w/2, h - 12, '#93c5fd');
+      },
+      after: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        drawSphere(ctx, w/2, h/2, 55, '#1e3a5f', 'rgba(180,220,255,0.9)');
+        // metallic reflection band
+        var rGrad = ctx.createLinearGradient(w/2 - 55, h/2 - 20, w/2 + 55, h/2 + 10);
+        rGrad.addColorStop(0, 'rgba(100,160,220,0)');
+        rGrad.addColorStop(0.4, 'rgba(180,220,255,0.35)');
+        rGrad.addColorStop(0.7, 'rgba(100,160,220,0.1)');
+        rGrad.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.beginPath(); ctx.arc(w/2, h/2, 55, 0, Math.PI * 2);
+        ctx.fillStyle = rGrad; ctx.fill();
+        lbl(ctx, 'Metallic 1 (금속)', w/2, h - 12, '#bfdbfe');
+      }
+    },
+    roughness: {
+      desc: 'Roughness는 표면 거칠기를 제어합니다. 낮을수록 거울처럼 선명하게 반사하고, 높을수록 흩어집니다.',
+      ce: [
+        { cause: 'Roughness = 0', result: '완전히 매끄러운 거울 반사', cls: 'result-a' },
+        { cause: 'Roughness = 1', result: '빛이 넓게 산란 — 무광 마트 표면', cls: 'result-b' }
+      ],
+      before: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        // Glossy sphere (roughness 0)
+        drawSphere(ctx, w/2, h/2, 55, '#475569', 'rgba(255,255,255,0.95)');
+        lbl(ctx, 'Roughness 0 (광택)', w/2, h - 12, '#e2e8f0');
+      },
+      after: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        // Matte sphere (roughness 1)
+        var flatGrad = ctx.createRadialGradient(w/2, h/2, 5, w/2, h/2, 55);
+        flatGrad.addColorStop(0, '#8a95a3');
+        flatGrad.addColorStop(0.7, '#64748b');
+        flatGrad.addColorStop(1, '#475569');
+        ctx.beginPath(); ctx.arc(w/2, h/2, 55, 0, Math.PI * 2);
+        ctx.fillStyle = flatGrad; ctx.fill();
+        lbl(ctx, 'Roughness 1 (무광)', w/2, h - 12, '#94a3b8');
+      }
+    }
+  };
+
+  function buildCauseEffect(ceList) {
+    var c = document.getElementById('cause-effect-mb');
+    c.textContent = '';
+    ceList.forEach(function(item) {
+      var row = document.createElement('div'); row.className = 'ce-row';
+      var cause = document.createElement('span'); cause.className = 'ce-cause'; cause.textContent = item.cause;
+      var arrow = document.createElement('span'); arrow.className = 'ce-arrow'; arrow.textContent = '→';
+      var result = document.createElement('span'); result.className = 'ce-result ' + item.cls; result.textContent = item.result;
+      row.appendChild(cause); row.appendChild(arrow); row.appendChild(result);
+      c.appendChild(row);
+    });
+  }
+
+  function renderBAPanels(scene) {
+    var cvB = document.getElementById('mb-before');
+    var cvA = document.getElementById('mb-after');
+    scene.before(cvB.getContext('2d'), cvB.width, cvB.height);
+    scene.after(cvA.getContext('2d'), cvA.width, cvA.height);
+  }
+
+  window.switchScenarioMB = function(key) {
+    var scene = scenarios[key];
+    document.getElementById('scene-desc-mb').textContent = scene.desc;
+    document.querySelectorAll('#panel-visual .scenario-btn').forEach(function(b) {
+      b.classList.toggle('active', b.dataset.scene === key);
+    });
+    renderBAPanels(scene);
+    buildCauseEffect(scene.ce);
+  };
+
+  document.addEventListener('DOMContentLoaded', function() { switchScenarioMB('color'); });
+})();
+
 // ── Tab Switching ──────────────────────────────
 document.querySelectorAll(".tab").forEach(function(tab) {
   tab.addEventListener("click", function() {

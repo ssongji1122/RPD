@@ -401,20 +401,40 @@ body {
 
 <!-- TAB 2: 시각적 비교 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    버튼으로 분할 수를 변경하고, 캔버스를 좌우로 드래그하여 Loop Cut 위치를 조절하세요.
-  </p>
-  <div class="demo-wrap">
-    <canvas id="demoCanvas" width="680" height="340"></canvas>
-    <div class="demo-controls">
-      <button class="demo-btn" id="btnMinus">- 분할</button>
-      <button class="demo-btn is-active" id="btnCutLabel">분할 수: 1</button>
-      <button class="demo-btn" id="btnPlus">+ 분할</button>
-      <button class="demo-btn" id="btnSlideToggle">Edge Slide OFF</button>
-      <button class="demo-btn" id="btnReset">초기화</button>
+<style>
+.scenario-nav{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.scenario-btn{padding:6px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.15);background:transparent;color:#cbd5e1;cursor:pointer;font-size:13px;transition:all .2s;font-family:inherit}
+.scenario-btn.active{background:rgba(99,102,241,.25);border-color:rgba(99,102,241,.5);color:#a5b4fc}
+.before-after{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.ba-panel{border-radius:12px;overflow:hidden}
+.ba-panel canvas{width:100%;display:block}
+.ba-label{text-align:center;font-size:11px;color:#94a3b8;padding:4px;background:rgba(0,0,0,.2)}
+.cause-effect{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.ce-row{display:flex;align-items:center;gap:8px}
+.ce-cause{background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);border-radius:8px;padding:6px 12px;font-size:13px;flex:1}
+.ce-arrow{color:#64748b;font-size:16px}
+.ce-result{border-radius:8px;padding:6px 12px;font-size:13px;flex:1.5}
+.result-a{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:#6ee7b7}
+.result-b{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);color:#fcd34d}
+.result-c{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:#fca5a5}
+</style>
+  <div class="scenario-nav">
+    <button class="scenario-btn active" data-scene="basic" onclick="switchScenarioLC('basic')">기본 Loop Cut</button>
+    <button class="scenario-btn" data-scene="multi" onclick="switchScenarioLC('multi')">다중 분할</button>
+    <button class="scenario-btn" data-scene="slide" onclick="switchScenarioLC('slide')">Edge Slide</button>
+  </div>
+  <div id="scene-desc-lc" style="font-size:.84rem;color:var(--muted-strong);margin-bottom:10px;padding:10px 14px;border-radius:12px;background:var(--surface);border:1px solid var(--line);">시나리오를 선택하세요.</div>
+  <div class="before-after">
+    <div class="ba-panel">
+      <div class="ba-label">BEFORE</div>
+      <canvas id="lc-before" width="320" height="160"></canvas>
+    </div>
+    <div class="ba-panel">
+      <div class="ba-label">AFTER</div>
+      <canvas id="lc-after" width="320" height="160"></canvas>
     </div>
   </div>
-  <p class="demo-hint">좌우로 드래그하면 Loop Cut 위치가 이동합니다. +/- 버튼으로 분할 수를 조절하세요.</p>
+  <div class="cause-effect" id="cause-effect-lc"></div>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->
@@ -471,6 +491,138 @@ body {
 </section>
 
 <script>
+// ── Loop Cut Visual Scenarios ──────────────────
+(function() {
+  var BG = '#1e293b';
+  function drawBg(ctx, w, h) { ctx.fillStyle = BG; ctx.fillRect(0, 0, w, h); }
+  function lbl(ctx, text, x, y, color) {
+    ctx.save(); ctx.font = 'bold 11px sans-serif'; ctx.fillStyle = color || '#94a3b8';
+    ctx.textAlign = 'center'; ctx.fillText(text, x, y); ctx.restore();
+  }
+  function drawGrid(ctx, x, y, cols, rows, cw, rh, strokeColor) {
+    ctx.strokeStyle = strokeColor || '#475569'; ctx.lineWidth = 1.2;
+    for (var r = 0; r <= rows; r++) {
+      ctx.beginPath(); ctx.moveTo(x, y + r * rh); ctx.lineTo(x + cols * cw, y + r * rh); ctx.stroke();
+    }
+    for (var c = 0; c <= cols; c++) {
+      ctx.beginPath(); ctx.moveTo(x + c * cw, y); ctx.lineTo(x + c * cw, y + rows * rh); ctx.stroke();
+    }
+  }
+
+  var scenarios = {
+    basic: {
+      desc: 'Ctrl+R을 누르고 엣지 위로 마우스를 가져가면 노란색 미리보기가 표시됩니다. 클릭하면 새 엣지 루프가 추가됩니다.',
+      ce: [
+        { cause: 'Ctrl+R → 엣지 위 호버', result: '노란 루프 미리보기 표시', cls: 'result-a' },
+        { cause: '클릭 확정', result: '엣지 루프 삽입 — 메시 분할됨', cls: 'result-a' }
+      ],
+      before: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        var x = 40, y = 25, cw = 60, rh = 40;
+        drawGrid(ctx, x, y, 4, 3, cw, rh);
+        lbl(ctx, '분할 전 (4×3 그리드)', w/2, h - 10);
+      },
+      after: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        var x = 40, y = 25, cw = 60, rh = 40;
+        drawGrid(ctx, x, y, 4, 3, cw, rh);
+        // new loop cut line at center (between col 2 and 3)
+        ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2.5;
+        ctx.beginPath(); ctx.moveTo(x + cw * 2, y); ctx.lineTo(x + cw * 2, y + 3 * rh); ctx.stroke();
+        lbl(ctx, 'Loop Cut 삽입됨', w/2, h - 10, '#fcd34d');
+      }
+    },
+    multi: {
+      desc: 'Ctrl+R 후 마우스 스크롤을 굴리면 여러 개의 루프를 한 번에 추가할 수 있습니다.',
+      ce: [
+        { cause: 'Ctrl+R 후 스크롤 업', result: '분할 수 증가 (2, 3, 4... 개 루프)', cls: 'result-a' },
+        { cause: '여러 루프 동시 삽입', result: '균등 간격으로 분배됨', cls: 'result-b' }
+      ],
+      before: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        var x = 40, y = 25, cw = 60, rh = 40;
+        drawGrid(ctx, x, y, 4, 3, cw, rh);
+        lbl(ctx, '분할 전', w/2, h - 10);
+      },
+      after: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        var x = 30, y = 25, cols = 6, cw = 43, rh = 40;
+        drawGrid(ctx, x, y, cols, 3, cw, rh);
+        // highlight 3 new loops (at 1/4, 1/2, 3/4)
+        [1, 2, 3].forEach(function(i) {
+          ctx.strokeStyle = 'rgba(245,158,11,0.8)'; ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.moveTo(x + cw * (i + 1), y); ctx.lineTo(x + cw * (i + 1), y + 3 * rh); ctx.stroke();
+        });
+        lbl(ctx, '3개 루프 추가됨', w/2, h - 10, '#fcd34d');
+      }
+    },
+    slide: {
+      desc: 'Loop Cut 삽입 후 바로 마우스를 움직이면 Edge Slide 모드가 됩니다. 루프 위치를 조절할 수 있습니다.',
+      ce: [
+        { cause: 'Loop Cut 삽입 후 마우스 이동', result: '엣지가 슬라이드 — 위치 조절 가능', cls: 'result-a' },
+        { cause: 'RMB 클릭으로 취소', result: '루프가 정확히 중앙에 배치됨', cls: 'result-b' }
+      ],
+      before: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        var x = 40, y = 25, cw = 60, rh = 40;
+        drawGrid(ctx, x, y, 4, 3, cw, rh);
+        // center loop
+        ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2.5;
+        ctx.beginPath(); ctx.moveTo(x + cw * 2, y); ctx.lineTo(x + cw * 2, y + 3 * rh); ctx.stroke();
+        lbl(ctx, '루프 삽입 직후 (중앙)', w/2, h - 10, '#fcd34d');
+      },
+      after: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        var x = 40, y = 25, cw = 60, rh = 40;
+        drawGrid(ctx, x, y, 4, 3, cw, rh);
+        // slid loop (offset from center)
+        ctx.strokeStyle = '#10b981'; ctx.lineWidth = 2.5;
+        ctx.setLineDash([6, 4]);
+        ctx.beginPath(); ctx.moveTo(x + cw * 2.7, y); ctx.lineTo(x + cw * 2.7, y + 3 * rh); ctx.stroke();
+        ctx.setLineDash([]);
+        // slide arrow
+        ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(x + cw * 2 + 4, y + rh * 1.5); ctx.lineTo(x + cw * 2.7 - 4, y + rh * 1.5); ctx.stroke();
+        ctx.fillStyle = '#f59e0b';
+        ctx.beginPath(); ctx.moveTo(x + cw * 2.7, y + rh * 1.5); ctx.lineTo(x + cw * 2.7 - 8, y + rh * 1.5 - 4); ctx.lineTo(x + cw * 2.7 - 8, y + rh * 1.5 + 4); ctx.fill();
+        lbl(ctx, 'Edge Slide 이동됨', w/2, h - 10, '#6ee7b7');
+      }
+    }
+  };
+
+  function buildCauseEffect(ceList) {
+    var c = document.getElementById('cause-effect-lc');
+    c.textContent = '';
+    ceList.forEach(function(item) {
+      var row = document.createElement('div'); row.className = 'ce-row';
+      var cause = document.createElement('span'); cause.className = 'ce-cause'; cause.textContent = item.cause;
+      var arrow = document.createElement('span'); arrow.className = 'ce-arrow'; arrow.textContent = '→';
+      var result = document.createElement('span'); result.className = 'ce-result ' + item.cls; result.textContent = item.result;
+      row.appendChild(cause); row.appendChild(arrow); row.appendChild(result);
+      c.appendChild(row);
+    });
+  }
+
+  function renderBAPanels(scene) {
+    var cvB = document.getElementById('lc-before');
+    var cvA = document.getElementById('lc-after');
+    scene.before(cvB.getContext('2d'), cvB.width, cvB.height);
+    scene.after(cvA.getContext('2d'), cvA.width, cvA.height);
+  }
+
+  window.switchScenarioLC = function(key) {
+    var scene = scenarios[key];
+    document.getElementById('scene-desc-lc').textContent = scene.desc;
+    document.querySelectorAll('#panel-visual .scenario-btn').forEach(function(b) {
+      b.classList.toggle('active', b.dataset.scene === key);
+    });
+    renderBAPanels(scene);
+    buildCauseEffect(scene.ce);
+  };
+
+  document.addEventListener('DOMContentLoaded', function() { switchScenarioLC('basic'); });
+})();
+
 // ── Tab Switching ──────────────────────────────
 document.querySelectorAll(".tab").forEach(function(tab) {
   tab.addEventListener("click", function() {

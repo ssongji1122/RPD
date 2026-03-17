@@ -152,19 +152,41 @@ body { margin:0;padding:0;font-family:var(--font);background:var(--bg);color:var
 
 <!-- TAB 2 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem;color:var(--muted);margin:0 0 10px;">
-    각 조명 버튼을 클릭하면 빛의 퍼짐 패턴을 시각적으로 확인할 수 있습니다.
-  </p>
-  <div class="demo-wrap">
-    <canvas id="demoCanvas" width="680" height="340"></canvas>
-    <div class="demo-controls">
-      <button class="demo-btn is-active" id="btnPoint">Point</button>
-      <button class="demo-btn" id="btnSun">Sun</button>
-      <button class="demo-btn" id="btnSpot">Spot</button>
-      <button class="demo-btn" id="btnArea">Area</button>
+<style>
+.scenario-nav{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.scenario-btn{padding:6px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.15);background:transparent;color:#cbd5e1;cursor:pointer;font-size:13px;transition:all .2s;font-family:inherit}
+.scenario-btn.active{background:rgba(99,102,241,.25);border-color:rgba(99,102,241,.5);color:#a5b4fc}
+.before-after{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.ba-panel{border-radius:12px;overflow:hidden}
+.ba-panel canvas{width:100%;display:block}
+.ba-label{text-align:center;font-size:11px;color:#94a3b8;padding:4px;background:rgba(0,0,0,.2)}
+.cause-effect{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.ce-row{display:flex;align-items:center;gap:8px}
+.ce-cause{background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);border-radius:8px;padding:6px 12px;font-size:13px;flex:1}
+.ce-arrow{color:#64748b;font-size:16px}
+.ce-result{border-radius:8px;padding:6px 12px;font-size:13px;flex:1.5}
+.result-a{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:#6ee7b7}
+.result-b{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);color:#fcd34d}
+.result-c{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:#fca5a5}
+</style>
+  <div class="scenario-nav">
+    <button class="scenario-btn active" data-scene="point" onclick="switchScenarioLT('point')">Point (점 광원)</button>
+    <button class="scenario-btn" data-scene="sun" onclick="switchScenarioLT('sun')">Sun (태양광)</button>
+    <button class="scenario-btn" data-scene="spot" onclick="switchScenarioLT('spot')">Spot (집중광)</button>
+    <button class="scenario-btn" data-scene="area" onclick="switchScenarioLT('area')">Area (면 광원)</button>
+  </div>
+  <div id="scene-desc-lt" style="font-size:.84rem;color:var(--muted-strong);margin-bottom:10px;padding:10px 14px;border-radius:12px;background:var(--surface);border:1px solid var(--line);">시나리오를 선택하세요.</div>
+  <div class="before-after">
+    <div class="ba-panel">
+      <div class="ba-label">조명 아이콘</div>
+      <canvas id="lt-before" width="320" height="160"></canvas>
+    </div>
+    <div class="ba-panel">
+      <div class="ba-label">빛 패턴</div>
+      <canvas id="lt-after" width="320" height="160"></canvas>
     </div>
   </div>
-  <p class="demo-hint">조명 타입에 따른 빛의 방향, 감쇠, 그림자 패턴을 비교해 보세요.</p>
+  <div class="cause-effect" id="cause-effect-lt"></div>
 </section>
 
 <!-- TAB 3 -->
@@ -217,6 +239,197 @@ body { margin:0;padding:0;font-family:var(--font);background:var(--bg);color:var
 </section>
 
 <script>
+// ── Light Types Visual Scenarios ──────────────
+(function() {
+  var BG = '#1e293b';
+  function drawBg(ctx, w, h) { ctx.fillStyle = BG; ctx.fillRect(0, 0, w, h); }
+  function lbl(ctx, text, x, y, color) {
+    ctx.save(); ctx.font = 'bold 11px sans-serif'; ctx.fillStyle = color || '#94a3b8';
+    ctx.textAlign = 'center'; ctx.fillText(text, x, y); ctx.restore();
+  }
+
+  var scenarios = {
+    point: {
+      desc: 'Point Light는 한 지점에서 모든 방향으로 균등하게 빛을 방사합니다. 전구나 촛불 같은 광원에 적합합니다.',
+      ce: [
+        { cause: '단일 점에서 방사', result: '거리에 따라 빛이 약해짐 (역제곱 법칙)', cls: 'result-a' },
+        { cause: '반경(Radius) 키우기', result: '그림자 경계가 부드러워짐', cls: 'result-b' }
+      ],
+      before: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        // Point icon: circle with dot
+        var cx = w/2, cy = h/2;
+        ctx.fillStyle = '#fcd34d';
+        ctx.beginPath(); ctx.arc(cx, cy, 8, 0, Math.PI * 2); ctx.fill();
+        // radiating dots
+        for (var i = 0; i < 8; i++) {
+          var a = Math.PI * 2 / 8 * i;
+          ctx.fillStyle = 'rgba(252,211,77,0.5)';
+          ctx.beginPath(); ctx.arc(cx + Math.cos(a) * 24, cy + Math.sin(a) * 24, 3, 0, Math.PI * 2); ctx.fill();
+        }
+        lbl(ctx, 'Point Light', w/2, h - 12, '#fcd34d');
+      },
+      after: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        var cx = w/2, cy = h/2 - 10;
+        // radial gradient
+        var grad = ctx.createRadialGradient(cx, cy, 4, cx, cy, 80);
+        grad.addColorStop(0, 'rgba(252,211,77,0.7)');
+        grad.addColorStop(0.5, 'rgba(252,211,77,0.2)');
+        grad.addColorStop(1, 'rgba(252,211,77,0)');
+        ctx.fillStyle = grad; ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = '#fcd34d';
+        ctx.beginPath(); ctx.arc(cx, cy, 7, 0, Math.PI * 2); ctx.fill();
+        lbl(ctx, '전방향 방사 패턴', w/2, h - 12, '#fcd34d');
+      }
+    },
+    sun: {
+      desc: 'Sun Light는 거리에 관계없이 평행하게 빛을 비춥니다. 야외 장면의 태양광 표현에 적합합니다.',
+      ce: [
+        { cause: '평행 광선 방향', result: '씬 전체에 균일한 밝기 적용', cls: 'result-a' },
+        { cause: '위치 변경 무의미', result: '각도(Rotation)만 빛 방향에 영향', cls: 'result-b' }
+      ],
+      before: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        // Sun icon: circle with rays
+        var cx = w/2, cy = h/2;
+        ctx.fillStyle = '#fbbf24';
+        ctx.beginPath(); ctx.arc(cx, cy, 14, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = '#fbbf24'; ctx.lineWidth = 2.5;
+        for (var i = 0; i < 8; i++) {
+          var a = Math.PI * 2 / 8 * i;
+          ctx.beginPath();
+          ctx.moveTo(cx + Math.cos(a) * 20, cy + Math.sin(a) * 20);
+          ctx.lineTo(cx + Math.cos(a) * 32, cy + Math.sin(a) * 32);
+          ctx.stroke();
+        }
+        lbl(ctx, 'Sun Light', w/2, h - 12, '#fbbf24');
+      },
+      after: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        // Parallel downward rays
+        ctx.strokeStyle = 'rgba(251,191,36,0.7)'; ctx.lineWidth = 1.5;
+        for (var x = 20; x < w; x += 28) {
+          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h - 20); ctx.stroke();
+          // arrowhead
+          ctx.beginPath(); ctx.moveTo(x, h - 20); ctx.lineTo(x - 5, h - 32); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(x, h - 20); ctx.lineTo(x + 5, h - 32); ctx.stroke();
+        }
+        lbl(ctx, '평행 광선 (거리 무관)', w/2, h - 8, '#fbbf24');
+      }
+    },
+    spot: {
+      desc: 'Spot Light는 원뿔형으로 빛을 집중시킵니다. 무대 조명, 손전등 등에 적합합니다.',
+      ce: [
+        { cause: '원뿔 각도(Spot Size) 조절', result: '빛이 닿는 범위 조절 가능', cls: 'result-a' },
+        { cause: 'Spot Blend 값 올리기', result: '원뿔 가장자리 빛이 부드럽게 전환', cls: 'result-b' }
+      ],
+      before: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        // Spot icon: circle at top, cone going down
+        var cx = w/2, ty = 25;
+        ctx.fillStyle = '#f97316';
+        ctx.beginPath(); ctx.arc(cx, ty, 10, 0, Math.PI * 2); ctx.fill();
+        // cone outline
+        ctx.strokeStyle = '#f97316'; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(cx - 10, ty + 10); ctx.lineTo(cx - 50, h - 20); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx + 10, ty + 10); ctx.lineTo(cx + 50, h - 20); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx - 50, h - 20); ctx.lineTo(cx + 50, h - 20); ctx.stroke();
+        lbl(ctx, 'Spot Light', w/2, h - 8, '#f97316');
+      },
+      after: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        var cx = w/2, ty = 20;
+        // cone gradient fill
+        var grad = ctx.createRadialGradient(cx, ty, 2, cx, ty + 80, 80);
+        grad.addColorStop(0, 'rgba(249,115,22,0.6)');
+        grad.addColorStop(0.7, 'rgba(249,115,22,0.15)');
+        grad.addColorStop(1, 'rgba(249,115,22,0)');
+        ctx.beginPath();
+        ctx.moveTo(cx, ty);
+        ctx.lineTo(cx - 60, h - 20);
+        ctx.lineTo(cx + 60, h - 20);
+        ctx.closePath();
+        ctx.fillStyle = grad; ctx.fill();
+        ctx.strokeStyle = 'rgba(249,115,22,0.5)'; ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.fillStyle = '#f97316';
+        ctx.beginPath(); ctx.arc(cx, ty, 6, 0, Math.PI * 2); ctx.fill();
+        lbl(ctx, '원뿔형 집중 패턴', w/2, h - 8, '#f97316');
+      }
+    },
+    area: {
+      desc: 'Area Light는 직사각형 면에서 빛을 방사합니다. 스튜디오 조명, 창문 빛 표현에 적합합니다.',
+      ce: [
+        { cause: '면의 크기 조절', result: '크기 클수록 그림자 부드럽고 넓은 조명 영역', cls: 'result-a' },
+        { cause: '창문 모양 배치', result: '실내 자연광 효과를 쉽게 연출', cls: 'result-b' }
+      ],
+      before: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        // Area icon: rectangle with soft glow
+        var rx = w/2 - 40, ry = h/2 - 22, rw = 80, rh = 44;
+        ctx.strokeStyle = '#c084fc'; ctx.lineWidth = 2;
+        ctx.strokeRect(rx, ry, rw, rh);
+        ctx.fillStyle = 'rgba(192,132,252,0.15)';
+        ctx.fillRect(rx, ry, rw, rh);
+        lbl(ctx, 'Area Light', w/2, h - 12, '#c084fc');
+      },
+      after: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        var cx = w/2, ty = 35;
+        // soft area gradient downward
+        var grad = ctx.createLinearGradient(cx - 70, ty, cx - 70, h - 20);
+        grad.addColorStop(0, 'rgba(192,132,252,0.5)');
+        grad.addColorStop(0.8, 'rgba(192,132,252,0.05)');
+        grad.addColorStop(1, 'rgba(192,132,252,0)');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.moveTo(cx - 45, ty);
+        ctx.lineTo(cx + 45, ty);
+        ctx.lineTo(cx + 80, h - 20);
+        ctx.lineTo(cx - 80, h - 20);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = 'rgba(192,132,252,0.2)'; ctx.fillRect(cx - 45, ty - 4, 90, 8);
+        ctx.strokeStyle = '#c084fc'; ctx.lineWidth = 1.5; ctx.strokeRect(cx - 45, ty - 8, 90, 16);
+        lbl(ctx, '소프트 면광 패턴', w/2, h - 8, '#c084fc');
+      }
+    }
+  };
+
+  function buildCauseEffect(ceList) {
+    var c = document.getElementById('cause-effect-lt');
+    c.textContent = '';
+    ceList.forEach(function(item) {
+      var row = document.createElement('div'); row.className = 'ce-row';
+      var cause = document.createElement('span'); cause.className = 'ce-cause'; cause.textContent = item.cause;
+      var arrow = document.createElement('span'); arrow.className = 'ce-arrow'; arrow.textContent = '→';
+      var result = document.createElement('span'); result.className = 'ce-result ' + item.cls; result.textContent = item.result;
+      row.appendChild(cause); row.appendChild(arrow); row.appendChild(result);
+      c.appendChild(row);
+    });
+  }
+
+  function renderBAPanels(scene) {
+    var cvB = document.getElementById('lt-before');
+    var cvA = document.getElementById('lt-after');
+    scene.before(cvB.getContext('2d'), cvB.width, cvB.height);
+    scene.after(cvA.getContext('2d'), cvA.width, cvA.height);
+  }
+
+  window.switchScenarioLT = function(key) {
+    var scene = scenarios[key];
+    document.getElementById('scene-desc-lt').textContent = scene.desc;
+    document.querySelectorAll('#panel-visual .scenario-btn').forEach(function(b) {
+      b.classList.toggle('active', b.dataset.scene === key);
+    });
+    renderBAPanels(scene);
+    buildCauseEffect(scene.ce);
+  };
+
+  document.addEventListener('DOMContentLoaded', function() { switchScenarioLT('point'); });
+})();
+
 // ── Tab Switching ──────────────────────────────
 document.querySelectorAll(".tab").forEach(function(tab) {
   tab.addEventListener("click", function() {

@@ -341,6 +341,56 @@ body {
   .tab { padding: 10px 12px; font-size: .8rem; }
   .panel { padding: 16px 12px; }
 }
+/* ── Scenario Nav ── */
+.scenario-nav {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.scenario-btn {
+  padding: 6px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .8rem;
+  cursor: pointer;
+  transition: background .14s, color .14s, border-color .14s;
+}
+.scenario-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.scenario-btn.active {
+  background: rgba(10,132,255,.14);
+  color: var(--key-soft);
+  border-color: rgba(10,132,255,.3);
+}
+/* ── Before/After Canvas ── */
+.before-after {
+  display: flex; gap: 12px; margin: 10px 0;
+}
+.ba-panel {
+  flex: 1; border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface); overflow: hidden;
+}
+.ba-label {
+  padding: 6px 12px; font-size: .75rem;
+  color: var(--muted); background: var(--surface-strong);
+  border-bottom: 1px solid var(--line);
+  text-align: center;
+}
+.ba-panel canvas { display: block; width: 100%; }
+/* ── Cause-Effect ── */
+.cause-effect { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+.ce-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; border-radius: var(--radius-sm);
+  background: var(--surface); border: 1px solid var(--line);
+  font-size: .84rem;
+}
+.ce-cause { color: var(--muted-strong); flex: 1; }
+.ce-arrow { color: var(--muted); flex-shrink: 0; }
+.ce-result { flex: 1.2; font-weight: 500; }
+.result-a { color: var(--key-soft); }
+.result-b { color: var(--success-soft); }
+.result-c { color: #fbbf24; }
 </style>
 </head>
 <body>
@@ -405,8 +455,28 @@ body {
 
 <!-- TAB 2: 시각적 비교 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    캔버스를 드래그하여 큐브를 회전(Orbit)해 보세요. 아래 버튼으로 Numpad 뷰를 체험할 수 있습니다.
+  <!-- Scenario Navigation -->
+  <div class="scenario-nav" id="vpnScenarioNav">
+    <button class="scenario-btn active" data-scene="orbit" onclick="switchSceneVPN('orbit')">Orbit (궤도 회전)</button>
+    <button class="scenario-btn" data-scene="pan" onclick="switchSceneVPN('pan')">Pan (횡이동)</button>
+    <button class="scenario-btn" data-scene="zoom" onclick="switchSceneVPN('zoom')">Zoom (확대/축소)</button>
+  </div>
+  <p id="vpn-scene-desc" style="font-size:.84rem; color:var(--muted-strong); margin:0 0 10px;"></p>
+  <div class="before-after">
+    <div class="ba-panel">
+      <div class="ba-label" id="vpn-label-before">입력</div>
+      <canvas id="canvas-vpn-before" width="280" height="160"></canvas>
+    </div>
+    <div class="ba-panel">
+      <div class="ba-label" id="vpn-label-after">결과</div>
+      <canvas id="canvas-vpn-after" width="280" height="160"></canvas>
+    </div>
+  </div>
+  <div class="cause-effect" id="cause-effect-vpn"></div>
+
+  <!-- Interactive Demo -->
+  <p style="font-size:.84rem; color:var(--muted); margin:16px 0 8px; border-top:1px solid var(--line); padding-top:14px;">
+    직접 체험: 캔버스를 드래그하여 큐브를 회전(Orbit)해 보세요.
   </p>
   <div class="demo-wrap">
     <canvas id="demoCanvas" width="680" height="380"></canvas>
@@ -609,6 +679,322 @@ function initQuiz(questions) {
     container.appendChild(scoreDiv);
   }
 }
+
+// ── Viewport Navigation Scenario System ───────
+var vpnScenesData = {
+  orbit: {
+    desc: 'MMB(마우스 가운데 버튼)를 드래그하면 카메라가 원점 주위를 원호로 회전합니다. 오브젝트를 360° 관찰할 수 있습니다.',
+    labelBefore: '마우스 입력',
+    labelAfter: '카메라 움직임',
+    ce: [
+      { cause: 'MMB 드래그 (좌→우)', result: '카메라가 Y축 주위로 회전', resultClass: 'result-a' },
+      { cause: 'MMB 드래그 (위→아래)', result: '카메라가 X축 주위로 회전', resultClass: 'result-b' },
+      { cause: 'Orbit 반복', result: '오브젝트 사방 확인 가능', resultClass: 'result-c' }
+    ],
+    before: function(ctx, w, h) {
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(0, 0, w, h);
+      // Mouse icon
+      var mx = w * 0.5, my = h * 0.5;
+      // mouse body
+      ctx.beginPath();
+      ctx.roundRect(mx - 18, my - 28, 36, 52, 10);
+      ctx.strokeStyle = '#8ec5ff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.fillStyle = 'rgba(10,132,255,.12)';
+      ctx.fill();
+      // middle button highlight
+      ctx.fillStyle = 'rgba(10,132,255,.5)';
+      ctx.fillRect(mx - 4, my - 28, 8, 22);
+      // label
+      ctx.fillStyle = '#8ec5ff';
+      ctx.font = 'bold 11px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('MMB 드래그', mx, my + 36);
+      // drag arrow
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(mx + 24, my - 10);
+      ctx.lineTo(mx + 42, my - 10);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(mx + 38, my - 15);
+      ctx.lineTo(mx + 44, my - 10);
+      ctx.lineTo(mx + 38, my - 5);
+      ctx.strokeStyle = '#fbbf24';
+      ctx.stroke();
+    },
+    after: function(ctx, w, h) {
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(0, 0, w, h);
+      // Draw orbit arc around a box
+      var cx = w * 0.5, cy = h * 0.5;
+      // simple 3D cube wireframe (front face)
+      ctx.strokeStyle = 'rgba(142,197,255,.6)';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(cx - 20, cy - 20, 40, 40);
+      // back face
+      ctx.globalAlpha = 0.3;
+      ctx.strokeRect(cx - 12, cy - 28, 40, 40);
+      ctx.globalAlpha = 1;
+      // connecting lines
+      ctx.globalAlpha = 0.3;
+      ctx.beginPath(); ctx.moveTo(cx - 20, cy - 20); ctx.lineTo(cx - 12, cy - 28); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx + 20, cy - 20); ctx.lineTo(cx + 28, cy - 28); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx + 20, cy + 20); ctx.lineTo(cx + 28, cy + 12); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx - 20, cy + 20); ctx.lineTo(cx - 12, cy + 12); ctx.stroke();
+      ctx.globalAlpha = 1;
+      // orbit arc
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 4]);
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, 55, 20, 0, -Math.PI * 0.3, Math.PI * 1.3);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      // arrowhead on arc
+      var arrowAngle = Math.PI * 1.3;
+      var ax = cx + 55 * Math.cos(arrowAngle);
+      var ay = cy + 20 * Math.sin(arrowAngle);
+      ctx.beginPath();
+      ctx.moveTo(ax - 8, ay - 5);
+      ctx.lineTo(ax, ay);
+      ctx.lineTo(ax - 3, ay + 7);
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      // camera icon
+      ctx.fillStyle = '#8ec5ff';
+      ctx.font = 'bold 12px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('📷', cx + 56, cy - 28);
+      // label
+      ctx.fillStyle = '#fbbf24';
+      ctx.font = 'bold 11px sans-serif';
+      ctx.fillText('궤도 회전', cx, cy + 60);
+    }
+  },
+  pan: {
+    desc: 'Shift + MMB 드래그로 카메라를 상하좌우로 평행 이동합니다. 회전 없이 화면을 밀어서 다른 부분을 봅니다.',
+    labelBefore: '마우스 입력',
+    labelAfter: '카메라 움직임',
+    ce: [
+      { cause: 'Shift + MMB 드래그 (좌)', result: '뷰포트가 오른쪽으로 이동', resultClass: 'result-a' },
+      { cause: 'Shift + MMB 드래그 (위)', result: '뷰포트가 아래로 이동', resultClass: 'result-b' },
+      { cause: 'Pan 활용', result: '오브젝트 모서리·측면 탐색', resultClass: 'result-c' }
+    ],
+    before: function(ctx, w, h) {
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(0, 0, w, h);
+      var mx = w * 0.5, my = h * 0.5;
+      // Shift key
+      ctx.fillStyle = 'rgba(16,185,129,.15)';
+      ctx.strokeStyle = '#6ee7b7';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.roundRect(mx - 52, my - 18, 50, 28, 6);
+      ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#6ee7b7';
+      ctx.font = 'bold 11px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Shift', mx - 27, my);
+      // plus sign
+      ctx.fillStyle = '#a1a1aa';
+      ctx.font = 'bold 14px sans-serif';
+      ctx.fillText('+', mx - 5, my + 2);
+      // MMB icon
+      ctx.fillStyle = 'rgba(10,132,255,.12)';
+      ctx.strokeStyle = '#8ec5ff';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(mx + 8, my - 22, 28, 40, 8);
+      ctx.fill(); ctx.stroke();
+      ctx.fillStyle = 'rgba(10,132,255,.5)';
+      ctx.fillRect(mx + 19, my - 22, 6, 17);
+      ctx.fillStyle = '#8ec5ff';
+      ctx.font = 'bold 10px sans-serif';
+      ctx.fillText('MMB', mx + 22, my + 26);
+    },
+    after: function(ctx, w, h) {
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(0, 0, w, h);
+      var cx = w * 0.5, cy = h * 0.5;
+      // Draw 4 directional arrows (pan directions)
+      var dirs = [
+        { dx: 0, dy: -1, label: '↑' },
+        { dx: 0, dy: 1,  label: '↓' },
+        { dx: -1, dy: 0, label: '←' },
+        { dx: 1, dy: 0,  label: '→' }
+      ];
+      dirs.forEach(function(d) {
+        var ex = cx + d.dx * 46, ey = cy + d.dy * 46;
+        ctx.strokeStyle = '#6ee7b7';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(cx + d.dx * 16, cy + d.dy * 16);
+        ctx.lineTo(ex - d.dx * 6, ey - d.dy * 6);
+        ctx.stroke();
+        // arrowhead
+        var angle = Math.atan2(d.dy, d.dx);
+        ctx.beginPath();
+        ctx.moveTo(ex, ey);
+        ctx.lineTo(ex - 8 * Math.cos(angle - 0.4), ey - 8 * Math.sin(angle - 0.4));
+        ctx.moveTo(ex, ey);
+        ctx.lineTo(ex - 8 * Math.cos(angle + 0.4), ey - 8 * Math.sin(angle + 0.4));
+        ctx.strokeStyle = '#6ee7b7';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      });
+      // Center dot (camera origin)
+      ctx.beginPath();
+      ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+      ctx.fillStyle = '#6ee7b7';
+      ctx.fill();
+      // label
+      ctx.fillStyle = '#6ee7b7';
+      ctx.font = 'bold 11px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('카메라 평행 이동', cx, cy + 72);
+    }
+  },
+  zoom: {
+    desc: '마우스 스크롤 휠로 카메라를 앞뒤로 이동시켜 확대/축소합니다. 숫자패드 +/-로도 동일하게 동작합니다.',
+    labelBefore: '마우스 입력',
+    labelAfter: '카메라 움직임',
+    ce: [
+      { cause: '스크롤 위 (올리기)', result: '카메라 전진 → 확대', resultClass: 'result-a' },
+      { cause: '스크롤 아래 (내리기)', result: '카메라 후진 → 축소', resultClass: 'result-b' },
+      { cause: 'Ctrl + MMB 드래그', result: '부드러운 줌 조절', resultClass: 'result-c' }
+    ],
+    before: function(ctx, w, h) {
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(0, 0, w, h);
+      var mx = w * 0.5, my = h * 0.5;
+      // scroll wheel icon
+      ctx.fillStyle = 'rgba(10,132,255,.12)';
+      ctx.strokeStyle = '#8ec5ff';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(mx - 18, my - 28, 36, 52, 10);
+      ctx.fill(); ctx.stroke();
+      // scroll wheel
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.roundRect(mx - 5, my - 22, 10, 20, 4);
+      ctx.stroke();
+      // up arrow on wheel
+      ctx.fillStyle = '#fbbf24';
+      ctx.beginPath();
+      ctx.moveTo(mx, my - 26);
+      ctx.lineTo(mx - 5, my - 20);
+      ctx.lineTo(mx + 5, my - 20);
+      ctx.closePath();
+      ctx.fill();
+      // down arrow on wheel
+      ctx.beginPath();
+      ctx.moveTo(mx, my + 26);
+      ctx.lineTo(mx - 5, my + 20);
+      ctx.lineTo(mx + 5, my + 20);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = '#fbbf24';
+      ctx.font = 'bold 11px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('스크롤 휠', mx, my + 38);
+    },
+    after: function(ctx, w, h) {
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(0, 0, w, h);
+      var cx = w * 0.5, cy = h * 0.5;
+      // magnifier circle
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.arc(cx, cy - 8, 32, 0, Math.PI * 2);
+      ctx.stroke();
+      // magnifier handle
+      ctx.beginPath();
+      ctx.moveTo(cx + 22, cy + 18);
+      ctx.lineTo(cx + 38, cy + 36);
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineCap = 'round';
+      ctx.stroke();
+      ctx.lineCap = 'butt';
+      // + / - inside magnifier
+      ctx.fillStyle = '#fbbf24';
+      ctx.font = 'bold 20px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('+', cx - 16, cy - 4 + 6);
+      ctx.font = '16px sans-serif';
+      ctx.fillStyle = 'rgba(245,158,11,.5)';
+      ctx.fillText('-', cx + 14, cy - 4 + 4);
+      // zoom in/out arrows
+      ctx.strokeStyle = 'rgba(245,158,11,.7)';
+      ctx.lineWidth = 1.5;
+      // zoom in arrow (converging)
+      ctx.beginPath();
+      ctx.moveTo(cx - 55, cy - 40);
+      ctx.lineTo(cx - 32, cy - 18);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx + 50, cy - 50);
+      ctx.lineTo(cx + 28, cy - 24);
+      ctx.stroke();
+      ctx.fillStyle = '#fbbf24';
+      ctx.font = 'bold 11px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('확대 / 축소', cx, cy + 56);
+    }
+  }
+};
+
+function buildCauseEffectVPN(ces) {
+  var el = document.getElementById('cause-effect-vpn');
+  while (el.firstChild) el.removeChild(el.firstChild);
+  ces.forEach(function(c) {
+    var row = document.createElement('div'); row.className = 'ce-row';
+    var cause = document.createElement('div'); cause.className = 'ce-cause'; cause.textContent = c.cause;
+    var arr = document.createElement('div'); arr.className = 'ce-arrow'; arr.textContent = '\u2192';
+    var res = document.createElement('div'); res.className = 'ce-result ' + c.resultClass; res.textContent = c.result;
+    row.appendChild(cause); row.appendChild(arr); row.appendChild(res);
+    el.appendChild(row);
+  });
+}
+
+function renderBAPanelsVPN(s) {
+  var cb = document.getElementById('canvas-vpn-before');
+  var ca = document.getElementById('canvas-vpn-after');
+  var w = 280, h = 160;
+  cb.width = w; cb.height = h;
+  ca.width = w; ca.height = h;
+  document.getElementById('vpn-label-before').textContent = s.labelBefore;
+  document.getElementById('vpn-label-after').textContent = s.labelAfter;
+  s.before(cb.getContext('2d'), w, h);
+  s.after(ca.getContext('2d'), w, h);
+}
+
+function switchSceneVPN(key) {
+  document.querySelectorAll('#vpnScenarioNav .scenario-btn').forEach(function(b) {
+    b.classList.toggle('active', b.dataset.scene === key);
+  });
+  var s = vpnScenesData[key];
+  document.getElementById('vpn-scene-desc').textContent = s.desc;
+  buildCauseEffectVPN(s.ce);
+  renderBAPanelsVPN(s);
+}
+
+document.querySelectorAll('.tab').forEach(function(tab) {
+  tab.addEventListener('click', function() {
+    if (tab.dataset.tab === 'visual') {
+      setTimeout(function() { switchSceneVPN('orbit'); }, 50);
+    }
+  });
+});
+switchSceneVPN('orbit');
 
 // ── Canvas Viewport Navigation Demo ──────────
 (function() {
