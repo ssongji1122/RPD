@@ -21,7 +21,7 @@
     .hero p {
       max-width: 720px; margin: 0;
       color: var(--muted-strong); font-size: clamp(.98rem, 1.6vw, 1.06rem);
-      line-height: 1.8;
+      line-height: 1.8; white-space: nowrap;
     }
     .hero-meta { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; }
     .meta-chip {
@@ -524,9 +524,13 @@
               </div>
               <div class="status-pill" data-step-status>진행 중</div>
             </div>
-            ${step.image ? (step.link
-              ? `<a href="${step.link}" target="_blank" rel="noopener noreferrer"><img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" /></a>`
-              : `<img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" />`) : ""}
+            ${step.images && step.images.length
+              ? `<div class="step-images">${step.images.map((img, i) =>
+                  `<img src="${img}" alt="${step.title} ${i + 1}" class="step-image" loading="lazy" />`
+                ).join("")}</div>`
+              : step.image ? (step.link
+                ? `<a href="${step.link}" target="_blank" rel="noopener noreferrer"><img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" /></a>`
+                : `<img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" />`) : ""}
             ${step.downloads && step.downloads.length ? `<div class="step-downloads">${step.downloads.map(dl => `<a class="step-dl-btn" href="${dl.url}" download="${dl.url.split('/').pop()}" target="_blank" rel="noopener">⬇ ${dl.label}</a>`).join("")}</div>` : ""}
             <p class="step-copy">${step.copy}</p>
             ${showmeHtml}
@@ -612,6 +616,7 @@
           <div class="hero-card">
             <div class="eyebrow">Week ${String(w.week).padStart(2,"0")} · RPD</div>
             <h1>${w.title}</h1>
+            ${w.subtitle ? `<p>${w.subtitle}</p>` : ""}
             <div class="hero-meta">
               <span class="meta-chip">⏱ ${w.duration}</span>
               <span class="meta-chip">📋 ${w.steps.length}단계 실습</span>
