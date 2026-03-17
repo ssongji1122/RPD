@@ -537,9 +537,10 @@
               ? `<div class="step-images">${step.images.map((img, i) =>
                   `<img src="${img}" alt="${step.title} ${i + 1}" class="step-image" loading="lazy" />`
                 ).join("")}</div>`
-              : step.image ? (step.link
-                ? `<a href="${step.link}" target="_blank" rel="noopener noreferrer"><img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" /></a>`
-                : `<img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" />`) : ""}
+              : step.image ? `<figure class="step-image-wrap">
+                  <img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" />
+                  ${step.link ? `<figcaption><a href="${step.link}" target="_blank" rel="noopener noreferrer" class="doc-link">공식 문서 →</a></figcaption>` : ""}
+                </figure>` : ""}
             ${step.video ? `<video class="step-video" controls preload="metadata"><source src="${step.video}" type="video/mp4" /><source src="${step.video}" type="video/quicktime" /></video>` : ""}
             ${step.clips && step.clips.length ? `
               <div class="clip-player" data-step-clips>
