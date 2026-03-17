@@ -421,48 +421,6 @@ const CURRICULUM = [
     ],
     "steps": [
       {
-        "title": "레퍼런스 이미지 설정",
-        "copy": "모델링 전에 참고할 이미지를 뷰포트에 깔아 두면 형태를 잡기가 훨씬 쉬워요. 정면·측면·후면 레퍼런스를 각 뷰에 배치해서 로봇의 비율과 구조를 미리 파악해요.",
-        "goal": [
-          "이미지 레퍼런스를 뷰포트에 올린다",
-          "4가지 이미지 타입의 차이를 안다"
-        ],
-        "tasks": [
-          {
-            "id": "w3-ref1",
-            "label": "Numpad 1 → Shift+A → Image → Reference로 정면 이미지 추가",
-            "detail": "Front View 상태에서 추가해야 정면에 정렬됨"
-          },
-          {
-            "id": "w3-ref2",
-            "label": "Numpad 3 → Shift+A → Image → Reference로 측면 이미지 추가",
-            "detail": "Right Side View에서 추가"
-          },
-          {
-            "id": "w3-ref3",
-            "label": "N 패널 → Item에서 투명도(Opacity) 0.3~0.5로 조절",
-            "detail": "모델링 중 메쉬와 구분되도록"
-          },
-          {
-            "id": "w3-ref4",
-            "label": "Outliner에서 선택 잠금으로 실수 이동 방지",
-            "detail": "화살표 아이콘 클릭 → 선택 비활성화"
-          }
-        ],
-        "done": [
-          "정면·측면 레퍼런스가 각 뷰에 정렬되어 있다",
-          "모델링 도중 레퍼런스가 방해되지 않는다"
-        ],
-        "image": "assets/images/week03/robot-ref-front.png",
-        "downloads": [
-          { "label": "정면 (Front)", "url": "assets/images/week03/robot-ref-front.png" },
-          { "label": "측면 (Side)",  "url": "assets/images/week03/robot-ref-side.png" },
-          { "label": "후면 (Back)",  "url": "assets/images/week03/robot-ref-back.png" }
-        ],
-        "showme": "image-reference",
-        "link": "https://docs.blender.org/manual/en/latest/editors/3dview/display/overlays.html"
-      },
-      {
         "title": "기본형 만들기",
         "copy": "레퍼런스를 보면서 Tab으로 Edit Mode에 들어가 Extrude로 덩어리를 뽑고, Loop Cut으로 나누고, Inset과 Bevel로 다듬는 게 기본 흐름이에요.",
         "goal": [
