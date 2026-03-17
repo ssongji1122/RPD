@@ -13,6 +13,13 @@
       "runtimeArgs": ["-m", "http.server", "--directory", "course-site"],
       "port": 8770,
       "autoPort": true
+    },
+    {
+      "name": "course-site-static",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8790", "--directory", "course-site"],
+      "port": 8790,
+      "autoPort": true
     }
   ]
 }
