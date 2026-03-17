@@ -16,6 +16,7 @@ const SHOWME_REGISTRY = {
   "pivot-point":            { label: "Pivot Point 이해",        icon: "🎯" },
   "snap":                   { label: "Snapping 이해",           icon: "🧲" },
   "viewport-shading":       { label: "Viewport Shading 이해",   icon: "💡" },
+  "xray-opacity":           { label: "X-Ray 투명도 조절",        icon: "🔍" },
   "edit-mode":              { label: "Edit Mode 이해",          icon: "✏️" },
 
   // ── Edit Mode Tools (기능별 라이브러리) ──

@@ -324,7 +324,7 @@ const CURRICULUM = [
           "Z Pie Menu로 빠르게 모드 전환이 된다",
           "Solid와 Material Preview 차이를 말할 수 있다"
         ],
-        "showme": "viewport-shading"
+        "showme": ["viewport-shading", "xray-opacity"]
       }
     ],
     "assignment": {
@@ -449,6 +449,16 @@ const CURRICULUM = [
           { "label": "3장 배치", "src": "assets/clips/week03/ref-position.mp4" },
           { "label": "Opacity · 정렬", "src": "assets/clips/week03/ref-opacity.mp4" }
         ],
+        "images": [
+          "assets/images/week03/robot-ref-front.png",
+          "assets/images/week03/robot-ref-side.png",
+          "assets/images/week03/robot-ref-back.png"
+        ],
+        "downloads": [
+          { "label": "정면 (Front)", "url": "assets/images/week03/robot-ref-front.png" },
+          { "label": "측면 (Side)",  "url": "assets/images/week03/robot-ref-side.png" },
+          { "label": "후면 (Back)",  "url": "assets/images/week03/robot-ref-back.png" }
+        ],
         "done": [
           "3장의 Reference Image가 뷰포트에 깔려 있다",
           "Orthographic 뷰에서 레퍼런스와 3D 커서가 정렬되어 있다"
@@ -489,7 +499,7 @@ const CURRICULUM = [
           "Cube가 머리 레퍼런스와 비슷한 비율이다",
           "Edge가 주요 윤곽선에 맞게 배치되었다"
         ],
-        "showme": "edit-mode-tools",
+        "showme": ["edit-mode-tools", "extrude", "loop-cut", "inset", "bevel-tool"],
         "link": "https://docs.blender.org/manual/en/latest/modeling/meshes/tools/extrude_region.html"
       },
       {
@@ -651,7 +661,7 @@ const CURRICULUM = [
             "detail": "30°~60° 사이 실험"
           }
         ],
-        "image": "assets/images/week03/bevel-weighted-normal.png",
+        "image": "assets/images/week03/bevel-tool.png",
         "done": [
           "전체 모서리가 자연스럽게 둥글어졌다"
         ],
@@ -679,10 +689,11 @@ const CURRICULUM = [
             "detail": "Keep Sharp와 함께 쓰면 효과가 더 잘 보임"
           }
         ],
-        "image": "assets/images/week03/bevel-weighted-normal.png",
+        "image": "assets/images/week03/weighted-normal.png",
         "done": [
           "음영이 깔끔하게 정리됐다"
         ],
+        "showme": "weighted-normal",
         "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/modify/weighted_normal.html"
       },
       {
@@ -704,12 +715,88 @@ const CURRICULUM = [
             "detail": "Scale이 1이 아니면 Modifier 결과가 달라짐"
           }
         ],
-        "image": "assets/images/week03/bevel-weighted-normal.png",
+        "image": "assets/images/week03/modifier-stack.png",
         "done": [
           "순서를 바꿨을 때 결과가 달라지는 것을 확인했다",
           "Apply는 마지막에만 하는 이유를 안다"
         ],
+        "showme": "transform-apply",
         "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/introduction.html"
+      },
+      {
+        "sectionTitle": "로봇 모델링 기초",
+        "title": "Collection",
+        "copy": "씬이 복잡해질수록 오브젝트를 묶어서 관리하는 게 중요해요. Collection은 폴더처럼 오브젝트를 그룹으로 정리해서 켜고 끄거나 한꺼번에 선택할 수 있어요.",
+        "goal": [
+          "Collection을 만들고 오브젝트를 정리한다",
+          "Outliner에서 Collection 단위로 숨기고 보이기를 제어한다"
+        ],
+        "tasks": [
+          {
+            "id": "w3-col1",
+            "label": "Outliner에서 New Collection 만들기",
+            "detail": "우클릭 → New Collection, 또는 M 키로 이동"
+          },
+          {
+            "id": "w3-col2",
+            "label": "오브젝트 선택 후 M 키 → Collection으로 이동하기",
+            "detail": "레퍼런스 이미지, 로봇 파츠를 별도 Collection으로 분리"
+          },
+          {
+            "id": "w3-col3",
+            "label": "Outliner 눈 아이콘으로 Collection 전체 숨기기/보이기",
+            "detail": "H 키로 숨기기, Alt+H로 전부 보이기"
+          }
+        ],
+        "done": [
+          "Outliner에 Collection 구조가 정리되어 있다",
+          "레퍼런스 이미지와 메쉬가 분리된 Collection에 들어있다"
+        ]
+      },
+      {
+        "title": "Reference Image 실습",
+        "copy": "민트 로봇 레퍼런스 이미지를 뷰포트에 올려서 정면·측면을 각각 배치해요. 영상을 따라하면서 세팅을 완성해요.",
+        "goal": [
+          "레퍼런스 이미지를 뷰포트에 정확히 정렬한다"
+        ],
+        "video": "assets/videos/week03/001-ref-setting.mov",
+        "images": [
+          "assets/images/week03/robot-ref-front.png",
+          "assets/images/week03/robot-ref-side.png",
+          "assets/images/week03/robot-ref-back.png"
+        ],
+        "downloads": [
+          { "label": "정면 (Front)", "url": "assets/images/week03/robot-ref-front.png" },
+          { "label": "측면 (Side)",  "url": "assets/images/week03/robot-ref-side.png" },
+          { "label": "후면 (Back)",  "url": "assets/images/week03/robot-ref-back.png" }
+        ],
+        "tasks": [
+          {
+            "id": "w3-ref-a",
+            "label": "Numpad 1 → Shift+A → Image → Reference로 정면 이미지 추가",
+            "detail": "Front View 상태에서 추가해야 정렬됨"
+          },
+          {
+            "id": "w3-ref-b",
+            "label": "Numpad 3 → 측면 이미지 추가 후 위치 정렬",
+            "detail": "Right View에서 추가"
+          },
+          {
+            "id": "w3-ref-c",
+            "label": "N 패널 → Opacity 0.3~0.5로 낮추기",
+            "detail": "메쉬와 겹쳐도 작업이 편하도록"
+          },
+          {
+            "id": "w3-ref-d",
+            "label": "Outliner에서 선택 잠금 설정",
+            "detail": "화살표 아이콘 클릭 → 실수로 이동 방지"
+          }
+        ],
+        "done": [
+          "정면·측면 레퍼런스가 각 뷰에 정렬되어 있다",
+          "영상 따라 전체 세팅 완료"
+        ],
+        "showme": "image-reference"
       }
     ],
     "shortcuts": [
@@ -791,6 +878,14 @@ const CURRICULUM = [
     "status": "active",
     "summary": "레고 조립처럼, Edit Mode로 블록을 깎고 Modifier로 대칭·곡면·반복 효과를 얹는 흐름을 배워요.",
     "videos": [
+      {
+        "title": "[실습] 민트 로봇 레퍼런스 이미지 설정",
+        "url": "https://youtu.be/-U82eI3eiQ0"
+      },
+      {
+        "title": "[실습] 민트 로봇 헤드 Mirror 모델링",
+        "url": "https://youtu.be/FIY9RBLdYcA"
+      },
       {
         "title": "Blender Studio - Modeling Introduction",
         "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modeling-introduction/"
