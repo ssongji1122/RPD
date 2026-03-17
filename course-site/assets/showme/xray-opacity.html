@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — X-Ray 투명도 조절</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Tab Navigation ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+
+/* ── Tab Panels ── */
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+
+/* ── Concept Cards ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card h3 {
+  margin: 0 0 8px; font-size: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.concept-card p {
+  margin: 0; color: var(--muted-strong);
+  font-size: .88rem; line-height: 1.7;
+}
+.concept-card ul {
+  margin: 8px 0 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
+}
+
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: .72rem; font-weight: 600;
+}
+.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: #fbbf24; }
+.badge-red   { background: rgba(239,68,68,.15);   color: #fca5a5; }
+
+/* ── Keyboard Shortcut ── */
+.kbd {
+  display: inline-block;
+  padding: 3px 8px; border-radius: 6px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  color: var(--key-soft);
+  font-size: .82rem; font-weight: 600;
+  font-family: var(--font);
+}
+
+/* ── Canvas / Demo ── */
+.demo-wrap {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+  margin: 14px 0;
+}
+.demo-wrap canvas {
+  display: block; width: 100%;
+}
+.demo-controls {
+  display: flex; gap: 8px; padding: 12px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+  align-items: center;
+}
+.demo-hint {
+  font-size: .78rem; color: var(--muted);
+  text-align: center; padding: 6px 0 0;
+}
+.demo-btn {
+  padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .82rem;
+  cursor: pointer;
+  transition: background .14s, color .14s;
+}
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active {
+  background: rgba(10,132,255,.14);
+  color: var(--key-soft);
+  border-color: rgba(10,132,255,.3);
+}
+
+/* ── Slider ── */
+.slider-wrap {
+  display: flex; align-items: center; gap: 10px; flex: 1; min-width: 180px;
+}
+.slider-wrap label {
+  font-size: .82rem; color: var(--muted-strong); white-space: nowrap;
+}
+.slider-wrap input[type="range"] {
+  flex: 1;
+  -webkit-appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255,255,255,.12);
+  outline: none;
+  cursor: pointer;
+}
+.slider-wrap input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--key-soft);
+  border: 2px solid var(--bg);
+  cursor: pointer;
+}
+.slider-val {
+  font-size: .82rem; color: var(--key-soft);
+  font-weight: 600; min-width: 36px; text-align: right;
+}
+
+/* ── Usage Grid ── */
+.usage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.usage-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 16px;
+}
+.usage-card h4 {
+  margin: 0 0 8px; font-size: .92rem;
+  color: var(--key-soft);
+}
+.usage-card ul {
+  margin: 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem;
+  line-height: 1.8;
+}
+
+/* ── Tip Box ── */
+.tip-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(10,132,255,.2);
+  background: rgba(10,132,255,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+}
+.tip-box strong { color: var(--key-soft); }
+
+.warn-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(245,158,11,.2);
+  background: rgba(245,158,11,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: #fbbf24;
+}
+.warn-box strong { color: #fbbf24; }
+
+/* ── Combo Section ── */
+.combo-section {
+  margin-top: 18px;
+}
+.combo-section h4 {
+  margin: 0 0 10px;
+  font-size: .92rem;
+  color: var(--text);
+}
+.combo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.combo-card {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 12px 14px;
+}
+.combo-card .combo-name {
+  font-size: .86rem;
+  font-weight: 600;
+  color: var(--key-soft);
+  margin-bottom: 4px;
+}
+.combo-card .combo-desc {
+  font-size: .8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ── Shortcut Reference ── */
+.shortcut-list {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.shortcut-list h4 {
+  margin: 0 0 10px;
+  font-size: .9rem;
+  color: var(--text);
+}
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: .84rem;
+  color: var(--muted-strong);
+}
+.shortcut-row + .shortcut-row {
+  border-top: 1px solid var(--line);
+}
+.shortcut-keys {
+  flex-shrink: 0;
+}
+.analogy {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(245,158,11,.06);
+  border: 1px solid rgba(245,158,11,.15);
+  font-size: .82rem;
+  color: #fbbf24;
+  font-style: italic;
+}
+
+/* ── Opacity Scale Bar ── */
+.opacity-scale {
+  margin-top: 14px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.opacity-scale h4 { margin: 0 0 10px; font-size: .9rem; color: var(--text); }
+.opacity-row {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+}
+.opacity-swatch {
+  width: 36px; height: 20px;
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,.1);
+  flex-shrink: 0;
+}
+.opacity-label { font-size: .82rem; color: var(--muted-strong); }
+.opacity-note { font-size: .78rem; color: var(--muted); }
+
+/* ── Quiz ── */
+.quiz-progress {
+  font-size: .78rem; color: var(--muted);
+  margin-bottom: 12px;
+}
+.quiz-question {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.quiz-question h4 {
+  margin: 0 0 12px; font-size: .94rem;
+}
+.quiz-option {
+  display: block; width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.025);
+  color: var(--text);
+  font: inherit; font-size: .86rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background .14s, border-color .14s;
+}
+.quiz-option:hover {
+  background: rgba(255,255,255,.06);
+  border-color: var(--line-strong);
+}
+.quiz-option.correct {
+  background: rgba(16,185,129,.12);
+  border-color: rgba(16,185,129,.4);
+  color: var(--success-soft);
+}
+.quiz-option.wrong {
+  background: rgba(239,68,68,.1);
+  border-color: rgba(239,68,68,.3);
+  color: #fca5a5;
+}
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback {
+  margin-top: 8px; padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: .84rem;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: #fca5a5; }
+
+.quiz-score {
+  text-align: center; padding: 20px;
+  font-size: 1.1rem; font-weight: 600;
+}
+.quiz-retry {
+  display: block; margin: 12px auto;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--key);
+  background: rgba(10,132,255,.12);
+  color: var(--key-soft);
+  font: inherit; font-size: .88rem;
+  cursor: pointer;
+  transition: background .14s;
+}
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+
+/* ── Official Doc Reference ── */
+.doc-ref {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(10,132,255,.15);
+  background: rgba(10,132,255,.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-ref a {
+  color: var(--key-soft);
+  font-size: .84rem;
+  text-decoration: none;
+  line-height: 1.5;
+}
+.doc-ref a:hover { text-decoration: underline; }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+  .slider-wrap { min-width: 120px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Tab Bar -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+</nav>
+
+<!-- TAB 1: 개념 이해 -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">X-Ray</span> X-Ray 모드란?</h3>
+      <p>오브젝트를 반투명하게 보여주는 뷰포트 표시 모드입니다. 내부 구조, 뒤쪽 폴리곤, 겹친 엣지까지 모두 보이게 해줍니다.</p>
+      <div class="analogy">마치 X선 촬영처럼 — 표면 뒤에 있는 것까지 비쳐 보여요</div>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-amber">Opacity</span> 투명도 슬라이더</h3>
+      <p>X-Ray 모드 ON 시 활성화되는 <strong>0.0 ~ 1.0</strong> 값입니다. 값이 낮을수록 더 투명해지고, 1.0이면 완전 불투명(X-Ray 효과 없음)에 가깝습니다.</p>
+      <div class="analogy">유리의 두께 조절 — 얇을수록 더 많이 비쳐요</div>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-green">위치</span> 어디서 조절하나요?</h3>
+      <p>3D 뷰포트 우측 상단 <strong>Viewport Shading</strong> 아이콘(●) 클릭 → <strong>X-Ray 체크박스</strong> 옆 숫자 슬라이더를 드래그하거나 클릭해서 값을 입력합니다.</p>
+      <ul>
+        <li>토글: 아이콘 영역 우측의 체크 ON/OFF</li>
+        <li>슬라이더: 체크 옆 파란 숫자 드래그</li>
+        <li>정확한 값: 숫자 더블클릭 후 직접 입력</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="opacity-scale">
+    <h4>Opacity 값 의미</h4>
+    <div class="opacity-row">
+      <div class="opacity-swatch" style="background: rgba(80,160,255,0.08);"></div>
+      <span class="opacity-label"><strong>0.1 — 거의 투명</strong></span>
+      <span class="opacity-note">내부 구조가 매우 선명하게 보임</span>
+    </div>
+    <div class="opacity-row">
+      <div class="opacity-swatch" style="background: rgba(80,160,255,0.35);"></div>
+      <span class="opacity-label"><strong>0.5 — 반투명</strong></span>
+      <span class="opacity-note">표면과 내부를 동시에 파악 가능</span>
+    </div>
+    <div class="opacity-row">
+      <div class="opacity-swatch" style="background: rgba(80,160,255,0.72);"></div>
+      <span class="opacity-label"><strong>0.7 — 기본값</strong></span>
+      <span class="opacity-note">Blender 기본 설정 (0.723)</span>
+    </div>
+    <div class="opacity-row">
+      <div class="opacity-swatch" style="background: rgba(80,160,255,1.0);"></div>
+      <span class="opacity-label"><strong>1.0 — 불투명</strong></span>
+      <span class="opacity-note">X-Ray 효과 없음, 일반 Solid처럼 보임</span>
+    </div>
+  </div>
+
+  <div class="shortcut-list">
+    <h4>주요 단축키 / 조작</h4>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Alt</span> + <span class="kbd">Z</span></span>
+      <span>X-Ray 모드 토글 (켜기/끄기)</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys">Viewport 우상단 <span class="kbd">●</span> 클릭</span>
+      <span>Viewport Shading 팝업 열기</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys">슬라이더 <strong>드래그</strong></span>
+      <span>Opacity 값 연속 조절</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys">슬라이더 <strong>더블클릭</strong></span>
+      <span>정확한 수치 직접 입력</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys">슬라이더 위 <span class="kbd">Ctrl</span> + 드래그</span>
+      <span>0.1 단위 스냅으로 정밀 조절</span>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/editors/3dview/display/shading.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Viewport Shading (X-Ray)
+    </a>
+  </div>
+</section>
+
+<!-- TAB 2: 시각적 비교 -->
+<section class="panel" id="panel-visual" role="tabpanel">
+  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
+    슬라이더를 움직여 X-Ray Opacity 효과를 직접 확인해 보세요.
+  </p>
+  <div class="demo-wrap">
+    <canvas id="demoCanvas" width="680" height="320"></canvas>
+    <div class="demo-controls">
+      <button class="demo-btn is-active" id="btnXray">X-Ray ON</button>
+      <div class="slider-wrap">
+        <label for="opacitySlider">Opacity</label>
+        <input type="range" id="opacitySlider" min="0" max="100" value="72" step="1">
+        <span class="slider-val" id="sliderVal">0.72</span>
+      </div>
+      <button class="demo-btn" id="btnReset">초기화</button>
+    </div>
+  </div>
+  <p class="demo-hint">X-Ray 토글과 슬라이더를 조작하면 캔버스가 즉시 반응합니다.</p>
+</section>
+
+<!-- TAB 3: 언제 쓰나요? -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>X-Ray Opacity가 필요할 때</h4>
+      <ul>
+        <li>내부 Edge Loop 위치 확인</li>
+        <li>뒤쪽 정점/면 선택</li>
+        <li>오브젝트 내부에 파묻힌 메쉬 점검</li>
+        <li>두 오브젝트의 겹침 여부 확인</li>
+        <li>Armature 본이 메쉬 안에 맞는지 확인</li>
+        <li>UV 펼침 전 메쉬 이음새 확인</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>X-Ray를 끄는 경우</h4>
+      <ul>
+        <li>표면 디테일 집중 편집</li>
+        <li>재질·색상 결과 확인</li>
+        <li>앞쪽 요소만 선택해야 할 때</li>
+        <li>최종 결과물 미리보기</li>
+        <li>Sculpt Mode에서 브러쉬 작업</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>팁:</strong> Edit Mode에서 <span class="kbd">Alt</span>+<span class="kbd">Z</span>로 X-Ray를 켜면 뒤쪽 정점까지 한 번에 박스 선택(<span class="kbd">B</span>)할 수 있어요. 반대로 표면만 선택할 때는 꼭 X-Ray를 끄세요.
+  </div>
+
+  <div class="warn-box">
+    <strong>주의:</strong> X-Ray 모드는 <em>렌더링과 무관</em>합니다. 뷰포트 표시 설정일 뿐이므로 최종 렌더 결과에는 영향을 주지 않아요.
+  </div>
+
+  <div class="combo-section">
+    <h4>함께 쓰면 좋은 조합</h4>
+    <div class="combo-grid">
+      <div class="combo-card">
+        <div class="combo-name">X-Ray + 박스 선택 (B)</div>
+        <div class="combo-desc">X-Ray ON 상태에서 B로 드래그하면 앞뒤 정점을 모두 선택. 빠른 전체 영역 선택에 최적.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">X-Ray + Mirror Modifier</div>
+        <div class="combo-desc">대칭 모델에서 내부 중심선 정점 확인. Clipping 적용 여부를 투명하게 시각화.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">X-Ray + Weight Paint</div>
+        <div class="combo-desc">Armature 본이 메쉬 내부에서 올바른 위치에 있는지 확인하며 웨이트 조절.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">낮은 Opacity + 레퍼런스 이미지</div>
+        <div class="combo-desc">배경 이미지와 메쉬 내부 구조를 동시에 확인하여 정밀한 형태 맞추기에 유리.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/editors/3dview/display/shading.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Viewport Shading (X-Ray)
+    </a>
+  </div>
+</section>
+
+<!-- TAB 4: 퀴즈 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+// ── Tab Switching ──────────────────────────────
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(t) {
+      t.classList.remove("is-active");
+      t.setAttribute("aria-selected", "false");
+    });
+    document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("is-active"); });
+    tab.classList.add("is-active");
+    tab.setAttribute("aria-selected", "true");
+    document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+  });
+});
+
+// ── Quiz Engine ────────────────────────────────
+function initQuiz(questions) {
+  var container = document.getElementById("quizArea");
+  var score = 0, answered = 0;
+  var scoreDiv = null;
+
+  var progress = document.createElement("div");
+  progress.className = "quiz-progress";
+  progress.textContent = "문제 0 / " + questions.length + " · 점수 0점";
+  container.appendChild(progress);
+
+  questions.forEach(function(q, qi) {
+    var div = document.createElement("div");
+    div.className = "quiz-question";
+
+    var heading = document.createElement("h4");
+    heading.textContent = "Q" + (qi + 1) + ". " + q.question;
+    div.appendChild(heading);
+
+    var fb = document.createElement("div");
+    fb.className = "quiz-feedback";
+
+    q.options.forEach(function(opt, oi) {
+      var btn = document.createElement("button");
+      btn.className = "quiz-option";
+      btn.textContent = opt;
+      btn.addEventListener("click", function() {
+        if (btn.disabled) return;
+        div.querySelectorAll(".quiz-option").forEach(function(b) { b.disabled = true; });
+        answered++;
+        if (oi === q.answer) {
+          btn.classList.add("correct");
+          fb.className = "quiz-feedback show correct-fb";
+          fb.textContent = "✅ " + q.explanation;
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
+          fb.className = "quiz-feedback show wrong-fb";
+          fb.textContent = "❌ " + q.explanation;
+
+          var retryBtn = document.createElement("button");
+          retryBtn.className = "quiz-retry";
+          retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
+          retryBtn.textContent = "다시 풀기";
+          retryBtn.addEventListener("click", function() {
+            answered--;
+            div.querySelectorAll(".quiz-option").forEach(function(b) {
+              b.disabled = false;
+              b.classList.remove("wrong", "correct");
+            });
+            fb.className = "quiz-feedback";
+            fb.textContent = "";
+            retryBtn.remove();
+            if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+            progress.textContent = "문제 " + answered + " / " + questions.length + " · 점수 " + score + "점";
+          });
+          fb.appendChild(retryBtn);
+        }
+        progress.textContent = "문제 " + answered + " / " + questions.length + " · 점수 " + score + "점";
+        if (answered === questions.length) showScore();
+      });
+      div.appendChild(btn);
+    });
+
+    div.appendChild(fb);
+    container.appendChild(div);
+  });
+
+  function showScore() {
+    if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+
+    scoreDiv = document.createElement("div");
+    scoreDiv.className = "quiz-score";
+
+    var emoji = document.createElement("div");
+    emoji.style.cssText = "font-size:36px;margin-bottom:8px";
+    emoji.textContent = score === questions.length ? "🎉" : score >= Math.ceil(questions.length / 2) ? "👍" : "📚";
+    scoreDiv.appendChild(emoji);
+
+    var result = document.createElement("div");
+    result.style.cssText = "font-size:18px;font-weight:500;margin-bottom:6px";
+    result.textContent = score + " / " + questions.length + " 정답";
+    scoreDiv.appendChild(result);
+
+    var msg = document.createElement("div");
+    msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
+    msg.textContent = score === questions.length ? "완벽합니다!" : "조금 더 연습하면 완벽해질 거예요!";
+    scoreDiv.appendChild(msg);
+
+    var saveBtn = document.createElement("button");
+    saveBtn.className = "quiz-retry";
+    saveBtn.style.cssText = "background:rgba(10,132,255,.18);border-color:var(--key);margin-bottom:8px";
+    saveBtn.textContent = "기록 저장하기";
+    saveBtn.addEventListener("click", function() {
+      try {
+        var wid = new URLSearchParams(location.search).get("wid")
+               || location.pathname.split("/").pop().replace(".html", "");
+        window.parent.postMessage({
+          type: "showme-quiz-complete",
+          widgetId: wid,
+          score: score,
+          total: questions.length,
+          pass: score >= Math.ceil(questions.length * 0.75)
+        }, "*");
+      } catch(e) {}
+      saveBtn.textContent = "저장 완료!";
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = ".5";
+    });
+    scoreDiv.appendChild(saveBtn);
+
+    var retry = document.createElement("button");
+    retry.className = "quiz-retry";
+    retry.textContent = "처음부터 다시";
+    retry.addEventListener("click", function() { location.reload(); });
+    scoreDiv.appendChild(retry);
+
+    container.appendChild(scoreDiv);
+  }
+}
+
+// ── Canvas X-Ray Opacity Demo ──────────────────
+(function() {
+  var canvas = document.getElementById("demoCanvas");
+  var ctx = canvas.getContext("2d");
+  var xrayOn = true;
+  var opacity = 0.72;
+
+  var slider = document.getElementById("opacitySlider");
+  var sliderVal = document.getElementById("sliderVal");
+  var btnXray = document.getElementById("btnXray");
+
+  // Robot character data (simplified shapes)
+  var robot = {
+    // body parts: [x, y, w, h, label]
+    parts: [
+      // body
+      { type: "rect", x: 240, y: 160, w: 200, h: 130, color: "#2a7a3a", label: "Body" },
+      // head
+      { type: "roundRect", x: 255, y: 60, w: 170, h: 100, r: 20, color: "#2a7a3a", label: "Head" },
+      // left arm
+      { type: "rect", x: 195, y: 170, w: 42, h: 90, color: "#1a5a2a", label: "L-Arm" },
+      // right arm
+      { type: "rect", x: 443, y: 170, w: 42, h: 90, color: "#1a5a2a", label: "R-Arm" },
+      // left leg
+      { type: "rect", x: 255, y: 290, w: 72, h: 28, color: "#1a5a2a", label: "L-Leg" },
+      // right leg
+      { type: "rect", x: 353, y: 290, w: 72, h: 28, color: "#1a5a2a", label: "R-Leg" },
+    ],
+    // inner structure (hidden without X-Ray)
+    inner: [
+      // spine
+      { type: "line", x1: 340, y1: 160, x2: 340, y2: 290, color: "#ff6b6b", label: "Spine Loop" },
+      // rib loops
+      { type: "ellipse", cx: 340, cy: 200, rx: 60, ry: 18, color: "#f59e0b", label: "Edge Loop" },
+      { type: "ellipse", cx: 340, cy: 230, rx: 60, ry: 18, color: "#f59e0b", label: "Edge Loop" },
+      { type: "ellipse", cx: 340, cy: 260, rx: 55, ry: 16, color: "#f59e0b", label: "Edge Loop" },
+      // face center cross
+      { type: "line", x1: 340, y1: 60, x2: 340, y2: 160, color: "#8ec5ff", label: "Center Line" },
+      // eye sockets inner
+      { type: "ellipse", cx: 305, cy: 105, rx: 20, ry: 16, color: "#a78bfa", label: "Eye Inner" },
+      { type: "ellipse", cx: 375, cy: 105, rx: 20, ry: 16, color: "#a78bfa", label: "Eye Inner" },
+      // arm bones
+      { type: "line", x1: 216, y1: 175, x2: 216, y2: 255, color: "#ff6b6b", label: "Bone" },
+      { type: "line", x1: 464, y1: 175, x2: 464, y2: 255, color: "#ff6b6b", label: "Bone" },
+    ]
+  };
+
+  function drawRoundRect(x, y, w, h, r, fillStyle, alpha) {
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = fillStyle;
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.arcTo(x + w, y, x + w, y + r, r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+    ctx.lineTo(x + r, y + h);
+    ctx.arcTo(x, y + h, x, y + h - r, r);
+    ctx.lineTo(x, y + r);
+    ctx.arcTo(x, y, x + r, y, r);
+    ctx.closePath();
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+
+  function draw() {
+    var w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    // Background
+    ctx.fillStyle = "#17181a";
+    ctx.fillRect(0, 0, w, h);
+
+    // Grid
+    ctx.strokeStyle = "rgba(255,255,255,.04)";
+    ctx.lineWidth = 1;
+    for (var gx = 40; gx < w; gx += 40) {
+      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
+    }
+    for (var gy = 40; gy < h; gy += 40) {
+      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
+    }
+
+    // Draw outer body with opacity
+    var bodyAlpha = xrayOn ? opacity : 1.0;
+    robot.parts.forEach(function(p) {
+      ctx.globalAlpha = bodyAlpha;
+      ctx.fillStyle = p.color;
+      if (p.type === "rect") {
+        ctx.fillRect(p.x, p.y, p.w, p.h);
+      } else if (p.type === "roundRect") {
+        drawRoundRect(p.x, p.y, p.w, p.h, p.r, p.color, bodyAlpha);
+      }
+      ctx.globalAlpha = 1;
+    });
+
+    // Outline
+    ctx.globalAlpha = xrayOn ? Math.min(opacity + 0.2, 1.0) : 1.0;
+    ctx.strokeStyle = "#4ade80";
+    ctx.lineWidth = 2;
+    robot.parts.forEach(function(p) {
+      if (p.type === "rect") {
+        ctx.strokeRect(p.x, p.y, p.w, p.h);
+      } else if (p.type === "roundRect") {
+        ctx.beginPath();
+        ctx.moveTo(p.x + p.r, p.y);
+        ctx.lineTo(p.x + p.w - p.r, p.y);
+        ctx.arcTo(p.x + p.w, p.y, p.x + p.w, p.y + p.r, p.r);
+        ctx.lineTo(p.x + p.w, p.y + p.h - p.r);
+        ctx.arcTo(p.x + p.w, p.y + p.h, p.x + p.w - p.r, p.y + p.h, p.r);
+        ctx.lineTo(p.x + p.r, p.y + p.h);
+        ctx.arcTo(p.x, p.y + p.h, p.x, p.y + p.h - p.r, p.r);
+        ctx.lineTo(p.x, p.y + p.r);
+        ctx.arcTo(p.x, p.y, p.x + p.r, p.y, p.r);
+        ctx.closePath();
+        ctx.stroke();
+      }
+    });
+    ctx.globalAlpha = 1;
+
+    // Draw inner structure (only visible in X-Ray)
+    if (xrayOn) {
+      var innerAlpha = 1.0 - opacity; // more inner visible when opacity is lower
+      innerAlpha = Math.max(0.05, Math.min(innerAlpha + 0.4, 1.0));
+      robot.inner.forEach(function(el) {
+        ctx.globalAlpha = innerAlpha;
+        ctx.strokeStyle = el.color;
+        ctx.lineWidth = 1.5;
+        if (el.type === "line") {
+          ctx.setLineDash([5, 4]);
+          ctx.beginPath();
+          ctx.moveTo(el.x1, el.y1);
+          ctx.lineTo(el.x2, el.y2);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        } else if (el.type === "ellipse") {
+          ctx.beginPath();
+          ctx.ellipse(el.cx, el.cy, el.rx, el.ry, 0, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+        ctx.globalAlpha = 1;
+      });
+    }
+
+    // Eyes (surface detail — always visible but faded in X-Ray)
+    var eyeAlpha = xrayOn ? Math.min(opacity + 0.1, 1.0) : 1.0;
+    ctx.globalAlpha = eyeAlpha;
+    // Left eye
+    ctx.fillStyle = "#1a1a2e";
+    ctx.beginPath(); ctx.ellipse(305, 105, 22, 18, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#60a5fa";
+    ctx.beginPath(); ctx.arc(305, 105, 8, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#1e40af";
+    ctx.beginPath(); ctx.arc(305, 105, 4, 0, Math.PI * 2); ctx.fill();
+    // Right eye
+    ctx.fillStyle = "#1a1a2e";
+    ctx.beginPath(); ctx.ellipse(375, 105, 22, 18, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#60a5fa";
+    ctx.beginPath(); ctx.arc(375, 105, 8, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#1e40af";
+    ctx.beginPath(); ctx.arc(375, 105, 4, 0, Math.PI * 2); ctx.fill();
+    // Mouth
+    ctx.strokeStyle = "#4ade80";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(340, 135, 18, 0.1 * Math.PI, 0.9 * Math.PI);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    // Antennas
+    ctx.globalAlpha = eyeAlpha;
+    ctx.strokeStyle = "#4ade80";
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(305, 60); ctx.lineTo(295, 30); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(375, 60); ctx.lineTo(385, 30); ctx.stroke();
+    ctx.fillStyle = "#1a1a1a";
+    ctx.beginPath(); ctx.arc(295, 28, 5, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle = "#60a5fa"; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(295, 28, 5, 0, Math.PI*2); ctx.stroke();
+    ctx.fillStyle = "#1a1a1a";
+    ctx.beginPath(); ctx.arc(385, 28, 5, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle = "#f59e0b"; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(385, 28, 5, 0, Math.PI*2); ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    // Status label
+    ctx.fillStyle = xrayOn ? "rgba(10,132,255,.85)" : "rgba(255,255,255,.4)";
+    ctx.font = "bold 12px sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText(xrayOn ? ("X-Ray ON  |  Opacity: " + opacity.toFixed(2)) : "X-Ray OFF", 12, 20);
+
+    // Inner legend (only in X-Ray)
+    if (xrayOn && opacity < 0.9) {
+      ctx.font = "11px sans-serif";
+      ctx.textAlign = "left";
+      ctx.fillStyle = "rgba(255,107,107,.7)";
+      ctx.fillText("── Spine / Bone", 510, 200);
+      ctx.fillStyle = "rgba(245,158,11,.7)";
+      ctx.fillText("○ Edge Loop", 510, 218);
+      ctx.fillStyle = "rgba(142,197,255,.7)";
+      ctx.fillText("── Center Line", 510, 236);
+      ctx.fillStyle = "rgba(167,139,250,.7)";
+      ctx.fillText("○ Eye Inner", 510, 254);
+    }
+  }
+
+  // Controls
+  slider.addEventListener("input", function() {
+    opacity = parseInt(slider.value) / 100;
+    sliderVal.textContent = opacity.toFixed(2);
+    draw();
+  });
+
+  btnXray.addEventListener("click", function() {
+    xrayOn = !xrayOn;
+    btnXray.textContent = xrayOn ? "X-Ray ON" : "X-Ray OFF";
+    if (xrayOn) {
+      btnXray.classList.add("is-active");
+      slider.disabled = false;
+      slider.style.opacity = "1";
+    } else {
+      btnXray.classList.remove("is-active");
+      slider.disabled = true;
+      slider.style.opacity = ".4";
+    }
+    draw();
+  });
+
+  document.getElementById("btnReset").addEventListener("click", function() {
+    xrayOn = true;
+    opacity = 0.72;
+    slider.value = 72;
+    sliderVal.textContent = "0.72";
+    btnXray.textContent = "X-Ray ON";
+    btnXray.classList.add("is-active");
+    slider.disabled = false;
+    slider.style.opacity = "1";
+    draw();
+  });
+
+  // Touch support for slider
+  slider.addEventListener("touchstart", function(e) { e.stopPropagation(); }, { passive: true });
+
+  draw();
+})();
+
+// ── Quiz Data ──────────────────────────────────
+initQuiz([
+  {
+    question: "Blender에서 X-Ray 모드를 토글하는 단축키는?",
+    options: [
+      "Shift + Z",
+      "Alt + Z",
+      "Ctrl + X",
+      "Tab"
+    ],
+    answer: 1,
+    explanation: "Alt + Z로 X-Ray 모드를 켜고 끌 수 있습니다. 가장 자주 쓰는 단축키 중 하나입니다."
+  },
+  {
+    question: "X-Ray Opacity 슬라이더 값이 낮을수록(0에 가까울수록) 어떻게 되나요?",
+    options: [
+      "오브젝트가 더 불투명해진다",
+      "오브젝트가 더 투명해져 내부가 잘 보인다",
+      "렌더 출력이 투명해진다",
+      "Edit Mode로 자동 전환된다"
+    ],
+    answer: 1,
+    explanation: "Opacity 값이 낮을수록 오브젝트가 더 투명하게 보여 내부 Edge Loop, 뒷면 정점 등이 잘 보입니다."
+  },
+  {
+    question: "X-Ray Opacity 슬라이더는 어디서 조절하나요?",
+    options: [
+      "Properties 패널 → Object Properties",
+      "Object Data Properties → Viewport Display",
+      "3D 뷰포트 우상단 Viewport Shading 팝업",
+      "Edit → Preferences → Viewport"
+    ],
+    answer: 2,
+    explanation: "3D 뷰포트 우측 상단의 ● (Viewport Shading) 아이콘을 클릭하면 나오는 팝업에서 X-Ray 체크박스와 슬라이더를 볼 수 있습니다."
+  },
+  {
+    question: "X-Ray 모드에서 박스 선택(B)을 사용하면?",
+    options: [
+      "앞면 정점만 선택된다",
+      "앞뒤 모든 정점이 한꺼번에 선택된다",
+      "자동으로 Loop Select가 된다",
+      "선택이 반전된다"
+    ],
+    answer: 1,
+    explanation: "X-Ray ON 상태에서 박스 선택을 하면 카메라 방향 앞뒤의 정점을 모두 선택합니다. X-Ray OFF 상태에서는 앞면만 선택됩니다."
+  },
+  {
+    question: "X-Ray 모드를 켜도 최종 렌더 결과물이 투명하게 나오나요?",
+    options: [
+      "예, 설정한 Opacity 그대로 렌더된다",
+      "아니요, X-Ray는 뷰포트 표시 설정일 뿐 렌더와 무관하다",
+      "Cycles에서만 영향을 준다",
+      "EEVEE에서만 영향을 준다"
+    ],
+    answer: 1,
+    explanation: "X-Ray Opacity는 순수 뷰포트 표시 옵션입니다. 렌더링 결과와는 전혀 무관하므로 작업 편의를 위해 자유롭게 조절해도 됩니다."
+  }
+]);
+</script>
+
+</body>
+</html>
