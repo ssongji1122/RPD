@@ -391,6 +391,25 @@ body {
   color: var(--text);
 }
 
+/* ── Scenario Visualization ── */
+.scenario-nav{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.scenario-btn{padding:6px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.15);background:transparent;color:#cbd5e1;cursor:pointer;font-size:13px;transition:all .2s;font-family:var(--font)}
+.scenario-btn.active{background:rgba(99,102,241,.25);border-color:rgba(99,102,241,.5);color:#a5b4fc}
+.before-after{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.ba-panel{border-radius:var(--radius-sm);border:1px solid var(--line);background:var(--surface);overflow:hidden}
+.ba-panel canvas{display:block;width:100%;height:160px}
+.ba-label{text-align:center;padding:6px;font-size:.78rem;color:var(--muted);border-top:1px solid var(--line)}
+.cause-effect{margin-top:12px}
+.ce-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line)}
+.ce-row:last-child{border-bottom:none}
+.ce-cause{flex:1;font-size:.84rem;color:var(--muted-strong);padding:4px 8px;background:var(--surface);border-radius:6px;border:1px solid var(--line)}
+.ce-arrow{color:var(--muted);font-size:1rem;flex-shrink:0}
+.ce-result{flex:1.2;font-size:.84rem;padding:4px 8px;border-radius:6px;border:1px solid transparent}
+.result-a{background:rgba(10,132,255,.1);border-color:rgba(10,132,255,.25);color:#93c5fd}
+.result-b{background:rgba(16,185,129,.1);border-color:rgba(16,185,129,.25);color:#6ee7b7}
+.result-warn{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.25);color:#fcd34d}
+.scene-desc-box{font-size:.85rem;color:var(--muted-strong);background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:12px}
+
 /* ── Responsive ── */
 @media (max-width: 600px) {
   .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
@@ -636,18 +655,23 @@ body {
      TAB 2: 시각적 비교
      ═══════════════════════════════════════════════ -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    버튼을 클릭하면 각 Extrude 방식의 차이를 애니메이션으로 확인할 수 있습니다.
-  </p>
-  <div class="demo-wrap">
-    <canvas id="demoCanvas" width="680" height="360"></canvas>
-    <div class="demo-controls">
-      <button class="demo-btn is-active" id="btnRegion">Extrude Region</button>
-      <button class="demo-btn" id="btnNormals">Extrude Along Normals</button>
-      <button class="demo-btn" id="btnIndividual">Extrude Individual</button>
+  <div class="scenario-nav" id="scenarioNavEMT">
+    <button class="scenario-btn active" data-scene="vertex" onclick="switchScenarioEMT('vertex')">버텍스 선택</button>
+    <button class="scenario-btn" data-scene="edge" onclick="switchScenarioEMT('edge')">엣지 선택</button>
+    <button class="scenario-btn" data-scene="face" onclick="switchScenarioEMT('face')">페이스 선택</button>
+  </div>
+  <div class="scene-desc-box" id="scene-desc-emt">개별 꼭짓점(Vertex)을 선택하여 이동·변형합니다. 가장 세밀한 제어가 가능한 모드입니다.</div>
+  <div class="before-after">
+    <div class="ba-panel">
+      <canvas id="canvas-before-emt" height="160"></canvas>
+      <div class="ba-label">선택 전</div>
+    </div>
+    <div class="ba-panel">
+      <canvas id="canvas-after-emt" height="160"></canvas>
+      <div class="ba-label" id="ba-label-after-emt">버텍스 선택 후</div>
     </div>
   </div>
-  <p class="demo-hint">버튼을 눌러 각 Extrude 방식의 차이를 확인하세요. 터치 기기에서도 동작합니다.</p>
+  <div class="cause-effect" id="cause-effect-emt"></div>
 </section>
 
 <!-- ═══════════════════════════════════════════════
