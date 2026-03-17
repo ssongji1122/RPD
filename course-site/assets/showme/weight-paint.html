@@ -356,6 +356,56 @@ body {
   .tab { padding: 10px 12px; font-size: .8rem; }
   .panel { padding: 16px 12px; }
 }
+/* ── Scenario Nav ── */
+.scenario-nav {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.scenario-btn {
+  padding: 6px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .8rem;
+  cursor: pointer;
+  transition: background .14s, color .14s, border-color .14s;
+}
+.scenario-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.scenario-btn.active {
+  background: rgba(10,132,255,.14);
+  color: var(--key-soft);
+  border-color: rgba(10,132,255,.3);
+}
+/* ── Before/After Canvas ── */
+.before-after {
+  display: flex; gap: 12px; margin: 10px 0;
+}
+.ba-panel {
+  flex: 1; border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface); overflow: hidden;
+}
+.ba-label {
+  padding: 6px 12px; font-size: .75rem;
+  color: var(--muted); background: var(--surface-strong);
+  border-bottom: 1px solid var(--line);
+  text-align: center;
+}
+.ba-panel canvas { display: block; width: 100%; }
+/* ── Cause-Effect ── */
+.cause-effect { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+.ce-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; border-radius: var(--radius-sm);
+  background: var(--surface); border: 1px solid var(--line);
+  font-size: .84rem;
+}
+.ce-cause { color: var(--muted-strong); flex: 1; }
+.ce-arrow { color: var(--muted); flex-shrink: 0; }
+.ce-result { flex: 1.2; font-weight: 500; }
+.result-a { color: var(--key-soft); }
+.result-b { color: var(--success-soft); }
+.result-c { color: #fbbf24; }
 </style>
 </head>
 <body>
@@ -419,8 +469,28 @@ body {
 
 <!-- TAB 2: 시각적 비교 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    팔 메쉬 위에서 클릭/드래그하여 Weight를 칠해 보세요. 브러시 모드를 바꿔 Add/Subtract/Blur를 체험하세요.
+  <!-- Scenario Navigation -->
+  <div class="scenario-nav" id="wpScenarioNav">
+    <button class="scenario-btn active" data-scene="spectrum" onclick="switchSceneWP('spectrum')">Weight 색상 스펙트럼</button>
+    <button class="scenario-btn" data-scene="joint" onclick="switchSceneWP('joint')">관절 변형 비교</button>
+    <button class="scenario-btn" data-scene="brush" onclick="switchSceneWP('brush')">브러시 효과</button>
+  </div>
+  <p id="wp-scene-desc" style="font-size:.84rem; color:var(--muted-strong); margin:0 0 10px;"></p>
+  <div class="before-after">
+    <div class="ba-panel">
+      <div class="ba-label" id="wp-label-before">이전</div>
+      <canvas id="canvas-wp-before" width="280" height="160"></canvas>
+    </div>
+    <div class="ba-panel">
+      <div class="ba-label" id="wp-label-after">이후</div>
+      <canvas id="canvas-wp-after" width="280" height="160"></canvas>
+    </div>
+  </div>
+  <div class="cause-effect" id="cause-effect-wp"></div>
+
+  <!-- Interactive Demo -->
+  <p style="font-size:.84rem; color:var(--muted); margin:16px 0 8px; border-top:1px solid var(--line); padding-top:14px;">
+    직접 체험: 팔 메쉬 위에서 클릭/드래그하여 Weight를 칠해 보세요.
   </p>
   <div class="demo-wrap">
     <canvas id="demoCanvas" width="680" height="340"></canvas>
@@ -620,6 +690,294 @@ function initQuiz(questions) {
     container.appendChild(scoreDiv);
   }
 }
+
+// ── Weight Paint Scenario System ──────────────
+function weightToColorWP(w) {
+  w = Math.max(0, Math.min(1, w));
+  var r, g, b;
+  if (w < 0.25) {
+    var t = w / 0.25;
+    r = 0; g = Math.floor(t * 200); b = Math.floor(255 - t * 55);
+  } else if (w < 0.5) {
+    var t = (w - 0.25) / 0.25;
+    r = 0; g = Math.floor(200 + t * 55); b = Math.floor(200 - t * 200);
+  } else if (w < 0.75) {
+    var t = (w - 0.5) / 0.25;
+    r = Math.floor(t * 255); g = 255; b = 0;
+  } else {
+    var t = (w - 0.75) / 0.25;
+    r = 255; g = Math.floor(255 - t * 255); b = 0;
+  }
+  return 'rgb(' + r + ',' + g + ',' + b + ')';
+}
+
+var wpScenesData = {
+  spectrum: {
+    desc: 'Weight 값(0~1)은 색상으로 시각화됩니다. 파랑(0.0)은 영향 없음, 초록(0.5)은 중간 영향, 빨강(1.0)은 완전한 영향을 나타냅니다.',
+    labelBefore: 'Weight 값',
+    labelAfter: 'Weight 색상 스펙트럼',
+    ce: [
+      { cause: 'Weight 0.0 (파랑)', result: 'Bone 이동 시 메쉬 움직임 없음', resultClass: 'result-a' },
+      { cause: 'Weight 0.5 (초록)', result: 'Bone 이동의 50% 만큼 움직임', resultClass: 'result-b' },
+      { cause: 'Weight 1.0 (빨강)', result: 'Bone과 함께 100% 완전히 이동', resultClass: 'result-c' }
+    ],
+    before: function(ctx, w, h) {
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(0, 0, w, h);
+      // draw vertical color bars with labels
+      var steps = [
+        { v: 0.0, label: '0.0' },
+        { v: 0.25, label: '0.25' },
+        { v: 0.5, label: '0.5' },
+        { v: 0.75, label: '0.75' },
+        { v: 1.0, label: '1.0' }
+      ];
+      var barW = 36, barH = 70;
+      var startX = w * 0.5 - (steps.length * (barW + 8)) / 2 + 4;
+      var barY = h * 0.5 - barH / 2 - 10;
+      steps.forEach(function(s, i) {
+        var x = startX + i * (barW + 8);
+        ctx.fillStyle = weightToColorWP(s.v);
+        ctx.fillRect(x, barY, barW, barH);
+        ctx.strokeStyle = 'rgba(255,255,255,.2)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(x, barY, barW, barH);
+        ctx.fillStyle = '#d4d4d8';
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(s.label, x + barW / 2, barY + barH + 16);
+      });
+      ctx.fillStyle = '#a1a1aa';
+      ctx.font = '11px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Weight 값', w / 2, barY - 10);
+    },
+    after: function(ctx, w, h) {
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(0, 0, w, h);
+      // gradient bar
+      var gx = 20, gy = h / 2 - 16, gw = w - 40, gh = 32;
+      for (var i = 0; i <= gw; i++) {
+        ctx.fillStyle = weightToColorWP(i / gw);
+        ctx.fillRect(gx + i, gy, 1, gh);
+      }
+      ctx.strokeStyle = 'rgba(255,255,255,.2)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(gx, gy, gw, gh);
+      // labels
+      var labels = ['파랑\n0.0', '초록\n0.5', '빨강\n1.0'];
+      var lxs = [gx, gx + gw / 2, gx + gw];
+      labels.forEach(function(lbl, i) {
+        var parts = lbl.split('\n');
+        ctx.fillStyle = '#d4d4d8';
+        ctx.font = 'bold 10px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(parts[0], lxs[i], gy + gh + 16);
+        ctx.fillStyle = '#a1a1aa';
+        ctx.font = '10px sans-serif';
+        ctx.fillText(parts[1], lxs[i], gy + gh + 28);
+      });
+      ctx.fillStyle = '#a1a1aa';
+      ctx.font = '11px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Weight 색상 스펙트럼', w / 2, gy - 10);
+    }
+  },
+  joint: {
+    desc: 'Weight를 부드럽게 그라데이션하면 관절 변형이 자연스러워집니다. 경계가 딱딱하면(0 또는 1만 사용) 메쉬가 찢어지거나 꺾입니다.',
+    labelBefore: 'Weight 경계가 딱딱한 경우',
+    labelAfter: 'Weight 그라데이션 적용',
+    ce: [
+      { cause: 'Weight 0/1만 사용 (딱딱한 경계)', result: '관절 부위 메쉬가 꺾이거나 찢어짐', resultClass: 'result-a' },
+      { cause: 'Weight 그라데이션 (부드러운 전환)', result: '자연스러운 피부 변형', resultClass: 'result-b' },
+      { cause: 'Blur 브러시로 경계 부드럽게', result: '관절 변형 품질 향상', resultClass: 'result-c' }
+    ],
+    before: function(ctx, w, h) {
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(0, 0, w, h);
+      var cx = w / 2, cy = h / 2;
+      // Hard boundary arm - upper half red, lower half blue
+      var armW = 120, armH = 36;
+      // upper arm (hard red)
+      ctx.fillStyle = weightToColorWP(1.0);
+      ctx.fillRect(cx - armW, cy - armH / 2, armW, armH);
+      // lower arm (hard blue)
+      ctx.fillStyle = weightToColorWP(0.0);
+      ctx.fillRect(cx, cy - armH / 2, armW, armH);
+      // sharp divide line
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([4, 3]);
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - armH / 2 - 8);
+      ctx.lineTo(cx, cy + armH / 2 + 8);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      // label
+      ctx.fillStyle = '#ef4444';
+      ctx.font = 'bold 10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('딱딱한 경계', cx, cy + armH / 2 + 22);
+      ctx.fillStyle = '#a1a1aa';
+      ctx.font = '10px sans-serif';
+      ctx.fillText('1.0', cx - armW / 2, cy - armH / 2 - 6);
+      ctx.fillText('0.0', cx + armW / 2, cy - armH / 2 - 6);
+    },
+    after: function(ctx, w, h) {
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(0, 0, w, h);
+      var cx = w / 2, cy = h / 2;
+      var armW = 120, armH = 36;
+      var totalW = armW * 2;
+      var startX = cx - armW;
+      // gradient arm
+      for (var i = 0; i < totalW; i++) {
+        ctx.fillStyle = weightToColorWP(1 - i / totalW);
+        ctx.fillRect(startX + i, cy - armH / 2, 1, armH);
+      }
+      ctx.strokeStyle = 'rgba(255,255,255,.2)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(startX, cy - armH / 2, totalW, armH);
+      ctx.fillStyle = '#6ee7b7';
+      ctx.font = 'bold 10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('부드러운 그라데이션', cx, cy + armH / 2 + 22);
+      ctx.fillStyle = '#a1a1aa';
+      ctx.font = '10px sans-serif';
+      ctx.fillText('1.0', startX + 14, cy - armH / 2 - 6);
+      ctx.fillText('0.0', startX + totalW - 14, cy - armH / 2 - 6);
+    }
+  },
+  brush: {
+    desc: 'Add 브러시는 Weight를 높이고, Subtract(Ctrl)는 낮춥니다. Blur 브러시는 Weight 경계를 부드럽게 만들어 자연스러운 변형을 만듭니다.',
+    labelBefore: '브러시 종류',
+    labelAfter: '브러시 효과',
+    ce: [
+      { cause: 'Add 브러시 클릭/드래그', result: 'Weight 증가 → 빨간색으로 변화', resultClass: 'result-a' },
+      { cause: 'Ctrl + 드래그 (Subtract)', result: 'Weight 감소 → 파란색으로 변화', resultClass: 'result-b' },
+      { cause: 'Blur 브러시', result: '경계 부드럽게 → 자연스러운 변형', resultClass: 'result-c' }
+    ],
+    before: function(ctx, w, h) {
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(0, 0, w, h);
+      var brushes = [
+        { x: w * 0.22, y: h * 0.42, color: '#ef4444', label: 'Add', sub: 'Weight +' },
+        { x: w * 0.5, y: h * 0.42, color: '#8ec5ff', label: 'Subtract', sub: 'Ctrl + 드래그' },
+        { x: w * 0.78, y: h * 0.42, color: '#6ee7b7', label: 'Blur', sub: 'Smooth' }
+      ];
+      brushes.forEach(function(b) {
+        // brush circle
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, 22, 0, Math.PI * 2);
+        ctx.strokeStyle = b.color;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.fillStyle = b.color.replace(')', ',.15)').replace('rgb', 'rgba');
+        ctx.fill();
+        // brush dot
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, 3, 0, Math.PI * 2);
+        ctx.fillStyle = b.color;
+        ctx.fill();
+        ctx.fillStyle = b.color;
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(b.label, b.x, b.y + 36);
+        ctx.fillStyle = '#a1a1aa';
+        ctx.font = '9px sans-serif';
+        ctx.fillText(b.sub, b.x, b.y + 48);
+      });
+    },
+    after: function(ctx, w, h) {
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(0, 0, w, h);
+      var cy = h / 2, rectH = 30;
+      var startX = 20, endX = w - 20;
+      // base weight strip (all green = 0.5)
+      for (var i = 0; i < endX - startX; i++) {
+        ctx.fillStyle = weightToColorWP(0.5);
+        ctx.fillRect(startX + i, cy - rectH / 2, 1, rectH);
+      }
+      // Add effect: red bump in left area
+      var addCx = startX + (endX - startX) * 0.25;
+      var subCx = startX + (endX - startX) * 0.5;
+      var blurCx = startX + (endX - startX) * 0.75;
+      var r = 28;
+      for (var i = -r; i <= r; i++) {
+        var falloff = Math.max(0, 1 - Math.abs(i) / r);
+        falloff = falloff * falloff;
+        var bh2 = Math.floor(rectH * 0.8 * falloff + rectH * 0.1);
+        // add effect
+        ctx.fillStyle = weightToColorWP(0.5 + 0.5 * falloff);
+        ctx.fillRect(addCx + i, cy - bh2 / 2, 1, bh2);
+        // subtract effect
+        ctx.fillStyle = weightToColorWP(0.5 - 0.5 * falloff);
+        ctx.fillRect(subCx + i, cy - bh2 / 2, 1, bh2);
+        // blur - same level but faded edge
+        ctx.fillStyle = weightToColorWP(0.5);
+        ctx.fillRect(blurCx + i, cy - bh2 / 2, 1, bh2);
+      }
+      ctx.strokeStyle = 'rgba(255,255,255,.15)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(startX, cy - rectH / 2, endX - startX, rectH);
+      var labels2 = [
+        { x: addCx, color: '#ef4444', t: 'Add' },
+        { x: subCx, color: '#8ec5ff', t: 'Subtract' },
+        { x: blurCx, color: '#6ee7b7', t: 'Blur' }
+      ];
+      labels2.forEach(function(lb) {
+        ctx.fillStyle = lb.color;
+        ctx.font = 'bold 10px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(lb.t, lb.x, cy + rectH / 2 + 16);
+      });
+    }
+  }
+};
+
+function buildCauseEffectWP(ces) {
+  var el = document.getElementById('cause-effect-wp');
+  while (el.firstChild) el.removeChild(el.firstChild);
+  ces.forEach(function(c) {
+    var row = document.createElement('div'); row.className = 'ce-row';
+    var cause = document.createElement('div'); cause.className = 'ce-cause'; cause.textContent = c.cause;
+    var arr = document.createElement('div'); arr.className = 'ce-arrow'; arr.textContent = '\u2192';
+    var res = document.createElement('div'); res.className = 'ce-result ' + c.resultClass; res.textContent = c.result;
+    row.appendChild(cause); row.appendChild(arr); row.appendChild(res);
+    el.appendChild(row);
+  });
+}
+
+function renderBAPanelsWP(s) {
+  var cb = document.getElementById('canvas-wp-before');
+  var ca = document.getElementById('canvas-wp-after');
+  var w = 280, h = 160;
+  cb.width = w; cb.height = h;
+  ca.width = w; ca.height = h;
+  document.getElementById('wp-label-before').textContent = s.labelBefore;
+  document.getElementById('wp-label-after').textContent = s.labelAfter;
+  s.before(cb.getContext('2d'), w, h);
+  s.after(ca.getContext('2d'), w, h);
+}
+
+function switchSceneWP(key) {
+  document.querySelectorAll('#wpScenarioNav .scenario-btn').forEach(function(b) {
+    b.classList.toggle('active', b.dataset.scene === key);
+  });
+  var s = wpScenesData[key];
+  document.getElementById('wp-scene-desc').textContent = s.desc;
+  buildCauseEffectWP(s.ce);
+  renderBAPanelsWP(s);
+}
+
+document.querySelectorAll('.tab').forEach(function(tab) {
+  tab.addEventListener('click', function() {
+    if (tab.dataset.tab === 'visual') {
+      setTimeout(function() { switchSceneWP('spectrum'); }, 50);
+    }
+  });
+});
+switchSceneWP('spectrum');
 
 // ── Canvas Weight Paint Demo ────────────────────
 (function() {

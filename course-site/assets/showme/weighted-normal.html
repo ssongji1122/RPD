@@ -363,6 +363,56 @@ body {
   .tab { padding: 10px 12px; font-size: .8rem; }
   .panel { padding: 16px 12px; }
 }
+/* ── Scenario Nav ── */
+.scenario-nav {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.scenario-btn {
+  padding: 6px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .8rem;
+  cursor: pointer;
+  transition: background .14s, color .14s, border-color .14s;
+}
+.scenario-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.scenario-btn.active {
+  background: rgba(10,132,255,.14);
+  color: var(--key-soft);
+  border-color: rgba(10,132,255,.3);
+}
+/* ── Before/After Canvas ── */
+.before-after {
+  display: flex; gap: 12px; margin: 10px 0;
+}
+.ba-panel {
+  flex: 1; border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface); overflow: hidden;
+}
+.ba-label {
+  padding: 6px 12px; font-size: .75rem;
+  color: var(--muted); background: var(--surface-strong);
+  border-bottom: 1px solid var(--line);
+  text-align: center;
+}
+.ba-panel canvas { display: block; width: 100%; }
+/* ── Cause-Effect ── */
+.cause-effect { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+.ce-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; border-radius: var(--radius-sm);
+  background: var(--surface); border: 1px solid var(--line);
+  font-size: .84rem;
+}
+.ce-cause { color: var(--muted-strong); flex: 1; }
+.ce-arrow { color: var(--muted); flex-shrink: 0; }
+.ce-result { flex: 1.2; font-weight: 500; }
+.result-a { color: var(--key-soft); }
+.result-b { color: var(--success-soft); }
+.result-c { color: #fbbf24; }
 </style>
 </head>
 <body>
@@ -417,8 +467,28 @@ body {
 
 <!-- TAB 2: 시각적 비교 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    왼쪽은 Shade Smooth만 적용한 상태, 오른쪽은 Weighted Normal을 추가한 상태입니다. 토글 버튼으로 비교해 보세요.
+  <!-- Scenario Navigation -->
+  <div class="scenario-nav" id="wnScenarioNav">
+    <button class="scenario-btn active" data-scene="normals" onclick="switchSceneWN('normals')">법선 방향 비교</button>
+    <button class="scenario-btn" data-scene="shading" onclick="switchSceneWN('shading')">셰이딩 아티팩트</button>
+    <button class="scenario-btn" data-scene="bevel" onclick="switchSceneWN('bevel')">Bevel + Weighted Normal</button>
+  </div>
+  <p id="wn-scene-desc" style="font-size:.84rem; color:var(--muted-strong); margin:0 0 10px;"></p>
+  <div class="before-after">
+    <div class="ba-panel">
+      <div class="ba-label" id="wn-label-before">이전</div>
+      <canvas id="canvas-wn-before" width="280" height="160"></canvas>
+    </div>
+    <div class="ba-panel">
+      <div class="ba-label" id="wn-label-after">이후</div>
+      <canvas id="canvas-wn-after" width="280" height="160"></canvas>
+    </div>
+  </div>
+  <div class="cause-effect" id="cause-effect-wn"></div>
+
+  <!-- Interactive Demo -->
+  <p style="font-size:.84rem; color:var(--muted); margin:16px 0 8px; border-top:1px solid var(--line); padding-top:14px;">
+    직접 비교: Shade Smooth만 vs Weighted Normal 추가
   </p>
   <div class="demo-wrap">
     <canvas id="demoCanvas" width="680" height="340"></canvas>
@@ -621,6 +691,305 @@ function initQuiz(questions) {
     container.appendChild(scoreDiv);
   }
 }
+
+// ── Weighted Normal Scenario System ───────────
+var wnScenesData = {
+  normals: {
+    desc: 'Flat Shading에서 각 면은 자신의 법선만 사용합니다. Shade Smooth는 모든 법선을 평균 내고, Weighted Normal은 큰 면이 더 많은 영향을 줍니다.',
+    labelBefore: 'Flat / Shade Smooth 법선',
+    labelAfter: 'Weighted Normal 법선',
+    ce: [
+      { cause: 'Flat Shading: 면별 법선', result: '폴리곤 경계가 명확히 보임', resultClass: 'result-a' },
+      { cause: 'Shade Smooth: 모든 법선 평균', result: '경계는 사라지나 아티팩트 발생', resultClass: 'result-b' },
+      { cause: 'Weighted Normal: 큰 면 우선', result: '평평한 면이 깨끗하게 유지됨', resultClass: 'result-c' }
+    ],
+    before: function(ctx, w, h) {
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(0, 0, w, h);
+      var cx = w / 2, cy = h / 2 + 10;
+      // Draw an L-shaped mesh (large face + small face)
+      // Large face
+      ctx.fillStyle = 'rgba(10,132,255,.12)';
+      ctx.strokeStyle = 'rgba(142,197,255,.5)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.rect(cx - 80, cy - 40, 100, 60);
+      ctx.fill(); ctx.stroke();
+      // Small face
+      ctx.fillStyle = 'rgba(245,158,11,.1)';
+      ctx.strokeStyle = 'rgba(251,191,36,.5)';
+      ctx.beginPath();
+      ctx.rect(cx + 20, cy - 60, 40, 80);
+      ctx.fill(); ctx.stroke();
+      // Flat normals — each face pointing straight out
+      function drawNormal(x, y, dx, dy, color) {
+        var len = 30;
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + dx * len, y + dy * len);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(x + dx * len, y + dy * len, 3, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.fill();
+      }
+      // large face normal (up)
+      drawNormal(cx - 30, cy - 40, 0, -1, '#8ec5ff');
+      drawNormal(cx - 55, cy - 40, 0, -1, '#8ec5ff');
+      // small face normal (right)
+      drawNormal(cx + 20, cy - 20, -1, 0, '#fbbf24');
+      drawNormal(cx + 20, cy + 10, -1, 0, '#fbbf24');
+      ctx.fillStyle = '#a1a1aa';
+      ctx.font = '10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('각 면의 법선 방향', cx - 10, cy + 45);
+    },
+    after: function(ctx, w, h) {
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(0, 0, w, h);
+      var cx = w / 2, cy = h / 2 + 10;
+      // Same mesh
+      ctx.fillStyle = 'rgba(10,132,255,.12)';
+      ctx.strokeStyle = 'rgba(142,197,255,.5)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.rect(cx - 80, cy - 40, 100, 60);
+      ctx.fill(); ctx.stroke();
+      ctx.fillStyle = 'rgba(245,158,11,.1)';
+      ctx.strokeStyle = 'rgba(251,191,36,.5)';
+      ctx.beginPath();
+      ctx.rect(cx + 20, cy - 60, 40, 80);
+      ctx.fill(); ctx.stroke();
+      // Weighted normals — large face dominates shared vertex
+      function drawWN(x, y, dx, dy, color, alpha) {
+        ctx.globalAlpha = alpha;
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + dx * 30, y + dy * 30);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(x + dx * 30, y + dy * 30, 3, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+      // shared vertex at cx+20, cy-40 — large face wins → mostly up
+      drawWN(cx - 30, cy - 40, 0, -1, '#6ee7b7', 1);
+      drawWN(cx - 55, cy - 40, 0, -1, '#6ee7b7', 1);
+      // shared vertex normals lean toward large face
+      drawWN(cx + 20, cy - 40, -0.2, -0.98, '#6ee7b7', 1);
+      drawWN(cx + 20, cy + 10, -0.2, -0.98, '#6ee7b7', 1);
+      ctx.fillStyle = '#6ee7b7';
+      ctx.font = '10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('큰 면이 법선 방향 지배', cx - 10, cy + 45);
+    }
+  },
+  shading: {
+    desc: 'Shade Smooth만 사용하면 작은 면(베벨 등)의 법선이 큰 면에 영향을 줘서 아티팩트가 생깁니다. Weighted Normal은 면적 가중치로 이를 해결합니다.',
+    labelBefore: 'Shade Smooth Only (아티팩트)',
+    labelAfter: 'Weighted Normal (깔끔)',
+    ce: [
+      { cause: 'Shade Smooth: 작은 면이 큰 면 법선에 영향', result: '평평한 면에 울퉁불퉁한 음영 아티팩트', resultClass: 'result-a' },
+      { cause: 'Weighted Normal: 면적 기반 가중치', result: '큰 면의 법선이 우선 → 깨끗한 셰이딩', resultClass: 'result-b' },
+      { cause: '평평한 하드서피스 모델', result: '아티팩트 없는 균일한 반사광', resultClass: 'result-c' }
+    ],
+    before: function(ctx, w, h) {
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(0, 0, w, h);
+      var cx = w / 2, cy = h / 2;
+      // Draw box top face with shading artifacts (wavy gradient)
+      var bw = 140, bh = 50;
+      var bx = cx - bw / 2, by = cy - bh / 2 - 20;
+      for (var i = 0; i < bw; i++) {
+        var noise = Math.sin(i * 0.18) * 0.15 + Math.sin(i * 0.35) * 0.1;
+        var brightness = 0.35 + noise;
+        ctx.fillStyle = 'rgba(' + Math.floor(142 * brightness) + ',' + Math.floor(197 * brightness) + ',' + Math.floor(255 * brightness) + ',1)';
+        ctx.fillRect(bx + i, by, 1, bh);
+      }
+      ctx.strokeStyle = 'rgba(255,255,255,.2)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(bx, by, bw, bh);
+      // sides
+      ctx.fillStyle = 'rgba(10,132,255,.25)';
+      ctx.fillRect(bx, by + bh, bw, 30);
+      ctx.strokeStyle = 'rgba(255,255,255,.15)';
+      ctx.strokeRect(bx, by + bh, bw, 30);
+      // artifact label
+      ctx.fillStyle = '#ef4444';
+      ctx.font = 'bold 10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('음영 아티팩트', cx, by + bh + 48);
+      // wavy line indicator
+      ctx.strokeStyle = 'rgba(239,68,68,.7)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      for (var j = 0; j < bw; j++) {
+        var y2 = by + bh + 58 + Math.sin(j * 0.2) * 4;
+        if (j === 0) ctx.moveTo(bx + j, y2);
+        else ctx.lineTo(bx + j, y2);
+      }
+      ctx.stroke();
+    },
+    after: function(ctx, w, h) {
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(0, 0, w, h);
+      var cx = w / 2, cy = h / 2;
+      var bw = 140, bh = 50;
+      var bx = cx - bw / 2, by = cy - bh / 2 - 20;
+      // clean uniform top face
+      var grad = ctx.createLinearGradient(bx, by, bx + bw, by);
+      grad.addColorStop(0, 'rgba(142,197,255,.5)');
+      grad.addColorStop(0.5, 'rgba(142,197,255,.8)');
+      grad.addColorStop(1, 'rgba(142,197,255,.5)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(bx, by, bw, bh);
+      ctx.strokeStyle = 'rgba(255,255,255,.2)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(bx, by, bw, bh);
+      ctx.fillStyle = 'rgba(10,132,255,.25)';
+      ctx.fillRect(bx, by + bh, bw, 30);
+      ctx.strokeStyle = 'rgba(255,255,255,.15)';
+      ctx.strokeRect(bx, by + bh, bw, 30);
+      ctx.fillStyle = '#6ee7b7';
+      ctx.font = 'bold 10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('균일한 셰이딩', cx, by + bh + 48);
+      // straight line
+      ctx.strokeStyle = 'rgba(110,231,183,.7)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(bx, by + bh + 58);
+      ctx.lineTo(bx + bw, by + bh + 58);
+      ctx.stroke();
+    }
+  },
+  bevel: {
+    desc: 'Bevel Modifier와 Weighted Normal을 함께 사용하면 하드서피스 마무리의 정석이 됩니다. Bevel로 모서리를 깎고, Weighted Normal로 셰이딩을 정리합니다.',
+    labelBefore: 'Bevel만 적용',
+    labelAfter: 'Bevel + Weighted Normal',
+    ce: [
+      { cause: 'Bevel Modifier만 사용', result: '모서리는 둥글어지나 셰이딩 아티팩트 남음', resultClass: 'result-a' },
+      { cause: 'Weighted Normal 추가 적용', result: '베벨 모서리와 평면이 모두 깨끗하게 정리', resultClass: 'result-b' },
+      { cause: 'Modifier 순서: Bevel → Weighted Normal', result: '하드서피스 마무리 완성', resultClass: 'result-c' }
+    ],
+    before: function(ctx, w, h) {
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(0, 0, w, h);
+      var cx = w / 2, cy = h / 2;
+      // Box with sharp corners and artifact lines
+      var bw = 110, bh = 70;
+      var bx = cx - bw / 2, by = cy - bh / 2 - 10;
+      ctx.fillStyle = 'rgba(10,132,255,.15)';
+      ctx.strokeStyle = 'rgba(142,197,255,.5)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.rect(bx, by, bw, bh);
+      ctx.fill(); ctx.stroke();
+      // artifact streaks on top face
+      for (var i = 0; i < 3; i++) {
+        var ax = bx + 15 + i * 30;
+        ctx.strokeStyle = 'rgba(239,68,68,.25)';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(ax, by + 2);
+        ctx.lineTo(ax, by + bh - 2);
+        ctx.stroke();
+      }
+      // corner indicator
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(bx - 2, by - 2, 10, 10);
+      ctx.strokeRect(bx + bw - 8, by - 2, 10, 10);
+      ctx.fillStyle = '#ef4444';
+      ctx.font = '10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('아티팩트 남음', cx, by + bh + 18);
+    },
+    after: function(ctx, w, h) {
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(0, 0, w, h);
+      var cx = w / 2, cy = h / 2;
+      var bw = 110, bh = 70;
+      var bx = cx - bw / 2, by = cy - bh / 2 - 10;
+      var r = 8;
+      // beveled box (rounded corners)
+      ctx.fillStyle = 'rgba(10,132,255,.2)';
+      ctx.strokeStyle = 'rgba(142,197,255,.7)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(bx, by, bw, bh, r);
+      ctx.fill(); ctx.stroke();
+      // clean uniform shading
+      var grad = ctx.createLinearGradient(bx, by, bx, by + bh);
+      grad.addColorStop(0, 'rgba(142,197,255,.4)');
+      grad.addColorStop(0.5, 'rgba(142,197,255,.15)');
+      grad.addColorStop(1, 'rgba(142,197,255,.35)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.roundRect(bx, by, bw, bh, r);
+      ctx.fill();
+      // bevel highlight edges
+      ctx.strokeStyle = 'rgba(255,255,255,.35)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.roundRect(bx + 3, by + 3, bw - 6, bh - 6, r - 2);
+      ctx.stroke();
+      ctx.fillStyle = '#6ee7b7';
+      ctx.font = '10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('깨끗한 마무리', cx, by + bh + 18);
+    }
+  }
+};
+
+function buildCauseEffectWN(ces) {
+  var el = document.getElementById('cause-effect-wn');
+  while (el.firstChild) el.removeChild(el.firstChild);
+  ces.forEach(function(c) {
+    var row = document.createElement('div'); row.className = 'ce-row';
+    var cause = document.createElement('div'); cause.className = 'ce-cause'; cause.textContent = c.cause;
+    var arr = document.createElement('div'); arr.className = 'ce-arrow'; arr.textContent = '\u2192';
+    var res = document.createElement('div'); res.className = 'ce-result ' + c.resultClass; res.textContent = c.result;
+    row.appendChild(cause); row.appendChild(arr); row.appendChild(res);
+    el.appendChild(row);
+  });
+}
+
+function renderBAPanelsWN(s) {
+  var cb = document.getElementById('canvas-wn-before');
+  var ca = document.getElementById('canvas-wn-after');
+  var w = 280, h = 160;
+  cb.width = w; cb.height = h;
+  ca.width = w; ca.height = h;
+  document.getElementById('wn-label-before').textContent = s.labelBefore;
+  document.getElementById('wn-label-after').textContent = s.labelAfter;
+  s.before(cb.getContext('2d'), w, h);
+  s.after(ca.getContext('2d'), w, h);
+}
+
+function switchSceneWN(key) {
+  document.querySelectorAll('#wnScenarioNav .scenario-btn').forEach(function(b) {
+    b.classList.toggle('active', b.dataset.scene === key);
+  });
+  var s = wnScenesData[key];
+  document.getElementById('wn-scene-desc').textContent = s.desc;
+  buildCauseEffectWN(s.ce);
+  renderBAPanelsWN(s);
+}
+
+document.querySelectorAll('.tab').forEach(function(tab) {
+  tab.addEventListener('click', function() {
+    if (tab.dataset.tab === 'visual') {
+      setTimeout(function() { switchSceneWN('normals'); }, 50);
+    }
+  });
+});
+switchSceneWN('normals');
 
 // ── Canvas Weighted Normal Demo ───────────────
 (function() {

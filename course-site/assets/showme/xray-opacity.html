@@ -420,6 +420,56 @@ body {
   .panel { padding: 16px 12px; }
   .slider-wrap { min-width: 120px; }
 }
+/* ── Scenario Nav ── */
+.scenario-nav {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.scenario-btn {
+  padding: 6px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .8rem;
+  cursor: pointer;
+  transition: background .14s, color .14s, border-color .14s;
+}
+.scenario-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.scenario-btn.active {
+  background: rgba(10,132,255,.14);
+  color: var(--key-soft);
+  border-color: rgba(10,132,255,.3);
+}
+/* ── Before/After Canvas ── */
+.before-after {
+  display: flex; gap: 12px; margin: 10px 0;
+}
+.ba-panel {
+  flex: 1; border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface); overflow: hidden;
+}
+.ba-label {
+  padding: 6px 12px; font-size: .75rem;
+  color: var(--muted); background: var(--surface-strong);
+  border-bottom: 1px solid var(--line);
+  text-align: center;
+}
+.ba-panel canvas { display: block; width: 100%; }
+/* ── Cause-Effect ── */
+.cause-effect { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+.ce-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; border-radius: var(--radius-sm);
+  background: var(--surface); border: 1px solid var(--line);
+  font-size: .84rem;
+}
+.ce-cause { color: var(--muted-strong); flex: 1; }
+.ce-arrow { color: var(--muted); flex-shrink: 0; }
+.ce-result { flex: 1.2; font-weight: 500; }
+.result-a { color: var(--key-soft); }
+.result-b { color: var(--success-soft); }
+.result-c { color: #fbbf24; }
 </style>
 </head>
 <body>
@@ -513,8 +563,28 @@ body {
 
 <!-- TAB 2: 시각적 비교 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    슬라이더를 움직여 X-Ray Opacity 효과를 직접 확인해 보세요.
+  <!-- Scenario Navigation -->
+  <div class="scenario-nav" id="xrScenarioNav">
+    <button class="scenario-btn active" data-scene="solid" onclick="switchSceneXR('solid')">Solid vs X-Ray</button>
+    <button class="scenario-btn" data-scene="opacity" onclick="switchSceneXR('opacity')">Opacity 단계 비교</button>
+    <button class="scenario-btn" data-scene="select" onclick="switchSceneXR('select')">선택 범위 차이</button>
+  </div>
+  <p id="xr-scene-desc" style="font-size:.84rem; color:var(--muted-strong); margin:0 0 10px;"></p>
+  <div class="before-after">
+    <div class="ba-panel">
+      <div class="ba-label" id="xr-label-before">이전</div>
+      <canvas id="canvas-xr-before" width="280" height="160"></canvas>
+    </div>
+    <div class="ba-panel">
+      <div class="ba-label" id="xr-label-after">이후</div>
+      <canvas id="canvas-xr-after" width="280" height="160"></canvas>
+    </div>
+  </div>
+  <div class="cause-effect" id="cause-effect-xr"></div>
+
+  <!-- Interactive Demo -->
+  <p style="font-size:.84rem; color:var(--muted); margin:16px 0 8px; border-top:1px solid var(--line); padding-top:14px;">
+    직접 체험: 슬라이더를 움직여 X-Ray Opacity 효과를 확인해 보세요.
   </p>
   <div class="demo-wrap">
     <canvas id="demoCanvas" width="680" height="320"></canvas>
@@ -735,6 +805,238 @@ function initQuiz(questions) {
     container.appendChild(scoreDiv);
   }
 }
+
+// ── X-Ray Opacity Scenario System ─────────────
+function drawSolidBox(ctx, cx, cy, bw, bh) {
+  // solid opaque cube wireframe
+  ctx.fillStyle = 'rgba(10,132,255,.6)';
+  ctx.strokeStyle = 'rgba(142,197,255,.8)';
+  ctx.lineWidth = 1.5;
+  // front face
+  ctx.beginPath();
+  ctx.rect(cx - bw / 2, cy - bh / 2, bw, bh);
+  ctx.fill(); ctx.stroke();
+  // isometric back lines
+  var offset = 18;
+  ctx.fillStyle = 'rgba(10,132,255,.4)';
+  ctx.beginPath();
+  ctx.rect(cx - bw / 2 + offset, cy - bh / 2 - offset, bw, bh);
+  ctx.fill(); ctx.stroke();
+  // connecting edges
+  ctx.strokeStyle = 'rgba(142,197,255,.5)';
+  ctx.lineWidth = 1;
+  var corners = [[-1,-1],[1,-1],[1,1],[-1,1]];
+  corners.forEach(function(c) {
+    var fx = cx + c[0] * bw / 2, fy = cy + c[1] * bh / 2;
+    var bx2 = fx + offset, by2 = fy - offset;
+    ctx.beginPath(); ctx.moveTo(fx, fy); ctx.lineTo(bx2, by2); ctx.stroke();
+  });
+}
+
+function drawXRayBox(ctx, cx, cy, bw, bh, opacity) {
+  // X-Ray transparent cube with dashed interior lines
+  ctx.fillStyle = 'rgba(10,132,255,' + (opacity * 0.4) + ')';
+  ctx.strokeStyle = 'rgba(142,197,255,' + (0.3 + opacity * 0.5) + ')';
+  ctx.lineWidth = 1.5;
+  var offset = 18;
+  // draw back face first (dashed)
+  ctx.setLineDash([4, 3]);
+  ctx.strokeStyle = 'rgba(142,197,255,' + (opacity * 0.6) + ')';
+  ctx.beginPath();
+  ctx.rect(cx - bw / 2 + offset, cy - bh / 2 - offset, bw, bh);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  // front face (solid but transparent fill)
+  ctx.strokeStyle = 'rgba(142,197,255,.8)';
+  ctx.beginPath();
+  ctx.rect(cx - bw / 2, cy - bh / 2, bw, bh);
+  ctx.fillStyle = 'rgba(10,132,255,' + (opacity * 0.3) + ')';
+  ctx.fill(); ctx.stroke();
+  // interior hidden edges (dashed)
+  ctx.strokeStyle = 'rgba(142,197,255,' + (opacity * 0.7) + ')';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 3]);
+  var corners = [[-1,-1],[1,-1],[1,1],[-1,1]];
+  corners.forEach(function(c) {
+    var fx = cx + c[0] * bw / 2, fy = cy + c[1] * bh / 2;
+    var bk2x = fx + offset, bk2y = fy - offset;
+    ctx.beginPath(); ctx.moveTo(fx, fy); ctx.lineTo(bk2x, bk2y); ctx.stroke();
+  });
+  ctx.setLineDash([]);
+  // interior center cross (normally hidden)
+  ctx.strokeStyle = 'rgba(110,231,183,' + (opacity * 0.8) + ')';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(cx - bw / 2 + 8, cy);
+  ctx.lineTo(cx + bw / 2 - 8, cy);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(cx, cy - bh / 2 + 6);
+  ctx.lineTo(cx, cy + bh / 2 - 6);
+  ctx.stroke();
+}
+
+var xrScenesData = {
+  solid: {
+    desc: 'Solid 모드에서는 오브젝트가 불투명하게 표시됩니다. X-Ray 모드(Alt+Z)를 켜면 메쉬를 투명하게 보여주어 내부 구조를 확인할 수 있습니다.',
+    labelBefore: 'Solid 모드 (불투명)',
+    labelAfter: 'X-Ray 모드 ON',
+    ce: [
+      { cause: 'Solid 모드: 표면만 렌더', result: '내부 엣지/버텍스 보이지 않음', resultClass: 'result-a' },
+      { cause: 'X-Ray ON (Alt+Z)', result: '내부 구조, 뒤쪽 폴리곤 모두 보임', resultClass: 'result-b' },
+      { cause: 'X-Ray + Edit Mode', result: '앞뒤 버텍스 동시 선택 가능', resultClass: 'result-c' }
+    ],
+    before: function(ctx, w, h) {
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(0, 0, w, h);
+      drawSolidBox(ctx, w / 2, h / 2, 90, 65);
+      ctx.fillStyle = '#a1a1aa';
+      ctx.font = '10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Solid: 내부 불투명', w / 2, h / 2 + 55);
+    },
+    after: function(ctx, w, h) {
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(0, 0, w, h);
+      drawXRayBox(ctx, w / 2, h / 2, 90, 65, 0.6);
+      ctx.fillStyle = '#6ee7b7';
+      ctx.font = '10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('X-Ray: 내부 구조 노출', w / 2, h / 2 + 55);
+    }
+  },
+  opacity: {
+    desc: 'Opacity 슬라이더(0.0~1.0)로 투명도를 조절합니다. 낮을수록 내부가 더 선명하게 보이고, 1.0에 가까울수록 일반 Solid에 가까워집니다.',
+    labelBefore: '낮은 Opacity (0.2)',
+    labelAfter: '높은 Opacity (0.8)',
+    ce: [
+      { cause: 'Opacity 0.1~0.3 (낮음)', result: '내부 구조가 선명하게 투시됨', resultClass: 'result-a' },
+      { cause: 'Opacity 0.7 (Blender 기본값)', result: '표면과 내부를 균형 있게 파악', resultClass: 'result-b' },
+      { cause: 'Opacity 1.0 (높음)', result: 'Solid와 거의 동일하게 표시', resultClass: 'result-c' }
+    ],
+    before: function(ctx, w, h) {
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(0, 0, w, h);
+      drawXRayBox(ctx, w / 2, h / 2, 90, 65, 0.15);
+      ctx.fillStyle = '#8ec5ff';
+      ctx.font = '10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Opacity 0.2 — 매우 투명', w / 2, h / 2 + 55);
+    },
+    after: function(ctx, w, h) {
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(0, 0, w, h);
+      drawXRayBox(ctx, w / 2, h / 2, 90, 65, 0.85);
+      ctx.fillStyle = '#fbbf24';
+      ctx.font = '10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Opacity 0.8 — 거의 불투명', w / 2, h / 2 + 55);
+    }
+  },
+  select: {
+    desc: 'Solid 모드에서는 앞면 폴리곤만 선택됩니다. X-Ray 모드에서 박스 선택(B)을 사용하면 뒤쪽 버텍스/엣지까지 모두 포함됩니다.',
+    labelBefore: 'Solid 모드 박스 선택',
+    labelAfter: 'X-Ray 모드 박스 선택',
+    ce: [
+      { cause: 'Solid 모드 + 박스 선택', result: '앞면 버텍스/엣지만 선택됨', resultClass: 'result-a' },
+      { cause: 'X-Ray ON + 박스 선택(B)', result: '앞뒤 모든 버텍스 동시 선택', resultClass: 'result-b' },
+      { cause: '전체 단면 Loop 선택 필요 시', result: 'X-Ray 활성화 후 선택 권장', resultClass: 'result-c' }
+    ],
+    before: function(ctx, w, h) {
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(0, 0, w, h);
+      var cx = w / 2, cy = h / 2;
+      // draw solid box
+      drawSolidBox(ctx, cx, cy, 80, 58);
+      // selection box (dashed)
+      ctx.strokeStyle = 'rgba(245,158,11,.8)';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([4, 3]);
+      ctx.strokeRect(cx - 50, cy - 35, 60, 70);
+      ctx.setLineDash([]);
+      // selected vertices (front only)
+      ctx.fillStyle = '#fbbf24';
+      [[cx-40, cy-29],[cx+10, cy-29],[cx-40, cy+29]].forEach(function(p) {
+        ctx.beginPath(); ctx.arc(p[0], p[1], 4, 0, Math.PI * 2); ctx.fill();
+      });
+      ctx.fillStyle = '#a1a1aa';
+      ctx.font = '10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('앞면만 선택', cx, cy + 52);
+    },
+    after: function(ctx, w, h) {
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(0, 0, w, h);
+      var cx = w / 2, cy = h / 2;
+      // draw xray box
+      drawXRayBox(ctx, cx, cy, 80, 58, 0.5);
+      // selection box
+      ctx.strokeStyle = 'rgba(245,158,11,.8)';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([4, 3]);
+      ctx.strokeRect(cx - 50, cy - 38, 66, 76);
+      ctx.setLineDash([]);
+      // selected vertices (front + back)
+      var offset = 18;
+      var allPts = [
+        [cx-40, cy-29],[cx+10, cy-29],[cx-40, cy+29],[cx+10, cy+29],
+        [cx-40+offset, cy-29-offset],[cx+10+offset, cy-29-offset]
+      ];
+      ctx.fillStyle = '#fbbf24';
+      allPts.forEach(function(p) {
+        ctx.beginPath(); ctx.arc(p[0], p[1], 4, 0, Math.PI * 2); ctx.fill();
+      });
+      ctx.fillStyle = '#6ee7b7';
+      ctx.font = '10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('앞뒤 모두 선택', cx, cy + 52);
+    }
+  }
+};
+
+function buildCauseEffectXR(ces) {
+  var el = document.getElementById('cause-effect-xr');
+  while (el.firstChild) el.removeChild(el.firstChild);
+  ces.forEach(function(c) {
+    var row = document.createElement('div'); row.className = 'ce-row';
+    var cause = document.createElement('div'); cause.className = 'ce-cause'; cause.textContent = c.cause;
+    var arr = document.createElement('div'); arr.className = 'ce-arrow'; arr.textContent = '\u2192';
+    var res = document.createElement('div'); res.className = 'ce-result ' + c.resultClass; res.textContent = c.result;
+    row.appendChild(cause); row.appendChild(arr); row.appendChild(res);
+    el.appendChild(row);
+  });
+}
+
+function renderBAPanelsXR(s) {
+  var cb = document.getElementById('canvas-xr-before');
+  var ca = document.getElementById('canvas-xr-after');
+  var w = 280, h = 160;
+  cb.width = w; cb.height = h;
+  ca.width = w; ca.height = h;
+  document.getElementById('xr-label-before').textContent = s.labelBefore;
+  document.getElementById('xr-label-after').textContent = s.labelAfter;
+  s.before(cb.getContext('2d'), w, h);
+  s.after(ca.getContext('2d'), w, h);
+}
+
+function switchSceneXR(key) {
+  document.querySelectorAll('#xrScenarioNav .scenario-btn').forEach(function(b) {
+    b.classList.toggle('active', b.dataset.scene === key);
+  });
+  var s = xrScenesData[key];
+  document.getElementById('xr-scene-desc').textContent = s.desc;
+  buildCauseEffectXR(s.ce);
+  renderBAPanelsXR(s);
+}
+
+document.querySelectorAll('.tab').forEach(function(tab) {
+  tab.addEventListener('click', function() {
+    if (tab.dataset.tab === 'visual') {
+      setTimeout(function() { switchSceneXR('solid'); }, 50);
+    }
+  });
+});
+switchSceneXR('solid');
 
 // ── Canvas X-Ray Opacity Demo ──────────────────
 (function() {
