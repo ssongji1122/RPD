@@ -12,6 +12,12 @@
       "runtimeExecutable": "python3",
       "runtimeArgs": ["tools/serve-static.py"],
       "port": 8770
+    },
+    {
+      "name": "main-static",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8893", "--directory", "/Users/ssongji/Developer/Workspace/RPD/course-site"],
+      "port": 8893
     }
   ]
 }
