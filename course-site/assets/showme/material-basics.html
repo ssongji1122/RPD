@@ -465,6 +465,32 @@ body {
     </div>
   </div>
   <div class="cause-effect" id="cause-effect-mb"></div>
+
+  <!-- 인터랙티브 데모 -->
+  <div style="margin-top:20px">
+    <div style="font-size:.85rem;color:var(--muted-strong);font-weight:600;margin-bottom:6px">인터랙티브 데모</div>
+    <div class="demo-wrap">
+      <canvas id="demoCanvas" width="680" height="300"></canvas>
+    </div>
+    <div class="demo-controls">
+      <div class="demo-slider-group">
+        <label for="sliderColor">Base Color</label>
+        <input type="color" id="sliderColor" value="#3b82f6">
+      </div>
+      <div class="demo-slider-group">
+        <label for="sliderMetallic">Metallic</label>
+        <input type="range" id="sliderMetallic" min="0" max="100" step="1" value="0">
+        <span id="valMetallic">0.00</span>
+      </div>
+      <div class="demo-slider-group">
+        <label for="sliderRoughness">Roughness</label>
+        <input type="range" id="sliderRoughness" min="0" max="100" step="1" value="50">
+        <span id="valRoughness">0.50</span>
+      </div>
+      <button class="demo-btn" id="btnReset">리셋</button>
+    </div>
+    <div class="demo-hint">색상, Metallic, Roughness 값을 조절하여 재질 변화를 실시간으로 확인하세요.</div>
+  </div>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->

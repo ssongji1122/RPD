@@ -518,6 +518,21 @@ body {
     </div>
   </div>
   <div class="cause-effect" id="cause-effect-ir"></div>
+
+  <!-- 인터랙티브 타입 비교 -->
+  <div style="margin-top:20px">
+    <div style="font-size:.85rem;color:var(--muted-strong);font-weight:600;margin-bottom:6px">인터랙티브 타입 비교</div>
+    <p style="font-size:.82rem;color:var(--muted);margin:0 0 10px">버튼을 눌러 각 이미지 타입의 특성을 확인하세요.</p>
+    <div class="demo-wrap">
+      <canvas id="demoCanvas" width="680" height="300"></canvas>
+    </div>
+    <div class="demo-controls">
+      <button class="demo-btn is-active" id="btnRef">Reference</button>
+      <button class="demo-btn" id="btnBg">Background</button>
+      <button class="demo-btn" id="btnMesh">Mesh Plane</button>
+      <button class="demo-btn" id="btnEmpty">Empty Image</button>
+    </div>
+  </div>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->
@@ -1048,7 +1063,7 @@ switchScenarioIR('reference');
       ctx.fillText("REFERENCE IMAGE", cx, ry + rh/2 - 6);
       ctx.font = "11px sans-serif";
       ctx.fillStyle = "rgba(10,132,255,.3)";
-      ctx.fillText("(반투명 · 편집 불가)", cx, ry + rh/2 + 12);
+      ctx.fillText("(선택 불가 · 렌더 제외)", cx, ry + rh/2 + 12);
 
       // Robot silhouette on top (representing model being built over reference)
       drawRobotSilhouette(cx, cy, 1.1, 0.85);
@@ -1057,7 +1072,7 @@ switchScenarioIR('reference');
       ctx.fillStyle = "rgba(10,132,255,.7)";
       ctx.font = "11px sans-serif";
       ctx.textAlign = "left";
-      ctx.fillText("Opacity: 0.4", rx, ry - 8);
+      ctx.fillText("기본 Opacity: 1.0 (Properties에서 낮출 수 있음)", rx, ry - 8);
 
     } else if (activeType === "background") {
       // Camera frame around entire area
