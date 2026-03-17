@@ -527,7 +527,7 @@ const CURRICULUM = [
           "한쪽을 움직이면 반대쪽도 같이 바뀐다",
           "Clipping으로 중심선이 벌어지지 않는다"
         ],
-        "showme": "mirror-modifier",
+        "showme": ["mirror-modifier", "mirror-origin-mode"],
         "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html"
       },
       {
