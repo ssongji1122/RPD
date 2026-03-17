@@ -379,23 +379,32 @@ body {
     <div class="concept-card">
       <h3>Clipping이란?</h3>
       <p>중심선을 넘지 못하게 하는 옵션입니다. ON이면 중심 정점이 정확히 중앙에 고정되어, 양쪽이 깔끔하게 이어집니다.</p>
-      <div class="analogy">중심선에 보이지 않는 벽이 생겨서 정점이 넘어가지 못해요</div>
+      <div class="analogy">종이를 반으로 접으면 접힌 선(중심선)이 경계가 돼요. Clipping은 그 선 너머로 펜이 못 넘어가게 막는 역할이에요</div>
+    </div>
+    <div class="concept-card">
+      <h3>Origin(원점)이 핵심이에요</h3>
+      <p>Mirror는 <strong>오브젝트의 원점(Origin)을 기준</strong>으로 반전합니다. 원점이 메시 중앙에 없으면 미러가 엉뚱한 곳에 나타나요. <span class="badge badge-amber">가장 흔한 실수</span></p>
+      <div class="analogy">Mirror 추가 전 반드시: <strong>Ctrl+A → All Transforms</strong> 적용 → 원점 확인 순서로 시작하세요</div>
     </div>
   </div>
 
   <div class="shortcut-list">
     <h4>주요 단축키</h4>
     <div class="shortcut-row">
-      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">1</span></span>
-      <span>Modifier 추가 패널</span>
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">A</span></span>
+      <span>All Transforms 적용 — Mirror 추가 전 반드시 실행 <span class="badge badge-amber">필수</span></span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Shift</span> + <span class="kbd">S</span> → Cursor to World Origin</span>
+      <span>3D 커서를 월드 원점으로 — 원점 리셋 시작점</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys">우클릭 → Set Origin → Origin to 3D Cursor</span>
+      <span>오브젝트 원점을 중앙으로 이동</span>
     </div>
     <div class="shortcut-row">
       <span class="shortcut-keys"><span class="kbd">S</span> <span class="kbd">X</span> <span class="kbd">0</span></span>
       <span>중심선 정렬 (선택한 정점의 X좌표를 0으로)</span>
-    </div>
-    <div class="shortcut-row">
-      <span class="shortcut-keys">Clipping 체크박스</span>
-      <span>Properties &rarr; Modifier tab에서 설정</span>
     </div>
   </div>
 
@@ -897,6 +906,17 @@ initQuiz([
     ],
     answer: 2,
     explanation: "Mirror\uAC00 \uC704\uC5D0, Subdivision\uC774 \uC544\uB798\uC5D0 \uC640\uC57C \uD569\uB2C8\uB2E4. \uBA3C\uC800 \uB300\uCE6D\uC744 \uC7A1\uACE0 \uB098\uC11C \uBD80\uB4DC\uB7FD\uAC8C \uB9CC\uB4DC\uB294 \uAC83\uC774 \uC62C\uBC14\uB978 \uC21C\uC11C\uC785\uB2C8\uB2E4."
+  },
+  {
+    question: "Mirror Modifier를 추가하기 전에 반드시 해야 하는 것은?",
+    options: [
+      "Edit Mode로 진입하기",
+      "Ctrl+A로 All Transforms 적용하기",
+      "Subdivision Surface 먼저 추가하기",
+      "오브젝트를 선택 해제하기"
+    ],
+    answer: 1,
+    explanation: "스케일이나 회전이 Apply 안 된 상태에서 Mirror를 추가하면 축이 틀어져요. Ctrl+A → All Transforms가 선행 필수예요."
   }
 ]);
 </script>
