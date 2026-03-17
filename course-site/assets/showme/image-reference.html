@@ -426,8 +426,8 @@ body {
       <p>뷰포트에 반투명하게 떠 있는 가이드 이미지입니다. 편집에 전혀 영향을 주지 않으며, 렌더링에 포함되지 않습니다.</p>
       <ul>
         <li>선택은 되지만 메쉬가 아님</li>
-        <li>N 패널에서 투명도(Opacity) 조절 가능</li>
-        <li>Outliner에서 선택 잠금 가능</li>
+        <li>Properties Data > Opacity 활성화 후 조절 가능</li>
+        <li>Outliner 필터에서 Selectable 활성화 후 선택 방지 가능</li>
         <li>로봇 모델링 가이드로 가장 적합</li>
       </ul>
       <div class="analogy">스케치북 위에 트레이싱지 올려놓은 것처럼, 밑그림만 보이고 건드릴 수 없어요</div>
@@ -483,7 +483,7 @@ body {
     </div>
     <div class="shortcut-row">
       <span class="shortcut-keys"><span class="kbd">N</span> 패널 → Item</span>
-      <span>위치·크기·투명도(Opacity) 조절</span>
+      <span>위치·크기 조절 (투명도는 Properties Data > Opacity 활성화)</span>
     </div>
     <div class="shortcut-row">
       <span class="shortcut-keys"><span class="kbd">H</span> / <span class="kbd">Alt</span>+<span class="kbd">H</span></span>
@@ -543,7 +543,7 @@ body {
   </div>
 
   <div class="tip-box">
-    <strong>팁:</strong> 레퍼런스 추가 후 N 패널에서 투명도(Opacity)를 0.3~0.5로 낮추면 모델링 도중 메쉬와 구분이 쉬워요. Outliner에서 자물쇠 아이콘을 클릭해 선택 방지하면 실수로 이동시키는 걸 막을 수 있어요.
+    <strong>팁:</strong> 레퍼런스 추가 후 Properties(Object Data Properties) > Opacity를 활성화하고 0.3~0.5로 낮추면 모델링 도중 메쉬와 구분이 쉬워요. Outliner 필터(깔대기 아이콘)에서 Selectable을 활성화한 뒤 레퍼런스 옆 셀렉터블 아이콘을 끄면 실수로 이동시키는 걸 막을 수 있어요.
   </div>
 
   <div class="warn-box">
@@ -1255,9 +1255,9 @@ initQuiz([
   },
   {
     question: "모델링 중 레퍼런스를 실수로 이동시키지 않으려면?",
-    options: ["Hide (H)로 숨기기", "Outliner에서 선택 잠금(자물쇠 아이콘)", "Delete 후 재추가", "Render 끄기"],
+    options: ["Hide (H)로 숨기기", "Outliner 필터에서 Selectable 활성화 후 선택 방지", "Delete 후 재추가", "Render 끄기"],
     answer: 1,
-    explanation: "Outliner에서 레퍼런스 오브젝트의 선택 잠금 아이콘(화살표)을 끄면 뷰포트에서 선택이 되지 않아 실수를 방지할 수 있습니다."
+    explanation: "Outliner 필터(깔대기 아이콘)에서 Selectable을 활성화하면 각 오브젝트 옆에 셀렉터블 아이콘이 표시됩니다. 레퍼런스의 아이콘을 끄면 뷰포트에서 선택되지 않아 실수를 방지할 수 있습니다."
   }
 ]);
 </script>

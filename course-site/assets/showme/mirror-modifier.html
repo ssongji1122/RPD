@@ -349,6 +349,40 @@ body {
 }
 .doc-ref a:hover { text-decoration: underline; }
 
+/* ── Concept Canvas ── */
+.concept-canvas {
+  display: block;
+  width: 100%;
+  height: 110px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 12px;
+  background: var(--bg);
+}
+
+/* ── Origin Steps ── */
+.origin-steps {
+  margin: 8px 0 0;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(245,158,11,.06);
+  border: 1px solid rgba(245,158,11,.15);
+  font-size: .82rem;
+  color: #fbbf24;
+  list-style: none;
+}
+.origin-steps li {
+  padding: 3px 0 3px 16px;
+  display: block;
+  position: relative;
+  line-height: 1.6;
+}
+.origin-steps li::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  opacity: .6;
+}
+
 /* ── Responsive ── */
 @media (max-width: 600px) {
   .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
@@ -371,21 +405,42 @@ body {
 <!-- TAB 1: 개념 이해 -->
 <section class="panel is-active" id="panel-concept" role="tabpanel">
   <div class="concept-grid">
+
+    <!-- 카드 1: Mirror란? -->
     <div class="concept-card">
+      <canvas class="concept-canvas" id="cv-mirror" width="600" height="110"></canvas>
       <h3>Mirror Modifier란?</h3>
       <p>거울처럼 한쪽만 편집하면 반대쪽이 자동으로 따라오는 Modifier입니다. 좌우 대칭 모델을 만들 때 작업량을 절반으로 줄여줍니다.</p>
       <div class="analogy">거울 앞에서 한쪽을 바꾸면 반대쪽이 자동으로 따라와요</div>
     </div>
+
+    <!-- 카드 2: Clipping -->
     <div class="concept-card">
+      <canvas class="concept-canvas" id="cv-clipping" width="600" height="110"></canvas>
       <h3>Clipping이란?</h3>
       <p>중심선을 넘지 못하게 하는 옵션입니다. ON이면 중심 정점이 정확히 중앙에 고정되어, 양쪽이 깔끔하게 이어집니다.</p>
-      <div class="analogy">종이를 반으로 접으면 접힌 선(중심선)이 경계가 돼요. Clipping은 그 선 너머로 펜이 못 넘어가게 막는 역할이에요</div>
+      <div class="analogy">종이를 반으로 접으면 접힌 선이 경계가 돼요. Clipping은 그 선 너머로 펜이 못 넘어가게 막는 역할이에요</div>
     </div>
+
+    <!-- 카드 3: Origin -->
     <div class="concept-card">
-      <h3>Origin(원점)이 핵심이에요</h3>
-      <p>Mirror는 <strong>오브젝트의 원점(Origin)을 기준</strong>으로 반전합니다. 원점이 메시 중앙에 없으면 미러가 엉뚱한 곳에 나타나요. <span class="badge badge-amber">가장 흔한 실수</span></p>
-      <div class="analogy">Mirror 추가 전 반드시: <strong>Ctrl+A → All Transforms</strong> 적용 → 원점 확인 순서로 시작하세요</div>
+      <canvas class="concept-canvas" id="cv-origin" width="600" height="110"></canvas>
+      <h3>Origin(원점)이 핵심이에요 <span class="badge badge-amber">가장 흔한 실수</span></h3>
+      <p>Mirror는 <strong>오브젝트의 원점(Origin)을 기준</strong>으로 반전합니다. 원점이 메시 중앙에 없으면 미러가 엉뚱한 곳에 나타나요.</p>
+      <ul class="origin-steps">
+        <li><strong>중앙으로 이동:</strong> <span class="kbd">Shift+S</span> → Cursor to World Origin → 우클릭 → Set Origin → Origin to 3D Cursor</li>
+        <li><strong>원하는 위치로:</strong> 해당 요소 선택 → <span class="kbd">Shift+S</span> → Cursor to Selected → 우클릭 → Set Origin → Origin to 3D Cursor</li>
+      </ul>
     </div>
+
+    <!-- 카드 4: Transforms 미적용 -->
+    <div class="concept-card">
+      <canvas class="concept-canvas" id="cv-transforms" width="600" height="110"></canvas>
+      <h3>Transforms 미적용 시 문제</h3>
+      <p>Object Mode에서 회전·스케일 후 <strong>Ctrl+A (All Transforms)</strong>를 안 하면, 로컬 축이 월드 축과 달라져 미러 방향이 틀어집니다.</p>
+      <div class="analogy">Mirror 추가 전 순서: <strong>Ctrl+A → All Transforms</strong> 적용 → 원점 확인 → Mirror 추가</div>
+    </div>
+
   </div>
 
   <div class="shortcut-list">
@@ -1096,6 +1151,349 @@ initQuiz([
     explanation: "스케일이나 회전이 Apply 안 된 상태에서 Mirror를 추가하면 축이 틀어져요. Ctrl+A → All Transforms가 선행 필수예요."
   }
 ]);
+
+// ── Concept Canvas Animations ─────────────────
+(function() {
+  function px(canvas) {
+    // Set internal resolution to match display width
+    var w = canvas.offsetWidth || 300;
+    canvas.width = w;
+    canvas.height = 110;
+    return canvas.getContext('2d');
+  }
+
+  // ── Canvas 1: Mirror Demo ──────────────────
+  function animMirror(canvas) {
+    var ctx = px(canvas);
+    var W = canvas.width, H = canvas.height, cx = W / 2;
+    var t = 0;
+
+    // Left-half shape: 5 points (x measured leftward from cx)
+    var base = [
+      { dx: -6,  dy: -38 },
+      { dx: -44, dy: -22 },
+      { dx: -52, dy: 8   },
+      { dx: -38, dy: 34  },
+      { dx: -8,  dy: 40  }
+    ];
+
+    function frame() {
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = '#111214';
+      ctx.fillRect(0, 0, W, H);
+
+      // Wobble vertex index 1
+      var wobble = Math.sin(t * 0.045) * 16;
+      var verts = base.map(function(v, i) {
+        return { x: cx + v.dx, y: H / 2 + v.dy + (i === 1 ? wobble : 0) };
+      });
+      var mirror = verts.map(function(v) { return { x: cx + (cx - v.x), y: v.y }; });
+
+      // Mirror shape (green, dashed)
+      ctx.beginPath();
+      ctx.moveTo(mirror[0].x, mirror[0].y);
+      mirror.forEach(function(v) { ctx.lineTo(v.x, v.y); });
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(16,185,129,.1)';
+      ctx.fill();
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([4, 3]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Original shape (blue)
+      ctx.beginPath();
+      ctx.moveTo(verts[0].x, verts[0].y);
+      verts.forEach(function(v) { ctx.lineTo(v.x, v.y); });
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(10,132,255,.15)';
+      ctx.fill();
+      ctx.strokeStyle = '#0a84ff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Moving vertex dot
+      ctx.beginPath();
+      ctx.arc(verts[1].x, verts[1].y, 5, 0, Math.PI * 2);
+      ctx.fillStyle = '#0a84ff';
+      ctx.fill();
+
+      // Mirror axis
+      ctx.strokeStyle = 'rgba(245,158,11,.35)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(cx, 4); ctx.lineTo(cx, H - 4);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Labels
+      ctx.font = '10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = 'rgba(10,132,255,.8)';
+      ctx.fillText('✏️ 편집 중', cx - 38, H - 5);
+      ctx.fillStyle = 'rgba(16,185,129,.8)';
+      ctx.fillText('🪞 자동 미러', cx + 44, H - 5);
+      ctx.textAlign = 'left';
+
+      t++;
+      requestAnimationFrame(frame);
+    }
+    frame();
+  }
+
+  // ── Canvas 2: Clipping Demo ────────────────
+  function animClipping(canvas) {
+    var ctx = px(canvas);
+    var W = canvas.width, H = canvas.height, cx = W / 2;
+    var t = 0;
+    var CYCLE = 150; // frames per ON/OFF phase
+
+    function frame() {
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = '#111214';
+      ctx.fillRect(0, 0, W, H);
+
+      var total = t % (CYCLE * 2);
+      var isOn  = total >= CYCLE;
+      var prog  = (total % CYCLE) / CYCLE;
+      var pp    = prog < .5 ? prog * 2 : 2 - prog * 2; // 0→1→0
+
+      var vx = cx - 68 + pp * (isOn ? 68 : 88);
+      var vy = H / 2;
+      var mvx = cx + (cx - vx);
+
+      // Crossed-center highlight when OFF
+      if (!isOn && vx > cx) {
+        ctx.fillStyle = 'rgba(239,68,68,.07)';
+        ctx.fillRect(cx, 0, W - cx, H);
+      }
+
+      // Center line
+      ctx.strokeStyle = isOn ? 'rgba(16,185,129,.55)' : 'rgba(255,255,255,.22)';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(cx, 8); ctx.lineTo(cx, H - 8);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      var col = isOn ? '#10b981' : (vx > cx ? '#ef4444' : '#0a84ff');
+
+      // Mirror vertex (ghost)
+      ctx.beginPath();
+      ctx.arc(mvx, vy, 7, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,.12)';
+      ctx.fill();
+
+      // Main vertex
+      ctx.beginPath();
+      ctx.arc(vx, vy, 7, 0, Math.PI * 2);
+      ctx.fillStyle = col;
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,.25)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      // Status
+      ctx.font = 'bold 11px sans-serif';
+      ctx.textAlign = 'center';
+      if (isOn) {
+        ctx.fillStyle = '#10b981';
+        ctx.fillText('Clipping ON — 중심선에서 멈춤 ✓', cx, 17);
+      } else {
+        ctx.fillStyle = vx > cx ? '#ef4444' : '#a1a1aa';
+        ctx.fillText('Clipping OFF' + (vx > cx ? ' — 경계 넘음 ✗' : ''), cx, 17);
+      }
+      ctx.textAlign = 'left';
+
+      t++;
+      requestAnimationFrame(frame);
+    }
+    frame();
+  }
+
+  // ── Canvas 3: Origin Position Demo ────────
+  function animOrigin(canvas) {
+    var ctx = px(canvas);
+    var W = canvas.width, H = canvas.height;
+    var t = 0;
+    var PHASE = 160;
+
+    function mesh(x, y, w, h, fill, stroke, dashed) {
+      ctx.beginPath();
+      ctx.rect(x - w / 2, y - h / 2, w, h);
+      ctx.fillStyle = fill;
+      ctx.fill();
+      ctx.strokeStyle = stroke;
+      ctx.lineWidth = 1.5;
+      if (dashed) ctx.setLineDash([3, 2]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    function originDot(x, y) {
+      ctx.strokeStyle = 'rgba(245,158,11,.45)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x - 9, y); ctx.lineTo(x + 9, y);
+      ctx.moveTo(x, y - 9); ctx.lineTo(x, y + 9);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(x, y, 5, 0, Math.PI * 2);
+      ctx.fillStyle = '#f59e0b';
+      ctx.fill();
+    }
+
+    function frame() {
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = '#111214';
+      ctx.fillRect(0, 0, W, H);
+
+      var total = t % (PHASE * 2);
+      var isBad = total < PHASE;
+
+      var meshX = W * .58, meshY = H / 2;
+      var mw = 52, mh = 58;
+      var origX = isBad ? W * .18 : meshX;
+      var origY = isBad ? H * .35 : meshY;
+      var mirX  = 2 * origX - meshX;
+
+      // Mirrored mesh
+      mesh(mirX, meshY, mw, mh,
+        isBad ? 'rgba(239,68,68,.1)' : 'rgba(16,185,129,.1)',
+        isBad ? '#ef4444'            : '#10b981',
+        true);
+
+      // Original mesh
+      mesh(meshX, meshY, mw, mh, 'rgba(10,132,255,.15)', '#0a84ff', false);
+
+      // Origin dot
+      originDot(origX, origY);
+
+      // Origin label
+      ctx.font = '9px sans-serif';
+      ctx.fillStyle = '#f59e0b';
+      ctx.textAlign = 'left';
+      ctx.fillText('Origin', origX + 7, origY - 7);
+
+      // Status
+      ctx.font = 'bold 11px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = isBad ? '#ef4444' : '#10b981';
+      ctx.fillText(isBad ? '원점이 메시 밖에 있어요 ✗' : '원점이 메시 중앙에 있어요 ✓', W / 2, 16);
+      ctx.textAlign = 'left';
+
+      t++;
+      requestAnimationFrame(frame);
+    }
+    frame();
+  }
+
+  // ── Canvas 4: Unapplied Transforms Demo ───
+  function animTransforms(canvas) {
+    var ctx = px(canvas);
+    var W = canvas.width, H = canvas.height;
+    var t = 0;
+    var PHASE = 160;
+    var ROT = 0.42; // ~24° visual rotation
+
+    function box(cx, cy, w, h, angle, fill, stroke, dashed) {
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(angle);
+      ctx.beginPath();
+      ctx.rect(-w / 2, -h / 2, w, h);
+      ctx.fillStyle = fill;
+      ctx.fill();
+      ctx.strokeStyle = stroke;
+      ctx.lineWidth = 1.5;
+      if (dashed) ctx.setLineDash([3, 2]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+    }
+
+    function axis(cx, cy, angle, color, label) {
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(angle);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([5, 3]);
+      ctx.beginPath();
+      ctx.moveTo(0, -52); ctx.lineTo(0, 52);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.font = 'bold 9px sans-serif';
+      ctx.fillStyle = color;
+      ctx.textAlign = 'left';
+      ctx.fillText(label, 4, -36);
+      ctx.restore();
+    }
+
+    function frame() {
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = '#111214';
+      ctx.fillRect(0, 0, W, H);
+
+      var total = t % (PHASE * 2);
+      var isBad = total < PHASE;
+
+      var cx = W / 2, cy = H / 2;
+
+      if (isBad) {
+        // Unapplied: local axis tilted → mirror wrong
+        box(cx - 32, cy, 36, 52, ROT, 'rgba(10,132,255,.15)', '#0a84ff', false);
+        // Mirrored along tilted local axis (bad position)
+        box(cx + 52, cy - 22, 36, 52, ROT, 'rgba(239,68,68,.1)', '#ef4444', true);
+        // Show tilted axis
+        axis(cx, cy, ROT, 'rgba(245,158,11,.75)', '로컬X');
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#ef4444';
+        ctx.fillText('Ctrl+A 미적용 → 미러 방향 틀어짐 ✗', cx, 16);
+        ctx.textAlign = 'left';
+      } else {
+        // Applied: local axis aligned with world → mirror correct
+        box(cx - 32, cy, 36, 52, ROT, 'rgba(10,132,255,.15)', '#0a84ff', false);
+        // Correct mirror (symmetric about world axis)
+        box(cx + 32, cy, 36, 52, -ROT, 'rgba(16,185,129,.1)', '#10b981', true);
+        // Show straight axis
+        axis(cx, cy, 0, 'rgba(16,185,129,.75)', '로컬X');
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#10b981';
+        ctx.fillText('Ctrl+A 적용 → 미러 방향 정상 ✓', cx, 16);
+        ctx.textAlign = 'left';
+      }
+
+      t++;
+      requestAnimationFrame(frame);
+    }
+    frame();
+  }
+
+  // Initialise all after DOM ready
+  function init() {
+    var c1 = document.getElementById('cv-mirror');
+    var c2 = document.getElementById('cv-clipping');
+    var c3 = document.getElementById('cv-origin');
+    var c4 = document.getElementById('cv-transforms');
+    if (c1) animMirror(c1);
+    if (c2) animClipping(c2);
+    if (c3) animOrigin(c3);
+    if (c4) animTransforms(c4);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    // Small delay so canvas layout is computed
+    setTimeout(init, 50);
+  }
+})();
 </script>
 
 </body>

@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — Mirror Modifier 워크플로우</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+/* ── Tab Navigation ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+/* ── Tab Panels ── */
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+/* ── Concept Cards ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card h3 {
+  margin: 0 0 8px; font-size: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.concept-card p {
+  margin: 0; color: var(--muted-strong);
+  font-size: .88rem; line-height: 1.7;
+}
+.concept-card ul {
+  margin: 8px 0 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
+}
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: .72rem; font-weight: 600;
+}
+.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: #fbbf24; }
+/* ── Keyboard Shortcut ── */
+.kbd {
+  display: inline-block;
+  padding: 3px 8px; border-radius: 6px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  color: var(--key-soft);
+  font-size: .82rem; font-weight: 600;
+  font-family: var(--font);
+}
+/* ── Canvas / Demo ── */
+.demo-wrap {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+  margin: 14px 0;
+}
+.demo-wrap canvas {
+  display: block; width: 100%;
+}
+.demo-controls {
+  display: flex; gap: 8px; padding: 12px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.demo-hint {
+  font-size: .78rem; color: var(--muted);
+  text-align: center; padding: 6px 0 0;
+}
+.demo-btn {
+  padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .82rem;
+  cursor: pointer;
+  transition: background .14s, color .14s;
+}
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active {
+  background: rgba(10,132,255,.14);
+  color: var(--key-soft);
+  border-color: rgba(10,132,255,.3);
+}
+/* ── Usage Grid ── */
+.usage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.usage-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 16px;
+}
+.usage-card h4 {
+  margin: 0 0 8px; font-size: .92rem;
+  color: var(--key-soft);
+}
+.usage-card p {
+  margin: 0; color: var(--muted-strong);
+  font-size: .85rem; line-height: 1.7;
+}
+/* ── Tip Box ── */
+.tip-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(10,132,255,.2);
+  background: rgba(10,132,255,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+}
+.tip-box strong { color: var(--key-soft); }
+/* ── Quiz ── */
+.quiz-progress {
+  font-size: .78rem; color: var(--muted);
+  margin-bottom: 12px;
+}
+.quiz-question {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.quiz-question h4 {
+  margin: 0 0 12px; font-size: .94rem;
+}
+.quiz-option {
+  display: block; width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.025);
+  color: var(--text);
+  font: inherit; font-size: .86rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background .14s, border-color .14s;
+}
+.quiz-option:hover {
+  background: rgba(255,255,255,.06);
+  border-color: var(--line-strong);
+}
+.quiz-option.correct {
+  background: rgba(16,185,129,.12);
+  border-color: rgba(16,185,129,.4);
+  color: var(--success-soft);
+}
+.quiz-option.wrong {
+  background: rgba(239,68,68,.1);
+  border-color: rgba(239,68,68,.3);
+  color: #fca5a5;
+}
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback {
+  margin-top: 8px; padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: .84rem;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: #fca5a5; }
+.quiz-score {
+  text-align: center; padding: 20px;
+  font-size: 1.1rem; font-weight: 600;
+}
+.quiz-retry {
+  display: block; margin: 12px auto;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--key);
+  background: rgba(10,132,255,.12);
+  color: var(--key-soft);
+  font: inherit; font-size: .88rem;
+  cursor: pointer;
+  transition: background .14s;
+}
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+/* ── Official Doc Reference ── */
+.doc-ref {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(10,132,255,.15);
+  background: rgba(10,132,255,.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-ref a {
+  color: var(--key-soft);
+  font-size: .84rem;
+  text-decoration: none;
+  line-height: 1.5;
+}
+.doc-ref a:hover { text-decoration: underline; }
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Tab Bar -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+</nav>
+
+<!-- TAB 1: 개념 이해 -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <p style="font-size:.9rem; color:var(--muted-strong); margin:0 0 14px;">
+    Mirror Modifier는 대칭 모델링의 핵심 도구입니다. 아래 3단계를 순서대로 따라하면 완벽한 좌우 대칭을 만들 수 있어요.
+  </p>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">Step 1</span> 절반 삭제</h3>
+      <p>대칭축(보통 X축)을 기준으로 한쪽 절반을 지웁니다. Edit Mode에서 삭제할 쪽의 버텍스를 모두 선택한 뒤 <span class="kbd">X</span> &rarr; Vertices로 삭제합니다. 오브젝트의 Origin이 정확히 중심에 있어야 깔끔하게 나뉩니다.</p>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-green">Step 2</span> Mirror Modifier 추가</h3>
+      <p>Properties &rarr; Modifier &rarr; Add Modifier &rarr; <strong>Mirror</strong>를 선택합니다. Axis를 X로 설정하면 남은 절반이 자동으로 반대쪽에 대칭 복사됩니다. 한쪽만 편집하면 반대쪽이 실시간으로 따라옵니다.</p>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-amber">Step 3</span> Clipping 활성화</h3>
+      <p>Mirror Modifier 설정에서 <strong>Clipping</strong> 체크박스를 켭니다. 이렇게 하면 중심선의 버텍스가 대칭축을 넘어가지 못하게 고정되어, 이음새 없는 매끄러운 대칭 형태를 유지할 수 있습니다.</p>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>팁:</strong> 중심선 버텍스가 살짝 어긋나 틈이 생겼다면? 해당 버텍스들을 선택하고 <span class="kbd">S</span> + <span class="kbd">X</span> + <span class="kbd">0</span>을 눌러 X축 스케일을 0으로 만들면 한 줄로 정렬됩니다.
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html" target="_blank" rel="noopener">
+      Blender 공식 문서 &mdash; Mirror Modifier
+    </a>
+  </div>
+</section>
+
+<!-- TAB 2: 시각적 비교 -->
+<section class="panel" id="panel-visual" role="tabpanel">
+  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
+    버튼을 눌러 Mirror 워크플로우의 각 단계를 확인하세요. 4단계에서는 편집이 자동 애니메이션됩니다.
+  </p>
+  <div class="demo-wrap">
+    <canvas id="demoCanvas" width="680" height="320"></canvas>
+    <div class="demo-controls">
+      <button class="demo-btn is-active" id="btnPhase1">전체 형태</button>
+      <button class="demo-btn" id="btnPhase2">절반 삭제</button>
+      <button class="demo-btn" id="btnPhase3">Mirror 추가</button>
+      <button class="demo-btn" id="btnPhase4">한쪽 편집</button>
+    </div>
+  </div>
+  <p class="demo-hint">각 단계 버튼을 클릭하여 Mirror Modifier 워크플로우를 단계별로 확인하세요.</p>
+</section>
+
+<!-- TAB 3: 언제 쓰나요? -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>캐릭터 모델링</h4>
+      <p>얼굴, 몸통 등 좌우 대칭인 유기체 모델링에서 가장 많이 사용됩니다. 한쪽 눈, 볼, 귀만 만들면 반대쪽이 자동으로 완성됩니다.</p>
+    </div>
+    <div class="usage-card">
+      <h4>로봇/메카 디자인</h4>
+      <p>좌우 대칭인 파츠가 많은 메카닉 모델에서 작업 시간을 절반으로 줄여줍니다. 관절, 팔, 다리 등 반복 구조에 효과적입니다.</p>
+    </div>
+    <div class="usage-card">
+      <h4>차량/비행기</h4>
+      <p>자동차, 비행기, 선박 등 좌우 대칭 탈것의 외형을 모델링할 때 필수입니다. 한쪽 면만 다듬으면 전체 형태가 완성됩니다.</p>
+    </div>
+    <div class="usage-card">
+      <h4>건축/가구</h4>
+      <p>대칭 구조물인 건물 정면, 테이블, 의자 등을 모델링할 때 효율적입니다. 정밀한 대칭이 보장됩니다.</p>
+    </div>
+  </div>
+  <div class="tip-box">
+    <strong>팁:</strong> Mirror는 모델링 초반에 추가하는 게 가장 효율적이에요. 나중에 추가하면 Origin 위치를 정확히 맞춰야 해요.
+  </div>
+</section>
+
+<!-- TAB 4: 퀴즈 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+// ── Tab Switching ──────────────────────────────
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(t) { t.classList.remove("is-active"); });
+    document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("is-active"); });
+    tab.classList.add("is-active");
+    document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+  });
+});
+
+// ── Quiz Engine (Safe DOM methods) ────────────
+function initQuiz(questions) {
+  var container = document.getElementById("quizArea");
+  var score = 0, answered = 0;
+  var scoreDiv = null;
+
+  var progress = document.createElement("div");
+  progress.className = "quiz-progress";
+  progress.textContent = "\uBB38\uC81C 0 / " + questions.length + " \u00b7 \uC810\uC218 0\uC810";
+  container.appendChild(progress);
+
+  questions.forEach(function(q, qi) {
+    var div = document.createElement("div");
+    div.className = "quiz-question";
+
+    var heading = document.createElement("h4");
+    heading.textContent = "Q" + (qi + 1) + ". " + q.question;
+    div.appendChild(heading);
+
+    var fb = document.createElement("div");
+    fb.className = "quiz-feedback";
+
+    q.options.forEach(function(opt, oi) {
+      var btn = document.createElement("button");
+      btn.className = "quiz-option";
+      btn.textContent = opt;
+      btn.addEventListener("click", function() {
+        if (btn.disabled) return;
+        div.querySelectorAll(".quiz-option").forEach(function(b) { b.disabled = true; });
+        answered++;
+        if (oi === q.answer) {
+          btn.classList.add("correct");
+          fb.className = "quiz-feedback show correct-fb";
+          fb.textContent = "\u2705 " + q.explanation;
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
+          fb.className = "quiz-feedback show wrong-fb";
+          fb.textContent = "\u274c " + q.explanation;
+
+          var retryBtn = document.createElement("button");
+          retryBtn.className = "quiz-retry";
+          retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
+          retryBtn.textContent = "\uB2E4\uC2DC \uD480\uAE30";
+          retryBtn.addEventListener("click", function() {
+            answered--;
+            div.querySelectorAll(".quiz-option").forEach(function(b) {
+              b.disabled = false;
+              b.classList.remove("wrong", "correct");
+            });
+            fb.className = "quiz-feedback";
+            fb.textContent = "";
+            retryBtn.remove();
+            if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+            progress.textContent = "\uBB38\uC81C " + answered + " / " + questions.length + " \u00b7 \uC810\uC218 " + score + "\uC810";
+          });
+          fb.appendChild(retryBtn);
+        }
+        progress.textContent = "\uBB38\uC81C " + answered + " / " + questions.length + " \u00b7 \uC810\uC218 " + score + "\uC810";
+        if (answered === questions.length) showScore();
+      });
+      div.appendChild(btn);
+    });
+
+    div.appendChild(fb);
+    container.appendChild(div);
+  });
+
+  function showScore() {
+    if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+
+    scoreDiv = document.createElement("div");
+    scoreDiv.className = "quiz-score";
+
+    var emoji = document.createElement("div");
+    emoji.style.cssText = "font-size:36px;margin-bottom:8px";
+    emoji.textContent = score === questions.length ? "\ud83c\udf89" : score >= Math.ceil(questions.length / 2) ? "\ud83d\udc4d" : "\ud83d\udcda";
+    scoreDiv.appendChild(emoji);
+
+    var result = document.createElement("div");
+    result.style.cssText = "font-size:18px;font-weight:500;margin-bottom:6px";
+    result.textContent = score + " / " + questions.length + " \uC815\uB2F5";
+    scoreDiv.appendChild(result);
+
+    var msg = document.createElement("div");
+    msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
+    msg.textContent = score === questions.length ? "\uC644\uBCBD\uD569\uB2C8\uB2E4!" : "\uC870\uAE08 \uB354 \uC5F0\uC2B5\uD558\uBA74 \uC644\uBCBD\uD574\uC9C8 \uAC70\uC608\uC694!";
+    scoreDiv.appendChild(msg);
+
+    var saveBtn = document.createElement("button");
+    saveBtn.className = "quiz-retry";
+    saveBtn.style.cssText = "background:rgba(10,132,255,.18);border-color:var(--key);margin-bottom:8px";
+    saveBtn.textContent = "\uAE30\uB85D \uC800\uC7A5\uD558\uAE30";
+    saveBtn.addEventListener("click", function() {
+      try {
+        var wid = new URLSearchParams(location.search).get("wid")
+               || location.pathname.split("/").pop().replace(".html", "");
+        window.parent.postMessage({
+          type: "showme-quiz-complete",
+          widgetId: wid,
+          score: score,
+          total: questions.length,
+          pass: score >= Math.ceil(questions.length * 0.75)
+        }, "*");
+      } catch(e) {}
+      saveBtn.textContent = "\uC800\uC7A5 \uC644\uB8CC!";
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = ".5";
+    });
+    scoreDiv.appendChild(saveBtn);
+
+    var retry = document.createElement("button");
+    retry.className = "quiz-retry";
+    retry.textContent = "\uCC98\uC74C\uBD80\uD130 \uB2E4\uC2DC";
+    retry.addEventListener("click", function() { location.reload(); });
+    scoreDiv.appendChild(retry);
+
+    container.appendChild(scoreDiv);
+  }
+}
+
+// ── Canvas Demo: Mirror Workflow ──────────────
+(function() {
+  var canvas = document.getElementById("demoCanvas");
+  var ctx = canvas.getContext("2d");
+  var W = canvas.width, H = canvas.height;
+  var centerX = W / 2;
+  var phase = 1; // 1=full, 2=half deleted, 3=mirror added, 4=edit
+  var animTime = 0;
+  var transitionProgress = 1; // 0→1 for smooth transitions
+  var prevPhase = 1;
+
+  // Base shape vertices (right half — a simplified face-like silhouette, front view)
+  // These are offsets from center; positive X = right side
+  var baseRight = [
+    { x: 0,   y: -120 },  // top center
+    { x: 60,  y: -110 },  // top-right
+    { x: 90,  y: -80  },  // upper-right
+    { x: 100, y: -30  },  // mid-right (widest)
+    { x: 95,  y: 20   },  // lower-mid-right
+    { x: 80,  y: 60   },  // jaw area
+    { x: 50,  y: 100  },  // chin area
+    { x: 0,   y: 115  }   // bottom center
+  ];
+
+  // Deformed version for phase 4 (sinusoidal offsets applied dynamically)
+  function getDeformedRight(t) {
+    return baseRight.map(function(v, i) {
+      if (i === 0 || i === baseRight.length - 1) return { x: v.x, y: v.y }; // keep center verts
+      var dx = Math.sin(t * 2 + i * 0.8) * 15;
+      var dy = Math.cos(t * 1.5 + i * 1.1) * 8;
+      return { x: v.x + dx, y: v.y + dy };
+    });
+  }
+
+  function mirrorPoint(v) {
+    return { x: -v.x, y: v.y };
+  }
+
+  function drawShape(points, color, alpha, filled) {
+    if (points.length < 2) return;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.beginPath();
+    ctx.moveTo(centerX + points[0].x, H / 2 + points[0].y);
+    for (var i = 1; i < points.length; i++) {
+      // Smooth curve through points
+      if (i < points.length - 1) {
+        var xc = (centerX + points[i].x + centerX + points[i + 1].x) / 2;
+        var yc = (H / 2 + points[i].y + H / 2 + points[i + 1].y) / 2;
+        ctx.quadraticCurveTo(centerX + points[i].x, H / 2 + points[i].y, xc, yc);
+      } else {
+        ctx.lineTo(centerX + points[i].x, H / 2 + points[i].y);
+      }
+    }
+    if (filled) {
+      ctx.fillStyle = color;
+      ctx.fill();
+    }
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawVertices(points, color, alpha) {
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = color;
+    for (var i = 0; i < points.length; i++) {
+      ctx.beginPath();
+      ctx.arc(centerX + points[i].x, H / 2 + points[i].y, 4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function drawCenterLine() {
+    ctx.save();
+    ctx.setLineDash([6, 4]);
+    ctx.strokeStyle = "#ef4444";
+    ctx.lineWidth = 1.5;
+    ctx.globalAlpha = 0.7;
+    ctx.beginPath();
+    ctx.moveTo(centerX, 20);
+    ctx.lineTo(centerX, H - 20);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    // Label
+    ctx.fillStyle = "#ef4444";
+    ctx.globalAlpha = 0.6;
+    ctx.font = "11px " + getComputedStyle(document.body).fontFamily;
+    ctx.textAlign = "center";
+    ctx.fillText("X = 0 (대칭축)", centerX, H - 8);
+    ctx.restore();
+  }
+
+  function drawLabel(text, x, y, color) {
+    ctx.save();
+    ctx.fillStyle = color || "#a1a1aa";
+    ctx.font = "12px " + getComputedStyle(document.body).fontFamily;
+    ctx.textAlign = "center";
+    ctx.fillText(text, x, y);
+    ctx.restore();
+  }
+
+  function drawPhaseLabel(text) {
+    ctx.save();
+    ctx.fillStyle = "#8ec5ff";
+    ctx.font = "bold 13px " + getComputedStyle(document.body).fontFamily;
+    ctx.textAlign = "left";
+    ctx.fillText(text, 16, 24);
+    ctx.restore();
+  }
+
+  function easeInOut(t) {
+    return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+  }
+
+  function render() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Background
+    ctx.fillStyle = "#17181a";
+    ctx.fillRect(0, 0, W, H);
+
+    // Subtle grid
+    ctx.save();
+    ctx.strokeStyle = "rgba(255,255,255,.03)";
+    ctx.lineWidth = 1;
+    for (var gx = 0; gx < W; gx += 40) {
+      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke();
+    }
+    for (var gy = 0; gy < H; gy += 40) {
+      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke();
+    }
+    ctx.restore();
+
+    // Center line
+    drawCenterLine();
+
+    var rightPts = (phase === 4) ? getDeformedRight(animTime) : baseRight;
+    var leftPts = rightPts.map(mirrorPoint).reverse();
+
+    var tp = easeInOut(Math.min(transitionProgress, 1));
+
+    if (phase === 1) {
+      // Full shape — both halves solid
+      drawPhaseLabel("전체 형태 — 대칭 오브젝트");
+      drawShape(rightPts, "#8ec5ff", 0.8, true);
+      drawShape(leftPts, "#8ec5ff", 0.8, true);
+      drawVertices(rightPts, "#8ec5ff", 0.9);
+      drawVertices(leftPts, "#8ec5ff", 0.9);
+      drawLabel("왼쪽", centerX - 80, H / 2 - 130, "#8ec5ff");
+      drawLabel("오른쪽", centerX + 80, H / 2 - 130, "#8ec5ff");
+    } else if (phase === 2) {
+      // Left half fades out
+      drawPhaseLabel("절반 삭제 — 왼쪽을 지움");
+      var leftAlpha = 0.8 * (1 - tp);
+      drawShape(rightPts, "#8ec5ff", 0.8, true);
+      drawVertices(rightPts, "#8ec5ff", 0.9);
+      if (leftAlpha > 0.01) {
+        drawShape(leftPts, "#8ec5ff", leftAlpha, true);
+        drawVertices(leftPts, "#8ec5ff", leftAlpha);
+      }
+      drawLabel("삭제됨", centerX - 80, H / 2 - 130, "rgba(239,68,68," + (0.7 * tp) + ")");
+      drawLabel("남은 절반", centerX + 80, H / 2 - 130, "#8ec5ff");
+    } else if (phase === 3) {
+      // Right solid, left semi-transparent mirror copy
+      drawPhaseLabel("Mirror 추가 — 대칭 복사 (반투명)");
+      drawShape(rightPts, "#8ec5ff", 0.8, true);
+      drawVertices(rightPts, "#8ec5ff", 0.9);
+      var mirrorAlpha = 0.35 * tp;
+      drawShape(leftPts, "#6ee7b7", mirrorAlpha, true);
+      drawVertices(leftPts, "#6ee7b7", mirrorAlpha + 0.1);
+      drawLabel("Mirror 복사본", centerX - 90, H / 2 - 130, "#6ee7b7");
+      drawLabel("원본 (편집 가능)", centerX + 90, H / 2 - 130, "#8ec5ff");
+    } else if (phase === 4) {
+      // Auto-animate: right deforms, left follows
+      drawPhaseLabel("한쪽 편집 — 실시간 대칭 반영");
+      drawShape(rightPts, "#8ec5ff", 0.8, true);
+      drawVertices(rightPts, "#8ec5ff", 0.9);
+      drawShape(leftPts, "#6ee7b7", 0.35, true);
+      drawVertices(leftPts, "#6ee7b7", 0.45);
+      drawLabel("Mirror 복사본 (자동 반영)", centerX - 100, H / 2 - 130, "#6ee7b7");
+      drawLabel("편집 중...", centerX + 80, H / 2 - 130, "#fbbf24");
+    }
+
+    // Advance animation
+    animTime += 0.02;
+    if (transitionProgress < 1) {
+      transitionProgress += 0.03;
+    }
+
+    requestAnimationFrame(render);
+  }
+
+  function setPhase(p) {
+    if (p === phase) return;
+    prevPhase = phase;
+    phase = p;
+    transitionProgress = 0;
+    // Update buttons
+    document.querySelectorAll(".demo-btn").forEach(function(b) { b.classList.remove("is-active"); });
+    document.getElementById("btnPhase" + p).classList.add("is-active");
+  }
+
+  document.getElementById("btnPhase1").addEventListener("click", function() { setPhase(1); });
+  document.getElementById("btnPhase2").addEventListener("click", function() { setPhase(2); });
+  document.getElementById("btnPhase3").addEventListener("click", function() { setPhase(3); });
+  document.getElementById("btnPhase4").addEventListener("click", function() { setPhase(4); });
+
+  render();
+})();
+
+// ── Quiz Data ─────────────────────────────────
+initQuiz([
+  {
+    question: "Mirror를 쓰기 전에 먼저 해야 할 작업은?",
+    options: ["Subdivision Surface 추가", "대칭축 기준으로 절반 삭제", "Apply All Transforms", "오브젝트 복제"],
+    answer: 1,
+    explanation: "Mirror는 남은 절반을 기준으로 대칭 복사하므로, 먼저 한쪽을 지워야 합니다."
+  },
+  {
+    question: "Clipping 옵션의 역할은?",
+    options: ["미러를 비활성화한다", "중심선 버텍스가 축을 넘지 못하게 고정한다", "미러 결과를 Apply한다", "UV를 자동 펼친다"],
+    answer: 1,
+    explanation: "Clipping을 켜면 중심선의 버텍스가 대칭축을 넘어가지 않아서 이음새 없는 대칭을 유지할 수 있어요."
+  },
+  {
+    question: "중심선이 벌어졌을 때 빠르게 정렬하는 단축키는?",
+    options: ["G+X+0", "S+X+0", "R+X+0", "Alt+M"],
+    answer: 1,
+    explanation: "S+X+0은 X축 스케일을 0으로 만들어서 선택한 버텍스들을 X축 기준으로 일직선에 놓아줍니다."
+  }
+]);
+</script>
+
+</body>
+</html>

@@ -121,7 +121,6 @@
       margin-top: auto; padding-top: 10px;
       border-top: 1px solid rgba(147,197,253,.07);
     }
-    .week-duration { color: var(--muted); font-size: .78rem; }
     .go-arrow { color: var(--key-soft); font-size: .9rem; }
 
     /* Responsive */
@@ -260,13 +259,9 @@
       // Footer
       var footer = document.createElement("div");
       footer.className = "week-footer";
-      var dur = document.createElement("span");
-      dur.className = "week-duration";
-      dur.textContent = "\u23F1 " + w.duration;
       var arrow = document.createElement("span");
       arrow.className = "go-arrow";
       arrow.textContent = "\u2192";
-      footer.appendChild(dur);
       footer.appendChild(arrow);
       a.appendChild(footer);
 
