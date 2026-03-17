@@ -240,6 +240,13 @@ section, .section-inner {
 }
 
 /* Step image */
+.step-image-wrap {
+  position: relative; margin: 14px 0 0; padding: 0; border: none;
+}
+.step-image-wrap .step-image { margin-top: 0; display: block; }
+.step-image-wrap figcaption {
+  position: absolute; top: 10px; right: 10px;
+}
 .step-image {
   width: 100%; border-radius: var(--radius-md);
   border: 1px solid var(--line);
