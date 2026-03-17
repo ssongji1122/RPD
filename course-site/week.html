@@ -10,26 +10,26 @@
   <style>
     /* ── Week-page specific styles ── */
     .hero {
-      padding: 80px 0 16px; text-align: center;
+      padding: 72px 0 12px; text-align: center;
     }
-    .hero-card { display: grid; gap: 12px; justify-items: center; width: 100%; }
+    .hero-card { display: grid; gap: 8px; justify-items: center; width: 100%; }
     .hero h1 {
       margin: 0; font-family: var(--font-display);
-      font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+      font-size: clamp(1.5rem, 3.2vw, 2.2rem);
       font-weight: 650; letter-spacing: -.026em; line-height: 1.15;
     }
     .hero p {
       max-width: 720px; margin: 0;
-      color: var(--muted-strong); font-size: clamp(.98rem, 1.6vw, 1.06rem);
+      color: var(--muted-strong); font-size: clamp(.92rem, 1.4vw, 1rem);
       line-height: 1.8; white-space: nowrap;
     }
-    .hero-meta { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; }
+    .hero-meta { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
     .meta-chip {
-      display: inline-flex; align-items: center; gap: 7px;
-      padding: 6px 13px; border-radius: 999px;
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 11px; border-radius: 999px;
       border: 1px solid var(--line);
-      background: var(--surface); color: var(--muted-strong);
-      font-size: .82rem;
+      background: var(--surface); color: var(--muted);
+      font-size: .78rem;
     }
 
     /* Topic checklist */
@@ -96,6 +96,14 @@
 
     /* Text accent */
     .text-key { color: var(--key-soft); }
+
+    /* Ref card (merged resources) */
+    .ref-card { display: grid; gap: 16px; }
+    .ref-group { display: grid; gap: 8px; }
+    .ref-group-label {
+      font-size: .76rem; font-weight: 600; color: var(--muted);
+      text-transform: uppercase; letter-spacing: .06em;
+    }
 
     /* Responsive */
     @media (max-width: 720px) {
@@ -567,30 +575,22 @@
           </article>`;
       }).join("");
 
-      // Mistakes
-      const mistakesHtml = w.mistakes.length > 0 ? `
-        <section class="content-block" id="section-mistakes">
-          <div class="section-head"><h3>막히는 지점</h3></div>
-          <details class="card mistakes-section" open>
-            <summary>막혔을 때</summary>
-            <ul>${w.mistakes.map(m => `<li>${m}</li>`).join("")}</ul>
-          </details>
+      // 참고 자료 통합 (영상 + 문서 + 막히는 지점)
+      const refParts = [];
+      if (videos.length > 0) {
+        refParts.push(`<div class="ref-group"><div class="ref-group-label">영상</div><div class="doc-links-row">${videos.map(d => `<a class="doc-link" href="${d.url}" target="_blank" rel="noopener noreferrer">▶ ${d.title} ↗</a>`).join("")}</div></div>`);
+      }
+      if (docs.length > 0) {
+        refParts.push(`<div class="ref-group"><div class="ref-group-label">문서</div><div class="doc-links-row">${docs.map(d => `<a class="doc-link" href="${d.url}" target="_blank" rel="noopener noreferrer">📄 ${d.title} ↗</a>`).join("")}</div></div>`);
+      }
+      if (w.mistakes.length > 0) {
+        refParts.push(`<details class="mistakes-section"><summary>막혔을 때</summary><ul>${w.mistakes.map(m => `<li>${m}</li>`).join("")}</ul></details>`);
+      }
+      const referenceHtml = refParts.length > 0 ? `
+        <section class="content-block" id="section-reference">
+          <div class="section-head"><h3>참고 자료</h3></div>
+          <div class="card ref-card">${refParts.join("")}</div>
         </section>` : "";
-
-      const renderResourceSection = (title, icon, items) => items.length > 0 ? `
-        <section class="content-block">
-          <div class="section-head"><h3>${title}</h3></div>
-          <div class="doc-links-row">
-            ${items.map(d => `
-              <a class="doc-link" href="${d.url}" target="_blank" rel="noopener noreferrer">
-                ${icon} ${d.title} ↗
-              </a>`).join("")}
-          </div>
-        </section>` : "";
-
-      // Videos / Docs
-      const videosHtml = renderResourceSection("공식 영상 튜토리얼", "▶", videos);
-      const docsHtml = renderResourceSection("공식 문서", "📄", docs);
 
       // Assignment
       const assignmentCheckli = w.assignment.checklist.map(c => `<li>${c}</li>`).join("");
@@ -643,14 +643,11 @@
         <!-- Hero -->
         <section class="hero" id="hero-section">
           <div class="hero-card">
-            <div class="eyebrow">Week ${String(w.week).padStart(2,"0")} · RPD</div>
             <h1>${w.title}</h1>
             ${w.subtitle ? `<p>${w.subtitle}</p>` : ""}
             <div class="hero-meta">
               <span class="meta-chip">⏱ ${w.duration}</span>
-              <span class="meta-chip">📋 ${w.steps.length}단계 실습</span>
-              ${videos.length ? `<span class="meta-chip">▶ ${videos.length}개 공식 영상</span>` : ""}
-              ${docs.length ? `<span class="meta-chip">📄 ${docs.length}개 공식 문서</span>` : ""}
+              <span class="meta-chip">${w.steps.length}단계 실습</span>
             </div>
           </div>
         </section>
@@ -671,9 +668,7 @@
 
         ${shortcutsHtml}
         ${exploreHtml}
-        ${mistakesHtml}
-        ${videosHtml}
-        ${docsHtml}
+        ${referenceHtml}
         ${assignmentHtml}
 
         <!-- Week nav -->
@@ -983,15 +978,22 @@
 
       if (!sidebar || !overlay || !toggleBtn || !navList) return;
 
-      // Build section list
+      // Build section list (간소화: 개요 + 실습 스텝 + 부록만)
       var sections = [{ id: "hero-section", label: "개요", group: null }];
       w.steps.forEach(function(step, idx) {
-        sections.push({ id: "step-" + idx, label: step.title, group: idx === 0 ? "실습" : null });
+        sections.push({ id: "step-" + idx, label: (idx + 1) + ". " + step.title, group: idx === 0 ? "실습" : null });
       });
-      if (w.shortcuts && w.shortcuts.length)  sections.push({ id: "section-shortcuts",  label: "단축키",      group: "참고" });
-      if (w.explore   && w.explore.length)    sections.push({ id: "section-explore",    label: "더 해보기",   group: null });
-      if (w.mistakes  && w.mistakes.length)   sections.push({ id: "section-mistakes",   label: "막히는 지점", group: null });
-      if (w.assignment)                        sections.push({ id: "section-assignment", label: "과제",        group: null });
+      // 부록 그룹: 있는 것만 표시
+      var appendixStarted = false;
+      function addAppendix(id, label) {
+        sections.push({ id: id, label: label, group: appendixStarted ? null : "부록" });
+        appendixStarted = true;
+      }
+      if (w.shortcuts && w.shortcuts.length)  addAppendix("section-shortcuts",  "단축키");
+      if (w.explore   && w.explore.length)    addAppendix("section-explore",    "더 해보기");
+      var hasRef = (w.docs && w.docs.length) || (w.videos && w.videos.length) || (w.mistakes && w.mistakes.length);
+      if (hasRef)                              addAppendix("section-reference",  "참고 자료");
+      if (w.assignment)                        addAppendix("section-assignment", "과제");
 
       // Collect unique Show Me widgets for this week
       var showmeSet = {};
