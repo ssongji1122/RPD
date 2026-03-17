@@ -38,36 +38,23 @@
     .topic-progress-fill { height: 100%; border-radius: 2px; background: var(--key-soft); transition: width .35s ease; width: 0%; }
     .topic-progress-label { font-size: .78rem; color: var(--muted); white-space: nowrap; }
 
-    .topic-check-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
-    @media (max-width: 720px) { .topic-check-list { grid-template-columns: 1fr; } }
+    .topic-check-list { display: flex; flex-wrap: wrap; gap: 6px; }
     .topic-check-item { position: relative; }
     .topic-check-item input[type="checkbox"] { position: absolute; opacity: 0; width: 0; height: 0; }
     .topic-check-item label {
-      display: flex; align-items: center; gap: 11px;
-      padding: 7px 12px; border-radius: 999px;
+      display: inline-flex; align-items: center;
+      padding: 4px 10px; border-radius: 999px;
       border: 1px solid var(--line);
       background: var(--overlay-white);
-      color: var(--muted-strong); font-size: .82rem;
+      color: var(--muted); font-size: .76rem;
       cursor: pointer;
-      transition: background .22s, border-color .22s, color .22s;
+      transition: background .18s, border-color .18s, color .18s;
       user-select: none;
     }
-    .topic-check-item label::before {
-      content: ""; flex-shrink: 0;
-      width: 14px; height: 14px; border-radius: 50%;
-      border: 1.5px solid var(--line-strong);
-      transition: background .22s, border-color .22s;
-    }
     .topic-check-item input:checked + label {
-      background: rgba(10,132,255,.14);
-      border-color: rgba(10,132,255,.4);
+      background: rgba(10,132,255,.12);
+      border-color: rgba(10,132,255,.35);
       color: var(--key-soft);
-    }
-    .topic-check-item input:checked + label::before {
-      background: var(--key-soft);
-      border-color: var(--key-soft);
-      background-image: url("data:image/svg+xml,%3Csvg width='9' height='7' viewBox='0 0 9 7' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 3.5L3.2 5.8L8 1' stroke='white' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat; background-position: center;
     }
 
     /* Nav between weeks */
