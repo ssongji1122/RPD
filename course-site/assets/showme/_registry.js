@@ -36,6 +36,7 @@ const SHOWME_REGISTRY = {
   "edge-split-modifier":    { label: "Edge Split 이해",         icon: "🔀" },
   "mask-modifier":          { label: "Mask Modifier 이해",      icon: "🎭" },
   "mirror-modifier":        { label: "Mirror Modifier 이해",    icon: "🪞" },
+  "mirror-workflow":        { label: "Mirror 작업 흐름",        icon: "🔄" },
   "mirror-origin-mode":     { label: "Mirror·Origin·모드 이해", icon: "🔀" },
   "multiresolution-modifier": { label: "Multiresolution 이해",  icon: "🔍" },
   "remesh-modifier":        { label: "Remesh 이해",             icon: "🔲" },
