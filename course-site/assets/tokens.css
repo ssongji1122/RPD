@@ -246,6 +246,23 @@ section, .section-inner {
   margin-top: 14px;
 }
 
+/* Step images grid (multiple reference images) */
+.step-images {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 14px;
+}
+.step-images .step-image {
+  margin-top: 0;
+  height: 180px;
+  object-fit: cover;
+}
+@media (max-width: 600px) {
+  .step-images { grid-template-columns: 1fr; }
+  .step-images .step-image { height: auto; }
+}
+
 /* Step download buttons */
 .step-downloads {
   display: flex; gap: 8px; flex-wrap: wrap;
