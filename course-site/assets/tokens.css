@@ -246,6 +246,28 @@ section, .section-inner {
   margin-top: 14px;
 }
 
+/* Step section divider */
+.step-section-divider {
+  display: flex; align-items: center; gap: 12px;
+  margin: 32px 0 8px;
+}
+.step-section-divider span {
+  font-size: .78rem; font-weight: 700; letter-spacing: .06em;
+  color: var(--muted); text-transform: uppercase; white-space: nowrap;
+}
+.step-section-divider::before,
+.step-section-divider::after {
+  content: ""; flex: 1; height: 1px; background: var(--line);
+}
+
+/* Step video */
+.step-video {
+  width: 100%; border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  margin-top: 14px; display: block;
+  max-height: 420px; background: #000;
+}
+
 /* Step images grid (multiple reference images) */
 .step-images {
   display: grid;

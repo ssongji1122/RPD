@@ -515,7 +515,11 @@
           }).join("")}</div>`;
         })();
 
+        const sectionDivider = step.sectionTitle
+          ? `<div class="step-section-divider"><span>${step.sectionTitle}</span></div>` : "";
+
         return `
+          ${sectionDivider}
           <article class="lab-step" id="step-${idx}" data-step-index="${idx}">
             <div class="step-header">
               <div class="step-title-group">
@@ -531,6 +535,7 @@
               : step.image ? (step.link
                 ? `<a href="${step.link}" target="_blank" rel="noopener noreferrer"><img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" /></a>`
                 : `<img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" />`) : ""}
+            ${step.video ? `<video class="step-video" controls preload="metadata"><source src="${step.video}" type="video/mp4" /><source src="${step.video}" type="video/quicktime" /></video>` : ""}
             ${step.downloads && step.downloads.length ? `<div class="step-downloads">${step.downloads.map(dl => `<a class="step-dl-btn" href="${dl.url}" download="${dl.url.split('/').pop()}" target="_blank" rel="noopener">⬇ ${dl.label}</a>`).join("")}</div>` : ""}
             <p class="step-copy">${step.copy}</p>
             ${showmeHtml}
