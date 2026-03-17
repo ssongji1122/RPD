@@ -367,6 +367,24 @@ body {
 }
 .doc-ref a:hover { text-decoration: underline; }
 
+/* ── Scenario Nav ── */
+.scenario-nav { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+.scenario-btn { padding:6px 14px; border-radius:20px; border:1px solid rgba(255,255,255,.15); background:transparent; color:#cbd5e1; cursor:pointer; font-size:13px; transition:all .2s; font-family:inherit; }
+.scenario-btn.active { background:rgba(99,102,241,.25); border-color:rgba(99,102,241,.5); color:#a5b4fc; }
+.before-after { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:12px 0; }
+.ba-panel { border-radius:12px; overflow:hidden; background:var(--surface); }
+.ba-panel canvas { width:100%; display:block; }
+.ba-label { text-align:center; font-size:11px; color:#94a3b8; padding:4px; background:rgba(0,0,0,.2); }
+.cause-effect { display:flex; flex-direction:column; gap:8px; margin:12px 0; }
+.ce-row { display:flex; align-items:center; gap:8px; }
+.ce-cause { background:rgba(99,102,241,.12); border:1px solid rgba(99,102,241,.25); border-radius:8px; padding:6px 12px; font-size:13px; flex:1; color:var(--muted-strong); }
+.ce-arrow { color:#64748b; font-size:16px; }
+.ce-result { border-radius:8px; padding:6px 12px; font-size:13px; flex:1.5; }
+.result-a { background:rgba(16,185,129,.1); border:1px solid rgba(16,185,129,.25); color:#6ee7b7; }
+.result-b { background:rgba(245,158,11,.1); border:1px solid rgba(245,158,11,.25); color:#fcd34d; }
+.result-c { background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.25); color:#fca5a5; }
+.scene-desc { font-size:.84rem; color:var(--muted-strong); margin-bottom:10px; padding:10px 14px; border-radius:var(--radius-sm); background:var(--surface); border:1px solid var(--line); line-height:1.7; }
+
 /* ── Responsive ── */
 @media (max-width: 600px) {
   .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
@@ -382,7 +400,7 @@ body {
 <!-- Tab Bar -->
 <nav class="tabs" role="tablist">
   <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
-  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">모드 데모</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각화</button>
   <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
   <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
 </nav>
@@ -421,26 +439,25 @@ body {
   </div>
 </section>
 
-<!-- TAB 2: 모드 데모 -->
+<!-- TAB 2: 시각화 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    모드를 전환하고 해상도 슬라이더를 조절하여 Remesh 효과를 확인하세요.
-  </p>
-  <div class="demo-wrap">
-    <canvas id="demoCanvas" width="680" height="380"></canvas>
-    <div class="demo-controls">
-      <button class="demo-btn is-active" id="btnVoxel">Voxel</button>
-      <button class="demo-btn" id="btnSmooth">Smooth</button>
-      <button class="demo-btn" id="btnSharp">Sharp</button>
-      <button class="demo-btn" id="btnBlocks">Blocks</button>
-      <div class="demo-slider-wrap">
-        <label>해상도:</label>
-        <input type="range" id="resSlider" min="1" max="5" value="3" step="1">
-        <span class="slider-val" id="resVal">3</span>
-      </div>
+  <div class="scenario-nav" id="scenarioNav">
+    <button class="scenario-btn active" data-scene="voxel">Voxel 모드</button>
+    <button class="scenario-btn" data-scene="smooth">Smooth 모드</button>
+    <button class="scenario-btn" data-scene="blocks">Blocks 모드</button>
+  </div>
+  <div class="scene-desc" id="scene-desc">균일한 복셀 크기로 메쉬를 재구성합니다. 가장 많이 사용되는 모드로, 스컬핑 전 준비에 최적입니다.</div>
+  <div class="before-after">
+    <div class="ba-panel">
+      <canvas id="canvas-before" width="280" height="160"></canvas>
+      <div class="ba-label">적용 전 (불균일한 메쉬)</div>
+    </div>
+    <div class="ba-panel">
+      <canvas id="canvas-after" width="280" height="160"></canvas>
+      <div class="ba-label">적용 후 (균일한 쿼드 메쉬)</div>
     </div>
   </div>
-  <p class="demo-hint">왼쪽: 원본 메쉬 (지저분한 토폴로지) → 오른쪽: Remesh 결과 (깨끗한 토폴로지)</p>
+  <div class="cause-effect" id="cause-effect"></div>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->
@@ -639,311 +656,189 @@ function initQuiz(questions) {
   }
 }
 
-// ── Canvas Remesh Demo ────────────────────────
+// ── Remesh Scenario Visualization ────────────
 (function() {
-  var canvas = document.getElementById("demoCanvas");
-  var ctx = canvas.getContext("2d");
-  var W = canvas.width;
-  var H = canvas.height;
-  var currentMode = "voxel";
-  var resolution = 3;
-
-  // Generate a messy original mesh (irregular polygon with random topology)
-  var seed = 42;
-  function seededRandom() {
-    seed = (seed * 16807 + 0) % 2147483647;
-    return (seed - 1) / 2147483646;
+  function drawBg(ctx, w, h) {
+    ctx.fillStyle = "#1e293b";
+    ctx.fillRect(0, 0, w, h);
   }
 
-  // Original messy shape — irregular blob
-  function generateMessyShape() {
-    seed = 42;
+  function drawMessyMesh(ctx, w, h) {
+    drawBg(ctx, w, h);
+    var cx = w / 2, cy = h / 2;
+    var seed = 42;
+    function sr() { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
     var pts = [];
-    var numPts = 24;
-    var cx = W * 0.25;
-    var cy = H * 0.5;
-    var baseR = 100;
-    for (var i = 0; i < numPts; i++) {
-      var angle = (i / numPts) * Math.PI * 2;
-      var r = baseR + (seededRandom() - 0.5) * 60;
-      pts.push({
-        x: cx + Math.cos(angle) * r,
-        y: cy + Math.sin(angle) * r
-      });
+    for (var i = 0; i < 20; i++) {
+      var angle = (i / 20) * Math.PI * 2;
+      var r = 55 + (sr() - 0.5) * 40;
+      pts.push({ x: cx + Math.cos(angle) * r, y: cy + Math.sin(angle) * r });
     }
-    return pts;
-  }
-
-  // Generate remeshed versions based on mode and resolution
-  function generateRemeshed(mode, res) {
-    var cx = W * 0.72;
-    var cy = H * 0.5;
-    var baseR = 100;
-    var pts = [];
-
-    if (mode === "blocks") {
-      // Blocky voxelized grid
-      var gridSize = 14 - res * 2; // smaller grid = more blocks
-      if (gridSize < 4) gridSize = 4;
-      return { type: "blocks", cx: cx, cy: cy, baseR: baseR, gridSize: gridSize };
-    }
-
-    // For voxel/smooth/sharp: generate clean circular mesh with varying segments
-    var segments = 8 + res * 8;
-
-    for (var i = 0; i <= segments; i++) {
-      var angle = (i / segments) * Math.PI * 2;
-      var r = baseR;
-
-      // Add original shape influence based on resolution
-      seed = 42;
-      var origAngle = 0;
-      for (var j = 0; j < 24; j++) {
-        origAngle = (j / 24) * Math.PI * 2;
-        var origR = 100 + (seededRandom() - 0.5) * 60;
-        if (Math.abs(origAngle - angle) < 0.3) {
-          var blend = res / 5;
-          r = baseR * (1 - blend) + origR * blend;
-        }
-      }
-
-      if (mode === "smooth") {
-        // Smooth: less sharp transitions
-        r = baseR + Math.sin(angle * 3) * (5 + res * 3);
-      } else if (mode === "sharp") {
-        // Sharp: preserve some edges
-        var sharpFactor = Math.round(Math.sin(angle * 4) * 2) / 2;
-        r = baseR + sharpFactor * (8 + res * 4);
-      } else {
-        // Voxel: uniform grid
-        r = baseR + Math.sin(angle * 5) * (3 + res * 2);
-      }
-
-      pts.push({
-        x: cx + Math.cos(angle) * r,
-        y: cy + Math.sin(angle) * r
-      });
-    }
-    return { type: "polygon", pts: pts, segments: segments };
-  }
-
-  // Draw messy wireframe lines (internal edges)
-  function drawMessyWireframe(pts, cx, cy) {
-    seed = 123;
-    ctx.strokeStyle = "rgba(239,68,68,.2)";
-    ctx.lineWidth = 0.5;
-    for (var i = 0; i < pts.length; i++) {
-      for (var j = i + 2; j < pts.length; j++) {
-        if (seededRandom() > 0.65) {
-          ctx.beginPath();
-          ctx.moveTo(pts[i].x, pts[i].y);
-          ctx.lineTo(pts[j].x, pts[j].y);
-          ctx.stroke();
-        }
-      }
-    }
-  }
-
-  // Draw clean wireframe grid
-  function drawCleanWireframe(pts, cx, cy) {
-    if (!pts || pts.length < 3) return;
-    // Radial lines from center
-    ctx.strokeStyle = "rgba(16,185,129,.15)";
-    ctx.lineWidth = 0.5;
-    for (var i = 0; i < pts.length; i += 2) {
-      ctx.beginPath();
-      ctx.moveTo(cx, cy);
-      ctx.lineTo(pts[i].x, pts[i].y);
-      ctx.stroke();
-    }
-  }
-
-  function drawBlocksShape(data) {
-    var gs = data.gridSize;
-    var cx = data.cx;
-    var cy = data.cy;
-    var r = data.baseR;
-    var startX = cx - r;
-    var startY = cy - r;
-    var size = r * 2;
-
-    seed = 42;
-    ctx.fillStyle = "rgba(245,158,11,.15)";
-    ctx.strokeStyle = "rgba(245,158,11,.4)";
-    ctx.lineWidth = 1;
-
-    for (var bx = 0; bx < size; bx += gs) {
-      for (var by = 0; by < size; by += gs) {
-        var px = startX + bx + gs / 2;
-        var py = startY + by + gs / 2;
-        var dx = px - cx;
-        var dy = py - cy;
-        var dist = Math.sqrt(dx * dx + dy * dy);
-        // Add irregular shape influence
-        var angle = Math.atan2(dy, dx);
-        var shapeR = r + Math.sin(angle * 3) * 15 + Math.cos(angle * 5) * 10;
-        if (dist < shapeR) {
-          ctx.fillRect(startX + bx, startY + by, gs - 1, gs - 1);
-          ctx.strokeRect(startX + bx, startY + by, gs - 1, gs - 1);
-        }
-      }
-    }
-  }
-
-  var modeColors = {
-    voxel:  { fill: "rgba(10,132,255,.12)",  stroke: "rgba(10,132,255,.6)",  label: "Voxel" },
-    smooth: { fill: "rgba(16,185,129,.12)",  stroke: "rgba(16,185,129,.6)",  label: "Smooth" },
-    sharp:  { fill: "rgba(142,69,255,.12)",  stroke: "rgba(142,69,255,.6)",  label: "Sharp" },
-    blocks: { fill: "rgba(245,158,11,.12)",  stroke: "rgba(245,158,11,.6)",  label: "Blocks" }
-  };
-
-  function draw() {
-    ctx.clearRect(0, 0, W, H);
-
-    // Background
-    ctx.fillStyle = "#17181a";
-    ctx.fillRect(0, 0, W, H);
-
-    // Grid
-    ctx.strokeStyle = "rgba(255,255,255,.04)";
-    ctx.lineWidth = 1;
-    for (var gx = 40; gx < W; gx += 40) {
-      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke();
-    }
-    for (var gy = 40; gy < H; gy += 40) {
-      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke();
-    }
-
-    // Arrow in middle
-    ctx.fillStyle = "rgba(255,255,255,.2)";
-    ctx.font = "bold 24px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("\u2192", W * 0.48, H * 0.5 + 8);
-    ctx.font = "11px sans-serif";
-    ctx.fillText("Remesh", W * 0.48, H * 0.5 + 26);
-
-    // ── Left: Original messy mesh ──
-    var messy = generateMessyShape();
-
-    // Fill
     ctx.beginPath();
-    messy.forEach(function(p, i) {
-      if (i === 0) ctx.moveTo(p.x, p.y);
-      else ctx.lineTo(p.x, p.y);
-    });
+    pts.forEach(function(p, i) { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
     ctx.closePath();
-    ctx.fillStyle = "rgba(239,68,68,.08)";
+    ctx.fillStyle = "rgba(239,68,68,.12)";
     ctx.fill();
-    ctx.strokeStyle = "rgba(239,68,68,.5)";
+    ctx.strokeStyle = "rgba(239,68,68,.6)";
     ctx.lineWidth = 1.5;
     ctx.stroke();
-
-    // Messy wireframe
-    drawMessyWireframe(messy, W * 0.25, H * 0.5);
-
-    // Vertices
-    messy.forEach(function(p) {
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(239,68,68,.6)";
-      ctx.fill();
+    seed = 99;
+    ctx.strokeStyle = "rgba(239,68,68,.2)";
+    ctx.lineWidth = 0.5;
+    for (var a = 0; a < pts.length; a++) {
+      for (var b = a + 2; b < pts.length; b++) {
+        if (sr() > 0.6) {
+          ctx.beginPath(); ctx.moveTo(pts[a].x, pts[a].y); ctx.lineTo(pts[b].x, pts[b].y); ctx.stroke();
+        }
+      }
+    }
+    pts.forEach(function(p) {
+      ctx.beginPath(); ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(239,68,68,.7)"; ctx.fill();
     });
-
-    // Label
-    ctx.fillStyle = "rgba(239,68,68,.7)";
-    ctx.font = "bold 12px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("Original (messy)", W * 0.25, 24);
-
-    // ── Right: Remeshed result ──
-    var mc = modeColors[currentMode];
-    var remeshed = generateRemeshed(currentMode, resolution);
-
-    if (remeshed.type === "blocks") {
-      drawBlocksShape(remeshed);
-    } else {
-      var rPts = remeshed.pts;
-
-      // Fill
-      ctx.beginPath();
-      rPts.forEach(function(p, i) {
-        if (i === 0) ctx.moveTo(p.x, p.y);
-        else ctx.lineTo(p.x, p.y);
-      });
-      ctx.closePath();
-      ctx.fillStyle = mc.fill;
-      ctx.fill();
-      ctx.strokeStyle = mc.stroke;
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-
-      // Clean wireframe
-      drawCleanWireframe(rPts, W * 0.72, H * 0.5);
-
-      // Vertices
-      rPts.forEach(function(p) {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
-        ctx.fillStyle = mc.stroke;
-        ctx.fill();
-      });
-    }
-
-    // Label
-    ctx.fillStyle = mc.stroke;
-    ctx.font = "bold 12px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText(mc.label + " (res: " + resolution + ")", W * 0.72, 24);
-
-    // Face count info
-    ctx.fillStyle = "rgba(255,255,255,.4)";
-    ctx.font = "11px sans-serif";
-    if (remeshed.type === "blocks") {
-      ctx.fillText("\uBCF5\uC140 \uADF8\uB9AC\uB4DC", W * 0.72, 42);
-    } else {
-      ctx.fillText(remeshed.segments + "\uBA74", W * 0.72, 42);
-    }
-    ctx.fillText("24\uBA74 (\uBD88\uADE0\uC77C)", W * 0.25, 42);
+    ctx.fillStyle = "rgba(239,68,68,.8)"; ctx.font = "bold 11px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("\uC6D0\uBCF8 (\uBD88\uADE0\uC77C)", cx, 16);
   }
 
-  // Mode buttons
-  var btnVoxel = document.getElementById("btnVoxel");
-  var btnSmooth = document.getElementById("btnSmooth");
-  var btnSharp = document.getElementById("btnSharp");
-  var btnBlocks = document.getElementById("btnBlocks");
-  var modeBtns = [btnVoxel, btnSmooth, btnSharp, btnBlocks];
-  var modeNames = ["voxel", "smooth", "sharp", "blocks"];
-
-  function setMode(mode) {
-    currentMode = mode;
-    modeBtns.forEach(function(b, i) {
-      if (modeNames[i] === mode) b.classList.add("is-active");
-      else b.classList.remove("is-active");
+  function drawVoxelMesh(ctx, w, h) {
+    drawBg(ctx, w, h);
+    var cx = w / 2, cy = h / 2, r = 55, segs = 24;
+    var pts = [];
+    for (var i = 0; i <= segs; i++) {
+      var angle = (i / segs) * Math.PI * 2;
+      pts.push({ x: cx + Math.cos(angle) * r, y: cy + Math.sin(angle) * r });
+    }
+    ctx.beginPath();
+    pts.forEach(function(p, i) { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+    ctx.closePath();
+    ctx.fillStyle = "rgba(10,132,255,.12)"; ctx.fill();
+    ctx.strokeStyle = "rgba(10,132,255,.6)"; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.strokeStyle = "rgba(10,132,255,.2)"; ctx.lineWidth = 0.5;
+    for (var i = 0; i < segs; i += 3) {
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(pts[i].x, pts[i].y); ctx.stroke();
+    }
+    pts.forEach(function(p, i) {
+      if (i % 3 === 0) { ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI * 2); ctx.fillStyle = "rgba(10,132,255,.8)"; ctx.fill(); }
     });
-    draw();
+    ctx.fillStyle = "rgba(10,132,255,.8)"; ctx.font = "bold 11px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("Voxel \uACB0\uACFC (\uADE0\uC77C)", cx, 16);
   }
 
-  btnVoxel.addEventListener("click", function() { setMode("voxel"); });
-  btnSmooth.addEventListener("click", function() { setMode("smooth"); });
-  btnSharp.addEventListener("click", function() { setMode("sharp"); });
-  btnBlocks.addEventListener("click", function() { setMode("blocks"); });
+  function drawSmoothMesh(ctx, w, h) {
+    drawBg(ctx, w, h);
+    var cx = w / 2, cy = h / 2;
+    ctx.beginPath(); ctx.arc(cx, cy, 58, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(16,185,129,.12)"; ctx.fill();
+    ctx.strokeStyle = "rgba(16,185,129,.6)"; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.strokeStyle = "rgba(16,185,129,.15)"; ctx.lineWidth = 0.5;
+    for (var i = 0; i < 12; i++) {
+      var a = (i / 12) * Math.PI * 2;
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(a) * 58, cy + Math.sin(a) * 58); ctx.stroke();
+    }
+    for (var rv = 20; rv <= 58; rv += 19) {
+      ctx.beginPath(); ctx.arc(cx, cy, rv, 0, Math.PI * 2); ctx.stroke();
+    }
+    ctx.fillStyle = "rgba(16,185,129,.8)"; ctx.font = "bold 11px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("Smooth \uACB0\uACFC (\uBD80\uB4DC\uB7EC\uC6C0)", cx, 16);
+  }
 
-  // Resolution slider
-  var resSlider = document.getElementById("resSlider");
-  var resVal = document.getElementById("resVal");
+  function drawBlocksMesh(ctx, w, h) {
+    drawBg(ctx, w, h);
+    var cx = w / 2, cy = h / 2, r = 55, gs = 14;
+    ctx.fillStyle = "rgba(245,158,11,.15)"; ctx.strokeStyle = "rgba(245,158,11,.5)"; ctx.lineWidth = 1;
+    for (var bx = cx - r; bx < cx + r; bx += gs) {
+      for (var by = cy - r; by < cy + r; by += gs) {
+        var dx = bx + gs / 2 - cx, dy = by + gs / 2 - cy;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        var ang = Math.atan2(dy, dx);
+        if (dist < r + Math.sin(ang * 3) * 12) {
+          ctx.fillRect(bx, by, gs - 1, gs - 1);
+          ctx.strokeRect(bx, by, gs - 1, gs - 1);
+        }
+      }
+    }
+    ctx.fillStyle = "rgba(245,158,11,.8)"; ctx.font = "bold 11px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("Blocks \uACB0\uACFC (\uBCF5\uC140\uD654)", cx, 16);
+  }
 
-  resSlider.addEventListener("input", function() {
-    resolution = parseInt(resSlider.value);
-    resVal.textContent = resolution;
-    draw();
+  var scenarios = {
+    voxel: {
+      desc: "\uADE0\uC77C\uD55C \uBCF5\uC140 \uD06C\uAE30\uB85C \uBA54\uC2DC\uB97C \uC7AC\uAD6C\uC131\uD569\uB2C8\uB2E4. \uBD88\uADDC\uCE59\uD55C \uD3F4\uB9AC\uACE4\uC774 \uAE54\uB054\uD55C \uCFFC\uB4DC \uADF8\uB9AC\uB4DC\uB85C \uBC14\uB00C\uC5B4 \uC2A4\uCEF5\uD305\uC774\uB098 \uB9AC\uD1A0\uD3F4\uB85C\uC9C0 \uC804\uCC98\uB9AC\uC5D0 \uCD5C\uC801\uC785\uB2C8\uB2E4.",
+      ce: [
+        { cause: "\uBD88\uADE0\uC77C \uD3F4\uB9AC\uACE4 (\uC6D0\uBCF8)", result: "\uADE0\uC77C\uD55C \uCFFC\uB4DC \uBA54\uC2DC", resultClass: "result-a" },
+        { cause: "\uBCF5\uC140 \uD06C\uAE30 \uCD95\uC18C", result: "\uB514\uD14C\uC77C \uC99D\uAC00, \uBA74 \uC218 \uC99D\uAC00", resultClass: "result-b" },
+        { cause: "\uBCF5\uC120 \uD06C\uAE30 \uD655\uB300", result: "\uD615\uD0DC \uB2E8\uC21C\uD654, \uBA74 \uC218 \uAC10\uC18C", resultClass: "result-a" }
+      ],
+      before: drawMessyMesh,
+      after: drawVoxelMesh
+    },
+    smooth: {
+      desc: "\uD45C\uBA74\uC744 \uBD80\uB4DC\uB7FD\uAC8C \uC7AC\uAD6C\uC131\uD569\uB2C8\uB2E4. Sharp \uAC01\uB3C4\uB97C \uC81C\uAC70\uD558\uACE0 \uC720\uAE30\uCCB4(\uCE90\uB9AD\uD130\u00B7\uB3D9\uBB3C) \uBAA8\uB378\uB9C1\uC5D0 \uC5B4\uC6B8\uB9AC\uB294 \uB9E4\uB04C\uB7EC\uC6B4 \uAD6C\uBA74 \uBA54\uC2DC\uB97C \uB9CC\uB4ED\uB2C8\uB2E4.",
+      ce: [
+        { cause: "\uC6B8\uD280\uBD88\uD280\uD55C \uC6D0\uBCF8 \uD615\uD0DC", result: "\uBD80\uB4DC\uB7FD\uACE0 \uADE0\uC77C\uD55C \uD1A0\uD3F4\uB85C\uC9C0", resultClass: "result-a" },
+        { cause: "\uB0A0\uCE74\uB85C\uC6B4 \uC5A3\uC9C0 \uC874\uC7AC", result: "Sharp \uC81C\uAC70, \uB77C\uC6B4\uB4DC \uCC98\uB9AC", resultClass: "result-a" },
+        { cause: "\uAE30\uC874 UV \uB9F5", result: "UV \uD30C\uAD34 \uC8FC\uC758", resultClass: "result-c" }
+      ],
+      before: drawMessyMesh,
+      after: drawSmoothMesh
+    },
+    blocks: {
+      desc: "\uB9C8\uC778\uD06C\uB798\uD504\uD2B8 \uC2A4\uD0C0\uC77C \uBCF5\uC140 \uBE14\uB85D\uC73C\uB85C \uBCC0\uD658\uD569\uB2C8\uB2E4. \uD53D\uC140 \uC544\uD2B8\u00B7\uAC8C\uC784 \uC5D0\uC14B \uC2A4\uD0C0\uC77C \uD45C\uD604\uC774\uB098 \uB3C5\uD2B9\uD55C \uBE44\uC8FC\uC5BC \uD6A8\uACFC\uC5D0 \uD65C\uC6A9\uD569\uB2C8\uB2E4.",
+      ce: [
+        { cause: "\uC720\uAE30\uCCB4 \uACE1\uBA74 \uD615\uD0DC", result: "\uC9C1\uC721\uBA74\uCCB4 \uBE14\uB85D \uBC30\uC5F4", resultClass: "result-b" },
+        { cause: "\uBE14\uB85D \uD06C\uAE30 \uC870\uC808", result: "\uD574\uC0C1\uB3C4\u00B7\uC2A4\uD0C0\uC77C \uBCC0\uACBD", resultClass: "result-a" },
+        { cause: "\uC6D0\uBCF8 \uB514\uD14C\uC77C", result: "\uBCF5\uC140\uD654\uB85C \uB514\uD14C\uC77C \uC190\uC2E4", resultClass: "result-c" }
+      ],
+      before: drawMessyMesh,
+      after: drawBlocksMesh
+    }
+  };
+
+  function switchScenario(key) {
+    document.querySelectorAll('.scenario-btn').forEach(function(b) {
+      b.classList.toggle('active', b.dataset.scene === key);
+    });
+    var s = scenarios[key];
+    document.getElementById('scene-desc').textContent = s.desc;
+    buildCauseEffect(s.ce);
+    renderBAPanels(s);
+  }
+
+  function buildCauseEffect(ces) {
+    var el = document.getElementById('cause-effect');
+    while (el.firstChild) el.removeChild(el.firstChild);
+    ces.forEach(function(c) {
+      var row = document.createElement('div'); row.className = 'ce-row';
+      var cause = document.createElement('div'); cause.className = 'ce-cause'; cause.textContent = c.cause;
+      var arrow = document.createElement('div'); arrow.className = 'ce-arrow'; arrow.textContent = '\u2192';
+      var result = document.createElement('div'); result.className = 'ce-result ' + c.resultClass; result.textContent = c.result;
+      row.appendChild(cause); row.appendChild(arrow); row.appendChild(result);
+      el.appendChild(row);
+    });
+  }
+
+  function renderBAPanels(s) {
+    var bc = document.getElementById('canvas-before'), ac = document.getElementById('canvas-after');
+    var bx = bc.getContext('2d'), ax = ac.getContext('2d');
+    bc.width = bc.offsetWidth || 280; bc.height = 160;
+    ac.width = ac.offsetWidth || 280; ac.height = 160;
+    bx.clearRect(0, 0, bc.width, bc.height);
+    ax.clearRect(0, 0, ac.width, ac.height);
+    if (s.before) s.before(bx, bc.width, bc.height);
+    if (s.after) s.after(ax, ac.width, ac.height);
+  }
+
+  document.querySelectorAll('.scenario-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() { switchScenario(btn.dataset.scene); });
   });
 
-  // Touch support for slider
-  resSlider.addEventListener("touchstart", function(e) { e.stopPropagation(); }, { passive: true });
-  resSlider.addEventListener("touchmove", function(e) { e.stopPropagation(); }, { passive: true });
+  document.querySelectorAll('.tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      if (tab.dataset.tab === 'visual') { setTimeout(function() { switchScenario('voxel'); }, 50); }
+    });
+  });
 
-  // Initial draw
-  draw();
+  switchScenario('voxel');
 })();
 
 // ── Quiz Data ─────────────────────────────────
