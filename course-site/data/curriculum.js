@@ -453,7 +453,11 @@ const CURRICULUM = [
           "정면·측면 레퍼런스가 각 뷰에 정렬되어 있다",
           "모델링 도중 레퍼런스가 방해되지 않는다"
         ],
-        "image": "assets/images/week03/robot-ref-front.png",
+        "images": [
+          "assets/images/week03/robot-ref-front.png",
+          "assets/images/week03/robot-ref-side.png",
+          "assets/images/week03/robot-ref-back.png"
+        ],
         "downloads": [
           { "label": "정면 (Front)", "url": "assets/images/week03/robot-ref-front.png" },
           { "label": "측면 (Side)",  "url": "assets/images/week03/robot-ref-side.png" },
