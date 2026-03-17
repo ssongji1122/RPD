@@ -749,30 +749,30 @@
     // ─── Supplement Accordion ──────────────────────────────────
     function findSupplementForWidget(wid) {
       if (typeof SHOWME_SUPPLEMENTS === "undefined") return null;
-      for (var key in SHOWME_SUPPLEMENTS) {
-        var s = SHOWME_SUPPLEMENTS[key];
+      for (const key in SHOWME_SUPPLEMENTS) {
+        const s = SHOWME_SUPPLEMENTS[key];
         if (s.targets && s.targets.indexOf(wid) !== -1) return s;
       }
       return null;
     }
 
     function buildSupplementAccordion(doc, supplement) {
-      var wrap = doc.createElement("div");
+      const wrap = doc.createElement("div");
       wrap.style.cssText = "margin-top:20px;border:1px solid rgba(245,158,11,.18);border-radius:18px;overflow:hidden;background:rgba(245,158,11,.04);";
 
-      var toggle = doc.createElement("button");
+      const toggle = doc.createElement("button");
       toggle.style.cssText = "display:flex;align-items:center;gap:8px;width:100%;padding:14px 16px;border:none;background:none;color:#fbbf24;font:inherit;font-size:.88rem;font-weight:600;cursor:pointer;text-align:left;";
       toggle.textContent = "\uD83D\uDCA1 " + (supplement.title || "\uc544\uc9c1 \ud5f7\uac08\ub9b0\ub2e4\uba74?");
 
-      var arrow = doc.createElement("span");
+      const arrow = doc.createElement("span");
       arrow.style.cssText = "margin-left:auto;transition:transform .2s;font-size:.8rem;";
       arrow.textContent = "\u25BC";
       toggle.appendChild(arrow);
 
-      var content = doc.createElement("div");
+      const content = doc.createElement("div");
       content.style.cssText = "display:none;padding:0 16px 16px;";
 
-      var open = false;
+      let open = false;
       toggle.addEventListener("click", function() {
         open = !open;
         content.style.display = open ? "block" : "none";
@@ -780,12 +780,12 @@
       });
 
       if (supplement.analogy) {
-        var analogyDiv = doc.createElement("div");
+        const analogyDiv = doc.createElement("div");
         analogyDiv.style.cssText = "margin-bottom:12px;padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);";
-        var headlineEl = doc.createElement("div");
+        const headlineEl = doc.createElement("div");
         headlineEl.style.cssText = "font-size:.9rem;font-weight:600;color:#f5f5f7;margin-bottom:6px;";
         headlineEl.textContent = (supplement.analogy.emoji || "") + " " + supplement.analogy.headline;
-        var bodyEl = doc.createElement("div");
+        const bodyEl = doc.createElement("div");
         bodyEl.style.cssText = "font-size:.85rem;color:#d4d4d8;line-height:1.7;";
         bodyEl.textContent = supplement.analogy.body;
         analogyDiv.appendChild(headlineEl);
@@ -794,24 +794,24 @@
       }
 
       if (supplement.before_after) {
-        var baDiv = doc.createElement("div");
+        const baDiv = doc.createElement("div");
         baDiv.style.cssText = "display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;";
-        var beforeDiv = doc.createElement("div");
+        const beforeDiv = doc.createElement("div");
         beforeDiv.style.cssText = "padding:12px;border-radius:12px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.15);";
-        var beforeLabel = doc.createElement("div");
+        const beforeLabel = doc.createElement("div");
         beforeLabel.style.cssText = "font-size:.76rem;font-weight:600;color:#fca5a5;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em;";
         beforeLabel.textContent = "WITHOUT";
-        var beforeText = doc.createElement("div");
+        const beforeText = doc.createElement("div");
         beforeText.style.cssText = "font-size:.84rem;color:#d4d4d8;line-height:1.6;";
         beforeText.textContent = supplement.before_after.before;
         beforeDiv.appendChild(beforeLabel);
         beforeDiv.appendChild(beforeText);
-        var afterDiv = doc.createElement("div");
+        const afterDiv = doc.createElement("div");
         afterDiv.style.cssText = "padding:12px;border-radius:12px;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.15);";
-        var afterLabel = doc.createElement("div");
+        const afterLabel = doc.createElement("div");
         afterLabel.style.cssText = "font-size:.76rem;font-weight:600;color:#6ee7b7;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em;";
         afterLabel.textContent = "WITH";
-        var afterText = doc.createElement("div");
+        const afterText = doc.createElement("div");
         afterText.style.cssText = "font-size:.84rem;color:#d4d4d8;line-height:1.6;";
         afterText.textContent = supplement.before_after.after;
         afterDiv.appendChild(afterLabel);
@@ -822,7 +822,7 @@
       }
 
       if (supplement.takeaway) {
-        var takeawayDiv = doc.createElement("div");
+        const takeawayDiv = doc.createElement("div");
         takeawayDiv.style.cssText = "padding:10px 14px;border-radius:12px;background:rgba(10,132,255,.08);border:1px solid rgba(10,132,255,.18);font-size:.86rem;color:#8ec5ff;font-weight:500;";
         takeawayDiv.textContent = "\u2192 " + supplement.takeaway;
         content.appendChild(takeawayDiv);
@@ -835,11 +835,11 @@
 
     function injectSupplement(iframe, widgetId) {
       try {
-        var doc = iframe.contentDocument;
+        const doc = iframe.contentDocument;
         if (!doc) return;
-        var supplement = findSupplementForWidget(widgetId);
+        const supplement = findSupplementForWidget(widgetId);
         if (!supplement) return;
-        var panel = doc.getElementById("panel-concept");
+        const panel = doc.getElementById("panel-concept");
         if (!panel) return;
         panel.appendChild(buildSupplementAccordion(doc, supplement));
       } catch(e) {}
