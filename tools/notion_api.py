@@ -230,6 +230,7 @@ def week_to_notion_blocks(week: dict) -> list[dict]:
     })
 
     # Steps as checklist
+    _supplements = load_supplements()
     for step in week.get("steps", []):
         # Step title as heading_3
         blocks.append({
@@ -275,7 +276,6 @@ def week_to_notion_blocks(week: dict) -> list[dict]:
         showme_ids = step.get("showme", [])
         if isinstance(showme_ids, str):
             showme_ids = [showme_ids]
-        _supplements = load_supplements()
         for sid in showme_ids:
             sup = find_supplement_for_widget(sid, _supplements)
             if not sup:
