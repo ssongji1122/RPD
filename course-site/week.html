@@ -23,52 +23,7 @@
       color: var(--muted-strong); font-size: clamp(.98rem, 1.6vw, 1.06rem);
       line-height: 1.8; white-space: nowrap;
     }
-    .hero-meta { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; }
-    .meta-chip {
-      display: inline-flex; align-items: center; gap: 7px;
-      padding: 6px 13px; border-radius: 999px;
-      border: 1px solid var(--line);
-      background: var(--surface); color: var(--muted-strong);
-      font-size: .82rem;
-    }
 
-    /* Topic checklist */
-    .topic-progress { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
-    .topic-progress-bar { flex: 1; height: 4px; border-radius: 2px; background: var(--line); }
-    .topic-progress-fill { height: 100%; border-radius: 2px; background: var(--key-soft); transition: width .35s ease; width: 0%; }
-    .topic-progress-label { font-size: .78rem; color: var(--muted); white-space: nowrap; }
-
-    .topic-check-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
-    @media (max-width: 720px) { .topic-check-list { grid-template-columns: 1fr; } }
-    .topic-check-item { position: relative; }
-    .topic-check-item input[type="checkbox"] { position: absolute; opacity: 0; width: 0; height: 0; }
-    .topic-check-item label {
-      display: flex; align-items: center; gap: 11px;
-      padding: 7px 12px; border-radius: 999px;
-      border: 1px solid var(--line);
-      background: var(--overlay-white);
-      color: var(--muted-strong); font-size: .82rem;
-      cursor: pointer;
-      transition: background .22s, border-color .22s, color .22s;
-      user-select: none;
-    }
-    .topic-check-item label::before {
-      content: ""; flex-shrink: 0;
-      width: 14px; height: 14px; border-radius: 50%;
-      border: 1.5px solid var(--line-strong);
-      transition: background .22s, border-color .22s;
-    }
-    .topic-check-item input:checked + label {
-      background: rgba(10,132,255,.14);
-      border-color: rgba(10,132,255,.4);
-      color: var(--key-soft);
-    }
-    .topic-check-item input:checked + label::before {
-      background: var(--key-soft);
-      border-color: var(--key-soft);
-      background-image: url("data:image/svg+xml,%3Csvg width='9' height='7' viewBox='0 0 9 7' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 3.5L3.2 5.8L8 1' stroke='white' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat; background-position: center;
-    }
 
     /* Nav between weeks */
     .week-nav {
@@ -190,6 +145,49 @@
       border-color: rgba(16,185,129,.6);
     }
     .btn-showme.is-complete::before { content: "✅ "; }
+
+    /* ── Clip Player ── */
+    .clip-player {
+      border-radius: var(--radius-md);
+      border: 1px solid var(--line);
+      background: var(--surface);
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+    .clip-player video {
+      display: block; width: 100%;
+      border-radius: var(--radius-md) var(--radius-md) 0 0;
+      cursor: pointer;
+    }
+    .clip-tabs {
+      display: flex; gap: 0;
+      border-top: 1px solid var(--line);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .clip-tabs::-webkit-scrollbar { display: none; }
+    .clip-tab {
+      flex: 1; min-width: 0;
+      padding: 9px 14px;
+      font: inherit; font-size: .78rem; font-weight: 500;
+      color: var(--muted);
+      background: none; border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      white-space: nowrap;
+      text-align: center;
+      transition: color .14s, border-color .14s, background .14s;
+    }
+    .clip-tab:hover { color: var(--muted-strong); background: rgba(255,255,255,.03); }
+    .clip-tab.is-active {
+      color: var(--key-soft);
+      border-bottom-color: var(--key);
+      background: rgba(10,132,255,.04);
+    }
+    .clip-player-hint {
+      font-size: .72rem; color: var(--muted);
+      text-align: center; padding: 4px 0 6px;
+    }
 
     /* ── Show Me Modal ── */
     .showme-overlay {
@@ -499,24 +497,6 @@
       const videos = w.videos || [];
       const docs = w.docs || [];
 
-      // Topics (checkable pills with localStorage persistence)
-      const topicStorageKey = storageKey + "-topics";
-      const savedTopics = JSON.parse(localStorage.getItem(topicStorageKey) || "{}");
-      const topicTotal = w.topics.length;
-      const topicCheckedInit = w.topics.filter((_, i) => savedTopics["t" + i]).length;
-
-      const topicPills =
-        "<div class=\"topic-progress\">" +
-          "<div class=\"topic-progress-bar\"><div class=\"topic-progress-fill\" id=\"topicFill\" style=\"width:" + Math.round(topicCheckedInit / topicTotal * 100) + "%\"></div></div>" +
-          "<div class=\"topic-progress-label\" id=\"topicCount\">" + topicCheckedInit + " / " + topicTotal + "</div>" +
-        "</div>" +
-        "<div class=\"topic-check-list\">" +
-        w.topics.map((t, i) => {
-          const id = "tc-" + weekNum + "-" + i;
-          const chk = savedTopics["t" + i] ? " checked" : "";
-          return "<div class=\"topic-check-item\"><input type=\"checkbox\" id=\"" + id + "\"" + chk + " data-ti=\"" + i + "\" /><label for=\"" + id + "\">" + t + "</label></div>";
-        }).join("") +
-        "</div>";
 
       // Steps HTML
       const stepsHtml = w.steps.map((step, idx) => {
@@ -561,6 +541,18 @@
                 ? `<a href="${step.link}" target="_blank" rel="noopener noreferrer"><img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" /></a>`
                 : `<img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" />`) : ""}
             ${step.video ? `<video class="step-video" controls preload="metadata"><source src="${step.video}" type="video/mp4" /><source src="${step.video}" type="video/quicktime" /></video>` : ""}
+            ${step.clips && step.clips.length ? `
+              <div class="clip-player" data-step-clips>
+                <video src="${step.clips[0].src}" autoplay loop muted playsinline
+                       onclick="this.paused ? this.play() : this.pause()"
+                       title="클릭하면 일시정지/재생"></video>
+                ${step.clips.length > 1 ? `
+                  <div class="clip-tabs">${step.clips.map((c, ci) =>
+                    `<button class="clip-tab${ci === 0 ? ' is-active' : ''}" type="button"
+                             data-clip-src="${c.src}" data-clip-idx="${ci}">${c.label}</button>`
+                  ).join('')}</div>` : ''}
+                <div class="clip-player-hint">클릭하면 일시정지 · 다시 클릭하면 재생</div>
+              </div>` : ""}
             ${step.downloads && step.downloads.length ? `<div class="step-downloads">${step.downloads.map(dl => `<a class="step-dl-btn" href="${dl.url}" download="${dl.url.split('/').pop()}" target="_blank" rel="noopener">⬇ ${dl.label}</a>`).join("")}</div>` : ""}
             <p class="step-copy">${step.copy}</p>
             ${showmeHtml}
@@ -646,20 +638,7 @@
           <div class="hero-card">
             <div class="eyebrow">Week ${String(w.week).padStart(2,"0")} · RPD</div>
             <h1>${w.title}</h1>
-            ${w.subtitle ? `<p>${w.subtitle}</p>` : ""}
-            <div class="hero-meta">
-              <span class="meta-chip">⏱ ${w.duration}</span>
-              <span class="meta-chip">📋 ${w.steps.length}단계 실습</span>
-              ${videos.length ? `<span class="meta-chip">▶ ${videos.length}개 공식 영상</span>` : ""}
-              ${docs.length ? `<span class="meta-chip">📄 ${docs.length}개 공식 문서</span>` : ""}
-            </div>
           </div>
-        </section>
-
-        <!-- Topics -->
-        <section class="content-block">
-          <div class="section-head"><h3>이번 주</h3></div>
-          <div class="topic-list">${topicPills}</div>
         </section>
 
         <!-- Lab (Steps) -->
@@ -689,32 +668,22 @@
         <div style="height:60px"></div>
       `;
 
+      // ─── Clip tab switching ───
+      document.querySelectorAll(".clip-player").forEach(function(player) {
+        player.querySelectorAll(".clip-tab").forEach(function(tab) {
+          tab.addEventListener("click", function() {
+            player.querySelectorAll(".clip-tab").forEach(function(t) { t.classList.remove("is-active"); });
+            tab.classList.add("is-active");
+            var video = player.querySelector("video");
+            video.src = tab.dataset.clipSrc;
+            video.play();
+          });
+        });
+      });
+
       // Init progress engine
       initProgress(w.steps.length);
-      initTopicChecks(w.topics.length, topicStorageKey);
       initSidebar(w);
-    }
-
-    // ─── Topic check engine ──────────────────────────
-    function initTopicChecks(total, key) {
-      const fill  = document.getElementById("topicFill");
-      const count = document.getElementById("topicCount");
-      if (!fill || !count) return;
-
-      function updateTopicProgress() {
-        const all     = [...document.querySelectorAll(".topic-check-list input[type='checkbox']")];
-        const checked = all.filter(c => c.checked).length;
-        const pct     = total > 0 ? Math.round(checked / total * 100) : 0;
-        fill.style.width  = pct + "%";
-        count.textContent = checked + " / " + total;
-        const state = {};
-        all.forEach((c, i) => { state["t" + i] = c.checked; });
-        localStorage.setItem(key, JSON.stringify(state));
-      }
-
-      document.querySelectorAll(".topic-check-list input[type='checkbox']").forEach(cb => {
-        cb.addEventListener("change", updateTopicProgress);
-      });
     }
 
     // ─── Progress engine ─────────────────────────────

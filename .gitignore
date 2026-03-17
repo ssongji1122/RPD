@@ -7,6 +7,9 @@
 *.m4v
 *.mepj
 
+# Allow course-site clips (small compressed clips for inline playback)
+!course-site/assets/clips/**/*.mp4
+
 # System
 .DS_Store
 ._*
