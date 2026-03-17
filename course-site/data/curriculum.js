@@ -757,7 +757,10 @@ const CURRICULUM = [
         "goal": [
           "레퍼런스 이미지를 뷰포트에 정확히 정렬한다"
         ],
-        "video": "assets/videos/week03/001-ref-setting.mov",
+        "video": {
+          "src": "https://youtu.be/-U82eI3eiQ0",
+          "caption": "민트 로봇 레퍼런스 이미지를 뷰포트에 배치하는 전체 과정이에요. 영상을 보며 그대로 따라해요."
+        },
         "images": [
           "assets/images/week03/robot-ref-front.png",
           "assets/images/week03/robot-ref-side.png",
@@ -878,11 +881,13 @@ const CURRICULUM = [
     "videos": [
       {
         "title": "[실습] 민트 로봇 레퍼런스 이미지 설정",
-        "url": "https://youtu.be/-U82eI3eiQ0"
+        "url": "https://youtu.be/-U82eI3eiQ0",
+        "description": "정면·측면 레퍼런스를 뷰포트에 올리고 Opacity를 조절하는 세팅 과정이에요."
       },
       {
         "title": "[실습] 민트 로봇 헤드 Mirror 모델링",
-        "url": "https://youtu.be/FIY9RBLdYcA"
+        "url": "https://youtu.be/FIY9RBLdYcA",
+        "description": "Mirror Modifier로 로봇 헤드를 좌우 대칭 모델링하는 전체 과정이에요."
       },
       {
         "title": "Blender Studio - Modeling Introduction",
