@@ -5,6 +5,12 @@ description: RPD curriculum.js 콘텐츠 작성/편집. 주차 데이터 추가,
 
 # RPD Content Write
 
+## 리서치 브리프 참조
+
+작업 시작 전 `claudedocs/research/{관련-id}-brief.md` 존재 여부 확인:
+- **있으면** → 비유(§7), 실수(§6), 단축키(§3)를 브리프에서 가져와 curriculum.js에 반영
+- **없으면** → `⚠️ {id} 리서치 브리프가 없습니다. /rpd-research {id} 먼저 실행을 권장합니다.`
+
 ## 대상 파일
 - `course-site/data/curriculum.js` — 15주 커리큘럼 데이터 (단일 소스)
 
