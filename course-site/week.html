@@ -540,7 +540,7 @@
               : step.image ? (step.link
                 ? `<a href="${step.link}" target="_blank" rel="noopener noreferrer"><img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" /></a>`
                 : `<img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" />`) : ""}
-            ${step.video ? `<video class="step-video" controls preload="metadata"><source src="${step.video}" type="video/mp4" /><source src="${step.video}" type="video/quicktime" /></video>` : ""}
+            ${step.video ? `<div class="step-player"><video class="step-video" preload="metadata"><source src="${step.video}" type="video/mp4" /><source src="${step.video}" type="video/quicktime" /></video><div class="spc"><button class="spc-btn spc-rw" aria-label="10초 뒤로">−10</button><button class="spc-btn spc-play" aria-label="재생">▶</button><button class="spc-btn spc-fw" aria-label="10초 앞으로">+10</button><div class="spc-track"><div class="spc-fill"></div><input class="spc-seek" type="range" min="0" max="100" value="0" step="0.1" aria-label="탐색" /></div><span class="spc-time">0:00</span></div></div>` : ""}
             ${step.clips && step.clips.length ? `
               <div class="clip-player" data-step-clips>
                 <video src="${step.clips[0].src}" autoplay loop muted playsinline
@@ -684,7 +684,54 @@
       // Init progress engine
       initProgress(w.steps.length);
       initSidebar(w);
+      initStepVideos();
     }
+
+    // ─── Step Video Player ───────────────────────────
+    function initStepVideos() {
+      document.querySelectorAll(".step-player").forEach(function(player) {
+        var video   = player.querySelector(".step-video");
+        var playBtn = player.querySelector(".spc-play");
+        var rwBtn   = player.querySelector(".spc-rw");
+        var fwBtn   = player.querySelector(".spc-fw");
+        var seek    = player.querySelector(".spc-seek");
+        var fill    = player.querySelector(".spc-fill");
+        var timeEl  = player.querySelector(".spc-time");
+
+        function fmt(s) {
+          var m = Math.floor(s / 60);
+          var sec = Math.floor(s % 60);
+          return m + ":" + (sec < 10 ? "0" : "") + sec;
+        }
+
+        function updateFill() {
+          var pct = video.duration ? (video.currentTime / video.duration * 100) : 0;
+          fill.style.width = pct + "%";
+          seek.value = pct;
+          timeEl.textContent = fmt(video.currentTime) + (video.duration ? " / " + fmt(video.duration) : "");
+        }
+
+        video.addEventListener("timeupdate", updateFill);
+        video.addEventListener("loadedmetadata", updateFill);
+
+        playBtn.addEventListener("click", function() {
+          if (video.paused) { video.play(); playBtn.textContent = "⏸"; }
+          else              { video.pause(); playBtn.textContent = "▶"; }
+        });
+        video.addEventListener("ended", function() { playBtn.textContent = "▶"; });
+
+        rwBtn.addEventListener("click", function() { video.currentTime = Math.max(0, video.currentTime - 10); });
+        fwBtn.addEventListener("click", function() { video.currentTime = Math.min(video.duration || 0, video.currentTime + 10); });
+
+        seek.addEventListener("input", function() {
+          if (video.duration) video.currentTime = video.duration * seek.value / 100;
+        });
+
+        // Tap on video toggles play/pause
+        video.addEventListener("click", function() { playBtn.click(); });
+      });
+    }
+
 
     // ─── Progress engine ─────────────────────────────
     function initProgress(totalSteps) {
