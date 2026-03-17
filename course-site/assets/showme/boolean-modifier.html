@@ -348,6 +348,17 @@ body {
   line-height: 1.5;
 }
 .doc-ref a:hover { text-decoration: underline; }
+.scenario-nav { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+.scenario-btn { padding:6px 14px; border-radius:20px; border:1px solid rgba(255,255,255,.15); background:transparent; color:#cbd5e1; cursor:pointer; font-size:13px; transition:all .2s; font-family:inherit; }
+.scenario-btn.active { background:rgba(99,102,241,.25); border-color:rgba(99,102,241,.5); color:#a5b4fc; }
+.cause-effect { display:flex; flex-direction:column; gap:8px; margin:12px 0; }
+.ce-row { display:flex; align-items:center; gap:8px; }
+.ce-cause { background:rgba(99,102,241,.12); border:1px solid rgba(99,102,241,.25); border-radius:8px; padding:6px 12px; font-size:13px; flex:1; }
+.ce-arrow { color:#64748b; font-size:16px; flex-shrink:0; }
+.ce-result { border-radius:8px; padding:6px 12px; font-size:13px; flex:1.5; }
+.result-a { background:rgba(16,185,129,.1); border:1px solid rgba(16,185,129,.25); color:#6ee7b7; }
+.result-b { background:rgba(245,158,11,.1); border:1px solid rgba(245,158,11,.25); color:#fcd34d; }
+.result-c { background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.25); color:#fca5a5; }
 
 /* ── Responsive ── */
 @media (max-width: 600px) {
@@ -415,9 +426,16 @@ body {
 
 <!-- TAB 2: 시각적 비교 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    버튼을 눌러 Boolean 연산 결과를 확인하세요. 파란색은 Shape A, 초록색은 Shape B입니다.
-  </p>
+
+  <div class="scenario-nav" id="boolScenarioNav">
+    <button class="scenario-btn active" onclick="switchBoolScenario('union')">Union (합)</button>
+    <button class="scenario-btn" onclick="switchBoolScenario('difference')">Difference (차)</button>
+    <button class="scenario-btn" onclick="switchBoolScenario('intersect')">Intersect (교)</button>
+  </div>
+
+  <div id="boolDesc" style="font-size:.84rem; color:var(--muted-strong); margin:0 0 8px;"></div>
+  <div class="cause-effect" id="boolCE"></div>
+
   <div class="demo-wrap">
     <canvas id="demoCanvas" width="680" height="300"></canvas>
     <div class="demo-controls">
@@ -623,6 +641,78 @@ function initQuiz(questions) {
     container.appendChild(scoreDiv);
   }
 }
+
+// ── Scenario System ───────────────────────────
+var boolScenarios = {
+  union: {
+    desc: "두 오브젝트를 합쳐 하나의 메쉬로 만듭니다. 겹치는 내부 면은 제거되고 외곽만 남습니다.",
+    ce: [
+      { cause: "Shape A + Shape B 선택", result: "두 오브젝트가 하나로 합쳐짐", resultClass: "result-a" },
+      { cause: "내부 겹침 영역", result: "자동으로 제거되어 깔끔한 외곽선", resultClass: "result-a" },
+      { cause: "Apply 후", result: "단일 메쉬로 변환, 수정 불가", resultClass: "result-b" }
+    ]
+  },
+  difference: {
+    desc: "Shape A에서 Shape B 모양을 잘라냅니다. 구멍 뚫기, 컷아웃에 가장 많이 사용됩니다.",
+    ce: [
+      { cause: "Shape B (커터) 위치 지정", result: "A에서 B 형태만큼 잘려나감", resultClass: "result-a" },
+      { cause: "커터 오브젝트 숨기기 (H)", result: "결과만 보이게 정리", resultClass: "result-b" },
+      { cause: "커터 이동/수정 후 재적용", result: "구멍 위치/크기 변경 가능", resultClass: "result-a" }
+    ]
+  },
+  intersect: {
+    desc: "두 오브젝트가 겹치는 부분만 남깁니다. 교차 볼륨 추출에 사용됩니다.",
+    ce: [
+      { cause: "두 오브젝트 겹침", result: "겹친 부분 볼륨만 추출됨", resultClass: "result-a" },
+      { cause: "겹치지 않는 부분", result: "모두 제거됨", resultClass: "result-c" },
+      { cause: "Intersect 결과 Apply", result: "교차 형태만 남은 단일 메쉬", resultClass: "result-b" }
+    ]
+  }
+};
+
+function buildBoolCE(ces) {
+  var container = document.getElementById('boolCE');
+  while (container.firstChild) { container.removeChild(container.firstChild); }
+  ces.forEach(function(item) {
+    var row = document.createElement('div');
+    row.className = 'ce-row';
+    var cause = document.createElement('div');
+    cause.className = 'ce-cause';
+    cause.textContent = item.cause;
+    var arrow = document.createElement('div');
+    arrow.className = 'ce-arrow';
+    arrow.textContent = '\u2192';
+    var result = document.createElement('div');
+    result.className = 'ce-result ' + item.resultClass;
+    result.textContent = item.result;
+    row.appendChild(cause);
+    row.appendChild(arrow);
+    row.appendChild(result);
+    container.appendChild(row);
+  });
+}
+
+function switchBoolScenario(key) {
+  var s = boolScenarios[key];
+  document.getElementById('boolDesc').textContent = s.desc;
+  buildBoolCE(s.ce);
+  document.querySelectorAll('#boolScenarioNav .scenario-btn').forEach(function(btn) {
+    btn.classList.remove('active');
+    if (btn.getAttribute('onclick') && btn.getAttribute('onclick').indexOf("'" + key + "'") >= 0) {
+      btn.classList.add('active');
+    }
+  });
+  // Sync canvas demo
+  var modeMap = { union: 'btnUnion', difference: 'btnDifference', intersect: 'btnIntersect' };
+  var targetBtn = document.getElementById(modeMap[key]);
+  if (targetBtn) { targetBtn.click(); }
+}
+
+(function() {
+  var s = boolScenarios['union'];
+  document.getElementById('boolDesc').textContent = s.desc;
+  buildBoolCE(s.ce);
+})();
 
 // ── Canvas Boolean Demo ───────────────────────
 (function() {

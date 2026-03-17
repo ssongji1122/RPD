@@ -334,6 +334,17 @@ body {
   line-height: 1.5;
 }
 .doc-ref a:hover { text-decoration: underline; }
+.scenario-nav { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+.scenario-btn { padding:6px 14px; border-radius:20px; border:1px solid rgba(255,255,255,.15); background:transparent; color:#cbd5e1; cursor:pointer; font-size:13px; transition:all .2s; font-family:inherit; }
+.scenario-btn.active { background:rgba(99,102,241,.25); border-color:rgba(99,102,241,.5); color:#a5b4fc; }
+.cause-effect { display:flex; flex-direction:column; gap:8px; margin:12px 0; }
+.ce-row { display:flex; align-items:center; gap:8px; }
+.ce-cause { background:rgba(99,102,241,.12); border:1px solid rgba(99,102,241,.25); border-radius:8px; padding:6px 12px; font-size:13px; flex:1; }
+.ce-arrow { color:#64748b; font-size:16px; flex-shrink:0; }
+.ce-result { border-radius:8px; padding:6px 12px; font-size:13px; flex:1.5; }
+.result-a { background:rgba(16,185,129,.1); border:1px solid rgba(16,185,129,.25); color:#6ee7b7; }
+.result-b { background:rgba(245,158,11,.1); border:1px solid rgba(245,158,11,.25); color:#fcd34d; }
+.result-c { background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.25); color:#fca5a5; }
 /* ── Responsive ── */
 @media (max-width: 600px) {
   .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
@@ -397,9 +408,16 @@ body {
 
 <!-- TAB 2: 시각적 비교 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    Segments와 Profile 슬라이더를 조절하여 Bevel 효과를 비교하세요.
-  </p>
+
+  <div class="scenario-nav" id="bevelToolScenarioNav">
+    <button class="scenario-btn active" onclick="switchBevelToolScenario('basic')">기본 Bevel</button>
+    <button class="scenario-btn" onclick="switchBevelToolScenario('segments')">Segments 조절</button>
+    <button class="scenario-btn" onclick="switchBevelToolScenario('profile')">Profile 형태</button>
+  </div>
+
+  <div id="bevelToolDesc" style="font-size:.84rem; color:var(--muted-strong); margin:0 0 8px;"></div>
+  <div class="cause-effect" id="bevelToolCE"></div>
+
   <div class="demo-wrap">
     <canvas id="demoCanvas" width="680" height="340"></canvas>
     <div class="demo-controls">
@@ -603,6 +621,74 @@ function initQuiz(questions) {
     container.appendChild(scoreDiv);
   }
 }
+
+// ── Scenario System ───────────────────────────
+var bevelToolScenarios = {
+  basic: {
+    desc: "Ctrl+B로 엣지를 선택하고 마우스를 이동해 베벨 양을 조절합니다. 비파괴가 아닌 즉시 적용 방식입니다.",
+    ce: [
+      { cause: "엣지 선택 → Ctrl+B", result: "마우스 이동으로 베벨 미리보기 시작", resultClass: "result-a" },
+      { cause: "마우스 이동 거리", result: "베벨 Width(깎는 폭) 결정", resultClass: "result-b" },
+      { cause: "LMB 확정", result: "메쉬에 즉시 적용 (비파괴 아님)", resultClass: "result-c" }
+    ]
+  },
+  segments: {
+    desc: "베벨 중에 스크롤로 Segment 수를 조절합니다. 수가 많을수록 부드러운 곡면이 됩니다.",
+    ce: [
+      { cause: "스크롤 위 (베벨 중)", result: "Segment 수 증가, 더 부드러운 곡면", resultClass: "result-a" },
+      { cause: "Segment = 1", result: "Chamfer — 평면으로 45도 깎기", resultClass: "result-b" },
+      { cause: "Segment = 3+", result: "둥근 모서리, 자연스러운 곡면", resultClass: "result-a" }
+    ]
+  },
+  profile: {
+    desc: "P키로 Profile 값을 조절해 베벨 단면 형태를 볼록/오목으로 변경합니다.",
+    ce: [
+      { cause: "Profile = 0.0", result: "오목 (안쪽으로 파인 형태)", resultClass: "result-c" },
+      { cause: "Profile = 0.5", result: "원형 (기본 둥근 베벨)", resultClass: "result-a" },
+      { cause: "Profile = 1.0", result: "볼록 (바깥쪽으로 튀어나온 형태)", resultClass: "result-b" }
+    ]
+  }
+};
+
+function buildBevelToolCE(ces) {
+  var container = document.getElementById('bevelToolCE');
+  while (container.firstChild) { container.removeChild(container.firstChild); }
+  ces.forEach(function(item) {
+    var row = document.createElement('div');
+    row.className = 'ce-row';
+    var cause = document.createElement('div');
+    cause.className = 'ce-cause';
+    cause.textContent = item.cause;
+    var arrow = document.createElement('div');
+    arrow.className = 'ce-arrow';
+    arrow.textContent = '\u2192';
+    var result = document.createElement('div');
+    result.className = 'ce-result ' + item.resultClass;
+    result.textContent = item.result;
+    row.appendChild(cause);
+    row.appendChild(arrow);
+    row.appendChild(result);
+    container.appendChild(row);
+  });
+}
+
+function switchBevelToolScenario(key) {
+  var s = bevelToolScenarios[key];
+  document.getElementById('bevelToolDesc').textContent = s.desc;
+  buildBevelToolCE(s.ce);
+  document.querySelectorAll('#bevelToolScenarioNav .scenario-btn').forEach(function(btn) {
+    btn.classList.remove('active');
+    if (btn.getAttribute('onclick') && btn.getAttribute('onclick').indexOf("'" + key + "'") >= 0) {
+      btn.classList.add('active');
+    }
+  });
+}
+
+(function() {
+  var s = bevelToolScenarios['basic'];
+  document.getElementById('bevelToolDesc').textContent = s.desc;
+  buildBevelToolCE(s.ce);
+})();
 
 // ── Canvas Bevel Demo ────────────────────────
 (function() {
