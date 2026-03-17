@@ -431,6 +431,7 @@ body {
     <button class="scenario-btn active" onclick="switchBoolScenario('union')">Union (합)</button>
     <button class="scenario-btn" onclick="switchBoolScenario('difference')">Difference (차)</button>
     <button class="scenario-btn" onclick="switchBoolScenario('intersect')">Intersect (교)</button>
+    <button class="scenario-btn" onclick="switchBoolScenario('role')">Active vs Operand</button>
   </div>
 
   <div id="boolDesc" style="font-size:.84rem; color:var(--muted-strong); margin:0 0 8px;"></div>
@@ -667,6 +668,15 @@ var boolScenarios = {
       { cause: "겹치지 않는 부분", result: "모두 제거됨", resultClass: "result-c" },
       { cause: "Intersect 결과 Apply", result: "교차 형태만 남은 단일 메쉬", resultClass: "result-b" }
     ]
+  },
+  role: {
+    desc: "Boolean 모디파이어는 Active Object(밝은 주황 외곽)에 적용됩니다. 모디파이어 패널의 Object 필드에 지정한 오브젝트가 커터(Operand) 역할을 합니다.",
+    ce: [
+      { cause: "Active Object — 밝은 주황 외곽선", result: "모디파이어가 이 오브젝트에 적용됨 (기준 메쉬)", resultClass: "result-a" },
+      { cause: "Operand Object — 모디파이어 패널에서 지정", result: "커터/도구 역할, 형태가 연산에 사용됨", resultClass: "result-b" },
+      { cause: "Quick Boolean: 커터 먼저 선택 → Shift+클릭 베이스", result: "베이스가 Active가 되어 올바른 방향으로 적용됨", resultClass: "result-a" },
+      { cause: "Operand 오브젝트는 Apply 전까지 남아 있음", result: "H 키로 숨겨두면 결과만 보이게 정리 가능", resultClass: "result-b" }
+    ]
   }
 };
 
@@ -702,10 +712,135 @@ function switchBoolScenario(key) {
       btn.classList.add('active');
     }
   });
-  // Sync canvas demo
-  var modeMap = { union: 'btnUnion', difference: 'btnDifference', intersect: 'btnIntersect' };
-  var targetBtn = document.getElementById(modeMap[key]);
-  if (targetBtn) { targetBtn.click(); }
+  var controls = document.querySelector('.demo-controls');
+  if (key === 'role') {
+    if (controls) controls.style.display = 'none';
+    drawRoleDiagram();
+  } else {
+    if (controls) controls.style.display = '';
+    var modeMap = { union: 'btnUnion', difference: 'btnDifference', intersect: 'btnIntersect' };
+    var targetBtn = document.getElementById(modeMap[key]);
+    if (targetBtn) { targetBtn.click(); }
+  }
+}
+
+function drawRoleDiagram() {
+  var canvas = document.getElementById('demoCanvas');
+  var ctx = canvas.getContext('2d');
+  var W = canvas.width, H = canvas.height;
+
+  // Background grid
+  ctx.fillStyle = '#17181a';
+  ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = 'rgba(255,255,255,.04)';
+  ctx.lineWidth = 1;
+  for (var gx = 40; gx < W; gx += 40) { ctx.beginPath(); ctx.moveTo(gx,0); ctx.lineTo(gx,H); ctx.stroke(); }
+  for (var gy = 40; gy < H; gy += 40) { ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(W,gy); ctx.stroke(); }
+
+  var midY = H / 2;
+
+  // ── Left: Active Object (Base) ──────────────────────
+  var axL = W * 0.25, axT = midY - 55, axW = 140, axH = 90, axR = 14;
+  // Orange glow (Active)
+  ctx.shadowColor = 'rgba(255,140,0,0.7)';
+  ctx.shadowBlur = 22;
+  ctx.strokeStyle = '#ff8c00';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(axL - axW/2 + axR, axT);
+  ctx.lineTo(axL + axW/2 - axR, axT);
+  ctx.quadraticCurveTo(axL + axW/2, axT, axL + axW/2, axT + axR);
+  ctx.lineTo(axL + axW/2, axT + axH - axR);
+  ctx.quadraticCurveTo(axL + axW/2, axT + axH, axL + axW/2 - axR, axT + axH);
+  ctx.lineTo(axL - axW/2 + axR, axT + axH);
+  ctx.quadraticCurveTo(axL - axW/2, axT + axH, axL - axW/2, axT + axH - axR);
+  ctx.lineTo(axL - axW/2, axT + axR);
+  ctx.quadraticCurveTo(axL - axW/2, axT, axL - axW/2 + axR, axT);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(255,140,0,.08)';
+  ctx.fill();
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // Active label
+  ctx.fillStyle = '#ff8c00';
+  ctx.font = 'bold 12px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Active Object', axL, axT - 14);
+  ctx.fillStyle = 'rgba(255,255,255,.55)';
+  ctx.font = '11px sans-serif';
+  ctx.fillText('(밝은 주황 외곽선)', axL, axT - 2);
+  ctx.fillStyle = '#ffb347';
+  ctx.font = 'bold 13px sans-serif';
+  ctx.fillText('BASE MESH', axL, midY + 4);
+
+  // Arrow: Active → modifier
+  ctx.fillStyle = '#ff8c00';
+  ctx.font = '11px sans-serif';
+  ctx.fillText('▼ 모디파이어 적용 대상', axL, axT + axH + 20);
+
+  // ── Right: Operand Object (Cutter) ────────────────────
+  var bxC = W * 0.72, byC = midY - 10, bxR = 52;
+  ctx.shadowColor = 'rgba(99,102,241,0.5)';
+  ctx.shadowBlur = 16;
+  ctx.strokeStyle = '#818cf8';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.arc(bxC, byC, bxR, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(99,102,241,.08)';
+  ctx.fill();
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // Operand label
+  ctx.fillStyle = '#818cf8';
+  ctx.font = 'bold 12px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Operand Object', bxC, byC - bxR - 14);
+  ctx.fillStyle = 'rgba(255,255,255,.55)';
+  ctx.font = '11px sans-serif';
+  ctx.fillText('(모디파이어 패널에서 지정)', bxC, byC - bxR - 2);
+  ctx.fillStyle = '#a5b4fc';
+  ctx.font = 'bold 13px sans-serif';
+  ctx.fillText('CUTTER / TOOL', bxC, byC + 5);
+  ctx.fillStyle = '#818cf8';
+  ctx.font = '11px sans-serif';
+  ctx.fillText('▼ 형태가 연산에 사용됨', bxC, byC + bxR + 20);
+
+  // ── Center arrow ──────────────────────────────────────
+  var arrowX1 = axL + axW/2 + 8, arrowX2 = bxC - bxR - 8, arrowY = midY - 10;
+  ctx.strokeStyle = 'rgba(255,255,255,.2)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([5,4]);
+  ctx.beginPath();
+  ctx.moveTo(arrowX1, arrowY);
+  ctx.lineTo(arrowX2, arrowY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  // arrowhead
+  ctx.fillStyle = 'rgba(255,255,255,.3)';
+  ctx.beginPath();
+  ctx.moveTo(arrowX2, arrowY);
+  ctx.lineTo(arrowX2 - 8, arrowY - 5);
+  ctx.lineTo(arrowX2 - 8, arrowY + 5);
+  ctx.closePath();
+  ctx.fill();
+
+  // ── Bottom step guide ─────────────────────────────────
+  var steps = ['① 커터 오브젝트 선택', '② Shift+클릭 → 베이스 Active', '③ 모디파이어 추가 → Object 지정', '④ H로 커터 숨김 정리'];
+  var stepY = H - 30;
+  var stepX = W / 2 - (steps.length - 1) * 82;
+  steps.forEach(function(txt, i) {
+    var sx = stepX + i * 164;
+    ctx.fillStyle = i < 2 ? 'rgba(255,140,0,.15)' : 'rgba(99,102,241,.15)';
+    ctx.beginPath();
+    ctx.roundRect ? ctx.roundRect(sx - 70, stepY - 14, 140, 22, 6) : ctx.rect(sx - 70, stepY - 14, 140, 22);
+    ctx.fill();
+    ctx.fillStyle = i < 2 ? '#ffb347' : '#a5b4fc';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(txt, sx, stepY + 2);
+  });
 }
 
 (function() {
