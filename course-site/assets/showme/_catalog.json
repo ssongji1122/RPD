@@ -247,11 +247,27 @@
       "audienceNeed": "처음 세팅을 왜 바꾸는지 감이 안 올 때"
     },
     "viewport-navigation": {
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Viewport Navigation",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/viewport-navigation/"
+        },
+        {
+          "label": "Blender Studio - Interface Overview",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/interface-overview/"
+        }
+      ],
       "keywords": ["orbit", "pan", "zoom", "numpad", "camera control"],
       "audienceNeed": "카메라를 움직이는 건지 오브젝트를 움직이는 건지 헷갈릴 때"
     },
     "transform-grs": {
       "confusionLabel": "좌표 변형",
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Select & Transform",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/select-transform/"
+        }
+      ],
       "keywords": ["grab", "rotate", "scale", "axis", "transform"],
       "audienceNeed": "G/R/S는 외웠는데 언제 어떤 축으로 움직여야 할지 헷갈릴 때"
     },
@@ -282,24 +298,60 @@
     },
     "edit-mode": {
       "confusionLabel": "오브젝트와 점·선·면",
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Object and Edit Mode",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/object-and-edit-mode/"
+        },
+        {
+          "label": "Blender Studio - Mesh Selection Mode",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/mesh-selection-mode/"
+        }
+      ],
       "keywords": ["object mode", "vertex", "edge", "face"],
       "prerequisites": ["viewport-navigation"],
       "audienceNeed": "같은 큐브인데 어떤 때는 통째로, 어떤 때는 점으로 잡히는지 헷갈릴 때"
     },
     "edit-mode-tools": {
       "confusionLabel": "도구 선택 흐름",
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Modeling Introduction",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modeling-introduction/"
+        },
+        {
+          "label": "Blender Studio - Object and Edit Mode",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/object-and-edit-mode/"
+        },
+        {
+          "label": "Blender Studio - Mesh Selection Mode",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/mesh-selection-mode/"
+        }
+      ],
       "keywords": ["extrude", "loop cut", "inset", "bevel"],
       "prerequisites": ["edit-mode"],
       "audienceNeed": "어떤 편집 도구를 먼저 써야 하는지 감이 안 잡힐 때"
     },
     "extrude": {
       "confusionLabel": "연결된 메시",
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Extrude",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/extrude/"
+        }
+      ],
       "keywords": ["extrude", "connected geometry", "along normals", "manifold"],
       "prerequisites": ["edit-mode"],
       "audienceNeed": "새 오브젝트를 만드는 건지 기존 메시를 늘리는 건지 헷갈릴 때"
     },
     "loop-cut": {
       "confusionLabel": "엣지 흐름",
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Loop Cut",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/loop-cut/"
+        }
+      ],
       "keywords": ["loop cut", "ctrl+r", "edge flow", "segments"],
       "prerequisites": ["edit-mode"],
       "audienceNeed": "선 하나 추가하는데 왜 형태가 더 잘 잡히는지 감이 안 올 때"
@@ -312,12 +364,24 @@
     },
     "bevel-tool": {
       "confusionLabel": "모서리 분할",
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Bevel Tool",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/bevel-tool/"
+        }
+      ],
       "keywords": ["bevel tool", "width", "segments", "corner"],
       "prerequisites": ["edit-mode"],
       "audienceNeed": "모서리를 둥글리는 건 알겠는데 왜 세그먼트 수가 중요한지 헷갈릴 때"
     },
     "mirror-modifier": {
       "confusionLabel": "원점 대칭",
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Modifiers",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modifiers/"
+        }
+      ],
       "keywords": ["mirror", "origin", "axis", "clipping"],
       "prerequisites": ["origin-vs-3dcursor"],
       "audienceNeed": "한쪽만 고쳤는데 반대쪽이 따라오지 않거나 위치가 어긋날 때"
@@ -325,24 +389,48 @@
     "mirror-workflow": {
       "confusionLabel": "작업 순서",
       "visualPattern": "workflow",
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Modifiers",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modifiers/"
+        }
+      ],
       "keywords": ["mirror workflow", "apply", "clipping", "symmetry"],
       "prerequisites": ["mirror-modifier"],
       "audienceNeed": "Mirror는 켰는데 모델링 순서를 어떻게 가져가야 할지 막막할 때"
     },
     "mirror-origin-mode": {
       "confusionLabel": "원점과 모드 상호작용",
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Modifiers",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modifiers/"
+        }
+      ],
       "keywords": ["mirror", "origin", "object mode", "edit mode"],
       "prerequisites": ["mirror-modifier", "origin-vs-3dcursor"],
       "audienceNeed": "Mirror 문제인지 Origin 문제인지 모드 문제인지 구분이 안 될 때"
     },
     "subdivision-surface": {
       "confusionLabel": "분할과 형태 유지",
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Modifiers",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modifiers/"
+        }
+      ],
       "keywords": ["subdivision", "support loop", "smooth", "cage"],
       "prerequisites": ["loop-cut"],
       "audienceNeed": "부드럽게 만들었는데 왜 모서리가 다 죽는지 이해가 안 될 때"
     },
     "boolean-modifier": {
       "confusionLabel": "연산 결과",
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Modifiers",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modifiers/"
+        }
+      ],
       "keywords": ["boolean", "difference", "union", "intersect"],
       "prerequisites": ["transform-apply"],
       "audienceNeed": "컷은 되는데 메시가 지저분해지는 이유를 알고 싶을 때"
@@ -376,6 +464,12 @@
       "audienceNeed": "오브젝트 기준점과 커서 기준점을 같은 걸로 느끼고 있을 때"
     },
     "material-basics": {
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Materials and Shading",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/materials-and-shading/"
+        }
+      ],
       "keywords": ["material slot", "base color", "viewport material"],
       "audienceNeed": "색을 바꿨는데 왜 오브젝트 전체에 안 들어가거나 렌더와 다를 때"
     },
@@ -393,6 +487,12 @@
     },
     "uv-unwrapping": {
       "confusionLabel": "펼치기",
+      "officialVideos": [
+        {
+          "label": "Blender Studio - UV Unwrapping",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/uv-unwrapping/"
+        }
+      ],
       "keywords": ["uv", "unwrap", "seam", "island"],
       "audienceNeed": "3D 표면을 왜 먼저 자르고 펼쳐야 하는지 이해가 안 될 때"
     },
@@ -404,53 +504,245 @@
     },
     "light-types": {
       "confusionLabel": "조명 역할",
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Lighting Fundamentals",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/lighting/"
+        }
+      ],
       "keywords": ["point", "sun", "spot", "area light"],
       "audienceNeed": "빛을 추가했는데 종류별로 결과가 왜 달라지는지 감이 안 올 때"
     },
     "hdri-lighting": {
       "confusionLabel": "환경광",
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Lighting Fundamentals",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/lighting/"
+        }
+      ],
       "keywords": ["hdri", "world", "environment texture", "lighting"],
       "prerequisites": ["light-types"],
       "audienceNeed": "램프를 안 놔도 왜 장면이 밝아지는지 헷갈릴 때"
     },
     "three-point-light": {
       "confusionLabel": "키·필·림 분담",
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Lighting Fundamentals",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/lighting/"
+        }
+      ],
       "keywords": ["key light", "fill light", "rim light", "portrait lighting"],
       "prerequisites": ["light-types"],
       "audienceNeed": "조명이 세 개인 건 알겠는데 각각 무슨 역할인지 헷갈릴 때"
     },
     "keyframe-basics": {
       "confusionLabel": "상태 기록",
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Animation Fundamentals",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/animation/"
+        }
+      ],
       "keywords": ["keyframe", "timeline", "insert keyframe", "auto key"],
       "audienceNeed": "움직임을 그리는 게 아니라 상태를 찍는다는 감각이 없을 때"
     },
     "graph-editor": {
       "confusionLabel": "속도 곡선",
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Animation Fundamentals",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/animation/"
+        }
+      ],
       "keywords": ["graph editor", "f-curve", "ease in", "ease out"],
       "prerequisites": ["keyframe-basics"],
       "audienceNeed": "애니메이션은 들어갔는데 왜 움직임이 딱딱한지 모르겠을 때"
     },
     "armature-basics": {
       "confusionLabel": "본 계층",
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Armature and Rigging",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/armature-and-rigging/"
+        }
+      ],
       "keywords": ["armature", "bone", "parent", "pose mode"],
       "audienceNeed": "본을 움직이는데 메시가 왜 안 따라오는지 헷갈릴 때"
     },
     "weight-paint": {
       "confusionLabel": "영향 범위",
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Armature and Rigging",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/armature-and-rigging/"
+        }
+      ],
       "keywords": ["weight paint", "deform", "vertex group", "influence"],
       "prerequisites": ["armature-basics"],
       "audienceNeed": "메시는 따라오는데 이상하게 찢어지거나 같이 말려 들어갈 때"
     },
     "render-settings": {
       "confusionLabel": "엔진 차이",
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Rendering",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/rendering/"
+        }
+      ],
       "keywords": ["cycles", "eevee", "samples", "render settings"],
       "audienceNeed": "같은 씬인데 렌더 엔진마다 왜 분위기가 달라지는지 헷갈릴 때"
     },
     "compositing-basics": {
       "confusionLabel": "후반 작업",
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Rendering",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/rendering/"
+        }
+      ],
       "keywords": ["compositing", "glare", "color balance", "nodes"],
       "prerequisites": ["render-settings"],
       "audienceNeed": "렌더 후에 또 왜 노드를 만지는지 이해가 안 될 때"
+    },
+    "sculpt-basics": {
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Introduction to Sculpting",
+          "url": "https://studio.blender.org/training/sculpting-in-blender/introduction/"
+        }
+      ],
+      "keywords": ["sculpt", "brush", "dyntopo", "voxel remesh"],
+      "audienceNeed": "브러시로 만지는 감각이 아직 낯설고 어디서부터 시작해야 할지 막막할 때"
+    },
+    "array-modifier": {
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Modifiers",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modifiers/"
+        }
+      ]
+    },
+    "bevel-modifier": {
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Modifiers",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modifiers/"
+        }
+      ]
+    },
+    "build-modifier": {
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Modifiers",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modifiers/"
+        }
+      ]
+    },
+    "curve-to-tube": {
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Modifiers",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modifiers/"
+        }
+      ]
+    },
+    "decimate-modifier": {
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Modifiers",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modifiers/"
+        }
+      ]
+    },
+    "edge-split-modifier": {
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Modifiers",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modifiers/"
+        }
+      ]
+    },
+    "mask-modifier": {
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Modifiers",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modifiers/"
+        }
+      ]
+    },
+    "multiresolution-modifier": {
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Modifiers",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modifiers/"
+        }
+      ]
+    },
+    "remesh-modifier": {
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Modifiers",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modifiers/"
+        }
+      ]
+    },
+    "screw-modifier": {
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Modifiers",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modifiers/"
+        }
+      ]
+    },
+    "skin-modifier": {
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Modifiers",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modifiers/"
+        }
+      ]
+    },
+    "solidify-modifier": {
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Modifiers",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modifiers/"
+        }
+      ]
+    },
+    "triangulate-modifier": {
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Modifiers",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modifiers/"
+        }
+      ]
+    },
+    "volume-to-mesh": {
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Modifiers",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modifiers/"
+        }
+      ]
+    },
+    "weld-modifier": {
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Modifiers",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modifiers/"
+        }
+      ]
+    },
+    "wireframe-modifier": {
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Modifiers",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modifiers/"
+        }
+      ]
     },
     "bevel-tool-vs-modifier": {
       "confusionLabel": "직접 편집과 비파괴",

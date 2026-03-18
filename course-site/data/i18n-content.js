@@ -318,7 +318,27 @@
           "하드서피스 기초": "Hard-Surface Basics",
           "형태 다듬기": "Form Refinement",
           "형태 생성": "Form Building",
-          "환경 설정": "Setup"
+          "환경 설정": "Setup",
+          "더보기": "More",
+          "조작 방법": "How to Use It",
+          "주요 단축키 / 조작": "Key Shortcuts / Controls",
+          "핵심 단축키": "Core Shortcuts",
+          "핵심 단축키 5선": "Five Core Shortcuts",
+          "도구": "Tool",
+          "단축키": "Shortcut",
+          "핵심 차이": "Key Difference",
+          "항목": "Item",
+          "Apply 전": "Before Apply",
+          "Apply 후": "After Apply",
+          "선택 전": "Before Selection",
+          "버텍스 선택": "Vertex Selection",
+          "엣지 선택": "Edge Selection",
+          "페이스 선택": "Face Selection",
+          "알고리즘": "Algorithm",
+          "레벨": "Levels",
+          "기술": "Technique",
+          "다용도": "Versatile",
+          "중요": "Important"
         }
       },
       widgets: {
@@ -439,6 +459,177 @@
             "Clipping OFF: 중심선 넘기 가능": "Clipping Off: can cross the center line",
             "Apply 후 단일 메시": "Single Mesh After Apply",
             "Mirror Modifier 활성": "Mirror Modifier Active"
+          }
+        },
+        "extrude": {
+          exact: {
+            "선택한 면을 뽑아내어 새로운 지오메트리를 만드는 도구입니다. 점토를 손가락으로 잡아 당기는 것과 같습니다. 기본 형태에서 복잡한 구조를 만들어 나가는 가장 핵심적인 모델링 기법이에요.": "Extrude creates new geometry by pulling out the selected face. It feels like stretching clay with your fingers. It is one of the core modeling techniques for building complex forms from a simple base.",
+            "Alt+E로 면의 법선(Normal) 방향을 따라 균일하게 돌출합니다. 여러 면을 동시에 선택했을 때, 각 면이 자신의 법선 방향으로 개별적으로 뽑혀 나옵니다. 곡면에 균일한 두께를 줄 때 특히 유용합니다.": "Alt+E extrudes faces evenly along their normals. When multiple faces are selected, each one moves along its own normal direction. This is especially useful when you need even thickness across a curved surface.",
+            "돌출 후 내부에 남는 면(interior face)을 자동으로 제거해 메시를 항상 매니폴드(2-매니폴드) 상태로 유지합니다. 기존 지오메트리 안으로 뽑거나 인접한 메시를 합칠 때 Region 대신 사용하면 위상 오류 없이 깨끗한 결과를 얻을 수 있어요.": "Extrude Manifold removes the interior faces left behind after the extrusion so the mesh stays manifold. When you extrude inward or merge nearby forms, it often produces a cleaner result than a standard region extrude.",
+            "3D 뷰포트에서 마우스를 클릭한 위치까지 선택된 지오메트리를 곧장 뽑아냅니다. Blender의 3D Cursor 오브젝트(Shift+RMB로 배치하는 다트)가 아니라, 클릭 순간 마우스 포인터가 가리키는 뷰포트 위치가 끝점이 됩니다.": "Extrude to Cursor pulls the selected geometry directly toward the point you click in the 3D viewport. It does not use Blender's 3D Cursor object. The endpoint is the viewport position under your mouse at the moment you click.",
+            "찰흙에서 손가락으로 잡아당기면 새로운 형태가 늘어나오는 것, 그게 Extrude예요": "Imagine pulling on clay with your fingers until a new form stretches out. That is the idea behind Extrude."
+          }
+        },
+        "loop-cut": {
+          exact: {
+            "메시를 고리(loop) 형태로 한 바퀴 자르는 도구입니다. 디테일을 추가하는 가장 기본적인 방법이며, 모델링의 필수 기법입니다. Ctrl+R을 누르면 노란색 프리뷰 선이 나타나고, 마우스 휠로 분할 수를 조절할 수 있습니다.": "Loop Cut slices around the mesh in a continuous loop. It is one of the most basic ways to add detail and a core modeling technique. Press Ctrl+R to preview the cut in yellow, then use the mouse wheel to adjust how many cuts you want.",
+            "이미 있는 Edge Loop를 표면을 따라 미끄러지듯 이동시킵니다. 형상은 유지하면서 분할 위치만 조정할 때 사용합니다. G를 두 번 연속 누르면 Edge Slide 모드가 됩니다.": "Edge Slide moves an existing edge loop along the surface. Use it when you want to reposition the loop without changing the overall form. Press G twice to enter Edge Slide mode.",
+            "빵을 슬라이스하는 것처럼, Loop Cut은 메시를 깔끔하게 한 바퀴 잘라요": "Loop Cut is like slicing a loaf of bread. It cleanly cuts a full ring around the mesh."
+          }
+        },
+        "inset": {
+          exact: {
+            "선택한 면 안쪽으로 더 작은 면을 만들어요. 액자 안에 액자를 넣는 것처럼, 기존 면의 테두리를 남기면서 안쪽에 새로운 면이 생겨요. Extrude 전에 면을 좁혀서 모서리를 만들 때 자주 써요.": "Inset creates a smaller face inside the selected face. Like placing one frame inside another, it leaves a border around the original face while generating a new one inside. It is commonly used before Extrude when you need borders or panel details.",
+            "여러 면을 선택한 상태에서 I를 두 번 누르면(또는 I 후 I 입력) 각 면이 개별적으로 Inset됩니다. 패널 여러 개를 한 번에 만들 때 유용해요.": "If you press I twice while multiple faces are selected, each face gets inset individually. This is useful when you want to create several panels at once.",
+            "액자 안에 더 작은 액자를 끼워 넣는 것, 그게 Inset이에요": "Inset is like fitting a smaller picture frame inside a larger one."
+          }
+        },
+        "bevel-tool": {
+          exact: {
+            "모서리를 깎아 부드럽게 만드는 도구입니다. 실제 제품에서 안전과 미관을 위해 모서리를 둥글게 깎는 것(Chamfer)과 같습니다. 엣지를 선택하고 Ctrl+B를 누른 후 마우스를 이동하면 깎이는 양을 조절할 수 있습니다.": "Bevel trims an edge so it becomes softer and smoother. It is similar to chamfering a real product edge for safety and finish. Select an edge, press Ctrl+B, and move the mouse to control how much material is removed.",
+            "스크롤로 Segment 수를 늘려 더 부드럽게 만들 수 있습니다. Profile 값(P키)으로 깎인 형태를 볼록(1.0)하게 또는 오목(0.0)하게 조절할 수 있습니다. Segment 1은 Chamfer(평면 깎기), 2 이상은 둥근 모서리가 됩니다.": "Use the scroll wheel to increase the segment count for a smoother result. The Profile value, adjusted with P, changes the shape from convex to concave. A segment count of 1 gives you a flat chamfer, while 2 or more creates a rounded edge.",
+            "나무 책상 모서리를 사포로 둥글게 갈아내는 것, 그게 Bevel이에요": "Bevel is like sanding down the sharp corner of a wooden desk until it becomes rounded."
+          }
+        },
+        "subdivision-surface": {
+          exact: {
+            "Subdivision Surface = 폴리곤을 수학적으로 세분화하여 부드럽게 만드는 모디파이어. Low-Poly 메쉬에서 고해상도 곡면을 생성합니다.": "Subdivision Surface is a modifier that mathematically subdivides polygons to create a smoother surface. It turns a low-poly mesh into a higher-resolution curved form.",
+            "각 폴리곤 페이스를 4개로 분할하고, 꼭짓점을 인근 점들의 가중 평균으로 이동시킵니다. 사각형 메쉬에 최적화된 방식입니다.": "Catmull-Clark divides each polygon face into smaller faces and repositions the vertices using weighted averages of nearby points. It is especially well suited to quad-based meshes.",
+            "각진 종이접기를 수학적으로 부풀려 매끄러운 풍선으로 만드는 것": "It is like mathematically inflating a folded paper model until it becomes a smooth balloon.",
+            "Viewport는 작업 속도를 위해 낮게, Render는 최종 품질을 위해 높게 설정합니다.": "Keep the viewport level lower for speed while working, then raise the render level for final quality.",
+            "Level 0: 원본 (변화 없음)": "Level 0: original mesh with no change",
+            "Level 1: 폴리곤 4배": "Level 1: four times more polygons",
+            "Level 2: 폴리곤 16배": "Level 2: sixteen times more polygons",
+            "Level 3: 폴리곤 64배": "Level 3: sixty-four times more polygons",
+            "엣지를 선택 후 Shift+E로 Crease 값(0~1)을 설정합니다. 값이 1이면 Subdivision이 올라가도 그 모서리는 날카롭게 유지됩니다.": "Select an edge and press Shift+E to set its Crease value from 0 to 1. When the value is 1, that edge stays sharp even as the subdivision level increases.",
+            "풍선에서 실로 꽉 묶인 부분만 날카롭게 남는 것": "It is like the tied portion of a balloon staying sharp while the rest remains soft.",
+            "Subdivision은 폴리곤 수를 늘리고, Shade Smooth는 빛 반사를 부드럽게 만듭니다. 둘은 다른 기능입니다. 결과가 너무 둥글면 Crease를, 셰이딩만 거칠면 Shade Smooth by Angle을 먼저 확인하면 됩니다.": "Subdivision increases the polygon count, while Shade Smooth only softens the lighting response. They solve different problems. If the model becomes too round, check the Crease settings first. If the shape is fine but the shading looks rough, check Shade Smooth by Angle."
+          }
+        },
+        "mirror-workflow": {
+          exact: {
+            "Mirror Modifier는 대칭 모델링의 핵심 도구입니다. 아래 3단계를 순서대로 따라하면 완벽한 좌우 대칭을 만들 수 있어요.": "The Mirror Modifier is one of the core tools for symmetrical modeling. Follow these three steps in order to build a clean left-right mirror workflow.",
+            "절반 삭제": "Delete Half",
+            "대칭축(보통 X축)을 기준으로 한쪽 절반을 지웁니다. Edit Mode에서 삭제할 쪽의 버텍스를 모두 선택한 뒤 X → Vertices로 삭제합니다. 오브젝트의 Origin이 정확히 중심에 있어야 깔끔하게 나뉩니다.": "Delete one half of the mesh along the symmetry axis, usually X. In Edit Mode, select the vertices on the side you want to remove and press X -> Vertices. The object's Origin should already sit at the center so the split stays clean.",
+            "Mirror Modifier 추가": "Add the Mirror Modifier",
+            "Properties → Modifier → Add Modifier → Mirror를 선택합니다. Axis를 X로 설정하면 남은 절반이 자동으로 반대쪽에 대칭 복사됩니다. 한쪽만 편집하면 반대쪽이 실시간으로 따라옵니다.": "Go to Properties -> Modifier -> Add Modifier -> Mirror. With the axis set to X, the remaining half is mirrored automatically to the opposite side. Edit one side and the other updates in real time.",
+            "Clipping 활성화": "Enable Clipping",
+            "Mirror Modifier 설정에서 Clipping 체크박스를 켭니다. 이렇게 하면 중심선의 버텍스가 대칭축을 넘어가지 못하게 고정되어, 이음새 없는 매끄러운 대칭 형태를 유지할 수 있습니다.": "Turn on the Clipping checkbox in the Mirror settings. This locks center-line vertices to the symmetry axis so they cannot cross it, which helps you keep a seamless mirrored form.",
+            "중심선 버텍스가 살짝 어긋나 틈이 생겼다면? 해당 버텍스들을 선택하고 S + X + 0을 눌러 X축 스케일을 0으로 만들면 한 줄로 정렬됩니다.": "If the center-line vertices drift apart and leave a gap, select them and press S + X + 0. That scales them to zero on the X axis and lines them up perfectly."
+          }
+        },
+        "mirror-origin-mode": {
+          exact: {
+            "Mirror Modifier는 Origin(원점)을 기준으로 반전합니다. Origin의 위치와 모드(Edit/Object)에 따라 결과가 달라지는 이유를 알아봅시다.": "The Mirror Modifier reflects the mesh around the Origin. Understanding where the Origin sits, and whether you are in Edit Mode or Object Mode, explains why the mirrored result can change.",
+            "Mirror Modifier는 오브젝트의 Origin(주황 점)을 중심으로 메시를 반전합니다. Origin이 어디에 있느냐에 따라 미러된 반쪽의 위치가 완전히 달라집니다.": "Mirror uses the object's Origin, shown as the orange dot, as the reflection center. Move the Origin and the mirrored half can end up in a completely different place.",
+            "거울의 위치 = Origin의 위치. 거울을 옮기면 반사되는 모습도 달라지듯, Origin을 옮기면 미러 결과도 달라져요.": "The position of the mirror is the position of the Origin. Just as moving a real mirror changes the reflection, moving the Origin changes the mirrored result.",
+            "Object Mode에서 이동: Origin도 함께 이동 → Mirror 기준선이 바뀜 Edit Mode에서 이동: Origin은 그대로, 메시만 이동 → Mirror 기준선 유지": "Move in Object Mode: the Origin moves with the object, so the mirror line moves too. Move in Edit Mode: the Origin stays in place and only the mesh moves, so the mirror line remains fixed.",
+            "Object Mode = 거울째로 옮기기, Edit Mode = 거울은 두고 물건만 옮기기": "Object Mode is like moving the entire mirror. Edit Mode is like leaving the mirror in place and moving only the object in front of it.",
+            "Mirror Modifier의 Mirror Object 옵션에 Empty를 지정하면, 자기 자신의 Origin 대신 그 Empty의 위치·회전을 기준으로 미러합니다. 복잡한 배치에 유용합니다.": "If you assign an Empty to the Mirror Object option, Blender mirrors the mesh using that Empty's position and rotation instead of the object's own Origin. This is useful for more complex setups.",
+            "내 거울을 쓰는 대신, 다른 사람의 거울을 빌려 쓰는 것과 같아요.": "It is like borrowing someone else's mirror instead of using your own.",
+            "오브젝트와 함께 이동": "Moves with the object",
+            "제자리에 고정": "Stays in place",
+            "함께 이동": "Mesh and Origin move together",
+            "메시만 이동": "Only the mesh moves",
+            "정상 유지 (Origin과 메시 관계 불변)": "Stays consistent because the Origin-mesh relationship does not change",
+            "메시가 Origin에서 멀어지며 미러 위치 변경": "The mesh moves away from the Origin, so the mirrored position changes",
+            "완성된 오브젝트 배치": "Placing a finished object",
+            "대칭 모델링 작업": "Symmetrical modeling work",
+            "선택 정점의 X좌표를 0으로 → 중심선 정렬": "Set the selected vertices to X = 0 to align them to the center line",
+            "Apply Transform → 현재 변환을 기본값으로 적용": "Apply Transform to bake the current transform as the new default",
+            "Origin 위치 변경 메뉴": "Menu for changing the Origin position",
+            "Snap 메뉴 → Cursor to Selected / Origin to Cursor": "Snap menu -> Cursor to Selected / Origin to Cursor"
+          }
+        },
+        "solidify-modifier": {
+          exact: {
+            "Solidify란?": "What Is Solidify?",
+            "평면(면)에 두께를 추가하는 모디파이어입니다. 종이처럼 얇은 메쉬를 실제 물체처럼 두께 있는 3D로 만들어 줍니다.": "Solidify adds thickness to a flat surface. It turns a thin mesh, like a sheet of paper, into a 3D object with real volume.",
+            "종이에 두께를 입혀 판자로 만드는 것": "It is like giving thickness to a sheet of paper until it becomes a panel.",
+            "Offset 방향": "Offset Direction",
+            "Offset 값으로 두께가 추가되는 방향을 제어합니다.": "The Offset value controls which direction the new thickness grows.",
+            "-1 : 안쪽(노멀 반대 방향)": "-1: inward, opposite the normal",
+            "0 : 양쪽 균등": "0: evenly on both sides",
+            "+1 : 바깥쪽(노멀 방향)": "+1: outward, along the normal",
+            "Even Thickness를 켜면 경사면에서도 균일한 두께를 유지합니다.": "Turn on Even Thickness to keep the wall thickness more consistent across angled surfaces.",
+            "Thickness": "Thickness",
+            "두께 값을 직접 지정합니다. 양수가 기본이며, 음수를 입력하면 방향이 반전됩니다.": "Thickness lets you set the wall thickness directly. Positive values are the default, and negative values flip the direction.",
+            "입문 단계에서는 Thickness = 두께, Offset = 어느 쪽으로 생기는지, Even Thickness = 코너 보정 이 세 가지만 먼저 기억하면 충분합니다.": "At the beginner stage, it is enough to remember just three things: Thickness sets the width, Offset decides which side it grows on, and Even Thickness helps correct the corners."
+          }
+        },
+        "array-modifier": {
+          exact: {
+            "Array Modifier란?": "What Is the Array Modifier?",
+            "하나의 오브젝트를 여러 개 복제해서 일정한 간격으로 배열하는 Modifier입니다. 울타리, 계단, 체인 같은 반복 패턴을 한 번에 만들 수 있어요.": "The Array Modifier duplicates one object multiple times and places the copies at regular intervals. It is useful for repeating patterns such as fences, stairs, or chains.",
+            "복사기에 원본을 넣고 \"5장 복사\" 버튼을 누르는 것처럼, 하나를 수정하면 전부 바뀌어요": "It is like putting one page into a copier and pressing make five copies. If you change the original, every copy updates.",
+            "Offset 종류": "Offset Types",
+            "복제본 사이의 간격을 정하는 3가지 방법이 있습니다.": "There are three main ways to control the spacing between copies.",
+            "Constant: 절대 거리 (m 단위)": "Constant: an absolute distance in meters",
+            "Relative: 오브젝트 크기 기준 비율": "Relative: spacing based on the object's size",
+            "Object: 빈 오브젝트를 기준으로 배치 (원형 배열 가능)": "Object: spacing driven by another object, often an Empty, which also allows radial arrays",
+            "Relative는 일렬 반복, Object는 원형 반복, Constant는 절대 거리 기준 반복으로 기억하면 됩니다.": "A simple way to remember it is this: Relative is for straight repeating patterns, Object is great for circular setups, and Constant uses fixed distances."
+          }
+        },
+        "boolean-modifier": {
+          exact: {
+            "Boolean이란?": "What Is Boolean?",
+            "두 오브젝트의 겹치는 부분을 이용해 새 형태를 만드는 모디파이어입니다. 3가지 연산을 지원합니다: Union(합), Intersect(교), Difference(차).": "Boolean creates new forms by using the overlapping relationship between two objects. It supports three operations: Union, Intersect, and Difference.",
+            "쿠키 커터로 반죽을 찍어내는 것 (Difference), 반죽 두 덩어리를 합치는 것 (Union)": "Think of Difference as cutting cookie dough with a cutter, and Union as merging two lumps of dough into one.",
+            "3가지 연산": "Three Operations",
+            "Difference (차) — 커터 오브젝트 모양을 잘라냄 가장 많이 사용": "Difference: cuts out the shape of the cutter object, and it is the mode you will use most often",
+            "Union (합) — 두 오브젝트를 하나로 합침": "Union: combines two objects into one",
+            "Intersect (교) — 겹치는 부분만 남김": "Intersect: keeps only the overlapping area",
+            "Fast vs Exact 두 가지 솔버를 선택할 수 있습니다. Exact가 더 정확하지만 느립니다. Blender 5.0에서는 Exact가 기본값입니다.": "You can choose between the Fast and Exact solvers. Exact is more reliable but slower. In Blender 5.0, Exact is the default.",
+            "학생 단계에서는 Difference = 구멍, Union = 합치기, Intersect = 겹친 부분만 이 세 가지로 먼저 기억하면 충분합니다. 결과가 깨지면 Solver를 Exact로 다시 확인하세요.": "At the beginner stage, it is enough to remember Boolean as three simple ideas: Difference makes holes, Union merges forms, and Intersect keeps only the overlap. If the result breaks, switch the solver back to Exact."
+          }
+        },
+        "weighted-normal": {
+          exact: {
+            "면의 크기(면적)를 기준으로 Normal(법선) 방향을 다시 계산하는 Modifier입니다. 큰 면이 더 많은 영향을 주어서 평평한 면이 더 깨끗하게 보입니다.": "Weighted Normal recalculates the normals using face area as a priority. Larger faces carry more influence, which helps broad flat surfaces shade more cleanly.",
+            "Shade Smooth만 쓰면 작은 면과 큰 면의 Normal이 동일하게 섞여서 큰 면에 울퉁불퉁한 음영이 생깁니다. Weighted Normal로 큰 면에 우선권을 주면 평평한 면이 깔끔해집니다.": "If you rely on Shade Smooth alone, small and large faces mix their normals evenly, which can create lumpy shading on wide flat surfaces. Weighted Normal gives more priority to the large faces so those surfaces stay cleaner.",
+            "큰 거울은 빛을 균일하게 반사하고, 작은 거울 조각은 빛을 산란시켜요. Weighted Normal은 큰 거울이 이기게 해요": "A large mirror reflects light evenly, while many tiny mirror pieces scatter it. Weighted Normal makes the large mirror win."
+          }
+        },
+        "transform-apply": {
+          exact: {
+            "Apply Transform이란 Object Mode에서 설정한 Scale·Rotation 값을 메쉬 데이터에 실제로 \"굽는(bake)\" 작업입니다.": "Apply Transform bakes the Scale and Rotation values from Object Mode into the actual mesh data.",
+            "Apply Transform이란? 핵심": "What Is Apply Transform?",
+            "Object Mode의 Scale/Rotation은 메쉬에 실제 적용되지 않은 상태입니다. Ctrl+A → Apply Scale을 하면 현재 크기 모양은 유지되면서 Scale 값이 (1, 1, 1)로 초기화됩니다.": "Scale and Rotation values in Object Mode are not yet baked into the mesh itself. When you run Ctrl+A -> Apply Scale, the visible size stays the same while the Scale values reset to (1, 1, 1).",
+            "줄자의 눈금을 현재 위치에서 0으로 다시 세팅하는 것 — 물리적 위치는 그대로, 기준점만 이동": "It is like resetting the zero mark on a measuring tape at the current position. The object stays where it is, but the baseline changes.",
+            "왜 Apply해야 하나요? 주의": "Why Should You Apply It?",
+            "Scale이 (1, 1, 1)이 아닌 상태에서 Modifier를 추가하면 Blender는 \"메쉬 자체 크기\"가 아닌 \"변환 후 크기\"를 기준으로 계산합니다.": "If Scale is not (1, 1, 1) when you add a modifier, Blender calculates from the transformed size rather than the mesh's true baseline.",
+            "Mirror Modifier — 비대칭으로 나옴": "Mirror Modifier: can produce asymmetry",
+            "Bevel — 한쪽으로 찌그러짐": "Bevel: can squash unevenly to one side",
+            "Subdivision Surface — 균일하지 않게 부풀음": "Subdivision Surface: can inflate unevenly",
+            "Physics 시뮬레이션 — 크기·방향 오동작": "Physics simulation: can behave incorrectly in scale or direction"
+          }
+        },
+        "bevel-modifier": {
+          exact: {
+            "모든 모서리 또는 선택한 모서리를 자동으로 깎아 부드러운 경사면을 만드는 모디파이어입니다. Bevel Tool(Ctrl+B)과 달리 비파괴적으로 동작하여, 언제든 값을 수정하거나 제거할 수 있습니다.": "The Bevel Modifier automatically chamfers all edges, or only selected edges, to create a softer beveled surface. Unlike the Bevel Tool with Ctrl+B, it is non-destructive, so you can keep adjusting or remove it later.",
+            "나무 테이블 모서리를 사포로 둥글게 깎는 것과 같아요": "It is like sanding down the edge of a wooden table until it becomes rounded.",
+            "Width: 베벨 너비(깎는 폭). Segments: 분할 수(많을수록 부드러운 곡면).": "Width controls how wide the bevel is, while Segments controls how many cuts create the rounded profile. More segments give you a smoother curve.",
+            "Segments = 1 → 45도 chamfer (평면 깎기)": "Segments = 1 gives you a flat 45-degree chamfer",
+            "Segments ≥ 3 → 부드러운 라운드 곡면": "Segments >= 3 creates a smoother rounded edge",
+            "어떤 모서리에 베벨을 적용할지 결정합니다.": "Limit Method decides which edges receive the bevel.",
+            "None — 전체 모서리": "None: all edges",
+            "Angle — 각도 기준 자동 선택": "Angle: automatic selection based on edge angle",
+            "Weight — Bevel Weight 지정 모서리만": "Weight: only edges with Bevel Weight assigned",
+            "Vertex Group — 버텍스 그룹 기반": "Vertex Group: based on a vertex group",
+            "Bevel 후 Normal 방향이 꼬여 셰이딩이 이상해지는 문제를 해결합니다. Weighted Normal 모디파이어를 Bevel 아래에 추가하면 깔끔한 셰이딩을 유지할 수 있습니다.": "This helps fix the shading problems that appear when normals twist after a bevel. Add a Weighted Normal modifier below Bevel to keep the shading clean.",
+            "입문 단계에서는 Segments, Width, Weighted Normal 세 가지만 먼저 익혀도 충분합니다. 선택 적용이 필요할 때만 Limit Method = Weight까지 확장하면 됩니다.": "At the beginner stage, it is enough to focus on Segments, Width, and Weighted Normal. Add Limit Method = Weight only when you need selective bevels."
+          }
+        },
+        "bevel-tool-vs-modifier": {
+          exact: {
+            "지금 바로 깎기": "Cut It Right Now",
+            "Bevel Tool은 편집 모드에서 선택한 모서리를 즉시 깎아 실제 메시 구조를 바꿔요. 한번 적용하면 결과가 모델 안에 직접 새겨집니다.": "Bevel Tool cuts the selected edge immediately in Edit Mode and changes the real mesh structure. Once applied, the result is written directly into the model.",
+            "나중에도 조절하기": "Adjust It Later",
+            "Bevel Modifier는 원본 메시를 유지한 채, 렌더/표시 단계에서 비파괴로 모서리를 만들어 줘요. Width와 Segments를 계속 바꿀 수 있습니다.": "Bevel Modifier keeps the original mesh intact and generates the bevel non-destructively at display and render time. You can keep changing Width and Segments afterward.",
+            "직접 편집 vs 비파괴": "Direct Edit vs Non-Destructive",
+            "둘 다 모서리를 둥글리지만 목적이 달라요. 형태를 손으로 다듬는 순간에는 Tool, 결과를 나중까지 조정하고 싶으면 Modifier가 더 잘 맞아요.": "Both methods round edges, but they serve different goals. Use the Tool when you want to sculpt the form directly, and use the Modifier when you want to keep adjusting the result later.",
+            "기억할 한 줄:": "One line to remember:",
+            "지금 형태를 손으로 깎으면 Tool, 나중까지 수치를 바꾸고 싶으면 Modifier예요.": "If you want to carve the form directly right now, use the Tool. If you want to keep changing the numbers later, use the Modifier."
           }
         }
       }
