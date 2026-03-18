@@ -1,50 +1,47 @@
 #!/bin/bash
 # RPD Admin Server 시작 스크립트 + 동기화 도구
 # 사용법:
-#   ./start-admin.sh              # 관리자 서버 시작
-#   ./start-admin.sh sync-from-notion    # Notion → 웹 동기화
-#   ./start-admin.sh sync-to-notion      # 웹 → Notion 동기화
-#   ./start-admin.sh sync-all            # 양방향 동기화
+#   ADMIN_KEY=... ./start-admin.sh              # 관리자 서버 시작
+#   NOTION_TOKEN=... ./start-admin.sh sync-from-notion    # Notion 스냅샷 갱신
+#   NOTION_TOKEN=... ./start-admin.sh sync-to-notion      # canonical curriculum → Notion push
+#   ADMIN_KEY=... NOTION_TOKEN=... ./start-admin.sh sync-all
 #
-# 비밀번호 설정: 이 파일을 열고 ADMIN_KEY= 뒤에 원하는 비밀번호를 입력하세요.
-# (이 파일은 .gitignore에 추가 권장)
+# 비밀번호는 반드시 환경변수로 주입하세요.
+
+set -euo pipefail
 
 SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
-ADMIN_KEY="5059"
 
 # 동기화 명령 처리
 case "$1" in
   sync-from-notion)
-    # Notion → overrides.json 동기화
-    echo "📥 Notion 데이터를 웹으로 동기화 중..."
-    node "$SCRIPT_DIR/tools/notion-sync.js" --all
+    echo "📥 Notion 스냅샷을 가져오는 중..."
+    python3 "$SCRIPT_DIR/tools/notion-sync.py" --fetch-only
     exit $?
     ;;
 
   sync-to-notion)
-    # 학생 진행도를 Notion에 동기화
-    echo "📤 학생 진행도를 Notion에 동기화 중..."
-    node "$SCRIPT_DIR/tools/web-to-notion.js" --all
+    echo "📤 Canonical curriculum을 Notion에 push 중..."
+    python3 "$SCRIPT_DIR/tools/curriculum-push.py"
     exit $?
     ;;
 
   sync-all)
-    # 양방향 동기화
-    echo "🔄 양방향 동기화 시작..."
+    echo "🔄 스냅샷 갱신 + curriculum push 시작..."
 
     echo ""
-    echo "📥 Step 1: Notion → 웹"
-    node "$SCRIPT_DIR/tools/notion-sync.js" --all
+    echo "📥 Step 1: Notion snapshot"
+    python3 "$SCRIPT_DIR/tools/notion-sync.py" --fetch-only
     SYNC_FROM_STATUS=$?
 
     echo ""
-    echo "📤 Step 2: 웹 → Notion"
-    node "$SCRIPT_DIR/tools/web-to-notion.js" --all
+    echo "📤 Step 2: Canonical curriculum push"
+    python3 "$SCRIPT_DIR/tools/curriculum-push.py"
     SYNC_TO_STATUS=$?
 
     if [ $SYNC_FROM_STATUS -eq 0 ] && [ $SYNC_TO_STATUS -eq 0 ]; then
       echo ""
-      echo "✓ 양방향 동기화 완료"
+      echo "✓ 동기화 완료"
       exit 0
     else
       echo ""
@@ -54,8 +51,11 @@ case "$1" in
     ;;
 
   *)
-    # 기본: 관리자 서버 시작
-    ADMIN_KEY="$ADMIN_KEY" \
+    if [ -z "${ADMIN_KEY:-}" ]; then
+      echo "ERROR: ADMIN_KEY 환경변수가 필요합니다." >&2
+      echo "예: ADMIN_KEY=change-me ./start-admin.sh" >&2
+      exit 1
+    fi
     python3 "$SCRIPT_DIR/tools/admin-server.py" "$@"
     exit $?
     ;;
