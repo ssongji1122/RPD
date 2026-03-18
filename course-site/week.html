@@ -10,21 +10,75 @@
   <style>
     /* ── Week-page specific styles ── */
     .hero {
-      padding: 62px 0 10px; text-align: center;
+      padding: 28px 0 8px;
+      text-align: left;
     }
-    .hero-card { display: grid; gap: 12px; justify-items: center; width: 100%; }
+    .hero-card {
+      display: grid;
+      gap: 10px;
+      justify-items: start;
+      width: 100%;
+    }
     .hero h1 {
       margin: 0; font-family: var(--font-display);
-      font-size: clamp(1.38rem, 2.4vw, 1.94rem);
+      font-size: clamp(1.42rem, 2.2vw, 1.9rem);
       font-weight: 620; letter-spacing: -.03em; line-height: 1.16;
     }
     .hero p {
       max-width: 720px; margin: 0;
-      color: var(--muted-strong); font-size: clamp(.92rem, 1.2vw, .98rem);
+      color: var(--muted); font-size: clamp(.9rem, 1.2vw, .96rem);
       line-height: 1.8; white-space: normal;
     }
     .hero-support {
-      font-size: .82rem;
+      font-size: .78rem;
+      color: var(--muted);
+    }
+    .learning-panel {
+      display: grid;
+      gap: 18px;
+      padding: 18px 0 22px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    .learning-panel-copy {
+      display: grid;
+      gap: 10px;
+      max-width: 720px;
+    }
+    .learning-panel-title {
+      margin: 0;
+      font-size: clamp(1rem, 1.5vw, 1.18rem);
+      font-weight: 620;
+      letter-spacing: -.02em;
+      line-height: 1.3;
+    }
+    .learning-panel-text {
+      margin: 0;
+      color: var(--muted);
+      font-size: .9rem;
+      line-height: 1.7;
+    }
+    .learning-panel-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    .learning-panel-stat {
+      display: grid;
+      gap: 4px;
+      padding: 12px 0;
+      border-right: 1px solid var(--line);
+    }
+    .learning-panel-stat:last-child { border-right: none; }
+    .learning-panel-stat strong {
+      font-size: .96rem;
+      font-weight: 620;
+      letter-spacing: -.02em;
+    }
+    .learning-panel-stat span {
+      font-size: .74rem;
       color: var(--muted);
     }
 
@@ -32,7 +86,9 @@
     /* Nav between weeks */
     .week-nav {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 14px 0; border-bottom: 1px solid var(--line); margin-bottom: 48px;
+      padding: 18px 0 0;
+      border-top: 1px solid var(--line);
+      margin-bottom: 12px;
     }
     .week-nav a {
       display: flex; align-items: center; gap: 8px;
@@ -45,20 +101,23 @@
     .lab { display: grid; gap: 16px; }
     .lab-note {
       display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px;
-      padding: 14px 18px; border-radius: var(--radius-md);
-      border: 1px solid var(--line); background: var(--surface);
+      padding: 12px 0;
+      border-radius: 0;
+      border: none;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background: none;
       color: var(--muted-strong); font-size: .88rem;
     }
     .bundle-card {
       display: grid;
-      gap: 16px;
-      padding: 20px 22px;
-      border-radius: 24px;
-      border: 1px solid rgba(147, 197, 253, 0.16);
-      background:
-        radial-gradient(circle at top left, rgba(10,132,255,.12), transparent 32%),
-        linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
-      box-shadow: var(--shadow-card);
+      gap: 18px;
+      padding: 0 0 22px;
+      border-radius: 0;
+      border: none;
+      border-bottom: 1px solid var(--line);
+      background: none;
+      box-shadow: none;
     }
     .bundle-copy {
       display: grid;
@@ -71,23 +130,25 @@
     }
     .bundle-copy p {
       margin: 0;
-      color: var(--muted-strong);
+      color: var(--muted);
       line-height: 1.72;
       font-size: .92rem;
     }
     .bundle-stats {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 10px;
+      gap: 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
     }
     .bundle-stat {
       display: grid;
       gap: 4px;
-      padding: 14px 16px;
-      border-radius: 18px;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.03);
+      padding: 14px 0;
+      border-right: 1px solid var(--line);
+      background: none;
     }
+    .bundle-stat:last-child { border-right: none; }
     .bundle-stat strong {
       font-size: 1rem;
       font-weight: 620;
@@ -100,23 +161,21 @@
     .bundle-links {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 12px;
     }
     .bundle-link {
       display: inline-flex;
       align-items: center;
-      padding: 7px 11px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      color: var(--muted-strong);
+      padding: 0;
+      border-radius: 0;
+      border: none;
+      background: none;
+      color: var(--muted);
       text-decoration: none;
       font-size: .78rem;
-      transition: border-color .14s, background .14s, color .14s;
+      transition: color .14s;
     }
     .bundle-link:hover {
-      border-color: rgba(10,132,255,.34);
-      background: rgba(10,132,255,.08);
       color: var(--text);
     }
     .section-head p {
@@ -133,36 +192,32 @@
     .text-key { color: var(--key-soft); }
 
     /* Responsive */
-    @media (max-width: 720px) {
-      .hero { padding-top: 72px; }
-      .sidebar { width: 80vw; max-width: 300px; }
-      .bundle-card {
-        padding: 20px;
-      }
-      .bundle-stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
     /* ── Content layout ── */
     .content-layout {
-      display: flex; position: relative;
+      width: min(calc(var(--max-width) + 120px), calc(100% - 32px));
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 250px minmax(0, 1fr);
+      gap: 36px;
+      position: relative;
+      align-items: start;
     }
 
     /* ── Sidebar ── */
     .sidebar {
-      position: fixed; top: 0; left: 0;
-      width: 240px; height: 100vh;
-      background: var(--surface);
+      position: sticky;
+      top: 76px;
+      width: 100%;
+      height: calc(100vh - 88px);
+      background: none;
       border-right: 1px solid var(--line);
-      backdrop-filter: blur(20px);
-      z-index: 50;
-      padding: 72px 0 24px;
+      z-index: 20;
+      padding: 12px 18px 32px 0;
       overflow-y: auto;
-      transform: translateX(-100%);
-      transition: transform .26s cubic-bezier(.4,0,.2,1);
+      transform: none;
+      transition: none;
     }
-    .sidebar.is-open { transform: translateX(0); }
+    .sidebar.is-open { transform: none; }
 
     .sidebar-overlay {
       display: none; position: fixed; inset: 0;
@@ -172,20 +227,19 @@
 
     .sidebar-nav { list-style: none; margin: 0; padding: 8px 0; }
     .sidebar-nav li a {
-      display: block; padding: 8px 20px;
+      display: block; padding: 7px 0 7px 14px;
       font-size: .84rem; color: var(--muted);
       border-left: 2px solid transparent;
-      transition: color .14s, border-color .14s, background .14s;
+      transition: color .14s, border-color .14s;
     }
     .sidebar-nav li a:hover {
-      color: var(--text); background: var(--overlay-white);
+      color: var(--text);
     }
     .sidebar-nav li.is-active a {
-      color: var(--key-soft); border-left-color: var(--key-soft);
-      background: rgba(10,132,255,.08);
+      color: var(--text); border-left-color: var(--key-soft);
     }
     .sidebar-nav .nav-section-label {
-      display: block; padding: 14px 20px 4px;
+      display: block; padding: 14px 0 4px 14px;
       font-size: .72rem; color: var(--muted);
       text-transform: uppercase; letter-spacing: .08em; font-weight: 600;
     }
@@ -206,31 +260,141 @@
     .main-content { flex: 1; min-width: 0; }
 
     /* ── Show Me buttons ── */
-    .showme-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .showme-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 0 0 14px;
+    }
     .btn-showme {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 8px 14px; border-radius: 999px;
-      border: 1px solid rgba(10,132,255,.3);
-      background: rgba(10,132,255,.08);
-      color: var(--key-soft); font: inherit; font-size: .82rem; font-weight: 500;
+      position: relative;
+      isolation: isolate;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 14px; border-radius: 14px;
+      border: 1px solid rgba(147,197,253,.22);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.02)),
+        linear-gradient(135deg, rgba(59,130,246,.18), rgba(14,165,233,.1));
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.18),
+        0 10px 28px rgba(4, 10, 24, .26),
+        0 0 0 1px rgba(147,197,253,.04);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      color: var(--text); font: inherit; font-size: .81rem; font-weight: 600;
       cursor: pointer;
-      transition: background .18s, border-color .18s, color .18s;
+      transition: transform .18s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease, color .18s ease;
+    }
+    .btn-showme::after {
+      content: "";
+      position: absolute;
+      inset: 1px 1px auto 1px;
+      height: 48%;
+      border-radius: inherit;
+      background: linear-gradient(180deg, rgba(255,255,255,.2), rgba(255,255,255,0));
+      opacity: .75;
+      pointer-events: none;
     }
     .btn-showme:hover {
-      background: rgba(10,132,255,.16);
-      border-color: rgba(10,132,255,.5);
-      color: #fff;
+      transform: translateY(-1px);
+      border-color: rgba(147,197,253,.34);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.22),
+        0 14px 32px rgba(4, 10, 24, .3),
+        0 0 0 1px rgba(147,197,253,.1);
+      color: #f8fbff;
     }
     .btn-showme.is-complete {
-      border-color: rgba(16,185,129,.4);
-      background: rgba(16,185,129,.08);
-      color: #34d399;
+      border-color: rgba(52,211,153,.26);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.02)),
+        linear-gradient(135deg, rgba(16,185,129,.18), rgba(5,150,105,.1));
+      color: #d1fae5;
     }
     .btn-showme.is-complete:hover {
-      background: rgba(16,185,129,.16);
-      border-color: rgba(16,185,129,.6);
+      border-color: rgba(52,211,153,.34);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.2),
+        0 14px 32px rgba(4, 10, 24, .28),
+        0 0 0 1px rgba(52,211,153,.12);
     }
-    .btn-showme.is-complete::before { content: "✅ "; }
+    .btn-showme.is-complete::before {
+      content: "✓";
+      display: inline-grid;
+      place-items: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background: rgba(16,185,129,.18);
+      color: #a7f3d0;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.16);
+      font-size: .72rem;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    /* ── Step accordion ── */
+    .step-header { margin-bottom: 0; }
+    .step-toggle {
+      width: 100%;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 0;
+      border: none;
+      background: none;
+      color: inherit;
+      text-align: left;
+      cursor: pointer;
+      font: inherit;
+    }
+    .step-title-group { min-width: 0; }
+    .step-title-text { line-height: 1.35; }
+    .step-header-right {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+    .step-toggle-indicator {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      transition: transform .18s ease, border-color .18s ease, background .18s ease, color .18s ease;
+    }
+    .step-toggle-indicator::before {
+      content: "⌄";
+      font-size: 1rem;
+      line-height: 1;
+      transform: translateY(-1px);
+    }
+    .step-toggle:hover .step-toggle-indicator {
+      border-color: rgba(147,197,253,.22);
+      background: rgba(10,132,255,.08);
+      color: var(--key-soft);
+    }
+    .lab-step.is-expanded .step-toggle-indicator {
+      transform: rotate(180deg);
+      border-color: rgba(147,197,253,.22);
+      background: rgba(10,132,255,.08);
+      color: var(--key-soft);
+    }
+    .step-body {
+      display: grid;
+      gap: 0;
+      margin-top: 14px;
+    }
+    .step-body[hidden] { display: none; }
+    .lab-step.is-collapsed {
+      padding-bottom: 18px;
+    }
 
     /* ── Clip Player ── */
     .clip-player {
@@ -288,8 +452,8 @@
     .showme-overlay.is-open { display: flex; }
 
     .showme-modal {
-      width: min(960px, 92vw);
-      height: min(88vh, 800px);
+      width: min(1360px, 96vw);
+      height: min(92vh, 920px);
       max-width: 100%;
       max-height: 100%;
       border-radius: var(--radius-lg);
@@ -328,22 +492,175 @@
       display: flex; align-items: center; gap: 6px;
       flex-shrink: 0;
     }
-    .showme-resize, .showme-close {
+    .showme-browse-toggle,
+    .showme-resize,
+    .showme-close {
       display: grid; place-items: center;
       width: 44px; height: 44px; border-radius: 12px;
       border: 1px solid var(--line);
       background: var(--overlay-white);
       color: var(--muted-strong); cursor: pointer;
-      transition: background .14s, color .14s;
+      transition: background .14s, color .14s, border-color .14s;
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
     }
-    .showme-resize:hover, .showme-close:hover {
+    .showme-browse-toggle:hover,
+    .showme-resize:hover,
+    .showme-close:hover {
       background: var(--overlay-white-hover); color: var(--text);
+    }
+    .showme-browse-toggle.is-active {
+      border-color: rgba(10,132,255,.34);
+      background: rgba(10,132,255,.1);
+      color: var(--key-soft);
     }
     .showme-resize .icon-restore { display: none; }
     .is-maximized .showme-resize .icon-maximize { display: none; }
     .is-maximized .showme-resize .icon-restore { display: block; }
+    .showme-modal-body {
+      display: grid;
+      grid-template-columns: 0 minmax(0, 1fr);
+      flex: 1;
+      min-height: 0;
+      position: relative;
+      transition: grid-template-columns .24s ease;
+    }
+    .showme-modal.is-browser-open .showme-modal-body {
+      grid-template-columns: minmax(300px, 332px) minmax(0, 1fr);
+    }
+    .showme-browser {
+      min-width: 0;
+      border-right: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)),
+        radial-gradient(circle at top left, rgba(10,132,255,.09), transparent 42%);
+      overflow: hidden auto;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .18s ease;
+    }
+    .showme-modal.is-browser-open .showme-browser {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .showme-browser-header {
+      display: grid;
+      gap: 10px;
+      padding: 16px 16px 12px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(0,0,0,.08);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      backdrop-filter: blur(10px);
+    }
+    .showme-browser-search {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--line-strong);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      font: inherit;
+      font-size: .86rem;
+      outline: none;
+    }
+    .showme-browser-search:focus {
+      border-color: rgba(10,132,255,.42);
+    }
+    .showme-browser-search::placeholder {
+      color: var(--muted);
+    }
+    .showme-browser-library-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      width: fit-content;
+      color: var(--key-soft);
+      font-size: .8rem;
+      text-decoration: none;
+    }
+    .showme-browser-library-link:hover {
+      color: #cbe4ff;
+    }
+    .showme-browser-content {
+      display: grid;
+      gap: 16px;
+      padding: 16px;
+    }
+    .showme-browser-section {
+      display: grid;
+      gap: 8px;
+    }
+    .showme-browser-section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .showme-browser-section-title {
+      font-size: .74rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .showme-browser-section-count {
+      font-size: .74rem;
+      color: var(--muted);
+    }
+    .showme-browser-list {
+      display: grid;
+      gap: 8px;
+    }
+    .showme-browser-item {
+      display: grid;
+      gap: 4px;
+      width: 100%;
+      padding: 11px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+      transition: border-color .14s ease, background .14s ease, transform .14s ease;
+      font: inherit;
+    }
+    .showme-browser-item:hover {
+      border-color: rgba(10,132,255,.34);
+      background: rgba(10,132,255,.08);
+      transform: translateY(-1px);
+    }
+    .showme-browser-item.is-active {
+      border-color: rgba(10,132,255,.46);
+      background: rgba(10,132,255,.12);
+      box-shadow: inset 0 0 0 1px rgba(10,132,255,.12);
+    }
+    .showme-browser-item-label {
+      font-size: .85rem;
+      font-weight: 590;
+      line-height: 1.45;
+    }
+    .showme-browser-item-meta {
+      font-size: .74rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+    .showme-browser-empty {
+      padding: 12px 2px 4px;
+      color: var(--muted);
+      font-size: .82rem;
+      line-height: 1.6;
+    }
+    .showme-browser-backdrop {
+      display: none;
+    }
+    .showme-viewer {
+      min-width: 0;
+      min-height: 0;
+      display: flex;
+    }
     .showme-iframe {
       flex: 1; width: 100%; border: none;
       background: var(--bg);
@@ -368,6 +685,37 @@
         padding-left: calc(18px + env(safe-area-inset-left, 0px));
       }
       .showme-resize { display: none; }
+    }
+    @media (max-width: 980px) {
+      .showme-modal-body {
+        display: block;
+      }
+      .showme-browser {
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: min(86vw, 340px);
+        max-width: 100%;
+        border-right: 1px solid var(--line);
+        box-shadow: 18px 0 42px rgba(0,0,0,.32);
+        transform: translateX(-100%);
+        transition: transform .24s ease, opacity .18s ease;
+        z-index: 2;
+      }
+      .showme-modal.is-browser-open .showme-browser {
+        transform: translateX(0);
+      }
+      .showme-browser-backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(0,0,0,.4);
+        z-index: 1;
+      }
+      .showme-modal.is-browser-open .showme-browser-backdrop {
+        display: block;
+      }
+      .showme-viewer {
+        height: 100%;
+      }
     }
 
     /* ── Student Login Overlay ───────────────────── */
@@ -412,7 +760,7 @@
     }
     .student-login-preview .login-btn {
       display: inline-block; margin-top: 10px; padding: 9px 28px;
-      border-radius: 999px; border: none;
+      border-radius: var(--radius-sm); border: none;
       background: var(--key); color: #fff;
       font-size: .88rem; font-weight: 600; cursor: pointer;
     }
@@ -420,40 +768,97 @@
     /* ── Student badge (topbar) ──────────────────── */
     .student-badge {
       display: none; align-items: center; gap: 6px;
-      padding: 4px 10px 4px 8px; border-radius: 999px;
-      background: rgba(10,132,255,.08); border: 1px solid rgba(10,132,255,.2);
-      font-size: .76rem; color: var(--key-soft); cursor: pointer;
+      padding: 6px 10px; border-radius: var(--radius-sm);
+      background: var(--surface-strong); border: 1px solid var(--line);
+      font-size: .76rem; color: var(--muted-strong); cursor: pointer;
       white-space: nowrap; transition: background .14s;
     }
     .student-badge.is-active { display: inline-flex; }
-    .student-badge:hover { background: rgba(10,132,255,.15); }
+    .student-badge:hover { background: var(--overlay-white-hover); }
     /* ── Guest button ── */
     .guest-btn {
       display: block; width: 100%; margin-top: 14px;
-      padding: 9px 0; border-radius: 999px;
+      padding: 9px 0; border-radius: var(--radius-sm);
       border: 1px solid var(--line);
-      background: transparent; color: var(--muted);
+      background: var(--surface-strong); color: var(--muted);
       font-size: .82rem; cursor: pointer;
       transition: color .14s, border-color .14s;
     }
     .guest-btn:hover { color: var(--text); border-color: var(--line-strong); }
     /* ── Reference tabs (topbar) ──────────────────── */
     .ref-tabs {
-      display: flex; align-items: center; gap: 6px;
+      display: flex; align-items: center; gap: 12px;
     }
     .ref-tab {
       display: inline-flex; align-items: center; gap: 5px;
-      padding: 4px 11px; border-radius: 999px;
-      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
-      font-size: .76rem; color: var(--muted-strong);
+      padding: 0;
+      border-radius: 0;
+      background: none;
+      border: none;
+      font-size: .78rem; color: var(--muted);
       text-decoration: none; white-space: nowrap;
-      transition: background .14s, border-color .14s, color .14s;
+      transition: color .14s;
     }
     .ref-tab:hover {
-      background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.2);
       color: var(--text);
     }
     @media (max-width: 600px) { .ref-tabs { display: none; } }
+
+    @media (max-width: 980px) {
+      .content-layout {
+        width: calc(100% - 20px);
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 80vw;
+        max-width: 300px;
+        height: 100vh;
+        background: var(--surface);
+        padding: 72px 0 24px;
+        border-right: 1px solid var(--line);
+        transform: translateX(-100%);
+        transition: transform .26s cubic-bezier(.4,0,.2,1);
+        z-index: 50;
+      }
+      .sidebar.is-open { transform: translateX(0); }
+      .sidebar-nav li a {
+        padding: 8px 20px;
+      }
+      .sidebar-nav .nav-section-label {
+        padding: 14px 20px 4px;
+      }
+      .sidebar-toggle {
+        display: flex;
+      }
+      .bundle-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .learning-panel-stats {
+        grid-template-columns: 1fr;
+      }
+      .learning-panel-stat {
+        border-right: none;
+        border-bottom: 1px solid var(--line);
+      }
+      .learning-panel-stat:last-child { border-bottom: none; }
+    }
+    @media (min-width: 981px) {
+      .sidebar-toggle {
+        display: none;
+      }
+      .main-content {
+        padding-bottom: 40px;
+      }
+    }
+    @media (max-width: 720px) {
+      .hero {
+        padding-top: 72px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -525,6 +930,12 @@
         <div class="showme-modal-header">
           <span class="showme-modal-title" id="showmeTitle"></span>
           <div class="showme-header-actions">
+            <button class="showme-browse-toggle" id="showmeBrowseToggle" aria-label="Show Me 탐색 전환" type="button" aria-pressed="false">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <rect x="1.5" y="2" width="4" height="12" rx="1.2" stroke="currentColor" stroke-width="1.4"/>
+                <path d="M8.5 4H14M8.5 8H14M8.5 12H12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              </svg>
+            </button>
             <button class="showme-resize" id="showmeResize" aria-label="크기 전환" type="button">
               <svg class="icon-maximize" width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <rect x="2.5" y="2.5" width="11" height="11" rx="1.5" stroke="currentColor" stroke-width="1.4"/>
@@ -541,7 +952,19 @@
             </button>
           </div>
         </div>
-        <iframe class="showme-iframe" id="showmeIframe" sandbox="allow-scripts allow-same-origin" title="Show Me Widget"></iframe>
+        <div class="showme-modal-body">
+          <aside class="showme-browser" id="showmeBrowser" aria-hidden="true">
+            <div class="showme-browser-header">
+              <input class="showme-browser-search" id="showmeBrowserSearch" type="search" autocomplete="off" aria-label="Show Me 카드 검색" placeholder="연관 카드나 키워드 검색" />
+              <a class="showme-browser-library-link" id="showmeBrowserLibraryLink" href="library.html">전체 라이브러리 열기</a>
+            </div>
+            <div class="showme-browser-content" id="showmeBrowserContent"></div>
+          </aside>
+          <div class="showme-browser-backdrop" id="showmeBrowserBackdrop"></div>
+          <div class="showme-viewer">
+            <iframe class="showme-iframe" id="showmeIframe" sandbox="allow-scripts allow-same-origin" title="Show Me Widget"></iframe>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -621,9 +1044,13 @@
       document.getElementById("resetBtn").textContent = text.resetButton;
       document.getElementById("footerHomeLink").textContent = text.footerHome;
       document.getElementById("footerLibraryLink").textContent = text.footerLibrary;
+      document.getElementById("showmeBrowseToggle").setAttribute("aria-label", text.modalBrowseToggleAria);
       document.getElementById("showmeResize").setAttribute("aria-label", text.modalResizeAria);
       document.getElementById("showmeClose").setAttribute("aria-label", text.modalCloseAria);
       document.getElementById("showmeIframe").setAttribute("title", text.showmeFrameTitle);
+      document.getElementById("showmeBrowserSearch").setAttribute("aria-label", text.modalBrowseSearchAria);
+      document.getElementById("showmeBrowserSearch").setAttribute("placeholder", text.modalBrowseSearchPlaceholder);
+      document.getElementById("showmeBrowserLibraryLink").textContent = text.modalBrowseLibraryLink;
       document.getElementById("studentLoginTitle").textContent = text.loginTitle;
       document.getElementById("studentLoginSubtitle").textContent = text.loginSubtitle;
       document.getElementById("studentLoginInput").setAttribute("placeholder", text.loginPlaceholder);
@@ -650,6 +1077,7 @@
         return;
       }
       buildPage(window.RPDI18n.localizeWeekData(weekData));
+      renderShowMeBrowser();
       updateShowMeBadges();
       maybeOpenRequestedShowMe();
     }
@@ -681,7 +1109,9 @@
       var docs = w.docs || [];
 
       var stepsHtml = w.steps.map(function(step, idx) {
-        var taskItems = step.tasks.map(function(task) {
+        var initiallyExpanded = idx === 0;
+        var tasks = Array.isArray(step.tasks) ? step.tasks : [];
+        var taskItems = tasks.map(function(task) {
           return `
             <div class="task-item">
               <input id="${task.id}" type="checkbox" data-task-id="${task.id}" />
@@ -706,41 +1136,54 @@
 
         return `
           ${sectionDivider}
-          <article class="lab-step" id="step-${idx}" data-step-index="${idx}">
+          <article class="lab-step ${initiallyExpanded ? "is-expanded" : "is-collapsed"}" id="step-${idx}" data-step-index="${idx}">
             <div class="step-header">
-              <div class="step-title-group">
-                <div class="step-number">${idx + 1}</div>
-                <strong class="step-title-text">${step.title}</strong>
-              </div>
-              <div class="status-pill" data-step-status>${text.stepStatusActive}</div>
+              <button
+                class="step-toggle"
+                type="button"
+                data-step-toggle
+                aria-expanded="${initiallyExpanded ? "true" : "false"}"
+                aria-label="${initiallyExpanded ? text.stepToggleCollapse : text.stepToggleExpand}"
+                aria-controls="step-body-${idx}">
+                <div class="step-title-group">
+                  <div class="step-number">${idx + 1}</div>
+                  <strong class="step-title-text">${step.title}</strong>
+                </div>
+                <div class="step-header-right">
+                  <div class="status-pill active" data-step-status>${text.stepStatusActive}</div>
+                  <span class="step-toggle-indicator" aria-hidden="true"></span>
+                </div>
+              </button>
             </div>
-            ${step.images && step.images.length
-              ? `<div class="step-images">${step.images.map(function(img, imageIndex) {
-                  return `<img src="${img}" alt="${step.title} ${imageIndex + 1}" class="step-image" loading="lazy" />`;
-                }).join("")}</div>`
-              : step.image ? `<figure class="step-image-wrap">
-                  <img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" />
-                  ${step.link ? `<figcaption><a href="${step.link}" target="_blank" rel="noopener noreferrer" class="doc-link">${text.sectionDocs} →</a></figcaption>` : ""}
-                </figure>` : ""}
-            ${step.video ? `<video class="step-video" controls preload="metadata"><source src="${step.video}" type="video/mp4" /><source src="${step.video}" type="video/quicktime" /></video>` : ""}
-            ${step.clips && step.clips.length ? `
-              <div class="clip-player" data-step-clips>
-                <video src="${step.clips[0].src}" autoplay loop muted playsinline
-                       onclick="this.paused ? this.play() : this.pause()"
-                       title="${text.clipTitle}"></video>
-                ${step.clips.length > 1 ? `
-                  <div class="clip-tabs">${step.clips.map(function(clip, clipIndex) {
-                    return `<button class="clip-tab${clipIndex === 0 ? " is-active" : ""}" type="button"
-                             data-clip-src="${clip.src}" data-clip-idx="${clipIndex}">${clip.label}</button>`;
-                  }).join("")}</div>` : ""}
-                <div class="clip-player-hint">${text.clipHint}</div>
-              </div>` : ""}
-            ${step.downloads && step.downloads.length ? `<div class="step-downloads">${step.downloads.map(function(download) {
-              return `<a class="step-dl-btn" href="${download.url}" download="${download.url.split("/").pop()}" target="_blank" rel="noopener">⬇ ${download.label}</a>`;
-            }).join("")}</div>` : ""}
-            <p class="step-copy">${step.copy}</p>
-            ${showmeHtml}
-            <div class="task-list">${taskItems}</div>
+            <div class="step-body" id="step-body-${idx}" data-step-body ${initiallyExpanded ? "" : "hidden"}>
+              ${step.images && step.images.length
+                ? `<div class="step-images">${step.images.map(function(img, imageIndex) {
+                    return `<img src="${img}" alt="${step.title} ${imageIndex + 1}" class="step-image" loading="lazy" />`;
+                  }).join("")}</div>`
+                : step.image ? `<figure class="step-image-wrap">
+                    <img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" />
+                    ${step.link ? `<figcaption><a href="${step.link}" target="_blank" rel="noopener noreferrer" class="doc-link">${text.sectionDocs} →</a></figcaption>` : ""}
+                  </figure>` : ""}
+              ${step.video ? `<video class="step-video" controls preload="metadata"><source src="${step.video}" type="video/mp4" /><source src="${step.video}" type="video/quicktime" /></video>` : ""}
+              ${step.clips && step.clips.length ? `
+                <div class="clip-player" data-step-clips>
+                  <video src="${step.clips[0].src}" autoplay loop muted playsinline
+                         onclick="this.paused ? this.play() : this.pause()"
+                         title="${text.clipTitle}"></video>
+                  ${step.clips.length > 1 ? `
+                    <div class="clip-tabs">${step.clips.map(function(clip, clipIndex) {
+                      return `<button class="clip-tab${clipIndex === 0 ? " is-active" : ""}" type="button"
+                               data-clip-src="${clip.src}" data-clip-idx="${clipIndex}">${clip.label}</button>`;
+                    }).join("")}</div>` : ""}
+                  <div class="clip-player-hint">${text.clipHint}</div>
+                </div>` : ""}
+              ${step.downloads && step.downloads.length ? `<div class="step-downloads">${step.downloads.map(function(download) {
+                return `<a class="step-dl-btn" href="${download.url}" download="${download.url.split("/").pop()}" target="_blank" rel="noopener">⬇ ${download.label}</a>`;
+              }).join("")}</div>` : ""}
+              <p class="step-copy">${step.copy}</p>
+              ${showmeHtml}
+              ${taskItems ? `<div class="task-list">${taskItems}</div>` : ""}
+            </div>
           </article>`;
       }).join("");
 
@@ -901,6 +1344,47 @@
 
       initProgress();
       initSidebar(w);
+      initStepAccordion();
+    }
+
+    function setStepExpanded(step, expanded) {
+      var text = getWeekText();
+      var toggle = step.querySelector("[data-step-toggle]");
+      var body = step.querySelector("[data-step-body]");
+      if (!toggle || !body) return;
+      var nextExpanded = Boolean(expanded);
+      step.classList.toggle("is-expanded", nextExpanded);
+      step.classList.toggle("is-collapsed", !nextExpanded);
+      toggle.setAttribute("aria-expanded", nextExpanded ? "true" : "false");
+      toggle.setAttribute("aria-label", nextExpanded ? text.stepToggleCollapse : text.stepToggleExpand);
+      body.hidden = !nextExpanded;
+    }
+
+    function initStepAccordion() {
+      var steps = Array.from(document.querySelectorAll(".lab-step"));
+      if (!steps.length) return;
+
+      var firstIncompleteIndex = steps.findIndex(function(step) {
+        return !step.classList.contains("is-complete");
+      });
+      var defaultOpenIndex = firstIncompleteIndex === -1 ? 0 : firstIncompleteIndex;
+
+      steps.forEach(function(step, idx) {
+        var toggle = step.querySelector("[data-step-toggle]");
+        if (!toggle) return;
+        setStepExpanded(step, idx === defaultOpenIndex);
+        toggle.addEventListener("click", function() {
+          setStepExpanded(step, step.classList.contains("is-collapsed"));
+        });
+      });
+
+      document.querySelectorAll('a[href^="#step-"]').forEach(function(link) {
+        link.addEventListener("click", function() {
+          var targetId = link.getAttribute("href").slice(1);
+          var step = document.getElementById(targetId);
+          if (step) setStepExpanded(step, true);
+        });
+      });
     }
 
     function initProgress() {
@@ -974,6 +1458,231 @@
 
     var showMeLastTrigger = null;
     var activeShowMeWidgetId = null;
+    var showMeBrowserOpen = window.innerWidth >= 1100;
+    var showMeBrowserQuery = "";
+
+    function getWeekShowMeIds() {
+      var ids = [];
+      var seen = {};
+      if (!weekData || !Array.isArray(weekData.steps)) return ids;
+      weekData.steps.forEach(function(step) {
+        collectShowMeIdsFromStep(step).forEach(function(id) {
+          if (!id || seen[id]) return;
+          seen[id] = true;
+          ids.push(id);
+        });
+      });
+      return ids;
+    }
+
+    function buildShowMeBrowserCard(id) {
+      var meta = getShowMeMeta(id);
+      var keywords = Array.isArray(meta.keywords) ? meta.keywords : [];
+      var prerequisites = Array.isArray(meta.prerequisites) ? meta.prerequisites : [];
+      var manualSectionMap = window.SHOWME_CATALOG && window.SHOWME_CATALOG.manualSectionMap
+        ? window.SHOWME_CATALOG.manualSectionMap
+        : {};
+      return {
+        id: id,
+        icon: meta.icon || "📖",
+        label: meta.label || id,
+        canonicalLabel: meta.label || id,
+        category: meta.category || "",
+        stageLabel: meta.stageLabel || "",
+        keywords: keywords,
+        prerequisites: prerequisites,
+        manualSection: manualSectionMap[id] || "",
+        searchText: [
+          id,
+          meta.label,
+          meta.category,
+          meta.stageLabel,
+          meta.confusionLabel,
+          meta.audienceNeed,
+          keywords.join(" "),
+          prerequisites.join(" ")
+        ].join(" ").toLowerCase()
+      };
+    }
+
+    function sortShowMeBrowserCards(cards) {
+      return cards.slice().sort(function(a, b) {
+        return a.label.localeCompare(b.label, window.RPDI18n.getLanguage(), { sensitivity: "base" });
+      });
+    }
+
+    function getAllShowMeBrowserCards() {
+      return sortShowMeBrowserCards(Object.keys(SHOWME_REGISTRY || {}).map(buildShowMeBrowserCard));
+    }
+
+    function getSharedShowMeTermScore(baseCard, candidateCard) {
+      var score = 0;
+      var baseTerms = {};
+      []
+        .concat(baseCard.keywords || [])
+        .concat(baseCard.prerequisites || [])
+        .concat((baseCard.canonicalLabel || "").split(/[\s/,-]+/))
+        .forEach(function(term) {
+          var normalized = String(term || "").trim().toLowerCase();
+          if (normalized.length >= 3) baseTerms[normalized] = true;
+        });
+
+      []
+        .concat(candidateCard.keywords || [])
+        .concat(candidateCard.prerequisites || [])
+        .concat((candidateCard.canonicalLabel || "").split(/[\s/,-]+/))
+        .forEach(function(term) {
+          var normalized = String(term || "").trim().toLowerCase();
+          if (baseTerms[normalized]) score += 1;
+        });
+
+      return score;
+    }
+
+    function getRelatedShowMeCards(widgetId, weekIdSet, limit) {
+      var current = buildShowMeBrowserCard(widgetId);
+      return getAllShowMeBrowserCards()
+        .filter(function(card) {
+          return card.id !== widgetId && !weekIdSet[card.id];
+        })
+        .map(function(card) {
+          var score = 0;
+          if (card.category && current.category && card.category === current.category) score += 5;
+          if (card.manualSection && current.manualSection && card.manualSection === current.manualSection) score += 3;
+          if (card.stageLabel && current.stageLabel && card.stageLabel === current.stageLabel) score += 1;
+          score += getSharedShowMeTermScore(current, card);
+          return { card: card, score: score };
+        })
+        .filter(function(item) { return item.score > 0; })
+        .sort(function(a, b) {
+          if (b.score !== a.score) return b.score - a.score;
+          return a.card.label.localeCompare(b.card.label, window.RPDI18n.getLanguage(), { sensitivity: "base" });
+        })
+        .slice(0, limit || 8)
+        .map(function(item) { return item.card; });
+    }
+
+    function matchesShowMeBrowserQuery(card, query) {
+      return !query || card.searchText.indexOf(query) !== -1;
+    }
+
+    function createShowMeBrowserItem(card) {
+      var button = document.createElement("button");
+      button.type = "button";
+      button.className = "showme-browser-item" + (card.id === activeShowMeWidgetId ? " is-active" : "");
+
+      var label = document.createElement("span");
+      label.className = "showme-browser-item-label";
+      label.textContent = card.icon + " " + card.label;
+      button.appendChild(label);
+
+      var meta = document.createElement("span");
+      meta.className = "showme-browser-item-meta";
+      meta.textContent = [card.category, card.stageLabel].filter(Boolean).join(" · ");
+      button.appendChild(meta);
+
+      button.addEventListener("click", function() {
+        openShowMe(card.id);
+      });
+      return button;
+    }
+
+    function appendShowMeBrowserSection(container, title, cards) {
+      if (!cards.length) return false;
+
+      var section = document.createElement("section");
+      section.className = "showme-browser-section";
+
+      var head = document.createElement("div");
+      head.className = "showme-browser-section-head";
+
+      var heading = document.createElement("div");
+      heading.className = "showme-browser-section-title";
+      heading.textContent = title;
+      head.appendChild(heading);
+
+      var count = document.createElement("span");
+      count.className = "showme-browser-section-count";
+      count.textContent = cards.length;
+      head.appendChild(count);
+
+      section.appendChild(head);
+
+      var list = document.createElement("div");
+      list.className = "showme-browser-list";
+      cards.forEach(function(card) {
+        list.appendChild(createShowMeBrowserItem(card));
+      });
+      section.appendChild(list);
+
+      container.appendChild(section);
+      return true;
+    }
+
+    function setShowMeBrowserOpen(nextOpen) {
+      var modal = document.querySelector(".showme-modal");
+      var browser = document.getElementById("showmeBrowser");
+      var toggle = document.getElementById("showmeBrowseToggle");
+      if (!modal || !browser || !toggle) return;
+      showMeBrowserOpen = Boolean(nextOpen);
+      modal.classList.toggle("is-browser-open", showMeBrowserOpen);
+      browser.setAttribute("aria-hidden", showMeBrowserOpen ? "false" : "true");
+      toggle.classList.toggle("is-active", showMeBrowserOpen);
+      toggle.setAttribute("aria-pressed", showMeBrowserOpen ? "true" : "false");
+    }
+
+    function renderShowMeBrowser() {
+      var text = getWeekText();
+      var container = document.getElementById("showmeBrowserContent");
+      var link = document.getElementById("showmeBrowserLibraryLink");
+      if (!container || !link) return;
+
+      link.textContent = text.modalBrowseLibraryLink;
+      link.href = activeShowMeWidgetId
+        ? "library.html?showme=" + encodeURIComponent(activeShowMeWidgetId)
+        : "library.html";
+
+      container.textContent = "";
+      if (!weekData) return;
+
+      var query = showMeBrowserQuery.trim().toLowerCase();
+      var weekIds = getWeekShowMeIds();
+      var weekIdSet = {};
+      weekIds.forEach(function(id) { weekIdSet[id] = true; });
+
+      if (query) {
+        var results = getAllShowMeBrowserCards()
+          .filter(function(card) { return matchesShowMeBrowserQuery(card, query); })
+          .sort(function(a, b) {
+            if (weekIdSet[a.id] !== weekIdSet[b.id]) return weekIdSet[a.id] ? -1 : 1;
+            return a.label.localeCompare(b.label, window.RPDI18n.getLanguage(), { sensitivity: "base" });
+          })
+          .slice(0, 24);
+
+        if (!appendShowMeBrowserSection(container, text.modalBrowseResults, results)) {
+          var empty = document.createElement("div");
+          empty.className = "showme-browser-empty";
+          empty.textContent = text.modalBrowseEmpty;
+          container.appendChild(empty);
+        }
+        return;
+      }
+
+      var weekCards = sortShowMeBrowserCards(weekIds.map(buildShowMeBrowserCard));
+      var relatedCards = activeShowMeWidgetId
+        ? getRelatedShowMeCards(activeShowMeWidgetId, weekIdSet, 8)
+        : [];
+      var hasContent = false;
+      hasContent = appendShowMeBrowserSection(container, text.modalBrowseCurrent, weekCards) || hasContent;
+      hasContent = appendShowMeBrowserSection(container, text.modalBrowseRelated, relatedCards) || hasContent;
+
+      if (!hasContent) {
+        var fallback = document.createElement("div");
+        fallback.className = "showme-browser-empty";
+        fallback.textContent = text.modalBrowseEmpty;
+        container.appendChild(fallback);
+      }
+    }
 
     function openShowMe(widgetId) {
       var overlay = document.getElementById("showmeOverlay");
@@ -983,11 +1692,14 @@
       var meta = getShowMeMeta(widgetId);
       var cacheBust = String(Date.now());
       var active = document.activeElement;
+      var wasOpen = overlay.classList.contains("is-open");
       showMeLastTrigger = active && active !== document.body ? active : null;
       activeShowMeWidgetId = widgetId;
       syncShowMeQuery(widgetId);
 
       title.textContent = meta.icon + " " + meta.label;
+      renderShowMeBrowser();
+      setShowMeBrowserOpen(showMeBrowserOpen);
       iframe.onload = function() {
         normalizeShowMeLayout(iframe);
         injectShowMeSupplement(iframe, widgetId);
@@ -996,10 +1708,15 @@
       iframe.src = "assets/showme/" + widgetId + ".html?wid=" + encodeURIComponent(widgetId) + "&v=" + cacheBust;
       overlay.classList.add("is-open");
       overlay.setAttribute("aria-hidden", "false");
+      if (wasOpen && window.innerWidth < 980) {
+        setShowMeBrowserOpen(false);
+      }
       document.body.style.overflow = "hidden";
-      window.setTimeout(function() {
-        closeBtn.focus({ preventScroll: true });
-      }, 50);
+      if (!wasOpen) {
+        window.setTimeout(function() {
+          closeBtn.focus({ preventScroll: true });
+        }, 50);
+      }
     }
 
     function closeShowMe() {
@@ -1052,8 +1769,23 @@
       modal.classList.toggle("is-maximized");
     }
 
+    document.getElementById("showmeBrowseToggle").addEventListener("click", function() {
+      setShowMeBrowserOpen(!showMeBrowserOpen);
+      if (showMeBrowserOpen) {
+        var searchInput = document.getElementById("showmeBrowserSearch");
+        if (searchInput) searchInput.focus({ preventScroll: true });
+      }
+    });
     document.getElementById("showmeResize").addEventListener("click", toggleShowMeSize);
     document.getElementById("showmeClose").addEventListener("click", closeShowMe);
+    document.getElementById("showmeBrowserBackdrop").addEventListener("click", function() {
+      setShowMeBrowserOpen(false);
+    });
+    document.getElementById("showmeBrowserSearch").addEventListener("input", function(e) {
+      showMeBrowserQuery = e.target.value || "";
+      renderShowMeBrowser();
+      if (e.target.value && !showMeBrowserOpen) setShowMeBrowserOpen(true);
+    });
     document.getElementById("showmeOverlay").addEventListener("click", function(e) {
       if (e.target === this) closeShowMe();
     });
@@ -1120,10 +1852,20 @@
     var sidebarObserver = null;
     var sidebarBindingsReady = false;
 
+    function isDesktopSidebar() {
+      return window.matchMedia("(min-width: 981px)").matches;
+    }
+
     function openSidebar() {
       var sidebar = document.getElementById("sidebar");
       var overlay = document.getElementById("sidebarOverlay");
       if (!sidebar || !overlay) return;
+      if (isDesktopSidebar()) {
+        sidebar.classList.add("is-open");
+        overlay.classList.remove("is-visible");
+        sidebar.removeAttribute("aria-hidden");
+        return;
+      }
       sidebar.classList.add("is-open");
       overlay.classList.add("is-visible");
       sidebar.removeAttribute("aria-hidden");
@@ -1133,6 +1875,12 @@
       var sidebar = document.getElementById("sidebar");
       var overlay = document.getElementById("sidebarOverlay");
       if (!sidebar || !overlay) return;
+      if (isDesktopSidebar()) {
+        sidebar.classList.add("is-open");
+        overlay.classList.remove("is-visible");
+        sidebar.removeAttribute("aria-hidden");
+        return;
+      }
       sidebar.classList.remove("is-open");
       overlay.classList.remove("is-visible");
       sidebar.setAttribute("aria-hidden", "true");
@@ -1193,6 +1941,16 @@
         sidebarBindingsReady = true;
       }
 
+      if (isDesktopSidebar()) {
+        sidebar.classList.add("is-open");
+        sidebar.removeAttribute("aria-hidden");
+        overlay.classList.remove("is-visible");
+      } else {
+        sidebar.classList.remove("is-open");
+        sidebar.setAttribute("aria-hidden", "true");
+        overlay.classList.remove("is-visible");
+      }
+
       if (sidebarObserver) sidebarObserver.disconnect();
       sidebarObserver = new IntersectionObserver(function(entries) {
         entries.forEach(function(entry) {
@@ -1210,6 +1968,15 @@
         if (el) sidebarObserver.observe(el);
       });
     }
+
+    window.addEventListener("resize", function() {
+      if (!document.getElementById("sidebar")) return;
+      if (isDesktopSidebar()) {
+        openSidebar();
+      } else {
+        closeSidebar();
+      }
+    });
 
     // ─── Theme toggle ─────────────────────────────────
     document.getElementById("themeToggle").addEventListener("click", function() {

@@ -123,20 +123,6 @@
     .shortcut-row-action {
       flex: 1; color: var(--muted-strong); font-size: .9rem; line-height: 1.5;
     }
-    .sc-week-badge {
-      display: inline-flex; align-items: center;
-      padding: 3px 8px; border-radius: 999px;
-      background: rgba(10,132,255,.1);
-      border: 1px solid rgba(10,132,255,.2);
-      color: var(--key-soft); font-size: .72rem; font-weight: 600;
-      text-decoration: none; flex-shrink: 0;
-      transition: background .14s, border-color .14s;
-    }
-    .sc-week-badge:hover {
-      background: rgba(10,132,255,.2);
-      border-color: rgba(10,132,255,.4);
-    }
-
     /* Empty state */
     .empty-state {
       text-align: center; padding: 60px 20px;
@@ -205,20 +191,23 @@
         <div class="brand">
           <div class="brand-badge">R</div>
           <div class="brand-copy">
-            <strong>Blender Shortcuts DB</strong>
-            <span>Robot Product Design · 2026</span>
+            <strong id="brandTitle">Blender Shortcuts DB</strong>
+            <span id="brandMeta">Robot Product Design · 2026</span>
           </div>
         </div>
-        <a href="index.html" class="btn btn-ghost" style="font-size:.84rem">&larr; 전체 목록</a>
+        <div class="topbar-actions">
+          <div id="langSwitcher"></div>
+          <a href="index.html" class="btn btn-ghost" id="backToList" style="font-size:.84rem">&larr; 전체 목록</a>
+        </div>
       </div>
     </header>
 
     <!-- Hero -->
     <section class="hero">
       <div class="hero-card">
-        <div class="eyebrow">Blender Shortcuts</div>
-        <h1>단축키 DB</h1>
-        <p>수업에서 다루는 모든 Blender 단축키를 한 곳에서 검색하세요.</p>
+        <div class="eyebrow" id="heroEyebrow">Blender Shortcuts</div>
+        <h1 id="heroTitle">단축키 DB</h1>
+        <p id="heroDescription">수업에서 다루는 모든 Blender 단축키를 한 곳에서 검색하세요.</p>
         <div class="stats-bar" id="statsBar"></div>
       </div>
     </section>
@@ -234,8 +223,8 @@
         </div>
         <div class="filter-chips" id="filterChips" role="group" aria-label="카테고리 필터"></div>
         <div class="view-toggle" id="viewToggle" role="group" aria-label="보기 방식">
-          <button class="view-btn is-active" data-view="list">목록</button>
-          <button class="view-btn" data-view="kbd">&#x2328; 키보드</button>
+          <button class="view-btn is-active" id="viewListBtn" data-view="list">목록</button>
+          <button class="view-btn" id="viewKeyboardBtn" data-view="kbd">&#x2328; 키보드</button>
         </div>
       </div>
     </div>
@@ -250,59 +239,120 @@
 
     <!-- Footer -->
     <footer class="page-footer">
-      <div>Robot Product Design 2026 · <a href="index.html" style="color:var(--key-soft)">&larr; 전체 목록</a></div>
+      <div>Robot Product Design 2026 · <a href="index.html" id="footerBackLink" style="color:var(--key-soft)">&larr; 전체 목록</a></div>
     </footer>
 
   </div>
 
+  <script src="assets/i18n.js"></script>
   <script src="data/curriculum.js"></script>
   <script>
-    // ═══════════════════════════════════════════════════
-    //  Shortcuts DB — Build, Filter, Render
-    //  Data source: curriculum.js (trusted static data)
-    // ═══════════════════════════════════════════════════
+    function getText() {
+      return window.RPDI18n.getStrings("shortcuts");
+    }
 
-    // 1. Build the complete shortcuts database
+    function formatCount(count, nounKo, nounEn) {
+      return window.RPDI18n.getLanguage() === "ko"
+        ? count + "개 " + nounKo
+        : count + " " + nounEn;
+    }
+
+    function normalizeShortcutValue(value) {
+      return String(value || "")
+        .toLowerCase()
+        .replace(/[−–—]/g, "-")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function buildShortcutIdentity(shortcut) {
+      return [
+        normalizeShortcutValue(shortcut.keys),
+        normalizeShortcutValue(shortcut.action),
+        normalizeShortcutValue(shortcut.detail),
+        normalizeShortcutValue(shortcut.category || "general"),
+      ].join("||");
+    }
+
     function buildDB() {
       var db = [];
-      CURRICULUM.forEach(function(w) {
-        if (!w.shortcuts || !w.shortcuts.length) return;
-        w.shortcuts.forEach(function(s) {
-          db.push({
-            keys: s.keys,
-            action: s.action,
-            detail: s.detail || "",
-            category: s.category || "general",
-            week: w.week
-          });
+      var seen = {};
+      CURRICULUM.forEach(function(week) {
+        if (!week.shortcuts || !week.shortcuts.length) return;
+        week.shortcuts.forEach(function(shortcut) {
+          var entry = {
+            keys: shortcut.keys,
+            action: shortcut.action,
+            detail: shortcut.detail || "",
+            category: shortcut.category || "general",
+            weeks: [week.week]
+          };
+          var identity = buildShortcutIdentity(entry);
+          if (seen[identity]) {
+            if (seen[identity].weeks.indexOf(week.week) === -1) {
+              seen[identity].weeks.push(week.week);
+            }
+            return;
+          }
+          seen[identity] = entry;
+          db.push(entry);
         });
       });
       return db;
     }
 
     var fullDB = buildDB();
-
-    // 2. Stats
     var statsEl = document.getElementById("statsBar");
-    var catCounts = {};
-    fullDB.forEach(function(s) {
-      catCounts[s.category] = (catCounts[s.category] || 0) + 1;
-    });
-    var weekSet = {};
-    fullDB.forEach(function(s) { weekSet[s.week] = true; });
-    var weekCount = Object.keys(weekSet).length;
-    statsEl.textContent = "";
-    [fullDB.length + "개 단축키", Object.keys(catCounts).length + "개 카테고리", weekCount + "개 주차"].forEach(function(t) {
-      var span = document.createElement("span");
-      span.className = "stat-chip";
-      span.textContent = t;
-      statsEl.appendChild(span);
-    });
-
-    // 3. Render filter chips
     var chipContainer = document.getElementById("filterChips");
+    var contentEl = document.getElementById("shortcutsContent");
+    var kbdEl = document.getElementById("kbdView");
     var activeFilter = "all";
     var currentView = "list";
+    var selectedKeyId = null;
+
+    var catCounts = {};
+    fullDB.forEach(function(shortcut) {
+      catCounts[shortcut.category] = (catCounts[shortcut.category] || 0) + 1;
+    });
+    var weekSet = {};
+    fullDB.forEach(function(shortcut) {
+      (shortcut.weeks || []).forEach(function(week) {
+        weekSet[week] = true;
+      });
+    });
+    var weekCount = Object.keys(weekSet).length;
+
+    function renderStaticText() {
+      var text = getText();
+      document.title = text.pageTitle;
+      var meta = document.querySelector('meta[name="description"]');
+      if (meta) meta.setAttribute("content", text.metaDescription);
+      document.getElementById("brandTitle").textContent = text.brandTitle;
+      document.getElementById("brandMeta").textContent = text.brandMeta;
+      document.getElementById("backToList").textContent = text.backToList;
+      document.getElementById("heroEyebrow").textContent = text.heroEyebrow;
+      document.getElementById("heroTitle").textContent = text.heroTitle;
+      document.getElementById("heroDescription").textContent = text.heroDescription;
+      document.getElementById("searchInput").setAttribute("placeholder", text.searchPlaceholder);
+      document.getElementById("searchInput").setAttribute("aria-label", text.searchAria);
+      document.getElementById("filterChips").setAttribute("aria-label", text.categoryFilterAria);
+      document.getElementById("viewToggle").setAttribute("aria-label", text.viewModeAria);
+      document.getElementById("viewListBtn").textContent = text.viewList;
+      document.getElementById("viewKeyboardBtn").textContent = text.viewKeyboard;
+      document.getElementById("footerBackLink").textContent = text.footerBack;
+
+      statsEl.textContent = "";
+      [
+        formatCount(fullDB.length, "단축키", "shortcuts"),
+        formatCount(Object.keys(catCounts).length, "카테고리", "categories"),
+        formatCount(weekCount, "주차", "weeks")
+      ].forEach(function(label) {
+        var span = document.createElement("span");
+        span.className = "stat-chip";
+        span.textContent = label;
+        statsEl.appendChild(span);
+      });
+    }
 
     function renderChips() {
       var sorted = Object.keys(SHORTCUT_CATEGORIES).sort(function(a, b) {
@@ -314,7 +364,7 @@
       var allBtn = document.createElement("button");
       allBtn.className = "filter-chip" + (activeFilter === "all" ? " is-active" : "");
       allBtn.dataset.cat = "all";
-      allBtn.textContent = "전체";
+      allBtn.textContent = getText().allFilter;
       chipContainer.appendChild(allBtn);
 
       sorted.forEach(function(cat) {
@@ -322,7 +372,7 @@
         var btn = document.createElement("button");
         btn.className = "filter-chip" + (activeFilter === cat ? " is-active" : "");
         btn.dataset.cat = cat;
-        btn.textContent = SHORTCUT_CATEGORIES[cat].label + " (" + catCounts[cat] + ")";
+        btn.textContent = window.RPDI18n.getShortcutCategoryLabel(cat, SHORTCUT_CATEGORIES[cat].label) + " (" + catCounts[cat] + ")";
         chipContainer.appendChild(btn);
       });
 
@@ -336,31 +386,29 @@
       });
     }
 
-    // 4. Filter logic
     function filterDB(db, query, cat) {
       var filtered = db;
       if (cat && cat !== "all") {
-        filtered = filtered.filter(function(s) { return s.category === cat; });
+        filtered = filtered.filter(function(shortcut) { return shortcut.category === cat; });
       }
       if (query) {
         var q = query.toLowerCase();
-        filtered = filtered.filter(function(s) {
-          return s.keys.toLowerCase().includes(q) || s.action.toLowerCase().includes(q);
+        filtered = filtered.filter(function(shortcut) {
+          return shortcut.keys.toLowerCase().includes(q) || shortcut.action.toLowerCase().includes(q);
         });
       }
       return filtered;
     }
 
-    // 5. Group by category
     function groupByCategory(items) {
       var groups = {};
       var order = [];
-      items.forEach(function(s) {
-        if (!groups[s.category]) {
-          groups[s.category] = [];
-          order.push(s.category);
+      items.forEach(function(shortcut) {
+        if (!groups[shortcut.category]) {
+          groups[shortcut.category] = [];
+          order.push(shortcut.category);
         }
-        groups[s.category].push(s);
+        groups[shortcut.category].push(shortcut);
       });
       order.sort(function(a, b) {
         var oa = SHORTCUT_CATEGORIES[a] ? SHORTCUT_CATEGORIES[a].order : 99;
@@ -370,8 +418,33 @@
       return { groups: groups, order: order };
     }
 
-    // 6. Render shortcuts (list view) using safe DOM methods
-    var contentEl = document.getElementById("shortcutsContent");
+    function makeShortcutRow(shortcut) {
+      var row = document.createElement("div");
+      row.className = "shortcut-row";
+
+      var keysDiv = document.createElement("div");
+      keysDiv.className = "shortcut-row-keys";
+      var kbd = document.createElement("kbd");
+      kbd.className = "shortcut-key";
+      kbd.textContent = shortcut.keys;
+      keysDiv.appendChild(kbd);
+
+      var actionDiv = document.createElement("div");
+      actionDiv.className = "shortcut-row-action";
+      actionDiv.textContent = shortcut.action;
+
+      row.appendChild(keysDiv);
+      row.appendChild(actionDiv);
+
+      if (shortcut.detail) {
+        var detailDiv = document.createElement("div");
+        detailDiv.className = "shortcut-row-detail";
+        detailDiv.textContent = shortcut.detail;
+        row.appendChild(detailDiv);
+      }
+
+      return row;
+    }
 
     function renderShortcuts() {
       var query = document.getElementById("searchInput").value.trim();
@@ -382,13 +455,12 @@
       if (filtered.length === 0) {
         var empty = document.createElement("div");
         empty.className = "empty-state";
-        empty.textContent = "검색 결과가 없습니다. 다른 키워드로 시도해보세요.";
+        empty.textContent = getText().emptyResults;
         contentEl.appendChild(empty);
         return;
       }
 
       var result = groupByCategory(filtered);
-
       result.order.forEach(function(cat) {
         var items = result.groups[cat];
         var catInfo = SHORTCUT_CATEGORIES[cat] || { label: cat, order: 99 };
@@ -400,164 +472,116 @@
         header.className = "cat-group-header";
         var label = document.createElement("span");
         label.className = "cat-group-label";
-        label.textContent = catInfo.label;
+        label.textContent = window.RPDI18n.getShortcutCategoryLabel(cat, catInfo.label);
         var count = document.createElement("span");
         count.className = "cat-group-count";
-        count.textContent = items.length + "개";
+        count.textContent = window.RPDI18n.getLanguage() === "ko" ? items.length + "개" : String(items.length);
         header.appendChild(label);
         header.appendChild(count);
         group.appendChild(header);
 
-        items.forEach(function(s) {
-          group.appendChild(makeShortcutRow(s));
+        items.forEach(function(shortcut) {
+          group.appendChild(makeShortcutRow(shortcut));
         });
 
         contentEl.appendChild(group);
       });
     }
 
-    function makeShortcutRow(s) {
-      var row = document.createElement("div");
-      row.className = "shortcut-row";
-
-      var keysDiv = document.createElement("div");
-      keysDiv.className = "shortcut-row-keys";
-      var kbd = document.createElement("kbd");
-      kbd.className = "shortcut-key";
-      kbd.textContent = s.keys;
-      keysDiv.appendChild(kbd);
-
-      var actionDiv = document.createElement("div");
-      actionDiv.className = "shortcut-row-action";
-      actionDiv.textContent = s.action;
-
-      var badge = document.createElement("a");
-      badge.className = "sc-week-badge";
-      badge.href = "week.html?week=" + s.week;
-      badge.textContent = "W" + String(s.week).padStart(2, "0");
-
-      row.appendChild(keysDiv);
-      row.appendChild(actionDiv);
-      row.appendChild(badge);
-
-      if (s.detail) {
-        var detailDiv = document.createElement("div");
-        detailDiv.className = "shortcut-row-detail";
-        detailDiv.textContent = s.detail;
-        row.appendChild(detailDiv);
-      }
-      return row;
-    }
-
-    // ═══════════════════════════════════════════════════
-    //  Keyboard View
-    // ═══════════════════════════════════════════════════
-
-    // QWERTY layout definition: {k: keyId, l: display label, w: optional width class}
-    // ═══════════════════════════════════════════════════
-    //  SVG Keyboard Layout Data
-    //  Each row: [y, h, [ [keyId, label, widthUnits], ... ]]
-    //  null keyId = invisible spacer
-    // ═══════════════════════════════════════════════════
     var U = 40, KH = 34, FH = 28, G = 4;
     var NP_X0 = 598, NP_Y0 = 46;
     var MOUSE_X0 = 598, MOUSE_Y0 = 210;
     var NS = "http://www.w3.org/2000/svg";
 
     var KBD_SVG = [
-      [10,  FH, [ ["ESC","Esc",1.5],[null,"",0.5],["F1","F1",1],["F2","F2",1],["F3","F3",1],["F4","F4",1],[null,"",0.25],["F5","F5",1],["F6","F6",1],["F7","F7",1],["F8","F8",1],[null,"",0.25],["F9","F9",1],["F10","F10",1],["F11","F11",1],["F12","F12",1] ]],
-      [46,  KH, [ ["TILDE","`",1],["1","1",1],["2","2",1],["3","3",1],["4","4",1],["5","5",1],["6","6",1],["7","7",1],["8","8",1],["9","9",1],["0","0",1],["MINUS","-",1],["EQ","=",1] ]],
-      [84,  KH, [ ["TAB","Tab",1.5],["Q","Q",1],["W","W",1],["E","E",1],["R","R",1],["T","T",1],["Y","Y",1],["U","U",1],["I","I",1],["O","O",1],["P","P",1],["LBRACKET","[",1],["RBRACKET","]",1] ]],
-      [122, KH, [ ["A","A",1],["S","S",1],["D","D",1],["F","F",1],["G","G",1],["H","H",1],["J","J",1],["K","K",1],["L","L",1],["SEMI",";",1],["QUOTE","'",1] ]],
-      [160, KH, [ ["Z","Z",1],["X","X",1],["C","C",1],["V","V",1],["B","B",1],["N","N",1],["M","M",1],["COMMA",",",1],["DOT",".",1],["SLASH","/",1] ]],
-      [198, KH, [ ["CTRL","Ctrl",1.5],["ALT","Alt",1.25],["SPACE","Space",6.5],["ALT","Alt",1.25],["CTRL","Ctrl",1.5] ]],
+      [10, FH, [["ESC", "Esc", 1.5], [null, "", 0.5], ["F1", "F1", 1], ["F2", "F2", 1], ["F3", "F3", 1], ["F4", "F4", 1], [null, "", 0.25], ["F5", "F5", 1], ["F6", "F6", 1], ["F7", "F7", 1], ["F8", "F8", 1], [null, "", 0.25], ["F9", "F9", 1], ["F10", "F10", 1], ["F11", "F11", 1], ["F12", "F12", 1]]],
+      [46, KH, [["TILDE", "`", 1], ["1", "1", 1], ["2", "2", 1], ["3", "3", 1], ["4", "4", 1], ["5", "5", 1], ["6", "6", 1], ["7", "7", 1], ["8", "8", 1], ["9", "9", 1], ["0", "0", 1], ["MINUS", "-", 1], ["EQ", "=", 1]]],
+      [84, KH, [["TAB", "Tab", 1.5], ["Q", "Q", 1], ["W", "W", 1], ["E", "E", 1], ["R", "R", 1], ["T", "T", 1], ["Y", "Y", 1], ["U", "U", 1], ["I", "I", 1], ["O", "O", 1], ["P", "P", 1], ["LBRACKET", "[", 1], ["RBRACKET", "]", 1]]],
+      [122, KH, [["A", "A", 1], ["S", "S", 1], ["D", "D", 1], ["F", "F", 1], ["G", "G", 1], ["H", "H", 1], ["J", "J", 1], ["K", "K", 1], ["L", "L", 1], ["SEMI", ";", 1], ["QUOTE", "'", 1]]],
+      [160, KH, [["Z", "Z", 1], ["X", "X", 1], ["C", "C", 1], ["V", "V", 1], ["B", "B", 1], ["N", "N", 1], ["M", "M", 1], ["COMMA", ",", 1], ["DOT", ".", 1], ["SLASH", "/", 1]]],
+      [198, KH, [["CTRL", "Ctrl", 1.5], ["ALT", "Alt", 1.25], ["SPACE", "Space", 6.5], ["ALT", "Alt", 1.25], ["CTRL", "Ctrl", 1.5]]],
     ];
 
     var NP_SVG = [
-      [NP_Y0,           KH, [ ["NP7","7",1],["NP8","8",1],["NP9","9",1],["NPMINUS","\u2212",1] ]],
-      [NP_Y0+38,        KH, [ ["NP4","4",1],["NP5","5",1],["NP6","6",1],["NPPLUS","+",1] ]],
-      [NP_Y0+38*2,      KH, [ ["NP1","1",1],["NP2","2",1],["NP3","3",1] ]],
-      [NP_Y0+38*3,      KH, [ ["NP0","0",2],["NPDOT",".",1] ]],
+      [NP_Y0, KH, [["NP7", "7", 1], ["NP8", "8", 1], ["NP9", "9", 1], ["NPMINUS", "−", 1]]],
+      [NP_Y0 + 38, KH, [["NP4", "4", 1], ["NP5", "5", 1], ["NP6", "6", 1], ["NPPLUS", "+", 1]]],
+      [NP_Y0 + 38 * 2, KH, [["NP1", "1", 1], ["NP2", "2", 1], ["NP3", "3", 1]]],
+      [NP_Y0 + 38 * 3, KH, [["NP0", "0", 2], ["NPDOT", ".", 1]]],
     ];
 
     var MOUSE_SVG = [
-      [MOUSE_Y0, KH, [ ["LMB","LMB",1],["MMB","MMB",1],["RMB","RMB",1],["SCROLL","\u21d5",1.25] ]],
+      [MOUSE_Y0, KH, [["LMB", "LMB", 1], ["MMB", "MMB", 1], ["RMB", "RMB", 1], ["SCROLL", "⇕", 1.25]]],
     ];
 
-    // Normalize a raw key token string to a keyId
-    function rawKeyToId(k) {
-      if (!k) return null;
-      var ku = k.toUpperCase().trim();
-      if (ku.startsWith("NUMPAD ")) {
-        var npk = ku.slice(7).trim();
-        if (npk === "." || npk === "DOT" || npk === "PERIOD") return "NPDOT";
-        if (npk === "+" || npk === "PLUS") return "NPPLUS";
-        if (npk === "-" || npk === "MINUS" || npk === "\u2212") return "NPMINUS";
-        return "NP" + npk;
+    function rawKeyToId(key) {
+      if (!key) return null;
+      var upper = key.toUpperCase().trim();
+      if (upper.startsWith("NUMPAD ")) {
+        var numpadKey = upper.slice(7).trim();
+        if (numpadKey === "." || numpadKey === "DOT" || numpadKey === "PERIOD") return "NPDOT";
+        if (numpadKey === "+" || numpadKey === "PLUS") return "NPPLUS";
+        if (numpadKey === "-" || numpadKey === "MINUS" || numpadKey === "−") return "NPMINUS";
+        return "NP" + numpadKey;
       }
-      if (k === "\u2190" || ku === "LEFT")  return "LARROW";
-      if (k === "\u2192" || ku === "RIGHT") return "RARROW";
-      if (ku.includes("MMB"))    return "MMB";
-      if (ku === "\uC2A4\uD06C\uB864" || ku === "SCROLL") return "SCROLL"; // 스크롤
-      if (ku.includes("\uD074\uB9AD") || ku === "LMB") return "LMB"; // 클릭
-      if (ku === "CTRL")  return "CTRL";
-      if (ku === "SHIFT") return "SHIFT";
-      if (ku === "ALT")   return "ALT";
-      if (ku === "TAB")   return "TAB";
-      if (ku === "SPACE") return "SPACE";
-      if (ku === "ESC" || ku === "ESCAPE") return "ESC";
-      if (/^F\d{1,2}$/.test(ku)) return ku;
-      if (/^[A-Z0-9]$/.test(ku)) return ku;
+      if (key === "←" || upper === "LEFT") return "LARROW";
+      if (key === "→" || upper === "RIGHT") return "RARROW";
+      if (upper.includes("MMB")) return "MMB";
+      if (upper.includes("RMB") || upper.includes("RIGHT CLICK")) return "RMB";
+      if (upper === "스크롤" || upper === "SCROLL") return "SCROLL";
+      if (upper.includes("클릭") || upper === "LMB" || upper.includes("LEFT CLICK") || upper === "CLICK") return "LMB";
+      if (upper === "CTRL") return "CTRL";
+      if (upper === "SHIFT") return "SHIFT";
+      if (upper === "ALT") return "ALT";
+      if (upper === "TAB") return "TAB";
+      if (upper === "SPACE") return "SPACE";
+      if (upper === "ESC" || upper === "ESCAPE") return "ESC";
+      if (/^F\d{1,2}$/.test(upper)) return upper;
+      if (/^[A-Z0-9]$/.test(upper)) return upper;
       return null;
     }
 
-    // Extract physical key IDs from a shortcut keys string
     function shortcutToKeyIds(keysStr) {
-      // Strip parenthetical notes: "(Sculpt)", "(UV Editor)", etc.
-      var s = keysStr.replace(/\s*\([^)]*\)/g, "").trim();
-      // Strip " → ..." arrow notation (keep left side only)
-      s = s.split(/\s*\u2192\s*/)[0].trim();
-      // Split by " + " to separate modifiers from main key
-      var parts = s.split(/\s*\+\s*/);
-      var mainPart = parts[parts.length - 1].trim();
-      // Handle "/" separated variants: "X / Y / Z", "Numpad 1/3/7"
-      var variants = mainPart.split(/\s*\/\s*/);
-      // If first variant starts with "Numpad", carry that prefix to bare digits
-      var numpadPrefix = /^numpad\s+/i.test(variants[0]) ? "Numpad " : "";
+      var cleaned = keysStr.replace(/\s*\([^)]*\)/g, "").trim();
+      cleaned = cleaned.replace(/\s+→\s+(?=[A-Za-z가-힣]).*$/, "").trim();
+      var parts = cleaned.split(/\s*\+\s*/);
       var ids = [];
-      variants.forEach(function(v, vi) {
-        var raw = v.trim();
-        if (vi > 0 && numpadPrefix && /^\d+$/.test(raw)) raw = numpadPrefix + raw;
-        var id = rawKeyToId(raw);
-        if (id) ids.push(id);
+      var seenIds = {};
+
+      parts.forEach(function(part) {
+        var variants = part.trim().split(/\s*\/\s*/);
+        var numpadPrefix = /^numpad\s+/i.test(variants[0]) ? "Numpad " : "";
+        variants.forEach(function(variant, index) {
+          var raw = variant.trim();
+          if (index > 0 && numpadPrefix && /^\d+$/.test(raw)) raw = numpadPrefix + raw;
+          var id = rawKeyToId(raw);
+          if (id && !seenIds[id]) {
+            seenIds[id] = true;
+            ids.push(id);
+          }
+        });
       });
-      // Edge case: standalone modifier (e.g. "Ctrl (Sculpt)" → after strip → "Ctrl")
-      if (ids.length === 0 && parts.length === 1) {
-        var id = rawKeyToId(parts[0].trim());
-        if (id) ids.push(id);
+
+      if (ids.length === 0) {
+        var fallback = rawKeyToId(cleaned);
+        if (fallback) ids.push(fallback);
       }
       return ids;
     }
 
-    // Build keyId → [shortcut, ...] map from a filtered DB
     function buildKeyMap(db) {
       var map = {};
-      db.forEach(function(s) {
-        shortcutToKeyIds(s.keys).forEach(function(id) {
+      db.forEach(function(shortcut) {
+        shortcutToKeyIds(shortcut.keys).forEach(function(id) {
           if (!map[id]) map[id] = [];
-          map[id].push(s);
+          map[id].push(shortcut);
         });
       });
       return map;
     }
 
-    var selectedKeyId = null;
-    var kbdEl = document.getElementById("kbdView");
-
-    // Create SVG element with attributes
     function svgEl(tag, attrs) {
       var el = document.createElementNS(NS, tag);
-      Object.keys(attrs).forEach(function(k) { el.setAttribute(k, attrs[k]); });
+      Object.keys(attrs).forEach(function(key) { el.setAttribute(key, attrs[key]); });
       return el;
     }
 
@@ -568,92 +592,78 @@
 
       kbdEl.textContent = "";
 
-      // ── SVG canvas ──────────────────────────────────
       var svg = svgEl("svg", {
         viewBox: "0 0 764 258",
         width: "100%",
         style: "max-width:764px;display:block",
-        "aria-label": "Blender 키보드 단축키 맵",
+        "aria-label": getText().keyboardMapAria,
       });
 
-      // Keyboard body
-      svg.appendChild(svgEl("rect", { x:4, y:4, width:576, height:246, rx:12,
-        fill:"rgba(255,255,255,0.025)", stroke:"rgba(255,255,255,0.07)", "stroke-width":1 }));
+      svg.appendChild(svgEl("rect", { x: 4, y: 4, width: 576, height: 246, rx: 12, fill: "rgba(255,255,255,0.025)", stroke: "rgba(255,255,255,0.07)", "stroke-width": 1 }));
+      svg.appendChild(svgEl("rect", { x: 590, y: 38, width: 170, height: 214, rx: 10, fill: "rgba(255,255,255,0.025)", stroke: "rgba(255,255,255,0.07)", "stroke-width": 1 }));
 
-      // Extras body (numpad + mouse)
-      svg.appendChild(svgEl("rect", { x:590, y:38, width:170, height:214, rx:10,
-        fill:"rgba(255,255,255,0.025)", stroke:"rgba(255,255,255,0.07)", "stroke-width":1 }));
-
-      // Section labels
-      function addSvgLabel(txt, x, y) {
-        var t = svgEl("text", { x:x, y:y, "text-anchor":"middle",
-          fill:"rgba(255,255,255,0.22)", "font-size":"8",
-          "font-family":"var(--font-body,sans-serif)", "letter-spacing":"0.07em" });
-        t.textContent = txt;
+      function addSvgLabel(text, x, y) {
+        var t = svgEl("text", {
+          x: x,
+          y: y,
+          "text-anchor": "middle",
+          fill: "rgba(255,255,255,0.22)",
+          "font-size": "8",
+          "font-family": "var(--font-body,sans-serif)",
+          "letter-spacing": "0.07em"
+        });
+        t.textContent = text;
         svg.appendChild(t);
       }
-      addSvgLabel("NUMPAD", NP_X0 + 59, NP_Y0 - 8);
-      addSvgLabel("\ub9c8\uc6b0\uc2a4", MOUSE_X0 + 58, MOUSE_Y0 - 8);
 
-      // ── Core key renderer ────────────────────────────
+      addSvgLabel(getText().numpadLabel, NP_X0 + 59, NP_Y0 - 8);
+      addSvgLabel(getText().mouseLabel, MOUSE_X0 + 58, MOUSE_Y0 - 8);
+
       function renderRows(rows, x0) {
         rows.forEach(function(row) {
-          var ry = row[0], rh = row[1], keys = row[2];
-          var cx = x0;
-          keys.forEach(function(kd) {
-            var kid = kd[0], lbl = kd[1], units = kd[2];
-            var kw = units * U - G;
-            var kx = cx;
-            cx += units * U;
-            if (!kid) return;
+          var rowY = row[0];
+          var rowHeight = row[1];
+          var keys = row[2];
+          var cursorX = x0;
+          keys.forEach(function(keyData) {
+            var keyId = keyData[0];
+            var label = keyData[1];
+            var units = keyData[2];
+            var width = units * U - G;
+            var x = cursorX;
+            cursorX += units * U;
+            if (!keyId) return;
 
-            var scs = kmap[kid];
-            var hasSc = !!(scs && scs.length);
-            var isSel = selectedKeyId === kid;
+            var shortcuts = kmap[keyId];
+            var hasShortcut = !!(shortcuts && shortcuts.length);
+            var isSelected = selectedKeyId === keyId;
+            var fill = isSelected ? "rgba(10,132,255,0.42)" : hasShortcut ? "rgba(10,132,255,0.16)" : "rgba(255,255,255,0.055)";
+            var stroke = isSelected ? "rgba(10,132,255,0.95)" : hasShortcut ? "rgba(10,132,255,0.55)" : "rgba(255,255,255,0.11)";
+            var textFill = isSelected ? "#ffffff" : hasShortcut ? "rgba(100,178,255,1)" : "rgba(255,255,255,0.40)";
+            var fontSize = rowHeight <= FH ? 8 : 9;
 
-            var fill   = isSel ? "rgba(10,132,255,0.42)" : hasSc ? "rgba(10,132,255,0.16)" : "rgba(255,255,255,0.055)";
-            var stroke = isSel ? "rgba(10,132,255,0.95)" : hasSc ? "rgba(10,132,255,0.55)" : "rgba(255,255,255,0.11)";
-            var tFill  = isSel ? "#ffffff" : hasSc ? "rgba(100,178,255,1)" : "rgba(255,255,255,0.40)";
-            var fSize  = rh <= FH ? 8 : 9;
+            svg.appendChild(svgEl("rect", { x: x, y: rowY, width: width, height: rowHeight, rx: 5, fill: fill, stroke: stroke, "stroke-width": 1 }));
 
-            // Key body
-            svg.appendChild(svgEl("rect", { x:kx, y:ry, width:kw, height:rh, rx:5,
-              fill:fill, stroke:stroke, "stroke-width":1 }));
+            var keyText = svgEl("text", { x: x + width / 2, y: rowY + rowHeight / 2 + 3.5, "text-anchor": "middle", fill: textFill, "font-size": fontSize, "font-family": "var(--font-mono,monospace)" });
+            keyText.textContent = label;
+            svg.appendChild(keyText);
 
-            // Key label
-            var t = svgEl("text", { x:kx + kw/2, y:ry + rh/2 + 3.5,
-              "text-anchor":"middle", fill:tFill,
-              "font-size":fSize, "font-family":"var(--font-mono,monospace)" });
-            t.textContent = lbl;
-            svg.appendChild(t);
+            if (hasShortcut) {
+              var badgeX = x + width - 5;
+              var badgeY = rowY + 5;
+              svg.appendChild(svgEl("circle", { cx: badgeX, cy: badgeY, r: 6.5, fill: "rgba(10,132,255,0.95)" }));
+              var badgeText = svgEl("text", { x: badgeX, y: badgeY + 3.5, "text-anchor": "middle", fill: "#fff", "font-size": "6.5", "font-weight": "700", "font-family": "var(--font-body,sans-serif)" });
+              badgeText.textContent = shortcuts.length;
+              svg.appendChild(badgeText);
 
-            // Badge
-            if (hasSc) {
-              var bx = kx + kw - 5, by = ry + 5;
-              svg.appendChild(svgEl("circle", { cx:bx, cy:by, r:6.5,
-                fill:"rgba(10,132,255,0.95)" }));
-              var bt = svgEl("text", { x:bx, y:by + 3.5, "text-anchor":"middle",
-                fill:"#fff", "font-size":"6.5", "font-weight":"700",
-                "font-family":"var(--font-body,sans-serif)" });
-              bt.textContent = scs.length;
-              svg.appendChild(bt);
-            }
-
-            // Invisible hit area (on top) for clickable keys
-            if (hasSc) {
-              var hit = svgEl("rect", { x:kx, y:ry, width:kw, height:rh, rx:5,
-                fill:"transparent", cursor:"pointer", "data-kid":kid });
-              (function(k) {
+              var hit = svgEl("rect", { x: x, y: rowY, width: width, height: rowHeight, rx: 5, fill: "transparent", cursor: "pointer", "data-kid": keyId });
+              (function(selectedId) {
                 hit.addEventListener("click", function() {
-                  var wasSel = selectedKeyId === k;
-                  selectedKeyId = wasSel ? null : k;
+                  var wasSelected = selectedKeyId === selectedId;
+                  selectedKeyId = wasSelected ? null : selectedId;
                   renderKeyboard();
-                  if (!wasSel) {
-                    var d = document.getElementById("kbdDetail");
-                    if (d) d.scrollIntoView({ behavior:"smooth", block:"nearest" });
-                  }
                 });
-              }(kid));
+              }(keyId));
               svg.appendChild(hit);
             }
           });
@@ -669,7 +679,6 @@
       wrap.appendChild(svg);
       kbdEl.appendChild(wrap);
 
-      // Detail panel (use external section to avoid overflow clipping)
       var detailHolder = document.getElementById("kbdDetailSection");
       detailHolder.textContent = "";
 
@@ -680,26 +689,26 @@
       }
     }
 
-    // Find display label for a keyId
     function keyIdToLabel(keyId) {
       var found = keyId;
       KBD_SVG.concat(NP_SVG).concat(MOUSE_SVG).forEach(function(row) {
-        row[2].forEach(function(kd) { if (kd[0] === keyId) found = kd[1]; });
+        row[2].forEach(function(keyData) {
+          if (keyData[0] === keyId) found = keyData[1];
+        });
       });
       return found;
     }
 
-    // Render the detail panel for a selected key
     function renderKeyDetail(keyId, kmap) {
       var detailHolder = document.getElementById("kbdDetailSection");
       if (!detailHolder) return;
       detailHolder.textContent = "";
       detailHolder.style.display = "none";
 
-      var scs = kmap[keyId];
-      if (!scs || scs.length === 0) return;
-      detailHolder.style.display = "";
+      var shortcuts = kmap[keyId];
+      if (!shortcuts || shortcuts.length === 0) return;
 
+      detailHolder.style.display = "";
       var panel = document.createElement("div");
       panel.className = "kbd-detail-panel";
 
@@ -708,21 +717,22 @@
       var badge = document.createElement("span");
       badge.className = "kbd-detail-key-badge";
       badge.textContent = keyIdToLabel(keyId);
-      var countText = document.createTextNode("\uAC00 \uC0AC\uC6A9\uB41C \uB2E8\uCD95\uD0A4 (" + scs.length + "\uAC1C)"); // "가 사용된 단축키 (N개)"
       title.appendChild(badge);
-      title.appendChild(countText);
+      title.appendChild(document.createTextNode(
+        window.RPDI18n.getLanguage() === "ko"
+          ? "가 사용된 단축키 (" + shortcuts.length + "개)"
+          : " shortcuts on this key (" + shortcuts.length + ")"
+      ));
       panel.appendChild(title);
 
-      scs.forEach(function(s) {
-        panel.appendChild(makeShortcutRow(s));
+      shortcuts.forEach(function(shortcut) {
+        panel.appendChild(makeShortcutRow(shortcut));
       });
 
       detailHolder.appendChild(panel);
-      // Scroll panel into view
       panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
 
-    // ── View toggle logic ─────────────────────────────
     function switchView(view) {
       currentView = view;
       var listEl = document.getElementById("shortcutsContent");
@@ -742,6 +752,13 @@
       }
     }
 
+    function renderPage() {
+      renderStaticText();
+      renderChips();
+      if (currentView === "kbd") renderKeyboard();
+      else renderShortcuts();
+    }
+
     document.getElementById("viewToggle").addEventListener("click", function(e) {
       var btn = e.target.closest(".view-btn");
       if (btn && btn.dataset.view && btn.dataset.view !== currentView) {
@@ -749,15 +766,13 @@
       }
     });
 
-    // ── Init ─────────────────────────────────────────
-    renderChips();
-    renderShortcuts();
-
     document.getElementById("searchInput").addEventListener("input", function() {
       if (currentView === "kbd") renderKeyboard();
       else renderShortcuts();
     });
+
+    window.RPDI18n.mountLanguageSwitcher(document.getElementById("langSwitcher"));
+    window.RPDI18n.onLanguageChange(renderPage);
   </script>
 </body>
 </html>
-
