@@ -330,7 +330,49 @@
     }
 
     /* Progress sticky */
-    .progress-widget { min-width: min(380px, 44vw); }
+    .progress-widget {
+      min-width: min(360px, 42vw);
+      gap: 10px;
+      padding: 2px 0;
+    }
+    .progress-label {
+      min-width: auto;
+      color: var(--muted);
+      font-size: .78rem;
+      letter-spacing: .03em;
+    }
+    .progress-track {
+      height: 3px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.065);
+      border-color: rgba(255,255,255,.04);
+    }
+    .progress-fill {
+      background: linear-gradient(90deg, rgba(147,197,253,.48), rgba(147,197,253,.72));
+    }
+    .progress-count {
+      color: var(--muted-strong);
+      font-size: .79rem;
+      font-weight: 600;
+      letter-spacing: -.01em;
+      font-variant-numeric: tabular-nums;
+    }
+    #resetBtn {
+      padding: 0;
+      border: none;
+      background: transparent;
+      color: rgba(255,255,255,.42);
+      font-size: .74rem;
+      font-weight: 500;
+    }
+    #resetBtn:hover {
+      color: var(--muted-strong);
+    }
+    #resetBtn:disabled {
+      color: rgba(255,255,255,.24);
+      cursor: default;
+      pointer-events: none;
+    }
 
     /* Text accent */
     .text-key { color: var(--key-soft); }
@@ -453,9 +495,23 @@
       display: grid;
       place-items: center;
       flex-shrink: 0;
+      overflow: hidden;
       border: 1px solid var(--line);
       background: rgba(255,255,255,.03);
       color: var(--muted-strong);
+    }
+    .showme-icon-image {
+      display: block;
+      max-width: none;
+      object-fit: contain;
+      image-rendering: auto;
+      filter: drop-shadow(0 1px 1px rgba(0,0,0,.18));
+    }
+    .showme-icon-image-fallback {
+      display: none;
+      width: 100%;
+      height: 100%;
+      place-items: center;
     }
     .showme-icon-badge svg {
       display: block;
@@ -487,37 +543,53 @@
       stroke: none;
     }
     .showme-icon-badge--card {
-      width: 42px;
-      height: 42px;
+      width: 46px;
+      height: 46px;
       border-radius: 12px;
+    }
+    .showme-icon-badge--card .showme-icon-image {
+      width: 34px;
+      height: 34px;
     }
     .showme-icon-badge--card svg {
       width: 22px;
       height: 22px;
     }
     .showme-icon-badge--browser {
-      width: 34px;
-      height: 34px;
+      width: 38px;
+      height: 38px;
       border-radius: 10px;
+    }
+    .showme-icon-badge--browser .showme-icon-image {
+      width: 28px;
+      height: 28px;
     }
     .showme-icon-badge--browser svg {
       width: 18px;
       height: 18px;
     }
     .showme-icon-badge--pill {
-      width: 24px;
-      height: 24px;
+      width: 28px;
+      height: 28px;
       border-radius: 8px;
+    }
+    .showme-icon-badge--pill .showme-icon-image {
+      width: 19px;
+      height: 19px;
     }
     .showme-icon-badge--pill svg {
       width: 13px;
       height: 13px;
     }
     .showme-icon-badge--title {
-      width: 24px;
-      height: 24px;
+      width: 28px;
+      height: 28px;
       border-radius: 8px;
       background: rgba(255,255,255,.03);
+    }
+    .showme-icon-badge--title .showme-icon-image {
+      width: 20px;
+      height: 20px;
     }
     .showme-icon-badge--title svg {
       width: 14px;
@@ -642,6 +714,20 @@
       align-items: center;
       white-space: nowrap;
     }
+    .step-meta-token.is-showme {
+      color: rgba(191,219,254,.78);
+    }
+    .step-meta-token.is-showme strong {
+      color: #dbeafe;
+    }
+    .step-meta-token.is-reference,
+    .step-meta-token.is-download {
+      color: rgba(255,255,255,.46);
+    }
+    .step-meta-token.is-reference strong,
+    .step-meta-token.is-download strong {
+      color: rgba(255,255,255,.72);
+    }
     .step-meta-token + .step-meta-token::before {
       content: "·";
       color: rgba(255,255,255,.22);
@@ -657,6 +743,23 @@
       gap: 10px;
       margin-left: auto;
       flex-shrink: 0;
+    }
+    .step-header-right .status-pill {
+      padding: 3px 7px;
+      border-radius: 999px;
+      font-size: .67rem;
+      font-weight: 650;
+      letter-spacing: .035em;
+    }
+    .step-header-right .status-pill.active {
+      background: rgba(255,255,255,.015);
+      border-color: rgba(255,255,255,.08);
+      color: rgba(255,255,255,.58);
+    }
+    .step-header-right .status-pill.complete {
+      background: rgba(16,185,129,.05);
+      border-color: rgba(16,185,129,.14);
+      color: rgba(167,243,208,.82);
     }
     .step-toggle-indicator {
       width: 34px;
@@ -1576,6 +1679,10 @@
       .assignment-head {
         flex-direction: column;
       }
+      .progress-widget {
+        width: 100%;
+        min-width: 0;
+      }
     }
     @media (min-width: 981px) {
       .sidebar-toggle {
@@ -1595,6 +1702,34 @@
       .ref-summary {
         align-items: flex-start;
         flex-direction: column;
+      }
+      .progress-widget {
+        display: grid;
+        grid-template-columns: auto 1fr auto auto;
+        grid-template-areas:
+          "label . count reset"
+          "track track track track";
+        align-items: center;
+        column-gap: 8px;
+        row-gap: 6px;
+      }
+      .progress-label {
+        grid-area: label;
+        font-size: .74rem;
+      }
+      .progress-track {
+        grid-area: track;
+        width: 100%;
+      }
+      .progress-count {
+        grid-area: count;
+        justify-self: end;
+        font-size: .74rem;
+      }
+      #resetBtn {
+        grid-area: reset;
+        justify-self: end;
+        font-size: .72rem;
       }
       .lab-step {
         padding: 18px 16px;
@@ -1636,10 +1771,29 @@
         padding: 4px 7px;
         font-size: .68rem;
       }
+      .step-header-right .status-pill {
+        padding: 3px 6px;
+        font-size: .66rem;
+      }
     }
     @media (max-width: 480px) {
       .step-title-group {
         gap: 10px;
+      }
+      .progress-widget {
+        grid-template-columns: auto 1fr auto;
+        }
+      .progress-label {
+        font-size: .72rem;
+      }
+      .progress-count {
+        font-size: .72rem;
+      }
+      .progress-track {
+        min-width: 0;
+      }
+      #resetBtn {
+        font-size: .7rem;
       }
       .step-number {
         min-width: 34px;
@@ -1671,6 +1825,10 @@
       }
       .status-pill {
         letter-spacing: .03em;
+      }
+      .step-header-right .status-pill {
+        padding: 2px 6px;
+        font-size: .64rem;
       }
     }
   </style>
@@ -1817,7 +1975,7 @@
   <script src="assets/showme/_registry.js?v=20260318f"></script>
   <script src="assets/showme/_catalog.js?v=20260318c"></script>
   <script src="assets/showme/_supplements.js?v=20260318c"></script>
-  <script src="assets/showme/_helpers.js?v=20260318s"></script>
+  <script src="assets/showme/_helpers.js?v=20260318z"></script>
   <script src="data/curriculum.js?v=20260318c"></script>
   <script>
     // ════════════════════════════════════════════════
@@ -1868,6 +2026,19 @@
       return [meta.toolName, meta.category, meta.stageLabel].filter(Boolean).join(" · ");
     }
 
+    function getShowMeToolIconAssetPath(iconKey) {
+      var iconAssets = {
+        "edit-mode": "edit-mode",
+        "edit-mode-tools": "edit-mode-tools",
+        "extrude": "extrude",
+        "loop-cut": "loop-cut",
+        "inset": "inset",
+        "bevel": "bevel-tool",
+        "poly-circle": "poly-circle"
+      };
+      return iconAssets[iconKey] ? ("assets/showme/icons/" + iconAssets[iconKey] + ".png?v=20260318g") : "";
+    }
+
     function getShowMeToolIconSvg(iconKey) {
       var icons = {
         "edit-mode": '<svg viewBox="0 0 24 24" aria-hidden="true"><path class="showme-icon-base" d="M7.2 7.2h9.6v7.2H7.2z"></path><path class="showme-icon-soft" d="M7.2 7.2 12 4.8l4.8 2.4"></path><path class="showme-icon-base" d="M12 4.8V12"></path><circle class="showme-icon-accent-fill" cx="12" cy="12" r="1.9"></circle></svg>',
@@ -1885,8 +2056,16 @@
         ? "showme-icon-badge--browser"
         : (variant === "pill" ? "showme-icon-badge--pill" : (variant === "title" ? "showme-icon-badge--title" : "showme-icon-badge--card"));
       var rootClass = (variant === "card" ? "btn-showme-icon " : "") + "showme-icon-badge " + sizeClass;
-      if (meta && meta.iconKey) {
-        return '<span class="' + rootClass + ' is-tool" aria-hidden="true">' + getShowMeToolIconSvg(meta.iconKey) + '</span>';
+      var iconAssetPath = meta && meta.iconKey ? getShowMeToolIconAssetPath(meta.iconKey) : "";
+      var iconSvg = meta && meta.iconKey ? getShowMeToolIconSvg(meta.iconKey) : "";
+      var iconFallback = iconSvg
+        ? ('<span class="showme-icon-image-fallback" aria-hidden="true">' + iconSvg + '</span>')
+        : ('<span class="showme-icon-image-fallback" aria-hidden="true">' + escapeHtml(meta && meta.icon ? meta.icon : "📖") + '</span>');
+      if (iconAssetPath) {
+        return '<span class="' + rootClass + ' is-image" aria-hidden="true"><img class="showme-icon-image" src="' + iconAssetPath + '" alt="" decoding="async" draggable="false" onerror="this.style.display=\'none\';if(this.nextElementSibling){this.nextElementSibling.style.display=\'grid\';}">' + iconFallback + '</span>';
+      }
+      if (iconSvg) {
+        return '<span class="' + rootClass + ' is-tool" aria-hidden="true">' + iconSvg + '</span>';
       }
       return '<span class="' + rootClass + ' is-fallback" aria-hidden="true">' + escapeHtml(meta && meta.icon ? meta.icon : "📖") + '</span>';
     }
@@ -1922,28 +2101,28 @@
       var lang = window.RPDI18n.getLanguage();
       var parts = [];
 
-      function metaToken(html) {
-        return '<span class="step-meta-token">' + html + '</span>';
+      function metaToken(html, variant) {
+        return '<span class="step-meta-token' + (variant ? ' is-' + variant : '') + '">' + html + '</span>';
       }
 
       if (lang === "ko") {
-        if (taskCount > 0) parts.push(metaToken(text.stepMetaTasks + " <strong>" + taskCount + "</strong>"));
-        if (showMeCount > 0) parts.push(metaToken(text.stepMetaShowMe + " <strong>" + showMeCount + "</strong>"));
-        if (downloadCount > 0) parts.push(metaToken(text.stepMetaDownloads + " <strong>" + downloadCount + "</strong>"));
-        else if (referenceCount > 0) parts.push(metaToken(text.stepMetaReferences + " <strong>" + referenceCount + "</strong>"));
-        if (clipCount > 0) parts.push(metaToken(text.stepMetaClips + " <strong>" + clipCount + "</strong>"));
+        if (taskCount > 0) parts.push(metaToken(text.stepMetaTasks + " <strong>" + taskCount + "</strong>", "task"));
+        if (showMeCount > 0) parts.push(metaToken(text.stepMetaShowMe + " <strong>" + showMeCount + "</strong>", "showme"));
+        if (downloadCount > 0) parts.push(metaToken(text.stepMetaDownloads + " <strong>" + downloadCount + "</strong>", "download"));
+        else if (referenceCount > 0) parts.push(metaToken(text.stepMetaReferences + " <strong>" + referenceCount + "</strong>", "reference"));
+        if (clipCount > 0) parts.push(metaToken(text.stepMetaClips + " <strong>" + clipCount + "</strong>", "clip"));
         return parts.join("");
       }
 
-      function pluralize(count, singular, plural) {
-        return metaToken("<strong>" + count + "</strong> " + (count === 1 ? singular : plural));
+      function pluralize(count, singular, plural, variant) {
+        return metaToken("<strong>" + count + "</strong> " + (count === 1 ? singular : plural), variant);
       }
 
-      if (taskCount > 0) parts.push(pluralize(taskCount, text.stepMetaTaskSingular, text.stepMetaTaskPlural));
-      if (showMeCount > 0) parts.push(pluralize(showMeCount, text.stepMetaShowMeSingular, text.stepMetaShowMePlural));
-      if (downloadCount > 0) parts.push(pluralize(downloadCount, text.stepMetaDownloadSingular, text.stepMetaDownloadPlural));
-      else if (referenceCount > 0) parts.push(pluralize(referenceCount, text.stepMetaReferenceSingular, text.stepMetaReferencePlural));
-      if (clipCount > 0) parts.push(pluralize(clipCount, text.stepMetaClipSingular, text.stepMetaClipPlural));
+      if (taskCount > 0) parts.push(pluralize(taskCount, text.stepMetaTaskSingular, text.stepMetaTaskPlural, "task"));
+      if (showMeCount > 0) parts.push(pluralize(showMeCount, text.stepMetaShowMeSingular, text.stepMetaShowMePlural, "showme"));
+      if (downloadCount > 0) parts.push(pluralize(downloadCount, text.stepMetaDownloadSingular, text.stepMetaDownloadPlural, "download"));
+      else if (referenceCount > 0) parts.push(pluralize(referenceCount, text.stepMetaReferenceSingular, text.stepMetaReferencePlural, "reference"));
+      if (clipCount > 0) parts.push(pluralize(clipCount, text.stepMetaClipSingular, text.stepMetaClipPlural, "clip"));
       return parts.join("");
     }
 
@@ -2658,6 +2837,7 @@
         var pct = steps.length ? (completed / steps.length) * 100 : 0;
         progressFill.style.width = `${pct}%`;
         progressCount.textContent = `${completed} / ${steps.length}`;
+        resetBtn.disabled = completed === 0;
         steps.forEach(updateStep);
         refreshWeekActionPanels();
       }
@@ -2780,6 +2960,23 @@
       return score;
     }
 
+    function getTunedShowMeRelationScore(current, card) {
+      var sharesCategory = card.category && current.category && card.category === current.category;
+      var sharesManualSection = card.manualSection && current.manualSection && card.manualSection === current.manualSection;
+      var sharesStage = card.stageLabel && current.stageLabel && card.stageLabel === current.stageLabel;
+      var sharedTermScore = Math.min(getSharedShowMeTermScore(current, card), 3);
+      var score = 0;
+
+      if (sharesCategory) score += 7;
+      if (sharesManualSection) score += 4;
+      if (sharesStage) score += 2;
+      if (sharesCategory && sharesManualSection) score += 2;
+      if (sharesManualSection && sharesStage) score += 1;
+      score += sharedTermScore;
+
+      return score;
+    }
+
     function getRelatedShowMeCards(widgetId, weekIdSet, limit) {
       var current = buildShowMeBrowserCard(widgetId);
       return getAllShowMeBrowserCards()
@@ -2787,12 +2984,7 @@
           return card.id !== widgetId && !weekIdSet[card.id];
         })
         .map(function(card) {
-          var score = 0;
-          if (card.category && current.category && card.category === current.category) score += 5;
-          if (card.manualSection && current.manualSection && card.manualSection === current.manualSection) score += 3;
-          if (card.stageLabel && current.stageLabel && card.stageLabel === current.stageLabel) score += 1;
-          score += getSharedShowMeTermScore(current, card);
-          return { card: card, score: score };
+          return { card: card, score: getTunedShowMeRelationScore(current, card) };
         })
         .filter(function(item) { return item.score > 0; })
         .sort(function(a, b) {
