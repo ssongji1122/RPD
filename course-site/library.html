@@ -305,10 +305,42 @@
   word-break: keep-all;
 }
 .lib-card-reason {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.04);
   font-size: .74rem;
   color: var(--muted);
   line-height: 1.45;
   word-break: keep-all;
+}
+.lib-card-reasons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.lib-card-reason.is-category {
+  border-color: rgba(10,132,255,.34);
+  background: rgba(10,132,255,.12);
+  color: #dbeafe;
+  font-weight: 650;
+}
+.lib-card-reason.is-current {
+  border-color: rgba(96,165,250,.26);
+  background: rgba(96,165,250,.1);
+  color: rgba(219,234,254,.92);
+}
+.lib-section.is-focus-highlight .lib-section-head {
+  border-bottom-color: rgba(96,165,250,.34);
+  box-shadow: inset 0 -1px 0 rgba(96,165,250,.16);
+}
+.lib-section.is-focus-highlight .lib-section-title {
+  color: #dbeafe;
+}
+.lib-section.is-focus-highlight .lib-section-copy {
+  color: rgba(219,234,254,.82);
 }
 .lib-empty {
   grid-column: 1 / -1;
@@ -577,12 +609,28 @@
   gap: 8px;
 }
 .showme-browser-item-kicker {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 7px;
+  border-radius: 999px;
+  border: 1px solid rgba(122,162,247,.16);
+  background: rgba(255,255,255,.04);
   font-size: .62rem;
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: .08em;
   text-transform: uppercase;
   color: rgba(191,219,254,.82);
+}
+.showme-browser-item-kicker.is-category {
+  border-color: rgba(10,132,255,.34);
+  background: rgba(10,132,255,.12);
+  color: #dbeafe;
+}
+.showme-browser-item-kicker.is-current {
+  border-color: rgba(96,165,250,.26);
+  background: rgba(96,165,250,.1);
+  color: rgba(219,234,254,.92);
 }
 .showme-browser-item-state {
   display: inline-flex;
@@ -833,7 +881,7 @@
   <script src="assets/showme/_registry.js?v=20260318f"></script>
   <script src="assets/showme/_catalog.js?v=20260318c"></script>
   <script src="assets/showme/_supplements.js?v=20260318c"></script>
-  <script src="assets/showme/_helpers.js?v=20260318z"></script>
+  <script src="assets/showme/_helpers.js?v=20260318ab"></script>
 <script>
 var activeLetter = "all";
 var activeWeek = "all";
@@ -902,12 +950,21 @@ function getShowMeModalText() {
     ? window.RPDI18n.getStrings("week")
     : {};
   return Object.assign({}, weekText, {
+    modalBrowseToggleAria: weekText.modalBrowseToggleAria || (isKo ? "Show Me 탐색 전환" : "Toggle Show Me browser"),
+    modalBrowseSearchAria: weekText.modalBrowseSearchAria || (isKo ? "Show Me 카드 검색" : "Search Show Me cards"),
+    modalBrowseSearchPlaceholder: weekText.modalBrowseSearchPlaceholder || (isKo ? "연관 카드나 키워드 검색" : "Search related cards or keywords"),
     modalBrowseContextHint: isKo
       ? "현재 카드, 연관 카드, 또는 검색 결과를 빠르게 탐색합니다."
       : "Quickly browse the current card, related cards, or search results.",
     modalBrowseCurrent: isKo ? "현재 카드" : "Current card",
+    modalBrowseRelated: weekText.modalBrowseRelated || (isKo ? "연관 카드" : "Related cards"),
+    modalBrowseResults: weekText.modalBrowseResults || (isKo ? "검색 결과" : "Search results"),
+    modalBrowseEmpty: weekText.modalBrowseEmpty || (isKo ? "조건에 맞는 카드가 없습니다." : "No cards match this view."),
     modalBrowseResetCta: isKo ? "현재 카드 기준으로 보기" : "Back to current card",
     modalBrowseLibraryLink: isKo ? "라이브러리 위치 보기" : "Locate in library",
+    modalBrowserViewing: weekText.modalBrowserViewing || (isKo ? "보고 있는 카드" : "Viewing"),
+    modalCloseAria: weekText.modalCloseAria || (isKo ? "닫기" : "Close"),
+    showmeFrameTitle: weekText.showmeFrameTitle || (isKo ? "Show Me 위젯" : "Show Me widget"),
     modalCurrentCardFallbackMeta: isKo
       ? "현재 카드를 기준으로 연관 카드를 바로 이어서 둘러볼 수 있어요."
       : "Use this card as the current reference while exploring related cards."
@@ -982,7 +1039,7 @@ function getWeekValue(meta) {
 }
 
 function getWeekLabel(week) {
-  var isKo = window.RPDI18n.getLanguage() === "ko";
+  var isKo = I18N.getLanguage() === "ko";
   if (week === 0) return isKo ? "공통" : "Core";
   return "Week " + week;
 }
@@ -997,7 +1054,9 @@ function getLetterKey(label) {
 function buildCardData(id) {
   var localized = getLocalizedMeta(id);
   var meta = localized.raw;
-  var localizeShowMeUiText = window.RPDI18n.translateShowMeUiText || function(value) { return value; };
+  var localizeShowMeUiText = window.RPDI18n && window.RPDI18n.translateShowMeUiText
+    ? window.RPDI18n.translateShowMeUiText
+    : function(value) { return value; };
   var keywords = Array.isArray(meta.keywords) ? meta.keywords : [];
   var prerequisites = Array.isArray(meta.prerequisites) ? meta.prerequisites : [];
   var toolName = localizeShowMeUiText(meta.toolName || "", id);
@@ -1189,6 +1248,15 @@ function getLibraryReasonText() {
   };
 }
 
+function buildLibraryReasonTokens(reasonText, relation) {
+  var tokens = [];
+  if (relation.sharesCategory) tokens.push({ kind: "category", label: reasonText.sameCategory });
+  if (relation.sharesManualSection) tokens.push({ kind: "manual", label: reasonText.sameManualSection });
+  if (relation.sharesStage) tokens.push({ kind: "stage", label: reasonText.sameStage });
+  if (relation.sharedTermScore > 0) tokens.push({ kind: "shared", label: reasonText.sharedTerms });
+  return tokens.slice(0, 2);
+}
+
 function getSharedLibraryTermScore(baseCard, candidateCard) {
   var score = 0;
   var baseTerms = {};
@@ -1253,15 +1321,12 @@ function getRelatedLibraryCards(cards, widgetId, limit) {
     })
     .map(function(card) {
       var relation = getTunedLibraryRelationScore(current, card);
-      var reasons = [];
-      if (relation.sharesCategory) reasons.push(reasonText.sameCategory);
-      if (relation.sharesManualSection) reasons.push(reasonText.sameManualSection);
-      if (relation.sharesStage) reasons.push(reasonText.sameStage);
-      if (relation.sharedTermScore > 0) reasons.push(reasonText.sharedTerms);
+      var reasonTokens = buildLibraryReasonTokens(reasonText, relation);
       return {
         card: card,
         score: relation.score,
-        reason: reasons.slice(0, 2).join(" · ")
+        reason: reasonTokens.map(function(token) { return token.label; }).join(" · "),
+        reasonTokens: reasonTokens
       };
     })
     .filter(function(item) { return item.score > 0; })
@@ -1284,7 +1349,7 @@ function getLibraryFocusSection(visibleCards) {
   });
   if (!currentCard) return null;
 
-  var entries = [{ card: currentCard, reason: reasonText.current }].concat(
+  var entries = [{ card: currentCard, reason: reasonText.current, reasonTokens: [{ kind: "current", label: reasonText.current }] }].concat(
     getRelatedLibraryCards(visibleCards, activeShowMeWidgetId, 6)
   );
   var cardSet = {};
@@ -1342,7 +1407,7 @@ function renderLibraryFocusSection(main, focusSection) {
   var grid = document.createElement("div");
   grid.className = "lib-grid";
   focusSection.entries.forEach(function(entry) {
-    grid.appendChild(createCardButton(entry.card, { reason: entry.reason }));
+    grid.appendChild(createCardButton(entry.card, { reason: entry.reason, reasonTokens: entry.reasonTokens }));
   });
 
   body.appendChild(grid);
@@ -1354,7 +1419,14 @@ function scrollToLibraryFocusContext(behavior) {
   if (!activeShowMeWidgetId) return;
   var focusSection = document.getElementById("section-focus-cards");
   if (!focusSection) return;
+  focusSection.classList.remove("is-focus-highlight");
+  void focusSection.offsetWidth;
+  focusSection.classList.add("is-focus-highlight");
   focusSection.scrollIntoView({ behavior: behavior || "smooth", block: "start" });
+  window.clearTimeout(focusSection.__flashTimer);
+  focusSection.__flashTimer = window.setTimeout(function() {
+    focusSection.classList.remove("is-focus-highlight");
+  }, 1600);
 }
 
 function getShowMeKickerText(card) {
@@ -1370,6 +1442,7 @@ function createShowMeBrowserItem(entry) {
   var text = getShowMeModalText();
   var card = entry.card || entry;
   var reason = entry.reason || "";
+  var reasonTokens = Array.isArray(entry.reasonTokens) ? entry.reasonTokens : [];
   var isActive = card.id === activeShowMeWidgetId;
   var button = document.createElement("button");
   button.type = "button";
@@ -1388,7 +1461,15 @@ function createShowMeBrowserItem(entry) {
   kickerRow.className = "showme-browser-item-kicker-row";
   var hasKickerRow = false;
 
-  if (reason) {
+  if (reasonTokens.length) {
+    reasonTokens.forEach(function(token) {
+      var reasonLabel = document.createElement("span");
+      reasonLabel.className = "showme-browser-item-kicker" + (token.kind ? " is-" + token.kind : "");
+      reasonLabel.textContent = token.label;
+      kickerRow.appendChild(reasonLabel);
+    });
+    hasKickerRow = true;
+  } else if (reason) {
     var reasonLabel = document.createElement("span");
     reasonLabel.className = "showme-browser-item-kicker";
     reasonLabel.textContent = reason;
@@ -1490,7 +1571,7 @@ function renderShowMeBrowser() {
     var results = prioritizeActiveCardList(allCards.filter(function(card) {
       return card.searchText.indexOf(query) !== -1;
     })).slice(0, 24).map(function(card) {
-      return { card: card, reason: "" };
+      return { card: card, reason: "", reasonTokens: [] };
     });
 
     if (!appendShowMeBrowserSection(container, text.modalBrowseResults, results)) {
@@ -1505,7 +1586,11 @@ function renderShowMeBrowser() {
   var currentEntry = null;
   allCards.some(function(card) {
     if (card.id !== activeShowMeWidgetId) return false;
-    currentEntry = { card: card, reason: getLibraryReasonText().current };
+    currentEntry = {
+      card: card,
+      reason: getLibraryReasonText().current,
+      reasonTokens: [{ kind: "current", label: getLibraryReasonText().current }]
+    };
     return true;
   });
   var relatedEntries = activeShowMeWidgetId ? getRelatedLibraryCards(allCards, activeShowMeWidgetId, 8) : [];
@@ -1572,11 +1657,21 @@ function createCardButton(card, options) {
   label.textContent = card.localizedLabel;
   copy.appendChild(label);
 
-  if (options.reason) {
-    var reason = document.createElement("span");
-    reason.className = "lib-card-reason";
-    reason.textContent = options.reason;
-    copy.appendChild(reason);
+  var reasonTokens = Array.isArray(options.reasonTokens) ? options.reasonTokens : [];
+  if (!reasonTokens.length && options.reason) {
+    reasonTokens = [{ kind: "", label: options.reason }];
+  }
+
+  if (reasonTokens.length) {
+    var reasons = document.createElement("span");
+    reasons.className = "lib-card-reasons";
+    reasonTokens.forEach(function(token) {
+      var reason = document.createElement("span");
+      reason.className = "lib-card-reason" + (token.kind ? " is-" + token.kind : "");
+      reason.textContent = token.label;
+      reasons.appendChild(reason);
+    });
+    copy.appendChild(reasons);
   }
 
   btn.appendChild(copy);
@@ -1670,7 +1765,7 @@ function renderAlphabet(cards, availableLetters) {
 
 function renderWeekFilter(cards, availableWeeks) {
   var nav = document.getElementById("libWeekFilter");
-  var isKo = window.RPDI18n.getLanguage() === "ko";
+  var isKo = I18N.getLanguage() === "ko";
   if (!nav) return;
 
   nav.textContent = "";
@@ -1829,6 +1924,7 @@ function renderLibrary() {
 
 function renderPage() {
   var text = getText();
+  var modalText = getShowMeModalText();
   document.title = text.pageTitle;
   var meta = document.querySelector('meta[name="description"]');
   if (meta) meta.setAttribute("content", text.metaDescription);
@@ -1839,8 +1935,14 @@ function renderPage() {
   document.getElementById("libSearch").setAttribute("placeholder", text.searchPlaceholder);
   document.getElementById("libToc").setAttribute("aria-label", text.tocAria);
   document.getElementById("libAlphabet").setAttribute("aria-label", text.alphabetFilterAria);
-  document.getElementById("showmeClose").setAttribute("aria-label", text.modalCloseAria);
-  document.getElementById("showmeIframe").setAttribute("title", text.showmeFrameTitle);
+  document.getElementById("showmeBrowseToggle").setAttribute("aria-label", modalText.modalBrowseToggleAria);
+  document.getElementById("showmeClose").setAttribute("aria-label", modalText.modalCloseAria || text.modalCloseAria);
+  document.getElementById("showmeIframe").setAttribute("title", modalText.showmeFrameTitle || text.showmeFrameTitle);
+  document.getElementById("showmeBrowserSearch").setAttribute("aria-label", modalText.modalBrowseSearchAria);
+  document.getElementById("showmeBrowserSearch").setAttribute("placeholder", modalText.modalBrowseSearchPlaceholder);
+  document.getElementById("showmeBrowserReset").textContent = modalText.modalBrowseResetCta;
+  document.getElementById("showmeBrowserLibraryLink").textContent = modalText.modalBrowseLibraryLink;
+  document.getElementById("showmeBrowserHint").textContent = modalText.modalBrowseContextHint;
   renderLibrary();
   maybeOpenRequestedShowMe();
 }
@@ -1853,17 +1955,27 @@ document.getElementById("libSearch").addEventListener("input", function() {
 function openShowMe(widgetId) {
   var overlay = document.getElementById("showmeOverlay");
   var iframe = document.getElementById("showmeIframe");
+  var title = document.getElementById("showmeTitle");
+  var titleIcon = document.getElementById("showmeTitleIcon");
+  var titleMeta = document.getElementById("showmeTitleMeta");
   var closeBtn = document.getElementById("showmeClose");
-  var meta = getLocalizedMeta(widgetId);
+  var text = getShowMeModalText();
+  var meta = buildCardData(widgetId);
   var cacheBust = String(Date.now());
   var active = document.activeElement;
+  var wasOpen = overlay.classList.contains("is-open");
   showMeLastTrigger = active && active !== document.body ? active : null;
+  if (!wasOpen) showMeBrowserQuery = "";
   activeShowMeWidgetId = widgetId;
   syncShowMeQuery(widgetId);
   renderLibrary();
   scrollToLibraryFocusContext(pendingShowMeFromUrl ? "auto" : "smooth");
   showMeLastTrigger = document.querySelector('.lib-card[data-showme-id="' + widgetId + '"]') || showMeLastTrigger;
-  document.getElementById("showmeTitle").textContent = meta.icon + " " + meta.label;
+  title.textContent = meta.localizedLabel;
+  titleMeta.textContent = getShowMeMetaLine(meta) || text.modalCurrentCardFallbackMeta;
+  titleIcon.textContent = meta.icon || (meta.meta && meta.meta.icon) || "📖";
+  renderShowMeBrowser();
+  setShowMeBrowserOpen(showMeBrowserOpen);
   iframe.onload = function() {
     normalizeShowMeLayout(this);
     injectShowMeSupplement(this, widgetId);
@@ -1872,10 +1984,15 @@ function openShowMe(widgetId) {
   iframe.src = "assets/showme/" + widgetId + ".html?wid=" + encodeURIComponent(widgetId) + "&v=" + cacheBust;
   overlay.classList.add("is-open");
   overlay.setAttribute("aria-hidden", "false");
+  if (wasOpen && window.innerWidth < 980) {
+    setShowMeBrowserOpen(false);
+  }
   document.body.style.overflow = "hidden";
-  setTimeout(function() {
-    closeBtn.focus({ preventScroll: true });
-  }, 50);
+  if (!wasOpen) {
+    setTimeout(function() {
+      closeBtn.focus({ preventScroll: true });
+    }, 50);
+  }
 }
 
 function closeShowMe() {
@@ -1925,11 +2042,41 @@ function maybeOpenRequestedShowMe() {
 }
 
 document.getElementById("showmeClose").addEventListener("click", closeShowMe);
+document.getElementById("showmeBrowseToggle").addEventListener("click", function() {
+  setShowMeBrowserOpen(!showMeBrowserOpen);
+  if (showMeBrowserOpen) {
+    var searchInput = document.getElementById("showmeBrowserSearch");
+    if (searchInput) searchInput.focus({ preventScroll: true });
+  }
+});
+document.getElementById("showmeBrowserBackdrop").addEventListener("click", function() {
+  setShowMeBrowserOpen(false);
+});
+document.getElementById("showmeBrowserSearch").addEventListener("input", function(e) {
+  showMeBrowserQuery = e.target.value || "";
+  renderShowMeBrowser();
+  if (e.target.value && !showMeBrowserOpen) setShowMeBrowserOpen(true);
+});
+document.getElementById("showmeBrowserReset").addEventListener("click", function() {
+  var search = document.getElementById("showmeBrowserSearch");
+  showMeBrowserQuery = "";
+  if (search) search.value = "";
+  renderShowMeBrowser();
+});
+document.getElementById("showmeBrowserLibraryLink").addEventListener("click", locateCurrentShowMeCard);
 document.getElementById("showmeOverlay").addEventListener("click", function(e) {
   if (e.target === this) closeShowMe();
 });
 document.addEventListener("keydown", function(e) {
   if (e.key === "Escape") closeShowMe();
+});
+window.addEventListener("resize", function() {
+  if (!document.getElementById("showmeOverlay").classList.contains("is-open")) return;
+  if (window.innerWidth >= 1100 && !showMeBrowserQuery) {
+    setShowMeBrowserOpen(true);
+  } else if (window.innerWidth < 980 && showMeBrowserOpen && !showMeBrowserQuery) {
+    setShowMeBrowserOpen(false);
+  }
 });
 
 I18N.mountLanguageSwitcher(document.getElementById("langSwitcher"));

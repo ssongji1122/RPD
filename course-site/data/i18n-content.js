@@ -732,6 +732,7 @@
             "모서리(Edge)만 또는 꼭짓점(Vertex)만 돌출합니다. 면이 아닌 선이나 점에서 새로운 지오메트리를 만듭니다.": "This extrudes only edges or only vertices. It creates new geometry from lines and points instead of full faces.",
             "마우스 위치로 직접 돌출합니다. 빠르게 점/면을 원하는 곳에 뻗어나갈 때 사용합니다.": "This extrudes directly toward the mouse position. Use it when you want to extend points or faces quickly toward a target area.",
             "마지막 Extrude를 반복합니다. Spin: 축을 기준으로 회전 돌출하여 선반(Lathe) 효과를 만듭니다.": "Repeat runs the last Extrude again. Spin rotates the extrusion around an axis to create a lathe-style result.",
+            "Repeat: 마지막 Extrude를 반복합니다. Spin: 축을 기준으로 회전 돌출하여 선반(Lathe) 효과를 만듭니다.": "Repeat: repeats the last Extrude. Spin: rotates the extrusion around an axis to create a lathe-style effect.",
             "Repeat: 마지막 Extrude를 반복합니다.": "Repeat: repeats the last Extrude.",
             "Spin: 축을 기준으로 회전 돌출하여 선반(Lathe) 효과를 만듭니다.": "Spin: rotates the extrusion around an axis to create a lathe-style effect.",
             "선택 영역 전체를 하나로 밀어냄": "Pushes the whole selected region out as one piece",

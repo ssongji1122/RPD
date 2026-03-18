@@ -794,15 +794,18 @@ function drawPrefCanvas(key) {
   var ctx = canvas.getContext("2d");
   var scenario = prefScenarios[key] || prefScenarios.input;
   var panel = scenario.panel;
-  var rowHeight = 34;
-  var rowGap = 44;
-  var rowStartOffset = 84;
-  var footerTop = 18 + rowStartOffset + panel.rows.length * rowGap + 8;
 
-  canvas.width = Math.max(520, Math.floor(canvas.clientWidth || 680));
-  canvas.height = Math.max(304, footerTop + 54);
+  canvas.width = Math.max(560, Math.floor(canvas.clientWidth || 680));
 
   var w = canvas.width;
+  var compact = w < 620;
+  var rowHeight = compact ? 36 : 34;
+  var rowGap = compact ? 48 : 52;
+  var rowStartOffset = compact ? 80 : 88;
+  var footerTop = 18 + rowStartOffset + panel.rows.length * rowGap + 14;
+
+  canvas.height = Math.max(compact ? 324 : 342, footerTop + 62);
+
   var h = canvas.height;
   var accent = key === "save" ? "#fbbf24" : (key === "addons" ? "#6ee7b7" : "#8ec5ff");
   var frameX = 22;
@@ -823,6 +826,23 @@ function drawPrefCanvas(key) {
     ctx.lineTo(x, y + radius);
     ctx.quadraticCurveTo(x, y, x + radius, y);
     ctx.closePath();
+  }
+
+  function fitText(text, maxWidth, font) {
+    var source = String(text || "");
+    if (!source) return source;
+    ctx.save();
+    if (font) ctx.font = font;
+    if (ctx.measureText(source).width <= maxWidth) {
+      ctx.restore();
+      return source;
+    }
+    var trimmed = source;
+    while (trimmed.length > 1 && ctx.measureText(trimmed + "…").width > maxWidth) {
+      trimmed = trimmed.slice(0, -1);
+    }
+    ctx.restore();
+    return trimmed + "…";
   }
 
   ctx.clearRect(0, 0, w, h);
@@ -880,8 +900,7 @@ function drawPrefCanvas(key) {
     ctx.stroke();
 
     ctx.fillStyle = "#e5e7eb";
-    ctx.font = "12px sans-serif";
-    ctx.fillText(row.label, rowX + 14, rowY + 21);
+    ctx.font = compact ? "11.5px sans-serif" : "12px sans-serif";
 
     var toneFill = row.tone === "warn"
       ? "rgba(245,158,11,.16)"
@@ -900,6 +919,9 @@ function drawPrefCanvas(key) {
     ctx.fill();
     ctx.strokeStyle = toneStroke;
     ctx.stroke();
+    var labelMaxWidth = Math.max(88, pillX - rowX - 24);
+    ctx.fillStyle = "#e5e7eb";
+    ctx.fillText(fitText(row.label, labelMaxWidth, ctx.font), rowX + 14, rowY + 21);
     ctx.fillStyle = toneStroke;
     ctx.font = "600 11px sans-serif";
     ctx.textAlign = "center";
@@ -908,15 +930,19 @@ function drawPrefCanvas(key) {
   });
 
   var footerX = frameX + sidebarW + 24;
-  var footerY = frameY + rowStartOffset + panel.rows.length * rowGap + 8;
-  roundedRect(footerX, footerY, 128, 28, 12);
+  var footerY = frameY + rowStartOffset + panel.rows.length * rowGap + 14;
+  ctx.font = "600 11px sans-serif";
+  var footerLabel = "Save Preferences";
+  var footerW = Math.max(144, Math.ceil(ctx.measureText(footerLabel).width) + 34);
+  roundedRect(footerX, footerY, footerW, 30, 12);
   ctx.fillStyle = "rgba(10,132,255,.14)";
   ctx.fill();
   ctx.strokeStyle = "rgba(10,132,255,.28)";
   ctx.stroke();
   ctx.fillStyle = "#8ec5ff";
-  ctx.font = "600 11px sans-serif";
-  ctx.fillText("Save Preferences", footerX + 16, footerY + 18);
+  ctx.textAlign = "center";
+  ctx.fillText(footerLabel, footerX + footerW / 2, footerY + 19);
+  ctx.textAlign = "left";
 }
 
 function updatePrefMeta(meta) {
