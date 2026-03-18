@@ -225,6 +225,44 @@
       color: var(--muted);
       line-height: 1.65;
     }
+    .hero-card,
+    .topic-list,
+    .assignment-card,
+    .bundle-card,
+    .learning-panel {
+      position: relative;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,.08);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.012)),
+        linear-gradient(135deg, rgba(10,132,255,.05), rgba(255,255,255,0) 36%),
+        var(--surface);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.05),
+        0 18px 40px rgba(0,0,0,.18);
+      overflow: hidden;
+    }
+    .hero-card,
+    .topic-list,
+    .assignment-card,
+    .bundle-card,
+    .learning-panel {
+      padding: 18px 20px;
+    }
+    .ref-accordion {
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,.08);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.012)),
+        linear-gradient(135deg, rgba(10,132,255,.04), rgba(255,255,255,0) 36%),
+        var(--surface);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.05),
+        0 18px 40px rgba(0,0,0,.16);
+    }
+    .ref-accordion[open] {
+      border-color: rgba(147,197,253,.14);
+    }
 
 
     /* Nav between weeks */
@@ -256,12 +294,6 @@
     .bundle-card {
       display: grid;
       gap: 14px;
-      padding: 0 0 18px;
-      border-radius: 0;
-      border: none;
-      border-bottom: 1px solid var(--line);
-      background: none;
-      box-shadow: none;
     }
     .bundle-copy {
       display: grid;
@@ -333,7 +365,11 @@
     .progress-widget {
       min-width: min(360px, 42vw);
       gap: 10px;
-      padding: 2px 0;
+      padding: 8px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.07);
+      background: rgba(255,255,255,.02);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
     }
     .progress-label {
       min-width: auto;
@@ -863,6 +899,7 @@
       padding: 16px 18px;
       cursor: pointer;
       list-style: none;
+      background: rgba(255,255,255,.015);
     }
     .ref-summary::-webkit-details-marker {
       display: none;
@@ -1712,6 +1749,7 @@
         align-items: center;
         column-gap: 8px;
         row-gap: 6px;
+        padding: 8px 10px;
       }
       .progress-label {
         grid-area: label;
@@ -1782,7 +1820,7 @@
       }
       .progress-widget {
         grid-template-columns: auto 1fr auto;
-        }
+      }
       .progress-label {
         font-size: .72rem;
       }
@@ -1794,6 +1832,17 @@
       }
       #resetBtn {
         font-size: .7rem;
+      }
+      .hero-card,
+      .topic-list,
+      .assignment-card,
+      .bundle-card,
+      .learning-panel {
+        padding: 16px 16px;
+        border-radius: 18px;
+      }
+      .ref-accordion {
+        border-radius: 18px;
       }
       .step-number {
         min-width: 34px;
@@ -1975,7 +2024,7 @@
   <script src="assets/showme/_registry.js?v=20260318f"></script>
   <script src="assets/showme/_catalog.js?v=20260318c"></script>
   <script src="assets/showme/_supplements.js?v=20260318c"></script>
-  <script src="assets/showme/_helpers.js?v=20260318z"></script>
+  <script src="assets/showme/_helpers.js?v=20260318ab"></script>
   <script src="data/curriculum.js?v=20260318c"></script>
   <script>
     // ════════════════════════════════════════════════
