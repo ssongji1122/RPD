@@ -2,71 +2,75 @@
 """
 RPD Admin Server
 ================
-Stdlib-only HTTP server that manages course-site/data/curriculum.js
-and serves static files from course-site/.
+Stdlib-only HTTP server that manages the canonical curriculum
+(`weeks/site-data.json`), regenerates public site assets, and serves
+static files from `course-site/`.
 
 Usage:
-    python3 tools/admin-server.py [--port 8765]
+    ADMIN_KEY=... python3 tools/admin-server.py [--host 127.0.0.1] [--port 8765]
 
 Environment variables:
     PORT       - server port (default 8765)
-    ADMIN_KEY  - if set, PUT/POST require Authorization: Bearer <key>
+    HOST       - bind host (default 127.0.0.1)
+    ADMIN_KEY  - required admin password for cookie-based login
 """
 
 from __future__ import annotations
 
 import argparse
+from http import cookies
 import json
 import mimetypes
 import os
 import re
 import shutil
+import secrets
 import sys
+import time
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
-import urllib.request
-from urllib.parse import unquote
+from urllib.parse import unquote, urlparse
 
+from content_pipeline import (
+    compute_curriculum_diff,
+    content_version,
+    load_canonical_curriculum,
+    write_canonical_curriculum,
+    write_generated_outputs,
+)
 from notion_api import (
     load_notion_mapping,
     sync_week_to_notion,
-    NOTION_API,
+    week_to_notion_blocks,
+)
+from runtime_paths import (
+    AUDIT_LOG_PATH,
+    CANONICAL_JSON,
+    COURSE_SITE,
+    IMAGES_DIR,
+    ROOT,
+    VIDEOS_DIR,
+    WEEKS_DIR,
 )
 
 # ---------------------------------------------------------------------------
 # Paths
 # ---------------------------------------------------------------------------
-ROOT = Path(__file__).resolve().parent.parent
-COURSE_SITE = ROOT / "course-site"
-WEEKS_DIR = ROOT / "weeks"
 CURRICULUM_JS = COURSE_SITE / "data" / "curriculum.js"
-IMAGES_DIR = COURSE_SITE / "assets" / "images"
-VIDEOS_DIR = COURSE_SITE / "assets" / "videos"
 NOTION_TOKEN: str | None = os.environ.get("NOTION_TOKEN")
+MOCK_NOTION_SYNC = os.environ.get("RPD_MOCK_NOTION") == "1"
 
 # ---------------------------------------------------------------------------
 # Auth
 # ---------------------------------------------------------------------------
 ADMIN_KEY: str | None = os.environ.get("ADMIN_KEY")
+SESSION_COOKIE_NAME = "rpd_admin_session"
+SESSION_TTL_SECONDS = int(os.environ.get("ADMIN_SESSION_TTL", "28800"))
+ADMIN_SESSIONS: dict[str, dict[str, float]] = {}
 
 # ---------------------------------------------------------------------------
 # curriculum.js header/footer templates
 # ---------------------------------------------------------------------------
-CURRICULUM_HEADER = """\
-// ============================================================
-// 15주 블렌더 수업 커리큘럼 데이터
-// 이 파일만 수정하면 메인 페이지와 각 주차 페이지가 자동 반영됨
-// ============================================================
-
-const CURRICULUM = """
-
-CURRICULUM_FOOTER = """\
-;
-
-// Node.js 환경 대응
-if (typeof module !== "undefined") module.exports = CURRICULUM;
-"""
-
 LECTURE_SYNC_START = "<!-- AUTO:CURRICULUM-SYNC:START -->"
 LECTURE_SYNC_END = "<!-- AUTO:CURRICULUM-SYNC:END -->"
 
@@ -103,123 +107,56 @@ def guess_mime(path: str) -> str:
 
 
 # ---------------------------------------------------------------------------
-# curriculum.js read / write helpers
+# curriculum canonical read / write helpers
 # ---------------------------------------------------------------------------
-def _js_to_json(text: str) -> str:
-    """
-    Convert a JS value expression (object/array literal) to valid JSON.
-
-    Handles:
-    - Stripping single-line comments (// ...) outside strings
-    - Quoting bare (unquoted) object keys
-    - Removing trailing commas before } or ]
-
-    Uses a character-level scanner so it never modifies content inside
-    double-quoted string literals.
-    """
-    result: list[str] = []
-    i = 0
-    length = len(text)
-
-    while i < length:
-        ch = text[i]
-
-        # --- Double-quoted string: copy verbatim ---
-        if ch == '"':
-            j = i + 1
-            while j < length:
-                if text[j] == "\\":
-                    j += 2  # skip escaped char
-                    continue
-                if text[j] == '"':
-                    j += 1
-                    break
-                j += 1
-            result.append(text[i:j])
-            i = j
-            continue
-
-        # --- Single-line comment: skip to EOL ---
-        if ch == "/" and i + 1 < length and text[i + 1] == "/":
-            while i < length and text[i] != "\n":
-                i += 1
-            continue
-
-        # --- Bare identifier key: quote it ---
-        # A bare key appears after { or , or at start-of-line (after whitespace)
-        # and is followed (with optional whitespace) by a colon.
-        # We only trigger when we see a letter/underscore that is NOT inside a string.
-        if ch.isalpha() or ch == "_":
-            # Check if this looks like a bare key by scanning ahead for `:`
-            j = i
-            while j < length and (text[j].isalnum() or text[j] == "_"):
-                j += 1
-            # Skip whitespace between identifier and potential colon
-            k = j
-            while k < length and text[k] in " \t":
-                k += 1
-            if k < length and text[k] == ":":
-                # Verify this is a key position: preceding non-whitespace
-                # should be one of { , [ or newline (start of structure)
-                preceding = "".join(result).rstrip()
-                if preceding and preceding[-1] in "{,[\n":
-                    # It's a bare key -- quote it
-                    key = text[i:j]
-                    result.append(f'"{key}"')
-                    i = j
-                    continue
-
-            # Not a key -- just append the char
-            result.append(ch)
-            i += 1
-            continue
-
-        result.append(ch)
-        i += 1
-
-    output = "".join(result)
-
-    # Remove trailing commas before } or ] (JS allows, JSON doesn't)
-    output = re.sub(r",\s*([}\]])", r"\1", output)
-
-    return output
-
-
 def read_curriculum() -> list[dict]:
-    """Read curriculum.js and return the parsed array."""
-    text = CURRICULUM_JS.read_text(encoding="utf-8")
-
-    # Find the array between `const CURRICULUM = ` and `];`
-    start_marker = "const CURRICULUM = "
-    start = text.find(start_marker)
-    if start == -1:
-        raise ValueError("Cannot find 'const CURRICULUM = ' in curriculum.js")
-    start += len(start_marker)
-
-    # Find the closing `];`
-    end = text.find("];", start)
-    if end == -1:
-        raise ValueError("Cannot find closing '];' in curriculum.js")
-    # Include the `]`
-    array_text = text[start : end + 1]
-
-    # Convert JS object literal syntax to valid JSON
-    json_text = _js_to_json(array_text)
-
-    return json.loads(json_text)
+    """Read the canonical curriculum payload from weeks/site-data.json."""
+    return load_canonical_curriculum()
 
 
-def write_curriculum(data: list[dict]) -> None:
-    """Write curriculum array back to curriculum.js with backup."""
-    # Backup
+def write_curriculum(data: list[dict]) -> dict[str, str | int]:
+    """Write canonical curriculum and regenerate public site data."""
     if CURRICULUM_JS.exists():
         backup = CURRICULUM_JS.with_suffix(".js.bak")
         shutil.copy2(CURRICULUM_JS, backup)
 
-    pretty = json.dumps(data, ensure_ascii=False, indent=2)
-    content = CURRICULUM_HEADER + pretty + CURRICULUM_FOOTER
-    CURRICULUM_JS.write_text(content, encoding="utf-8")
-    sync_lecture_notes(data)
+    normalized = write_canonical_curriculum(data)
+    result = write_generated_outputs(normalized)
+    return result
+
+
+def notion_push_enabled() -> bool:
+    return bool(NOTION_TOKEN or MOCK_NOTION_SYNC)
+
+
+def sync_week_to_notion_safe(week: dict) -> dict:
+    if MOCK_NOTION_SYNC:
+        mapping = load_notion_mapping()
+        week_num = str(week.get("week", ""))
+        page_id = mapping.get(week_num) or f"mock-week-{week_num.zfill(2)}"
+        return {
+            "ok": True,
+            "page_id": page_id,
+            "blocks_written": len(week_to_notion_blocks(week)),
+            "mock": True,
+        }
+    return sync_week_to_notion(week)
+
+
+def audit_event(action: str, *, ok: bool, detail: str = "", request: BaseHTTPRequestHandler | None = None) -> None:
+    record = {
+        "ts": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "action": action,
+        "ok": ok,
+        "detail": detail,
+    }
+    if request is not None:
+        record["path"] = getattr(request, "path", "")
+        record["client"] = request.client_address[0] if request.client_address else ""
+
+    AUDIT_LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with open(AUDIT_LOG_PATH, "a", encoding="utf-8") as handle:
+        handle.write(json.dumps(record, ensure_ascii=False) + "\n")
 
 
 
@@ -493,17 +430,14 @@ class AdminHandler(BaseHTTPRequestHandler):
 
     # -- helpers -----------------------------------------------------------
 
-    def _set_cors(self) -> None:
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, PUT, POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
-
     def _send_json(self, data: dict | list, status: int = 200) -> None:
         body = json.dumps(data, ensure_ascii=False, indent=2).encode("utf-8")
         self.send_response(status)
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
-        self._set_cors()
+        self.send_header("Cache-Control", "no-store")
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("Referrer-Policy", "same-origin")
         self.end_headers()
         self.wfile.write(body)
 
@@ -514,46 +448,125 @@ class AdminHandler(BaseHTTPRequestHandler):
         length = int(self.headers.get("Content-Length", 0))
         return self.rfile.read(length) if length > 0 else b""
 
+    def _load_session(self) -> dict[str, float] | None:
+        raw_cookie = self.headers.get("Cookie", "")
+        if not raw_cookie:
+            return None
+
+        jar = cookies.SimpleCookie()
+        jar.load(raw_cookie)
+        morsel = jar.get(SESSION_COOKIE_NAME)
+        if morsel is None:
+            return None
+
+        token = morsel.value
+        session = ADMIN_SESSIONS.get(token)
+        if session is None:
+            return None
+
+        expires_at = session.get("expires_at", 0.0)
+        now = time.time()
+        if now >= expires_at:
+            ADMIN_SESSIONS.pop(token, None)
+            return None
+
+        session["expires_at"] = now + SESSION_TTL_SECONDS
+        return session
+
+    def _set_session_cookie(self, token: str, *, max_age: int = SESSION_TTL_SECONDS) -> None:
+        cookie = cookies.SimpleCookie()
+        cookie[SESSION_COOKIE_NAME] = token
+        cookie[SESSION_COOKIE_NAME]["path"] = "/"
+        cookie[SESSION_COOKIE_NAME]["httponly"] = True
+        cookie[SESSION_COOKIE_NAME]["samesite"] = "Strict"
+        cookie[SESSION_COOKIE_NAME]["max-age"] = str(max_age)
+        self.send_header("Set-Cookie", cookie.output(header="").strip())
+
+    def _clear_session_cookie(self) -> None:
+        cookie = cookies.SimpleCookie()
+        cookie[SESSION_COOKIE_NAME] = ""
+        cookie[SESSION_COOKIE_NAME]["path"] = "/"
+        cookie[SESSION_COOKIE_NAME]["httponly"] = True
+        cookie[SESSION_COOKIE_NAME]["samesite"] = "Strict"
+        cookie[SESSION_COOKIE_NAME]["expires"] = "Thu, 01 Jan 1970 00:00:00 GMT"
+        cookie[SESSION_COOKIE_NAME]["max-age"] = "0"
+        self.send_header("Set-Cookie", cookie.output(header="").strip())
+
     def _check_auth(self) -> bool:
-        """Return True if authorised, False (and send 401) if not."""
-        if ADMIN_KEY is None:
-            return True
-        auth = self.headers.get("Authorization", "")
-        if auth == f"Bearer {ADMIN_KEY}":
+        """Return True if a valid admin session exists."""
+        session = self._load_session()
+        if session is not None:
             return True
         self._send_error_json(401, "Unauthorized")
+        return False
+
+    def _require_admin_key(self) -> bool:
+        if ADMIN_KEY:
+            return True
+        self._send_error_json(503, "ADMIN_KEY not configured")
         return False
 
     def _route_path(self) -> str:
         """Decoded, normalised request path."""
         return unquote(self.path).split("?", 1)[0]
 
+    def _enforce_same_origin(self) -> bool:
+        """Reject cross-origin write requests when an Origin header is present."""
+        origin = self.headers.get("Origin", "").strip()
+        if not origin:
+            return True
+
+        try:
+            origin_netloc = urlparse(origin).netloc
+        except ValueError:
+            self._send_error_json(403, "Invalid Origin header")
+            return False
+
+        host = self.headers.get("Host", "").strip()
+        if not origin_netloc or not host or origin_netloc != host:
+            self._send_error_json(403, "Cross-origin write requests are not allowed")
+            return False
+        return True
+
     # -- verbs -------------------------------------------------------------
 
     def do_OPTIONS(self) -> None:
         self.send_response(204)
-        self._set_cors()
+        self.send_header("Allow", "GET, POST, PUT, OPTIONS")
         self.end_headers()
 
     def do_GET(self) -> None:
         path = self._route_path()
 
+        if path == "/api/admin/session":
+            if self._load_session():
+                self._send_json({"ok": True, "authenticated": True})
+            else:
+                self._send_json({"ok": True, "authenticated": False}, status=401)
+            return
+
         # API: GET /api/curriculum
         if path == "/api/curriculum":
+            if not self._check_auth():
+                return
             try:
                 data = read_curriculum()
-                self._send_json({"data": data})
+                self._send_json({"data": data, "version": content_version(data)})
             except Exception as exc:
+                audit_event("curriculum.read", ok=False, detail=str(exc), request=self)
                 self._send_error_json(500, str(exc))
             return
 
         # API: GET /api/notion-status
         if path == "/api/notion-status":
+            if not self._check_auth():
+                return
             mapping = load_notion_mapping()
             self._send_json({
-                "configured": bool(NOTION_TOKEN),
+                "configured": notion_push_enabled(),
                 "mapping_loaded": bool(mapping),
                 "weeks_mapped": len(mapping),
+                "mock": MOCK_NOTION_SYNC,
             })
             return
 
@@ -561,6 +574,8 @@ class AdminHandler(BaseHTTPRequestHandler):
         self._serve_static(path)
 
     def do_PUT(self) -> None:
+        if not self._enforce_same_origin():
+            return
         if not self._check_auth():
             return
 
@@ -583,13 +598,28 @@ class AdminHandler(BaseHTTPRequestHandler):
     def do_POST(self) -> None:
         path = self._route_path()
 
-        # POST /api/notion-quiz — no auth required (student-facing endpoint)
+        if not self._enforce_same_origin():
+            return
+
+        if path == "/api/admin/login":
+            self._handle_admin_login()
+            return
+
+        if path == "/api/admin/logout":
+            self._handle_admin_logout()
+            return
+
+        # POST /api/notion-quiz — disabled until authenticated student sync exists
         if path == "/api/notion-quiz":
-            self._handle_notion_quiz()
+            self._send_error_json(410, "Quiz server sync is disabled")
             return
 
         # All other POST endpoints require auth
         if not self._check_auth():
+            return
+
+        if path == "/api/curriculum/diff":
+            self._handle_curriculum_diff()
             return
 
         # POST /api/upload/{weekNum}/{stepIdx}
@@ -624,8 +654,77 @@ class AdminHandler(BaseHTTPRequestHandler):
 
     # -- API handlers ------------------------------------------------------
 
+    def _handle_admin_login(self) -> None:
+        if not self._require_admin_key():
+            return
+
+        body = self._read_body()
+        try:
+            payload = json.loads(body or b"{}")
+        except json.JSONDecodeError as exc:
+            self._send_error_json(400, f"Invalid JSON: {exc}")
+            return
+
+        password = str(payload.get("password", "")).strip()
+        if password != ADMIN_KEY:
+            audit_event("auth.login", ok=False, detail="invalid password", request=self)
+            self._send_error_json(401, "Invalid credentials")
+            return
+
+        token = secrets.token_urlsafe(32)
+        ADMIN_SESSIONS[token] = {
+            "issued_at": time.time(),
+            "expires_at": time.time() + SESSION_TTL_SECONDS,
+        }
+
+        self.send_response(200)
+        self._set_session_cookie(token)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        body_bytes = json.dumps({"ok": True}, ensure_ascii=False).encode("utf-8")
+        self.send_header("Content-Length", str(len(body_bytes)))
+        self.send_header("Cache-Control", "no-store")
+        self.end_headers()
+        self.wfile.write(body_bytes)
+        audit_event("auth.login", ok=True, detail="session created", request=self)
+
+    def _handle_admin_logout(self) -> None:
+        session_cookie = self.headers.get("Cookie", "")
+        if session_cookie:
+            jar = cookies.SimpleCookie()
+            jar.load(session_cookie)
+            morsel = jar.get(SESSION_COOKIE_NAME)
+            if morsel is not None:
+                ADMIN_SESSIONS.pop(morsel.value, None)
+
+        self.send_response(200)
+        self._clear_session_cookie()
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        body_bytes = json.dumps({"ok": True}, ensure_ascii=False).encode("utf-8")
+        self.send_header("Content-Length", str(len(body_bytes)))
+        self.send_header("Cache-Control", "no-store")
+        self.end_headers()
+        self.wfile.write(body_bytes)
+        audit_event("auth.logout", ok=True, detail="session cleared", request=self)
+
+    def _handle_curriculum_diff(self) -> None:
+        body = self._read_body()
+        try:
+            candidate = json.loads(body)
+        except json.JSONDecodeError as exc:
+            self._send_error_json(400, f"Invalid JSON: {exc}")
+            return
+
+        try:
+            current = read_curriculum()
+            diff = compute_curriculum_diff(current, candidate)
+        except Exception as exc:
+            self._send_error_json(400, str(exc))
+            return
+
+        self._send_json({"ok": True, "diff": diff})
+
     def _handle_put_curriculum(self) -> None:
-        """Handle full curriculum save — writes directly to curriculum.js."""
+        """Handle full curriculum save through the canonical pipeline."""
         body = self._read_body()
         try:
             data = json.loads(body)
@@ -637,8 +736,20 @@ class AdminHandler(BaseHTTPRequestHandler):
             self._send_error_json(400, "Body must be a JSON array")
             return
 
-        write_curriculum(data)
-        self._send_json({"ok": True})
+        try:
+            result = write_curriculum(data)
+        except Exception as exc:
+            audit_event("curriculum.write", ok=False, detail=str(exc), request=self)
+            self._send_error_json(400, str(exc))
+            return
+
+        audit_event(
+            "curriculum.write",
+            ok=True,
+            detail=f"version={result['version']} weeks={result['weeks']}",
+            request=self,
+        )
+        self._send_json({"ok": True, "version": result["version"]})
 
     def _handle_put_week_status(self, week_num: int) -> None:
         body = self._read_body()
@@ -660,8 +771,16 @@ class AdminHandler(BaseHTTPRequestHandler):
             if week.get("week") == week_num:
                 week["status"] = new_status
                 break
-        write_curriculum(curriculum)
-        self._send_json({"ok": True, "week": week_num, "status": new_status})
+        result = write_curriculum(curriculum)
+        audit_event(
+            "curriculum.status",
+            ok=True,
+            detail=f"week={week_num} status={new_status} version={result['version']}",
+            request=self,
+        )
+        self._send_json(
+            {"ok": True, "week": week_num, "status": new_status, "version": result["version"]}
+        )
 
     def _handle_upload(self, week_num: int, step_idx: int) -> None:
         content_type = self.headers.get("Content-Type", "")
@@ -718,9 +837,14 @@ class AdminHandler(BaseHTTPRequestHandler):
                 if step_idx < len(steps):
                     steps[step_idx]["image"] = relative_path
                 break
-        write_curriculum(curriculum)
-
-        self._send_json({"ok": True, "path": relative_path})
+        result = write_curriculum(curriculum)
+        audit_event(
+            "asset.upload.image",
+            ok=True,
+            detail=f"week={week_num} step={step_idx} path={relative_path} version={result['version']}",
+            request=self,
+        )
+        self._send_json({"ok": True, "path": relative_path, "version": result["version"]})
 
     def _handle_video_upload(self, week_num: int, video_idx: int) -> None:
         content_type = self.headers.get("Content-Type", "")
@@ -798,19 +922,26 @@ class AdminHandler(BaseHTTPRequestHandler):
                 if video_idx < len(week_videos):
                     week_videos[video_idx]["url"] = relative_path
                 break
-        write_curriculum(curriculum)
-
-        self._send_json({"ok": True, "path": relative_path})
+        result = write_curriculum(curriculum)
+        audit_event(
+            "asset.upload.video",
+            ok=True,
+            detail=f"week={week_num} video={video_idx} path={relative_path} version={result['version']}",
+            request=self,
+        )
+        self._send_json({"ok": True, "path": relative_path, "version": result["version"]})
 
     def _handle_notion_push(self, week_num: int) -> None:
         """Push curriculum week data to Notion."""
-        if not NOTION_TOKEN:
+        if not notion_push_enabled():
+            audit_event("notion.push", ok=False, detail="notion sync unavailable", request=self)
             self._send_error_json(503, "NOTION_TOKEN not configured")
             return
 
         try:
             data = read_curriculum()
         except Exception as exc:
+            audit_event("notion.push", ok=False, detail=f"read failed: {exc}", request=self)
             self._send_error_json(500, f"Read failed: {exc}")
             return
 
@@ -825,26 +956,37 @@ class AdminHandler(BaseHTTPRequestHandler):
             return
 
         try:
-            result = sync_week_to_notion(week)
+            result = sync_week_to_notion_safe(week)
+            result["version"] = content_version([week])
+            audit_event(
+                "notion.push",
+                ok=True,
+                detail=f"week={week_num} version={result['version']}",
+                request=self,
+            )
             self._send_json(result)
         except Exception as exc:
+            audit_event("notion.push", ok=False, detail=str(exc), request=self)
             self._send_error_json(500, f"Notion sync failed: {exc}")
 
     def _handle_notion_push_all(self) -> None:
         """Push all curriculum weeks to Notion."""
-        if not NOTION_TOKEN:
+        if not notion_push_enabled():
+            audit_event("notion.push_all", ok=False, detail="notion sync unavailable", request=self)
             self._send_error_json(503, "NOTION_TOKEN not configured")
             return
 
         try:
             data = read_curriculum()
         except Exception as exc:
+            audit_event("notion.push_all", ok=False, detail=f"read failed: {exc}", request=self)
             self._send_error_json(500, f"Read failed: {exc}")
             return
 
         try:
             mapping = load_notion_mapping()
         except Exception as exc:
+            audit_event("notion.push_all", ok=False, detail=f"mapping failed: {exc}", request=self)
             self._send_error_json(500, f"Mapping load failed: {exc}")
             return
         results = []
@@ -859,7 +1001,7 @@ class AdminHandler(BaseHTTPRequestHandler):
                 })
                 continue
             try:
-                sync_week_to_notion(week)
+                sync_week_to_notion_safe(week)
                 results.append({"week": week_num, "ok": True, "title": week.get("title", "")})
             except Exception as exc:
                 results.append({
@@ -870,56 +1012,20 @@ class AdminHandler(BaseHTTPRequestHandler):
                 })
 
         success_count = sum(1 for r in results if r["ok"])
-        self._send_json({"results": results, "success_count": success_count, "total": len(results)})
-
-    def _handle_notion_quiz(self) -> None:
-        """Log a Show Me quiz completion to the Notion 제출/공개피드백 database."""
-        # Load per-site config (gitignored), falling back to env var
-        config_path = COURSE_SITE / "data" / "notion-config.json"
-        token: str | None = None
-        if config_path.exists():
-            try:
-                with open(config_path, encoding="utf-8") as f:
-                    cfg = json.load(f)
-                if not cfg.get("enabled"):
-                    self._send_json({"ok": False, "reason": "disabled"})
-                    return
-                token = cfg.get("token") or NOTION_TOKEN
-            except Exception as exc:
-                self._send_error_json(500, f"Config read error: {exc}")
-                return
-        else:
-            token = NOTION_TOKEN
-
-        if not token:
-            self._send_json({"ok": False, "reason": "no token configured"})
-            return
-
-        body = self._read_body()
-        try:
-            payload = json.loads(body)
-        except json.JSONDecodeError as exc:
-            self._send_error_json(400, f"Invalid JSON: {exc}")
-            return
-
-        req = urllib.request.Request(
-            f"{NOTION_API}/pages",
-            data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
-            headers={
-                "Authorization": f"Bearer {token}",
-                "Notion-Version": "2022-06-28",
-                "Content-Type": "application/json",
-            },
+        audit_event(
+            "notion.push_all",
+            ok=success_count == len(results),
+            detail=f"success={success_count}/{len(results)} version={content_version(data)}",
+            request=self,
         )
-        try:
-            with urllib.request.urlopen(req) as resp:
-                result = json.loads(resp.read().decode("utf-8"))
-            self._send_json({"ok": True, "id": result.get("id")})
-        except urllib.error.HTTPError as exc:
-            err_body = exc.read().decode("utf-8", errors="replace")
-            self._send_error_json(exc.code, err_body)
-        except Exception as exc:
-            self._send_error_json(500, str(exc))
+        self._send_json(
+            {
+                "results": results,
+                "success_count": success_count,
+                "total": len(results),
+                "version": content_version(data),
+            }
+        )
 
     # -- static file serving -----------------------------------------------
 
@@ -954,7 +1060,11 @@ class AdminHandler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header("Content-Type", mime)
         self.send_header("Content-Length", str(len(data)))
-        self._set_cors()
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("X-Frame-Options", "DENY")
+        self.send_header("Referrer-Policy", "same-origin")
+        if requested.name == "admin.html":
+            self.send_header("Cache-Control", "no-store")
         self.end_headers()
         self.wfile.write(data)
 
@@ -989,6 +1099,11 @@ class AdminHandler(BaseHTTPRequestHandler):
 def main() -> None:
     parser = argparse.ArgumentParser(description="RPD Admin Server")
     parser.add_argument(
+        "--host",
+        default=os.environ.get("HOST", "127.0.0.1"),
+        help="Bind host (default: 127.0.0.1 or HOST env var)",
+    )
+    parser.add_argument(
         "--port",
         type=int,
         default=int(os.environ.get("PORT", "8765")),
@@ -996,34 +1111,38 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    # Validate curriculum.js exists
-    if not CURRICULUM_JS.exists():
-        print(f"ERROR: {CURRICULUM_JS} not found", file=sys.stderr)
+    if not ADMIN_KEY:
+        print("ERROR: ADMIN_KEY environment variable is required", file=sys.stderr)
         sys.exit(1)
 
-    # Quick sanity check — can we parse it?
     try:
         entries = read_curriculum()
         week_count = len(entries)
+        version = content_version(entries)
     except Exception as exc:
-        print(f"ERROR: Failed to parse curriculum.js: {exc}", file=sys.stderr)
+        print(f"ERROR: Failed to parse canonical curriculum: {exc}", file=sys.stderr)
         sys.exit(1)
 
-    auth_mode = "ENABLED (ADMIN_KEY set)" if ADMIN_KEY else "DISABLED (development)"
-    notion_mode = "ENABLED" if NOTION_TOKEN else "DISABLED (set NOTION_TOKEN)"
+    auth_mode = "COOKIE SESSION"
+    notion_mode = "MOCK" if MOCK_NOTION_SYNC else ("ENABLED" if NOTION_TOKEN else "DISABLED (set NOTION_TOKEN)")
     notion_weeks = len(load_notion_mapping())
 
     HTTPServer.allow_reuse_address = True
-    server = HTTPServer(("0.0.0.0", args.port), AdminHandler)
+    server = HTTPServer((args.host, args.port), AdminHandler)
 
     print("=" * 60)
     print("  RPD Admin Server")
     print("=" * 60)
-    print(f"  URL:        http://localhost:{args.port}/")
+    print(f"  URL:        http://{args.host}:{args.port}/")
     print(f"  Static:     {COURSE_SITE}")
-    print(f"  Curriculum: {CURRICULUM_JS} ({week_count} weeks)")
+    try:
+        curriculum_path = CANONICAL_JSON.relative_to(ROOT)
+    except Exception:
+        curriculum_path = CANONICAL_JSON
+    print(f"  Curriculum: {curriculum_path} ({week_count} weeks, version {version})")
     print(f"  Auth:       {auth_mode}")
     print(f"  Notion:     {notion_mode} ({notion_weeks} weeks mapped)")
+    print(f"  Audit log:  {AUDIT_LOG_PATH}")
     print("=" * 60)
     print()
 

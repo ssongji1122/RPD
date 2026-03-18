@@ -46,6 +46,23 @@
       color: #fbbf24; font-size: .78rem; font-weight: 600;
     }
     .dirty-indicator.visible { display: inline-flex; }
+    .version-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 12px; border-radius: 999px;
+      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08);
+      color: var(--muted-strong); font-size: .76rem; font-weight: 600;
+    }
+    .modal-log {
+      font-size: .85rem; line-height: 1.8; max-height: 320px;
+      overflow-y: auto; margin: 12px 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    .diff-week {
+      padding: 10px 12px; border-radius: 12px; margin-bottom: 8px;
+      background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.05);
+    }
+    .diff-fields {
+      color: var(--muted); font-size: .8rem;
+    }
 
     /* ── Hamburger (mobile) ────────────────────────────── */
     .hamburger {
@@ -600,13 +617,16 @@
           <select class="field-select" id="weekSelectTopbar" style="width:160px;font-size:.84rem;padding:6px 30px 6px 10px;display:none" title="주차 선택"></select>
         </div>
         <div class="topbar-actions">
+          <div class="version-badge" id="versionBadge">버전 —</div>
           <div class="dirty-indicator" id="dirtyIndicator">
             <span>&#9679;</span> 저장되지 않은 변경
           </div>
           <div class="notion-sync-group" id="notionGroup" style="display:none">
-            <button class="btn btn-ghost" id="notionPushAllBtn" type="button" title="curriculum.js → Notion 전체 push">&#128640; Notion Push</button>
+            <button class="btn btn-ghost" id="notionPushAllBtn" type="button" title="canonical curriculum → Notion 전체 push">&#128640; Notion Push</button>
           </div>
+          <button class="btn btn-ghost" id="diffBtn" type="button">변경 미리보기</button>
           <button class="btn btn-ghost" id="previewBtn" type="button">미리보기 &#8599;</button>
+          <button class="btn btn-ghost" id="logoutBtn" type="button">로그아웃</button>
           <button class="btn btn-primary" id="saveBtn" type="button">&#128190; 저장</button>
         </div>
       </div>
@@ -650,8 +670,17 @@
   <div class="auth-overlay" id="pushAllOverlay" style="display:none">
     <div class="auth-card" style="max-width:480px;width:90%">
       <h2>Notion 전체 Push 결과</h2>
-      <div id="pushAllLog" style="font-size:.85rem;line-height:1.8;max-height:320px;overflow-y:auto;margin:12px 0;font-family:monospace"></div>
+      <div class="modal-log" id="pushAllLog"></div>
       <button class="btn btn-primary" id="pushAllCloseBtn" type="button" style="width:100%;justify-content:center;">닫기</button>
+    </div>
+  </div>
+
+  <div class="auth-overlay" id="diffOverlay" style="display:none">
+    <div class="auth-card" style="max-width:560px;width:92%">
+      <h2>저장 전 변경 미리보기</h2>
+      <div id="diffMeta" style="color:var(--muted);font-size:.84rem;line-height:1.6"></div>
+      <div class="modal-log" id="diffLog"></div>
+      <button class="btn btn-primary" id="diffCloseBtn" type="button" style="width:100%;justify-content:center;">닫기</button>
     </div>
   </div>
 
@@ -672,15 +701,18 @@
     var selectedIdx = 0;
     var dirty = false;
     var dirtyWeeks = {};
-    var authToken = sessionStorage.getItem("rpd-admin-token") || "";
     var notionConfigured = false;
+    var currentVersion = "";
 
     // ─── DOM refs ────────────────────────────────────────
     var sidebarList    = document.getElementById("sidebarList");
     var editorInner    = document.getElementById("editorInner");
     var dirtyIndicator = document.getElementById("dirtyIndicator");
+    var versionBadge   = document.getElementById("versionBadge");
     var saveBtn        = document.getElementById("saveBtn");
+    var diffBtn        = document.getElementById("diffBtn");
     var previewBtn     = document.getElementById("previewBtn");
+    var logoutBtn      = document.getElementById("logoutBtn");
     var toastContainer = document.getElementById("toastContainer");
     var authOverlay    = document.getElementById("authOverlay");
     var authInput      = document.getElementById("authInput");
@@ -694,6 +726,10 @@
     var pushAllOverlay   = document.getElementById("pushAllOverlay");
     var pushAllLog       = document.getElementById("pushAllLog");
     var pushAllCloseBtn  = document.getElementById("pushAllCloseBtn");
+    var diffOverlay      = document.getElementById("diffOverlay");
+    var diffMeta         = document.getElementById("diffMeta");
+    var diffLog          = document.getElementById("diffLog");
+    var diffCloseBtn     = document.getElementById("diffCloseBtn");
 
     // ─── Helpers ─────────────────────────────────────────
 
@@ -732,15 +768,43 @@
     }
 
     function apiHeaders() {
-      var h = { "Content-Type": "application/json" };
-      if (authToken) h["Authorization"] = "Bearer " + authToken;
-      return h;
+      return { "Content-Type": "application/json" };
     }
 
-    function uploadApiHeaders() {
-      var h = {};
-      if (authToken) h["Authorization"] = "Bearer " + authToken;
-      return h;
+    async function apiFetch(url, options) {
+      var init = Object.assign({ credentials: "same-origin" }, options || {});
+      init.headers = Object.assign({}, options && options.headers ? options.headers : {});
+      var res = await fetch(url, init);
+      if (res.status === 401 || res.status === 403) {
+        showAuth();
+      }
+      return res;
+    }
+
+    function setCurrentVersion(version) {
+      currentVersion = version || "";
+      versionBadge.textContent = currentVersion ? "버전 " + currentVersion : "버전 —";
+    }
+
+    function renderDiffOverlay(diff) {
+      diffMeta.textContent =
+        "현재 " + diff.version_from + " → 저장 예정 " + diff.version_to +
+        " · 변경 주차 " + diff.changed_count + "개";
+
+      if (!diff.changed_weeks.length) {
+        diffLog.innerHTML = "<div class=\"diff-week\">변경된 주차가 없습니다.</div>";
+        return;
+      }
+
+      diffLog.innerHTML = diff.changed_weeks.map(function(week) {
+        var fields = week.changed_fields.map(esc).join(", ");
+        return [
+          "<div class=\"diff-week\">",
+          "<strong>Week ", esc(String(week.week).padStart(2, "0")), " · ", esc(week.title || ""), "</strong>",
+          "<div class=\"diff-fields\">변경 필드: ", fields, " · 단계 ", esc(String(week.step_count)), "개</div>",
+          "</div>"
+        ].join("");
+      }).join("");
     }
 
 
@@ -748,14 +812,17 @@
       saveBtn.disabled = true;
       saveBtn.textContent = "\uC800\uC7A5 \uC911...";
       try {
-        var res = await fetch("/api/curriculum", {
+        var res = await apiFetch("/api/curriculum", {
           method: "PUT",
           headers: apiHeaders(),
           body: JSON.stringify(curriculum),
         });
+        if (res.status === 401 || res.status === 403) return;
         if (!res.ok) throw new Error("HTTP " + res.status);
+        var result = await res.json();
+        setCurrentVersion(result.version);
         clearDirty();
-        toast("\uC800\uC7A5 \uC644\uB8CC", "success");
+        toast("\uC800\uC7A5 \uC644\uB8CC (" + result.version + ")", "success");
       } catch (e) {
         toast("\uC800\uC7A5 \uC2E4\uD328: " + e.message, "error");
       } finally {
@@ -1104,23 +1171,24 @@
     authSubmit.addEventListener("click", async function() {
       var pw = authInput.value.trim();
       if (!pw) { authError.textContent = "비밀번호를 입력하세요."; return; }
-      authToken = pw;
-      sessionStorage.setItem("rpd-admin-token", authToken);
       try {
-        var res = await fetch("/api/curriculum", { headers: apiHeaders() });
+        authSubmit.disabled = true;
+        var res = await apiFetch("/api/admin/login", {
+          method: "POST",
+          headers: apiHeaders(),
+          body: JSON.stringify({ password: pw })
+        });
         if (res.status === 401 || res.status === 403) {
           authError.textContent = "인증 실패. 다시 시도하세요.";
-          authToken = "";
-          sessionStorage.removeItem("rpd-admin-token");
           return;
         }
+        if (!res.ok) throw new Error("HTTP " + res.status);
         authOverlay.style.display = "none";
-        var result = await res.json();
-        parseCurriculumResponse(result);
-        renderSidebar();
-        selectWeek(0);
+        await loadCurriculum();
       } catch (e) {
-        authError.textContent = "서버 연결 실패.";
+        authError.textContent = "서버 연결 실패: " + e.message;
+      } finally {
+        authSubmit.disabled = false;
       }
     });
 
@@ -1144,11 +1212,12 @@
     /** Parse API response: supports both bare array and { data } envelope */
     function parseCurriculumResponse(result) {
       curriculum = Array.isArray(result) ? result : (result.data || result);
+      setCurrentVersion(Array.isArray(result) ? "" : result.version);
     }
 
     async function loadCurriculum() {
       try {
-        var res = await fetch("/api/curriculum", { headers: apiHeaders() });
+        var res = await apiFetch("/api/curriculum");
         if (res.status === 401 || res.status === 403) {
           showAuth();
           return;
@@ -1158,6 +1227,7 @@
         parseCurriculumResponse(result);
         renderSidebar();
         selectWeek(0);
+        await checkNotionStatus();
       } catch (e) {
         editorInner.textContent = "";
         var msg = document.createElement("div");
@@ -1174,6 +1244,30 @@
         return;
       }
       await performCurriculumSave();
+    });
+
+    diffBtn.addEventListener("click", async function() {
+      if (!curriculum.length) return;
+      diffBtn.disabled = true;
+      diffMeta.textContent = "검증 중...";
+      diffLog.innerHTML = "";
+      diffOverlay.style.display = "flex";
+      try {
+        var res = await apiFetch("/api/curriculum/diff", {
+          method: "POST",
+          headers: apiHeaders(),
+          body: JSON.stringify(curriculum),
+        });
+        if (res.status === 401 || res.status === 403) return;
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        var data = await res.json();
+        renderDiffOverlay(data.diff);
+      } catch (e) {
+        diffMeta.textContent = "변경 미리보기를 불러오지 못했습니다.";
+        diffLog.innerHTML = "<div class=\"diff-week\" style=\"color:#f66\">오류: " + esc(e.message) + "</div>";
+      } finally {
+        diffBtn.disabled = false;
+      }
     });
 
     // ─── Preview ─────────────────────────────────────────
@@ -1524,11 +1618,11 @@
       var form = new FormData();
       form.append("image", file);
       try {
-        var res = await fetch("/api/upload/" + weekNum + "/" + stepIdx, {
+        var res = await apiFetch("/api/upload/" + weekNum + "/" + stepIdx, {
           method: "POST",
-          headers: uploadApiHeaders(),
           body: form,
         });
+        if (res.status === 401 || res.status === 403) return;
         if (!res.ok) throw new Error("HTTP " + res.status);
         var data = await res.json();
         curriculum[selectedIdx].steps[stepIdx].image = data.path;
@@ -1545,11 +1639,11 @@
       var form = new FormData();
       form.append("video", file);
       try {
-        var res = await fetch("/api/upload-video/" + weekNum + "/" + videoIdx, {
+        var res = await apiFetch("/api/upload-video/" + weekNum + "/" + videoIdx, {
           method: "POST",
-          headers: uploadApiHeaders(),
           body: form,
         });
+        if (res.status === 401 || res.status === 403) return;
         if (!res.ok) throw new Error("HTTP " + res.status);
         var data = await res.json();
         curriculum[selectedIdx].videos[videoIdx].url = data.path;
@@ -1572,7 +1666,12 @@
     // ─── Notion integration ──────────────────────────────
     async function checkNotionStatus() {
       try {
-        var res = await fetch("/api/notion-status", { headers: apiHeaders() });
+        var res = await apiFetch("/api/notion-status");
+        if (res.status === 401 || res.status === 403) {
+          notionConfigured = false;
+          notionGroup.style.display = "none";
+          return;
+        }
         var data = await res.json();
         notionConfigured = !!(data.configured && data.mapping_loaded);
         notionGroup.style.display = notionConfigured ? "flex" : "none";
@@ -1583,16 +1682,33 @@
     }
 
     notionPushAllBtn.addEventListener("click", async function() {
-      pushAllLog.innerHTML = "<span style='color:#aaa'>전체 push 중...</span>";
       pushAllOverlay.style.display = "flex";
       notionPushAllBtn.disabled = true;
       notionPushAllBtn.textContent = "\u23F3 Push \uc911...";
 
       try {
-        var res = await fetch("/api/notion-push-all", {
+        pushAllLog.innerHTML = "<span style='color:#aaa'>사전 검증 중...</span>";
+        var statusRes = await apiFetch("/api/notion-status");
+        if (statusRes.status === 401 || statusRes.status === 403) return;
+        if (!statusRes.ok) throw new Error("Notion status HTTP " + statusRes.status);
+        var statusData = await statusRes.json();
+
+        if (!(statusData.configured && statusData.mapping_loaded)) {
+          pushAllLog.innerHTML = "<span style='color:#f66'>검증 실패: NOTION_TOKEN 또는 notion-mapping.json 설정을 확인하세요.</span>";
+          return;
+        }
+
+        pushAllLog.innerHTML =
+          "<span style='color:#aaa'>검증 완료</span><br>" +
+          "현재 버전: <strong>" + esc(currentVersion || "-") + "</strong><br>" +
+          "매핑된 주차: <strong>" + esc(String(statusData.weeks_mapped)) + "</strong><br><br>" +
+          "<span style='color:#aaa'>전체 push 중...</span>";
+
+        var res = await apiFetch("/api/notion-push-all", {
           method: "POST",
           headers: apiHeaders(),
         });
+        if (res.status === 401 || res.status === 403) return;
         var data = await res.json();
 
         if (!res.ok) {
@@ -1621,7 +1737,30 @@
     pushAllCloseBtn.addEventListener("click", function() {
       pushAllOverlay.style.display = "none";
     });
+    diffCloseBtn.addEventListener("click", function() {
+      diffOverlay.style.display = "none";
+    });
+    logoutBtn.addEventListener("click", async function() {
+      try {
+        await apiFetch("/api/admin/logout", { method: "POST" });
+      } catch (e) {
+        // Ignore logout network failures and still reset the UI.
+      }
+      curriculum = [];
+      clearDirty();
+      notionConfigured = false;
+      notionGroup.style.display = "none";
+      setCurrentVersion("");
+      editorInner.innerHTML = '<div class="empty-state">로그아웃되었습니다.</div>';
+      sidebarList.innerHTML = "";
+      weekSelectTopbar.innerHTML = "";
+      weekSelectTopbar.style.display = "none";
+      showAuth();
+    });
     document.addEventListener("keydown", function(e) {
+      if (e.key === "Escape" && diffOverlay.style.display !== "none") {
+        diffOverlay.style.display = "none";
+      }
       if (e.key === "Escape" && pushAllOverlay.style.display !== "none") {
         pushAllOverlay.style.display = "none";
       }
@@ -1629,7 +1768,6 @@
 
     // ─── Init ────────────────────────────────────────────
     loadCurriculum();
-    checkNotionStatus();
 
   })();
   </script>
