@@ -1,6 +1,6 @@
 {
-  "_comment": "Notion ↔ 웹 동기화 설정. 주차 번호 → Notion 페이지 ID 매핑",
-  "_description": "이 파일은 notion-sync.js와 web-to-notion.js에서 사용됩니다. 각 주차의 Notion 페이지 ID를 정의합니다.",
+  "_comment": "RPD Notion 연동 설정. 주차 번호 → Notion 페이지 ID 매핑",
+  "_description": "이 파일은 tools/notion-sync.py, tools/curriculum-push.py, tools/admin-server.py 에서 사용됩니다. 각 주차의 Notion 페이지 ID를 정의합니다.",
   "weeks": {
     "1": "31354d654971812e9f48f392f2de551b",
     "2": "31354d6549718179a709cabf829a5971",
@@ -19,7 +19,7 @@
     "15": "31354d654971813dbf3dfc91cef9c1c6"
   },
   "mapping": {
-    "_description": "Notion 콘텐츠 → overrides.json 필드 매핑",
+    "_description": "Notion 스냅샷 파서용 섹션/상태 매핑",
     "sections": {
       "요약": "summary",
       "summary": "summary",

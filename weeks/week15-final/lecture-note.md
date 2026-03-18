@@ -368,6 +368,10 @@ final_학번_이름_promo.mp4      (프로모션 영상, 선택)
 - 제출 체크:
   - 발표 진행
   - 최종 파일 제출 완료
+
+### 공식 문서
+
+- [Blender Manual](https://docs.blender.org/manual/en/latest/)
 <!-- AUTO:CURRICULUM-SYNC:END -->
 
 ## 참고 자료

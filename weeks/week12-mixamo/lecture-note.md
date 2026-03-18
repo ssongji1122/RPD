@@ -439,7 +439,7 @@ NLA Editor는 애니메이션 클립을 레이어처럼 쌓고 이어 붙이는 
 
 - `Ctrl + J`: 오브젝트 합치기 (Join)
 - `Ctrl + A → All Transforms`: Transform 적용
-- `M (Merge by Distance)`: 중복 정점 제거
+- `Shift + Ctrl + M`: Merge by Distance
 - `Space`: 애니메이션 재생/정지
 - `Shift + N`: 법선 재계산
 

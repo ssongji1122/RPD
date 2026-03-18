@@ -351,6 +351,11 @@
   - 렌더 이미지 3장 이상
   - .blend 파일 1개
   - 사용한 기능 설명 (2~3가지)
+
+### 공식 문서
+
+- [Blender Manual: Rendering](https://docs.blender.org/manual/en/latest/render/index.html)
+- [Blender 단축키 모음](../../resources/blender-shortcuts.md)
 <!-- AUTO:CURRICULUM-SYNC:END -->
 
 ## 참고 자료
