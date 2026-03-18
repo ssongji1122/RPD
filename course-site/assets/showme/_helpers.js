@@ -5,8 +5,26 @@
     advanced: "심화"
   };
 
+  function readShowMeGlobal(name) {
+    if (global && global[name]) return global[name];
+    try {
+      if (global.parent && global.parent !== global && global.parent[name]) {
+        return global.parent[name];
+      }
+    } catch (error) {}
+    return null;
+  }
+
   function getCatalog() {
-    return global.SHOWME_CATALOG || {};
+    return readShowMeGlobal("SHOWME_CATALOG") || {};
+  }
+
+  function getRegistry() {
+    return readShowMeGlobal("SHOWME_REGISTRY") || {};
+  }
+
+  function getSupplements() {
+    return readShowMeGlobal("SHOWME_SUPPLEMENTS") || null;
   }
 
   function getShowMeCategoryOrder() {
@@ -24,7 +42,7 @@
   }
 
   function getShowMeEntry(id) {
-    var registry = global.SHOWME_REGISTRY || {};
+    var registry = getRegistry();
     var catalog = getCatalog();
     var base = registry[id] || { label: id, icon: "📖" };
     var categoryMap = catalog.categoryMap || {};
@@ -508,10 +526,11 @@
   }
 
   function findShowMeSupplement(widgetId) {
-    if (typeof global.SHOWME_SUPPLEMENTS === "undefined") return null;
-    for (var key in global.SHOWME_SUPPLEMENTS) {
-      if (!Object.prototype.hasOwnProperty.call(global.SHOWME_SUPPLEMENTS, key)) continue;
-      var supplement = global.SHOWME_SUPPLEMENTS[key];
+    var supplements = getSupplements();
+    if (!supplements) return null;
+    for (var key in supplements) {
+      if (!Object.prototype.hasOwnProperty.call(supplements, key)) continue;
+      var supplement = supplements[key];
       if (supplement.targets && supplement.targets.indexOf(widgetId) !== -1) return supplement;
     }
     return null;

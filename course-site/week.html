@@ -986,15 +986,7 @@
     .showme-modal-title-block {
       min-width: 0;
       display: grid;
-      gap: 2px;
-    }
-    .showme-modal-kicker {
-      font-size: .67rem;
-      font-weight: 700;
-      line-height: 1.2;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      color: rgba(191,219,254,.86);
+      gap: 3px;
     }
     .showme-modal-title {
       font-size: 1.12rem;
@@ -1753,7 +1745,6 @@
           <div class="showme-modal-header-copy">
             <div class="showme-modal-card-icon" id="showmeTitleIcon" aria-hidden="true"></div>
             <div class="showme-modal-title-block">
-              <span class="showme-modal-kicker" id="showmeTitleKicker"></span>
               <span class="showme-modal-title showme-modal-title-label" id="showmeTitle"></span>
               <span class="showme-modal-title-meta" id="showmeTitleMeta"></span>
             </div>
@@ -1822,7 +1813,7 @@
   </div>
 
   <script src="data/i18n-content.js?v=20260318e"></script>
-  <script src="assets/i18n.js?v=20260318q"></script>
+  <script src="assets/i18n.js?v=20260318t"></script>
   <script src="assets/showme/_registry.js?v=20260318f"></script>
   <script src="assets/showme/_catalog.js?v=20260318c"></script>
   <script src="assets/showme/_supplements.js?v=20260318c"></script>
@@ -1869,7 +1860,8 @@
     }
 
     function getShowMeKickerText(meta) {
-      return meta && meta.toolName ? "Show Me · " + meta.toolName : "Show Me";
+      if (!meta) return "";
+      return meta.toolName || meta.category || "";
     }
 
     function getShowMeMetaLine(meta) {
@@ -2832,19 +2824,28 @@
 
       var kickerRow = document.createElement("span");
       kickerRow.className = "showme-browser-item-kicker-row";
+      var hasKickerRow = false;
 
-      var kicker = document.createElement("span");
-      kicker.className = "showme-browser-item-kicker";
-      kicker.textContent = getShowMeKickerText(card);
-      kickerRow.appendChild(kicker);
+      var kickerText = getShowMeKickerText(card);
+      if (kickerText) {
+        var kicker = document.createElement("span");
+        kicker.className = "showme-browser-item-kicker";
+        kicker.textContent = kickerText;
+        kickerRow.appendChild(kicker);
+        hasKickerRow = true;
+      }
 
       if (isActive) {
         var state = document.createElement("span");
         state.className = "showme-browser-item-state";
         state.textContent = text.modalBrowserViewing;
         kickerRow.appendChild(state);
+        hasKickerRow = true;
       }
-      copy.appendChild(kickerRow);
+
+      if (hasKickerRow) {
+        copy.appendChild(kickerRow);
+      }
 
       var label = document.createElement("span");
       label.className = "showme-browser-item-label";
@@ -3027,7 +3028,6 @@
       var iframe = document.getElementById("showmeIframe");
       var title = document.getElementById("showmeTitle");
       var titleIcon = document.getElementById("showmeTitleIcon");
-      var titleKicker = document.getElementById("showmeTitleKicker");
       var titleMeta = document.getElementById("showmeTitleMeta");
       var closeBtn = document.getElementById("showmeClose");
       var text = getWeekText();
@@ -3040,7 +3040,6 @@
       syncShowMeQuery(widgetId);
 
       title.textContent = meta.label;
-      titleKicker.textContent = text.modalCurrentCardKicker;
       titleMeta.textContent = getShowMeMetaLine(meta) || text.modalCurrentCardFallbackMeta;
       titleIcon.innerHTML = renderShowMeIcon(meta, "browser");
       renderShowMeBrowser();
