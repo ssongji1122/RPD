@@ -172,7 +172,7 @@
         learningStartTitle: "지금 바로 이번 주 학습을 시작하세요.",
         learningContinueTitle: "여기서부터 이어서 학습하세요.",
         learningCompleteTitle: "이번 주 핵심 흐름을 모두 마쳤어요.",
-        learningPanelCopy: "체크한 진도와 Show Me 퀴즈 결과는 이 브라우저에 저장됩니다.",
+        learningPanelCopy: "체크한 학습 항목과 Show Me 퀴즈 결과는 이 브라우저에 저장됩니다.",
         learningPrimaryStart: "학습 시작",
         learningPrimaryContinue: "이어서 학습",
         learningPrimaryReview: "다시 훑어보기",
@@ -291,7 +291,7 @@
         learningStartTitle: "Start this week's lesson now.",
         learningContinueTitle: "Pick up the lesson from here.",
         learningCompleteTitle: "You've finished the core flow for this week.",
-        learningPanelCopy: "Checked progress and Show Me quiz results are stored in this browser.",
+        learningPanelCopy: "Checked learning items and Show Me quiz results are stored in this browser.",
         learningPrimaryStart: "Start lesson",
         learningPrimaryContinue: "Continue lesson",
         learningPrimaryReview: "Review flow",
@@ -1620,6 +1620,39 @@
       });
   }
 
+  function applyShowMeLocalization(doc, widgetId) {
+    if (!doc || !doc.body) return;
+    if (typeof doc.title === "string") doc.title = translateShowMeString(doc.title, widgetId);
+    localizeShowMeAttributes(doc.body, widgetId);
+    localizeShowMeStructuredBlocks(doc, widgetId);
+    localizeShowMeTextNodes(doc, widgetId);
+  }
+
+  function queueShowMeLocalization(doc, widgetId) {
+    if (!doc || !doc.defaultView || typeof doc.defaultView.setTimeout !== "function") return;
+    if (doc.__rpdShowMeQueuedTimer) {
+      doc.defaultView.clearTimeout(doc.__rpdShowMeQueuedTimer);
+    }
+    doc.__rpdShowMeQueuedTimer = doc.defaultView.setTimeout(function() {
+      doc.__rpdShowMeQueuedTimer = null;
+      applyShowMeLocalization(doc, widgetId);
+    }, 72);
+  }
+
+  function scheduleShowMeLocalization(doc, widgetId) {
+    if (!doc || !doc.defaultView || typeof doc.defaultView.setTimeout !== "function") return;
+    if (doc.__rpdShowMeTimers && doc.__rpdShowMeTimers.length) {
+      doc.__rpdShowMeTimers.forEach(function(timerId) {
+        doc.defaultView.clearTimeout(timerId);
+      });
+    }
+    doc.__rpdShowMeTimers = [0, 48, 180, 480, 1200, 2400, 4200, 6400].map(function(delay) {
+      return doc.defaultView.setTimeout(function() {
+        applyShowMeLocalization(doc, widgetId);
+      }, delay);
+    });
+  }
+
   function patchShowMeCanvasText(frameWin) {
     if (!frameWin || !frameWin.CanvasRenderingContext2D) return;
     var proto = frameWin.CanvasRenderingContext2D.prototype;
@@ -1643,6 +1676,7 @@
     if (doc.__rpdShowMeObserver) doc.__rpdShowMeObserver.disconnect();
 
     doc.__rpdShowMeObserver = new doc.defaultView.MutationObserver(function(mutations) {
+      var shouldQueue = false;
       mutations.forEach(function(mutation) {
         if (mutation.type === "characterData" && mutation.target) {
           var nextValue = translateShowMeString(mutation.target.nodeValue, widgetId);
@@ -1662,15 +1696,19 @@
           if (node.nodeType === 3) {
             var textValue = translateShowMeString(node.nodeValue, widgetId);
             if (textValue !== node.nodeValue) node.nodeValue = textValue;
+            shouldQueue = true;
             return;
           }
           if (node.nodeType === 1) {
             localizeShowMeAttributes(node, widgetId);
             localizeShowMeStructuredBlocks(node, widgetId);
             localizeShowMeTextNodes(doc, widgetId);
+            shouldQueue = true;
           }
         });
       });
+
+      if (shouldQueue) queueShowMeLocalization(doc, widgetId);
     });
 
     doc.__rpdShowMeObserver.observe(doc.body, {
@@ -1690,11 +1728,9 @@
     doc.documentElement.lang = currentLang;
     doc.documentElement.setAttribute("data-lang", currentLang);
     patchShowMeCanvasText(frameWin);
-    if (typeof doc.title === "string") doc.title = translateShowMeString(doc.title, widgetId);
-    localizeShowMeAttributes(doc.body, widgetId);
-    localizeShowMeStructuredBlocks(doc, widgetId);
-    localizeShowMeTextNodes(doc, widgetId);
+    applyShowMeLocalization(doc, widgetId);
     observeShowMeDocument(doc, widgetId);
+    scheduleShowMeLocalization(doc, widgetId);
   }
 
   function updateSwitcherState(root) {
