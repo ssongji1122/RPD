@@ -156,6 +156,43 @@ body {
   color: var(--key-soft);
   border-color: rgba(10,132,255,.3);
 }
+.scenario-nav { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.control-guide { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+.control-kind { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; font-size: .72rem; font-weight: 600; letter-spacing: .02em; }
+.control-kind.discrete { background: rgba(10,132,255,.14); color: var(--key-soft); }
+.control-kind.range { background: rgba(16,185,129,.14); color: var(--success-soft); }
+.control-copy { font-size: .78rem; color: var(--muted); line-height: 1.6; }
+.scene-desc {
+  font-size: .84rem;
+  color: var(--muted-strong);
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  line-height: 1.7;
+}
+.cause-effect { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0 14px; }
+.cause-card {
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.cause-card h4 {
+  margin: 0 0 6px;
+  font-size: .82rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.cause-card p {
+  margin: 0;
+  font-size: .82rem;
+  color: var(--muted-strong);
+  line-height: 1.65;
+}
+.cause-card.bad h4 { color: #fca5a5; }
+.cause-card.good h4 { color: var(--success-soft); }
 
 /* ── Slider ── */
 .demo-slider-wrap {
@@ -168,6 +205,8 @@ body {
 .demo-slider-wrap .slider-label {
   min-width: 50px; font-size: .78rem; color: var(--muted);
 }
+.control-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; width: 100%; }
+.control-row + .control-row { padding-top: 8px; border-top: 1px solid var(--line); }
 
 /* ── Usage Grid ── */
 .usage-grid {
@@ -377,7 +416,7 @@ body {
 <!-- Tab Bar -->
 <nav class="tabs" role="tablist">
   <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
-  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">인터랙티브 데모</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">interaction</button>
   <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
   <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
 </nav>
@@ -411,23 +450,39 @@ body {
 
 <!-- TAB 2: 인터랙티브 데모 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    왼쪽의 프로파일(꽃병 단면)이 축을 기준으로 회전하여 3D 윤곽선을 형성합니다. 슬라이더로 Angle과 Screw를 조절해 보세요.
-  </p>
+  <div class="control-guide">
+    <span class="control-kind range">연속 조절</span>
+    <span class="control-copy">슬라이더는 Angle과 Screw 값을 연속적으로 바꾸고, 초기화 버튼은 현재 실험 상태를 기준값으로 되돌립니다.</span>
+  </div>
+  <div class="scene-desc" id="screwDesc">Screw Modifier는 단면을 돌려서 입체를 만드는 과정입니다. Angle은 얼마나 감쌀지, Screw는 회전하면서 축 방향으로 얼마나 이동할지를 정해 순수 회전체와 나사형 구조를 가릅니다.</div>
+  <div class="cause-effect">
+    <div class="cause-card bad">
+      <h4>Axis Mistake</h4>
+      <p>회전 각도와 축 이동의 차이를 헷갈리면 꽃병을 만들려다 열린 쉘이 나오거나, 원통을 만들려다 엉뚱한 나사 형태가 생깁니다.</p>
+    </div>
+    <div class="cause-card good">
+      <h4>Lathe to Thread</h4>
+      <p>Angle은 회전체의 닫힘 정도, Screw는 축 이동량이라고 나눠 보면 선반 가공형 병부터 스프링과 볼트까지 같은 원리로 설명할 수 있어요.</p>
+    </div>
+  </div>
   <div class="demo-wrap">
     <canvas id="demoCanvas" width="680" height="300"></canvas>
     <div class="demo-controls">
-      <div class="demo-slider-wrap">
-        <span class="slider-label">Angle</span>
-        <input type="range" id="sliderAngle" min="0" max="360" value="360">
-        <span id="angleVal" style="min-width:32px">360°</span>
+      <div class="control-row">
+        <div class="demo-slider-wrap">
+          <span class="slider-label">Angle</span>
+          <input type="range" id="sliderAngle" min="0" max="360" value="360">
+          <span id="angleVal" style="min-width:32px">360°</span>
+        </div>
+        <div class="demo-slider-wrap">
+          <span class="slider-label">Screw</span>
+          <input type="range" id="sliderScrew" min="0" max="80" value="0">
+          <span id="screwVal" style="min-width:24px">0</span>
+        </div>
       </div>
-      <div class="demo-slider-wrap">
-        <span class="slider-label">Screw</span>
-        <input type="range" id="sliderScrew" min="0" max="80" value="0">
-        <span id="screwVal" style="min-width:24px">0</span>
+      <div class="control-row">
+        <button class="demo-btn" id="btnReset">초기화</button>
       </div>
-      <button class="demo-btn" id="btnReset">초기화</button>
     </div>
   </div>
   <p class="demo-hint">프로파일이 축을 기준으로 회전하여 3D 형태가 만들어지는 과정을 관찰해 보세요.</p>
@@ -634,6 +689,7 @@ function initQuiz(questions) {
   var screwOffset = 0;
   var animFrame = null;
   var animAngle = 0; // current animation rotation for 3D effect
+  var screwDesc = document.getElementById("screwDesc");
 
   // Vase profile points (half profile, from bottom to top)
   // x = distance from axis, y = height (0 = bottom)
@@ -850,7 +906,23 @@ function initQuiz(questions) {
     animFrame = requestAnimationFrame(animate);
   }
 
+  function updateScrewDesc() {
+    if (!screwDesc) return;
+    var angleText = angle < 180
+      ? "회전 각도가 작아서 아직 절개된 반제품처럼 보입니다."
+      : angle < 360
+        ? "거의 감기지만 일부가 열려 있어서 컷어웨이 단면이나 반쪽 쉘 설명에 적합합니다."
+        : "360도 회전이라 프로파일이 완전히 감겨 순수 회전체가 됩니다.";
+    var screwText = screwOffset === 0
+      ? "축 이동이 없어서 물레나 선반처럼 제자리 회전만 일어나는 상태예요."
+      : screwOffset < 25
+        ? "회전하면서 조금씩 위로 이동해 완만한 나선이나 장식 홈에 가까운 흐름입니다."
+        : "축 이동량이 커서 나사산, 스프링, 코일 같은 구조가 강하게 읽힙니다.";
+    screwDesc.textContent = "현재 Angle " + angle + "도, Screw " + screwOffset + " 설정입니다. " + angleText + " " + screwText;
+  }
+
   animate();
+  updateScrewDesc();
 
   // Angle slider
   var sliderAngle = document.getElementById("sliderAngle");
@@ -858,6 +930,7 @@ function initQuiz(questions) {
   sliderAngle.addEventListener("input", function() {
     angle = parseInt(this.value);
     angleVal.textContent = angle + "\u00b0";
+    updateScrewDesc();
   });
   sliderAngle.addEventListener("touchstart", function(e) { e.stopPropagation(); }, { passive: true });
 
@@ -867,6 +940,7 @@ function initQuiz(questions) {
   sliderScrew.addEventListener("input", function() {
     screwOffset = parseInt(this.value);
     screwVal.textContent = screwOffset;
+    updateScrewDesc();
   });
   sliderScrew.addEventListener("touchstart", function(e) { e.stopPropagation(); }, { passive: true });
 
@@ -878,6 +952,7 @@ function initQuiz(questions) {
     sliderScrew.value = 0;
     angleVal.textContent = "360\u00b0";
     screwVal.textContent = "0";
+    updateScrewDesc();
   });
 })();
 

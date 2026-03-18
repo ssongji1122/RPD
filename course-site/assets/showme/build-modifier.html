@@ -155,6 +155,43 @@ body {
   color: var(--key-soft);
   border-color: rgba(10,132,255,.3);
 }
+.scenario-nav { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.control-guide { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+.control-kind { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; font-size: .72rem; font-weight: 600; letter-spacing: .02em; }
+.control-kind.discrete { background: rgba(10,132,255,.14); color: var(--key-soft); }
+.control-kind.range { background: rgba(16,185,129,.14); color: var(--success-soft); }
+.control-copy { font-size: .78rem; color: var(--muted); line-height: 1.6; }
+.scene-desc {
+  font-size: .84rem;
+  color: var(--muted-strong);
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  line-height: 1.7;
+}
+.cause-effect { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0 14px; }
+.cause-card {
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.cause-card h4 {
+  margin: 0 0 6px;
+  font-size: .82rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.cause-card p {
+  margin: 0;
+  font-size: .82rem;
+  color: var(--muted-strong);
+  line-height: 1.65;
+}
+.cause-card.bad h4 { color: #fca5a5; }
+.cause-card.good h4 { color: var(--success-soft); }
 
 /* ── Usage Grid ── */
 .usage-grid {
@@ -363,7 +400,7 @@ body {
 <!-- Tab Bar -->
 <nav class="tabs" role="tablist">
   <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
-  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">interaction</button>
   <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
   <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
 </nav>
@@ -407,12 +444,24 @@ body {
 
 <!-- TAB 2: 시각적 비교 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    4×4 그리드가 순서대로 나타납니다. 버튼으로 재생, 역재생, 랜덤 순서를 실험하세요.
-  </p>
+  <div class="control-guide">
+    <span class="control-kind discrete">상태 전환</span>
+    <span class="control-copy">버튼은 조립, 분해, 랜덤 순서처럼 모션 상태를 바꾸고, 같은 메시가 어떤 내러티브로 읽히는지 비교하게 합니다.</span>
+  </div>
+  <div class="scene-desc" id="buildDesc">Build Modifier는 메쉬를 만드는 게 아니라 보이는 순서를 제어합니다. 같은 모델도 정방향 조립인지, 역방향 분해인지, 랜덤 시드인지에 따라 완전히 다른 모션 문법이 됩니다.</div>
+  <div class="cause-effect">
+    <div class="cause-card bad">
+      <h4>Flat Reveal</h4>
+      <p>순서와 방향을 의식하지 않으면 단순히 켜졌다 꺼지는 것처럼 보여서, 조립이나 분해라는 서사가 잘 읽히지 않습니다.</p>
+    </div>
+    <div class="cause-card good">
+      <h4>Readable Motion</h4>
+      <p>정방향, 역방향, 랜덤 순서를 분리해서 보면 같은 메시도 조립 애니메이션, 파괴 연출, 데이터 리빌처럼 다른 역할을 맡길 수 있어요.</p>
+    </div>
+  </div>
   <div class="demo-wrap">
     <canvas id="demoCanvas" width="680" height="300"></canvas>
-    <div class="demo-controls">
+    <div class="demo-controls scenario-nav">
       <button class="demo-btn is-active" id="btnPlay">재생</button>
       <button class="demo-btn" id="btnReverse">역재생</button>
       <button class="demo-btn" id="btnRandom">랜덤 순서</button>
@@ -640,6 +689,7 @@ function initQuiz(questions) {
   var isReversed = false;
   var isPlaying = false;
   var animFrame = null;
+  var buildDesc = document.getElementById("buildDesc");
 
   // Current state: how many cells are visible
   var visibleCount = 0;
@@ -760,6 +810,17 @@ function initQuiz(questions) {
     ctx.fillStyle = "rgba(255,255,255,.4)";
     ctx.textAlign = "right";
     ctx.fillText("Frame: " + visibleCount, canvas.width - 14, 14);
+
+    if (buildDesc) {
+      var directionText = isReversed ? "역재생으로 면이 하나씩 사라지는 분해" : "정방향으로 면이 쌓이는 조립";
+      var orderText = isRandom
+        ? "랜덤 Seed가 켜져 있어서 같은 메시라도 예측되지 않는 순서로 펼쳐집니다."
+        : "기본 순서라서 면의 흐름과 구조를 따라 차근차근 읽히는 상태예요.";
+      var progressText = isPlaying
+        ? (visibleCount >= totalCells ? "모든 단계가 끝나서 마지막 프레임까지 도달했습니다." : totalCells + "단계 중 " + visibleCount + "단계를 지나며 리듬을 보여 주는 중입니다.")
+        : (visibleCount === 0 ? "아직 재생 전이라 전체 순서를 설계하는 단계입니다." : "중간 프레임에 멈춰 두고 특정 단계만 설명하기 좋은 상태입니다.");
+      buildDesc.textContent = "현재는 " + directionText + " 모드입니다. " + orderText + " " + progressText;
+    }
   }
 
   function animate(timestamp) {

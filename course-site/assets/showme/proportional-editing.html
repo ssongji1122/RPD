@@ -58,6 +58,20 @@ body { margin: 0; padding: 0; font-family: var(--font); background: var(--bg); c
 .demo-btn { padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line-strong); background: rgba(255,255,255,.04); color: var(--muted-strong); font: inherit; font-size: .82rem; cursor: pointer; transition: background .14s, color .14s; }
 .demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
 .demo-btn.is-active { background: rgba(10,132,255,.14); color: var(--key-soft); border-color: rgba(10,132,255,.3); }
+.scenario-nav { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.control-guide { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+.control-kind { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; font-size: .72rem; font-weight: 600; letter-spacing: .02em; }
+.control-kind.discrete { background: rgba(10,132,255,.14); color: var(--key-soft); }
+.control-kind.range { background: rgba(16,185,129,.14); color: var(--success-soft); }
+.control-copy { font-size: .78rem; color: var(--muted); line-height: 1.6; }
+.scenario-btn { border-radius: 999px; }
+.scene-desc { font-size: .84rem; color: var(--muted-strong); margin-bottom: 12px; padding: 10px 14px; border-radius: var(--radius-sm); background: var(--surface); border: 1px solid var(--line); line-height: 1.7; }
+.cause-effect { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0 14px; }
+.cause-card { padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--surface); }
+.cause-card h4 { margin: 0 0 6px; font-size: .82rem; text-transform: uppercase; letter-spacing: .04em; }
+.cause-card p { margin: 0; font-size: .82rem; color: var(--muted-strong); line-height: 1.65; }
+.cause-card.bad h4 { color: #fca5a5; }
+.cause-card.good h4 { color: var(--success-soft); }
 .usage-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .usage-card { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); padding: 16px; }
 .usage-card h4 { margin: 0 0 8px; font-size: .92rem; color: var(--key-soft); }
@@ -167,16 +181,28 @@ body { margin: 0; padding: 0; font-family: var(--font); background: var(--bg); c
 
 <!-- TAB 2: 시각적 비교 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    중앙 포인트를 드래그하면 주변 포인트들이 Smooth falloff로 따라와요. 반경을 조절하거나 Proportional을 껐다 켜 보세요.
-  </p>
+  <div class="control-guide">
+    <span class="control-kind discrete">상태 전환</span>
+    <span class="control-copy">버튼은 영향 반경 프리셋을 바꿔서 같은 드래그가 얼마나 넓게 퍼지는지 비교하게 해 줍니다.</span>
+  </div>
+  <div class="scenario-nav" id="propScenarioNav">
+    <button class="demo-btn scenario-btn" id="btnSceneTight">좁은 반경</button>
+    <button class="demo-btn scenario-btn is-active" id="btnSceneWide">넓은 반경</button>
+    <button class="demo-btn scenario-btn" id="btnSceneOff">OFF</button>
+  </div>
+  <div class="scene-desc" id="propSceneDesc">넓은 반경은 큰 덩어리를 천천히 밀어 올릴 때 좋아요. 선택점 하나를 움직여도 주변까지 같이 따라와서 실루엣을 크게 잡을 수 있습니다.</div>
+  <div class="cause-effect">
+    <div class="cause-card bad">
+      <h4>Without Proportional</h4>
+      <p>한 점만 튀어나오면 표면이 꺾여 보이고, 자연스러운 곡면 대신 뾰족한 변형이 생기기 쉬워요.</p>
+    </div>
+    <div class="cause-card good">
+      <h4>With Proportional</h4>
+      <p>영향 반경 안의 점들이 함께 움직여서, 적은 조작으로도 덩어리감과 흐름을 부드럽게 만들 수 있어요.</p>
+    </div>
+  </div>
   <div class="demo-wrap">
     <canvas id="demoCanvas" width="680" height="300"></canvas>
-    <div class="demo-controls">
-      <button class="demo-btn" id="btnRadiusUp">반경 크게</button>
-      <button class="demo-btn" id="btnRadiusDown">반경 작게</button>
-      <button class="demo-btn" id="btnPropToggle">Proportional ON</button>
-    </div>
   </div>
   <p class="demo-hint">중앙 포인트를 위아래로 드래그하세요. 점선 원이 영향 반경이에요.</p>
 </section>
@@ -580,6 +606,36 @@ function initQuiz(questions) {
     isDragging = false;
   }
 
+  function updateScenarioButtons(activeId) {
+    document.querySelectorAll("#propScenarioNav .scenario-btn").forEach(function(btn) {
+      btn.classList.toggle("is-active", btn.id === activeId);
+    });
+  }
+
+  function updatePropSceneDesc(text) {
+    var desc = document.getElementById("propSceneDesc");
+    if (desc) desc.textContent = text;
+  }
+
+  function setScenario(key) {
+    if (key === "tight") {
+      propEnabled = true;
+      radius = 90;
+      updateScenarioButtons("btnSceneTight");
+      updatePropSceneDesc("좁은 반경은 눈꺼풀, 패널 굴곡, 작은 덴트처럼 일부만 조심스럽게 밀고 싶을 때 적합해요. 영향이 가까운 점에만 짧게 퍼집니다.");
+    } else if (key === "wide") {
+      propEnabled = true;
+      radius = 160;
+      updateScenarioButtons("btnSceneWide");
+      updatePropSceneDesc("넓은 반경은 큰 덩어리를 천천히 밀어 올릴 때 좋아요. 선택점 하나를 움직여도 주변까지 같이 따라와서 실루엣을 크게 잡을 수 있습니다.");
+    } else {
+      propEnabled = false;
+      updateScenarioButtons("btnSceneOff");
+      updatePropSceneDesc("OFF 상태에서는 선택한 점만 움직여요. 기계적인 하드 엣지나 정확한 위치 조정처럼 주변을 건드리면 안 되는 순간에 더 안전합니다.");
+    }
+    draw();
+  }
+
   canvas.addEventListener("mousedown", onDown);
   canvas.addEventListener("mousemove", onMove);
   canvas.addEventListener("mouseup", onUp);
@@ -589,31 +645,11 @@ function initQuiz(questions) {
   canvas.addEventListener("touchend", onUp);
   canvas.addEventListener("touchcancel", onUp);
 
-  document.getElementById("btnRadiusUp").addEventListener("click", function() {
-    radius = Math.min(300, radius + 30);
-    draw();
-  });
+  document.getElementById("btnSceneTight").addEventListener("click", function() { setScenario("tight"); });
+  document.getElementById("btnSceneWide").addEventListener("click", function() { setScenario("wide"); });
+  document.getElementById("btnSceneOff").addEventListener("click", function() { setScenario("off"); });
 
-  document.getElementById("btnRadiusDown").addEventListener("click", function() {
-    radius = Math.max(40, radius - 30);
-    draw();
-  });
-
-  var btnPropToggle = document.getElementById("btnPropToggle");
-  btnPropToggle.classList.add("is-active");
-  btnPropToggle.addEventListener("click", function() {
-    propEnabled = !propEnabled;
-    if (propEnabled) {
-      btnPropToggle.textContent = "Proportional ON";
-      btnPropToggle.classList.add("is-active");
-    } else {
-      btnPropToggle.textContent = "Proportional OFF";
-      btnPropToggle.classList.remove("is-active");
-    }
-    draw();
-  });
-
-  draw();
+  setScenario("wide");
 })();
 
 // ── Quiz Data ─────────────────────────────────

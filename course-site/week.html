@@ -3,25 +3,29 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Week — RPD</title>
-  <meta name="description" content="Robot Product Design 실습 페이지" />
+  <title>Week — Blender Archive</title>
+  <meta name="description" content="Blender Archive 기반 RPD 주차 페이지" />
   <link rel="stylesheet" href="assets/tokens.css" />
-  <script>/* FOUC prevention */ (function(){var t=localStorage.getItem('rpd-theme');if(t)document.documentElement.setAttribute('data-theme',t);})()</script>
+  <script>/* FOUC prevention */ (function(){var t=localStorage.getItem('rpd-theme');if(t)document.documentElement.setAttribute('data-theme',t);var l=localStorage.getItem('rpd-lang');if(l){document.documentElement.lang=l;document.documentElement.setAttribute('data-lang',l);}})()</script>
   <style>
     /* ── Week-page specific styles ── */
     .hero {
-      padding: 80px 0 16px; text-align: center;
+      padding: 62px 0 10px; text-align: center;
     }
     .hero-card { display: grid; gap: 12px; justify-items: center; width: 100%; }
     .hero h1 {
       margin: 0; font-family: var(--font-display);
-      font-size: clamp(1.6rem, 3.5vw, 2.4rem);
-      font-weight: 650; letter-spacing: -.026em; line-height: 1.15;
+      font-size: clamp(1.38rem, 2.4vw, 1.94rem);
+      font-weight: 620; letter-spacing: -.03em; line-height: 1.16;
     }
     .hero p {
       max-width: 720px; margin: 0;
-      color: var(--muted-strong); font-size: clamp(.98rem, 1.6vw, 1.06rem);
-      line-height: 1.8; white-space: nowrap;
+      color: var(--muted-strong); font-size: clamp(.92rem, 1.2vw, .98rem);
+      line-height: 1.8; white-space: normal;
+    }
+    .hero-support {
+      font-size: .82rem;
+      color: var(--muted);
     }
 
 
@@ -45,6 +49,82 @@
       border: 1px solid var(--line); background: var(--surface);
       color: var(--muted-strong); font-size: .88rem;
     }
+    .bundle-card {
+      display: grid;
+      gap: 16px;
+      padding: 20px 22px;
+      border-radius: 24px;
+      border: 1px solid rgba(147, 197, 253, 0.16);
+      background:
+        radial-gradient(circle at top left, rgba(10,132,255,.12), transparent 32%),
+        linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      box-shadow: var(--shadow-card);
+    }
+    .bundle-copy {
+      display: grid;
+      gap: 10px;
+      max-width: 760px;
+    }
+    .bundle-copy strong {
+      font-size: .98rem;
+      line-height: 1.42;
+    }
+    .bundle-copy p {
+      margin: 0;
+      color: var(--muted-strong);
+      line-height: 1.72;
+      font-size: .92rem;
+    }
+    .bundle-stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .bundle-stat {
+      display: grid;
+      gap: 4px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+    }
+    .bundle-stat strong {
+      font-size: 1rem;
+      font-weight: 620;
+      letter-spacing: -.02em;
+    }
+    .bundle-stat span {
+      font-size: .73rem;
+      color: var(--muted);
+    }
+    .bundle-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .bundle-link {
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 11px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color: var(--muted-strong);
+      text-decoration: none;
+      font-size: .78rem;
+      transition: border-color .14s, background .14s, color .14s;
+    }
+    .bundle-link:hover {
+      border-color: rgba(10,132,255,.34);
+      background: rgba(10,132,255,.08);
+      color: var(--text);
+    }
+    .section-head p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: .86rem;
+    }
 
     /* Progress sticky */
     .progress-widget { min-width: min(380px, 44vw); }
@@ -56,6 +136,12 @@
     @media (max-width: 720px) {
       .hero { padding-top: 72px; }
       .sidebar { width: 80vw; max-width: 300px; }
+      .bundle-card {
+        padding: 20px;
+      }
+      .bundle-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
 
     /* ── Content layout ── */
@@ -197,12 +283,15 @@
       backdrop-filter: blur(8px);
       justify-content: center; align-items: center;
       padding: 20px;
+      overscroll-behavior: contain;
     }
     .showme-overlay.is-open { display: flex; }
 
     .showme-modal {
       width: min(960px, 92vw);
       height: min(88vh, 800px);
+      max-width: 100%;
+      max-height: 100%;
       border-radius: var(--radius-lg);
       border: 1px solid var(--line-strong);
       background: var(--surface);
@@ -226,20 +315,28 @@
       padding: 14px 18px;
       border-bottom: 1px solid var(--line);
       flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+      background: var(--surface);
     }
     .showme-modal-title {
       font-size: .9rem; font-weight: 600; color: var(--text);
+      line-height: 1.35;
+      min-width: 0;
     }
     .showme-header-actions {
       display: flex; align-items: center; gap: 6px;
+      flex-shrink: 0;
     }
     .showme-resize, .showme-close {
       display: grid; place-items: center;
-      width: 32px; height: 32px; border-radius: 8px;
+      width: 44px; height: 44px; border-radius: 12px;
       border: 1px solid var(--line);
       background: var(--overlay-white);
       color: var(--muted-strong); cursor: pointer;
       transition: background .14s, color .14s;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
     .showme-resize:hover, .showme-close:hover {
       background: var(--overlay-white-hover); color: var(--text);
@@ -250,13 +347,25 @@
     .showme-iframe {
       flex: 1; width: 100%; border: none;
       background: var(--bg);
+      min-height: 0;
     }
 
     @media (max-width: 768px) {
       .showme-overlay { padding: 0; }
       .showme-modal {
-        width: 100%; height: 100%;
+        width: 100%;
+        height: 100dvh;
+        min-height: 100dvh;
         border-radius: 0; border: none;
+      }
+      .showme-modal.is-maximized {
+        width: 100%;
+        height: 100dvh;
+      }
+      .showme-modal-header {
+        padding-top: calc(14px + env(safe-area-inset-top, 0px));
+        padding-right: calc(18px + env(safe-area-inset-right, 0px));
+        padding-left: calc(18px + env(safe-area-inset-left, 0px));
       }
       .showme-resize { display: none; }
     }
@@ -365,16 +474,17 @@
             <div class="brand-badge" id="brandBadge">—</div>
             <div class="brand-copy">
               <strong id="brandTitle">불러오는 중...</strong>
-              <span>Robot Product Design · 2026</span>
+              <span id="brandMeta">Robot Product Design · 2026</span>
             </div>
           </a>
         </div>
         <div class="ref-tabs">
-          <a class="ref-tab" href="shortcuts.html">⌨ 단축키 DB</a>
-          <a class="ref-tab" href="https://www.notion.so/31e54d654971812e9c38f85124b45e3f" target="_blank" rel="noopener">🤖 AI 참고자료</a>
-          <a class="ref-tab" href="https://www.notion.so/31e54d65497181c89e8bfa97bb5efaa7" target="_blank" rel="noopener">🔧 블렌더 참고자료</a>
+          <a class="ref-tab" id="refShortcutsLink" href="shortcuts.html">⌨ 단축키 DB</a>
+          <a class="ref-tab" id="refAiLink" href="https://www.notion.so/31e54d654971812e9c38f85124b45e3f" target="_blank" rel="noopener">🤖 AI 참고자료</a>
+          <a class="ref-tab" id="refBlenderLink" href="https://www.notion.so/31e54d65497181c89e8bfa97bb5efaa7" target="_blank" rel="noopener">🔧 블렌더 참고자료</a>
         </div>
         <div style="display:flex;align-items:center;gap:8px">
+          <div id="langSwitcher"></div>
           <span class="student-badge" id="studentBadge" title="학생 변경" onclick="switchStudent()">👤 <span id="studentBadgeName"></span></span>
           <button class="theme-toggle" id="themeToggle" type="button" aria-label="테마 전환">
             <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
@@ -382,7 +492,7 @@
           </button>
         </div>
         <div class="progress-widget">
-          <div class="progress-label">진도</div>
+          <div class="progress-label" id="progressLabel">진도</div>
           <div class="progress-track" aria-hidden="true">
             <div class="progress-fill" id="progressFill"></div>
           </div>
@@ -404,8 +514,8 @@
     <footer class="page-footer">
       <div>
         Robot Product Design 2026 ·
-        <a href="index.html" style="color:var(--key-soft)">← 전체 목록</a>
-        · <a href="library.html" style="color:var(--key-soft)">도구 라이브러리</a>
+        <a href="index.html" id="footerHomeLink" style="color:var(--key-soft)">← 전체 목록</a>
+        · <a href="library.html" id="footerLibraryLink" style="color:var(--key-soft)">도구 라이브러리</a>
       </div>
     </footer>
 
@@ -438,89 +548,160 @@
     <!-- Student Login (full-page, shown when ?sid= is missing) -->
     <div class="student-login-overlay" id="studentLoginOverlay">
       <div class="student-login-card">
-        <h2>👋 학번을 입력하세요</h2>
-        <p class="login-subtitle">퀴즈 기록이 자동으로 저장됩니다</p>
+        <h2 id="studentLoginTitle">👋 바로 시작하세요</h2>
+        <p class="login-subtitle" id="studentLoginSubtitle">퀴즈 기록은 이 브라우저에만 저장됩니다</p>
         <input class="student-login-input" id="studentLoginInput"
-               type="text" placeholder="학번 8자리" maxlength="8" inputmode="numeric"
+               type="text" placeholder="이름 없이 사용 가능" maxlength="32" inputmode="text"
                autocomplete="off">
         <div class="student-login-preview" id="studentLoginPreview"></div>
-        <button class="guest-btn" type="button" onclick="loginAsGuest()">학번 없이 둘러보기</button>
+        <button class="guest-btn" id="guestBrowseBtn" type="button" onclick="loginAsGuest()">바로 둘러보기</button>
       </div>
     </div>
   </div>
 
-  <script src="data/students.js"></script>
-  <script src="assets/showme/_registry.js"></script>
-  <script src="assets/showme/_supplements.js"></script>
-  <script src="data/curriculum.js"></script>
+  <script src="data/i18n-content.js?v=20260318e"></script>
+  <script src="assets/i18n.js?v=20260318d"></script>
+  <script src="assets/showme/_registry.js?v=20260318c"></script>
+  <script src="assets/showme/_catalog.js?v=20260318c"></script>
+  <script src="assets/showme/_supplements.js?v=20260318c"></script>
+  <script src="assets/showme/_helpers.js?v=20260318c"></script>
+  <script src="data/curriculum.js?v=20260318c"></script>
   <script>
     // ════════════════════════════════════════════════
     //  Week page template engine
     //  URL: week.html?week=2  →  renders Week 02 data
     // ════════════════════════════════════════════════
 
-    const params   = new URLSearchParams(location.search);
-    const weekNum  = parseInt(params.get("week") || "1", 10);
+    const params = new URLSearchParams(location.search);
+    const weekNum = parseInt(params.get("week") || "1", 10);
+    const requestedShowMeId = params.get("showme") || "";
     const weekData = CURRICULUM.find(w => w.week === weekNum);
     const storageKey = `blender2026-week${weekNum}-v1`;
+    var pendingShowMeFromUrl = !!requestedShowMeId;
 
-    // ─── Guard ───────────────────────────────────────
-    if (!weekData) {
-      document.getElementById("pageContent").innerHTML = `
-        <section style="padding:80px 0;text-align:center;color:var(--muted)">
-          <p>해당 주차 데이터를 찾을 수 없습니다. <a href="index.html" style="color:var(--key-soft)">← 돌아가기</a></p>
-        </section>`;
-    } else {
-      initStudentLogin();    // check ?sid= or show login overlay
-      buildPage(weekData);
-      updateShowMeBadges();  // restore completion badges from localStorage
+    function getWeekText() {
+      return window.RPDI18n.getStrings("week");
     }
 
-    // ─── Build page ─────────────────────────────────
-    function buildPage(w) {
-      document.title = `Week ${w.week} — ${w.title}`;
+    function getShowMeMeta(widgetId) {
+      var meta = getShowMeEntry(widgetId);
+      return Object.assign({}, meta, {
+        label: window.RPDI18n.getShowMeLabel(widgetId, meta)
+      });
+    }
 
-      // Topbar
+    function buildWeekBundle(w) {
+      var showMeIds = {};
+      var taskCount = 0;
+
+      (w.steps || []).forEach(function(step) {
+        taskCount += (step.tasks || []).length;
+        collectShowMeIdsFromStep(step).forEach(function(id) {
+          showMeIds[id] = true;
+        });
+      });
+
+      return {
+        practiceCount: (w.steps || []).length,
+        showMeCount: Object.keys(showMeIds).length,
+        taskCount: taskCount,
+        referenceCount: (w.docs || []).length + (w.videos || []).length + (w.shortcuts || []).length
+      };
+    }
+
+    function applyWeekChrome() {
+      var text = getWeekText();
+      document.getElementById("sidebarToggle").setAttribute("aria-label", text.sidebarToggleAria);
+      document.getElementById("brandMeta").textContent = text.brandMeta;
+      document.getElementById("refShortcutsLink").textContent = text.shortcutsLink;
+      document.getElementById("refAiLink").textContent = text.aiRefsLink;
+      document.getElementById("refBlenderLink").textContent = text.blenderRefsLink;
+      document.getElementById("themeToggle").setAttribute("aria-label", text.themeToggleAria);
+      document.getElementById("progressLabel").textContent = text.progressLabel;
+      document.getElementById("resetBtn").textContent = text.resetButton;
+      document.getElementById("footerHomeLink").textContent = text.footerHome;
+      document.getElementById("footerLibraryLink").textContent = text.footerLibrary;
+      document.getElementById("showmeResize").setAttribute("aria-label", text.modalResizeAria);
+      document.getElementById("showmeClose").setAttribute("aria-label", text.modalCloseAria);
+      document.getElementById("showmeIframe").setAttribute("title", text.showmeFrameTitle);
+      document.getElementById("studentLoginTitle").textContent = text.loginTitle;
+      document.getElementById("studentLoginSubtitle").textContent = text.loginSubtitle;
+      document.getElementById("studentLoginInput").setAttribute("placeholder", text.loginPlaceholder);
+      document.getElementById("guestBrowseBtn").textContent = text.guestBrowse;
+      var meta = document.querySelector('meta[name="description"]');
+      if (meta) meta.setAttribute("content", text.metaDescription);
+    }
+
+    function renderMissingWeek() {
+      var text = getWeekText();
+      document.title = text.pageTitlePrefix + " - RPD";
+      document.getElementById("brandBadge").textContent = "—";
+      document.getElementById("brandTitle").textContent = text.brandLoading;
+      document.getElementById("pageContent").innerHTML = `
+        <section style="padding:80px 0;text-align:center;color:var(--muted)">
+          <p>${text.notFound} <a href="index.html" style="color:var(--key-soft)">${text.notFoundBack}</a></p>
+        </section>`;
+    }
+
+    function renderWeekPage() {
+      applyWeekChrome();
+      if (!weekData) {
+        renderMissingWeek();
+        return;
+      }
+      buildPage(window.RPDI18n.localizeWeekData(weekData));
+      updateShowMeBadges();
+      maybeOpenRequestedShowMe();
+    }
+
+    if (weekData) initStudentLogin();
+    window.RPDI18n.mountLanguageSwitcher(document.getElementById("langSwitcher"));
+    window.RPDI18n.onLanguageChange(function() {
+      renderWeekPage();
+      refreshOpenShowMe();
+    });
+
+    function buildPage(w) {
+      var text = getWeekText();
+      var bundle = buildWeekBundle(w);
+      document.title = `Week ${w.week} — ${w.title} | Blender Archive`;
       document.getElementById("brandBadge").textContent = String(w.week).padStart(2, "0");
       document.getElementById("brandTitle").textContent = `Week ${String(w.week).padStart(2, "0")} · ${w.title}`;
 
-      // Prev/Next
-      const prev = CURRICULUM.find(x => x.week === w.week - 1);
-      const next = CURRICULUM.find(x => x.week === w.week + 1);
-      const prevLink = prev
+      var prev = CURRICULUM.find(function(item) { return item.week === w.week - 1; });
+      var next = CURRICULUM.find(function(item) { return item.week === w.week + 1; });
+      var prevLink = prev
         ? `<a href="week.html?week=${prev.week}">← Week ${prev.week}</a>`
-        : `<a href="index.html">← 홈</a>`;
-      const nextLink = next
+        : `<a href="index.html">${text.homeLabel}</a>`;
+      var nextLink = next
         ? `<a href="week.html?week=${next.week}">Week ${next.week} →</a>`
-        : `<span style="opacity:.4">마지막 주차</span>`;
+        : `<span style="opacity:.4">${text.lastWeek}</span>`;
 
-      const videos = w.videos || [];
-      const docs = w.docs || [];
+      var videos = w.videos || [];
+      var docs = w.docs || [];
 
+      var stepsHtml = w.steps.map(function(step, idx) {
+        var taskItems = step.tasks.map(function(task) {
+          return `
+            <div class="task-item">
+              <input id="${task.id}" type="checkbox" data-task-id="${task.id}" />
+              <label for="${task.id}">
+                <strong>${task.label}</strong>
+                ${task.detail ? `<small>${task.detail}</small>` : ""}
+              </label>
+            </div>`;
+        }).join("");
 
-      // Steps HTML
-      const stepsHtml = w.steps.map((step, idx) => {
-        const taskItems = step.tasks.map(t => `
-          <div class="task-item">
-            <input id="${t.id}" type="checkbox" data-task-id="${t.id}" />
-            <label for="${t.id}">
-              <strong>${t.label}</strong>
-              ${t.detail ? `<small>${t.detail}</small>` : ""}
-            </label>
-          </div>`).join("");
-
-        // Show Me buttons (only if step has showme field)
-        const showmeHtml = (() => {
-          if (!step.showme) return "";
-          const ids = Array.isArray(step.showme) ? step.showme : [step.showme];
-          return `<div class="showme-buttons">${ids.map(id => {
-            const meta = (typeof SHOWME_REGISTRY !== "undefined" && SHOWME_REGISTRY[id])
-              ? SHOWME_REGISTRY[id] : { label: id, icon: "\ud83d\udcd6" };
+        var showmeHtml = (function() {
+          var ids = collectShowMeIdsFromStep(step);
+          if (!ids.length) return "";
+          return `<div class="showme-buttons">${ids.map(function(id) {
+            var meta = getShowMeMeta(id);
             return `<button class="btn btn-showme" type="button" data-widget-id="${id}" onclick="openShowMe('${id}')">${meta.icon} ${meta.label}</button>`;
           }).join("")}</div>`;
-        })();
+        }());
 
-        const sectionDivider = step.sectionTitle
+        var sectionDivider = step.sectionTitle
           ? `<div class="step-section-divider"><span>${step.sectionTitle}</span></div>` : "";
 
         return `
@@ -531,119 +712,158 @@
                 <div class="step-number">${idx + 1}</div>
                 <strong class="step-title-text">${step.title}</strong>
               </div>
-              <div class="status-pill" data-step-status>진행 중</div>
+              <div class="status-pill" data-step-status>${text.stepStatusActive}</div>
             </div>
             ${step.images && step.images.length
-              ? `<div class="step-images">${step.images.map((img, i) =>
-                  `<img src="${img}" alt="${step.title} ${i + 1}" class="step-image" loading="lazy" />`
-                ).join("")}</div>`
-              : step.image ? (step.link
-                ? `<a href="${step.link}" target="_blank" rel="noopener noreferrer"><img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" /></a>`
-                : `<img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" />`) : ""}
+              ? `<div class="step-images">${step.images.map(function(img, imageIndex) {
+                  return `<img src="${img}" alt="${step.title} ${imageIndex + 1}" class="step-image" loading="lazy" />`;
+                }).join("")}</div>`
+              : step.image ? `<figure class="step-image-wrap">
+                  <img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" />
+                  ${step.link ? `<figcaption><a href="${step.link}" target="_blank" rel="noopener noreferrer" class="doc-link">${text.sectionDocs} →</a></figcaption>` : ""}
+                </figure>` : ""}
             ${step.video ? `<video class="step-video" controls preload="metadata"><source src="${step.video}" type="video/mp4" /><source src="${step.video}" type="video/quicktime" /></video>` : ""}
             ${step.clips && step.clips.length ? `
               <div class="clip-player" data-step-clips>
                 <video src="${step.clips[0].src}" autoplay loop muted playsinline
                        onclick="this.paused ? this.play() : this.pause()"
-                       title="클릭하면 일시정지/재생"></video>
+                       title="${text.clipTitle}"></video>
                 ${step.clips.length > 1 ? `
-                  <div class="clip-tabs">${step.clips.map((c, ci) =>
-                    `<button class="clip-tab${ci === 0 ? ' is-active' : ''}" type="button"
-                             data-clip-src="${c.src}" data-clip-idx="${ci}">${c.label}</button>`
-                  ).join('')}</div>` : ''}
-                <div class="clip-player-hint">클릭하면 일시정지 · 다시 클릭하면 재생</div>
+                  <div class="clip-tabs">${step.clips.map(function(clip, clipIndex) {
+                    return `<button class="clip-tab${clipIndex === 0 ? " is-active" : ""}" type="button"
+                             data-clip-src="${clip.src}" data-clip-idx="${clipIndex}">${clip.label}</button>`;
+                  }).join("")}</div>` : ""}
+                <div class="clip-player-hint">${text.clipHint}</div>
               </div>` : ""}
-            ${step.downloads && step.downloads.length ? `<div class="step-downloads">${step.downloads.map(dl => `<a class="step-dl-btn" href="${dl.url}" download="${dl.url.split('/').pop()}" target="_blank" rel="noopener">⬇ ${dl.label}</a>`).join("")}</div>` : ""}
+            ${step.downloads && step.downloads.length ? `<div class="step-downloads">${step.downloads.map(function(download) {
+              return `<a class="step-dl-btn" href="${download.url}" download="${download.url.split("/").pop()}" target="_blank" rel="noopener">⬇ ${download.label}</a>`;
+            }).join("")}</div>` : ""}
             <p class="step-copy">${step.copy}</p>
             ${showmeHtml}
             <div class="task-list">${taskItems}</div>
           </article>`;
       }).join("");
 
-      // Mistakes
-      const mistakesHtml = w.mistakes.length > 0 ? `
+      var mistakesHtml = w.mistakes.length > 0 ? `
         <section class="content-block" id="section-mistakes">
-          <div class="section-head"><h3>막히는 지점</h3></div>
+          <div class="section-head"><h3>${text.sectionMistakes}</h3></div>
           <details class="card mistakes-section" open>
-            <summary>막혔을 때</summary>
-            <ul>${w.mistakes.map(m => `<li>${m}</li>`).join("")}</ul>
+            <summary>${text.sectionMistakesSummary}</summary>
+            <ul>${w.mistakes.map(function(mistake) { return `<li>${mistake}</li>`; }).join("")}</ul>
           </details>
         </section>` : "";
 
-      const renderResourceSection = (title, icon, items) => items.length > 0 ? `
-        <section class="content-block">
-          <div class="section-head"><h3>${title}</h3></div>
-          <div class="doc-links-row">
-            ${items.map(d => `
-              <a class="doc-link" href="${d.url}" target="_blank" rel="noopener noreferrer">
-                ${icon} ${d.title} ↗
-              </a>`).join("")}
-          </div>
-        </section>` : "";
+      function renderResourceSection(title, icon, items) {
+        return items.length > 0 ? `
+          <section class="content-block">
+            <div class="section-head"><h3>${title}</h3></div>
+            <div class="doc-links-row">
+              ${items.map(function(item) {
+                return `
+                  <a class="doc-link" href="${item.url}" target="_blank" rel="noopener noreferrer">
+                    ${icon} ${item.title} ↗
+                  </a>`;
+              }).join("")}
+            </div>
+          </section>` : "";
+      }
 
-      // Videos / Docs
-      const videosHtml = renderResourceSection("공식 영상 튜토리얼", "▶", videos);
-      const docsHtml = renderResourceSection("공식 문서", "📄", docs);
-
-      // Assignment
-      const assignmentCheckli = w.assignment.checklist.map(c => `<li>${c}</li>`).join("");
-      const assignmentHtml = `
+      var videosHtml = renderResourceSection(text.sectionVideos, "▶", videos);
+      var docsHtml = renderResourceSection(text.sectionDocs, "📄", docs);
+      var assignmentChecklist = w.assignment.checklist.map(function(item) { return `<li>${item}</li>`; }).join("");
+      var assignmentHtml = `
         <section class="content-block" id="section-assignment">
-          <div class="section-head"><h3>과제</h3></div>
+          <div class="section-head"><h3>${text.sectionAssignment}</h3></div>
           <div class="card assignment-card">
-            <div class="card-chip">과제</div>
+            <div class="card-chip">${text.assignmentChip}</div>
             <strong>${w.assignment.title}</strong>
             <p style="color:var(--muted);line-height:1.72;margin:0">${w.assignment.description}</p>
-            <ul>${assignmentCheckli}</ul>
+            <ul>${assignmentChecklist}</ul>
           </div>
         </section>`;
 
-      // Shortcuts cheatsheet
-      const shortcutsHtml = (w.shortcuts && w.shortcuts.length > 0) ? `
+      var shortcutsHtml = (w.shortcuts && w.shortcuts.length > 0) ? `
         <section class="content-block" id="section-shortcuts">
           <div class="section-head">
-            <h3>단축키 치트시트</h3>
-            <p>이번 주에 쓰는 핵심 단축키입니다. 외우지 말고 반복하세요.</p>
+            <h3>${text.sectionShortcuts}</h3>
+            <p>${text.sectionShortcutsDesc}</p>
           </div>
           <div class="card shortcut-table-wrap">
             <table class="shortcut-table">
-              <thead><tr><th>단축키</th><th>기능</th></tr></thead>
+              <thead><tr><th>${text.shortcutsHeaderKeys}</th><th>${text.shortcutsHeaderAction}</th></tr></thead>
               <tbody>
-                ${w.shortcuts.map(s => `<tr><td><kbd class="shortcut-key">${s.keys}</kbd></td><td>${s.action}</td></tr>`).join("")}
+                ${w.shortcuts.map(function(shortcut) {
+                  return `<tr><td><kbd class="shortcut-key">${shortcut.keys}</kbd></td><td>${shortcut.action}</td></tr>`;
+                }).join("")}
               </tbody>
             </table>
           </div>
         </section>` : "";
 
-      // Explore (더 해보기)
-      const exploreHtml = (w.explore && w.explore.length > 0) ? `
+      var exploreHtml = (w.explore && w.explore.length > 0) ? `
         <section class="content-block" id="section-explore">
           <div class="section-head">
-            <h3>더 해보기</h3>
-            <p>필수는 아니지만, 도전하면 실력이 빠르게 늡니다.</p>
+            <h3>${text.sectionExplore}</h3>
+            <p>${text.sectionExploreDesc}</p>
           </div>
           <div class="explore-grid">
-            ${w.explore.map(e => `
-              <div class="explore-card">
-                <strong>${e.title}</strong>
-                <p>${e.hint}</p>
-              </div>`).join("")}
+            ${w.explore.map(function(item) {
+              return `
+                <div class="explore-card">
+                  <strong>${item.title}</strong>
+                  <p>${item.hint}</p>
+                </div>`;
+            }).join("")}
           </div>
         </section>` : "";
 
-      // Full page — all data sourced from curriculum.js (trusted, no user input)
       document.getElementById("pageContent").innerHTML = `
-        <!-- Hero -->
         <section class="hero" id="hero-section">
           <div class="hero-card">
-            <div class="eyebrow">Week ${String(w.week).padStart(2,"0")} · RPD</div>
-            <h1>${w.title}</h1>
+            <div class="eyebrow">${text.heroEyebrow}</div>
+            <h1>Week ${String(w.week).padStart(2, "0")} · ${w.title}</h1>
+            <p class="hero-support">${bundle.practiceCount} ${text.bundleStatPractice} · ${bundle.showMeCount} ${text.bundleStatShowme} · ${bundle.taskCount} ${text.bundleStatTasks} · ${bundle.referenceCount} ${text.bundleStatReferences}</p>
           </div>
         </section>
 
-        <!-- Lab (Steps) -->
+        <section class="content-block" id="section-bundle">
+          <div class="bundle-card">
+            <div class="bundle-copy">
+              <div class="card-chip">${text.bundleChip}</div>
+              <strong>${text.bundleTitle}</strong>
+              <p>${text.bundleDescription}</p>
+            </div>
+            <div class="bundle-stats">
+              <div class="bundle-stat">
+                <strong>${bundle.practiceCount}</strong>
+                <span>${text.bundleStatPractice}</span>
+              </div>
+              <div class="bundle-stat">
+                <strong>${bundle.showMeCount}</strong>
+                <span>${text.bundleStatShowme}</span>
+              </div>
+              <div class="bundle-stat">
+                <strong>${bundle.taskCount}</strong>
+                <span>${text.bundleStatTasks}</span>
+              </div>
+              <div class="bundle-stat">
+                <strong>${bundle.referenceCount}</strong>
+                <span>${text.bundleStatReferences}</span>
+              </div>
+            </div>
+            <div class="bundle-links">
+              <a class="bundle-link" href="index.html">${text.bundleHomeLink}</a>
+              <a class="bundle-link" href="library.html">${text.bundleLibraryLink}</a>
+              <a class="bundle-link" href="shortcuts.html">${text.bundleShortcutsLink}</a>
+            </div>
+          </div>
+        </section>
+
         <section class="content-block" id="practice">
-          <div class="section-head"><h3>실습</h3></div>
+          <div class="section-head">
+            <h3>${text.sectionPractice}</h3>
+            <p>${text.sectionPracticeDesc}</p>
+          </div>
           <div class="lab">
             ${stepsHtml}
           </div>
@@ -656,11 +876,10 @@
         ${docsHtml}
         ${assignmentHtml}
 
-        <!-- Week nav -->
         <section class="content-block">
           <div class="week-nav">
             ${prevLink}
-            <a href="index.html" style="color:var(--muted)">목록</a>
+            <a href="index.html" style="color:var(--muted)">${text.listLabel}</a>
             ${nextLink}
           </div>
         </section>
@@ -668,11 +887,10 @@
         <div style="height:60px"></div>
       `;
 
-      // ─── Clip tab switching ───
       document.querySelectorAll(".clip-player").forEach(function(player) {
         player.querySelectorAll(".clip-tab").forEach(function(tab) {
           tab.addEventListener("click", function() {
-            player.querySelectorAll(".clip-tab").forEach(function(t) { t.classList.remove("is-active"); });
+            player.querySelectorAll(".clip-tab").forEach(function(item) { item.classList.remove("is-active"); });
             tab.classList.add("is-active");
             var video = player.querySelector("video");
             video.src = tab.dataset.clipSrc;
@@ -681,200 +899,152 @@
         });
       });
 
-      // Init progress engine
-      initProgress(w.steps.length);
+      initProgress();
       initSidebar(w);
     }
 
-    // ─── Progress engine ─────────────────────────────
-    function initProgress(totalSteps) {
-      const steps       = [...document.querySelectorAll(".lab-step")];
-      const progressFill  = document.getElementById("progressFill");
-      const progressCount = document.getElementById("progressCount");
-      const resetBtn      = document.getElementById("resetBtn");
+    function initProgress() {
+      var text = getWeekText();
+      var steps = Array.from(document.querySelectorAll(".lab-step"));
+      var progressFill = document.getElementById("progressFill");
+      var progressCount = document.getElementById("progressCount");
+      var resetBtn = document.getElementById("resetBtn");
 
       function readState() {
         try { return JSON.parse(localStorage.getItem(storageKey) || "{}"); }
-        catch { return {}; }
+        catch (error) { return {}; }
       }
+
       function writeState(state) {
         localStorage.setItem(storageKey, JSON.stringify(state));
       }
+
       function getTasks(step) {
-        return [...step.querySelectorAll("input[type='checkbox'][data-task-id]")];
+        return Array.from(step.querySelectorAll("input[type='checkbox'][data-task-id]"));
       }
+
       function isComplete(step) {
-        return getTasks(step).every(t => t.checked);
+        return getTasks(step).every(function(task) { return task.checked; });
       }
 
       function updateStep(step) {
-        const pill     = step.querySelector("[data-step-status]");
-        const complete = isComplete(step);
+        var pill = step.querySelector("[data-step-status]");
+        var complete = isComplete(step);
         step.classList.toggle("is-complete", complete);
-        if (complete) { pill.textContent = "완료"; pill.className = "status-pill complete"; }
-        else          { pill.textContent = "진행 중"; pill.className = "status-pill active"; }
+        if (complete) {
+          pill.textContent = text.stepStatusComplete;
+          pill.className = "status-pill complete";
+        } else {
+          pill.textContent = text.stepStatusActive;
+          pill.className = "status-pill active";
+        }
       }
 
       function sync() {
-        const completed = steps.filter(isComplete).length;
-        const pct = steps.length ? (completed / steps.length) * 100 : 0;
-        progressFill.style.width  = `${pct}%`;
+        var completed = steps.filter(isComplete).length;
+        var pct = steps.length ? (completed / steps.length) * 100 : 0;
+        progressFill.style.width = `${pct}%`;
         progressCount.textContent = `${completed} / ${steps.length}`;
-
-        steps.forEach(step => updateStep(step));
+        steps.forEach(updateStep);
       }
 
-      function loadState() {
-        const state = readState();
-        steps.forEach(step => {
-          getTasks(step).forEach(task => {
-            task.checked = Boolean(state[task.dataset.taskId]);
-            task.addEventListener("change", () => {
-              const s = readState();
-              s[task.dataset.taskId] = task.checked;
-              writeState(s);
-              sync();
-            });
+      var state = readState();
+      steps.forEach(function(step) {
+        getTasks(step).forEach(function(task) {
+          task.checked = Boolean(state[task.dataset.taskId]);
+          task.addEventListener("change", function() {
+            var nextState = readState();
+            nextState[task.dataset.taskId] = task.checked;
+            writeState(nextState);
+            sync();
           });
         });
-        sync();
-      }
+      });
 
-      resetBtn.addEventListener("click", () => {
+      resetBtn.onclick = function() {
         localStorage.removeItem(storageKey);
-        steps.forEach(step => getTasks(step).forEach(t => { t.checked = false; }));
+        steps.forEach(function(step) {
+          getTasks(step).forEach(function(task) { task.checked = false; });
+        });
         sync();
-      });
+      };
 
-      loadState();
+      sync();
     }
 
-    // ─── Supplement Accordion ──────────────────────────────────
-    function findSupplementForWidget(wid) {
-      if (typeof SHOWME_SUPPLEMENTS === "undefined") return null;
-      for (const key in SHOWME_SUPPLEMENTS) {
-        const s = SHOWME_SUPPLEMENTS[key];
-        if (s.targets && s.targets.indexOf(wid) !== -1) return s;
-      }
-      return null;
-    }
+    var showMeLastTrigger = null;
+    var activeShowMeWidgetId = null;
 
-    function buildSupplementAccordion(doc, supplement) {
-      const wrap = doc.createElement("div");
-      wrap.style.cssText = "margin-top:20px;border:1px solid rgba(245,158,11,.18);border-radius:18px;overflow:hidden;background:rgba(245,158,11,.04);";
-
-      const toggle = doc.createElement("button");
-      toggle.style.cssText = "display:flex;align-items:center;gap:8px;width:100%;padding:14px 16px;border:none;background:none;color:#fbbf24;font:inherit;font-size:.88rem;font-weight:600;cursor:pointer;text-align:left;";
-      toggle.textContent = "\uD83D\uDCA1 " + (supplement.title || "\uc544\uc9c1 \ud5f7\uac08\ub9b0\ub2e4\uba74?");
-
-      const arrow = doc.createElement("span");
-      arrow.style.cssText = "margin-left:auto;transition:transform .2s;font-size:.8rem;";
-      arrow.textContent = "\u25BC";
-      toggle.appendChild(arrow);
-
-      const content = doc.createElement("div");
-      content.style.cssText = "display:none;padding:0 16px 16px;";
-
-      let open = false;
-      toggle.addEventListener("click", function() {
-        open = !open;
-        content.style.display = open ? "block" : "none";
-        arrow.style.transform = open ? "rotate(180deg)" : "";
-      });
-
-      if (supplement.analogy) {
-        const analogyDiv = doc.createElement("div");
-        analogyDiv.style.cssText = "margin-bottom:12px;padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);";
-        const headlineEl = doc.createElement("div");
-        headlineEl.style.cssText = "font-size:.9rem;font-weight:600;color:#f5f5f7;margin-bottom:6px;";
-        headlineEl.textContent = (supplement.analogy.emoji || "") + " " + supplement.analogy.headline;
-        const bodyEl = doc.createElement("div");
-        bodyEl.style.cssText = "font-size:.85rem;color:#d4d4d8;line-height:1.7;";
-        bodyEl.textContent = supplement.analogy.body;
-        analogyDiv.appendChild(headlineEl);
-        analogyDiv.appendChild(bodyEl);
-        content.appendChild(analogyDiv);
-      }
-
-      if (supplement.before_after) {
-        const baDiv = doc.createElement("div");
-        baDiv.style.cssText = "display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;";
-        const beforeDiv = doc.createElement("div");
-        beforeDiv.style.cssText = "padding:12px;border-radius:12px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.15);";
-        const beforeLabel = doc.createElement("div");
-        beforeLabel.style.cssText = "font-size:.76rem;font-weight:600;color:#fca5a5;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em;";
-        beforeLabel.textContent = "WITHOUT";
-        const beforeText = doc.createElement("div");
-        beforeText.style.cssText = "font-size:.84rem;color:#d4d4d8;line-height:1.6;";
-        beforeText.textContent = supplement.before_after.before;
-        beforeDiv.appendChild(beforeLabel);
-        beforeDiv.appendChild(beforeText);
-        const afterDiv = doc.createElement("div");
-        afterDiv.style.cssText = "padding:12px;border-radius:12px;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.15);";
-        const afterLabel = doc.createElement("div");
-        afterLabel.style.cssText = "font-size:.76rem;font-weight:600;color:#6ee7b7;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em;";
-        afterLabel.textContent = "WITH";
-        const afterText = doc.createElement("div");
-        afterText.style.cssText = "font-size:.84rem;color:#d4d4d8;line-height:1.6;";
-        afterText.textContent = supplement.before_after.after;
-        afterDiv.appendChild(afterLabel);
-        afterDiv.appendChild(afterText);
-        baDiv.appendChild(beforeDiv);
-        baDiv.appendChild(afterDiv);
-        content.appendChild(baDiv);
-      }
-
-      if (supplement.takeaway) {
-        const takeawayDiv = doc.createElement("div");
-        takeawayDiv.style.cssText = "padding:10px 14px;border-radius:12px;background:rgba(10,132,255,.08);border:1px solid rgba(10,132,255,.18);font-size:.86rem;color:#8ec5ff;font-weight:500;";
-        takeawayDiv.textContent = "\u2192 " + supplement.takeaway;
-        content.appendChild(takeawayDiv);
-      }
-
-      wrap.appendChild(toggle);
-      wrap.appendChild(content);
-      return wrap;
-    }
-
-    function injectSupplement(iframe, widgetId) {
-      try {
-        const doc = iframe.contentDocument;
-        if (!doc) return;
-        const supplement = findSupplementForWidget(widgetId);
-        if (!supplement) return;
-        const panel = doc.getElementById("panel-concept");
-        if (!panel) return;
-        panel.appendChild(buildSupplementAccordion(doc, supplement));
-      } catch(e) {}
-    }
-
-    // ─── Show Me Modal ──────────────────────────────
     function openShowMe(widgetId) {
       var overlay = document.getElementById("showmeOverlay");
-      var iframe  = document.getElementById("showmeIframe");
-      var title   = document.getElementById("showmeTitle");
-
-      var meta = (typeof SHOWME_REGISTRY !== "undefined" && SHOWME_REGISTRY[widgetId])
-        ? SHOWME_REGISTRY[widgetId]
-        : { label: widgetId, icon: "\ud83d\udcd6" };
+      var iframe = document.getElementById("showmeIframe");
+      var title = document.getElementById("showmeTitle");
+      var closeBtn = document.getElementById("showmeClose");
+      var meta = getShowMeMeta(widgetId);
+      var cacheBust = String(Date.now());
+      var active = document.activeElement;
+      showMeLastTrigger = active && active !== document.body ? active : null;
+      activeShowMeWidgetId = widgetId;
+      syncShowMeQuery(widgetId);
 
       title.textContent = meta.icon + " " + meta.label;
-      iframe.onload = function() { injectSupplement(iframe, widgetId); };
-      iframe.src = "assets/showme/" + widgetId + ".html?wid=" + widgetId;
+      iframe.onload = function() {
+        normalizeShowMeLayout(iframe);
+        injectShowMeSupplement(iframe, widgetId);
+        window.RPDI18n.localizeShowMeIframe(iframe, widgetId);
+      };
+      iframe.src = "assets/showme/" + widgetId + ".html?wid=" + encodeURIComponent(widgetId) + "&v=" + cacheBust;
       overlay.classList.add("is-open");
-      overlay.removeAttribute("aria-hidden");
+      overlay.setAttribute("aria-hidden", "false");
       document.body.style.overflow = "hidden";
+      window.setTimeout(function() {
+        closeBtn.focus({ preventScroll: true });
+      }, 50);
     }
 
     function closeShowMe() {
       var overlay = document.getElementById("showmeOverlay");
       var iframe  = document.getElementById("showmeIframe");
       var modal   = overlay.querySelector(".showme-modal");
+      if (!overlay.classList.contains("is-open")) return;
       overlay.classList.remove("is-open");
       overlay.setAttribute("aria-hidden", "true");
       modal.classList.remove("is-maximized");
+      iframe.onload = null;
       iframe.src = "about:blank";
+      syncShowMeQuery("");
       document.body.style.overflow = "";
+      if (showMeLastTrigger && document.contains(showMeLastTrigger)) {
+        showMeLastTrigger.focus({ preventScroll: true });
+      }
+      showMeLastTrigger = null;
+      activeShowMeWidgetId = null;
+    }
+
+    function refreshOpenShowMe() {
+      var overlay = document.getElementById("showmeOverlay");
+      if (!overlay.classList.contains("is-open") || !activeShowMeWidgetId) return;
+      openShowMe(activeShowMeWidgetId);
+    }
+
+    function syncShowMeQuery(widgetId) {
+      if (!window.history || typeof window.history.replaceState !== "function") return;
+      var url = new URL(window.location.href);
+      if (widgetId) url.searchParams.set("showme", widgetId);
+      else url.searchParams.delete("showme");
+      window.history.replaceState({}, "", url.pathname + url.search + url.hash);
+    }
+
+    function maybeOpenRequestedShowMe() {
+      if (!pendingShowMeFromUrl || !weekData || !requestedShowMeId) return;
+      var matchesWeek = weekData.steps.some(function(step) {
+        return collectShowMeIdsFromStep(step).indexOf(requestedShowMeId) !== -1;
+      });
+      pendingShowMeFromUrl = false;
+      if (!matchesWeek) return;
+      window.setTimeout(function() {
+        openShowMe(requestedShowMeId);
+      }, 0);
     }
 
     function toggleShowMeSize() {
@@ -894,158 +1064,82 @@
       }
     });
 
-    // ─── Student Identification & Quiz Tracking ────────
-    // URL: week.html?week=3&sid=12243798
-    // localStorage keys are partitioned per student:
-    //   rpd_quizzes_12243798  →  { "mirror-modifier": { score, total, pass, completedAt } }
+    // ─── Anonymous Quiz Tracking ─────────────────────
+    // Public pages stay read-only. Quiz completion is stored locally per browser.
 
-    function getCurrentSid() {
-      return new URLSearchParams(location.search).get("sid") || "";
+    function getQuizKey() {
+      return `blender2026-showme-week${String(weekNum).padStart(2, "0")}-v1`;
     }
 
-    function getCurrentStudent() {
-      var sid = getCurrentSid();
-      if (!sid || typeof STUDENTS === "undefined" || !STUDENTS[sid]) return null;
-      return { studentId: sid, name: STUDENTS[sid].name, "class": STUDENTS[sid]["class"] };
-    }
-
-    function getQuizKey(sid) { return "rpd_quizzes_" + sid; }
-
-    // ─── Student Login Flow ─────────────────────────
     function initStudentLogin() {
-      // TODO: 학번 로그인 기능 비활성화 중 (학생 명단 준비 전)
-      document.getElementById("studentLoginOverlay").classList.add("is-hidden");
-      return;
-
-      var sid = getCurrentSid();
       var overlay = document.getElementById("studentLoginOverlay");
-      var badge   = document.getElementById("studentBadge");
-      var nameEl  = document.getElementById("studentBadgeName");
-
-      if (sid && typeof STUDENTS !== "undefined" && STUDENTS[sid]) {
-        // Logged in → hide overlay, show badge
-        overlay.classList.add("is-hidden");
-        badge.classList.add("is-active");
-        nameEl.textContent = STUDENTS[sid].name + " (" + sid + ")";
-        return;
-      }
-
-      // Not logged in → show login overlay
-      overlay.classList.remove("is-hidden");
-      badge.classList.remove("is-active");
-
-      var input   = document.getElementById("studentLoginInput");
-      var preview = document.getElementById("studentLoginPreview");
-
-      input.addEventListener("input", function() {
-        var val = input.value.trim();
-        if (val.length < 8) { preview.className = "student-login-preview"; preview.innerHTML = ""; return; }
-        if (typeof STUDENTS !== "undefined" && STUDENTS[val]) {
-          var s = STUDENTS[val];
-          preview.className = "student-login-preview is-match";
-          preview.innerHTML = "<strong>" + s.name + "</strong> · " + s["class"]
-            + '<br><button class="login-btn" type="button" onclick="loginAsStudent(\'' + val + '\')">시작하기</button>';
-        } else {
-          preview.className = "student-login-preview is-nomatch";
-          preview.innerHTML = "등록되지 않은 학번입니다";
-        }
-      });
-
-      // Enter key = submit if match
-      input.addEventListener("keydown", function(e) {
-        if (e.key === "Enter") {
-          var val = input.value.trim();
-          if (typeof STUDENTS !== "undefined" && STUDENTS[val]) loginAsStudent(val);
-        }
-      });
-
-      input.focus();
+      var badge = document.getElementById("studentBadge");
+      if (overlay) overlay.classList.add("is-hidden");
+      if (badge) badge.classList.remove("is-active");
     }
 
-    function loginAsStudent(sid) {
-      // Redirect with sid parameter (preserves week param)
-      var params = new URLSearchParams(location.search);
-      params.set("sid", sid);
-      location.search = params.toString();
+    function loginAsStudent() {
+      initStudentLogin();
     }
 
     function loginAsGuest() {
-      document.getElementById("studentLoginOverlay").classList.add("is-hidden");
+      initStudentLogin();
     }
 
     function switchStudent() {
-      // Remove sid and reload → shows login overlay
-      var params = new URLSearchParams(location.search);
-      params.delete("sid");
-      location.search = params.toString();
+      initStudentLogin();
     }
 
-    // ─── Quiz Badge System ──────────────────────────
     function updateShowMeBadges() {
-      var sid = getCurrentSid();
-      if (!sid) return;
-      var quizzes = JSON.parse(localStorage.getItem(getQuizKey(sid)) || "{}");
+      var quizzes = JSON.parse(localStorage.getItem(getQuizKey()) || "{}");
       document.querySelectorAll(".btn-showme").forEach(function(btn) {
         var wid = btn.dataset.widgetId;
         if (wid && quizzes[wid] && quizzes[wid].pass) {
           btn.classList.add("is-complete");
+        } else {
+          btn.classList.remove("is-complete");
         }
       });
     }
 
-    // ─── Quiz Completion Listener ───────────────────
     window.addEventListener("message", function(e) {
       if (!e.data || e.data.type !== "showme-quiz-complete") return;
       var d = e.data;
-      var sid = getCurrentSid();
-      if (!sid) return;  // not logged in = no tracking
-
-      // 1. Save to student-specific localStorage
-      var key = getQuizKey(sid);
+      var key = getQuizKey();
       var quizzes = JSON.parse(localStorage.getItem(key) || "{}");
       quizzes[d.widgetId] = {
-        score: d.score, total: d.total, pass: d.pass,
+        score: d.score,
+        total: d.total,
+        pass: d.pass,
         completedAt: new Date().toISOString()
       };
       localStorage.setItem(key, JSON.stringify(quizzes));
-
-      // 2. Update badges
       updateShowMeBadges();
-
-      // 3. Sync to Notion
-      syncQuizToNotion(d.widgetId, d.score, d.total);
     });
 
-    // ─── Notion Sync ────────────────────────────────
-    async function syncQuizToNotion(widgetId, score, total) {
-      var student = getCurrentStudent();
-      if (!student) return;
-      var meta = (typeof SHOWME_REGISTRY !== "undefined" && SHOWME_REGISTRY[widgetId])
-        ? SHOWME_REGISTRY[widgetId] : { label: widgetId };
-      var weekNum = String(new URLSearchParams(location.search).get("week") || "").padStart(2, "0");
-      try {
-        await fetch("/api/notion-quiz", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            parent: { database_id: "d27c5dfdac27433284a4a6be1b6d8801" },
-            properties: {
-              "\ud56d\ubaa9\uba85": { title:     [{ text: { content: "Show Me \ud034\uc988: " + meta.label } }] },
-              "\ud559\ubc88":       { rich_text: [{ text: { content: student.studentId } }] },
-              "\ud559\uc0dd\uba85": { rich_text: [{ text: { content: student.name } }] },
-              "\ubc18":             { select:    { name: student["class"] } },
-              "\uc8fc\ucc28":       { select:    { name: "Week " + weekNum } },
-              "\uc81c\ucd9c\uc0c1\ud0dc": { select: { name: "\uc81c\ucd9c\uc644\ub8cc" } },
-              "\uacf5\uac1c\ud53c\ub4dc\ubc31": { rich_text: [{ text: { content: "\ud034\uc988 \uc810\uc218: " + score + "/" + total } }] },
-              "\uc81c\ucd9c\uac10\uc9c0\uc77c": { date: { start: new Date().toISOString().split("T")[0] } }
-            }
-          })
-        });
-      } catch(e) { console.warn("Notion sync failed:", e); }
+    var sidebarObserver = null;
+    var sidebarBindingsReady = false;
+
+    function openSidebar() {
+      var sidebar = document.getElementById("sidebar");
+      var overlay = document.getElementById("sidebarOverlay");
+      if (!sidebar || !overlay) return;
+      sidebar.classList.add("is-open");
+      overlay.classList.add("is-visible");
+      sidebar.removeAttribute("aria-hidden");
     }
 
-    // ─── Sidebar ────────────────────────────────────
+    function closeSidebar() {
+      var sidebar = document.getElementById("sidebar");
+      var overlay = document.getElementById("sidebarOverlay");
+      if (!sidebar || !overlay) return;
+      sidebar.classList.remove("is-open");
+      overlay.classList.remove("is-visible");
+      sidebar.setAttribute("aria-hidden", "true");
+    }
+
     function initSidebar(w) {
+      var text = getWeekText();
       var sidebar   = document.getElementById("sidebar");
       var overlay   = document.getElementById("sidebarOverlay");
       var toggleBtn = document.getElementById("sidebarToggle");
@@ -1053,66 +1147,54 @@
 
       if (!sidebar || !overlay || !toggleBtn || !navList) return;
 
-      // Build section list
-      var sections = [{ id: "hero-section", label: "개요", group: null }];
+      var sections = [
+        { id: "hero-section", label: text.sidebarOverview, group: null },
+        { id: "section-bundle", label: text.sidebarBundle, group: null }
+      ];
       w.steps.forEach(function(step, idx) {
-        sections.push({ id: "step-" + idx, label: step.title, group: idx === 0 ? "실습" : null });
+        sections.push({ id: "step-" + idx, label: step.title, group: idx === 0 ? text.sidebarPracticeGroup : null });
       });
-      if (w.shortcuts && w.shortcuts.length)  sections.push({ id: "section-shortcuts",  label: "단축키",      group: "참고" });
-      if (w.explore   && w.explore.length)    sections.push({ id: "section-explore",    label: "더 해보기",   group: null });
-      if (w.mistakes  && w.mistakes.length)   sections.push({ id: "section-mistakes",   label: "막히는 지점", group: null });
-      if (w.assignment)                        sections.push({ id: "section-assignment", label: "과제",        group: null });
+      if (w.shortcuts && w.shortcuts.length) sections.push({ id: "section-shortcuts", label: text.sidebarShortcuts, group: text.sidebarReferenceGroup });
+      if (w.explore && w.explore.length) sections.push({ id: "section-explore", label: text.sidebarExplore, group: null });
+      if (w.mistakes && w.mistakes.length) sections.push({ id: "section-mistakes", label: text.sidebarMistakes, group: null });
+      if (w.assignment) sections.push({ id: "section-assignment", label: text.sidebarAssignment, group: null });
 
-      // Collect unique Show Me widgets for this week
       var showmeSet = {};
       w.steps.forEach(function(step) {
-        if (!step.showme) return;
-        var ids = Array.isArray(step.showme) ? step.showme : [step.showme];
+        var ids = collectShowMeIdsFromStep(step);
         ids.forEach(function(id) { showmeSet[id] = true; });
       });
       var showmeIds = Object.keys(showmeSet);
 
-      // Render nav (curriculum.js = trusted developer data, not user input)
       var navHtml = sections.map(function(s) {
         var g = s.group ? "<li><span class=\"nav-section-label\">" + s.group + "</span></li>" : "";
         return g + "<li data-nav-id=\"" + s.id + "\"><a href=\"#" + s.id + "\">" + s.label + "</a></li>";
       }).join("");
 
-      // Add Show Me section to sidebar (data from _registry.js, developer-controlled)
       if (showmeIds.length > 0) {
-        navHtml += "<li><span class=\"nav-section-label\">Show Me</span></li>";
+        navHtml += "<li><span class=\"nav-section-label\">" + text.sidebarShowMe + "</span></li>";
         showmeIds.forEach(function(id) {
-          var meta = (typeof SHOWME_REGISTRY !== "undefined" && SHOWME_REGISTRY[id])
-            ? SHOWME_REGISTRY[id] : { label: id, icon: "\ud83d\udcd6" };
+          var meta = getShowMeMeta(id);
           navHtml += "<li><a href=\"#\" onclick=\"openShowMe('" + id + "');return false;\">" +
             meta.icon + " " + meta.label + "</a></li>";
         });
       }
 
-      navList.innerHTML = navHtml; // trusted static curriculum + registry data
+      navList.innerHTML = navHtml;
 
-      // Open / close
-      function openSidebar() {
-        sidebar.classList.add("is-open");
-        overlay.classList.add("is-visible");
-        sidebar.removeAttribute("aria-hidden");
+      if (!sidebarBindingsReady) {
+        toggleBtn.addEventListener("click", function() {
+          sidebar.classList.contains("is-open") ? closeSidebar() : openSidebar();
+        });
+        overlay.addEventListener("click", closeSidebar);
+        document.addEventListener("keydown", function(e) {
+          if (e.key === "Escape") closeSidebar();
+        });
+        sidebarBindingsReady = true;
       }
-      function closeSidebar() {
-        sidebar.classList.remove("is-open");
-        overlay.classList.remove("is-visible");
-        sidebar.setAttribute("aria-hidden", "true");
-      }
 
-      toggleBtn.addEventListener("click", function() {
-        sidebar.classList.contains("is-open") ? closeSidebar() : openSidebar();
-      });
-      overlay.addEventListener("click", closeSidebar);
-      document.addEventListener("keydown", function(e) {
-        if (e.key === "Escape") closeSidebar();
-      });
-
-      // IntersectionObserver: highlight current section
-      var observer = new IntersectionObserver(function(entries) {
+      if (sidebarObserver) sidebarObserver.disconnect();
+      sidebarObserver = new IntersectionObserver(function(entries) {
         entries.forEach(function(entry) {
           if (!entry.isIntersecting) return;
           navList.querySelectorAll("li[data-nav-id]").forEach(function(li) {
@@ -1125,7 +1207,7 @@
 
       sections.forEach(function(s) {
         var el = document.getElementById(s.id);
-        if (el) observer.observe(el);
+        if (el) sidebarObserver.observe(el);
       });
     }
 

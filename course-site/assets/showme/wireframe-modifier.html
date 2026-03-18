@@ -156,6 +156,43 @@ body {
   color: var(--key-soft);
   border-color: rgba(10,132,255,.3);
 }
+.scenario-nav { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.control-guide { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+.control-kind { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; font-size: .72rem; font-weight: 600; letter-spacing: .02em; }
+.control-kind.discrete { background: rgba(10,132,255,.14); color: var(--key-soft); }
+.control-kind.range { background: rgba(16,185,129,.14); color: var(--success-soft); }
+.control-copy { font-size: .78rem; color: var(--muted); line-height: 1.6; }
+.scene-desc {
+  font-size: .84rem;
+  color: var(--muted-strong);
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  line-height: 1.7;
+}
+.cause-effect { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0 14px; }
+.cause-card {
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.cause-card h4 {
+  margin: 0 0 6px;
+  font-size: .82rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.cause-card p {
+  margin: 0;
+  font-size: .82rem;
+  color: var(--muted-strong);
+  line-height: 1.65;
+}
+.cause-card.bad h4 { color: #fca5a5; }
+.cause-card.good h4 { color: var(--success-soft); }
 
 /* ── Slider ── */
 .slider-group {
@@ -170,6 +207,8 @@ body {
 .slider-group .slider-val {
   font-size: .8rem; color: var(--key-soft); min-width: 36px; text-align: right;
 }
+.control-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; width: 100%; }
+.control-row + .control-row { padding-top: 8px; border-top: 1px solid var(--line); }
 
 /* ── Usage Grid ── */
 .usage-grid {
@@ -378,7 +417,7 @@ body {
 <!-- Tab Bar -->
 <nav class="tabs" role="tablist">
   <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
-  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">인터랙티브 데모</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">interaction</button>
   <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">사용 사례</button>
   <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
 </nav>
@@ -418,19 +457,36 @@ body {
 
 <!-- TAB 2: 인터랙티브 데모 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    모드를 전환하고 Thickness를 조절해 보세요. 원본 메쉬가 와이어프레임으로 변하는 과정을 확인할 수 있습니다.
-  </p>
+  <div class="control-guide">
+    <span class="control-kind discrete">상태 전환</span>
+    <span class="control-kind range">연속 조절</span>
+    <span class="control-copy">모드 버튼은 원본 유지 여부를 바꾸고, Thickness 슬라이더는 와이어의 존재감을 연속적으로 조절합니다.</span>
+  </div>
+  <div class="scene-desc" id="wireframeDesc">Wireframe Modifier는 선을 보여 주는 기능이 아니라, 메쉬의 엣지를 실제 두께가 있는 구조물로 바꾸는 작업입니다. Replace Original과 Thickness 조합에 따라 골격만 남길지, 원본 위에 구조를 덧씌울지가 갈립니다.</div>
+  <div class="cause-effect">
+    <div class="cause-card bad">
+      <h4>Collapsed Grid</h4>
+      <p>두께를 무작정 키우거나 원본을 함께 두는 이유를 모르면, 구조가 읽히기보다 면과 와이어가 서로 겹쳐 보여 결과가 탁해집니다.</p>
+    </div>
+    <div class="cause-card good">
+      <h4>Structural Read</h4>
+      <p>모드로 원본 유지 여부를, Thickness로 골격의 존재감을 나눠 보면 홀로그램, 랜턴, 프레임 구조를 훨씬 명확하게 설명할 수 있어요.</p>
+    </div>
+  </div>
   <div class="demo-wrap">
     <canvas id="demoCanvas" width="680" height="300"></canvas>
     <div class="demo-controls">
-      <button class="demo-btn" id="btnOriginal">원본 메쉬</button>
-      <button class="demo-btn is-active" id="btnWireframe">Wireframe</button>
-      <button class="demo-btn" id="btnBoth">Wireframe + 원본</button>
-      <div class="slider-group">
-        <label>Thickness</label>
-        <input type="range" id="thickSlider" min="1" max="20" value="6">
-        <span class="slider-val" id="thickVal">0.06</span>
+      <div class="control-row">
+        <button class="demo-btn" id="btnOriginal">원본 메쉬</button>
+        <button class="demo-btn is-active" id="btnWireframe">Wireframe</button>
+        <button class="demo-btn" id="btnBoth">Wireframe + 원본</button>
+      </div>
+      <div class="control-row">
+        <div class="slider-group">
+          <label>Thickness</label>
+          <input type="range" id="thickSlider" min="1" max="20" value="6">
+          <span class="slider-val" id="thickVal">0.06</span>
+        </div>
       </div>
     </div>
   </div>
@@ -638,6 +694,7 @@ function initQuiz(questions) {
   var ctx = canvas.getContext("2d");
   var thickness = 6;
   var mode = "wireframe"; // "original", "wireframe", "both"
+  var wireframeDesc = document.getElementById("wireframeDesc");
 
   var slider = document.getElementById("thickSlider");
   var valLabel = document.getElementById("thickVal");
@@ -805,7 +862,23 @@ function initQuiz(questions) {
     btnOriginal.classList.toggle("is-active", m === "original");
     btnWireframe.classList.toggle("is-active", m === "wireframe");
     btnBoth.classList.toggle("is-active", m === "both");
+    updateWireframeDesc();
     draw();
+  }
+
+  function updateWireframeDesc() {
+    if (!wireframeDesc) return;
+    var thicknessText = thickness <= 5
+      ? "두께가 얇아서 기술 도면이나 홀로그램처럼 가벼운 골격 표현에 가깝습니다."
+      : thickness <= 12
+        ? "중간 두께라서 실루엣과 구조가 함께 읽히는 일반적인 와이어 구조에 어울립니다."
+        : "두께가 두꺼워져서 와이어가 서로 붙기 쉬우며, 장식 프레임이나 구조물 느낌이 강해집니다.";
+    var modeText = mode === "original"
+      ? "원본 메쉬만 보여 주는 상태라 아직 Wireframe 결과를 덧씌우지 않은 비교 기준입니다."
+      : mode === "wireframe"
+        ? "Replace Original이 켜진 것처럼 면을 없애고 골격만 남긴 상태입니다."
+        : "Replace Original을 끈 것처럼 원본 면 위에 와이어를 추가한 상태입니다.";
+    wireframeDesc.textContent = "현재 Thickness " + (thickness / 100).toFixed(2) + " 설정입니다. " + modeText + " " + thicknessText;
   }
 
   btnOriginal.addEventListener("click", function() { setMode("original"); });
@@ -815,12 +888,14 @@ function initQuiz(questions) {
   slider.addEventListener("input", function() {
     thickness = parseInt(slider.value);
     valLabel.textContent = (thickness / 100).toFixed(2);
+    updateWireframeDesc();
     draw();
   });
 
   slider.addEventListener("touchstart", function(e) { e.stopPropagation(); }, { passive: true });
   slider.addEventListener("touchmove", function(e) { e.stopPropagation(); }, { passive: true });
 
+  updateWireframeDesc();
   draw();
 })();
 
