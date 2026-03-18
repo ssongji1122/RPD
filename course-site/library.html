@@ -50,6 +50,44 @@
 .lib-count {
   font-size: .8rem; color: var(--muted); white-space: nowrap;
 }
+.lib-week-filter {
+  max-width: calc(var(--max-width) + 120px);
+  margin: 0 auto;
+  padding: 12px 20px 0;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.lib-week-chip {
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: none;
+  color: var(--muted);
+  font-size: .78rem;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color .14s, color .14s, background .14s;
+}
+.lib-week-chip:hover { color: var(--muted-strong); border-color: var(--line-strong); }
+.lib-week-chip.is-active {
+  border-color: var(--key);
+  color: var(--key-soft);
+  background: rgba(10,132,255,.08);
+}
+.lib-card-week {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin-top: 6px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--overlay-white);
+  font-size: .68rem;
+  color: var(--muted);
+}
 .lib-shell {
   max-width: calc(var(--max-width) + 120px);
   margin: 0 auto;
@@ -402,6 +440,7 @@
         </div>
       </div>
     </header>
+    <nav class="lib-week-filter" id="libWeekFilter" aria-label="주차 필터"></nav>
     <div class="lib-shell">
       <aside class="lib-nav-shell">
         <div class="lib-nav-inner">
@@ -443,6 +482,7 @@
   <script src="assets/showme/_helpers.js?v=20260318c"></script>
 <script>
 var activeLetter = "all";
+var activeWeek = "all";
 var showMeLastTrigger = null;
 var activeShowMeWidgetId = null;
 var lastSectionTargetId = "";
@@ -563,6 +603,16 @@ function getAlphaLabel(id) {
   return String(id || "").replace(/[-_]+/g, " ").trim();
 }
 
+function getWeekValue(meta) {
+  return meta && typeof meta.week === "number" ? meta.week : 0;
+}
+
+function getWeekLabel(week) {
+  var isKo = window.RPDI18n.getLanguage() === "ko";
+  if (week === 0) return isKo ? "공통" : "Core";
+  return "Week " + week;
+}
+
 function getLetterKey(label) {
   var upper = (label || "").trim().toUpperCase();
   var first = upper.charAt(0);
@@ -579,9 +629,8 @@ function buildCardData(id) {
     canonicalLabel: getCanonicalLabel(id),
     alphaLabel: getAlphaLabel(id),
     alphaKey: getLetterKey(getAlphaLabel(id)),
-    sectionId: typeof getShowMeManualSectionId === "function"
-      ? getShowMeManualSectionId(id)
-      : "getting-started",
+    week: getWeekValue(meta),
+    sectionId: getSectionIdForCard(id, meta.category || "기타"),
     meta: meta,
     searchText: [
       localized.label,
@@ -617,6 +666,10 @@ function matchesLetter(card) {
   return activeLetter === "all" || card.alphaKey === activeLetter;
 }
 
+function matchesWeek(card) {
+  return activeWeek === "all" || card.week === activeWeek;
+}
+
 function getAvailableLetters(cards, query) {
   var seen = {};
   cards.forEach(function(card) {
@@ -631,6 +684,21 @@ function getAvailableLetters(cards, query) {
   });
 }
 
+function getAvailableWeeks(cards, query) {
+  var seen = {};
+  cards.forEach(function(card) {
+    if (!matchesQuery(card, query) || !matchesLetter(card)) return;
+    seen[card.week] = true;
+  });
+  return Object.keys(seen).map(function(value) {
+    return Number(value);
+  }).sort(function(a, b) {
+    if (a === 0) return 1;
+    if (b === 0) return -1;
+    return a - b;
+  });
+}
+
 function ensureActiveLetter(cards, query) {
   var available = getAvailableLetters(cards, query);
   if (activeLetter !== "all" && available.indexOf(activeLetter) === -1) {
@@ -639,9 +707,17 @@ function ensureActiveLetter(cards, query) {
   return available;
 }
 
+function ensureActiveWeek(cards, query) {
+  var available = getAvailableWeeks(cards, query);
+  if (activeWeek !== "all" && available.indexOf(activeWeek) === -1) {
+    activeWeek = "all";
+  }
+  return available;
+}
+
 function getVisibleCards(cards, query) {
   return cards.filter(function(card) {
-    return matchesQuery(card, query) && matchesLetter(card);
+    return matchesQuery(card, query) && matchesLetter(card) && matchesWeek(card);
   });
 }
 
@@ -669,6 +745,11 @@ function createCardButton(card) {
   label.className = "lib-card-label";
   label.textContent = card.localizedLabel;
   btn.appendChild(label);
+
+  var week = document.createElement("span");
+  week.className = "lib-card-week";
+  week.textContent = getWeekLabel(card.week);
+  btn.appendChild(week);
   btn.addEventListener("click", function() { openShowMe(card.id); });
   return btn;
 }
@@ -726,6 +807,39 @@ function renderAlphabet(cards, availableLetters) {
     btn.setAttribute("aria-pressed", activeLetter === letter ? "true" : "false");
     btn.addEventListener("click", function() {
       activeLetter = letter;
+      renderLibrary();
+    });
+    nav.appendChild(btn);
+  });
+}
+
+function renderWeekFilter(cards, availableWeeks) {
+  var nav = document.getElementById("libWeekFilter");
+  var isKo = window.RPDI18n.getLanguage() === "ko";
+  if (!nav) return;
+
+  nav.textContent = "";
+  nav.setAttribute("aria-label", isKo ? "주차 필터" : "Week filter");
+
+  var allBtn = document.createElement("button");
+  allBtn.type = "button";
+  allBtn.className = "lib-week-chip" + (activeWeek === "all" ? " is-active" : "");
+  allBtn.textContent = isKo ? "전체" : "All";
+  allBtn.addEventListener("click", function() {
+    activeWeek = "all";
+    lastSectionTargetId = "";
+    renderLibrary();
+  });
+  nav.appendChild(allBtn);
+
+  availableWeeks.forEach(function(week) {
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "lib-week-chip" + (activeWeek === week ? " is-active" : "");
+    btn.textContent = getWeekLabel(week);
+    btn.addEventListener("click", function() {
+      activeWeek = week;
+      lastSectionTargetId = "";
       renderLibrary();
     });
     nav.appendChild(btn);
@@ -844,6 +958,8 @@ function renderLibrary() {
   var cards = getAllCards();
   var query = getSearchQuery();
   var availableLetters = ensureActiveLetter(cards, query);
+  var availableWeeks = ensureActiveWeek(cards, query);
+  renderWeekFilter(cards, availableWeeks);
   renderAlphabet(cards, availableLetters);
   renderSections(cards);
   renderToc(cards);
