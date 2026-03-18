@@ -675,6 +675,12 @@ body {
       <p>두께 값을 직접 지정합니다. 양수가 기본이며, 음수를 입력하면 방향이 반전됩니다.</p>
     </div>
   </div>
+  <details style="margin-top:14px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:14px 16px">
+    <summary style="cursor:pointer;color:var(--key-soft);font-weight:600;list-style:none">더보기</summary>
+    <div style="margin-top:10px;color:var(--muted-strong);font-size:.84rem;line-height:1.7">
+      입문 단계에서는 `Thickness = 두께`, `Offset = 어느 쪽으로 생기는지`, `Even Thickness = 코너 보정` 이 세 가지만 먼저 기억하면 충분합니다.
+    </div>
+  </details>
 
   <div class="showme-concept-visual">
     <div class="section-divider">개념 이해 시각화</div>
@@ -728,25 +734,13 @@ body {
 
 <!-- TAB 2: interaction -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <div class="control-guide">
-    <span class="control-kind discrete">상태 전환</span>
-    <span class="control-kind range">연속 조절</span>
-    <span class="control-copy">프리셋 버튼으로 두께가 생기는 방향을 먼저 고르고, Thickness와 Offset으로 결과를 미세하게 다듬습니다.</span>
-  </div>
-  <div class="scenario-nav" id="solidifyScenarioNav">
-    <button class="scenario-btn active" type="button" data-preset="outer">바깥 쉘</button>
-    <button class="scenario-btn" type="button" data-preset="center">중심 보강</button>
-    <button class="scenario-btn" type="button" data-preset="inner">안쪽 라이닝</button>
-  </div>
-  <div class="scene-desc" id="solidifyDesc">Solidify는 평면에 두께를 더할 때 “원본 면을 어디 기준으로 둘 것인가”를 정하는 카드입니다. 프리셋을 바꿔 보면 바깥 쉘, 중심선, 안쪽 라이닝의 차이를 바로 읽을 수 있어요.</div>
-  <div class="cause-effect" id="solidifyCE"></div>
   <div class="interaction-layout">
     <aside class="modifier-panel" aria-label="Solidify modifier controls">
       <div class="modifier-header">
         <div class="modifier-title">Solidify</div>
         <span class="modifier-badge">Modifier</span>
       </div>
-      <p class="modifier-subtitle">Blender Properties 패널처럼 값을 직접 조절해 보세요.</p>
+      <p class="modifier-subtitle">Thickness와 Offset만 조절해 보세요.</p>
 
       <div class="control-group">
         <div class="control-head">
@@ -798,7 +792,6 @@ body {
           <strong class="status-value" id="solidifyCornerStatus">모서리 두께 보정 ON</strong>
         </div>
       </div>
-      <p class="demo-hint">Thickness와 Offset 숫자를 직접 바꾸면서 “원본 면 기준 어디로 두께가 생기는지”를 확인해 보세요.</p>
     </div>
   </div>
 </section>
@@ -1013,9 +1006,9 @@ function initQuiz(questions) {
   var directionStatus = document.getElementById("solidifyDirectionStatus");
   var centerStatus = document.getElementById("solidifyCenterStatus");
   var cornerStatus = document.getElementById("solidifyCornerStatus");
-  var solidifyDesc = document.getElementById("solidifyDesc");
-  var solidifyCE = document.getElementById("solidifyCE");
-  var scenarioButtons = document.querySelectorAll("#solidifyScenarioNav .scenario-btn");
+  var solidifyDesc = null;
+  var solidifyCE = null;
+  var scenarioButtons = [];
 
   var state = {
     thickness: 0.04,
@@ -1037,6 +1030,7 @@ function initQuiz(questions) {
   }
 
   function buildSolidifyCE(rows) {
+    if (!solidifyCE) return;
     while (solidifyCE.firstChild) { solidifyCE.removeChild(solidifyCE.firstChild); }
     rows.forEach(function(item) {
       var row = document.createElement("div");
@@ -1091,6 +1085,7 @@ function initQuiz(questions) {
   }
 
   function updateSolidifyDesc() {
+    if (!solidifyDesc) return;
     var thicknessText = "Thickness " + state.thickness.toFixed(2) + " m";
     var evenResult = state.evenThickness
       ? "코너에서도 두께를 일정하게 유지하려고 보정합니다."
@@ -1173,9 +1168,11 @@ function initQuiz(questions) {
     ctx.font = "600 13px sans-serif";
     ctx.textAlign = "left";
     ctx.fillText(title, x + 14, y + 22);
-    ctx.fillStyle = "#94a3b8";
-    ctx.font = "11px sans-serif";
-    ctx.fillText(subtitle, x + 14, y + 40);
+    if (subtitle) {
+      ctx.fillStyle = "#94a3b8";
+      ctx.font = "11px sans-serif";
+      ctx.fillText(subtitle, x + 14, y + 40);
+    }
   }
 
   function drawBasePlane(area) {
@@ -1322,12 +1319,6 @@ function initQuiz(questions) {
     ctx.lineTo(area.x + area.w - 34, bendY + 22 - (state.evenThickness ? thicknessPx : thicknessPx * 0.35));
     ctx.stroke();
 
-    ctx.fillStyle = state.evenThickness ? "#6ee7b7" : "#fcd34d";
-    ctx.font = "11px sans-serif";
-    ctx.textAlign = "left";
-    ctx.fillText(state.evenThickness ? "Even Thickness ON" : "Even Thickness OFF", area.x + 14, area.y + 24);
-    ctx.fillStyle = "#94a3b8";
-    ctx.fillText(state.evenThickness ? "굽은 코너에서도 두께가 일정합니다." : "코너에서 두께가 눌려 보입니다.", area.x + 14, area.y + 42);
   }
 
   function draw() {
@@ -1343,9 +1334,9 @@ function initQuiz(questions) {
     var rightArea = { x: leftArea.x + leftArea.w + 12, y: 16, w: w - leftArea.w - 44, h: Math.floor(h * 0.63) };
     var cornerArea = { x: rightArea.x, y: rightArea.y + rightArea.h + 12, w: rightArea.w, h: h - rightArea.h - 44 };
 
-    drawStageBackground(leftArea.x, leftArea.y, leftArea.w, leftArea.h, "Base Mesh", "Solidify 전: 면만 있는 상태");
-    drawStageBackground(rightArea.x, rightArea.y, rightArea.w, rightArea.h, "Solidify Result", "Thickness / Offset 조절 결과");
-    drawStageBackground(cornerArea.x, cornerArea.y, cornerArea.w, cornerArea.h, "Corner Check", "Even Thickness 차이");
+    drawStageBackground(leftArea.x, leftArea.y, leftArea.w, leftArea.h, "Base Mesh", "");
+    drawStageBackground(rightArea.x, rightArea.y, rightArea.w, rightArea.h, "Solidify Result", "");
+    drawStageBackground(cornerArea.x, cornerArea.y, cornerArea.w, cornerArea.h, "Corner Check", "");
 
     drawBasePlane(leftArea);
     drawSolidifyPreview(rightArea);
@@ -1382,8 +1373,6 @@ function initQuiz(questions) {
     offsetNumber.value = state.offset.toFixed(1);
     evenCheckbox.checked = state.evenThickness;
     updateStatus();
-    updateScenarioButtons();
-    updateSolidifyDesc();
     draw();
   }
 
@@ -1405,12 +1394,6 @@ function initQuiz(questions) {
     state.evenThickness = evenCheckbox.checked;
     syncInputs();
   });
-  scenarioButtons.forEach(function(btn) {
-    btn.addEventListener("click", function() {
-      applySolidifyPreset(btn.dataset.preset);
-    });
-  });
-
   [thicknessRange, thicknessNumber, offsetRange, offsetNumber].forEach(function(control) {
     control.addEventListener("touchstart", function(e) { e.stopPropagation(); }, { passive: true });
     control.addEventListener("touchmove", function(e) { e.stopPropagation(); }, { passive: true });

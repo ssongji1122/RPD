@@ -35,8 +35,8 @@
     }
     .learning-panel {
       display: grid;
-      gap: 18px;
-      padding: 18px 0 22px;
+      gap: 14px;
+      padding: 14px 0 18px;
       border-top: 1px solid var(--line);
       border-bottom: 1px solid var(--line);
     }
@@ -60,7 +60,7 @@
     }
     .learning-panel-stats {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 0;
       border-top: 1px solid var(--line);
       border-bottom: 1px solid var(--line);
@@ -80,6 +80,83 @@
     .learning-panel-stat span {
       font-size: .74rem;
       color: var(--muted);
+    }
+    .assignment-card {
+      display: grid;
+      gap: 16px;
+      padding: 18px 0 0;
+      border-top: 1px solid var(--line);
+    }
+    .assignment-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .assignment-copy {
+      display: grid;
+      gap: 10px;
+      max-width: 720px;
+    }
+    .assignment-copy strong {
+      font-size: 1rem;
+      line-height: 1.42;
+    }
+    .assignment-copy p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.72;
+    }
+    .assignment-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line);
+      color: var(--muted-strong);
+      font-size: .76rem;
+      font-weight: 600;
+      letter-spacing: .02em;
+      white-space: nowrap;
+    }
+    .assignment-status::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--muted);
+      flex-shrink: 0;
+    }
+    .assignment-status.is-ready {
+      border-color: rgba(52,211,153,.26);
+      color: #d1fae5;
+      background: rgba(16,185,129,.08);
+    }
+    .assignment-status.is-ready::before {
+      background: #34d399;
+    }
+    .assignment-checklist {
+      margin: 0;
+      padding-left: 18px;
+      display: grid;
+      gap: 8px;
+      color: var(--muted-strong);
+      line-height: 1.7;
+    }
+    .assignment-meta {
+      font-size: .78rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .assignment-actions {
+      align-items: center;
+    }
+    .assignment-note {
+      margin: 0;
+      font-size: .76rem;
+      color: var(--muted);
+      line-height: 1.65;
     }
 
 
@@ -111,8 +188,8 @@
     }
     .bundle-card {
       display: grid;
-      gap: 18px;
-      padding: 0 0 22px;
+      gap: 14px;
+      padding: 0 0 18px;
       border-radius: 0;
       border: none;
       border-bottom: 1px solid var(--line);
@@ -261,76 +338,160 @@
 
     /* ── Show Me buttons ── */
     .showme-buttons {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 10px;
-      margin: 0 0 14px;
+      margin: 4px 0 16px;
     }
     .btn-showme {
-      position: relative;
-      isolation: isolate;
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 10px 14px; border-radius: 14px;
-      border: 1px solid rgba(147,197,253,.22);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.02)),
-        linear-gradient(135deg, rgba(59,130,246,.18), rgba(14,165,233,.1));
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.18),
-        0 10px 28px rgba(4, 10, 24, .26),
-        0 0 0 1px rgba(147,197,253,.04);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      color: var(--text); font: inherit; font-size: .81rem; font-weight: 600;
+      width: 100%;
+      min-height: 72px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--text);
+      text-align: left;
       cursor: pointer;
-      transition: transform .18s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease, color .18s ease;
+      font: inherit;
+      transition: transform .14s ease, border-color .14s ease, background .14s ease;
     }
+    .btn-showme::before,
     .btn-showme::after {
-      content: "";
-      position: absolute;
-      inset: 1px 1px auto 1px;
-      height: 48%;
-      border-radius: inherit;
-      background: linear-gradient(180deg, rgba(255,255,255,.2), rgba(255,255,255,0));
-      opacity: .75;
-      pointer-events: none;
+      display: none;
     }
-    .btn-showme:hover {
+    .btn-showme:hover,
+    .btn-showme:focus-visible {
       transform: translateY(-1px);
-      border-color: rgba(147,197,253,.34);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.22),
-        0 14px 32px rgba(4, 10, 24, .3),
-        0 0 0 1px rgba(147,197,253,.1);
-      color: #f8fbff;
+      border-color: rgba(10,132,255,.26);
+      background: rgba(255,255,255,.03);
     }
-    .btn-showme.is-complete {
-      border-color: rgba(52,211,153,.26);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.02)),
-        linear-gradient(135deg, rgba(16,185,129,.18), rgba(5,150,105,.1));
-      color: #d1fae5;
+    .btn-showme:focus-visible {
+      outline: none;
     }
-    .btn-showme.is-complete:hover {
-      border-color: rgba(52,211,153,.34);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.2),
-        0 14px 32px rgba(4, 10, 24, .28),
-        0 0 0 1px rgba(52,211,153,.12);
+    .btn-showme-main {
+      min-width: 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
     }
-    .btn-showme.is-complete::before {
-      content: "✓";
-      display: inline-grid;
+    .btn-showme-icon {
+      color: rgba(241,245,249,.96);
+    }
+    .showme-icon-badge {
+      display: grid;
       place-items: center;
+      flex-shrink: 0;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color: var(--muted-strong);
+    }
+    .showme-icon-badge svg {
+      display: block;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.85;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .showme-icon-badge--card {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+    }
+    .showme-icon-badge--card svg {
+      width: 22px;
+      height: 22px;
+    }
+    .showme-icon-badge--browser {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+    }
+    .showme-icon-badge--browser svg {
       width: 18px;
       height: 18px;
-      border-radius: 999px;
-      background: rgba(16,185,129,.18);
-      color: #a7f3d0;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.16);
-      font-size: .72rem;
-      font-weight: 800;
+    }
+    .showme-icon-badge--pill {
+      width: 24px;
+      height: 24px;
+      border-radius: 8px;
+    }
+    .showme-icon-badge--pill svg {
+      width: 13px;
+      height: 13px;
+    }
+    .showme-icon-badge.is-fallback {
+      font-size: 1rem;
+      line-height: 1;
+    }
+    .showme-icon-badge--browser.is-fallback {
+      font-size: .88rem;
+    }
+    .showme-icon-badge--pill.is-fallback {
+      font-size: .76rem;
+    }
+    .btn-showme-copy {
+      min-width: 0;
+      display: grid;
+      gap: 4px;
+    }
+    .btn-showme-kicker {
+      font-size: .64rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .btn-showme-label {
+      font-size: .9rem;
+      font-weight: 600;
+      line-height: 1.42;
+      color: var(--text);
+    }
+    .btn-showme-meta {
+      font-size: .74rem;
+      line-height: 1.45;
+      color: var(--muted);
+    }
+    .btn-showme-arrow {
+      width: 22px;
+      height: 22px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
       flex-shrink: 0;
+      transition: transform .14s ease, color .14s ease;
+    }
+    .btn-showme:hover .btn-showme-arrow,
+    .btn-showme:focus-visible .btn-showme-arrow {
+      transform: translateX(2px);
+      color: var(--key-soft);
+    }
+    .btn-showme.is-complete {
+      border-color: rgba(52,211,153,.24);
+      background: rgba(16,185,129,.05);
+    }
+    .btn-showme.is-complete .showme-icon-badge {
+      border-color: rgba(52,211,153,.2);
+      background: rgba(16,185,129,.12);
+      color: #d1fae5;
+    }
+    .btn-showme.is-complete .btn-showme-kicker,
+    .btn-showme.is-complete .btn-showme-meta {
+      color: rgba(209,250,229,.78);
+    }
+    .btn-showme.is-complete .btn-showme-arrow {
+      color: #d1fae5;
+    }
+    @media (max-width: 640px) {
+      .showme-buttons { grid-template-columns: 1fr; }
+      .btn-showme { min-height: 68px; }
     }
 
     /* ── Step accordion ── */
@@ -349,8 +510,20 @@
       cursor: pointer;
       font: inherit;
     }
-    .step-title-group { min-width: 0; }
-    .step-title-text { line-height: 1.35; }
+    .step-toggle:focus-visible {
+      outline: none;
+    }
+    .step-title-group {
+      min-width: 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+    .step-title-text {
+      display: block;
+      line-height: 1.35;
+      padding-top: 2px;
+    }
     .step-header-right {
       display: inline-flex;
       align-items: center;
@@ -392,6 +565,10 @@
       margin-top: 14px;
     }
     .step-body[hidden] { display: none; }
+    .lab-step.is-expanded {
+      border-color: rgba(147,197,253,.18);
+      box-shadow: 0 0 0 1px rgba(147,197,253,.05), var(--shadow-card);
+    }
     .lab-step.is-collapsed {
       padding-bottom: 18px;
     }
@@ -531,9 +708,7 @@
     .showme-browser {
       min-width: 0;
       border-right: 1px solid var(--line);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)),
-        radial-gradient(circle at top left, rgba(10,132,255,.09), transparent 42%);
+      background: var(--surface-strong);
       overflow: hidden auto;
       opacity: 0;
       pointer-events: none;
@@ -545,21 +720,20 @@
     }
     .showme-browser-header {
       display: grid;
-      gap: 10px;
+      gap: 8px;
       padding: 16px 16px 12px;
       border-bottom: 1px solid var(--line);
-      background: rgba(0,0,0,.08);
+      background: var(--surface);
       position: sticky;
       top: 0;
       z-index: 1;
-      backdrop-filter: blur(10px);
     }
     .showme-browser-search {
       width: 100%;
       padding: 10px 12px;
-      border-radius: 12px;
+      border-radius: var(--radius-sm);
       border: 1px solid var(--line-strong);
-      background: rgba(255,255,255,.04);
+      background: var(--surface-strong);
       color: var(--text);
       font: inherit;
       font-size: .86rem;
@@ -571,13 +745,29 @@
     .showme-browser-search::placeholder {
       color: var(--muted);
     }
+    .showme-browser-hint {
+      margin: -2px 0 0;
+      font-size: .76rem;
+      line-height: 1.55;
+      color: var(--muted);
+    }
+    .showme-browser-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+    }
+    .showme-browser-reset {
+      font-size: .78rem;
+    }
     .showme-browser-library-link {
       display: inline-flex;
       align-items: center;
       gap: 6px;
       width: fit-content;
       color: var(--key-soft);
-      font-size: .8rem;
+      font-size: .78rem;
       text-decoration: none;
     }
     .showme-browser-library-link:hover {
@@ -615,26 +805,41 @@
     }
     .showme-browser-item {
       display: grid;
-      gap: 4px;
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: flex-start;
+      gap: 10px;
       width: 100%;
       padding: 11px 12px;
-      border-radius: 14px;
+      border-radius: 12px;
       border: 1px solid var(--line);
-      background: rgba(255,255,255,.03);
+      background: transparent;
       color: var(--text);
       text-align: left;
       cursor: pointer;
       transition: border-color .14s ease, background .14s ease, transform .14s ease;
       font: inherit;
     }
+    .showme-browser-item-copy {
+      min-width: 0;
+      display: grid;
+      gap: 2px;
+    }
+    .showme-browser-item-kicker {
+      font-size: .62rem;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: rgba(191,219,254,.82);
+    }
     .showme-browser-item:hover {
       border-color: rgba(10,132,255,.34);
-      background: rgba(10,132,255,.08);
+      background: rgba(255,255,255,.04);
       transform: translateY(-1px);
     }
     .showme-browser-item.is-active {
       border-color: rgba(10,132,255,.46);
-      background: rgba(10,132,255,.12);
+      background: rgba(10,132,255,.08);
       box-shadow: inset 0 0 0 1px rgba(10,132,255,.12);
     }
     .showme-browser-item-label {
@@ -660,6 +865,52 @@
       min-width: 0;
       min-height: 0;
       display: flex;
+      flex-direction: column;
+    }
+    .showme-related {
+      display: none;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface-strong);
+    }
+    .showme-related.is-visible {
+      display: flex;
+    }
+    .showme-related-copy {
+      font-size: .82rem;
+      color: var(--muted-strong);
+      line-height: 1.45;
+    }
+    .showme-related-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+    .showme-related-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--text);
+      font: inherit;
+      font-size: .78rem;
+      cursor: pointer;
+      transition: border-color .14s ease, background .14s ease, color .14s ease;
+    }
+    .showme-related-btn-label {
+      line-height: 1.3;
+    }
+    .showme-related-btn:hover {
+      border-color: rgba(10,132,255,.34);
+      background: rgba(10,132,255,.08);
+      color: var(--key-soft);
     }
     .showme-iframe {
       flex: 1; width: 100%; border: none;
@@ -715,6 +966,13 @@
       }
       .showme-viewer {
         height: 100%;
+      }
+      .showme-related {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+      .showme-related-actions {
+        justify-content: flex-start;
       }
     }
 
@@ -845,6 +1103,9 @@
         border-bottom: 1px solid var(--line);
       }
       .learning-panel-stat:last-child { border-bottom: none; }
+      .assignment-head {
+        flex-direction: column;
+      }
     }
     @media (min-width: 981px) {
       .sidebar-toggle {
@@ -956,12 +1217,20 @@
           <aside class="showme-browser" id="showmeBrowser" aria-hidden="true">
             <div class="showme-browser-header">
               <input class="showme-browser-search" id="showmeBrowserSearch" type="search" autocomplete="off" aria-label="Show Me 카드 검색" placeholder="연관 카드나 키워드 검색" />
-              <a class="showme-browser-library-link" id="showmeBrowserLibraryLink" href="library.html">전체 라이브러리 열기</a>
+              <div class="showme-browser-actions">
+                <button class="btn-link showme-browser-reset" id="showmeBrowserReset" type="button">이번 주 카드 보기</button>
+                <a class="showme-browser-library-link" id="showmeBrowserLibraryLink" href="library.html">전체 라이브러리 열기</a>
+              </div>
+              <p class="showme-browser-hint" id="showmeBrowserHint">이번 주 카드와 연관 카드만 빠르게 탐색합니다.</p>
             </div>
             <div class="showme-browser-content" id="showmeBrowserContent"></div>
           </aside>
           <div class="showme-browser-backdrop" id="showmeBrowserBackdrop"></div>
           <div class="showme-viewer">
+            <div class="showme-related" id="showmeRelatedPrompt" hidden>
+              <div class="showme-related-copy" id="showmeRelatedLabel"></div>
+              <div class="showme-related-actions" id="showmeRelatedActions"></div>
+            </div>
             <iframe class="showme-iframe" id="showmeIframe" sandbox="allow-scripts allow-same-origin" title="Show Me Widget"></iframe>
           </div>
         </div>
@@ -983,8 +1252,8 @@
   </div>
 
   <script src="data/i18n-content.js?v=20260318e"></script>
-  <script src="assets/i18n.js?v=20260318d"></script>
-  <script src="assets/showme/_registry.js?v=20260318c"></script>
+  <script src="assets/i18n.js?v=20260318o"></script>
+  <script src="assets/showme/_registry.js?v=20260318f"></script>
   <script src="assets/showme/_catalog.js?v=20260318c"></script>
   <script src="assets/showme/_supplements.js?v=20260318c"></script>
   <script src="assets/showme/_helpers.js?v=20260318c"></script>
@@ -1001,6 +1270,7 @@
     const weekData = CURRICULUM.find(w => w.week === weekNum);
     const storageKey = `blender2026-week${weekNum}-v1`;
     var pendingShowMeFromUrl = !!requestedShowMeId;
+    var activeWeekView = null;
 
     function getWeekText() {
       return window.RPDI18n.getStrings("week");
@@ -1011,6 +1281,42 @@
       return Object.assign({}, meta, {
         label: window.RPDI18n.getShowMeLabel(widgetId, meta)
       });
+    }
+
+    function escapeHtml(value) {
+      return String(value == null ? "" : value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function getShowMeKickerText(meta) {
+      return meta && meta.toolName ? "Show Me · " + meta.toolName : "Show Me";
+    }
+
+    function getShowMeToolIconSvg(iconKey) {
+      var icons = {
+        "edit-mode": '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="7" cy="7" r="2"></circle><circle cx="17" cy="7" r="2"></circle><circle cx="12" cy="17" r="2"></circle><path d="M8.8 8.2 10.9 15"></path><path d="M15.2 8.2 13.1 15"></path><path d="M9 7h6"></path></svg>',
+        "extrude": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 14h8v6H8z"></path><path d="M10 4h4v3h-4z"></path><path d="M12 14V7"></path><path d="m9 9 3-3 3 3"></path></svg>',
+        "loop-cut": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h12v12H6z"></path><path d="M10 6v12"></path><path d="M14 6v12"></path><path d="m8 9 2-2 2 2"></path><path d="m12 15 2 2 2-2"></path></svg>',
+        "inset": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h12v12H6z"></path><path d="M9.5 9.5h5v5h-5z"></path><path d="M6 10h3.5"></path><path d="M10 6v3.5"></path></svg>',
+        "bevel": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18V7h11"></path><path d="M12 18h6"></path><path d="M18 12v6"></path><path d="M18 7 7 18"></path><path d="M14 7h4v4"></path></svg>',
+        "poly-circle": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 5 5 3v6l-5 3-5-3V8z"></path><circle cx="12" cy="11" r="2.8"></circle></svg>'
+      };
+      return icons[iconKey] || "";
+    }
+
+    function renderShowMeIcon(meta, variant) {
+      var sizeClass = variant === "browser"
+        ? "showme-icon-badge--browser"
+        : (variant === "pill" ? "showme-icon-badge--pill" : "showme-icon-badge--card");
+      var rootClass = (variant === "card" ? "btn-showme-icon " : "") + "showme-icon-badge " + sizeClass;
+      if (meta && meta.iconKey) {
+        return '<span class="' + rootClass + ' is-tool" aria-hidden="true">' + getShowMeToolIconSvg(meta.iconKey) + '</span>';
+      }
+      return '<span class="' + rootClass + ' is-fallback" aria-hidden="true">' + escapeHtml(meta && meta.icon ? meta.icon : "📖") + '</span>';
     }
 
     function buildWeekBundle(w) {
@@ -1032,6 +1338,148 @@
       };
     }
 
+    function getLearningState(w) {
+      var progressState = {};
+      var quizState = {};
+      try { progressState = JSON.parse(localStorage.getItem(storageKey) || "{}"); } catch (error) {}
+      try { quizState = JSON.parse(localStorage.getItem(getQuizKey()) || "{}"); } catch (error) {}
+
+      var completedSteps = 0;
+      var nextStepIndex = -1;
+      var nextShowMeId = "";
+      var totalSteps = (w.steps || []).length;
+      var allShowMeIds = {};
+
+      (w.steps || []).forEach(function(step, idx) {
+        var tasks = step.tasks || [];
+        var stepComplete = tasks.length > 0 && tasks.every(function(task) { return !!progressState[task.id]; });
+        if (stepComplete) {
+          completedSteps += 1;
+        } else if (nextStepIndex === -1) {
+          nextStepIndex = idx;
+        }
+
+        collectShowMeIdsFromStep(step).forEach(function(id) {
+          allShowMeIds[id] = true;
+          if (!nextShowMeId && (!quizState[id] || !quizState[id].pass)) nextShowMeId = id;
+        });
+      });
+
+      var allShowMeList = Object.keys(allShowMeIds);
+      var passedShowMe = allShowMeList.filter(function(id) {
+        return quizState[id] && quizState[id].pass;
+      }).length;
+
+      if (!nextShowMeId && allShowMeList.length) nextShowMeId = allShowMeList[0];
+
+      return {
+        totalSteps: totalSteps,
+        completedSteps: completedSteps,
+        nextStepIndex: totalSteps ? (nextStepIndex === -1 ? 0 : Math.min(nextStepIndex, totalSteps - 1)) : 0,
+        totalShowMe: allShowMeList.length,
+        passedShowMe: passedShowMe,
+        nextShowMeId: nextShowMeId,
+        isComplete: totalSteps > 0 && completedSteps === totalSteps
+      };
+    }
+
+    function updateLearningPanel() {
+      if (!activeWeekView) return;
+      var panel = document.getElementById("learningPanel");
+      var title = document.getElementById("learningPanelTitle");
+      var copy = document.getElementById("learningPanelText");
+      if (!panel) return;
+      var text = getWeekText();
+      var state = getLearningState(activeWeekView);
+      var titleText = state.isComplete
+        ? text.learningCompleteTitle
+        : (state.completedSteps > 0 ? text.learningContinueTitle : text.learningStartTitle);
+      var primaryLabel = state.isComplete
+        ? text.learningPrimaryReview
+        : (state.completedSteps > 0 ? text.learningPrimaryContinue : text.learningPrimaryStart);
+      var primaryTarget = state.totalSteps ? ("#step-" + state.nextStepIndex) : "#section-assignment";
+      var showMeAction = state.nextShowMeId
+        ? '<button class="btn btn-ghost" type="button" onclick="openShowMe(\'' + state.nextShowMeId + '\')">' + text.learningSecondaryShowme + '</button>'
+        : "";
+      if (title) title.textContent = titleText;
+      if (copy) copy.textContent = text.learningPanelCopy;
+
+      panel.innerHTML = `
+        <div class="cta-group">
+          <a class="btn btn-primary" href="${primaryTarget}">${primaryLabel}</a>
+          ${showMeAction}
+          <a class="btn-link" href="#section-assignment">${text.learningAssignmentCta} <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="learning-panel-stats">
+          <div class="learning-panel-stat">
+            <strong>${state.completedSteps} / ${state.totalSteps}</strong>
+            <span>${text.learningProgressSteps}</span>
+          </div>
+          <div class="learning-panel-stat">
+            <strong>${state.passedShowMe} / ${state.totalShowMe}</strong>
+            <span>${text.learningProgressShowme}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    function getAssignmentReadyKey() {
+      return storageKey + "-assignment-ready";
+    }
+
+    function isAssignmentReady() {
+      try {
+        return localStorage.getItem(getAssignmentReadyKey()) === "1";
+      } catch (error) {
+        return false;
+      }
+    }
+
+    function setAssignmentReadyState(nextReady) {
+      try {
+        if (nextReady) localStorage.setItem(getAssignmentReadyKey(), "1");
+        else localStorage.removeItem(getAssignmentReadyKey());
+      } catch (error) {}
+      refreshWeekActionPanels();
+    }
+
+    function updateAssignmentPanel() {
+      if (!activeWeekView || !activeWeekView.assignment) return;
+      var status = document.getElementById("assignmentStatus");
+      var meta = document.getElementById("assignmentMeta");
+      var actions = document.getElementById("assignmentActions");
+      var note = document.getElementById("assignmentNote");
+      if (!status || !meta || !actions || !note) return;
+
+      var text = getWeekText();
+      var state = getLearningState(activeWeekView);
+      var ready = isAssignmentReady();
+      var reviewTarget = state.totalSteps ? ("#step-" + state.nextStepIndex) : "#practice";
+      var relatedShowMeId = state.nextShowMeId || getWeekShowMeIds()[0] || "";
+
+      status.textContent = ready ? text.assignmentStatusReady : text.assignmentStatusDraft;
+      status.classList.toggle("is-ready", ready);
+
+      meta.textContent = [
+        text.assignmentProgressMeta + " " + state.completedSteps + " / " + state.totalSteps,
+        text.assignmentChecklistMeta + " " + activeWeekView.assignment.checklist.length
+      ].join(" · ");
+
+      actions.innerHTML = `
+        <button class="btn ${ready ? "btn-ghost" : "btn-primary"}" type="button" onclick="setAssignmentReadyState(${ready ? "false" : "true"})">
+          ${ready ? text.assignmentUndoAction : text.assignmentReadyAction}
+        </button>
+        <a class="btn btn-ghost" href="${reviewTarget}">${text.assignmentReviewCta}</a>
+        ${relatedShowMeId ? '<button class="btn btn-ghost" type="button" onclick="openShowMe(\'' + relatedShowMeId + '\')">' + text.assignmentShowMeCta + '</button>' : ""}
+      `;
+      note.textContent = text.assignmentStorageNote;
+    }
+
+    function refreshWeekActionPanels() {
+      updateLearningPanel();
+      updateAssignmentPanel();
+    }
+
     function applyWeekChrome() {
       var text = getWeekText();
       document.getElementById("sidebarToggle").setAttribute("aria-label", text.sidebarToggleAria);
@@ -1050,6 +1498,8 @@
       document.getElementById("showmeIframe").setAttribute("title", text.showmeFrameTitle);
       document.getElementById("showmeBrowserSearch").setAttribute("aria-label", text.modalBrowseSearchAria);
       document.getElementById("showmeBrowserSearch").setAttribute("placeholder", text.modalBrowseSearchPlaceholder);
+      document.getElementById("showmeBrowserReset").textContent = text.modalBrowseResetCta;
+      document.getElementById("showmeBrowserHint").textContent = text.modalBrowseContextHint;
       document.getElementById("showmeBrowserLibraryLink").textContent = text.modalBrowseLibraryLink;
       document.getElementById("studentLoginTitle").textContent = text.loginTitle;
       document.getElementById("studentLoginSubtitle").textContent = text.loginSubtitle;
@@ -1092,6 +1542,7 @@
     function buildPage(w) {
       var text = getWeekText();
       var bundle = buildWeekBundle(w);
+      activeWeekView = w;
       document.title = `Week ${w.week} — ${w.title} | Blender Archive`;
       document.getElementById("brandBadge").textContent = String(w.week).padStart(2, "0");
       document.getElementById("brandTitle").textContent = `Week ${String(w.week).padStart(2, "0")} · ${w.title}`;
@@ -1107,27 +1558,64 @@
 
       var videos = w.videos || [];
       var docs = w.docs || [];
+      var savedProgressState = (function() {
+        try { return JSON.parse(localStorage.getItem(storageKey) || "{}"); }
+        catch (error) { return {}; }
+      }());
+      var initialOpenIndex = w.steps.findIndex(function(step) {
+        var tasks = Array.isArray(step.tasks) ? step.tasks : [];
+        return !tasks.length || !tasks.every(function(task) { return Boolean(savedProgressState[task.id]); });
+      });
+      if (initialOpenIndex === -1) initialOpenIndex = 0;
 
       var stepsHtml = w.steps.map(function(step, idx) {
-        var initiallyExpanded = idx === 0;
+        var initiallyExpanded = idx === initialOpenIndex;
         var tasks = Array.isArray(step.tasks) ? step.tasks : [];
         var taskItems = tasks.map(function(task) {
+          var detailId = "task-detail-" + task.id;
           return `
-            <div class="task-item">
-              <input id="${task.id}" type="checkbox" data-task-id="${task.id}" />
-              <label for="${task.id}">
-                <strong>${task.label}</strong>
-                ${task.detail ? `<small>${task.detail}</small>` : ""}
-              </label>
+            <div class="task-item ${task.detail ? "is-collapsed" : ""}" ${task.detail ? "data-task-item" : ""}>
+              <div class="task-head">
+                <input id="${task.id}" type="checkbox" data-task-id="${task.id}" />
+                <div class="task-body">
+                  ${task.detail ? `
+                    <button
+                      class="task-toggle"
+                      type="button"
+                      data-task-toggle
+                      aria-expanded="false"
+                      aria-controls="${detailId}">
+                      <span class="task-title">${task.label}</span>
+                      <span class="task-toggle-indicator" aria-hidden="true"></span>
+                    </button>
+                    <div class="task-detail" id="${detailId}" hidden>${task.detail}</div>
+                  ` : `
+                    <label for="${task.id}" class="task-label">
+                      <strong>${task.label}</strong>
+                    </label>
+                  `}
+                </div>
+              </div>
             </div>`;
         }).join("");
 
         var showmeHtml = (function() {
           var ids = collectShowMeIdsFromStep(step);
           if (!ids.length) return "";
-          return `<div class="showme-buttons">${ids.map(function(id) {
+          return `<div class="showme-buttons" role="group" aria-label="${text.sidebarShowMe}">${ids.map(function(id) {
             var meta = getShowMeMeta(id);
-            return `<button class="btn btn-showme" type="button" data-widget-id="${id}" onclick="openShowMe('${id}')">${meta.icon} ${meta.label}</button>`;
+            var metaLine = [meta.category, meta.stageLabel].filter(Boolean).join(" · ") || text.sidebarShowMe;
+            return `<button class="btn btn-showme" type="button" data-widget-id="${id}" onclick="openShowMe('${id}')">
+              <span class="btn-showme-main">
+                ${renderShowMeIcon(meta, "card")}
+                <span class="btn-showme-copy">
+                  <span class="btn-showme-kicker">${escapeHtml(getShowMeKickerText(meta))}</span>
+                  <span class="btn-showme-label">${meta.label}</span>
+                  <span class="btn-showme-meta">${metaLine}</span>
+                </span>
+              </span>
+              <span class="btn-showme-arrow" aria-hidden="true">↗</span>
+            </button>`;
           }).join("")}</div>`;
         }());
 
@@ -1145,14 +1633,14 @@
                 aria-expanded="${initiallyExpanded ? "true" : "false"}"
                 aria-label="${initiallyExpanded ? text.stepToggleCollapse : text.stepToggleExpand}"
                 aria-controls="step-body-${idx}">
-                <div class="step-title-group">
-                  <div class="step-number">${idx + 1}</div>
-                  <strong class="step-title-text">${step.title}</strong>
-                </div>
-                <div class="step-header-right">
-                  <div class="status-pill active" data-step-status>${text.stepStatusActive}</div>
+                <span class="step-title-group">
+                  <span class="step-number">${idx + 1}</span>
+                  <span class="step-title-text">${step.title}</span>
+                </span>
+                <span class="step-header-right">
+                  <span class="status-pill active" data-step-status>${text.stepStatusActive}</span>
                   <span class="step-toggle-indicator" aria-hidden="true"></span>
-                </div>
+                </span>
               </button>
             </div>
             <div class="step-body" id="step-body-${idx}" data-step-body ${initiallyExpanded ? "" : "hidden"}>
@@ -1182,7 +1670,13 @@
               }).join("")}</div>` : ""}
               <p class="step-copy">${step.copy}</p>
               ${showmeHtml}
-              ${taskItems ? `<div class="task-list">${taskItems}</div>` : ""}
+              ${taskItems ? `
+                <details class="task-group">
+                  <summary>${text.taskGroupLabel} (${tasks.length})</summary>
+                  <div class="task-group-body">
+                    <div class="task-list">${taskItems}</div>
+                  </div>
+                </details>` : ""}
             </div>
           </article>`;
       }).join("");
@@ -1217,11 +1711,19 @@
       var assignmentHtml = `
         <section class="content-block" id="section-assignment">
           <div class="section-head"><h3>${text.sectionAssignment}</h3></div>
-          <div class="card assignment-card">
-            <div class="card-chip">${text.assignmentChip}</div>
-            <strong>${w.assignment.title}</strong>
-            <p style="color:var(--muted);line-height:1.72;margin:0">${w.assignment.description}</p>
-            <ul>${assignmentChecklist}</ul>
+          <div class="assignment-card">
+            <div class="assignment-head">
+              <div class="assignment-copy">
+                <div class="card-chip">${text.assignmentChip}</div>
+                <strong>${w.assignment.title}</strong>
+                <p>${w.assignment.description}</p>
+              </div>
+              <span class="assignment-status" id="assignmentStatus">${text.assignmentStatusDraft}</span>
+            </div>
+            <ul class="assignment-checklist">${assignmentChecklist}</ul>
+            <div class="assignment-meta" id="assignmentMeta"></div>
+            <div class="cta-group assignment-actions" id="assignmentActions"></div>
+            <p class="assignment-note" id="assignmentNote"></p>
           </div>
         </section>`;
 
@@ -1263,42 +1765,20 @@
       document.getElementById("pageContent").innerHTML = `
         <section class="hero" id="hero-section">
           <div class="hero-card">
-            <div class="eyebrow">${text.heroEyebrow}</div>
             <h1>Week ${String(w.week).padStart(2, "0")} · ${w.title}</h1>
-            <p class="hero-support">${bundle.practiceCount} ${text.bundleStatPractice} · ${bundle.showMeCount} ${text.bundleStatShowme} · ${bundle.taskCount} ${text.bundleStatTasks} · ${bundle.referenceCount} ${text.bundleStatReferences}</p>
+            ${w.subtitle ? `<p>${w.subtitle}</p>` : ""}
+            <div class="hero-support">${[w.duration, bundle.practiceCount + " " + text.bundleStatPractice, bundle.showMeCount + " " + text.bundleStatShowme].filter(Boolean).join(" · ")}</div>
           </div>
         </section>
 
-        <section class="content-block" id="section-bundle">
-          <div class="bundle-card">
-            <div class="bundle-copy">
-              <div class="card-chip">${text.bundleChip}</div>
-              <strong>${text.bundleTitle}</strong>
-              <p>${text.bundleDescription}</p>
+        <section class="content-block">
+          <div class="learning-panel">
+            <div class="learning-panel-copy">
+              <span class="eyebrow">${text.learningEyebrow}</span>
+              <h2 class="learning-panel-title" id="learningPanelTitle"></h2>
+              <p class="learning-panel-text" id="learningPanelText"></p>
             </div>
-            <div class="bundle-stats">
-              <div class="bundle-stat">
-                <strong>${bundle.practiceCount}</strong>
-                <span>${text.bundleStatPractice}</span>
-              </div>
-              <div class="bundle-stat">
-                <strong>${bundle.showMeCount}</strong>
-                <span>${text.bundleStatShowme}</span>
-              </div>
-              <div class="bundle-stat">
-                <strong>${bundle.taskCount}</strong>
-                <span>${text.bundleStatTasks}</span>
-              </div>
-              <div class="bundle-stat">
-                <strong>${bundle.referenceCount}</strong>
-                <span>${text.bundleStatReferences}</span>
-              </div>
-            </div>
-            <div class="bundle-links">
-              <a class="bundle-link" href="index.html">${text.bundleHomeLink}</a>
-              <a class="bundle-link" href="library.html">${text.bundleLibraryLink}</a>
-              <a class="bundle-link" href="shortcuts.html">${text.bundleShortcutsLink}</a>
-            </div>
+            <div id="learningPanel"></div>
           </div>
         </section>
 
@@ -1343,8 +1823,10 @@
       });
 
       initProgress();
+      refreshWeekActionPanels();
       initSidebar(w);
       initStepAccordion();
+      initTaskAccordion();
     }
 
     function setStepExpanded(step, expanded) {
@@ -1368,13 +1850,23 @@
         return !step.classList.contains("is-complete");
       });
       var defaultOpenIndex = firstIncompleteIndex === -1 ? 0 : firstIncompleteIndex;
+      var hashTargetId = window.location.hash ? window.location.hash.slice(1) : "";
+      var hashStep = hashTargetId ? document.getElementById(hashTargetId) : null;
 
       steps.forEach(function(step, idx) {
         var toggle = step.querySelector("[data-step-toggle]");
         if (!toggle) return;
-        setStepExpanded(step, idx === defaultOpenIndex);
+        setStepExpanded(step, hashStep && hashStep.classList.contains("lab-step")
+          ? step === hashStep
+          : idx === defaultOpenIndex);
         toggle.addEventListener("click", function() {
-          setStepExpanded(step, step.classList.contains("is-collapsed"));
+          var shouldExpand = step.classList.contains("is-collapsed");
+          if (shouldExpand) {
+            steps.forEach(function(item) {
+              if (item !== step) setStepExpanded(item, false);
+            });
+          }
+          setStepExpanded(step, shouldExpand);
         });
       });
 
@@ -1382,7 +1874,42 @@
         link.addEventListener("click", function() {
           var targetId = link.getAttribute("href").slice(1);
           var step = document.getElementById(targetId);
-          if (step) setStepExpanded(step, true);
+          if (!step) return;
+          steps.forEach(function(item) {
+            setStepExpanded(item, item === step);
+          });
+        });
+      });
+    }
+
+    function setTaskExpanded(taskItem, expanded) {
+      var toggle = taskItem.querySelector("[data-task-toggle]");
+      var detail = taskItem.querySelector(".task-detail");
+      if (!toggle || !detail) return;
+      var nextExpanded = Boolean(expanded);
+      taskItem.classList.toggle("is-expanded", nextExpanded);
+      taskItem.classList.toggle("is-collapsed", !nextExpanded);
+      toggle.setAttribute("aria-expanded", nextExpanded ? "true" : "false");
+      detail.hidden = !nextExpanded;
+    }
+
+    function initTaskAccordion() {
+      var taskItems = Array.from(document.querySelectorAll("[data-task-item]"));
+      if (!taskItems.length) return;
+
+      taskItems.forEach(function(taskItem) {
+        var toggle = taskItem.querySelector("[data-task-toggle]");
+        if (!toggle) return;
+        setTaskExpanded(taskItem, false);
+        toggle.addEventListener("click", function() {
+          var shouldExpand = taskItem.classList.contains("is-collapsed");
+          var taskList = taskItem.closest(".task-list");
+          if (taskList) {
+            Array.from(taskList.querySelectorAll("[data-task-item]")).forEach(function(otherItem) {
+              if (otherItem !== taskItem) setTaskExpanded(otherItem, false);
+            });
+          }
+          setTaskExpanded(taskItem, shouldExpand);
         });
       });
     }
@@ -1430,6 +1957,7 @@
         progressFill.style.width = `${pct}%`;
         progressCount.textContent = `${completed} / ${steps.length}`;
         steps.forEach(updateStep);
+        refreshWeekActionPanels();
       }
 
       var state = readState();
@@ -1479,19 +2007,18 @@
       var meta = getShowMeMeta(id);
       var keywords = Array.isArray(meta.keywords) ? meta.keywords : [];
       var prerequisites = Array.isArray(meta.prerequisites) ? meta.prerequisites : [];
-      var manualSectionMap = window.SHOWME_CATALOG && window.SHOWME_CATALOG.manualSectionMap
-        ? window.SHOWME_CATALOG.manualSectionMap
-        : {};
       return {
         id: id,
         icon: meta.icon || "📖",
+        iconKey: meta.iconKey || "",
         label: meta.label || id,
         canonicalLabel: meta.label || id,
+        toolName: meta.toolName || "",
         category: meta.category || "",
         stageLabel: meta.stageLabel || "",
         keywords: keywords,
         prerequisites: prerequisites,
-        manualSection: manualSectionMap[id] || "",
+        manualSection: typeof getShowMeManualSectionId === "function" ? getShowMeManualSectionId(id) : "",
         searchText: [
           id,
           meta.label,
@@ -1571,15 +2098,28 @@
       button.type = "button";
       button.className = "showme-browser-item" + (card.id === activeShowMeWidgetId ? " is-active" : "");
 
+      var iconWrap = document.createElement("span");
+      iconWrap.innerHTML = renderShowMeIcon(card, "browser");
+      button.appendChild(iconWrap.firstChild);
+
+      var copy = document.createElement("span");
+      copy.className = "showme-browser-item-copy";
+
+      var kicker = document.createElement("span");
+      kicker.className = "showme-browser-item-kicker";
+      kicker.textContent = getShowMeKickerText(card);
+      copy.appendChild(kicker);
+
       var label = document.createElement("span");
       label.className = "showme-browser-item-label";
-      label.textContent = card.icon + " " + card.label;
-      button.appendChild(label);
+      label.textContent = card.label;
+      copy.appendChild(label);
 
       var meta = document.createElement("span");
       meta.className = "showme-browser-item-meta";
       meta.textContent = [card.category, card.stageLabel].filter(Boolean).join(" · ");
-      button.appendChild(meta);
+      copy.appendChild(meta);
+      button.appendChild(copy);
 
       button.addEventListener("click", function() {
         openShowMe(card.id);
@@ -1645,7 +2185,7 @@
       container.textContent = "";
       if (!weekData) return;
 
-      var query = showMeBrowserQuery.trim().toLowerCase();
+      var query = String(showMeBrowserQuery || "").trim().toLowerCase();
       var weekIds = getWeekShowMeIds();
       var weekIdSet = {};
       weekIds.forEach(function(id) { weekIdSet[id] = true; });
@@ -1684,6 +2224,58 @@
       }
     }
 
+    function renderShowMeRelatedPrompt(widgetId) {
+      var text = getWeekText();
+      var prompt = document.getElementById("showmeRelatedPrompt");
+      var label = document.getElementById("showmeRelatedLabel");
+      var actions = document.getElementById("showmeRelatedActions");
+      if (!prompt || !label || !actions) return;
+
+      actions.textContent = "";
+      if (!widgetId || !weekData) {
+        prompt.hidden = true;
+        prompt.classList.remove("is-visible");
+        return;
+      }
+
+      var weekIds = getWeekShowMeIds();
+      var weekIdSet = {};
+      weekIds.forEach(function(id) { weekIdSet[id] = true; });
+
+      var relatedCards = getRelatedShowMeCards(widgetId, weekIdSet, 3);
+      if (!relatedCards.length) {
+        prompt.hidden = true;
+        prompt.classList.remove("is-visible");
+        return;
+      }
+
+      label.textContent = text.showMeRelatedPrompt;
+
+      relatedCards.forEach(function(card) {
+        var button = document.createElement("button");
+        button.type = "button";
+        button.className = "showme-related-btn";
+        button.innerHTML = renderShowMeIcon(card, "pill") + '<span class="showme-related-btn-label">' + escapeHtml(card.label) + '</span>';
+        button.addEventListener("click", function() {
+          openShowMe(card.id);
+        });
+        actions.appendChild(button);
+      });
+
+      var moreButton = document.createElement("button");
+      moreButton.type = "button";
+      moreButton.className = "showme-related-btn";
+      moreButton.textContent = text.showMeRelatedMore;
+      moreButton.addEventListener("click", function() {
+        setShowMeBrowserOpen(true);
+        renderShowMeBrowser();
+      });
+      actions.appendChild(moreButton);
+
+      prompt.hidden = false;
+      prompt.classList.add("is-visible");
+    }
+
     function openShowMe(widgetId) {
       var overlay = document.getElementById("showmeOverlay");
       var iframe = document.getElementById("showmeIframe");
@@ -1699,6 +2291,7 @@
 
       title.textContent = meta.icon + " " + meta.label;
       renderShowMeBrowser();
+      renderShowMeRelatedPrompt(widgetId);
       setShowMeBrowserOpen(showMeBrowserOpen);
       iframe.onload = function() {
         normalizeShowMeLayout(iframe);
@@ -1730,6 +2323,7 @@
       iframe.onload = null;
       iframe.src = "about:blank";
       syncShowMeQuery("");
+      renderShowMeRelatedPrompt("");
       document.body.style.overflow = "";
       if (showMeLastTrigger && document.contains(showMeLastTrigger)) {
         showMeLastTrigger.focus({ preventScroll: true });
@@ -1786,6 +2380,12 @@
       renderShowMeBrowser();
       if (e.target.value && !showMeBrowserOpen) setShowMeBrowserOpen(true);
     });
+    document.getElementById("showmeBrowserReset").addEventListener("click", function() {
+      var search = document.getElementById("showmeBrowserSearch");
+      showMeBrowserQuery = "";
+      if (search) search.value = "";
+      renderShowMeBrowser();
+    });
     document.getElementById("showmeOverlay").addEventListener("click", function(e) {
       if (e.target === this) closeShowMe();
     });
@@ -1832,6 +2432,7 @@
           btn.classList.remove("is-complete");
         }
       });
+      refreshWeekActionPanels();
     }
 
     window.addEventListener("message", function(e) {
@@ -1896,8 +2497,7 @@
       if (!sidebar || !overlay || !toggleBtn || !navList) return;
 
       var sections = [
-        { id: "hero-section", label: text.sidebarOverview, group: null },
-        { id: "section-bundle", label: text.sidebarBundle, group: null }
+        { id: "hero-section", label: text.sidebarOverview, group: null }
       ];
       w.steps.forEach(function(step, idx) {
         sections.push({ id: "step-" + idx, label: step.title, group: idx === 0 ? text.sidebarPracticeGroup : null });

@@ -16,6 +16,13 @@
       : ["전체", "기타"];
   }
 
+  function getShowMeManualSectionOrder() {
+    var catalog = getCatalog();
+    return Array.isArray(catalog.manualSectionOrder) && catalog.manualSectionOrder.length
+      ? catalog.manualSectionOrder.slice()
+      : ["getting-started", "user-interface", "modeling", "sculpting-painting", "materials-uv", "rendering", "animation-rigging"];
+  }
+
   function getShowMeEntry(id) {
     var registry = global.SHOWME_REGISTRY || {};
     var catalog = getCatalog();
@@ -51,6 +58,24 @@
       entry.confusionLabel
     ].filter(Boolean);
     return parts.join(" · ");
+  }
+
+  function getShowMeManualSectionFallback(category) {
+    if (category === "Sculpting") return "sculpting-painting";
+    if (category === "Material" || category === "UV") return "materials-uv";
+    if (category === "Lighting" || category === "Rendering") return "rendering";
+    if (category === "Animation" || category === "Rigging") return "animation-rigging";
+    if (category === "Generate Modifiers" || category === "Normals") return "modeling";
+    if (category === "Edit Mode") return "user-interface";
+    return "getting-started";
+  }
+
+  function getShowMeManualSectionId(id) {
+    var catalog = getCatalog();
+    var map = catalog.manualSectionMap || {};
+    if (map[id]) return map[id];
+    var entry = getShowMeEntry(id);
+    return getShowMeManualSectionFallback(entry.category || "기타");
   }
 
   function collectShowMeIdsFromStep(step) {
@@ -355,6 +380,8 @@
   }
 
   global.getShowMeCategoryOrder = getShowMeCategoryOrder;
+  global.getShowMeManualSectionOrder = getShowMeManualSectionOrder;
+  global.getShowMeManualSectionId = getShowMeManualSectionId;
   global.getShowMeEntry = getShowMeEntry;
   global.getShowMeDifficultyLabel = getShowMeDifficultyLabel;
   global.getShowMeTooltipText = getShowMeTooltipText;

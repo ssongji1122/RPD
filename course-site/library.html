@@ -437,7 +437,7 @@
   </div>
   <script src="data/i18n-content.js?v=20260318e"></script>
   <script src="assets/i18n.js?v=20260318d"></script>
-  <script src="assets/showme/_registry.js?v=20260318c"></script>
+  <script src="assets/showme/_registry.js?v=20260318f"></script>
   <script src="assets/showme/_catalog.js?v=20260318c"></script>
   <script src="assets/showme/_supplements.js?v=20260318c"></script>
   <script src="assets/showme/_helpers.js?v=20260318c"></script>
@@ -449,9 +449,55 @@ var lastSectionTargetId = "";
 var params = new URLSearchParams(location.search);
 var requestedShowMeId = params.get("showme") || "";
 var pendingShowMeFromUrl = !!requestedShowMeId;
+var FALLBACK_LIBRARY_TEXT = {
+  pageTitle: "Show Me 카드 라이브러리 - Blender Archive",
+  metaDescription: "Blender Archive 안의 Show Me 카드를 Blender 공식 문서 흐름에 맞춰 찾는 라이브러리",
+  backHome: "← Blender Archive",
+  title: "Show Me 카드 라이브러리",
+  subtitle: "Blender 공식 문서처럼 큰 흐름으로 먼저 보고, 필요하면 검색과 ABC로 바로 좁혀보세요",
+  searchAria: "도구 검색",
+  searchPlaceholder: "예: Array, Mirror, UV...",
+  tocAria: "라이브러리 목차",
+  alphabetFilterAria: "ABC 필터",
+  contentsLabel: "목차",
+  alphabetLabel: "ABC",
+  allLetters: "전체",
+  sectionGettingStartedTitle: "시작 준비",
+  sectionGettingStartedCopy: "환경 설정과 레퍼런스 준비처럼 Blender에 들어가기 전에 먼저 잡아야 하는 시작 단계를 모았습니다.",
+  sectionUserInterfaceTitle: "기초 조작과 작업 흐름",
+  sectionUserInterfaceCopy: "화면 조작, 축 기준, Pivot, 스냅처럼 Blender 인터페이스를 읽는 법과 기본 조작 감각을 먼저 정리합니다.",
+  sectionModelingTitle: "모델링",
+  sectionModelingCopy: "형태를 만들고 다듬는 핵심 구간입니다. Edit Mode 도구, Modifier, 정리용 개념을 한 흐름으로 묶었습니다.",
+  sectionSculptingPaintingTitle: "스컬프팅 · 페인팅",
+  sectionSculptingPaintingCopy: "브러시 기반으로 형태를 밀고 다듬는 흐름을 따로 모았습니다.",
+  sectionMaterialsUvTitle: "셰이딩 · 재질 · UV",
+  sectionMaterialsUvCopy: "재질 표현과 UV 준비를 함께 보게 해 Shader와 Texture 흐름을 한 번에 찾도록 구성했습니다.",
+  sectionRenderingTitle: "렌더링",
+  sectionRenderingCopy: "조명 세팅부터 렌더 엔진, 컴포지팅까지 최종 출력 단계에서 필요한 카드를 모았습니다.",
+  sectionAnimationRiggingTitle: "애니메이션 · 리깅",
+  sectionAnimationRiggingCopy: "키프레임, 그래프 편집, Armature, Weight Paint처럼 움직임과 캐릭터 제어에 필요한 주제를 묶었습니다.",
+  modalCloseAria: "닫기",
+  showmeFrameTitle: "Show Me Widget",
+  emptyResults: "검색 결과가 없습니다"
+};
+var I18N = (function() {
+  if (window.RPDI18n) return window.RPDI18n;
+  return {
+    getStrings: function() { return FALLBACK_LIBRARY_TEXT; },
+    getShowMeLabel: function(id, meta) { return meta && meta.label ? meta.label : id; },
+    getLanguage: function() {
+      var lang = (document.documentElement && document.documentElement.lang) || "ko";
+      return /^en/i.test(lang) ? "en" : "ko";
+    },
+    getLibraryCategoryLabel: function(value) { return value; },
+    mountLanguageSwitcher: function() {},
+    onLanguageChange: function() {},
+    localizeShowMeIframe: function() {}
+  };
+})();
 
 function getText() {
-  return window.RPDI18n.getStrings("library");
+  return I18N.getStrings("library");
 }
 
 function getLocalizedMeta(id) {
@@ -459,7 +505,7 @@ function getLocalizedMeta(id) {
   return {
     raw: meta,
     icon: meta.icon,
-    label: window.RPDI18n.getShowMeLabel(id, meta)
+    label: I18N.getShowMeLabel(id, meta)
   };
 }
 
@@ -496,9 +542,8 @@ function getLibrarySections() {
     }
   };
 
-  var catalog = window.SHOWME_CATALOG || {};
-  var order = Array.isArray(catalog.manualSectionOrder) && catalog.manualSectionOrder.length
-    ? catalog.manualSectionOrder.slice()
+  var order = typeof getShowMeManualSectionOrder === "function"
+    ? getShowMeManualSectionOrder()
     : ["getting-started", "user-interface", "modeling", "sculpting-painting", "materials-uv", "rendering", "animation-rigging"];
 
   return order.map(function(id) {
@@ -514,27 +559,15 @@ function getCanonicalLabel(id) {
   return (SHOWME_REGISTRY[id] && SHOWME_REGISTRY[id].label) || id;
 }
 
+function getAlphaLabel(id) {
+  return String(id || "").replace(/[-_]+/g, " ").trim();
+}
+
 function getLetterKey(label) {
   var upper = (label || "").trim().toUpperCase();
   var first = upper.charAt(0);
   if (/^[A-Z0-9]$/.test(first)) return first;
   return "#";
-}
-
-function getFallbackSectionId(category) {
-  if (category === "Sculpting") return "sculpting-painting";
-  if (category === "Material" || category === "UV") return "materials-uv";
-  if (category === "Lighting" || category === "Rendering") return "rendering";
-  if (category === "Animation" || category === "Rigging") return "animation-rigging";
-  if (category === "Generate Modifiers" || category === "Normals") return "modeling";
-  if (category === "Edit Mode") return "user-interface";
-  return "getting-started";
-}
-
-function getSectionIdForCard(id, category) {
-  var catalog = window.SHOWME_CATALOG || {};
-  var map = catalog.manualSectionMap || {};
-  return map[id] || getFallbackSectionId(category);
 }
 
 function buildCardData(id) {
@@ -544,12 +577,16 @@ function buildCardData(id) {
     id: id,
     localizedLabel: localized.label,
     canonicalLabel: getCanonicalLabel(id),
-    alphaKey: getLetterKey(getCanonicalLabel(id)),
-    sectionId: getSectionIdForCard(id, meta.category || "기타"),
+    alphaLabel: getAlphaLabel(id),
+    alphaKey: getLetterKey(getAlphaLabel(id)),
+    sectionId: typeof getShowMeManualSectionId === "function"
+      ? getShowMeManualSectionId(id)
+      : "getting-started",
     meta: meta,
     searchText: [
       localized.label,
       getCanonicalLabel(id),
+      getAlphaLabel(id),
       meta.label,
       id,
       meta.category,
@@ -563,9 +600,9 @@ function buildCardData(id) {
 }
 
 function sortCards(a, b) {
-  var primary = a.canonicalLabel.localeCompare(b.canonicalLabel, "en", { sensitivity: "base" });
+  var primary = a.alphaLabel.localeCompare(b.alphaLabel, "en", { sensitivity: "base" });
   if (primary !== 0) return primary;
-  return a.localizedLabel.localeCompare(b.localizedLabel, window.RPDI18n.getLanguage(), { sensitivity: "base" });
+  return a.localizedLabel.localeCompare(b.localizedLabel, I18N.getLanguage(), { sensitivity: "base" });
 }
 
 function getAllCards() {
@@ -770,7 +807,7 @@ function renderSections(cards) {
 
       var subgroupTitle = document.createElement("h3");
       subgroupTitle.className = "lib-subsection-title";
-      subgroupTitle.textContent = window.RPDI18n.getLibraryCategoryLabel(category);
+      subgroupTitle.textContent = I18N.getLibraryCategoryLabel(category);
       subgroupHead.appendChild(subgroupTitle);
 
       var subgroupMeta = document.createElement("span");
@@ -797,7 +834,7 @@ function renderSections(cards) {
 function updateCount(count) {
   var total = Object.keys(SHOWME_REGISTRY).length;
   var shown = count === undefined ? total : count;
-  var lang = window.RPDI18n.getLanguage();
+  var lang = I18N.getLanguage();
   document.getElementById("libCount").textContent = shown === total
     ? (lang === "ko" ? total + "개 도구" : total + " tools")
     : (lang === "ko" ? shown + " / " + total + "개" : shown + " / " + total);
@@ -849,7 +886,7 @@ function openShowMe(widgetId) {
   iframe.onload = function() {
     normalizeShowMeLayout(this);
     injectShowMeSupplement(this, widgetId);
-    window.RPDI18n.localizeShowMeIframe(this, widgetId);
+    I18N.localizeShowMeIframe(this, widgetId);
   };
   iframe.src = "assets/showme/" + widgetId + ".html?wid=" + encodeURIComponent(widgetId) + "&v=" + cacheBust;
   overlay.classList.add("is-open");
@@ -908,8 +945,8 @@ document.addEventListener("keydown", function(e) {
   if (e.key === "Escape") closeShowMe();
 });
 
-window.RPDI18n.mountLanguageSwitcher(document.getElementById("langSwitcher"));
-window.RPDI18n.onLanguageChange(function() {
+I18N.mountLanguageSwitcher(document.getElementById("langSwitcher"));
+I18N.onLanguageChange(function() {
   renderPage();
   refreshOpenShowMe();
 });

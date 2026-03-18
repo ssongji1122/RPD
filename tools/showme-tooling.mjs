@@ -14,6 +14,32 @@ const CATALOG_JS = path.join(SHOWME_DIR, "_catalog.js");
 const SUPPLEMENTS_JSON = path.join(SHOWME_DIR, "_supplements.json");
 const SUPPLEMENTS_JS = path.join(SHOWME_DIR, "_supplements.js");
 const I18N_CONTENT_JS = path.join(ROOT, "course-site", "data", "i18n-content.js");
+const I18N_JS = path.join(ROOT, "course-site", "assets", "i18n.js");
+const SUPPORTED_MANUAL_SECTIONS = [
+  "getting-started",
+  "user-interface",
+  "modeling",
+  "sculpting-painting",
+  "materials-uv",
+  "rendering",
+  "animation-rigging"
+];
+const LIBRARY_SECTION_I18N_KEYS = [
+  "sectionGettingStartedTitle",
+  "sectionGettingStartedCopy",
+  "sectionUserInterfaceTitle",
+  "sectionUserInterfaceCopy",
+  "sectionModelingTitle",
+  "sectionModelingCopy",
+  "sectionSculptingPaintingTitle",
+  "sectionSculptingPaintingCopy",
+  "sectionMaterialsUvTitle",
+  "sectionMaterialsUvCopy",
+  "sectionRenderingTitle",
+  "sectionRenderingCopy",
+  "sectionAnimationRiggingTitle",
+  "sectionAnimationRiggingCopy"
+];
 
 function readText(filePath) {
   return fs.readFileSync(filePath, "utf8");
@@ -41,6 +67,12 @@ function evalWindowScript(filePath, expression) {
     filename: path.basename(filePath)
   });
   return context.__VALUE__;
+}
+
+function countKeyOccurrences(source, key) {
+  const escaped = key.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const matches = source.match(new RegExp(`${escaped}\\s*:`, "g"));
+  return matches ? matches.length : 0;
 }
 
 function renderJsConstant(name, data, headerLines) {
@@ -304,12 +336,14 @@ function runAudit(options) {
   const linkedIds = getLinkedWidgetIds(curriculum);
   const supplementCoverage = getSupplementCoverage(supplements);
   const expectedSources = buildExpectedGeneratedSources();
+  const i18nSource = fs.existsSync(I18N_JS) ? readText(I18N_JS) : "";
 
   const categoryMapIds = Object.keys(catalog.categoryMap || {}).sort();
   const overrideIds = Object.keys(catalog.cardOverrides || {}).sort();
   const manualSectionOrder = Array.isArray(catalog.manualSectionOrder) ? catalog.manualSectionOrder : [];
   const manualSectionMap = catalog.manualSectionMap || {};
   const manualSectionMapIds = Object.keys(manualSectionMap).sort();
+  const assignedManualSections = Object.values(manualSectionMap);
   const htmlSet = new Set(htmlCardIds);
   const registrySet = new Set(registryIds);
   const categorySet = new Set(categoryMapIds);
@@ -321,13 +355,23 @@ function runAudit(options) {
   const unregisteredHtml = htmlCardIds.filter(function(id) { return !registrySet.has(id); });
   const missingCategoryMap = registryIds.filter(function(id) { return !categorySet.has(id); });
   const invalidOverrides = overrideIds.filter(function(id) { return !registrySet.has(id); });
+  const emptyManualSectionOrder = manualSectionOrder.length ? [] : ["manualSectionOrder"];
+  const duplicateManualSections = manualSectionOrder.filter(function(sectionId, index) {
+    return manualSectionOrder.indexOf(sectionId) !== index;
+  });
+  const invalidManualSectionOrderEntries = manualSectionOrder.filter(function(sectionId) {
+    return !SUPPORTED_MANUAL_SECTIONS.includes(sectionId);
+  });
   const missingManualSectionMap = registryIds.filter(function(id) { return !manualSectionMapSet.has(id); });
   const invalidManualSectionEntries = manualSectionMapIds.filter(function(id) { return !registrySet.has(id); });
-  const unknownManualSections = Array.from(new Set(Object.values(manualSectionMap))).filter(function(sectionId) {
-    return !manualSectionSet.has(sectionId);
+  const unknownManualSections = Array.from(new Set(assignedManualSections)).filter(function(sectionId) {
+    return !manualSectionSet.has(sectionId) || !SUPPORTED_MANUAL_SECTIONS.includes(sectionId);
   });
   const unusedManualSections = manualSectionOrder.filter(function(sectionId) {
-    return !Object.values(manualSectionMap).includes(sectionId);
+    return !assignedManualSections.includes(sectionId);
+  });
+  const missingLibrarySectionI18nKeys = LIBRARY_SECTION_I18N_KEYS.filter(function(key) {
+    return countKeyOccurrences(i18nSource, key) < 2;
   });
   const unlinked = registryIds.filter(function(id) { return !linkedSet.has(id); });
 
@@ -371,10 +415,14 @@ function runAudit(options) {
       unregisteredHtml,
       missingCategoryMap,
       invalidOverrides,
+      emptyManualSectionOrder,
+      duplicateManualSections,
+      invalidManualSectionOrderEntries,
       missingManualSectionMap,
       invalidManualSectionEntries,
       unknownManualSections,
       unusedManualSections,
+      missingLibrarySectionI18nKeys,
       unlinked,
       missingHighPrioritySupplements,
       outOfSyncGeneratedFiles: syncIssues
@@ -412,10 +460,14 @@ function runAudit(options) {
     printList("Unregistered HTML", report.issues.unregisteredHtml);
     printList("Missing category mapping", report.issues.missingCategoryMap);
     printList("Invalid catalog overrides", report.issues.invalidOverrides);
+    printList("Empty manual section order", report.issues.emptyManualSectionOrder);
+    printList("Duplicate manual sections", report.issues.duplicateManualSections);
+    printList("Invalid manual section order entries", report.issues.invalidManualSectionOrderEntries);
     printList("Missing manual section mapping", report.issues.missingManualSectionMap);
     printList("Invalid manual section entries", report.issues.invalidManualSectionEntries);
     printList("Unknown manual sections", report.issues.unknownManualSections);
     printList("Unused manual sections", report.issues.unusedManualSections);
+    printList("Missing library section i18n keys", report.issues.missingLibrarySectionI18nKeys);
     printList("Unlinked cards", report.issues.unlinked);
     printList("Missing high-priority supplements", report.issues.missingHighPrioritySupplements);
     printList("Out-of-sync generated files", report.issues.outOfSyncGeneratedFiles);
@@ -426,9 +478,13 @@ function runAudit(options) {
     report.issues.unregisteredHtml,
     report.issues.missingCategoryMap,
     report.issues.invalidOverrides,
+    report.issues.emptyManualSectionOrder,
+    report.issues.duplicateManualSections,
+    report.issues.invalidManualSectionOrderEntries,
     report.issues.missingManualSectionMap,
     report.issues.invalidManualSectionEntries,
     report.issues.unknownManualSections,
+    report.issues.missingLibrarySectionI18nKeys,
     report.issues.outOfSyncGeneratedFiles
   ].some(function(list) {
     return list.length > 0;
