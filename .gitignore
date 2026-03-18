@@ -27,9 +27,13 @@ client_secret.json
 youtube_token.json
 *_token.json
 course-site/data/notion-config.json
+course-site/data/notion-config.local.json
+course-site/data/students.js
+course-site/data/students.json
 
 # Python
 __pycache__/
+.pytest_cache/
 *.pyc
 .venv/
 dist/
@@ -45,4 +49,10 @@ node_modules/
 tools/lessonforge/existing_footage/
 tools/lessonforge/output/
 tools/lessonforge/temp/
+tmp/
+.playwright-cli/
+.playwright-mcp/
+playwright-report/
+test-results/
+output/
 .env
