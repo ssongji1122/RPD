@@ -412,7 +412,7 @@ body {
 <!-- Tab Bar -->
 <nav class="tabs" role="tablist">
   <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
-  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">interaction</button>
   <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
   <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
 </nav>
@@ -471,6 +471,28 @@ body {
 
   </div>
 
+  <div class="showme-concept-visual" style="margin:20px 0 0;padding:16px 18px;border-radius:18px;border:1px solid rgba(10,132,255,.18);background:rgba(255,255,255,.02);">
+    <div style="margin:0 0 12px;padding-bottom:4px;border-bottom:1px solid var(--line);font-size:.92rem;font-weight:600;color:var(--text);">개념 이해 시각화</div>
+    <div class="scenario-nav" id="scenarioNavIR">
+      <button class="scenario-btn active" data-scene="reference" onclick="switchScenarioIR('reference')">Reference</button>
+      <button class="scenario-btn" data-scene="background" onclick="switchScenarioIR('background')">Background</button>
+      <button class="scenario-btn" data-scene="meshplane" onclick="switchScenarioIR('meshplane')">Mesh Plane</button>
+      <button class="scenario-btn" data-scene="empty" onclick="switchScenarioIR('empty')">Empty Image</button>
+    </div>
+    <div class="scene-desc-box" id="scene-desc-ir">뷰포트에 반투명하게 표시되며 렌더링에는 포함되지 않습니다. 모델링 가이드에 가장 많이 씁니다.</div>
+    <div class="before-after">
+      <div class="ba-panel">
+        <canvas id="canvas-before-ir" height="160"></canvas>
+        <div class="ba-label">뷰포트 표시</div>
+      </div>
+      <div class="ba-panel">
+        <canvas id="canvas-after-ir" height="160"></canvas>
+        <div class="ba-label" id="ba-label-after-ir">렌더 결과</div>
+      </div>
+    </div>
+    <div class="cause-effect" id="cause-effect-ir"></div>
+  </div>
+
   <div class="shortcut-list">
     <h4>주요 단축키</h4>
     <div class="shortcut-row">
@@ -498,31 +520,11 @@ body {
   </div>
 </section>
 
-<!-- TAB 2: 시각적 비교 -->
+<!-- TAB 2: interaction -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <div class="scenario-nav" id="scenarioNavIR">
-    <button class="scenario-btn active" data-scene="reference" onclick="switchScenarioIR('reference')">Reference</button>
-    <button class="scenario-btn" data-scene="background" onclick="switchScenarioIR('background')">Background</button>
-    <button class="scenario-btn" data-scene="meshplane" onclick="switchScenarioIR('meshplane')">Mesh Plane</button>
-    <button class="scenario-btn" data-scene="empty" onclick="switchScenarioIR('empty')">Empty Image</button>
-  </div>
-  <div class="scene-desc-box" id="scene-desc-ir">뷰포트에 반투명하게 표시되며 렌더링에는 포함되지 않습니다. 모델링 가이드에 가장 많이 씁니다.</div>
-  <div class="before-after">
-    <div class="ba-panel">
-      <canvas id="canvas-before-ir" height="160"></canvas>
-      <div class="ba-label">뷰포트 표시</div>
-    </div>
-    <div class="ba-panel">
-      <canvas id="canvas-after-ir" height="160"></canvas>
-      <div class="ba-label" id="ba-label-after-ir">렌더 결과</div>
-    </div>
-  </div>
-  <div class="cause-effect" id="cause-effect-ir"></div>
-
-  <!-- 인터랙티브 타입 비교 -->
   <div style="margin-top:20px">
-    <div style="font-size:.85rem;color:var(--muted-strong);font-weight:600;margin-bottom:6px">인터랙티브 타입 비교</div>
-    <p style="font-size:.82rem;color:var(--muted);margin:0 0 10px">버튼을 눌러 각 이미지 타입의 특성을 확인하세요.</p>
+    <div style="font-size:.85rem;color:var(--muted-strong);font-weight:600;margin-bottom:6px">interaction — 타입 전환</div>
+    <p style="font-size:.82rem;color:var(--muted);margin:0 0 10px">버튼을 눌러 각 이미지 타입이 뷰포트에서 어떻게 다르게 동작하는지 직접 비교하세요.</p>
     <div class="demo-wrap">
       <canvas id="demoCanvas" width="680" height="300"></canvas>
     </div>
@@ -533,6 +535,7 @@ body {
       <button class="demo-btn" id="btnEmpty">Empty Image</button>
     </div>
   </div>
+  <p class="demo-hint">Reference는 모델링 가이드, Background는 카메라 기준, Mesh Plane은 실제 메쉬, Empty Image는 나중에 이미지를 넣는 슬롯입니다.</p>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->

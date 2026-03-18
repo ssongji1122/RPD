@@ -3,56 +3,235 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Week — RPD</title>
-  <meta name="description" content="Robot Product Design 실습 페이지" />
+  <title>Week — Blender Archive</title>
+  <meta name="description" content="Blender Archive 기반 RPD 주차 페이지" />
   <link rel="stylesheet" href="assets/tokens.css" />
-  <script>/* FOUC prevention */ (function(){var t=localStorage.getItem('rpd-theme');if(t)document.documentElement.setAttribute('data-theme',t);})()</script>
+  <script>/* FOUC prevention */ (function(){var t=localStorage.getItem('rpd-theme');if(t)document.documentElement.setAttribute('data-theme',t);var l=localStorage.getItem('rpd-lang');if(l){document.documentElement.lang=l;document.documentElement.setAttribute('data-lang',l);}})()</script>
   <style>
     /* ── Week-page specific styles ── */
     .hero {
-      padding: 80px 0 16px; text-align: center;
+      padding: 28px 0 8px;
+      text-align: left;
     }
-    .hero-card { display: grid; gap: 12px; justify-items: center; width: 100%; }
+    .hero-card {
+      display: grid;
+      gap: 10px;
+      justify-items: start;
+      width: 100%;
+    }
     .hero h1 {
       margin: 0; font-family: var(--font-display);
-      font-size: clamp(1.6rem, 3.5vw, 2.4rem);
-      font-weight: 650; letter-spacing: -.026em; line-height: 1.15;
+      font-size: clamp(1.42rem, 2.2vw, 1.9rem);
+      font-weight: 620; letter-spacing: -.03em; line-height: 1.16;
     }
     .hero p {
       max-width: 720px; margin: 0;
-      color: var(--muted-strong); font-size: clamp(.98rem, 1.6vw, 1.06rem);
-      line-height: 1.8; white-space: nowrap;
+      color: var(--muted); font-size: clamp(.9rem, 1.2vw, .96rem);
+      line-height: 1.8; white-space: normal;
     }
-
-    /* Topic checklist */
-    .topic-progress { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
-    .topic-progress-bar { flex: 1; height: 4px; border-radius: 2px; background: var(--line); }
-    .topic-progress-fill { height: 100%; border-radius: 2px; background: var(--key-soft); transition: width .35s ease; width: 0%; }
-    .topic-progress-label { font-size: .78rem; color: var(--muted); white-space: nowrap; }
-
-    .topic-check-list { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 16px; }
-    .topic-check-item { position: relative; }
-    .topic-check-item input[type="checkbox"] { position: absolute; opacity: 0; width: 0; height: 0; }
+    .hero-support {
+      font-size: .78rem;
+      color: var(--muted);
+    }
+    .topic-list {
+      display: grid;
+      gap: 14px;
+    }
+    .topic-progress {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .topic-progress-bar {
+      flex: 1;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--line);
+    }
+    .topic-progress-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: 2px;
+      background: var(--key-soft);
+      transition: width .35s ease;
+    }
+    .topic-progress-label {
+      font-size: .78rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .topic-check-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px 16px;
+    }
+    .topic-check-item {
+      position: relative;
+    }
+    .topic-check-item input[type="checkbox"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
     .topic-check-item label {
-      display: flex; align-items: baseline; gap: 7px;
+      display: flex;
+      align-items: baseline;
+      gap: 7px;
       padding: 5px 0;
-      color: var(--muted-strong); font-size: .82rem;
+      color: var(--muted-strong);
+      font-size: .82rem;
       cursor: pointer;
       transition: color .14s;
       user-select: none;
     }
     .topic-check-item label::before {
-      content: "•"; flex-shrink: 0;
-      color: var(--line-strong); font-size: 1rem;
+      content: "•";
+      flex-shrink: 0;
+      color: var(--line-strong);
+      font-size: 1rem;
       transition: color .14s;
     }
-    .topic-check-item input:checked + label { color: var(--key-soft); }
-    .topic-check-item input:checked + label::before { color: var(--key-soft); }
+    .topic-check-item input:checked + label {
+      color: var(--key-soft);
+    }
+    .topic-check-item input:checked + label::before {
+      color: var(--key-soft);
+    }
+    .learning-panel {
+      display: grid;
+      gap: 14px;
+      padding: 14px 0 18px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    .learning-panel-copy {
+      display: grid;
+      gap: 10px;
+      max-width: 720px;
+    }
+    .learning-panel-title {
+      margin: 0;
+      font-size: clamp(1rem, 1.5vw, 1.18rem);
+      font-weight: 620;
+      letter-spacing: -.02em;
+      line-height: 1.3;
+    }
+    .learning-panel-text {
+      margin: 0;
+      color: var(--muted);
+      font-size: .9rem;
+      line-height: 1.7;
+    }
+    .learning-panel-stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    .learning-panel-stat {
+      display: grid;
+      gap: 4px;
+      padding: 12px 0;
+      border-right: 1px solid var(--line);
+    }
+    .learning-panel-stat:last-child { border-right: none; }
+    .learning-panel-stat strong {
+      font-size: .96rem;
+      font-weight: 620;
+      letter-spacing: -.02em;
+    }
+    .learning-panel-stat span {
+      font-size: .74rem;
+      color: var(--muted);
+    }
+    .assignment-card {
+      display: grid;
+      gap: 16px;
+      padding: 18px 0 0;
+      border-top: 1px solid var(--line);
+    }
+    .assignment-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .assignment-copy {
+      display: grid;
+      gap: 10px;
+      max-width: 720px;
+    }
+    .assignment-copy strong {
+      font-size: 1rem;
+      line-height: 1.42;
+    }
+    .assignment-copy p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.72;
+    }
+    .assignment-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line);
+      color: var(--muted-strong);
+      font-size: .76rem;
+      font-weight: 600;
+      letter-spacing: .02em;
+      white-space: nowrap;
+    }
+    .assignment-status::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--muted);
+      flex-shrink: 0;
+    }
+    .assignment-status.is-ready {
+      border-color: rgba(52,211,153,.26);
+      color: #d1fae5;
+      background: rgba(16,185,129,.08);
+    }
+    .assignment-status.is-ready::before {
+      background: #34d399;
+    }
+    .assignment-checklist {
+      margin: 0;
+      padding-left: 18px;
+      display: grid;
+      gap: 8px;
+      color: var(--muted-strong);
+      line-height: 1.7;
+    }
+    .assignment-meta {
+      font-size: .78rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .assignment-actions {
+      align-items: center;
+    }
+    .assignment-note {
+      margin: 0;
+      font-size: .76rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
 
     /* Nav between weeks */
     .week-nav {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 14px 0; border-bottom: 1px solid var(--line); margin-bottom: 48px;
+      padding: 18px 0 0;
+      border-top: 1px solid var(--line);
+      margin-bottom: 12px;
     }
     .week-nav a {
       display: flex; align-items: center; gap: 8px;
@@ -65,9 +244,88 @@
     .lab { display: grid; gap: 16px; }
     .lab-note {
       display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px;
-      padding: 14px 18px; border-radius: var(--radius-md);
-      border: 1px solid var(--line); background: var(--surface);
+      padding: 12px 0;
+      border-radius: 0;
+      border: none;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background: none;
       color: var(--muted-strong); font-size: .88rem;
+    }
+    .bundle-card {
+      display: grid;
+      gap: 14px;
+      padding: 0 0 18px;
+      border-radius: 0;
+      border: none;
+      border-bottom: 1px solid var(--line);
+      background: none;
+      box-shadow: none;
+    }
+    .bundle-copy {
+      display: grid;
+      gap: 10px;
+      max-width: 760px;
+    }
+    .bundle-copy strong {
+      font-size: .98rem;
+      line-height: 1.42;
+    }
+    .bundle-copy p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.72;
+      font-size: .92rem;
+    }
+    .bundle-stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    .bundle-stat {
+      display: grid;
+      gap: 4px;
+      padding: 14px 0;
+      border-right: 1px solid var(--line);
+      background: none;
+    }
+    .bundle-stat:last-child { border-right: none; }
+    .bundle-stat strong {
+      font-size: 1rem;
+      font-weight: 620;
+      letter-spacing: -.02em;
+    }
+    .bundle-stat span {
+      font-size: .73rem;
+      color: var(--muted);
+    }
+    .bundle-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .bundle-link {
+      display: inline-flex;
+      align-items: center;
+      padding: 0;
+      border-radius: 0;
+      border: none;
+      background: none;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: .78rem;
+      transition: color .14s;
+    }
+    .bundle-link:hover {
+      color: var(--text);
+    }
+    .section-head p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: .86rem;
     }
 
     /* Progress sticky */
@@ -77,30 +335,32 @@
     .text-key { color: var(--key-soft); }
 
     /* Responsive */
-    @media (max-width: 720px) {
-      .hero { padding-top: 72px; }
-      .sidebar { width: 80vw; max-width: 300px; }
-    }
-
     /* ── Content layout ── */
     .content-layout {
-      display: flex; position: relative;
+      width: min(calc(var(--max-width) + 120px), calc(100% - 32px));
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 250px minmax(0, 1fr);
+      gap: 36px;
+      position: relative;
+      align-items: start;
     }
 
     /* ── Sidebar ── */
     .sidebar {
-      position: fixed; top: 0; left: 0;
-      width: 240px; height: 100vh;
-      background: var(--surface);
+      position: sticky;
+      top: 76px;
+      width: 100%;
+      height: calc(100vh - 88px);
+      background: none;
       border-right: 1px solid var(--line);
-      backdrop-filter: blur(20px);
-      z-index: 50;
-      padding: 72px 0 24px;
+      z-index: 20;
+      padding: 12px 18px 32px 0;
       overflow-y: auto;
-      transform: translateX(-100%);
-      transition: transform .26s cubic-bezier(.4,0,.2,1);
+      transform: none;
+      transition: none;
     }
-    .sidebar.is-open { transform: translateX(0); }
+    .sidebar.is-open { transform: none; }
 
     .sidebar-overlay {
       display: none; position: fixed; inset: 0;
@@ -110,20 +370,19 @@
 
     .sidebar-nav { list-style: none; margin: 0; padding: 8px 0; }
     .sidebar-nav li a {
-      display: block; padding: 8px 20px;
+      display: block; padding: 7px 0 7px 14px;
       font-size: .84rem; color: var(--muted);
       border-left: 2px solid transparent;
-      transition: color .14s, border-color .14s, background .14s;
+      transition: color .14s, border-color .14s;
     }
     .sidebar-nav li a:hover {
-      color: var(--text); background: var(--overlay-white);
+      color: var(--text);
     }
     .sidebar-nav li.is-active a {
-      color: var(--key-soft); border-left-color: var(--key-soft);
-      background: rgba(10,132,255,.08);
+      color: var(--text); border-left-color: var(--key-soft);
     }
     .sidebar-nav .nav-section-label {
-      display: block; padding: 14px 20px 4px;
+      display: block; padding: 14px 0 4px 14px;
       font-size: .72rem; color: var(--muted);
       text-transform: uppercase; letter-spacing: .08em; font-weight: 600;
     }
@@ -144,31 +403,401 @@
     .main-content { flex: 1; min-width: 0; }
 
     /* ── Show Me buttons ── */
-    .showme-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
-    .btn-showme {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 8px 14px; border-radius: 999px;
-      border: 1px solid rgba(10,132,255,.3);
-      background: rgba(10,132,255,.08);
-      color: var(--key-soft); font: inherit; font-size: .82rem; font-weight: 500;
-      cursor: pointer;
-      transition: background .18s, border-color .18s, color .18s;
+    .showme-buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+      margin: 4px 0 16px;
     }
-    .btn-showme:hover {
-      background: rgba(10,132,255,.16);
-      border-color: rgba(10,132,255,.5);
-      color: #fff;
+    .btn-showme {
+      width: 100%;
+      min-height: 72px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+      font: inherit;
+      transition: transform .14s ease, border-color .14s ease, background .14s ease;
+    }
+    .btn-showme::before,
+    .btn-showme::after {
+      display: none;
+    }
+    .btn-showme:hover,
+    .btn-showme:focus-visible {
+      transform: translateY(-1px);
+      border-color: rgba(10,132,255,.26);
+      background: rgba(255,255,255,.03);
+    }
+    .btn-showme:focus-visible {
+      outline: none;
+    }
+    .btn-showme-main {
+      min-width: 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .btn-showme-icon {
+      color: rgba(241,245,249,.96);
+    }
+    .showme-icon-badge {
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color: var(--muted-strong);
+    }
+    .showme-icon-badge svg {
+      display: block;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.85;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .showme-icon-badge--card {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+    }
+    .showme-icon-badge--card svg {
+      width: 22px;
+      height: 22px;
+    }
+    .showme-icon-badge--browser {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+    }
+    .showme-icon-badge--browser svg {
+      width: 18px;
+      height: 18px;
+    }
+    .showme-icon-badge--pill {
+      width: 24px;
+      height: 24px;
+      border-radius: 8px;
+    }
+    .showme-icon-badge--pill svg {
+      width: 13px;
+      height: 13px;
+    }
+    .showme-icon-badge.is-fallback {
+      font-size: 1rem;
+      line-height: 1;
+    }
+    .showme-icon-badge--browser.is-fallback {
+      font-size: .88rem;
+    }
+    .showme-icon-badge--pill.is-fallback {
+      font-size: .76rem;
+    }
+    .btn-showme-copy {
+      min-width: 0;
+      display: grid;
+      gap: 4px;
+    }
+    .btn-showme-kicker {
+      font-size: .64rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .btn-showme-label {
+      font-size: .9rem;
+      font-weight: 600;
+      line-height: 1.42;
+      color: var(--text);
+    }
+    .btn-showme-meta {
+      font-size: .74rem;
+      line-height: 1.45;
+      color: var(--muted);
+    }
+    .btn-showme-arrow {
+      width: 22px;
+      height: 22px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      flex-shrink: 0;
+      transition: transform .14s ease, color .14s ease;
+    }
+    .btn-showme:hover .btn-showme-arrow,
+    .btn-showme:focus-visible .btn-showme-arrow {
+      transform: translateX(2px);
+      color: var(--key-soft);
     }
     .btn-showme.is-complete {
-      border-color: rgba(16,185,129,.4);
-      background: rgba(16,185,129,.08);
-      color: #34d399;
+      border-color: rgba(52,211,153,.24);
+      background: rgba(16,185,129,.05);
     }
-    .btn-showme.is-complete:hover {
-      background: rgba(16,185,129,.16);
-      border-color: rgba(16,185,129,.6);
+    .btn-showme.is-complete .showme-icon-badge {
+      border-color: rgba(52,211,153,.2);
+      background: rgba(16,185,129,.12);
+      color: #d1fae5;
     }
-    .btn-showme.is-complete::before { content: "✅ "; }
+    .btn-showme.is-complete .btn-showme-kicker,
+    .btn-showme.is-complete .btn-showme-meta {
+      color: rgba(209,250,229,.78);
+    }
+    .btn-showme.is-complete .btn-showme-arrow {
+      color: #d1fae5;
+    }
+    @media (max-width: 640px) {
+      .showme-buttons { grid-template-columns: 1fr; }
+      .btn-showme { min-height: 68px; }
+    }
+
+    /* ── Step accordion ── */
+    .step-header { margin-bottom: 0; }
+    .step-toggle {
+      width: 100%;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 0;
+      border: none;
+      background: none;
+      color: inherit;
+      text-align: left;
+      cursor: pointer;
+      font: inherit;
+    }
+    .step-toggle:focus-visible {
+      outline: none;
+    }
+    .step-title-group {
+      min-width: 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+    .step-title-text {
+      display: block;
+      line-height: 1.35;
+      padding-top: 2px;
+    }
+    .step-header-right {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+    .step-toggle-indicator {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      transition: transform .18s ease, border-color .18s ease, background .18s ease, color .18s ease;
+    }
+    .step-toggle-indicator::before {
+      content: "⌄";
+      font-size: 1rem;
+      line-height: 1;
+      transform: translateY(-1px);
+    }
+    .step-toggle:hover .step-toggle-indicator {
+      border-color: rgba(147,197,253,.22);
+      background: rgba(10,132,255,.08);
+      color: var(--key-soft);
+    }
+    .lab-step.is-expanded .step-toggle-indicator {
+      transform: rotate(180deg);
+      border-color: rgba(147,197,253,.22);
+      background: rgba(10,132,255,.08);
+      color: var(--key-soft);
+    }
+    .step-body {
+      display: grid;
+      gap: 0;
+      margin-top: 14px;
+    }
+    .step-body[hidden] { display: none; }
+    .lab-step.is-expanded {
+      border-color: rgba(147,197,253,.18);
+      box-shadow: 0 0 0 1px rgba(147,197,253,.05), var(--shadow-card);
+    }
+    .lab-step.is-collapsed {
+      padding-bottom: 18px;
+    }
+    .step-video-figure {
+      margin: 0 0 14px;
+      display: grid;
+      gap: 8px;
+    }
+    .step-video-caption {
+      color: var(--muted);
+      font-size: .78rem;
+      line-height: 1.6;
+    }
+    .step-video-yt {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border: 0;
+      border-radius: var(--radius-md);
+      background: #000;
+    }
+    .task-accordion {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+    }
+    .task-accordion-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      cursor: pointer;
+      list-style: none;
+      color: var(--muted-strong);
+      font-size: .84rem;
+      font-weight: 600;
+    }
+    .task-accordion-summary::-webkit-details-marker {
+      display: none;
+    }
+    .task-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 24px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--overlay-white);
+      color: var(--muted);
+      font-size: .72rem;
+      font-weight: 600;
+    }
+    .ref-accordion {
+      padding: 0;
+      overflow: hidden;
+    }
+    .ref-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 18px;
+      cursor: pointer;
+      list-style: none;
+    }
+    .ref-summary::-webkit-details-marker {
+      display: none;
+    }
+    .ref-summary-title {
+      font-size: .94rem;
+      font-weight: 620;
+      color: var(--text);
+    }
+    .ref-summary-meta {
+      font-size: .76rem;
+      color: var(--muted);
+      text-align: right;
+    }
+    .ref-body {
+      display: grid;
+      gap: 18px;
+      padding: 0 18px 18px;
+      border-top: 1px solid var(--line);
+    }
+    .ref-group {
+      display: grid;
+      gap: 10px;
+    }
+    .ref-group-title {
+      margin: 0;
+      font-size: .82rem;
+      font-weight: 620;
+      color: var(--muted-strong);
+      letter-spacing: .01em;
+    }
+    .ref-video-list,
+    .shortcuts-compact {
+      display: grid;
+      gap: 10px;
+    }
+    .ref-video-item {
+      display: grid;
+      gap: 4px;
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--line);
+      background: var(--surface-strong);
+      color: inherit;
+      text-decoration: none;
+      transition: border-color .15s ease, background .15s ease;
+    }
+    .ref-video-item:hover {
+      border-color: rgba(147,197,253,.28);
+      background: var(--overlay-white);
+    }
+    .ref-video-title {
+      font-size: .84rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .ref-video-desc {
+      font-size: .76rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .sc-row {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--line);
+      background: var(--surface-strong);
+    }
+    .sc-key {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 9px;
+      border-radius: 8px;
+      border: 1px solid var(--line-strong);
+      background: var(--overlay-white);
+      color: var(--key-soft);
+      font-size: .77rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .sc-action {
+      color: var(--muted-strong);
+      font-size: .82rem;
+      line-height: 1.55;
+    }
+    .ref-list {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted-strong);
+      font-size: .84rem;
+      line-height: 1.75;
+    }
+    .ref-hint {
+      color: var(--muted);
+    }
 
     /* ── Clip Player ── */
     .clip-player {
@@ -221,12 +850,15 @@
       backdrop-filter: blur(8px);
       justify-content: center; align-items: center;
       padding: 20px;
+      overscroll-behavior: contain;
     }
     .showme-overlay.is-open { display: flex; }
 
     .showme-modal {
-      width: min(960px, 92vw);
-      height: min(88vh, 800px);
+      width: min(1360px, 96vw);
+      height: min(92vh, 920px);
+      max-width: 100%;
+      max-height: 100%;
       border-radius: var(--radius-lg);
       border: 1px solid var(--line-strong);
       background: var(--surface);
@@ -250,39 +882,324 @@
       padding: 14px 18px;
       border-bottom: 1px solid var(--line);
       flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+      background: var(--surface);
     }
     .showme-modal-title {
       font-size: .9rem; font-weight: 600; color: var(--text);
+      line-height: 1.35;
+      min-width: 0;
     }
     .showme-header-actions {
       display: flex; align-items: center; gap: 6px;
+      flex-shrink: 0;
     }
-    .showme-resize, .showme-close {
+    .showme-browse-toggle,
+    .showme-resize,
+    .showme-close {
       display: grid; place-items: center;
-      width: 32px; height: 32px; border-radius: 8px;
+      width: 44px; height: 44px; border-radius: 12px;
       border: 1px solid var(--line);
       background: var(--overlay-white);
       color: var(--muted-strong); cursor: pointer;
-      transition: background .14s, color .14s;
+      transition: background .14s, color .14s, border-color .14s;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
-    .showme-resize:hover, .showme-close:hover {
+    .showme-browse-toggle:hover,
+    .showme-resize:hover,
+    .showme-close:hover {
       background: var(--overlay-white-hover); color: var(--text);
+    }
+    .showme-browse-toggle.is-active {
+      border-color: rgba(10,132,255,.34);
+      background: rgba(10,132,255,.1);
+      color: var(--key-soft);
     }
     .showme-resize .icon-restore { display: none; }
     .is-maximized .showme-resize .icon-maximize { display: none; }
     .is-maximized .showme-resize .icon-restore { display: block; }
+    .showme-modal-body {
+      display: grid;
+      grid-template-columns: 0 minmax(0, 1fr);
+      flex: 1;
+      min-height: 0;
+      position: relative;
+      transition: grid-template-columns .24s ease;
+    }
+    .showme-modal.is-browser-open .showme-modal-body {
+      grid-template-columns: minmax(300px, 332px) minmax(0, 1fr);
+    }
+    .showme-browser {
+      min-width: 0;
+      border-right: 1px solid var(--line);
+      background: var(--surface-strong);
+      overflow: hidden auto;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .18s ease;
+    }
+    .showme-modal.is-browser-open .showme-browser {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .showme-browser-header {
+      display: grid;
+      gap: 8px;
+      padding: 16px 16px 12px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    .showme-browser-search {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line-strong);
+      background: var(--surface-strong);
+      color: var(--text);
+      font: inherit;
+      font-size: .86rem;
+      outline: none;
+    }
+    .showme-browser-search:focus {
+      border-color: rgba(10,132,255,.42);
+    }
+    .showme-browser-search::placeholder {
+      color: var(--muted);
+    }
+    .showme-browser-hint {
+      margin: -2px 0 0;
+      font-size: .76rem;
+      line-height: 1.55;
+      color: var(--muted);
+    }
+    .showme-browser-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+    }
+    .showme-browser-reset {
+      font-size: .78rem;
+    }
+    .showme-browser-library-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      width: fit-content;
+      color: var(--key-soft);
+      font-size: .78rem;
+      text-decoration: none;
+    }
+    .showme-browser-library-link:hover {
+      color: #cbe4ff;
+    }
+    .showme-browser-content {
+      display: grid;
+      gap: 16px;
+      padding: 16px;
+    }
+    .showme-browser-section {
+      display: grid;
+      gap: 8px;
+    }
+    .showme-browser-section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .showme-browser-section-title {
+      font-size: .74rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .showme-browser-section-count {
+      font-size: .74rem;
+      color: var(--muted);
+    }
+    .showme-browser-list {
+      display: grid;
+      gap: 8px;
+    }
+    .showme-browser-item {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: flex-start;
+      gap: 10px;
+      width: 100%;
+      padding: 11px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+      transition: border-color .14s ease, background .14s ease, transform .14s ease;
+      font: inherit;
+    }
+    .showme-browser-item-copy {
+      min-width: 0;
+      display: grid;
+      gap: 2px;
+    }
+    .showme-browser-item-kicker {
+      font-size: .62rem;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: rgba(191,219,254,.82);
+    }
+    .showme-browser-item:hover {
+      border-color: rgba(10,132,255,.34);
+      background: rgba(255,255,255,.04);
+      transform: translateY(-1px);
+    }
+    .showme-browser-item.is-active {
+      border-color: rgba(10,132,255,.46);
+      background: rgba(10,132,255,.08);
+      box-shadow: inset 0 0 0 1px rgba(10,132,255,.12);
+    }
+    .showme-browser-item-label {
+      font-size: .85rem;
+      font-weight: 590;
+      line-height: 1.45;
+    }
+    .showme-browser-item-meta {
+      font-size: .74rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+    .showme-browser-empty {
+      padding: 12px 2px 4px;
+      color: var(--muted);
+      font-size: .82rem;
+      line-height: 1.6;
+    }
+    .showme-browser-backdrop {
+      display: none;
+    }
+    .showme-viewer {
+      min-width: 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .showme-related {
+      display: none;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface-strong);
+    }
+    .showme-related.is-visible {
+      display: flex;
+    }
+    .showme-related-copy {
+      font-size: .82rem;
+      color: var(--muted-strong);
+      line-height: 1.45;
+    }
+    .showme-related-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+    .showme-related-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--text);
+      font: inherit;
+      font-size: .78rem;
+      cursor: pointer;
+      transition: border-color .14s ease, background .14s ease, color .14s ease;
+    }
+    .showme-related-btn-label {
+      line-height: 1.3;
+    }
+    .showme-related-btn:hover {
+      border-color: rgba(10,132,255,.34);
+      background: rgba(10,132,255,.08);
+      color: var(--key-soft);
+    }
     .showme-iframe {
       flex: 1; width: 100%; border: none;
       background: var(--bg);
+      min-height: 0;
     }
 
     @media (max-width: 768px) {
       .showme-overlay { padding: 0; }
       .showme-modal {
-        width: 100%; height: 100%;
+        width: 100%;
+        height: 100dvh;
+        min-height: 100dvh;
         border-radius: 0; border: none;
       }
+      .showme-modal.is-maximized {
+        width: 100%;
+        height: 100dvh;
+      }
+      .showme-modal-header {
+        padding-top: calc(14px + env(safe-area-inset-top, 0px));
+        padding-right: calc(18px + env(safe-area-inset-right, 0px));
+        padding-left: calc(18px + env(safe-area-inset-left, 0px));
+      }
       .showme-resize { display: none; }
+    }
+    @media (max-width: 980px) {
+      .showme-modal-body {
+        display: block;
+      }
+      .showme-browser {
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: min(86vw, 340px);
+        max-width: 100%;
+        border-right: 1px solid var(--line);
+        box-shadow: 18px 0 42px rgba(0,0,0,.32);
+        transform: translateX(-100%);
+        transition: transform .24s ease, opacity .18s ease;
+        z-index: 2;
+      }
+      .showme-modal.is-browser-open .showme-browser {
+        transform: translateX(0);
+      }
+      .showme-browser-backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(0,0,0,.4);
+        z-index: 1;
+      }
+      .showme-modal.is-browser-open .showme-browser-backdrop {
+        display: block;
+      }
+      .showme-viewer {
+        height: 100%;
+      }
+      .showme-related {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+      .showme-related-actions {
+        justify-content: flex-start;
+      }
     }
 
     /* ── Student Login Overlay ───────────────────── */
@@ -327,7 +1244,7 @@
     }
     .student-login-preview .login-btn {
       display: inline-block; margin-top: 10px; padding: 9px 28px;
-      border-radius: 999px; border: none;
+      border-radius: var(--radius-sm); border: none;
       background: var(--key); color: #fff;
       font-size: .88rem; font-weight: 600; cursor: pointer;
     }
@@ -335,40 +1252,107 @@
     /* ── Student badge (topbar) ──────────────────── */
     .student-badge {
       display: none; align-items: center; gap: 6px;
-      padding: 4px 10px 4px 8px; border-radius: 999px;
-      background: rgba(10,132,255,.08); border: 1px solid rgba(10,132,255,.2);
-      font-size: .76rem; color: var(--key-soft); cursor: pointer;
+      padding: 6px 10px; border-radius: var(--radius-sm);
+      background: var(--surface-strong); border: 1px solid var(--line);
+      font-size: .76rem; color: var(--muted-strong); cursor: pointer;
       white-space: nowrap; transition: background .14s;
     }
     .student-badge.is-active { display: inline-flex; }
-    .student-badge:hover { background: rgba(10,132,255,.15); }
+    .student-badge:hover { background: var(--overlay-white-hover); }
     /* ── Guest button ── */
     .guest-btn {
       display: block; width: 100%; margin-top: 14px;
-      padding: 9px 0; border-radius: 999px;
+      padding: 9px 0; border-radius: var(--radius-sm);
       border: 1px solid var(--line);
-      background: transparent; color: var(--muted);
+      background: var(--surface-strong); color: var(--muted);
       font-size: .82rem; cursor: pointer;
       transition: color .14s, border-color .14s;
     }
     .guest-btn:hover { color: var(--text); border-color: var(--line-strong); }
     /* ── Reference tabs (topbar) ──────────────────── */
     .ref-tabs {
-      display: flex; align-items: center; gap: 6px;
+      display: flex; align-items: center; gap: 12px;
     }
     .ref-tab {
       display: inline-flex; align-items: center; gap: 5px;
-      padding: 4px 11px; border-radius: 999px;
-      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
-      font-size: .76rem; color: var(--muted-strong);
+      padding: 0;
+      border-radius: 0;
+      background: none;
+      border: none;
+      font-size: .78rem; color: var(--muted);
       text-decoration: none; white-space: nowrap;
-      transition: background .14s, border-color .14s, color .14s;
+      transition: color .14s;
     }
     .ref-tab:hover {
-      background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.2);
       color: var(--text);
     }
     @media (max-width: 600px) { .ref-tabs { display: none; } }
+
+    @media (max-width: 980px) {
+      .content-layout {
+        width: calc(100% - 20px);
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 80vw;
+        max-width: 300px;
+        height: 100vh;
+        background: var(--surface);
+        padding: 72px 0 24px;
+        border-right: 1px solid var(--line);
+        transform: translateX(-100%);
+        transition: transform .26s cubic-bezier(.4,0,.2,1);
+        z-index: 50;
+      }
+      .sidebar.is-open { transform: translateX(0); }
+      .sidebar-nav li a {
+        padding: 8px 20px;
+      }
+      .sidebar-nav .nav-section-label {
+        padding: 14px 20px 4px;
+      }
+      .sidebar-toggle {
+        display: flex;
+      }
+      .bundle-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .learning-panel-stats {
+        grid-template-columns: 1fr;
+      }
+      .learning-panel-stat {
+        border-right: none;
+        border-bottom: 1px solid var(--line);
+      }
+      .learning-panel-stat:last-child { border-bottom: none; }
+      .assignment-head {
+        flex-direction: column;
+      }
+    }
+    @media (min-width: 981px) {
+      .sidebar-toggle {
+        display: none;
+      }
+      .main-content {
+        padding-bottom: 40px;
+      }
+    }
+    @media (max-width: 720px) {
+      .hero {
+        padding-top: 72px;
+      }
+      .topic-check-list {
+        grid-template-columns: 1fr;
+      }
+      .ref-summary {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
   </style>
 </head>
 <body>
@@ -389,16 +1373,17 @@
             <div class="brand-badge" id="brandBadge">—</div>
             <div class="brand-copy">
               <strong id="brandTitle">불러오는 중...</strong>
-              <span>Robot Product Design · 2026</span>
+              <span id="brandMeta">Robot Product Design · 2026</span>
             </div>
           </a>
         </div>
         <div class="ref-tabs">
-          <a class="ref-tab" href="shortcuts.html">⌨ 단축키 DB</a>
-          <a class="ref-tab" href="https://www.notion.so/31e54d654971812e9c38f85124b45e3f" target="_blank" rel="noopener">🤖 AI 참고자료</a>
-          <a class="ref-tab" href="https://www.notion.so/31e54d65497181c89e8bfa97bb5efaa7" target="_blank" rel="noopener">🔧 블렌더 참고자료</a>
+          <a class="ref-tab" id="refShortcutsLink" href="shortcuts.html">⌨ 단축키 DB</a>
+          <a class="ref-tab" id="refAiLink" href="https://www.notion.so/31e54d654971812e9c38f85124b45e3f" target="_blank" rel="noopener">🤖 AI 참고자료</a>
+          <a class="ref-tab" id="refBlenderLink" href="https://www.notion.so/31e54d65497181c89e8bfa97bb5efaa7" target="_blank" rel="noopener">🔧 블렌더 참고자료</a>
         </div>
         <div style="display:flex;align-items:center;gap:8px">
+          <div id="langSwitcher"></div>
           <span class="student-badge" id="studentBadge" title="학생 변경" onclick="switchStudent()">👤 <span id="studentBadgeName"></span></span>
           <button class="theme-toggle" id="themeToggle" type="button" aria-label="테마 전환">
             <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
@@ -406,7 +1391,7 @@
           </button>
         </div>
         <div class="progress-widget">
-          <div class="progress-label">진도</div>
+          <div class="progress-label" id="progressLabel">진도</div>
           <div class="progress-track" aria-hidden="true">
             <div class="progress-fill" id="progressFill"></div>
           </div>
@@ -428,8 +1413,8 @@
     <footer class="page-footer">
       <div>
         Robot Product Design 2026 ·
-        <a href="index.html" style="color:var(--key-soft)">← 전체 목록</a>
-        · <a href="library.html" style="color:var(--key-soft)">도구 라이브러리</a>
+        <a href="index.html" id="footerHomeLink" style="color:var(--key-soft)">← 전체 목록</a>
+        · <a href="library.html" id="footerLibraryLink" style="color:var(--key-soft)">도구 라이브러리</a>
       </div>
     </footer>
 
@@ -439,6 +1424,12 @@
         <div class="showme-modal-header">
           <span class="showme-modal-title" id="showmeTitle"></span>
           <div class="showme-header-actions">
+            <button class="showme-browse-toggle" id="showmeBrowseToggle" aria-label="Show Me 탐색 전환" type="button" aria-pressed="false">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <rect x="1.5" y="2" width="4" height="12" rx="1.2" stroke="currentColor" stroke-width="1.4"/>
+                <path d="M8.5 4H14M8.5 8H14M8.5 12H12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              </svg>
+            </button>
             <button class="showme-resize" id="showmeResize" aria-label="크기 전환" type="button">
               <svg class="icon-maximize" width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <rect x="2.5" y="2.5" width="11" height="11" rx="1.5" stroke="currentColor" stroke-width="1.4"/>
@@ -455,295 +1446,657 @@
             </button>
           </div>
         </div>
-        <iframe class="showme-iframe" id="showmeIframe" sandbox="allow-scripts allow-same-origin" title="Show Me Widget"></iframe>
+        <div class="showme-modal-body">
+          <aside class="showme-browser" id="showmeBrowser" aria-hidden="true">
+            <div class="showme-browser-header">
+              <input class="showme-browser-search" id="showmeBrowserSearch" type="search" autocomplete="off" aria-label="Show Me 카드 검색" placeholder="연관 카드나 키워드 검색" />
+              <div class="showme-browser-actions">
+                <button class="btn-link showme-browser-reset" id="showmeBrowserReset" type="button">이번 주 카드 보기</button>
+                <a class="showme-browser-library-link" id="showmeBrowserLibraryLink" href="library.html">전체 라이브러리 열기</a>
+              </div>
+              <p class="showme-browser-hint" id="showmeBrowserHint">이번 주 카드와 연관 카드만 빠르게 탐색합니다.</p>
+            </div>
+            <div class="showme-browser-content" id="showmeBrowserContent"></div>
+          </aside>
+          <div class="showme-browser-backdrop" id="showmeBrowserBackdrop"></div>
+          <div class="showme-viewer">
+            <div class="showme-related" id="showmeRelatedPrompt" hidden>
+              <div class="showme-related-copy" id="showmeRelatedLabel"></div>
+              <div class="showme-related-actions" id="showmeRelatedActions"></div>
+            </div>
+            <iframe class="showme-iframe" id="showmeIframe" sandbox="allow-scripts allow-same-origin" title="Show Me Widget"></iframe>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- Student Login (full-page, shown when ?sid= is missing) -->
     <div class="student-login-overlay" id="studentLoginOverlay">
       <div class="student-login-card">
-        <h2>👋 학번을 입력하세요</h2>
-        <p class="login-subtitle">퀴즈 기록이 자동으로 저장됩니다</p>
+        <h2 id="studentLoginTitle">👋 바로 시작하세요</h2>
+        <p class="login-subtitle" id="studentLoginSubtitle">퀴즈 기록은 이 브라우저에만 저장됩니다</p>
         <input class="student-login-input" id="studentLoginInput"
-               type="text" placeholder="학번 8자리" maxlength="8" inputmode="numeric"
+               type="text" placeholder="이름 없이 사용 가능" maxlength="32" inputmode="text"
                autocomplete="off">
         <div class="student-login-preview" id="studentLoginPreview"></div>
-        <button class="guest-btn" type="button" onclick="loginAsGuest()">학번 없이 둘러보기</button>
+        <button class="guest-btn" id="guestBrowseBtn" type="button" onclick="loginAsGuest()">바로 둘러보기</button>
       </div>
     </div>
   </div>
 
-  <script src="data/students.js"></script>
-  <script src="assets/showme/_registry.js"></script>
-  <script src="assets/showme/_supplements.js"></script>
-  <script src="data/curriculum.js"></script>
+  <script src="data/i18n-content.js?v=20260318e"></script>
+  <script src="assets/i18n.js?v=20260318o"></script>
+  <script src="assets/showme/_registry.js?v=20260318f"></script>
+  <script src="assets/showme/_catalog.js?v=20260318c"></script>
+  <script src="assets/showme/_supplements.js?v=20260318c"></script>
+  <script src="assets/showme/_helpers.js?v=20260318c"></script>
+  <script src="data/curriculum.js?v=20260318c"></script>
   <script>
     // ════════════════════════════════════════════════
     //  Week page template engine
     //  URL: week.html?week=2  →  renders Week 02 data
     // ════════════════════════════════════════════════
 
-    const params   = new URLSearchParams(location.search);
-    const weekNum  = parseInt(params.get("week") || "1", 10);
+    const params = new URLSearchParams(location.search);
+    const weekNum = parseInt(params.get("week") || "1", 10);
+    const requestedShowMeId = params.get("showme") || "";
     const weekData = CURRICULUM.find(w => w.week === weekNum);
     const storageKey = `blender2026-week${weekNum}-v1`;
+    var pendingShowMeFromUrl = !!requestedShowMeId;
+    var currentWeekHasReference = false;
+    var activeWeekView = null;
 
-    // ─── Guard ───────────────────────────────────────
-    if (!weekData) {
-      document.getElementById("pageContent").innerHTML = `
-        <section style="padding:80px 0;text-align:center;color:var(--muted)">
-          <p>해당 주차 데이터를 찾을 수 없습니다. <a href="index.html" style="color:var(--key-soft)">← 돌아가기</a></p>
-        </section>`;
-    } else {
-      initStudentLogin();    // check ?sid= or show login overlay
-      buildPage(weekData);
-      updateShowMeBadges();  // restore completion badges from localStorage
+    function getWeekText() {
+      return window.RPDI18n.getStrings("week");
     }
 
-    // ─── Build page ─────────────────────────────────
-    function buildPage(w) {
-      document.title = `Week ${w.week} — ${w.title}`;
+    function getShowMeMeta(widgetId) {
+      var meta = getShowMeEntry(widgetId);
+      return Object.assign({}, meta, {
+        label: window.RPDI18n.getShowMeLabel(widgetId, meta)
+      });
+    }
 
-      // Topbar
+    function escapeHtml(value) {
+      return String(value == null ? "" : value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function getShowMeKickerText(meta) {
+      return meta && meta.toolName ? "Show Me · " + meta.toolName : "Show Me";
+    }
+
+    function getShowMeToolIconSvg(iconKey) {
+      var icons = {
+        "edit-mode": '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="7" cy="7" r="2"></circle><circle cx="17" cy="7" r="2"></circle><circle cx="12" cy="17" r="2"></circle><path d="M8.8 8.2 10.9 15"></path><path d="M15.2 8.2 13.1 15"></path><path d="M9 7h6"></path></svg>',
+        "extrude": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 14h8v6H8z"></path><path d="M10 4h4v3h-4z"></path><path d="M12 14V7"></path><path d="m9 9 3-3 3 3"></path></svg>',
+        "loop-cut": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h12v12H6z"></path><path d="M10 6v12"></path><path d="M14 6v12"></path><path d="m8 9 2-2 2 2"></path><path d="m12 15 2 2 2-2"></path></svg>',
+        "inset": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h12v12H6z"></path><path d="M9.5 9.5h5v5h-5z"></path><path d="M6 10h3.5"></path><path d="M10 6v3.5"></path></svg>',
+        "bevel": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18V7h11"></path><path d="M12 18h6"></path><path d="M18 12v6"></path><path d="M18 7 7 18"></path><path d="M14 7h4v4"></path></svg>',
+        "poly-circle": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 5 5 3v6l-5 3-5-3V8z"></path><circle cx="12" cy="11" r="2.8"></circle></svg>'
+      };
+      return icons[iconKey] || "";
+    }
+
+    function renderShowMeIcon(meta, variant) {
+      var sizeClass = variant === "browser"
+        ? "showme-icon-badge--browser"
+        : (variant === "pill" ? "showme-icon-badge--pill" : "showme-icon-badge--card");
+      var rootClass = (variant === "card" ? "btn-showme-icon " : "") + "showme-icon-badge " + sizeClass;
+      if (meta && meta.iconKey) {
+        return '<span class="' + rootClass + ' is-tool" aria-hidden="true">' + getShowMeToolIconSvg(meta.iconKey) + '</span>';
+      }
+      return '<span class="' + rootClass + ' is-fallback" aria-hidden="true">' + escapeHtml(meta && meta.icon ? meta.icon : "📖") + '</span>';
+    }
+
+    function buildWeekBundle(w) {
+      var showMeIds = {};
+      var taskCount = 0;
+
+      (w.steps || []).forEach(function(step) {
+        taskCount += (step.tasks || []).length;
+        collectShowMeIdsFromStep(step).forEach(function(id) {
+          showMeIds[id] = true;
+        });
+      });
+
+      return {
+        practiceCount: (w.steps || []).length,
+        showMeCount: Object.keys(showMeIds).length,
+        taskCount: taskCount,
+        referenceCount: (w.docs || []).length + (w.videos || []).length + (w.shortcuts || []).length
+      };
+    }
+
+    function getLearningState(w) {
+      var progressState = {};
+      var quizState = {};
+      try { progressState = JSON.parse(localStorage.getItem(storageKey) || "{}"); } catch (error) {}
+      try { quizState = JSON.parse(localStorage.getItem(getQuizKey()) || "{}"); } catch (error) {}
+
+      var completedSteps = 0;
+      var nextStepIndex = -1;
+      var nextShowMeId = "";
+      var totalSteps = (w.steps || []).length;
+      var allShowMeIds = {};
+
+      (w.steps || []).forEach(function(step, idx) {
+        var tasks = step.tasks || [];
+        var stepComplete = tasks.length > 0 && tasks.every(function(task) { return !!progressState[task.id]; });
+        if (stepComplete) {
+          completedSteps += 1;
+        } else if (nextStepIndex === -1) {
+          nextStepIndex = idx;
+        }
+
+        collectShowMeIdsFromStep(step).forEach(function(id) {
+          allShowMeIds[id] = true;
+          if (!nextShowMeId && (!quizState[id] || !quizState[id].pass)) nextShowMeId = id;
+        });
+      });
+
+      var allShowMeList = Object.keys(allShowMeIds);
+      var passedShowMe = allShowMeList.filter(function(id) {
+        return quizState[id] && quizState[id].pass;
+      }).length;
+
+      if (!nextShowMeId && allShowMeList.length) nextShowMeId = allShowMeList[0];
+
+      return {
+        totalSteps: totalSteps,
+        completedSteps: completedSteps,
+        nextStepIndex: totalSteps ? (nextStepIndex === -1 ? 0 : Math.min(nextStepIndex, totalSteps - 1)) : 0,
+        totalShowMe: allShowMeList.length,
+        passedShowMe: passedShowMe,
+        nextShowMeId: nextShowMeId,
+        isComplete: totalSteps > 0 && completedSteps === totalSteps
+      };
+    }
+
+    function updateLearningPanel() {
+      if (!activeWeekView) return;
+      var panel = document.getElementById("learningPanel");
+      var title = document.getElementById("learningPanelTitle");
+      var copy = document.getElementById("learningPanelText");
+      if (!panel) return;
+      var text = getWeekText();
+      var state = getLearningState(activeWeekView);
+      var titleText = state.isComplete
+        ? text.learningCompleteTitle
+        : (state.completedSteps > 0 ? text.learningContinueTitle : text.learningStartTitle);
+      var primaryLabel = state.isComplete
+        ? text.learningPrimaryReview
+        : (state.completedSteps > 0 ? text.learningPrimaryContinue : text.learningPrimaryStart);
+      var primaryTarget = state.totalSteps ? ("#step-" + state.nextStepIndex) : "#section-assignment";
+      var showMeAction = state.nextShowMeId
+        ? '<button class="btn btn-ghost" type="button" onclick="openShowMe(\'' + state.nextShowMeId + '\')">' + text.learningSecondaryShowme + '</button>'
+        : "";
+      if (title) title.textContent = titleText;
+      if (copy) copy.textContent = text.learningPanelCopy;
+
+      panel.innerHTML = `
+        <div class="cta-group">
+          <a class="btn btn-primary" href="${primaryTarget}">${primaryLabel}</a>
+          ${showMeAction}
+          <a class="btn-link" href="#section-assignment">${text.learningAssignmentCta} <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="learning-panel-stats">
+          <div class="learning-panel-stat">
+            <strong>${state.completedSteps} / ${state.totalSteps}</strong>
+            <span>${text.learningProgressSteps}</span>
+          </div>
+          <div class="learning-panel-stat">
+            <strong>${state.passedShowMe} / ${state.totalShowMe}</strong>
+            <span>${text.learningProgressShowme}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    function getAssignmentReadyKey() {
+      return storageKey + "-assignment-ready";
+    }
+
+    function isAssignmentReady() {
+      try {
+        return localStorage.getItem(getAssignmentReadyKey()) === "1";
+      } catch (error) {
+        return false;
+      }
+    }
+
+    function setAssignmentReadyState(nextReady) {
+      try {
+        if (nextReady) localStorage.setItem(getAssignmentReadyKey(), "1");
+        else localStorage.removeItem(getAssignmentReadyKey());
+      } catch (error) {}
+      refreshWeekActionPanels();
+    }
+
+    function updateAssignmentPanel() {
+      if (!activeWeekView || !activeWeekView.assignment) return;
+      var status = document.getElementById("assignmentStatus");
+      var meta = document.getElementById("assignmentMeta");
+      var actions = document.getElementById("assignmentActions");
+      var note = document.getElementById("assignmentNote");
+      if (!status || !meta || !actions || !note) return;
+
+      var text = getWeekText();
+      var state = getLearningState(activeWeekView);
+      var ready = isAssignmentReady();
+      var reviewTarget = state.totalSteps ? ("#step-" + state.nextStepIndex) : "#practice";
+      var relatedShowMeId = state.nextShowMeId || getWeekShowMeIds()[0] || "";
+
+      status.textContent = ready ? text.assignmentStatusReady : text.assignmentStatusDraft;
+      status.classList.toggle("is-ready", ready);
+
+      meta.textContent = [
+        text.assignmentProgressMeta + " " + state.completedSteps + " / " + state.totalSteps,
+        text.assignmentChecklistMeta + " " + activeWeekView.assignment.checklist.length
+      ].join(" · ");
+
+      actions.innerHTML = `
+        <button class="btn ${ready ? "btn-ghost" : "btn-primary"}" type="button" onclick="setAssignmentReadyState(${ready ? "false" : "true"})">
+          ${ready ? text.assignmentUndoAction : text.assignmentReadyAction}
+        </button>
+        <a class="btn btn-ghost" href="${reviewTarget}">${text.assignmentReviewCta}</a>
+        ${relatedShowMeId ? '<button class="btn btn-ghost" type="button" onclick="openShowMe(\'' + relatedShowMeId + '\')">' + text.assignmentShowMeCta + '</button>' : ""}
+      `;
+      note.textContent = text.assignmentStorageNote;
+    }
+
+    function refreshWeekActionPanels() {
+      updateLearningPanel();
+      updateAssignmentPanel();
+    }
+
+    function applyWeekChrome() {
+      var text = getWeekText();
+      document.getElementById("sidebarToggle").setAttribute("aria-label", text.sidebarToggleAria);
+      document.getElementById("brandMeta").textContent = text.brandMeta;
+      document.getElementById("refShortcutsLink").textContent = text.shortcutsLink;
+      document.getElementById("refAiLink").textContent = text.aiRefsLink;
+      document.getElementById("refBlenderLink").textContent = text.blenderRefsLink;
+      document.getElementById("themeToggle").setAttribute("aria-label", text.themeToggleAria);
+      document.getElementById("progressLabel").textContent = text.progressLabel;
+      document.getElementById("resetBtn").textContent = text.resetButton;
+      document.getElementById("footerHomeLink").textContent = text.footerHome;
+      document.getElementById("footerLibraryLink").textContent = text.footerLibrary;
+      document.getElementById("showmeBrowseToggle").setAttribute("aria-label", text.modalBrowseToggleAria);
+      document.getElementById("showmeResize").setAttribute("aria-label", text.modalResizeAria);
+      document.getElementById("showmeClose").setAttribute("aria-label", text.modalCloseAria);
+      document.getElementById("showmeIframe").setAttribute("title", text.showmeFrameTitle);
+      document.getElementById("showmeBrowserSearch").setAttribute("aria-label", text.modalBrowseSearchAria);
+      document.getElementById("showmeBrowserSearch").setAttribute("placeholder", text.modalBrowseSearchPlaceholder);
+      document.getElementById("showmeBrowserReset").textContent = text.modalBrowseResetCta;
+      document.getElementById("showmeBrowserHint").textContent = text.modalBrowseContextHint;
+      document.getElementById("showmeBrowserLibraryLink").textContent = text.modalBrowseLibraryLink;
+      document.getElementById("studentLoginTitle").textContent = text.loginTitle;
+      document.getElementById("studentLoginSubtitle").textContent = text.loginSubtitle;
+      document.getElementById("studentLoginInput").setAttribute("placeholder", text.loginPlaceholder);
+      document.getElementById("guestBrowseBtn").textContent = text.guestBrowse;
+      var meta = document.querySelector('meta[name="description"]');
+      if (meta) meta.setAttribute("content", text.metaDescription);
+    }
+
+    function renderMissingWeek() {
+      var text = getWeekText();
+      document.title = text.pageTitlePrefix + " - RPD";
+      document.getElementById("brandBadge").textContent = "—";
+      document.getElementById("brandTitle").textContent = text.brandLoading;
+      document.getElementById("pageContent").innerHTML = `
+        <section style="padding:80px 0;text-align:center;color:var(--muted)">
+          <p>${text.notFound} <a href="index.html" style="color:var(--key-soft)">${text.notFoundBack}</a></p>
+        </section>`;
+    }
+
+    function renderWeekPage() {
+      applyWeekChrome();
+      if (!weekData) {
+        renderMissingWeek();
+        return;
+      }
+      buildPage(window.RPDI18n.localizeWeekData(weekData));
+      renderShowMeBrowser();
+      updateShowMeBadges();
+      maybeOpenRequestedShowMe();
+    }
+
+    if (weekData) initStudentLogin();
+    window.RPDI18n.mountLanguageSwitcher(document.getElementById("langSwitcher"));
+    window.RPDI18n.onLanguageChange(function() {
+      renderWeekPage();
+      refreshOpenShowMe();
+    });
+
+    function buildPage(w) {
+      var text = getWeekText();
+      var bundle = buildWeekBundle(w);
+      var isKo = window.RPDI18n.getLanguage() === "ko";
+      var topics = Array.isArray(w.topics) ? w.topics : [];
+      var videos = Array.isArray(w.videos) ? w.videos : [];
+      var docs = Array.isArray(w.docs) ? w.docs : [];
+      var shortcuts = Array.isArray(w.shortcuts) ? w.shortcuts : [];
+      var explore = Array.isArray(w.explore) ? w.explore : [];
+      var mistakes = Array.isArray(w.mistakes) ? w.mistakes : [];
+      var assignment = w.assignment || { checklist: [] };
+      var topicStorageKey = storageKey + "-topics";
+      var savedTopics = (function() {
+        try { return JSON.parse(localStorage.getItem(topicStorageKey) || "{}"); }
+        catch (error) { return {}; }
+      }());
+      var topicTotal = topics.length;
+      var topicCheckedInit = topics.filter(function(_, idx) {
+        return savedTopics["t" + idx];
+      }).length;
+      var topicSectionLabel = isKo ? "이번 주" : "This week";
+      var taskSummaryLabel = isKo ? "체크리스트" : "Checklist";
+      var referenceSummaryTitle = isKo ? "이번 주 참고자료" : "Week resources";
+      var practiceVideoTitle = isKo ? "실습 영상" : "Practice videos";
+      var referenceSidebarLabel = isKo ? "참고자료" : "References";
+      activeWeekView = w;
+      document.title = `Week ${w.week} — ${w.title} | Blender Archive`;
       document.getElementById("brandBadge").textContent = String(w.week).padStart(2, "0");
       document.getElementById("brandTitle").textContent = `Week ${String(w.week).padStart(2, "0")} · ${w.title}`;
 
-      // Prev/Next
-      const prev = CURRICULUM.find(x => x.week === w.week - 1);
-      const next = CURRICULUM.find(x => x.week === w.week + 1);
-      const prevLink = prev
+      var prev = CURRICULUM.find(function(item) { return item.week === w.week - 1; });
+      var next = CURRICULUM.find(function(item) { return item.week === w.week + 1; });
+      var prevLink = prev
         ? `<a href="week.html?week=${prev.week}">← Week ${prev.week}</a>`
-        : `<a href="index.html">← 홈</a>`;
-      const nextLink = next
+        : `<a href="index.html">${text.homeLabel}</a>`;
+      var nextLink = next
         ? `<a href="week.html?week=${next.week}">Week ${next.week} →</a>`
-        : `<span style="opacity:.4">마지막 주차</span>`;
+        : `<span style="opacity:.4">${text.lastWeek}</span>`;
 
-      const videos = w.videos || [];
-      const docs = w.docs || [];
+      function renderReferenceLink(label, url, desc) {
+        return `<a class="doc-link" href="${url}" target="_blank" rel="noopener noreferrer">
+          <span class="doc-link-main">${label} ↗</span>
+          ${desc ? `<span class="doc-link-desc">${desc}</span>` : ""}
+        </a>`;
+      }
 
-      // Topics (checkable chips with localStorage persistence)
-      const topicStorageKey = storageKey + "-topics";
-      const savedTopics = JSON.parse(localStorage.getItem(topicStorageKey) || "{}");
-      const topicTotal = w.topics.length;
-      const topicCheckedInit = w.topics.filter((_, i) => savedTopics["t" + i]).length;
-      const topicPills =
-        "<div class=\"topic-progress\">" +
-          "<div class=\"topic-progress-bar\"><div class=\"topic-progress-fill\" id=\"topicFill\" style=\"width:" + Math.round(topicCheckedInit / topicTotal * 100) + "%\"></div></div>" +
-          "<div class=\"topic-progress-label\" id=\"topicCount\">" + topicCheckedInit + " / " + topicTotal + "</div>" +
-        "</div>" +
-        "<div class=\"topic-check-list\">" +
-        w.topics.map((t, i) => {
-          const id = "tc-" + weekNum + "-" + i;
-          const chk = savedTopics["t" + i] ? " checked" : "";
-          return "<div class=\"topic-check-item\"><input type=\"checkbox\" id=\"" + id + "\"" + chk + " data-ti=\"" + i + "\" /><label for=\"" + id + "\">" + t + "</label></div>";
-        }).join("") +
-        "</div>";
+      function stripPracticePrefix(title) {
+        return String(title || "").replace(/^\[실습\]\s*/, "");
+      }
 
-      // Steps HTML
-      const stepsHtml = w.steps.map((step, idx) => {
-        const taskItems = step.tasks.map(t => `
-          <div class="task-item">
-            <input id="${t.id}" type="checkbox" data-task-id="${t.id}" />
-            <label for="${t.id}">
-              <strong>${t.label}</strong>
-              ${t.detail ? `<small>${t.detail}</small>` : ""}
-            </label>
-          </div>`).join("");
+      var topicHtml = topicTotal ? `
+        <section class="content-block" id="section-topics">
+          <div class="section-head"><h3>${topicSectionLabel}</h3></div>
+          <div class="topic-list">
+            <div class="topic-progress">
+              <div class="topic-progress-bar"><div class="topic-progress-fill" id="topicFill" style="width:${topicTotal ? Math.round(topicCheckedInit / topicTotal * 100) : 0}%"></div></div>
+              <div class="topic-progress-label" id="topicCount">${topicCheckedInit} / ${topicTotal}</div>
+            </div>
+            <div class="topic-check-list">
+              ${topics.map(function(topic, idx) {
+                var inputId = "tc-" + weekNum + "-" + idx;
+                var checked = savedTopics["t" + idx] ? " checked" : "";
+                return `<div class="topic-check-item"><input type="checkbox" id="${inputId}"${checked} data-ti="${idx}" /><label for="${inputId}">${topic}</label></div>`;
+              }).join("")}
+            </div>
+          </div>
+        </section>` : "";
+      var savedProgressState = (function() {
+        try { return JSON.parse(localStorage.getItem(storageKey) || "{}"); }
+        catch (error) { return {}; }
+      }());
+      var initialOpenIndex = w.steps.findIndex(function(step) {
+        var tasks = Array.isArray(step.tasks) ? step.tasks : [];
+        return !tasks.length || !tasks.every(function(task) { return Boolean(savedProgressState[task.id]); });
+      });
+      if (initialOpenIndex === -1) initialOpenIndex = 0;
 
-        // Show Me buttons (only if step has showme field)
-        const showmeHtml = (() => {
-          if (!step.showme) return "";
-          const ids = Array.isArray(step.showme) ? step.showme : [step.showme];
-          return `<div class="showme-buttons">${ids.map(id => {
-            const meta = (typeof SHOWME_REGISTRY !== "undefined" && SHOWME_REGISTRY[id])
-              ? SHOWME_REGISTRY[id] : { label: id, icon: "\ud83d\udcd6" };
-            return `<button class="btn btn-showme" type="button" data-widget-id="${id}" onclick="openShowMe('${id}')">${meta.icon} ${meta.label}</button>`;
+      var stepsHtml = (w.steps || []).map(function(step, idx) {
+        var initiallyExpanded = idx === initialOpenIndex;
+        var tasks = Array.isArray(step.tasks) ? step.tasks : [];
+        var taskItems = tasks.map(function(task) {
+          var detailId = "task-detail-" + task.id;
+          return `
+            <div class="task-item ${task.detail ? "is-collapsed" : ""}" ${task.detail ? "data-task-item" : ""}>
+              <div class="task-head">
+                <input id="${task.id}" type="checkbox" data-task-id="${task.id}" />
+                <div class="task-body">
+                  ${task.detail ? `
+                    <button
+                      class="task-toggle"
+                      type="button"
+                      data-task-toggle
+                      aria-expanded="false"
+                      aria-controls="${detailId}">
+                      <span class="task-title">${task.label}</span>
+                      <span class="task-toggle-indicator" aria-hidden="true"></span>
+                    </button>
+                    <div class="task-detail" id="${detailId}" hidden>${task.detail}</div>
+                  ` : `
+                    <label for="${task.id}" class="task-label">
+                      <strong>${task.label}</strong>
+                    </label>
+                  `}
+                </div>
+              </div>
+            </div>`;
+        }).join("");
+
+        var showmeHtml = (function() {
+          var ids = collectShowMeIdsFromStep(step);
+          if (!ids.length) return "";
+          return `<div class="showme-buttons" role="group" aria-label="${text.sidebarShowMe}">${ids.map(function(id) {
+            var meta = getShowMeMeta(id);
+            var metaLine = [meta.category, meta.stageLabel].filter(Boolean).join(" · ") || text.sidebarShowMe;
+            return `<button class="btn btn-showme" type="button" data-widget-id="${id}" onclick="openShowMe('${id}')">
+              <span class="btn-showme-main">
+                ${renderShowMeIcon(meta, "card")}
+                <span class="btn-showme-copy">
+                  <span class="btn-showme-kicker">${escapeHtml(getShowMeKickerText(meta))}</span>
+                  <span class="btn-showme-label">${meta.label}</span>
+                  <span class="btn-showme-meta">${metaLine}</span>
+                </span>
+              </span>
+              <span class="btn-showme-arrow" aria-hidden="true">↗</span>
+            </button>`;
           }).join("")}</div>`;
-        })();
+        }());
 
-        const sectionDivider = step.sectionTitle
+        var sectionDivider = step.sectionTitle
           ? `<div class="step-section-divider"><span>${step.sectionTitle}</span></div>` : "";
+
+        var stepVisualHtml = step.images && step.images.length
+          ? `<div class="step-images">${step.images.map(function(img, imageIndex) {
+              return `<img src="${img}" alt="${step.title} ${imageIndex + 1}" class="step-image" loading="lazy" />`;
+            }).join("")}</div>`
+          : step.image ? `<figure class="step-image-wrap">
+              <img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" />
+              ${step.link ? `<figcaption>${renderReferenceLink(text.sectionDocs, step.link, "")}</figcaption>` : ""}
+            </figure>` : "";
+
+        var stepVideoHtml = "";
+        if (step.video) {
+          var videoSrc = typeof step.video === "string" ? step.video : step.video.src;
+          var videoCaption = typeof step.video === "object" && step.video.caption ? step.video.caption : "";
+          if (videoSrc) {
+            var ytMatch = String(videoSrc).match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([A-Za-z0-9_-]{11})/);
+            var videoEl = ytMatch
+              ? `<iframe class="step-video step-video-yt" src="https://www.youtube.com/embed/${ytMatch[1]}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen title="${text.clipTitle}"></iframe>`
+              : `<video class="step-video" controls preload="metadata"><source src="${videoSrc}" type="video/mp4" /><source src="${videoSrc}" type="video/quicktime" /></video>`;
+            stepVideoHtml = `<figure class="step-video-figure">${videoEl}${videoCaption ? `<figcaption class="step-video-caption">${videoCaption}</figcaption>` : ""}</figure>`;
+          }
+        }
 
         return `
           ${sectionDivider}
-          <article class="lab-step" id="step-${idx}" data-step-index="${idx}">
+          <article class="lab-step ${initiallyExpanded ? "is-expanded" : "is-collapsed"}" id="step-${idx}" data-step-index="${idx}">
             <div class="step-header">
-              <div class="step-title-group">
-                <div class="step-number">${idx + 1}</div>
-                <strong class="step-title-text">${step.title}</strong>
-              </div>
-              <div class="status-pill" data-step-status>진행 중</div>
+              <button
+                class="step-toggle"
+                type="button"
+                data-step-toggle
+                aria-expanded="${initiallyExpanded ? "true" : "false"}"
+                aria-label="${initiallyExpanded ? text.stepToggleCollapse : text.stepToggleExpand}"
+                aria-controls="step-body-${idx}">
+                <span class="step-title-group">
+                  <span class="step-number">${idx + 1}</span>
+                  <span class="step-title-text">${step.title}</span>
+                </span>
+                <span class="step-header-right">
+                  <span class="status-pill active" data-step-status>${text.stepStatusActive}</span>
+                  <span class="step-toggle-indicator" aria-hidden="true"></span>
+                </span>
+              </button>
             </div>
-            ${(() => {
-              if (!step.video) return "";
-              const src = typeof step.video === "string" ? step.video : step.video.src;
-              const caption = typeof step.video === "object" && step.video.caption ? step.video.caption : null;
-              const ytMatch = src.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([A-Za-z0-9_-]{11})/);
-              const videoEl = ytMatch
-                ? `<iframe class="step-video step-video-yt" src="https://www.youtube.com/embed/${ytMatch[1]}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
-                : `<video class="step-video" controls preload="metadata"><source src="${src}" type="video/mp4" /><source src="${src}" type="video/quicktime" /></video>`;
-              return `<figure class="step-video-figure">
-                ${videoEl}
-                ${caption ? `<figcaption class="step-video-caption">${caption}</figcaption>` : ""}
-              </figure>`;
-            })()}
-            <p class="step-copy">${step.copy}</p>
-            ${showmeHtml}
-            ${step.images && step.images.length
-              ? `<div class="step-images">${step.images.map((img, i) =>
-                  `<img src="${img}" alt="${step.title} ${i + 1}" class="step-image" loading="lazy" />`
-                ).join("")}</div>`
-              : step.image ? `<figure class="step-image-wrap">
-                  <img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" />
-                  ${step.link ? `<figcaption><a href="${step.link}" target="_blank" rel="noopener noreferrer" class="doc-link">공식 문서 →</a></figcaption>` : ""}
-                </figure>` : ""}
-            ${step.clips && step.clips.length ? `
-              <div class="clip-player" data-step-clips>
-                <video src="${step.clips[0].src}" autoplay loop muted playsinline
-                       onclick="this.paused ? this.play() : this.pause()"
-                       title="클릭하면 일시정지/재생"></video>
-                ${step.clips.length > 1 ? `
-                  <div class="clip-tabs">${step.clips.map((c, ci) =>
-                    `<button class="clip-tab${ci === 0 ? ' is-active' : ''}" type="button"
-                             data-clip-src="${c.src}" data-clip-idx="${ci}">${c.label}</button>`
-                  ).join('')}</div>` : ''}
-                <div class="clip-player-hint">클릭하면 일시정지 · 다시 클릭하면 재생</div>
-              </div>` : ""}
-            ${step.downloads && step.downloads.length ? `<div class="step-downloads">${step.downloads.map(dl => `<a class="step-dl-btn" href="${dl.url}" download="${dl.url.split('/').pop()}" target="_blank" rel="noopener">⬇ ${dl.label}</a>`).join("")}</div>` : ""}
-            <details class="task-accordion">
-              <summary class="task-accordion-summary">체크리스트 <span class="task-count">${step.tasks.length}</span></summary>
-              <div class="task-list">${taskItems}</div>
-            </details>
+            <div class="step-body" id="step-body-${idx}" data-step-body ${initiallyExpanded ? "" : "hidden"}>
+              ${stepVisualHtml}
+              ${stepVideoHtml}
+              ${step.clips && step.clips.length ? `
+                <div class="clip-player" data-step-clips>
+                  <video src="${step.clips[0].src}" autoplay loop muted playsinline
+                         onclick="this.paused ? this.play() : this.pause()"
+                         title="${text.clipTitle}"></video>
+                  ${step.clips.length > 1 ? `
+                    <div class="clip-tabs">${step.clips.map(function(clip, clipIndex) {
+                      return `<button class="clip-tab${clipIndex === 0 ? " is-active" : ""}" type="button"
+                               data-clip-src="${clip.src}" data-clip-idx="${clipIndex}">${clip.label}</button>`;
+                    }).join("")}</div>` : ""}
+                  <div class="clip-player-hint">${text.clipHint}</div>
+                </div>` : ""}
+              ${step.downloads && step.downloads.length ? `<div class="step-downloads">${step.downloads.map(function(download) {
+                return `<a class="step-dl-btn" href="${download.url}" download="${download.url.split("/").pop()}" target="_blank" rel="noopener">⬇ ${download.label}</a>`;
+              }).join("")}</div>` : ""}
+              <p class="step-copy">${step.copy}</p>
+              ${showmeHtml}
+              ${taskItems ? `<details class="task-accordion"><summary class="task-accordion-summary">${taskSummaryLabel}<span class="task-count">${tasks.length}</span></summary><div class="task-list">${taskItems}</div></details>` : ""}
+            </div>
           </article>`;
       }).join("");
 
-      // 참고자료 아코디언
-      const practiceVideos = videos.filter(v => v.title.includes("[실습]"));
-      const officialVideos = videos.filter(v => !v.title.includes("[실습]"));
-
-      const refSubsections = [
-        practiceVideos.length ? (
-          '<div class="ref-group">' +
-          '<h4 class="ref-group-title">📹 실습 영상</h4>' +
-          '<div class="ref-video-list">' +
-          practiceVideos.map(v =>
-            '<a class="ref-video-item" href="' + v.url + '" target="_blank" rel="noopener noreferrer">' +
-            '<span class="ref-video-title">' + v.title.replace("[실습] ", "") + ' ↗</span>' +
-            (v.description ? '<span class="ref-video-desc">' + v.description + '</span>' : '') +
-            '</a>'
-          ).join("") +
-          '</div></div>'
-        ) : "",
-
-        officialVideos.length ? (
-          '<div class="ref-group">' +
-          '<h4 class="ref-group-title">📚 공식 튜토리얼</h4>' +
-          '<div class="doc-links-row">' +
-          officialVideos.map(v =>
-            '<a class="doc-link" href="' + v.url + '" target="_blank" rel="noopener noreferrer">' +
-            '<span class="doc-link-main">▶ ' + v.title + ' ↗</span>' +
-            '</a>'
-          ).join("") +
-          '</div></div>'
-        ) : "",
-
-        docs.length ? (
-          '<div class="ref-group">' +
-          '<h4 class="ref-group-title">📄 공식 문서</h4>' +
-          '<div class="doc-links-row">' +
-          docs.map(d =>
-            '<a class="doc-link" href="' + d.url + '" target="_blank" rel="noopener noreferrer">' +
-            '<span class="doc-link-main">📄 ' + d.title + ' ↗</span>' +
-            '</a>'
-          ).join("") +
-          '</div></div>'
-        ) : "",
-
-        (w.shortcuts && w.shortcuts.length) ? (
-          '<div class="ref-group">' +
-          '<h4 class="ref-group-title">⌨️ 단축키</h4>' +
-          '<div class="shortcuts-compact">' +
-          w.shortcuts.map(s =>
-            '<div class="sc-row">' +
-            '<kbd class="sc-key">' + s.keys + '</kbd>' +
-            '<span class="sc-action">' + s.action + '</span>' +
-            '</div>'
-          ).join("") +
-          '</div></div>'
-        ) : "",
-
-        (w.explore && w.explore.length) ? (
-          '<div class="ref-group">' +
-          '<h4 class="ref-group-title">💡 더 해보기</h4>' +
-          '<ul class="ref-list">' +
-          w.explore.map(e =>
-            '<li><strong>' + e.title + '</strong>' +
-            (e.hint ? ' — <span class="ref-hint">' + e.hint + '</span>' : '') +
-            '</li>'
-          ).join("") +
-          '</ul></div>'
-        ) : "",
-
-        (w.mistakes && w.mistakes.length) ? (
-          '<div class="ref-group">' +
-          '<h4 class="ref-group-title">⚠️ 막히는 지점</h4>' +
-          '<ul class="ref-list">' +
-          w.mistakes.map(m => '<li>' + m + '</li>').join("") +
-          '</ul></div>'
-        ) : "",
-      ].filter(Boolean).join("");
-
-      const hasRef = refSubsections.length > 0;
-      const refMetaParts = [
-        practiceVideos.length ? "실습 영상 " + practiceVideos.length : "",
-        officialVideos.length ? "튜토리얼 " + officialVideos.length : "",
-        docs.length ? "문서 " + docs.length : "",
-        (w.shortcuts && w.shortcuts.length) ? "단축키 " + w.shortcuts.length : "",
-      ].filter(Boolean).join(" · ");
-      const refHtml = hasRef ? (
-        '<section class="content-block" id="section-reference">' +
-        '<details class="card ref-accordion">' +
-        '<summary class="ref-summary">' +
-        '<span class="ref-summary-title">이번 주 참고자료</span>' +
-        '<span class="ref-summary-meta">' + refMetaParts + '</span>' +
-        '</summary>' +
-        '<div class="ref-body">' + refSubsections + '</div>' +
-        '</details>' +
-        '</section>'
-      ) : "";
-
-      // Assignment
-      const assignmentCheckli = w.assignment.checklist.map(c => `<li>${c}</li>`).join("");
-      const assignmentHtml = `
-        <section class="content-block" id="section-assignment">
-          <div class="section-head"><h3>과제</h3></div>
-          <div class="card assignment-card">
-            <div class="card-chip">과제</div>
-            <strong>${w.assignment.title}</strong>
-            <p style="color:var(--muted);line-height:1.72;margin:0">${w.assignment.description}</p>
-            <ul>${assignmentCheckli}</ul>
+      var practiceVideos = videos.filter(function(video) {
+        return /^\[실습\]/.test(String(video.title || ""));
+      });
+      var officialVideos = videos.filter(function(video) {
+        return !/^\[실습\]/.test(String(video.title || ""));
+      });
+      var refSubsections = [
+        practiceVideos.length ? `<div class="ref-group">
+          <h4 class="ref-group-title">📹 ${practiceVideoTitle}</h4>
+          <div class="ref-video-list">
+            ${practiceVideos.map(function(video) {
+              return `<a class="ref-video-item" href="${video.url}" target="_blank" rel="noopener noreferrer">
+                <span class="ref-video-title">${stripPracticePrefix(video.title)}</span>
+                ${video.description ? `<span class="ref-video-desc">${video.description}</span>` : ""}
+              </a>`;
+            }).join("")}
           </div>
-        </section>`;
+        </div>` : "",
+        officialVideos.length ? `<div class="ref-group">
+          <h4 class="ref-group-title">📚 ${text.sectionVideos}</h4>
+          <div class="doc-links-row">
+            ${officialVideos.map(function(video) {
+              return renderReferenceLink("▶ " + video.title, video.url, video.description || "");
+            }).join("")}
+          </div>
+        </div>` : "",
+        docs.length ? `<div class="ref-group">
+          <h4 class="ref-group-title">📄 ${text.sectionDocs}</h4>
+          <div class="doc-links-row">
+            ${docs.map(function(doc) {
+              return renderReferenceLink("📄 " + doc.title, doc.url, doc.description || "");
+            }).join("")}
+          </div>
+        </div>` : "",
+        shortcuts.length ? `<div class="ref-group">
+          <h4 class="ref-group-title">⌨ ${text.sectionShortcuts}</h4>
+          <div class="shortcuts-compact">
+            ${shortcuts.map(function(shortcut) {
+              return `<div class="sc-row"><kbd class="sc-key">${shortcut.keys}</kbd><span class="sc-action">${shortcut.action}</span></div>`;
+            }).join("")}
+          </div>
+        </div>` : "",
+        explore.length ? `<div class="ref-group">
+          <h4 class="ref-group-title">💡 ${text.sectionExplore}</h4>
+          <ul class="ref-list">
+            ${explore.map(function(item) {
+              return `<li><strong>${item.title}</strong>${item.hint ? ` — <span class="ref-hint">${item.hint}</span>` : ""}</li>`;
+            }).join("")}
+          </ul>
+        </div>` : "",
+        mistakes.length ? `<div class="ref-group">
+          <h4 class="ref-group-title">⚠ ${text.sectionMistakes}</h4>
+          <ul class="ref-list">${mistakes.map(function(mistake) {
+            return `<li>${mistake}</li>`;
+          }).join("")}</ul>
+        </div>` : ""
+      ].filter(Boolean).join("");
+      var refMetaParts = [
+        practiceVideos.length ? practiceVideoTitle + " " + practiceVideos.length : "",
+        officialVideos.length ? text.sectionVideos + " " + officialVideos.length : "",
+        docs.length ? text.sectionDocs + " " + docs.length : "",
+        shortcuts.length ? text.sectionShortcuts + " " + shortcuts.length : ""
+      ].filter(Boolean).join(" · ");
+      var hasRef = refSubsections.length > 0;
+      currentWeekHasReference = hasRef;
+      var refHtml = hasRef ? `
+        <section class="content-block" id="section-reference">
+          <details class="card ref-accordion">
+            <summary class="ref-summary">
+              <span class="ref-summary-title">${referenceSummaryTitle}</span>
+              <span class="ref-summary-meta">${refMetaParts}</span>
+            </summary>
+            <div class="ref-body">${refSubsections}</div>
+          </details>
+        </section>` : "";
 
-      // Full page — all data sourced from curriculum.js (trusted, no user input)
+      var assignmentChecklist = Array.isArray(assignment.checklist)
+        ? assignment.checklist.map(function(item) { return `<li>${item}</li>`; }).join("")
+        : "";
+      var assignmentHtml = assignment.title ? `
+        <section class="content-block" id="section-assignment">
+          <div class="section-head"><h3>${text.sectionAssignment}</h3></div>
+          <div class="card assignment-card">
+            <div class="assignment-head">
+              <div class="assignment-copy">
+                <div class="card-chip">${text.assignmentChip}</div>
+                <strong>${assignment.title}</strong>
+                <p>${assignment.description || ""}</p>
+              </div>
+              <span class="assignment-status" id="assignmentStatus">${text.assignmentStatusDraft}</span>
+            </div>
+            <ul class="assignment-checklist">${assignmentChecklist}</ul>
+            <div class="assignment-meta" id="assignmentMeta"></div>
+            <div class="cta-group assignment-actions" id="assignmentActions"></div>
+            <p class="assignment-note" id="assignmentNote"></p>
+          </div>
+        </section>` : "";
+
       document.getElementById("pageContent").innerHTML = `
-        <!-- Hero -->
         <section class="hero" id="hero-section">
           <div class="hero-card">
-            <div class="eyebrow">Week ${String(w.week).padStart(2,"0")} · RPD</div>
-            <h1>${w.title}</h1>
+            <h1>Week ${String(w.week).padStart(2, "0")} · ${w.title}</h1>
+            ${w.subtitle ? `<p>${w.subtitle}</p>` : ""}
+            <div class="hero-support">${[w.duration, bundle.practiceCount + " " + text.bundleStatPractice, bundle.showMeCount + " " + text.bundleStatShowme].filter(Boolean).join(" · ")}</div>
           </div>
         </section>
 
-        <!-- Topics -->
         <section class="content-block">
-          <div class="section-head"><h3>이번 주</h3></div>
-          <div class="topic-list">${topicPills}</div>
+          <div class="learning-panel">
+            <div class="learning-panel-copy">
+              <span class="eyebrow">${text.learningEyebrow}</span>
+              <h2 class="learning-panel-title" id="learningPanelTitle"></h2>
+              <p class="learning-panel-text" id="learningPanelText"></p>
+            </div>
+            <div id="learningPanel"></div>
+          </div>
         </section>
 
-        <!-- Lab (Steps) -->
+        ${topicHtml}
+
         <section class="content-block" id="practice">
-          <div class="section-head"><h3>실습</h3></div>
+          <div class="section-head">
+            <h3>${text.sectionPractice}</h3>
+            <p>${text.sectionPracticeDesc}</p>
+          </div>
           <div class="lab">
             ${stepsHtml}
           </div>
@@ -752,11 +2105,10 @@
         ${refHtml}
         ${assignmentHtml}
 
-        <!-- Week nav -->
         <section class="content-block">
           <div class="week-nav">
             ${prevLink}
-            <a href="index.html" style="color:var(--muted)">목록</a>
+            <a href="index.html" style="color:var(--muted)">${text.listLabel}</a>
             ${nextLink}
           </div>
         </section>
@@ -764,234 +2116,577 @@
         <div style="height:60px"></div>
       `;
 
-      // ─── Clip tab switching ───
       document.querySelectorAll(".clip-player").forEach(function(player) {
         player.querySelectorAll(".clip-tab").forEach(function(tab) {
           tab.addEventListener("click", function() {
-            player.querySelectorAll(".clip-tab").forEach(function(t) { t.classList.remove("is-active"); });
+            player.querySelectorAll(".clip-tab").forEach(function(item) { item.classList.remove("is-active"); });
             tab.classList.add("is-active");
             var video = player.querySelector("video");
+            if (!video) return;
             video.src = tab.dataset.clipSrc;
             video.play();
           });
         });
       });
 
-      // Init progress engine
-      initProgress(w.steps.length);
-      initTopicChecks(w.topics.length, topicStorageKey);
+      initProgress();
+      initTopicChecks(topicTotal, topicStorageKey);
+      refreshWeekActionPanels();
       initSidebar(w);
+      initStepAccordion();
+      initTaskAccordion();
     }
 
-    // ─── Topic check engine ──────────────────────────
-    function initTopicChecks(total, key) {
-      const fill  = document.getElementById("topicFill");
-      const count = document.getElementById("topicCount");
-      if (!fill || !count) return;
-      function updateTopicProgress() {
-        const all     = [...document.querySelectorAll(".topic-check-list input[type='checkbox']")];
-        const checked = all.filter(c => c.checked).length;
-        const pct     = total > 0 ? Math.round(checked / total * 100) : 0;
-        fill.style.width  = pct + "%";
-        count.textContent = checked + " / " + total;
-        const state = {};
-        all.forEach((c, i) => { state["t" + i] = c.checked; });
-        localStorage.setItem(key, JSON.stringify(state));
-      }
-      document.querySelectorAll(".topic-check-list input[type='checkbox']").forEach(cb => {
-        cb.addEventListener("change", updateTopicProgress);
+    function setStepExpanded(step, expanded) {
+      var text = getWeekText();
+      var toggle = step.querySelector("[data-step-toggle]");
+      var body = step.querySelector("[data-step-body]");
+      if (!toggle || !body) return;
+      var nextExpanded = Boolean(expanded);
+      step.classList.toggle("is-expanded", nextExpanded);
+      step.classList.toggle("is-collapsed", !nextExpanded);
+      toggle.setAttribute("aria-expanded", nextExpanded ? "true" : "false");
+      toggle.setAttribute("aria-label", nextExpanded ? text.stepToggleCollapse : text.stepToggleExpand);
+      body.hidden = !nextExpanded;
+    }
+
+    function initStepAccordion() {
+      var steps = Array.from(document.querySelectorAll(".lab-step"));
+      if (!steps.length) return;
+
+      var firstIncompleteIndex = steps.findIndex(function(step) {
+        return !step.classList.contains("is-complete");
+      });
+      var defaultOpenIndex = firstIncompleteIndex === -1 ? 0 : firstIncompleteIndex;
+      var hashTargetId = window.location.hash ? window.location.hash.slice(1) : "";
+      var hashStep = hashTargetId ? document.getElementById(hashTargetId) : null;
+
+      steps.forEach(function(step, idx) {
+        var toggle = step.querySelector("[data-step-toggle]");
+        if (!toggle) return;
+        setStepExpanded(step, hashStep && hashStep.classList.contains("lab-step")
+          ? step === hashStep
+          : idx === defaultOpenIndex);
+        toggle.addEventListener("click", function() {
+          var shouldExpand = step.classList.contains("is-collapsed");
+          if (shouldExpand) {
+            steps.forEach(function(item) {
+              if (item !== step) setStepExpanded(item, false);
+            });
+          }
+          setStepExpanded(step, shouldExpand);
+        });
+      });
+
+      document.querySelectorAll('a[href^="#step-"]').forEach(function(link) {
+        link.addEventListener("click", function() {
+          var targetId = link.getAttribute("href").slice(1);
+          var step = document.getElementById(targetId);
+          if (!step) return;
+          steps.forEach(function(item) {
+            setStepExpanded(item, item === step);
+          });
+        });
       });
     }
 
-    // ─── Progress engine ─────────────────────────────
-    function initProgress(totalSteps) {
-      const steps       = [...document.querySelectorAll(".lab-step")];
-      const progressFill  = document.getElementById("progressFill");
-      const progressCount = document.getElementById("progressCount");
-      const resetBtn      = document.getElementById("resetBtn");
+    function setTaskExpanded(taskItem, expanded) {
+      var toggle = taskItem.querySelector("[data-task-toggle]");
+      var detail = taskItem.querySelector(".task-detail");
+      if (!toggle || !detail) return;
+      var nextExpanded = Boolean(expanded);
+      taskItem.classList.toggle("is-expanded", nextExpanded);
+      taskItem.classList.toggle("is-collapsed", !nextExpanded);
+      toggle.setAttribute("aria-expanded", nextExpanded ? "true" : "false");
+      detail.hidden = !nextExpanded;
+    }
+
+    function initTaskAccordion() {
+      var taskItems = Array.from(document.querySelectorAll("[data-task-item]"));
+      if (!taskItems.length) return;
+
+      taskItems.forEach(function(taskItem) {
+        var toggle = taskItem.querySelector("[data-task-toggle]");
+        if (!toggle) return;
+        setTaskExpanded(taskItem, false);
+        toggle.addEventListener("click", function() {
+          var shouldExpand = taskItem.classList.contains("is-collapsed");
+          var taskList = taskItem.closest(".task-list");
+          if (taskList) {
+            Array.from(taskList.querySelectorAll("[data-task-item]")).forEach(function(otherItem) {
+              if (otherItem !== taskItem) setTaskExpanded(otherItem, false);
+            });
+          }
+          setTaskExpanded(taskItem, shouldExpand);
+        });
+      });
+    }
+
+    function initTopicChecks(total, key) {
+      var fill = document.getElementById("topicFill");
+      var count = document.getElementById("topicCount");
+      if (!fill || !count) return;
+
+      function updateTopicProgress() {
+        var all = Array.from(document.querySelectorAll(".topic-check-list input[type='checkbox']"));
+        var checked = all.filter(function(input) { return input.checked; }).length;
+        var pct = total > 0 ? Math.round(checked / total * 100) : 0;
+        var state = {};
+        all.forEach(function(input, idx) {
+          state["t" + idx] = input.checked;
+        });
+        fill.style.width = pct + "%";
+        count.textContent = checked + " / " + total;
+        localStorage.setItem(key, JSON.stringify(state));
+      }
+
+      document.querySelectorAll(".topic-check-list input[type='checkbox']").forEach(function(input) {
+        input.addEventListener("change", updateTopicProgress);
+      });
+    }
+
+    function initProgress() {
+      var text = getWeekText();
+      var steps = Array.from(document.querySelectorAll(".lab-step"));
+      var progressFill = document.getElementById("progressFill");
+      var progressCount = document.getElementById("progressCount");
+      var resetBtn = document.getElementById("resetBtn");
 
       function readState() {
         try { return JSON.parse(localStorage.getItem(storageKey) || "{}"); }
-        catch { return {}; }
+        catch (error) { return {}; }
       }
+
       function writeState(state) {
         localStorage.setItem(storageKey, JSON.stringify(state));
       }
+
       function getTasks(step) {
-        return [...step.querySelectorAll("input[type='checkbox'][data-task-id]")];
+        return Array.from(step.querySelectorAll("input[type='checkbox'][data-task-id]"));
       }
+
       function isComplete(step) {
-        return getTasks(step).every(t => t.checked);
+        return getTasks(step).every(function(task) { return task.checked; });
       }
 
       function updateStep(step) {
-        const pill     = step.querySelector("[data-step-status]");
-        const complete = isComplete(step);
+        var pill = step.querySelector("[data-step-status]");
+        var complete = isComplete(step);
         step.classList.toggle("is-complete", complete);
-        if (complete) { pill.textContent = "완료"; pill.className = "status-pill complete"; }
-        else          { pill.textContent = "진행 중"; pill.className = "status-pill active"; }
+        if (complete) {
+          pill.textContent = text.stepStatusComplete;
+          pill.className = "status-pill complete";
+        } else {
+          pill.textContent = text.stepStatusActive;
+          pill.className = "status-pill active";
+        }
       }
 
       function sync() {
-        const completed = steps.filter(isComplete).length;
-        const pct = steps.length ? (completed / steps.length) * 100 : 0;
-        progressFill.style.width  = `${pct}%`;
+        var completed = steps.filter(isComplete).length;
+        var pct = steps.length ? (completed / steps.length) * 100 : 0;
+        progressFill.style.width = `${pct}%`;
         progressCount.textContent = `${completed} / ${steps.length}`;
-
-        steps.forEach(step => updateStep(step));
+        steps.forEach(updateStep);
+        refreshWeekActionPanels();
       }
 
-      function loadState() {
-        const state = readState();
-        steps.forEach(step => {
-          getTasks(step).forEach(task => {
-            task.checked = Boolean(state[task.dataset.taskId]);
-            task.addEventListener("change", () => {
-              const s = readState();
-              s[task.dataset.taskId] = task.checked;
-              writeState(s);
-              sync();
-            });
+      var state = readState();
+      steps.forEach(function(step) {
+        getTasks(step).forEach(function(task) {
+          task.checked = Boolean(state[task.dataset.taskId]);
+          task.addEventListener("change", function() {
+            var nextState = readState();
+            nextState[task.dataset.taskId] = task.checked;
+            writeState(nextState);
+            sync();
           });
         });
-        sync();
-      }
+      });
 
-      resetBtn.addEventListener("click", () => {
+      resetBtn.onclick = function() {
         localStorage.removeItem(storageKey);
-        steps.forEach(step => getTasks(step).forEach(t => { t.checked = false; }));
+        steps.forEach(function(step) {
+          getTasks(step).forEach(function(task) { task.checked = false; });
+        });
         sync();
+      };
+
+      sync();
+    }
+
+    var showMeLastTrigger = null;
+    var activeShowMeWidgetId = null;
+    var showMeBrowserOpen = window.innerWidth >= 1100;
+    var showMeBrowserQuery = "";
+
+    function getWeekShowMeIds() {
+      var ids = [];
+      var seen = {};
+      if (!weekData || !Array.isArray(weekData.steps)) return ids;
+      weekData.steps.forEach(function(step) {
+        collectShowMeIdsFromStep(step).forEach(function(id) {
+          if (!id || seen[id]) return;
+          seen[id] = true;
+          ids.push(id);
+        });
+      });
+      return ids;
+    }
+
+    function buildShowMeBrowserCard(id) {
+      var meta = getShowMeMeta(id);
+      var keywords = Array.isArray(meta.keywords) ? meta.keywords : [];
+      var prerequisites = Array.isArray(meta.prerequisites) ? meta.prerequisites : [];
+      return {
+        id: id,
+        icon: meta.icon || "📖",
+        iconKey: meta.iconKey || "",
+        label: meta.label || id,
+        canonicalLabel: meta.label || id,
+        toolName: meta.toolName || "",
+        category: meta.category || "",
+        stageLabel: meta.stageLabel || "",
+        keywords: keywords,
+        prerequisites: prerequisites,
+        manualSection: typeof getShowMeManualSectionId === "function" ? getShowMeManualSectionId(id) : "",
+        searchText: [
+          id,
+          meta.label,
+          meta.category,
+          meta.stageLabel,
+          meta.confusionLabel,
+          meta.audienceNeed,
+          keywords.join(" "),
+          prerequisites.join(" ")
+        ].join(" ").toLowerCase()
+      };
+    }
+
+    function sortShowMeBrowserCards(cards) {
+      return cards.slice().sort(function(a, b) {
+        return a.label.localeCompare(b.label, window.RPDI18n.getLanguage(), { sensitivity: "base" });
+      });
+    }
+
+    function getAllShowMeBrowserCards() {
+      return sortShowMeBrowserCards(Object.keys(SHOWME_REGISTRY || {}).map(buildShowMeBrowserCard));
+    }
+
+    function getSharedShowMeTermScore(baseCard, candidateCard) {
+      var score = 0;
+      var baseTerms = {};
+      []
+        .concat(baseCard.keywords || [])
+        .concat(baseCard.prerequisites || [])
+        .concat((baseCard.canonicalLabel || "").split(/[\s/,-]+/))
+        .forEach(function(term) {
+          var normalized = String(term || "").trim().toLowerCase();
+          if (normalized.length >= 3) baseTerms[normalized] = true;
+        });
+
+      []
+        .concat(candidateCard.keywords || [])
+        .concat(candidateCard.prerequisites || [])
+        .concat((candidateCard.canonicalLabel || "").split(/[\s/,-]+/))
+        .forEach(function(term) {
+          var normalized = String(term || "").trim().toLowerCase();
+          if (baseTerms[normalized]) score += 1;
+        });
+
+      return score;
+    }
+
+    function getRelatedShowMeCards(widgetId, weekIdSet, limit) {
+      var current = buildShowMeBrowserCard(widgetId);
+      return getAllShowMeBrowserCards()
+        .filter(function(card) {
+          return card.id !== widgetId && !weekIdSet[card.id];
+        })
+        .map(function(card) {
+          var score = 0;
+          if (card.category && current.category && card.category === current.category) score += 5;
+          if (card.manualSection && current.manualSection && card.manualSection === current.manualSection) score += 3;
+          if (card.stageLabel && current.stageLabel && card.stageLabel === current.stageLabel) score += 1;
+          score += getSharedShowMeTermScore(current, card);
+          return { card: card, score: score };
+        })
+        .filter(function(item) { return item.score > 0; })
+        .sort(function(a, b) {
+          if (b.score !== a.score) return b.score - a.score;
+          return a.card.label.localeCompare(b.card.label, window.RPDI18n.getLanguage(), { sensitivity: "base" });
+        })
+        .slice(0, limit || 8)
+        .map(function(item) { return item.card; });
+    }
+
+    function matchesShowMeBrowserQuery(card, query) {
+      return !query || card.searchText.indexOf(query) !== -1;
+    }
+
+    function createShowMeBrowserItem(card) {
+      var button = document.createElement("button");
+      button.type = "button";
+      button.className = "showme-browser-item" + (card.id === activeShowMeWidgetId ? " is-active" : "");
+
+      var iconWrap = document.createElement("span");
+      iconWrap.innerHTML = renderShowMeIcon(card, "browser");
+      button.appendChild(iconWrap.firstChild);
+
+      var copy = document.createElement("span");
+      copy.className = "showme-browser-item-copy";
+
+      var kicker = document.createElement("span");
+      kicker.className = "showme-browser-item-kicker";
+      kicker.textContent = getShowMeKickerText(card);
+      copy.appendChild(kicker);
+
+      var label = document.createElement("span");
+      label.className = "showme-browser-item-label";
+      label.textContent = card.label;
+      copy.appendChild(label);
+
+      var meta = document.createElement("span");
+      meta.className = "showme-browser-item-meta";
+      meta.textContent = [card.category, card.stageLabel].filter(Boolean).join(" · ");
+      copy.appendChild(meta);
+      button.appendChild(copy);
+
+      button.addEventListener("click", function() {
+        openShowMe(card.id);
+      });
+      return button;
+    }
+
+    function appendShowMeBrowserSection(container, title, cards) {
+      if (!cards.length) return false;
+
+      var section = document.createElement("section");
+      section.className = "showme-browser-section";
+
+      var head = document.createElement("div");
+      head.className = "showme-browser-section-head";
+
+      var heading = document.createElement("div");
+      heading.className = "showme-browser-section-title";
+      heading.textContent = title;
+      head.appendChild(heading);
+
+      var count = document.createElement("span");
+      count.className = "showme-browser-section-count";
+      count.textContent = cards.length;
+      head.appendChild(count);
+
+      section.appendChild(head);
+
+      var list = document.createElement("div");
+      list.className = "showme-browser-list";
+      cards.forEach(function(card) {
+        list.appendChild(createShowMeBrowserItem(card));
+      });
+      section.appendChild(list);
+
+      container.appendChild(section);
+      return true;
+    }
+
+    function setShowMeBrowserOpen(nextOpen) {
+      var modal = document.querySelector(".showme-modal");
+      var browser = document.getElementById("showmeBrowser");
+      var toggle = document.getElementById("showmeBrowseToggle");
+      if (!modal || !browser || !toggle) return;
+      showMeBrowserOpen = Boolean(nextOpen);
+      modal.classList.toggle("is-browser-open", showMeBrowserOpen);
+      browser.setAttribute("aria-hidden", showMeBrowserOpen ? "false" : "true");
+      toggle.classList.toggle("is-active", showMeBrowserOpen);
+      toggle.setAttribute("aria-pressed", showMeBrowserOpen ? "true" : "false");
+    }
+
+    function renderShowMeBrowser() {
+      var text = getWeekText();
+      var container = document.getElementById("showmeBrowserContent");
+      var link = document.getElementById("showmeBrowserLibraryLink");
+      if (!container || !link) return;
+
+      link.textContent = text.modalBrowseLibraryLink;
+      link.href = activeShowMeWidgetId
+        ? "library.html?showme=" + encodeURIComponent(activeShowMeWidgetId)
+        : "library.html";
+
+      container.textContent = "";
+      if (!weekData) return;
+
+      var query = String(showMeBrowserQuery || "").trim().toLowerCase();
+      var weekIds = getWeekShowMeIds();
+      var weekIdSet = {};
+      weekIds.forEach(function(id) { weekIdSet[id] = true; });
+
+      if (query) {
+        var results = getAllShowMeBrowserCards()
+          .filter(function(card) { return matchesShowMeBrowserQuery(card, query); })
+          .sort(function(a, b) {
+            if (weekIdSet[a.id] !== weekIdSet[b.id]) return weekIdSet[a.id] ? -1 : 1;
+            return a.label.localeCompare(b.label, window.RPDI18n.getLanguage(), { sensitivity: "base" });
+          })
+          .slice(0, 24);
+
+        if (!appendShowMeBrowserSection(container, text.modalBrowseResults, results)) {
+          var empty = document.createElement("div");
+          empty.className = "showme-browser-empty";
+          empty.textContent = text.modalBrowseEmpty;
+          container.appendChild(empty);
+        }
+        return;
+      }
+
+      var weekCards = sortShowMeBrowserCards(weekIds.map(buildShowMeBrowserCard));
+      var relatedCards = activeShowMeWidgetId
+        ? getRelatedShowMeCards(activeShowMeWidgetId, weekIdSet, 8)
+        : [];
+      var hasContent = false;
+      hasContent = appendShowMeBrowserSection(container, text.modalBrowseCurrent, weekCards) || hasContent;
+      hasContent = appendShowMeBrowserSection(container, text.modalBrowseRelated, relatedCards) || hasContent;
+
+      if (!hasContent) {
+        var fallback = document.createElement("div");
+        fallback.className = "showme-browser-empty";
+        fallback.textContent = text.modalBrowseEmpty;
+        container.appendChild(fallback);
+      }
+    }
+
+    function renderShowMeRelatedPrompt(widgetId) {
+      var text = getWeekText();
+      var prompt = document.getElementById("showmeRelatedPrompt");
+      var label = document.getElementById("showmeRelatedLabel");
+      var actions = document.getElementById("showmeRelatedActions");
+      if (!prompt || !label || !actions) return;
+
+      actions.textContent = "";
+      if (!widgetId || !weekData) {
+        prompt.hidden = true;
+        prompt.classList.remove("is-visible");
+        return;
+      }
+
+      var weekIds = getWeekShowMeIds();
+      var weekIdSet = {};
+      weekIds.forEach(function(id) { weekIdSet[id] = true; });
+
+      var relatedCards = getRelatedShowMeCards(widgetId, weekIdSet, 3);
+      if (!relatedCards.length) {
+        prompt.hidden = true;
+        prompt.classList.remove("is-visible");
+        return;
+      }
+
+      label.textContent = text.showMeRelatedPrompt;
+
+      relatedCards.forEach(function(card) {
+        var button = document.createElement("button");
+        button.type = "button";
+        button.className = "showme-related-btn";
+        button.innerHTML = renderShowMeIcon(card, "pill") + '<span class="showme-related-btn-label">' + escapeHtml(card.label) + '</span>';
+        button.addEventListener("click", function() {
+          openShowMe(card.id);
+        });
+        actions.appendChild(button);
       });
 
-      loadState();
-    }
-
-    // ─── Supplement Accordion ──────────────────────────────────
-    function findSupplementForWidget(wid) {
-      if (typeof SHOWME_SUPPLEMENTS === "undefined") return null;
-      for (const key in SHOWME_SUPPLEMENTS) {
-        const s = SHOWME_SUPPLEMENTS[key];
-        if (s.targets && s.targets.indexOf(wid) !== -1) return s;
-      }
-      return null;
-    }
-
-    function buildSupplementAccordion(doc, supplement) {
-      const wrap = doc.createElement("div");
-      wrap.style.cssText = "margin-top:20px;border:1px solid rgba(245,158,11,.18);border-radius:18px;overflow:hidden;background:rgba(245,158,11,.04);";
-
-      const toggle = doc.createElement("button");
-      toggle.style.cssText = "display:flex;align-items:center;gap:8px;width:100%;padding:14px 16px;border:none;background:none;color:#fbbf24;font:inherit;font-size:.88rem;font-weight:600;cursor:pointer;text-align:left;";
-      toggle.textContent = "\uD83D\uDCA1 " + (supplement.title || "\uc544\uc9c1 \ud5f7\uac08\ub9b0\ub2e4\uba74?");
-
-      const arrow = doc.createElement("span");
-      arrow.style.cssText = "margin-left:auto;transition:transform .2s;font-size:.8rem;";
-      arrow.textContent = "\u25BC";
-      toggle.appendChild(arrow);
-
-      const content = doc.createElement("div");
-      content.style.cssText = "display:none;padding:0 16px 16px;";
-
-      let open = false;
-      toggle.addEventListener("click", function() {
-        open = !open;
-        content.style.display = open ? "block" : "none";
-        arrow.style.transform = open ? "rotate(180deg)" : "";
+      var moreButton = document.createElement("button");
+      moreButton.type = "button";
+      moreButton.className = "showme-related-btn";
+      moreButton.textContent = text.showMeRelatedMore;
+      moreButton.addEventListener("click", function() {
+        setShowMeBrowserOpen(true);
+        renderShowMeBrowser();
       });
+      actions.appendChild(moreButton);
 
-      if (supplement.analogy) {
-        const analogyDiv = doc.createElement("div");
-        analogyDiv.style.cssText = "margin-bottom:12px;padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);";
-        const headlineEl = doc.createElement("div");
-        headlineEl.style.cssText = "font-size:.9rem;font-weight:600;color:#f5f5f7;margin-bottom:6px;";
-        headlineEl.textContent = (supplement.analogy.emoji || "") + " " + supplement.analogy.headline;
-        const bodyEl = doc.createElement("div");
-        bodyEl.style.cssText = "font-size:.85rem;color:#d4d4d8;line-height:1.7;";
-        bodyEl.textContent = supplement.analogy.body;
-        analogyDiv.appendChild(headlineEl);
-        analogyDiv.appendChild(bodyEl);
-        content.appendChild(analogyDiv);
-      }
-
-      if (supplement.before_after) {
-        const baDiv = doc.createElement("div");
-        baDiv.style.cssText = "display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;";
-        const beforeDiv = doc.createElement("div");
-        beforeDiv.style.cssText = "padding:12px;border-radius:12px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.15);";
-        const beforeLabel = doc.createElement("div");
-        beforeLabel.style.cssText = "font-size:.76rem;font-weight:600;color:#fca5a5;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em;";
-        beforeLabel.textContent = "WITHOUT";
-        const beforeText = doc.createElement("div");
-        beforeText.style.cssText = "font-size:.84rem;color:#d4d4d8;line-height:1.6;";
-        beforeText.textContent = supplement.before_after.before;
-        beforeDiv.appendChild(beforeLabel);
-        beforeDiv.appendChild(beforeText);
-        const afterDiv = doc.createElement("div");
-        afterDiv.style.cssText = "padding:12px;border-radius:12px;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.15);";
-        const afterLabel = doc.createElement("div");
-        afterLabel.style.cssText = "font-size:.76rem;font-weight:600;color:#6ee7b7;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em;";
-        afterLabel.textContent = "WITH";
-        const afterText = doc.createElement("div");
-        afterText.style.cssText = "font-size:.84rem;color:#d4d4d8;line-height:1.6;";
-        afterText.textContent = supplement.before_after.after;
-        afterDiv.appendChild(afterLabel);
-        afterDiv.appendChild(afterText);
-        baDiv.appendChild(beforeDiv);
-        baDiv.appendChild(afterDiv);
-        content.appendChild(baDiv);
-      }
-
-      if (supplement.takeaway) {
-        const takeawayDiv = doc.createElement("div");
-        takeawayDiv.style.cssText = "padding:10px 14px;border-radius:12px;background:rgba(10,132,255,.08);border:1px solid rgba(10,132,255,.18);font-size:.86rem;color:#8ec5ff;font-weight:500;";
-        takeawayDiv.textContent = "\u2192 " + supplement.takeaway;
-        content.appendChild(takeawayDiv);
-      }
-
-      wrap.appendChild(toggle);
-      wrap.appendChild(content);
-      return wrap;
+      prompt.hidden = false;
+      prompt.classList.add("is-visible");
     }
 
-    function injectSupplement(iframe, widgetId) {
-      try {
-        const doc = iframe.contentDocument;
-        if (!doc) return;
-        const supplement = findSupplementForWidget(widgetId);
-        if (!supplement) return;
-        const panel = doc.getElementById("panel-concept");
-        if (!panel) return;
-        panel.appendChild(buildSupplementAccordion(doc, supplement));
-      } catch(e) {}
-    }
-
-    // ─── Show Me Modal ──────────────────────────────
     function openShowMe(widgetId) {
       var overlay = document.getElementById("showmeOverlay");
-      var iframe  = document.getElementById("showmeIframe");
-      var title   = document.getElementById("showmeTitle");
-
-      var meta = (typeof SHOWME_REGISTRY !== "undefined" && SHOWME_REGISTRY[widgetId])
-        ? SHOWME_REGISTRY[widgetId]
-        : { label: widgetId, icon: "\ud83d\udcd6" };
+      var iframe = document.getElementById("showmeIframe");
+      var title = document.getElementById("showmeTitle");
+      var closeBtn = document.getElementById("showmeClose");
+      var meta = getShowMeMeta(widgetId);
+      var cacheBust = String(Date.now());
+      var active = document.activeElement;
+      var wasOpen = overlay.classList.contains("is-open");
+      showMeLastTrigger = active && active !== document.body ? active : null;
+      activeShowMeWidgetId = widgetId;
+      syncShowMeQuery(widgetId);
 
       title.textContent = meta.icon + " " + meta.label;
-      iframe.onload = function() { injectSupplement(iframe, widgetId); };
-      iframe.src = "assets/showme/" + widgetId + ".html?wid=" + widgetId;
+      renderShowMeBrowser();
+      renderShowMeRelatedPrompt(widgetId);
+      setShowMeBrowserOpen(showMeBrowserOpen);
+      iframe.onload = function() {
+        normalizeShowMeLayout(iframe);
+        injectShowMeSupplement(iframe, widgetId);
+        window.RPDI18n.localizeShowMeIframe(iframe, widgetId);
+      };
+      iframe.src = "assets/showme/" + widgetId + ".html?wid=" + encodeURIComponent(widgetId) + "&v=" + cacheBust;
       overlay.classList.add("is-open");
-      overlay.removeAttribute("aria-hidden");
+      overlay.setAttribute("aria-hidden", "false");
+      if (wasOpen && window.innerWidth < 980) {
+        setShowMeBrowserOpen(false);
+      }
       document.body.style.overflow = "hidden";
+      if (!wasOpen) {
+        window.setTimeout(function() {
+          closeBtn.focus({ preventScroll: true });
+        }, 50);
+      }
     }
 
     function closeShowMe() {
       var overlay = document.getElementById("showmeOverlay");
       var iframe  = document.getElementById("showmeIframe");
       var modal   = overlay.querySelector(".showme-modal");
+      if (!overlay.classList.contains("is-open")) return;
       overlay.classList.remove("is-open");
       overlay.setAttribute("aria-hidden", "true");
       modal.classList.remove("is-maximized");
+      iframe.onload = null;
       iframe.src = "about:blank";
+      syncShowMeQuery("");
+      renderShowMeRelatedPrompt("");
       document.body.style.overflow = "";
+      if (showMeLastTrigger && document.contains(showMeLastTrigger)) {
+        showMeLastTrigger.focus({ preventScroll: true });
+      }
+      showMeLastTrigger = null;
+      activeShowMeWidgetId = null;
+    }
+
+    function refreshOpenShowMe() {
+      var overlay = document.getElementById("showmeOverlay");
+      if (!overlay.classList.contains("is-open") || !activeShowMeWidgetId) return;
+      openShowMe(activeShowMeWidgetId);
+    }
+
+    function syncShowMeQuery(widgetId) {
+      if (!window.history || typeof window.history.replaceState !== "function") return;
+      var url = new URL(window.location.href);
+      if (widgetId) url.searchParams.set("showme", widgetId);
+      else url.searchParams.delete("showme");
+      window.history.replaceState({}, "", url.pathname + url.search + url.hash);
+    }
+
+    function maybeOpenRequestedShowMe() {
+      if (!pendingShowMeFromUrl || !weekData || !requestedShowMeId) return;
+      var matchesWeek = weekData.steps.some(function(step) {
+        return collectShowMeIdsFromStep(step).indexOf(requestedShowMeId) !== -1;
+      });
+      pendingShowMeFromUrl = false;
+      if (!matchesWeek) return;
+      window.setTimeout(function() {
+        openShowMe(requestedShowMeId);
+      }, 0);
     }
 
     function toggleShowMeSize() {
@@ -999,8 +2694,29 @@
       modal.classList.toggle("is-maximized");
     }
 
+    document.getElementById("showmeBrowseToggle").addEventListener("click", function() {
+      setShowMeBrowserOpen(!showMeBrowserOpen);
+      if (showMeBrowserOpen) {
+        var searchInput = document.getElementById("showmeBrowserSearch");
+        if (searchInput) searchInput.focus({ preventScroll: true });
+      }
+    });
     document.getElementById("showmeResize").addEventListener("click", toggleShowMeSize);
     document.getElementById("showmeClose").addEventListener("click", closeShowMe);
+    document.getElementById("showmeBrowserBackdrop").addEventListener("click", function() {
+      setShowMeBrowserOpen(false);
+    });
+    document.getElementById("showmeBrowserSearch").addEventListener("input", function(e) {
+      showMeBrowserQuery = e.target.value || "";
+      renderShowMeBrowser();
+      if (e.target.value && !showMeBrowserOpen) setShowMeBrowserOpen(true);
+    });
+    document.getElementById("showmeBrowserReset").addEventListener("click", function() {
+      var search = document.getElementById("showmeBrowserSearch");
+      showMeBrowserQuery = "";
+      if (search) search.value = "";
+      renderShowMeBrowser();
+    });
     document.getElementById("showmeOverlay").addEventListener("click", function(e) {
       if (e.target === this) closeShowMe();
     });
@@ -1011,158 +2727,100 @@
       }
     });
 
-    // ─── Student Identification & Quiz Tracking ────────
-    // URL: week.html?week=3&sid=12243798
-    // localStorage keys are partitioned per student:
-    //   rpd_quizzes_12243798  →  { "mirror-modifier": { score, total, pass, completedAt } }
+    // ─── Anonymous Quiz Tracking ─────────────────────
+    // Public pages stay read-only. Quiz completion is stored locally per browser.
 
-    function getCurrentSid() {
-      return new URLSearchParams(location.search).get("sid") || "";
+    function getQuizKey() {
+      return `blender2026-showme-week${String(weekNum).padStart(2, "0")}-v1`;
     }
 
-    function getCurrentStudent() {
-      var sid = getCurrentSid();
-      if (!sid || typeof STUDENTS === "undefined" || !STUDENTS[sid]) return null;
-      return { studentId: sid, name: STUDENTS[sid].name, "class": STUDENTS[sid]["class"] };
-    }
-
-    function getQuizKey(sid) { return "rpd_quizzes_" + sid; }
-
-    // ─── Student Login Flow ─────────────────────────
     function initStudentLogin() {
-      // TODO: 학번 로그인 기능 비활성화 중 (학생 명단 준비 전)
-      document.getElementById("studentLoginOverlay").classList.add("is-hidden");
-      return;
-
-      var sid = getCurrentSid();
       var overlay = document.getElementById("studentLoginOverlay");
-      var badge   = document.getElementById("studentBadge");
-      var nameEl  = document.getElementById("studentBadgeName");
-
-      if (sid && typeof STUDENTS !== "undefined" && STUDENTS[sid]) {
-        // Logged in → hide overlay, show badge
-        overlay.classList.add("is-hidden");
-        badge.classList.add("is-active");
-        nameEl.textContent = STUDENTS[sid].name + " (" + sid + ")";
-        return;
-      }
-
-      // Not logged in → show login overlay
-      overlay.classList.remove("is-hidden");
-      badge.classList.remove("is-active");
-
-      var input   = document.getElementById("studentLoginInput");
-      var preview = document.getElementById("studentLoginPreview");
-
-      input.addEventListener("input", function() {
-        var val = input.value.trim();
-        if (val.length < 8) { preview.className = "student-login-preview"; preview.innerHTML = ""; return; }
-        if (typeof STUDENTS !== "undefined" && STUDENTS[val]) {
-          var s = STUDENTS[val];
-          preview.className = "student-login-preview is-match";
-          preview.innerHTML = "<strong>" + s.name + "</strong> · " + s["class"]
-            + '<br><button class="login-btn" type="button" onclick="loginAsStudent(\'' + val + '\')">시작하기</button>';
-        } else {
-          preview.className = "student-login-preview is-nomatch";
-          preview.innerHTML = "등록되지 않은 학번입니다";
-        }
-      });
-
-      // Enter key = submit if match
-      input.addEventListener("keydown", function(e) {
-        if (e.key === "Enter") {
-          var val = input.value.trim();
-          if (typeof STUDENTS !== "undefined" && STUDENTS[val]) loginAsStudent(val);
-        }
-      });
-
-      input.focus();
+      var badge = document.getElementById("studentBadge");
+      if (overlay) overlay.classList.add("is-hidden");
+      if (badge) badge.classList.remove("is-active");
     }
 
-    function loginAsStudent(sid) {
-      // Redirect with sid parameter (preserves week param)
-      var params = new URLSearchParams(location.search);
-      params.set("sid", sid);
-      location.search = params.toString();
+    function loginAsStudent() {
+      initStudentLogin();
     }
 
     function loginAsGuest() {
-      document.getElementById("studentLoginOverlay").classList.add("is-hidden");
+      initStudentLogin();
     }
 
     function switchStudent() {
-      // Remove sid and reload → shows login overlay
-      var params = new URLSearchParams(location.search);
-      params.delete("sid");
-      location.search = params.toString();
+      initStudentLogin();
     }
 
-    // ─── Quiz Badge System ──────────────────────────
     function updateShowMeBadges() {
-      var sid = getCurrentSid();
-      if (!sid) return;
-      var quizzes = JSON.parse(localStorage.getItem(getQuizKey(sid)) || "{}");
+      var quizzes = JSON.parse(localStorage.getItem(getQuizKey()) || "{}");
       document.querySelectorAll(".btn-showme").forEach(function(btn) {
         var wid = btn.dataset.widgetId;
         if (wid && quizzes[wid] && quizzes[wid].pass) {
           btn.classList.add("is-complete");
+        } else {
+          btn.classList.remove("is-complete");
         }
       });
+      refreshWeekActionPanels();
     }
 
-    // ─── Quiz Completion Listener ───────────────────
     window.addEventListener("message", function(e) {
       if (!e.data || e.data.type !== "showme-quiz-complete") return;
       var d = e.data;
-      var sid = getCurrentSid();
-      if (!sid) return;  // not logged in = no tracking
-
-      // 1. Save to student-specific localStorage
-      var key = getQuizKey(sid);
+      var key = getQuizKey();
       var quizzes = JSON.parse(localStorage.getItem(key) || "{}");
       quizzes[d.widgetId] = {
-        score: d.score, total: d.total, pass: d.pass,
+        score: d.score,
+        total: d.total,
+        pass: d.pass,
         completedAt: new Date().toISOString()
       };
       localStorage.setItem(key, JSON.stringify(quizzes));
-
-      // 2. Update badges
       updateShowMeBadges();
-
-      // 3. Sync to Notion
-      syncQuizToNotion(d.widgetId, d.score, d.total);
     });
 
-    // ─── Notion Sync ────────────────────────────────
-    async function syncQuizToNotion(widgetId, score, total) {
-      var student = getCurrentStudent();
-      if (!student) return;
-      var meta = (typeof SHOWME_REGISTRY !== "undefined" && SHOWME_REGISTRY[widgetId])
-        ? SHOWME_REGISTRY[widgetId] : { label: widgetId };
-      var weekNum = String(new URLSearchParams(location.search).get("week") || "").padStart(2, "0");
-      try {
-        await fetch("/api/notion-quiz", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            parent: { database_id: "d27c5dfdac27433284a4a6be1b6d8801" },
-            properties: {
-              "\ud56d\ubaa9\uba85": { title:     [{ text: { content: "Show Me \ud034\uc988: " + meta.label } }] },
-              "\ud559\ubc88":       { rich_text: [{ text: { content: student.studentId } }] },
-              "\ud559\uc0dd\uba85": { rich_text: [{ text: { content: student.name } }] },
-              "\ubc18":             { select:    { name: student["class"] } },
-              "\uc8fc\ucc28":       { select:    { name: "Week " + weekNum } },
-              "\uc81c\ucd9c\uc0c1\ud0dc": { select: { name: "\uc81c\ucd9c\uc644\ub8cc" } },
-              "\uacf5\uac1c\ud53c\ub4dc\ubc31": { rich_text: [{ text: { content: "\ud034\uc988 \uc810\uc218: " + score + "/" + total } }] },
-              "\uc81c\ucd9c\uac10\uc9c0\uc77c": { date: { start: new Date().toISOString().split("T")[0] } }
-            }
-          })
-        });
-      } catch(e) { console.warn("Notion sync failed:", e); }
+    var sidebarObserver = null;
+    var sidebarBindingsReady = false;
+
+    function isDesktopSidebar() {
+      return window.matchMedia("(min-width: 981px)").matches;
     }
 
-    // ─── Sidebar ────────────────────────────────────
+    function openSidebar() {
+      var sidebar = document.getElementById("sidebar");
+      var overlay = document.getElementById("sidebarOverlay");
+      if (!sidebar || !overlay) return;
+      if (isDesktopSidebar()) {
+        sidebar.classList.add("is-open");
+        overlay.classList.remove("is-visible");
+        sidebar.removeAttribute("aria-hidden");
+        return;
+      }
+      sidebar.classList.add("is-open");
+      overlay.classList.add("is-visible");
+      sidebar.removeAttribute("aria-hidden");
+    }
+
+    function closeSidebar() {
+      var sidebar = document.getElementById("sidebar");
+      var overlay = document.getElementById("sidebarOverlay");
+      if (!sidebar || !overlay) return;
+      if (isDesktopSidebar()) {
+        sidebar.classList.add("is-open");
+        overlay.classList.remove("is-visible");
+        sidebar.removeAttribute("aria-hidden");
+        return;
+      }
+      sidebar.classList.remove("is-open");
+      overlay.classList.remove("is-visible");
+      sidebar.setAttribute("aria-hidden", "true");
+    }
+
     function initSidebar(w) {
+      var text = getWeekText();
+      var isKo = window.RPDI18n.getLanguage() === "ko";
       var sidebar   = document.getElementById("sidebar");
       var overlay   = document.getElementById("sidebarOverlay");
       var toggleBtn = document.getElementById("sidebarToggle");
@@ -1170,64 +2828,66 @@
 
       if (!sidebar || !overlay || !toggleBtn || !navList) return;
 
-      // Build section list
-      var sections = [{ id: "hero-section", label: "개요", group: null }];
+      var sections = [
+        { id: "hero-section", label: text.sidebarOverview, group: null }
+      ];
+      if (w.topics && w.topics.length) {
+        sections.push({ id: "section-topics", label: isKo ? "이번 주" : "This week", group: null });
+      }
       w.steps.forEach(function(step, idx) {
-        sections.push({ id: "step-" + idx, label: step.title, group: idx === 0 ? "실습" : null });
+        sections.push({ id: "step-" + idx, label: step.title, group: idx === 0 ? text.sidebarPracticeGroup : null });
       });
-      if (hasRef)      sections.push({ id: "section-reference", label: "참고자료", group: "참고" });
-      if (w.assignment) sections.push({ id: "section-assignment", label: "과제",     group: null });
+      if (currentWeekHasReference) {
+        sections.push({ id: "section-reference", label: isKo ? "참고자료" : "References", group: text.sidebarReferenceGroup });
+      }
+      if (w.assignment) sections.push({ id: "section-assignment", label: text.sidebarAssignment, group: null });
 
-      // Collect unique Show Me widgets for this week
       var showmeSet = {};
       w.steps.forEach(function(step) {
-        if (!step.showme) return;
-        var ids = Array.isArray(step.showme) ? step.showme : [step.showme];
+        var ids = collectShowMeIdsFromStep(step);
         ids.forEach(function(id) { showmeSet[id] = true; });
       });
       var showmeIds = Object.keys(showmeSet);
 
-      // Render nav (curriculum.js = trusted developer data, not user input)
       var navHtml = sections.map(function(s) {
         var g = s.group ? "<li><span class=\"nav-section-label\">" + s.group + "</span></li>" : "";
         return g + "<li data-nav-id=\"" + s.id + "\"><a href=\"#" + s.id + "\">" + s.label + "</a></li>";
       }).join("");
 
-      // Add Show Me section to sidebar (data from _registry.js, developer-controlled)
       if (showmeIds.length > 0) {
-        navHtml += "<li><span class=\"nav-section-label\">Show Me</span></li>";
+        navHtml += "<li><span class=\"nav-section-label\">" + text.sidebarShowMe + "</span></li>";
         showmeIds.forEach(function(id) {
-          var meta = (typeof SHOWME_REGISTRY !== "undefined" && SHOWME_REGISTRY[id])
-            ? SHOWME_REGISTRY[id] : { label: id, icon: "\ud83d\udcd6" };
+          var meta = getShowMeMeta(id);
           navHtml += "<li><a href=\"#\" onclick=\"openShowMe('" + id + "');return false;\">" +
             meta.icon + " " + meta.label + "</a></li>";
         });
       }
 
-      navList.innerHTML = navHtml; // trusted static curriculum + registry data
+      navList.innerHTML = navHtml;
 
-      // Open / close
-      function openSidebar() {
+      if (!sidebarBindingsReady) {
+        toggleBtn.addEventListener("click", function() {
+          sidebar.classList.contains("is-open") ? closeSidebar() : openSidebar();
+        });
+        overlay.addEventListener("click", closeSidebar);
+        document.addEventListener("keydown", function(e) {
+          if (e.key === "Escape") closeSidebar();
+        });
+        sidebarBindingsReady = true;
+      }
+
+      if (isDesktopSidebar()) {
         sidebar.classList.add("is-open");
-        overlay.classList.add("is-visible");
         sidebar.removeAttribute("aria-hidden");
-      }
-      function closeSidebar() {
-        sidebar.classList.remove("is-open");
         overlay.classList.remove("is-visible");
+      } else {
+        sidebar.classList.remove("is-open");
         sidebar.setAttribute("aria-hidden", "true");
+        overlay.classList.remove("is-visible");
       }
 
-      toggleBtn.addEventListener("click", function() {
-        sidebar.classList.contains("is-open") ? closeSidebar() : openSidebar();
-      });
-      overlay.addEventListener("click", closeSidebar);
-      document.addEventListener("keydown", function(e) {
-        if (e.key === "Escape") closeSidebar();
-      });
-
-      // IntersectionObserver: highlight current section
-      var observer = new IntersectionObserver(function(entries) {
+      if (sidebarObserver) sidebarObserver.disconnect();
+      sidebarObserver = new IntersectionObserver(function(entries) {
         entries.forEach(function(entry) {
           if (!entry.isIntersecting) return;
           navList.querySelectorAll("li[data-nav-id]").forEach(function(li) {
@@ -1240,9 +2900,18 @@
 
       sections.forEach(function(s) {
         var el = document.getElementById(s.id);
-        if (el) observer.observe(el);
+        if (el) sidebarObserver.observe(el);
       });
     }
+
+    window.addEventListener("resize", function() {
+      if (!document.getElementById("sidebar")) return;
+      if (isDesktopSidebar()) {
+        openSidebar();
+      } else {
+        closeSidebar();
+      }
+    });
 
     // ─── Theme toggle ─────────────────────────────────
     document.getElementById("themeToggle").addEventListener("click", function() {

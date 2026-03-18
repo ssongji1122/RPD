@@ -1,11 +1,12 @@
 // ============================================================
 // 15주 블렌더 수업 커리큘럼 데이터
-// 이 파일만 수정하면 메인 페이지와 각 주차 페이지가 자동 반영됨
+// 이 파일은 weeks/site-data.json 에서 자동 생성됩니다.
 // ============================================================
 
 const CURRICULUM = [
   {
     "week": 1,
+    "status": "done",
     "title": "수업 시작 준비",
     "subtitle": "오리엔테이션 · Blender 설치 · 컨셉 설정",
     "duration": "~2시간",
@@ -22,6 +23,10 @@ const CURRICULUM = [
           "Blender 공식 사이트에서 설치 파일 다운로드",
           "실행 후 Welcome Screen 확인"
         ],
+        "done": [
+          "Blender가 정상적으로 열린다",
+          "버전 번호를 확인했다"
+        ],
         "tasks": [
           {
             "id": "w1-t1",
@@ -33,10 +38,6 @@ const CURRICULUM = [
             "label": "Blender 처음 실행 완료",
             "detail": "Welcome Screen이 보이는지 확인"
           }
-        ],
-        "done": [
-          "Blender가 정상적으로 열린다",
-          "버전 번호를 확인했다"
         ]
       },
       {
@@ -45,6 +46,10 @@ const CURRICULUM = [
         "goal": [
           "Mixboard를 열어 레이아웃 구성",
           "3개 이상 레퍼런스 이미지 수집"
+        ],
+        "done": [
+          "Mixboard에 적어도 3개 이상 이미지가 있다",
+          "어떤 걸 만들지 한 문장으로 설명할 수 있다"
         ],
         "tasks": [
           {
@@ -57,24 +62,8 @@ const CURRICULUM = [
             "label": "Mixboard 보드 캡처해서 저장",
             "detail": ""
           }
-        ],
-        "done": [
-          "Mixboard에 적어도 3개 이상 이미지가 있다",
-          "어떤 걸 만들지 한 문장으로 설명할 수 있다"
         ]
       }
-    ],
-    "assignment": {
-      "title": "Blender 설치 확인 스크린샷",
-      "description": "Blender를 실행해서 Welcome Screen이 보이는 화면을 캡처해서 제출하세요.",
-      "checklist": [
-        "Blender 정상 실행 확인",
-        "버전 번호 포함된 스크린샷 제출"
-      ]
-    },
-    "mistakes": [
-      "설치 중 권한 오류 → 관리자 권한으로 재설치",
-      "한글 경로에 설치하면 오류 → 영어 경로 사용"
     ],
     "shortcuts": [
       {
@@ -94,6 +83,25 @@ const CURRICULUM = [
         "action": "다시 실행 (Redo)"
       }
     ],
+    "explore": [],
+    "assignment": {
+      "title": "Blender 설치 확인 스크린샷",
+      "description": "Blender를 실행해서 Welcome Screen이 보이는 화면을 캡처해서 제출하세요.",
+      "checklist": [
+        "Blender 정상 실행 확인",
+        "버전 번호 포함된 스크린샷 제출"
+      ]
+    },
+    "mistakes": [
+      "설치 중 권한 오류 → 관리자 권한으로 재설치",
+      "한글 경로에 설치하면 오류 → 영어 경로 사용"
+    ],
+    "videos": [
+      {
+        "title": "Blender Studio - First Steps",
+        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/first-steps/"
+      }
+    ],
     "docs": [
       {
         "title": "Blender 설치 가이드",
@@ -104,17 +112,11 @@ const CURRICULUM = [
         "url": "https://docs.blender.org/manual/en/latest/getting_started/index.html"
       }
     ],
-    "status": "done",
-    "summary": "Blender 설치, Mixboard로 컨셉 설정.",
-    "videos": [
-      {
-        "title": "Blender Studio - First Steps",
-        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/first-steps/"
-      }
-    ]
+    "summary": "Blender 설치, Mixboard로 컨셉 설정."
   },
   {
     "week": 2,
+    "status": "done",
     "title": "Blender 인터페이스 · 기초",
     "subtitle": "화면 조작 · 오브젝트 변형 · 첫 모델링",
     "duration": "~3시간",
@@ -131,6 +133,10 @@ const CURRICULUM = [
         "goal": [
           "Preferences 위치를 안다",
           "입력 장치 제약을 먼저 해결한다"
+        ],
+        "done": [
+          "Preferences를 직접 열 수 있다",
+          "필요 시 Emulate 설정을 켰다"
         ],
         "tasks": [
           {
@@ -150,11 +156,7 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week02/ui-overview.png",
-        "showme": "blender-preferences",
-        "done": [
-          "Preferences를 직접 열 수 있다",
-          "필요 시 Emulate 설정을 켰다"
-        ]
+        "showme": "blender-preferences"
       },
       {
         "title": "화면 조작",
@@ -162,6 +164,10 @@ const CURRICULUM = [
         "goal": [
           "Orbit/Pan/Zoom을 자유롭게 쓴다",
           "정면/측면/상면 뷰로 이동한다"
+        ],
+        "done": [
+          "Numpad 1/3/7로 뷰 전환 가능",
+          "마우스를 잃지 않고 오브젝트를 따라다닐 수 있다"
         ],
         "tasks": [
           {
@@ -181,10 +187,6 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week02/navigation-gizmo.png",
-        "done": [
-          "Numpad 1/3/7로 뷰 전환 가능",
-          "마우스를 잃지 않고 오브젝트를 따라다닐 수 있다"
-        ],
         "showme": "viewport-navigation"
       },
       {
@@ -193,6 +195,10 @@ const CURRICULUM = [
         "goal": [
           "G/R/S 단축키를 손에 익힌다",
           "축 고정 (X/Y/Z)을 이해한다"
+        ],
+        "done": [
+          "G → X 처럼 축 고정 이동이 된다",
+          "숫자 입력으로 정확한 값 이동이 된다"
         ],
         "tasks": [
           {
@@ -212,17 +218,16 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week02/transform-gizmo.png",
-        "done": [
-          "G → X 처럼 축 고정 이동이 된다",
-          "숫자 입력으로 정확한 값 이동이 된다"
-        ],
         "showme": [
           "transform-grs",
           "transform-orientation",
           "pivot-point"
         ],
         "widgets": [
-          { "type": "showme", "id": "origin-vs-3dcursor" }
+          {
+            "type": "showme",
+            "id": "origin-vs-3dcursor"
+          }
         ]
       },
       {
@@ -231,6 +236,10 @@ const CURRICULUM = [
         "goal": [
           "Object/Edit Mode 전환을 안다",
           "면을 선택하고 Extrude로 뽑는다"
+        ],
+        "done": [
+          "Tab 키로 모드 전환이 된다",
+          "단순한 상자형 구조를 만들었다"
         ],
         "tasks": [
           {
@@ -255,10 +264,6 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week02/editmode-modeling.png",
-        "done": [
-          "Tab 키로 모드 전환이 된다",
-          "단순한 상자형 구조를 만들었다"
-        ],
         "showme": [
           "edit-mode",
           "extrude",
@@ -266,10 +271,6 @@ const CURRICULUM = [
           "loop-cut",
           "snap",
           "proportional-editing"
-        ],
-        "widgets": [
-          { "type": "showme", "id": "snap" },
-          { "type": "showme", "id": "proportional-editing" }
         ]
       },
       {
@@ -279,9 +280,13 @@ const CURRICULUM = [
           "Bevel의 원리를 이해한다",
           "최종 형태를 Object Mode에서 확인한다"
         ],
+        "done": [
+          "Ctrl+B로 Bevel이 됐다",
+          "결과물을 스크린샷으로 저장했다"
+        ],
         "tasks": [
           {
-            "id": "w2-t13",
+            "id": "w2-t13-2",
             "label": "모서리 선택 후 Ctrl+B로 Bevel",
             "detail": "스크롤로 분할 수 조절"
           },
@@ -297,13 +302,12 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week02/bevel-tool.png",
-        "done": [
-          "Ctrl+B로 Bevel이 됐다",
-          "결과물을 스크린샷으로 저장했다"
-        ],
         "showme": "bevel-tool",
         "widgets": [
-          { "type": "showme", "id": "box-rounding" }
+          {
+            "type": "showme",
+            "id": "box-rounding"
+          }
         ]
       },
       {
@@ -312,6 +316,10 @@ const CURRICULUM = [
         "goal": [
           "4가지 Shading 모드를 구분한다",
           "작업 목적에 맞는 모드를 선택한다"
+        ],
+        "done": [
+          "Z Pie Menu로 빠르게 모드 전환이 된다",
+          "Solid와 Material Preview 차이를 말할 수 있다"
         ],
         "tasks": [
           {
@@ -330,13 +338,79 @@ const CURRICULUM = [
             "detail": "재질 없어도 형태는 확인 가능"
           }
         ],
-        "done": [
-          "Z Pie Menu로 빠르게 모드 전환이 된다",
-          "Solid와 Material Preview 차이를 말할 수 있다"
-        ],
-        "showme": ["viewport-shading", "xray-opacity"]
+        "showme": [
+          "viewport-shading",
+          "xray-opacity"
+        ]
       }
     ],
+    "shortcuts": [
+      {
+        "keys": "MMB Drag",
+        "action": "Orbit (시점 회전)"
+      },
+      {
+        "keys": "Shift + MMB",
+        "action": "Pan (시점 이동)"
+      },
+      {
+        "keys": "Scroll",
+        "action": "Zoom (확대/축소)"
+      },
+      {
+        "keys": "Numpad 1/3/7",
+        "action": "Front/Right/Top View"
+      },
+      {
+        "keys": "Numpad 5",
+        "action": "Perspective ↔ Orthographic 전환"
+      },
+      {
+        "keys": "Numpad 2/4/6/8",
+        "action": "Orbit 상/하/좌/우 회전"
+      },
+      {
+        "keys": "Numpad .",
+        "action": "Frame Selected (선택 오브젝트 포커스)"
+      },
+      {
+        "keys": "Ctrl + Numpad 1/3/7",
+        "action": "Back/Left/Bottom View"
+      },
+      {
+        "keys": "Shift + Numpad 4/6",
+        "action": "Roll (뷰 좌우 기울이기)"
+      },
+      {
+        "keys": "Numpad Plus",
+        "action": "Zoom In"
+      },
+      {
+        "keys": "Numpad Minus",
+        "action": "Zoom Out"
+      },
+      {
+        "keys": "G",
+        "action": "Grab (이동)"
+      },
+      {
+        "keys": "R",
+        "action": "Rotate (회전)"
+      },
+      {
+        "keys": "S",
+        "action": "Scale (크기 조절)"
+      },
+      {
+        "keys": "G + X/Y/Z",
+        "action": "축 고정 이동"
+      },
+      {
+        "keys": "Tab",
+        "action": "Object ↔ Edit Mode 전환"
+      }
+    ],
+    "explore": [],
     "assignment": {
       "title": "간단한 로우폴리 소품 만들기",
       "description": "화면 조작과 기본 모델링 도구를 사용해 간단한 소품을 만들고 제출합니다.",
@@ -350,6 +424,20 @@ const CURRICULUM = [
       "탭(Tab) 키 없이 면을 클릭하려고 함 → Object Mode에선 편집이 안 돼요. Tab으로 Edit Mode로 먼저 들어가세요.",
       "새 박스가 이상한 곳에 생겼어요 → 3D Cursor가 이동했을 때 생기는 현상. Shift+C로 원점으로 돌려놓으세요.",
       "화면이 안 돌아가요 → 마우스 휠이 없는 경우, Preferences에서 [Emulate 3 Button Mouse]를 켜세요."
+    ],
+    "videos": [
+      {
+        "title": "Blender Studio - Viewport Navigation",
+        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/viewport-navigation/"
+      },
+      {
+        "title": "Blender Studio - Interface Overview",
+        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/interface-overview/"
+      },
+      {
+        "title": "Blender Studio - Select & Transform",
+        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/select-transform/"
+      }
     ],
     "docs": [
       {
@@ -377,46 +465,13 @@ const CURRICULUM = [
         "url": "https://docs.blender.org/manual/en/latest/modeling/meshes/tools/bevel.html"
       }
     ],
-    "shortcuts": [
-      { "keys": "MMB Drag", "action": "Orbit (시점 회전)", "detail": "마우스 가운데 버튼을 누른 채 드래그하면 3D 뷰포트 시점이 회전합니다. 모델을 여러 각도에서 확인할 때 가장 자주 쓰는 조작입니다.", "category": "navigation" },
-      { "keys": "Shift + MMB", "action": "Pan (시점 이동)", "detail": "Shift를 누른 채 가운데 버튼 드래그로 시점을 상하좌우로 평행 이동합니다. 줌 레벨은 유지됩니다.", "category": "navigation" },
-      { "keys": "Scroll", "action": "Zoom (확대/축소)", "detail": "마우스 휠을 위로 굴리면 확대, 아래로 굴리면 축소됩니다. 커서 위치 기준으로 줌됩니다.", "category": "navigation" },
-      { "keys": "Numpad 1/3/7", "action": "Front/Right/Top View", "detail": "Numpad 1은 정면(Front), 3은 우측(Right), 7은 위(Top) 정투영 뷰로 전환합니다. 정확한 위치 잡기에 필수입니다.", "category": "navigation" },
-      { "keys": "Numpad 5", "action": "Perspective ↔ Orthographic 전환", "detail": "원근감이 있는 Perspective 뷰와 평행 투영인 Orthographic 뷰를 토글합니다. 모델링 시 Ortho 뷰가 정확합니다.", "category": "navigation" },
-      { "keys": "Numpad 2/4/6/8", "action": "Orbit 상/하/좌/우 회전", "detail": "MMB 드래그 없이 키패드로 뷰를 15° 단위로 회전합니다. 2=아래, 8=위, 4=왼쪽, 6=오른쪽.", "category": "navigation" },
-      { "keys": "Numpad .", "action": "Frame Selected (선택 오브젝트 포커스)", "detail": "선택한 오브젝트가 화면 중앙에 오도록 뷰를 자동 조정합니다. 모델을 잃어버렸을 때 유용합니다.", "category": "navigation" },
-      { "keys": "Ctrl + Numpad 1/3/7", "action": "Back/Left/Bottom View", "detail": "Ctrl을 함께 누르면 반대편 뷰로 전환됩니다. 1=후면(Back), 3=좌측(Left), 7=아래(Bottom).", "category": "navigation" },
-      { "keys": "Shift + Numpad 4/6", "action": "Roll (뷰 좌우 기울이기)", "detail": "현재 시점을 기준으로 카메라를 좌우로 기울입니다(Roll). 4=반시계, 6=시계 방향.", "category": "navigation" },
-      { "keys": "Numpad Plus", "action": "Zoom In", "detail": "뷰를 단계적으로 확대합니다. 스크롤 휠의 대안입니다.", "category": "navigation" },
-      { "keys": "Numpad Minus", "action": "Zoom Out", "detail": "뷰를 단계적으로 축소합니다. 스크롤 휠의 대안입니다.", "category": "navigation" },
-      { "keys": "G", "action": "Grab (이동)", "detail": "선택한 오브젝트나 요소를 자유롭게 이동합니다. G 후 마우스를 움직이고 클릭으로 확정, ESC로 취소합니다.", "category": "transform" },
-      { "keys": "R", "action": "Rotate (회전)", "detail": "선택한 오브젝트나 요소를 회전합니다. R 후 마우스를 움직이고 클릭으로 확정합니다. R을 두 번 누르면 트랙볼 회전 모드가 됩니다.", "category": "transform" },
-      { "keys": "S", "action": "Scale (크기 조절)", "detail": "선택한 오브젝트나 요소의 크기를 조절합니다. S 후 마우스를 움직이고 클릭으로 확정합니다. 숫자 입력으로 정확한 배율 적용도 가능합니다.", "category": "transform" },
-      { "keys": "G + X/Y/Z", "action": "축 고정 이동", "detail": "G로 이동 모드에 들어간 뒤 X, Y, Z 키를 누르면 해당 축 방향으로만 이동이 제한됩니다. 정밀한 위치 조정에 필수입니다.", "category": "transform" },
-      { "keys": "Tab", "action": "Object ↔ Edit Mode 전환", "detail": "Object Mode(전체 오브젝트 조작)와 Edit Mode(점/선/면 편집) 사이를 전환합니다. 모델링의 가장 기본적인 전환입니다.", "category": "general" }
-    ],
-    "status": "done",
-    "summary": "Blender 인터페이스, 화면 조작, G/R/S 변형, Extrude/Bevel/LoopCut 실습.",
-    "videos": [
-      {
-        "title": "Blender Studio - Viewport Navigation",
-        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/viewport-navigation/"
-      },
-      {
-        "title": "Blender Studio - Interface Overview",
-        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/interface-overview/"
-      },
-      {
-        "title": "Blender Studio - Select & Transform",
-        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/select-transform/"
-      }
-    ]
+    "summary": "Blender 인터페이스, 화면 조작, G/R/S 변형, Extrude/Bevel/LoopCut 실습."
   },
   {
     "week": 3,
+    "status": "active",
     "title": "기초 모델링 1 — Edit + Modifier",
     "subtitle": "기본형 · 대칭 · 곡면 · 반복",
-    "summary": "레고 조립처럼, Edit Mode로 블록을 깎고 Modifier로 대칭·곡면·반복 효과를 얹는 흐름을 배워요.",
     "duration": "~3시간",
     "topics": [
       "Reference Image로 작업 준비",
@@ -436,6 +491,10 @@ const CURRICULUM = [
         "goal": [
           "이미지 레퍼런스를 뷰포트에 올린다",
           "4가지 이미지 타입의 차이를 안다"
+        ],
+        "done": [
+          "정면·측면 레퍼런스가 각 뷰에 정렬되어 있다",
+          "모델링 도중 레퍼런스가 방해되지 않는다"
         ],
         "tasks": [
           {
@@ -459,22 +518,27 @@ const CURRICULUM = [
             "detail": "화살표 아이콘 클릭 → 선택 비활성화"
           }
         ],
-        "done": [
-          "정면·측면 레퍼런스가 각 뷰에 정렬되어 있다",
-          "모델링 도중 레퍼런스가 방해되지 않는다"
-        ],
+        "link": "https://docs.blender.org/manual/en/latest/editors/3dview/display/overlays.html",
         "images": [
           "assets/images/week03/robot-ref-front.png",
           "assets/images/week03/robot-ref-side.png",
           "assets/images/week03/robot-ref-back.png"
         ],
         "downloads": [
-          { "label": "정면 (Front)", "url": "assets/images/week03/robot-ref-front.png" },
-          { "label": "측면 (Side)",  "url": "assets/images/week03/robot-ref-side.png" },
-          { "label": "후면 (Back)",  "url": "assets/images/week03/robot-ref-back.png" }
+          {
+            "label": "정면 (Front)",
+            "url": "assets/images/week03/robot-ref-front.png"
+          },
+          {
+            "label": "측면 (Side)",
+            "url": "assets/images/week03/robot-ref-side.png"
+          },
+          {
+            "label": "후면 (Back)",
+            "url": "assets/images/week03/robot-ref-back.png"
+          }
         ],
-        "showme": "image-reference",
-        "link": "https://docs.blender.org/manual/en/latest/editors/3dview/display/overlays.html"
+        "showme": "image-reference"
       },
       {
         "title": "기본형 만들기",
@@ -482,6 +546,10 @@ const CURRICULUM = [
         "goal": [
           "Reference Image를 뷰포트에 배치한다",
           "Edit Mode 도구 4가지를 실제로 써본다"
+        ],
+        "done": [
+          "Reference Image가 뷰포트에 깔려 있다",
+          "기본 형태가 잡혔다"
         ],
         "tasks": [
           {
@@ -506,21 +574,30 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week03/base-form.png",
-        "done": [
-          "Reference Image가 뷰포트에 깔려 있다",
-          "기본 형태가 잡혔다"
+        "link": "https://docs.blender.org/manual/en/latest/modeling/meshes/tools/extrude_region.html",
+        "showme": [
+          "edit-mode-tools",
+          "extrude",
+          "loop-cut",
+          "inset",
+          "bevel-tool"
         ],
-        "showme": ["edit-mode-tools", "extrude", "loop-cut", "inset", "bevel-tool"],
         "widgets": [
-          { "type": "showme", "id": "poly-circle" }
-        ],
-        "link": "https://docs.blender.org/manual/en/latest/modeling/meshes/tools/extrude_region.html"
+          {
+            "type": "showme",
+            "id": "poly-circle"
+          }
+        ]
       },
       {
         "title": "Mirror",
         "copy": "X축을 기준으로 반쪽을 대칭 복사해요. 한쪽만 만들면 작업량이 반으로 줄어요. Clipping을 켜면 중앙 정점이 넘어가지 않게 붙잡아줘요.",
         "goal": [
           "Mirror를 추가하고 Clipping을 설정한다"
+        ],
+        "done": [
+          "한쪽을 움직이면 반대쪽도 같이 바뀐다",
+          "Clipping으로 중심선이 벌어지지 않는다"
         ],
         "tasks": [
           {
@@ -540,12 +617,18 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week03/mirror-modifier.png",
-        "done": [
-          "한쪽을 움직이면 반대쪽도 같이 바뀐다",
-          "Clipping으로 중심선이 벌어지지 않는다"
-        ],
+        "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html",
         "showme": "mirror-modifier",
-        "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html"
+        "widgets": [
+          {
+            "type": "showme",
+            "id": "mirror-workflow"
+          },
+          {
+            "type": "showme",
+            "id": "mirror-origin-mode"
+          }
+        ]
       },
       {
         "title": "Subdivision Surface",
@@ -553,6 +636,10 @@ const CURRICULUM = [
         "goal": [
           "Subdivision Level을 조절한다",
           "Support Loop과 Edge Crease로 형태를 보존한다"
+        ],
+        "done": [
+          "표면이 부드러워졌다",
+          "날카운 모서리가 유지되는 방법을 2가지 써봤다"
         ],
         "tasks": [
           {
@@ -572,18 +659,17 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week03/subdivision-surface.png",
-        "done": [
-          "표면이 부드러워졌다",
-          "날카운 모서리가 유지되는 방법을 2가지 써봤다"
-        ],
-        "showme": "subdivision-surface",
-        "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/subdivision_surface.html"
+        "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/subdivision_surface.html",
+        "showme": "subdivision-surface"
       },
       {
         "title": "Solidify",
         "copy": "종이처럼 얇은 면(Plane)에 두께를 줘서 판 형태로 만들어요. 로봇의 장갑판이나 외장 패널을 만들 때 유용해요.",
         "goal": [
           "Solidify로 면에 두께를 준다"
+        ],
+        "done": [
+          "Plane이 두께 있는 판으로 바뀌었다"
         ],
         "tasks": [
           {
@@ -598,20 +684,23 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week03/solidify-modifier.png",
-        "done": [
-          "Plane이 두께 있는 판으로 바뀌었다"
-        ],
+        "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/solidify.html",
         "showme": "solidify-modifier",
         "widgets": [
-          { "type": "showme", "id": "curve-to-tube" }
-        ],
-        "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/solidify.html"
+          {
+            "type": "showme",
+            "id": "curve-to-tube"
+          }
+        ]
       },
       {
         "title": "Array",
         "copy": "같은 부품을 일정 간격으로 복제해요. Count로 개수, Offset으로 간격을 조절하면 반복 파츠를 한 번에 만들 수 있어요.",
         "goal": [
           "Array로 반복 구조를 만든다"
+        ],
+        "done": [
+          "같은 형태가 일정 간격으로 반복된다"
         ],
         "tasks": [
           {
@@ -626,22 +715,31 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week03/array-modifier.png",
-        "done": [
-          "같은 형태가 일정 간격으로 반복된다"
-        ],
+        "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/array.html",
         "showme": "array-modifier",
         "widgets": [
-          { "type": "showme", "id": "build-modifier" },
-          { "type": "showme", "id": "screw-modifier" },
-          { "type": "showme", "id": "scatter-on-surface" }
-        ],
-        "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/array.html"
+          {
+            "type": "showme",
+            "id": "build-modifier"
+          },
+          {
+            "type": "showme",
+            "id": "screw-modifier"
+          },
+          {
+            "type": "showme",
+            "id": "scatter-on-surface"
+          }
+        ]
       },
       {
         "title": "Boolean",
         "copy": "두 오브젝트가 겹치는 부분을 기준으로 자르거나 합쳐요. Difference는 구멍을 뚫고, Union은 합치고, Intersect는 겹치는 부분만 남겨요.",
         "goal": [
           "Boolean Difference로 구멍을 뚫는다"
+        ],
+        "done": [
+          "메쉬에 구멍이나 홈이 만들어졌다"
         ],
         "tasks": [
           {
@@ -656,20 +754,23 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week03/array-boolean-detail.png",
-        "done": [
-          "메쉬에 구멍이나 홈이 만들어졌다"
-        ],
+        "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/booleans.html",
         "showme": "boolean-modifier",
         "widgets": [
-          { "type": "showme", "id": "wireframe-modifier" }
-        ],
-        "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/booleans.html"
+          {
+            "type": "showme",
+            "id": "wireframe-modifier"
+          }
+        ]
       },
       {
         "title": "Bevel Modifier",
         "copy": "전체 모서리를 한꺼번에 둥글게 깎아줘요. Ctrl+B가 '모서리 하나씩 수동 다듬기'라면, Bevel Modifier는 '전체 자동 정리'예요.",
         "goal": [
           "Bevel Modifier를 추가하고 Amount/Segments를 조절한다"
+        ],
+        "done": [
+          "전체 모서리가 자연스럽게 둥글어졌다"
         ],
         "tasks": [
           {
@@ -684,20 +785,26 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week03/bevel-tool.png",
-        "done": [
-          "전체 모서리가 자연스럽게 둥글어졌다"
-        ],
+        "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/bevel.html",
         "showme": [
           "bevel-modifier",
           "transform-apply"
         ],
-        "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/bevel.html"
+        "widgets": [
+          {
+            "type": "showme",
+            "id": "bevel-tool-vs-modifier"
+          }
+        ]
       },
       {
         "title": "Weighted Normal",
         "copy": "형태는 바꾸지 않고, 빛이 닿는 느낌(음영)만 정리해줘요. Bevel Modifier 바로 아래에 넣으면 하드서피스가 훨씬 깔끔해져요.",
         "goal": [
           "Weighted Normal을 추가해서 음영 차이를 확인한다"
+        ],
+        "done": [
+          "음영이 깔끔하게 정리됐다"
         ],
         "tasks": [
           {
@@ -712,11 +819,14 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week03/weighted-normal.png",
-        "done": [
-          "음영이 깔끔하게 정리됐다"
-        ],
+        "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/modify/weighted_normal.html",
         "showme": "weighted-normal",
-        "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/modify/weighted_normal.html"
+        "widgets": [
+          {
+            "type": "showme",
+            "id": "edge-split-modifier"
+          }
+        ]
       },
       {
         "title": "Modifier Stack 정리",
@@ -724,6 +834,10 @@ const CURRICULUM = [
         "goal": [
           "Modifier 순서가 결과에 미치는 영향을 이해한다",
           "Apply 타이밍을 안다"
+        ],
+        "done": [
+          "순서를 바꿨을 때 결과가 달라지는 것을 확인했다",
+          "Apply는 마지막에만 하는 이유를 안다"
         ],
         "tasks": [
           {
@@ -738,24 +852,29 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week03/modifier-stack.png",
-        "done": [
-          "순서를 바꿨을 때 결과가 달라지는 것을 확인했다",
-          "Apply는 마지막에만 하는 이유를 안다"
-        ],
+        "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/introduction.html",
         "showme": "transform-apply",
         "widgets": [
-          { "type": "showme", "id": "simple-deform" },
-          { "type": "showme", "id": "skin-modifier" }
-        ],
-        "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/introduction.html"
+          {
+            "type": "showme",
+            "id": "simple-deform"
+          },
+          {
+            "type": "showme",
+            "id": "skin-modifier"
+          }
+        ]
       },
       {
-        "sectionTitle": "로봇 모델링 기초",
         "title": "Collection",
         "copy": "씬이 복잡해질수록 오브젝트를 묶어서 관리하는 게 중요해요. Collection은 폴더처럼 오브젝트를 그룹으로 정리해서 켜고 끄거나 한꺼번에 선택할 수 있어요.",
         "goal": [
           "Collection을 만들고 오브젝트를 정리한다",
           "Outliner에서 Collection 단위로 숨기고 보이기를 제어한다"
+        ],
+        "done": [
+          "Outliner에 Collection 구조가 정리되어 있다",
+          "레퍼런스 이미지와 메쉬가 분리된 Collection에 들어있다"
         ],
         "tasks": [
           {
@@ -774,10 +893,7 @@ const CURRICULUM = [
             "detail": "H 키로 숨기기, Alt+H로 전부 보이기"
           }
         ],
-        "done": [
-          "Outliner에 Collection 구조가 정리되어 있다",
-          "레퍼런스 이미지와 메쉬가 분리된 Collection에 들어있다"
-        ]
+        "sectionTitle": "로봇 모델링 기초"
       },
       {
         "title": "Reference Image 실습",
@@ -785,19 +901,9 @@ const CURRICULUM = [
         "goal": [
           "레퍼런스 이미지를 뷰포트에 정확히 정렬한다"
         ],
-        "video": {
-          "src": "https://youtu.be/-U82eI3eiQ0",
-          "caption": "민트 로봇 레퍼런스 이미지를 뷰포트에 배치하는 전체 과정이에요. 영상을 보며 그대로 따라해요."
-        },
-        "images": [
-          "assets/images/week03/robot-ref-front.png",
-          "assets/images/week03/robot-ref-side.png",
-          "assets/images/week03/robot-ref-back.png"
-        ],
-        "downloads": [
-          { "label": "정면 (Front)", "url": "assets/images/week03/robot-ref-front.png" },
-          { "label": "측면 (Side)",  "url": "assets/images/week03/robot-ref-side.png" },
-          { "label": "후면 (Back)",  "url": "assets/images/week03/robot-ref-back.png" }
+        "done": [
+          "정면·측면 레퍼런스가 각 뷰에 정렬되어 있다",
+          "영상 따라 전체 세팅 완료"
         ],
         "tasks": [
           {
@@ -821,25 +927,117 @@ const CURRICULUM = [
             "detail": "화살표 아이콘 클릭 → 실수로 이동 방지"
           }
         ],
-        "done": [
-          "정면·측면 레퍼런스가 각 뷰에 정렬되어 있다",
-          "영상 따라 전체 세팅 완료"
+        "images": [
+          "assets/images/week03/robot-ref-front.png",
+          "assets/images/week03/robot-ref-side.png",
+          "assets/images/week03/robot-ref-back.png"
+        ],
+        "downloads": [
+          {
+            "label": "정면 (Front)",
+            "url": "assets/images/week03/robot-ref-front.png"
+          },
+          {
+            "label": "측면 (Side)",
+            "url": "assets/images/week03/robot-ref-side.png"
+          },
+          {
+            "label": "후면 (Back)",
+            "url": "assets/images/week03/robot-ref-back.png"
+          }
+        ],
+        "clips": [
+          {
+            "label": "Import",
+            "src": "assets/clips/week03/ref-import.mp4"
+          },
+          {
+            "label": "Position",
+            "src": "assets/clips/week03/ref-position.mp4"
+          },
+          {
+            "label": "Opacity",
+            "src": "assets/clips/week03/ref-opacity.mp4"
+          }
         ],
         "showme": "image-reference"
       }
     ],
     "shortcuts": [
-      { "keys": "Shift + A", "action": "Add 메뉴 (Image → Reference로 참고 이미지 추가)", "category": "general" },
-      { "keys": "1 / 2 / 3", "action": "Vertex / Edge / Face 선택 모드 전환", "category": "modeling" },
-      { "keys": "E", "action": "Extrude (면/선 돌출)", "detail": "선택한 면이나 선을 바깥으로 밀어내어 새로운 지오메트리를 생성합니다. 모델링에서 형태를 확장하는 가장 기본적인 도구입니다.", "category": "modeling" },
-      { "keys": "Alt + E", "action": "Extrude Along Normals (면 방향으로 돌출)", "category": "modeling" },
-      { "keys": "Ctrl + R", "action": "Loop Cut (루프 분할)", "detail": "오브젝트에 새로운 엣지 루프를 추가하여 면을 분할합니다. 마우스 휠로 분할 수를 조절할 수 있습니다.", "category": "modeling" },
-      { "keys": "I", "action": "Inset (면 안쪽에 새 면)", "detail": "선택한 면 안쪽에 한 단계 작은 면을 만듭니다. 디테일 추가나 Extrude 전 준비 단계로 활용합니다.", "category": "modeling" },
-      { "keys": "Ctrl + B", "action": "Bevel (모서리 둥글게)", "detail": "선택한 엣지를 둥글게 깎아 부드러운 모서리를 만듭니다. 마우스 휠로 세그먼트 수를 늘릴 수 있습니다.", "category": "modeling" },
-      { "keys": "Ctrl + 1/2/3", "action": "Subdivision Level 빠른 설정", "detail": "Subdivision Surface Modifier의 레벨을 빠르게 1/2/3으로 설정합니다. 숫자가 클수록 면이 부드러워지지만 무거워집니다.", "category": "modifier" },
-      { "keys": "Shift + E", "action": "Edge Crease (날카로운 모서리 유지)", "detail": "Subdivision Surface 적용 시 특정 엣지의 날카로움을 유지합니다. 값이 1이면 완전히 날카롭고, 0이면 부드럽습니다.", "category": "modeling" },
-      { "keys": "Ctrl + A", "action": "Apply All Transforms (Modifier 전에 필수)", "detail": "위치/회전/스케일 값을 현재 상태로 확정합니다. Modifier 적용이나 내보내기 전에 반드시 실행해야 올바른 결과가 나옵니다.", "category": "object" },
-      { "keys": "S + X + 0", "action": "Mirror 중심선 X축 0 정렬", "detail": "선택한 버텍스의 X좌표를 0으로 만들어 Mirror Modifier의 중심선에 정확히 맞춥니다. 대칭 모델링의 필수 기법입니다.", "category": "modifier" }
+      {
+        "keys": "Shift + A",
+        "action": "Add 메뉴 (Image → Reference로 참고 이미지 추가)"
+      },
+      {
+        "keys": "1 / 2 / 3",
+        "action": "Vertex / Edge / Face 선택 모드 전환"
+      },
+      {
+        "keys": "E",
+        "action": "Extrude (면/선 돌출)"
+      },
+      {
+        "keys": "Alt + E",
+        "action": "Extrude Along Normals (면 방향으로 돌출)"
+      },
+      {
+        "keys": "Ctrl + R",
+        "action": "Loop Cut (루프 분할)"
+      },
+      {
+        "keys": "I",
+        "action": "Inset (면 안쪽에 새 면)"
+      },
+      {
+        "keys": "Ctrl + B",
+        "action": "Bevel (모서리 둥글게)"
+      },
+      {
+        "keys": "Ctrl + 1/2/3",
+        "action": "Subdivision Level 빠른 설정"
+      },
+      {
+        "keys": "Shift + E",
+        "action": "Edge Crease (날카로운 모서리 유지)"
+      },
+      {
+        "keys": "Ctrl + A",
+        "action": "Apply All Transforms (Modifier 전에 필수)"
+      },
+      {
+        "keys": "S + X + 0",
+        "action": "Mirror 중심선 X축 0 정렬"
+      }
+    ],
+    "explore": [
+      {
+        "title": "로봇 몸체 만들기",
+        "hint": "큐브 → Edit Mode로 기본형 → Mirror → Subdivision으로 부드럽게"
+      },
+      {
+        "title": "패널 구조 만들기",
+        "hint": "Plane → Solidify → Boolean으로 홈 추가"
+      },
+      {
+        "title": "반복 파츠 만들기",
+        "hint": "Cube 또는 Cylinder → Array로 6~10개 반복"
+      },
+      {
+        "title": "Skin Modifier로 손가락 만들기",
+        "hint": "점과 선만으로 뼈대를 만들고 Skin으로 두께 추가 → Ctrl+A로 각 정점 굵기 조절"
+      },
+      {
+        "title": "하드서피스 음영 정리",
+        "hint": "Bevel Modifier → Weighted Normal 순서로 넣어 차이 비교"
+      },
+      {
+        "title": "형태 휘기 실험",
+        "hint": "Simple Deform의 Bend나 Twist로 안테나, 손잡이 같은 형태를 휘어보기"
+      },
+      {
+        "title": "무거운 메쉬 가볍게 만들기",
+        "hint": "Decimate로 Polygon 수를 줄였을 때 형태가 얼마나 유지되는지 비교해보기"
+      }
     ],
     "assignment": {
       "title": "Edit + Modifier 로봇",
@@ -861,6 +1059,40 @@ const CURRICULUM = [
       "Boolean이 이상함 → 커터가 실제로 겹치는지 확인, Exact 모드 시도",
       "음영이 지저분함 → Weighted Normal 추가해보기",
       "Mirror 순서가 이상함 → Mirror는 스택 맨 위 (Subdivision 아래)"
+    ],
+    "videos": [
+      {
+        "title": "[실습] 민트 로봇 레퍼런스 이미지 설정",
+        "url": "https://youtu.be/-U82eI3eiQ0"
+      },
+      {
+        "title": "[실습] 민트 로봇 헤드 Mirror 모델링",
+        "url": "https://youtu.be/FIY9RBLdYcA"
+      },
+      {
+        "title": "Blender Studio - Modeling Introduction",
+        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modeling-introduction/"
+      },
+      {
+        "title": "Blender Studio - Object and Edit Mode",
+        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/object-and-edit-mode/"
+      },
+      {
+        "title": "Blender Studio - Mesh Selection Mode",
+        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/mesh-selection-mode/"
+      },
+      {
+        "title": "Blender Studio - Extrude",
+        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/extrude/"
+      },
+      {
+        "title": "Blender Studio - Loop Cut",
+        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/loop-cut/"
+      },
+      {
+        "title": "Blender Studio - Bevel Tool",
+        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/bevel-tool/"
+      }
     ],
     "docs": [
       {
@@ -904,77 +1136,11 @@ const CURRICULUM = [
         "url": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/decimate.html"
       }
     ],
-    "status": "active",
-    "summary": "레고 조립처럼, Edit Mode로 블록을 깎고 Modifier로 대칭·곡면·반복 효과를 얹는 흐름을 배워요.",
-    "videos": [
-      {
-        "title": "[실습] 민트 로봇 레퍼런스 이미지 설정",
-        "url": "https://youtu.be/-U82eI3eiQ0",
-        "description": "정면·측면 레퍼런스를 뷰포트에 올리고 Opacity를 조절하는 세팅 과정이에요."
-      },
-      {
-        "title": "[실습] 민트 로봇 헤드 Mirror 모델링",
-        "url": "https://youtu.be/FIY9RBLdYcA",
-        "description": "Mirror Modifier로 로봇 헤드를 좌우 대칭 모델링하는 전체 과정이에요."
-      },
-      {
-        "title": "Blender Studio - Modeling Introduction",
-        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modeling-introduction/"
-      },
-      {
-        "title": "Blender Studio - Object and Edit Mode",
-        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/object-and-edit-mode/"
-      },
-      {
-        "title": "Blender Studio - Mesh Selection Mode",
-        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/mesh-selection-mode/"
-      },
-      {
-        "title": "Blender Studio - Extrude",
-        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/extrude/"
-      },
-      {
-        "title": "Blender Studio - Loop Cut",
-        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/loop-cut/"
-      },
-      {
-        "title": "Blender Studio - Bevel Tool",
-        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/bevel-tool/"
-      }
-    ],
-    "explore": [
-      {
-        "title": "로봇 몸체 만들기",
-        "hint": "큐브 → Edit Mode로 기본형 → Mirror → Subdivision으로 부드럽게"
-      },
-      {
-        "title": "패널 구조 만들기",
-        "hint": "Plane → Solidify → Boolean으로 홈 추가"
-      },
-      {
-        "title": "반복 파츠 만들기",
-        "hint": "Cube 또는 Cylinder → Array로 6~10개 반복"
-      },
-      {
-        "title": "Skin Modifier로 손가락 만들기",
-        "hint": "점과 선만으로 뼈대를 만들고 Skin으로 두께 추가 → Ctrl+A로 각 정점 굵기 조절"
-      },
-      {
-        "title": "하드서피스 음영 정리",
-        "hint": "Bevel Modifier → Weighted Normal 순서로 넣어 차이 비교"
-      },
-      {
-        "title": "형태 휘기 실험",
-        "hint": "Simple Deform의 Bend나 Twist로 안테나, 손잡이 같은 형태를 휘어보기"
-      },
-      {
-        "title": "무거운 메쉬 가볍게 만들기",
-        "hint": "Decimate로 Polygon 수를 줄였을 때 형태가 얼마나 유지되는지 비교해보기"
-      }
-    ]
+    "summary": "레고 조립처럼, Edit Mode로 블록을 깎고 Modifier로 대칭·곡면·반복 효과를 얹는 흐름을 배워요."
   },
   {
     "week": 4,
+    "status": "upcoming",
     "title": "기초 모델링 2 — 디테일 & 정리",
     "subtitle": "Bevel · Weighted Normal · Apply",
     "duration": "~3시간",
@@ -992,6 +1158,10 @@ const CURRICULUM = [
         "goal": [
           "Transform을 정리한다",
           "파츠를 분리하거나 합쳐 관리한다"
+        ],
+        "done": [
+          "Scale이 안정적으로 정리됐다",
+          "움직일 파츠와 고정 파츠를 구분할 수 있다"
         ],
         "tasks": [
           {
@@ -1016,10 +1186,6 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week04/transform-apply.png",
-        "done": [
-          "Scale이 안정적으로 정리됐다",
-          "움직일 파츠와 고정 파츠를 구분할 수 있다"
-        ],
         "showme": "transform-apply"
       },
       {
@@ -1027,6 +1193,10 @@ const CURRICULUM = [
         "copy": "큰 덩어리가 잡힌 상태에서 눈, 패널, 관절 라인을 추가하는 단계예요. Inset과 Boolean을 같이 쓰면 디테일을 빠르게 만들 수 있어요.",
         "goal": [
           "Inset과 Boolean으로 디테일을 추가한다"
+        ],
+        "done": [
+          "얼굴이나 가슴판에 디테일이 생겼다",
+          "구멍이나 홈이 한 곳 이상 만들어졌다"
         ],
         "tasks": [
           {
@@ -1046,10 +1216,6 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week04/inset-panel-detail.png",
-        "done": [
-          "얼굴이나 가슴판에 디테일이 생겼다",
-          "구멍이나 홈이 한 곳 이상 만들어졌다"
-        ],
         "showme": "boolean-modifier"
       },
       {
@@ -1057,6 +1223,10 @@ const CURRICULUM = [
         "copy": "같은 '모서리 정리'라도 손으로 직접 깎는 방법과 Modifier로 전체를 정리하는 방법은 다르게 느껴져요. 둘 다 직접 비교해보는 게 가장 빠릅니다.",
         "goal": [
           "Ctrl+B와 Bevel Modifier를 구분해 쓴다"
+        ],
+        "done": [
+          "부분 수정과 전체 정리의 차이를 알게 됐다",
+          "모서리 느낌을 더 의도적으로 조절할 수 있다"
         ],
         "tasks": [
           {
@@ -1076,10 +1246,6 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week04/bevel-modifier.png",
-        "done": [
-          "부분 수정과 전체 정리의 차이를 알게 됐다",
-          "모서리 느낌을 더 의도적으로 조절할 수 있다"
-        ],
         "showme": "bevel-modifier"
       },
       {
@@ -1087,6 +1253,10 @@ const CURRICULUM = [
         "copy": "형태는 괜찮은데 표면이 울퉁불퉁해 보일 때가 있어요. 이럴 때 음영을 정리해주는 흐름을 익혀두면 결과물이 훨씬 단정해져요.",
         "goal": [
           "Weighted Normal의 역할을 이해한다"
+        ],
+        "done": [
+          "평평한 외장 면이 더 깔끔하게 보인다",
+          "언제 넣는지 설명할 수 있다"
         ],
         "tasks": [
           {
@@ -1106,13 +1276,12 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week04/weighted-normal.png",
-        "done": [
-          "평평한 외장 면이 더 깔끔하게 보인다",
-          "언제 넣는지 설명할 수 있다"
-        ],
         "showme": "weighted-normal",
         "widgets": [
-          { "type": "showme", "id": "edge-split-modifier" }
+          {
+            "type": "showme",
+            "id": "edge-split-modifier"
+          }
         ]
       },
       {
@@ -1120,6 +1289,10 @@ const CURRICULUM = [
         "copy": "정리 단계에서 가장 많이 헷갈리는 건 '언제 확정하느냐'예요. 수정 가능성을 남길지, 지금 확정할지를 의식적으로 나눠보면 훨씬 안정적으로 작업할 수 있어요.",
         "goal": [
           "Apply Transform과 Modifier Apply를 구분한다"
+        ],
+        "done": [
+          "언제 Ctrl+A를 쓰는지 안다",
+          "Modifier Apply는 마지막에만 하는 흐름을 이해한다"
         ],
         "tasks": [
           {
@@ -1139,65 +1312,39 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week04/array-modifier.png",
-        "done": [
-          "언제 Ctrl+A를 쓰는지 안다",
-          "Modifier Apply는 마지막에만 하는 흐름을 이해한다"
-        ],
         "showme": "join-separate",
         "widgets": [
-          { "type": "showme", "id": "triangulate-modifier" },
-          { "type": "showme", "id": "weld-modifier" }
+          {
+            "type": "showme",
+            "id": "triangulate-modifier"
+          },
+          {
+            "type": "showme",
+            "id": "weld-modifier"
+          }
         ]
       }
     ],
     "shortcuts": [
-      { "keys": "I", "action": "Inset (면 안쪽에 디테일 시작점 만들기)", "detail": "복잡한 제품 표면에 버튼, 홈, 장식 등의 디테일을 추가할 때 먼저 Inset으로 면을 분리합니다.", "category": "modeling" },
-      { "keys": "Ctrl + B", "action": "Bevel (특정 모서리 직접 다듬기)", "detail": "Subdivision 없이 특정 엣지만 둥글게 처리할 때 사용합니다. 제품의 라운드 처리에 적합합니다.", "category": "modeling" },
-      { "keys": "Ctrl + A", "action": "Apply All Transforms (Modifier 전 수치 정리)", "detail": "스케일이나 회전 값을 정리하여 Modifier가 의도대로 작동하게 합니다. 특히 Mirror, Array 적용 전 필수입니다.", "category": "object" },
-      { "keys": "P", "action": "Separate (선택 파츠 분리)", "detail": "Edit Mode에서 선택한 면/선/점을 별도 오브젝트로 분리합니다. 제품의 부품별 관리에 사용합니다.", "category": "object" },
-      { "keys": "Ctrl + J", "action": "Join (오브젝트 합치기)", "detail": "여러 오브젝트를 하나로 합칩니다. 마지막에 선택한 오브젝트가 Active가 되고 나머지가 그 안으로 합쳐집니다.", "category": "object" }
-    ],
-    "assignment": {
-      "title": "로봇 디테일 정리",
-      "description": "Week 03 기본형에 디테일과 음영 정리를 더한 결과물을 제출하세요.",
-      "checklist": [
-        "디테일 1곳 이상 추가",
-        "Bevel 계열 1회 이상 사용",
-        "Weighted Normal 확인",
-        "Modifier Stack 또는 Transform 확인 스크린샷"
-      ]
-    },
-    "mistakes": [
-      "Bevel이 너무 큼 → Width를 아주 작게 시작",
-      "Weighted Normal 차이가 안 보임 → Bevel과 Shade Smooth 전후 비교",
-      "Boolean이 지저분함 → 커터가 실제로 겹치는지 다시 확인",
-      "Modifier를 너무 일찍 Apply함 → 마지막에만 확정",
-      "파츠 관리가 헷갈림 → 움직일 파츠는 분리, 고정 파츠는 정리해서 묶기"
-    ],
-    "docs": [
       {
-        "title": "Bevel Tool",
-        "url": "https://docs.blender.org/manual/en/latest/modeling/meshes/tools/bevel.html"
+        "keys": "I",
+        "action": "Inset (면 안쪽에 디테일 시작점 만들기)"
       },
       {
-        "title": "Bevel Modifier",
-        "url": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/bevel.html"
+        "keys": "Ctrl + B",
+        "action": "Bevel (특정 모서리 직접 다듬기)"
       },
       {
-        "title": "Weighted Normal",
-        "url": "https://docs.blender.org/manual/en/latest/modeling/modifiers/modify/weighted_normal.html"
+        "keys": "Ctrl + A",
+        "action": "Apply All Transforms (Modifier 전 수치 정리)"
       },
       {
-        "title": "Boolean",
-        "url": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/booleans.html"
-      }
-    ],
-    "status": "upcoming",
-    "summary": "지난 주 배운 흐름을 바탕으로 디테일 추가와 음영 정리를 더 안정적으로 반복합니다.",
-    "videos": [
+        "keys": "P",
+        "action": "Separate (선택 파츠 분리)"
+      },
       {
-        "title": "Blender Studio - Modifiers",
-        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modifiers/"
+        "keys": "Ctrl + J",
+        "action": "Join (오브젝트 합치기)"
       }
     ],
     "explore": [
@@ -1217,10 +1364,53 @@ const CURRICULUM = [
         "title": "Apply 타이밍 비교",
         "hint": "같은 파일을 복제해 Apply 전과 후의 수정 난이도 비교"
       }
-    ]
+    ],
+    "assignment": {
+      "title": "로봇 디테일 정리",
+      "description": "Week 03 기본형에 디테일과 음영 정리를 더한 결과물을 제출하세요.",
+      "checklist": [
+        "디테일 1곳 이상 추가",
+        "Bevel 계열 1회 이상 사용",
+        "Weighted Normal 확인",
+        "Modifier Stack 또는 Transform 확인 스크린샷"
+      ]
+    },
+    "mistakes": [
+      "Bevel이 너무 큼 → Width를 아주 작게 시작",
+      "Weighted Normal 차이가 안 보임 → Bevel과 Shade Smooth 전후 비교",
+      "Boolean이 지저분함 → 커터가 실제로 겹치는지 다시 확인",
+      "Modifier를 너무 일찍 Apply함 → 마지막에만 확정",
+      "파츠 관리가 헷갈림 → 움직일 파츠는 분리, 고정 파츠는 정리해서 묶기"
+    ],
+    "videos": [
+      {
+        "title": "Blender Studio - Modifiers",
+        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modifiers/"
+      }
+    ],
+    "docs": [
+      {
+        "title": "Bevel Tool",
+        "url": "https://docs.blender.org/manual/en/latest/modeling/meshes/tools/bevel.html"
+      },
+      {
+        "title": "Bevel Modifier",
+        "url": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/bevel.html"
+      },
+      {
+        "title": "Weighted Normal",
+        "url": "https://docs.blender.org/manual/en/latest/modeling/modifiers/modify/weighted_normal.html"
+      },
+      {
+        "title": "Boolean",
+        "url": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/booleans.html"
+      }
+    ],
+    "summary": "지난 주 배운 흐름을 바탕으로 디테일 추가와 음영 정리를 더 안정적으로 반복합니다."
   },
   {
     "week": 5,
+    "status": "upcoming",
     "title": "AI 3D 생성 + Sculpting",
     "subtitle": "AI 툴 활용 · Sculpt Mode 기초 · 메쉬 정리",
     "duration": "~3시간",
@@ -1240,6 +1430,10 @@ const CURRICULUM = [
           "AI 생성 워크플로우를 이해한다",
           "프롬프트 작성 요령을 안다"
         ],
+        "done": [
+          "AI 생성 메쉬를 Blender에서 열었다",
+          "최소 2가지 프롬프트로 결과를 비교했다"
+        ],
         "tasks": [
           {
             "id": "w5-t1",
@@ -1257,11 +1451,7 @@ const CURRICULUM = [
             "detail": "File → Import → glTF (.glb/.gltf)"
           }
         ],
-        "image": "assets/images/week05/ai-3d-generation.png",
-        "done": [
-          "AI 생성 메쉬를 Blender에서 열었다",
-          "최소 2가지 프롬프트로 결과를 비교했다"
-        ]
+        "image": "assets/images/week05/ai-3d-generation.png"
       },
       {
         "title": "AI 메쉬 정리",
@@ -1269,6 +1459,10 @@ const CURRICULUM = [
         "goal": [
           "AI 메쉬의 폴리곤 문제를 이해한다",
           "Decimate로 메쉬를 정리한다"
+        ],
+        "done": [
+          "폴리곤 수가 절반 이하로 줄었다",
+          "형태가 크게 무너지지 않았다"
         ],
         "tasks": [
           {
@@ -1288,13 +1482,12 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week05/mesh-cleanup.png",
-        "done": [
-          "폴리곤 수가 절반 이하로 줄었다",
-          "형태가 크게 무너지지 않았다"
-        ],
         "showme": "decimate-modifier",
         "widgets": [
-          { "type": "showme", "id": "mask-modifier" }
+          {
+            "type": "showme",
+            "id": "mask-modifier"
+          }
         ]
       },
       {
@@ -1303,6 +1496,9 @@ const CURRICULUM = [
         "goal": [
           "Sculpt Mode 진입 방법을 안다",
           "기본 3대 브러시를 쓴다"
+        ],
+        "done": [
+          "Draw로 볼록하게, Grab으로 끌어당기고, Smooth로 정리했다"
         ],
         "tasks": [
           {
@@ -1332,9 +1528,6 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week05/sculpt-mode.png",
-        "done": [
-          "Draw로 볼록하게, Grab으로 끌어당기고, Smooth로 정리했다"
-        ],
         "showme": "sculpt-basics"
       },
       {
@@ -1342,6 +1535,9 @@ const CURRICULUM = [
         "copy": "기본 3개로 큰 흐름을 잡았으면, 이제 세부 표현용 브러시를 익혀요. Clay는 점토를 덧붙이는 느낌, Crease는 주름이나 홈을 파는 느낌이에요.",
         "goal": [
           "용도별 브러시를 구분해 쓴다"
+        ],
+        "done": [
+          "Clay/Crease/Inflate 중 2가지 이상 써봤다"
         ],
         "tasks": [
           {
@@ -1360,10 +1556,7 @@ const CURRICULUM = [
             "detail": "볼이나 근육 강조에 유용"
           }
         ],
-        "image": "assets/images/week05/sculpt-brushes.png",
-        "done": [
-          "Clay/Crease/Inflate 중 2가지 이상 써봤다"
-        ]
+        "image": "assets/images/week05/sculpt-brushes.png"
       },
       {
         "title": "Remesh와 마무리",
@@ -1371,6 +1564,10 @@ const CURRICULUM = [
         "goal": [
           "Remesh의 역할을 이해한다",
           "AI 초안 + Sculpt 마무리 흐름을 완성한다"
+        ],
+        "done": [
+          "Remesh 후 메쉬가 고르게 정리됐다",
+          "AI + Sculpt 결과물 스크린샷을 저장했다"
         ],
         "tasks": [
           {
@@ -1390,67 +1587,47 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week05/remesh.png",
-        "done": [
-          "Remesh 후 메쉬가 고르게 정리됐다",
-          "AI + Sculpt 결과물 스크린샷을 저장했다"
-        ],
         "showme": "remesh-modifier",
         "widgets": [
-          { "type": "showme", "id": "multiresolution-modifier" }
+          {
+            "type": "showme",
+            "id": "multiresolution-modifier"
+          }
         ]
       }
     ],
-    "assignment": {
-      "title": "AI + 수동 하이브리드 오브젝트",
-      "description": "AI 생성 메쉬를 Sculpt로 다듬은 결과물을 제출해요. 원본과 수정 후를 비교할 수 있어야 해요.",
-      "checklist": [
-        "AI 생성 원본과 Sculpt 수정 후 비교 이미지",
-        "AI 생성 → Sculpt 수정 흔적 있는 .blend",
-        "사용한 브러시 3가지 이상 적기",
-        "완성 렌더 이미지 2장 이상"
-      ]
-    },
-    "mistakes": [
-      "AI 메쉬 폴리곤이 너무 많음 → Decimate Modifier로 줄이기",
-      "Sculpt가 먹히지 않음 → 폴리곤이 너무 적으면 Remesh로 늘리기",
-      "브러시가 반대로 작동함 → Ctrl을 누르고 있으면 반전이에요. 떼세요",
-      "형태가 너무 울퉁불퉁 → Smooth 브러시로 정리, 또는 Strength 낮추기",
-      "Import 메쉬가 너무 작거나 큼 → S로 크기 맞추고 Ctrl+A로 Scale 적용"
-    ],
     "shortcuts": [
-      { "keys": "Ctrl + Tab", "action": "Sculpt Mode 전환", "detail": "Object Mode에서 Sculpt Mode로 빠르게 전환합니다. 파이 메뉴가 나타나면 Sculpt Mode를 선택합니다.", "category": "general" },
-      { "keys": "F", "action": "브러시 크기 조절", "detail": "F를 누른 채 마우스를 좌우로 움직여 브러시 크기를 실시간으로 조절합니다. 넓은 면은 크게, 디테일은 작게.", "category": "sculpt" },
-      { "keys": "Shift + F", "action": "브러시 강도 조절", "detail": "Shift+F를 누른 채 마우스를 움직여 브러시 압력(Strength)을 조절합니다. 미세한 표현에는 낮은 강도를 사용합니다.", "category": "sculpt" },
-      { "keys": "Ctrl (hold)", "action": "브러시 반전 (파내기)", "detail": "Ctrl을 누르고 있으면 현재 브러시의 효과가 반전됩니다. Draw 브러시는 올리기 → 파내기로 바뀝니다.", "category": "sculpt" },
-      { "keys": "Shift (hold)", "action": "Smooth 임시 전환", "detail": "Shift를 누르고 있으면 현재 브러시와 무관하게 임시로 Smooth 브러시로 전환됩니다. 울퉁불퉁한 표면을 다듬을 때 사용합니다.", "category": "sculpt" },
-      { "keys": "Ctrl + R (Sculpt)", "action": "Voxel Remesh", "category": "sculpt" },
-      { "keys": "Ctrl + Z", "action": "되돌리기", "detail": "직전 작업을 취소합니다. Sculpt에서 브러시 스트로크를 잘못했을 때 바로 되돌릴 수 있습니다. 여러 번 눌러 연속 취소 가능.", "category": "general" },
-      { "keys": "X", "action": "Draw 브러시 빠른 선택", "category": "sculpt" }
-    ],
-    "docs": [
       {
-        "title": "Sculpt Mode",
-        "url": "https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/introduction/index.html"
+        "keys": "Ctrl + Tab",
+        "action": "Sculpt Mode 전환"
       },
       {
-        "title": "Sculpt Brushes",
-        "url": "https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/tools/index.html"
+        "keys": "F",
+        "action": "브러시 크기 조절"
       },
       {
-        "title": "Remesh",
-        "url": "https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/tool_settings/remesh.html"
+        "keys": "Shift + F",
+        "action": "브러시 강도 조절"
       },
       {
-        "title": "Decimate Modifier",
-        "url": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/decimate.html"
-      }
-    ],
-    "status": "upcoming",
-    "summary": "AI 기반 3D 생성 툴을 경험하고, Sculpt Mode로 유기적인 형태를 만들어요.",
-    "videos": [
+        "keys": "Ctrl (hold)",
+        "action": "브러시 반전 (파내기)"
+      },
       {
-        "title": "Blender Studio - Introduction to Sculpting",
-        "url": "https://studio.blender.org/training/sculpting-in-blender/introduction/"
+        "keys": "Shift (hold)",
+        "action": "Smooth 임시 전환"
+      },
+      {
+        "keys": "Ctrl + R (Sculpt)",
+        "action": "Voxel Remesh"
+      },
+      {
+        "keys": "Ctrl + Z",
+        "action": "되돌리기"
+      },
+      {
+        "keys": "X",
+        "action": "Draw 브러시 빠른 선택"
       }
     ],
     "explore": [
@@ -1470,10 +1647,53 @@ const CURRICULUM = [
         "title": "AI + Edit Mode 하이브리드",
         "hint": "AI 메쉬를 Sculpt 대신 Edit Mode로 정리해서 하드서피스 느낌 만들기"
       }
-    ]
+    ],
+    "assignment": {
+      "title": "AI + 수동 하이브리드 오브젝트",
+      "description": "AI 생성 메쉬를 Sculpt로 다듬은 결과물을 제출해요. 원본과 수정 후를 비교할 수 있어야 해요.",
+      "checklist": [
+        "AI 생성 원본과 Sculpt 수정 후 비교 이미지",
+        "AI 생성 → Sculpt 수정 흔적 있는 .blend",
+        "사용한 브러시 3가지 이상 적기",
+        "완성 렌더 이미지 2장 이상"
+      ]
+    },
+    "mistakes": [
+      "AI 메쉬 폴리곤이 너무 많음 → Decimate Modifier로 줄이기",
+      "Sculpt가 먹히지 않음 → 폴리곤이 너무 적으면 Remesh로 늘리기",
+      "브러시가 반대로 작동함 → Ctrl을 누르고 있으면 반전이에요. 떼세요",
+      "형태가 너무 울퉁불퉁 → Smooth 브러시로 정리, 또는 Strength 낮추기",
+      "Import 메쉬가 너무 작거나 큼 → S로 크기 맞추고 Ctrl+A로 Scale 적용"
+    ],
+    "videos": [
+      {
+        "title": "Blender Studio - Introduction to Sculpting",
+        "url": "https://studio.blender.org/training/sculpting-in-blender/introduction/"
+      }
+    ],
+    "docs": [
+      {
+        "title": "Sculpt Mode",
+        "url": "https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/introduction/index.html"
+      },
+      {
+        "title": "Sculpt Brushes",
+        "url": "https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/tools/index.html"
+      },
+      {
+        "title": "Remesh",
+        "url": "https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/tool_settings/remesh.html"
+      },
+      {
+        "title": "Decimate Modifier",
+        "url": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/decimate.html"
+      }
+    ],
+    "summary": "AI 기반 3D 생성 툴을 경험하고, Sculpt Mode로 유기적인 형태를 만들어요."
   },
   {
     "week": 6,
+    "status": "upcoming",
     "title": "Material & Shader Node",
     "subtitle": "재질 시스템 · Principled BSDF · 노드 편집",
     "duration": "~3시간",
@@ -1493,6 +1713,10 @@ const CURRICULUM = [
           "Material 슬롯의 구조를 안다",
           "하나의 오브젝트에 여러 Material을 쓸 수 있다"
         ],
+        "done": [
+          "오브젝트 색이 바뀌었다",
+          "한 오브젝트에 2가지 이상 Material을 할당했다"
+        ],
         "tasks": [
           {
             "id": "w6-t1",
@@ -1511,10 +1735,6 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week06/material-assign.png",
-        "done": [
-          "오브젝트 색이 바뀌었다",
-          "한 오브젝트에 2가지 이상 Material을 할당했다"
-        ],
         "showme": "material-basics"
       },
       {
@@ -1523,6 +1743,10 @@ const CURRICULUM = [
         "goal": [
           "핵심 파라미터 4가지를 구분한다",
           "원하는 재질을 슬라이더로 만든다"
+        ],
+        "done": [
+          "금속/유리/플라스틱 재질을 각각 흉내냈다",
+          "Roughness 차이를 눈으로 구분할 수 있다"
         ],
         "tasks": [
           {
@@ -1547,10 +1771,6 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week06/principled-bsdf.png",
-        "done": [
-          "금속/유리/플라스틱 재질을 각각 흉내냈다",
-          "Roughness 차이를 눈으로 구분할 수 있다"
-        ],
         "showme": "principled-bsdf"
       },
       {
@@ -1559,6 +1779,10 @@ const CURRICULUM = [
         "goal": [
           "노드 기반 재질 편집 방식을 이해한다",
           "Color Ramp 노드를 연결한다"
+        ],
+        "done": [
+          "ColorRamp를 Principled BSDF에 연결했다",
+          "노드 2개 이상을 직접 연결했다"
         ],
         "tasks": [
           {
@@ -1583,10 +1807,6 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week06/shader-editor.png",
-        "done": [
-          "ColorRamp를 Principled BSDF에 연결했다",
-          "노드 2개 이상을 직접 연결했다"
-        ],
         "showme": "shader-editor"
       },
       {
@@ -1594,6 +1814,9 @@ const CURRICULUM = [
         "copy": "Noise Texture를 연결하면 표면에 얼룩이나 먼지 같은 질감이 생겨요. 실제 물건은 완전히 깨끗한 법이 없으니까, 이 한 단계가 리얼함을 크게 올려줘요.",
         "goal": [
           "Noise/Musgrave 등 텍스처 노드를 연결한다"
+        ],
+        "done": [
+          "표면에 패턴이나 질감이 보인다"
         ],
         "tasks": [
           {
@@ -1612,16 +1835,16 @@ const CURRICULUM = [
             "detail": "표면 광택에 변화를 줘요"
           }
         ],
-        "image": "assets/images/week06/texture-node.png",
-        "done": [
-          "표면에 패턴이나 질감이 보인다"
-        ]
+        "image": "assets/images/week06/texture-node.png"
       },
       {
         "title": "Viewport Shading 비교",
         "copy": "Z 키 하나로 와이어프레임/솔리드/미리보기/렌더를 오가요. 작업 중에는 Material Preview로, 최종 확인은 Rendered로 보는 습관을 들이면 편해요.",
         "goal": [
           "4가지 Shading 모드를 구분한다"
+        ],
+        "done": [
+          "Z 파이 메뉴로 모드 전환이 자연스럽다"
         ],
         "tasks": [
           {
@@ -1635,10 +1858,55 @@ const CURRICULUM = [
             "detail": "빛 반사가 다르게 보여요"
           }
         ],
-        "image": "assets/images/week06/shading-modes.png",
-        "done": [
-          "Z 파이 메뉴로 모드 전환이 자연스럽다"
-        ]
+        "image": "assets/images/week06/shading-modes.png"
+      }
+    ],
+    "shortcuts": [
+      {
+        "keys": "Z",
+        "action": "Shading 모드 전환 파이 메뉴"
+      },
+      {
+        "keys": "Shift + A",
+        "action": "Shader Editor 노드 추가"
+      },
+      {
+        "keys": "Ctrl + Shift + Click",
+        "action": "Viewer Node 연결"
+      },
+      {
+        "keys": "Ctrl + T",
+        "action": "Texture Mapping 자동 연결"
+      },
+      {
+        "keys": "M",
+        "action": "Frame 그룹 만들기"
+      },
+      {
+        "keys": "H",
+        "action": "노드 숨기기/접기"
+      },
+      {
+        "keys": "Ctrl + Right Click",
+        "action": "노드 연결선 끊기"
+      }
+    ],
+    "explore": [
+      {
+        "title": "로봇 파츠별 재질 입히기",
+        "hint": "몸통은 무광 플라스틱, 관절은 금속, 눈은 발광으로 나눠서 입히기"
+      },
+      {
+        "title": "Mix Shader 실험",
+        "hint": "금속과 플라스틱을 Mix Shader로 섞어 반반짜리 재질 만들기"
+      },
+      {
+        "title": "Noise로 녹슨 느낌 만들기",
+        "hint": "Noise Texture + Color Ramp로 깨끗한 금속과 녹슨 부분 분리"
+      },
+      {
+        "title": "투명 재질 실험",
+        "hint": "Alpha 값을 조절해서 반투명 바이저 만들기 (Settings → Blend Mode)"
       }
     ],
     "assignment": {
@@ -1658,14 +1926,11 @@ const CURRICULUM = [
       "유리가 검게 보임 → 주변에 반사할 환경이 없으면 유리가 어두워요. HDRI 추가하면 해결",
       "여러 Material 할당이 안 됨 → Edit Mode에서 면을 선택한 뒤 Assign 버튼"
     ],
-    "shortcuts": [
-      { "keys": "Z", "action": "Shading 모드 전환 파이 메뉴", "detail": "Wireframe, Solid, Material Preview, Rendered 네 가지 뷰포트 셰이딩 모드를 파이 메뉴로 빠르게 전환합니다.", "category": "material" },
-      { "keys": "Shift + A", "action": "Shader Editor 노드 추가", "detail": "Shader Editor에서 새로운 노드를 추가합니다. 텍스처, 컬러, 수학 연산 등 다양한 노드를 검색하여 넣을 수 있습니다.", "category": "material" },
-      { "keys": "Ctrl + Shift + Click", "action": "Viewer Node 연결", "detail": "노드를 Ctrl+Shift+클릭하면 Viewer Node가 자동 연결되어 해당 노드의 출력을 미리 볼 수 있습니다. 디버깅에 필수입니다.", "category": "material" },
-      { "keys": "Ctrl + T", "action": "Texture Mapping 자동 연결", "detail": "Image Texture 노드에 Mapping + Texture Coordinate 노드를 자동으로 연결합니다. 텍스처 위치/크기/회전 조절이 가능해집니다.", "category": "material" },
-      { "keys": "M", "action": "Frame 그룹 만들기", "detail": "선택한 노드들을 Frame으로 묶어 정리합니다. 복잡한 노드 트리를 기능별로 그룹화하여 가독성을 높입니다.", "category": "general" },
-      { "keys": "H", "action": "노드 숨기기/접기", "detail": "선택한 노드를 접어서 컴팩트하게 만듭니다. 사용하지 않는 소켓이 숨겨져 노드 트리가 깔끔해집니다.", "category": "general" },
-      { "keys": "Ctrl + Right Click", "action": "노드 연결선 끊기", "category": "material" }
+    "videos": [
+      {
+        "title": "Blender Studio - Materials and Shading",
+        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/materials-and-shading/"
+      }
     ],
     "docs": [
       {
@@ -1689,35 +1954,11 @@ const CURRICULUM = [
         "url": "https://docs.blender.org/manual/en/latest/render/shader_nodes/converter/color_ramp.html"
       }
     ],
-    "status": "upcoming",
-    "summary": "Material의 원리와 Shader Editor를 이해하고 Principled BSDF로 다양한 재질을 표현해요.",
-    "videos": [
-      {
-        "title": "Blender Studio - Materials and Shading",
-        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/materials-and-shading/"
-      }
-    ],
-    "explore": [
-      {
-        "title": "로봇 파츠별 재질 입히기",
-        "hint": "몸통은 무광 플라스틱, 관절은 금속, 눈은 발광으로 나눠서 입히기"
-      },
-      {
-        "title": "Mix Shader 실험",
-        "hint": "금속과 플라스틱을 Mix Shader로 섞어 반반짜리 재질 만들기"
-      },
-      {
-        "title": "Noise로 녹슨 느낌 만들기",
-        "hint": "Noise Texture + Color Ramp로 깨끗한 금속과 녹슨 부분 분리"
-      },
-      {
-        "title": "투명 재질 실험",
-        "hint": "Alpha 값을 조절해서 반투명 바이저 만들기 (Settings → Blend Mode)"
-      }
-    ]
+    "summary": "Material의 원리와 Shader Editor를 이해하고 Principled BSDF로 다양한 재질을 표현해요."
   },
   {
     "week": 7,
+    "status": "upcoming",
     "title": "UV Unwrapping + AI Texture",
     "subtitle": "UV 펼치기 · 텍스처 매핑 · AI 이미지 활용",
     "duration": "~3시간",
@@ -1737,6 +1978,10 @@ const CURRICULUM = [
           "UV가 왜 필요한지 이해한다",
           "Seam의 역할을 안다"
         ],
+        "done": [
+          "빨간 Seam 선이 표시됐다",
+          "Seam 위치를 의도적으로 정할 수 있다"
+        ],
         "tasks": [
           {
             "id": "w7-t1",
@@ -1755,10 +2000,6 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week07/uv-seam.png",
-        "done": [
-          "빨간 Seam 선이 표시됐다",
-          "Seam 위치를 의도적으로 정할 수 있다"
-        ],
         "showme": "uv-unwrapping"
       },
       {
@@ -1767,6 +2008,10 @@ const CURRICULUM = [
         "goal": [
           "UV가 어떻게 펼쳐지는지 이해한다",
           "UV Editor에서 섬을 조작한다"
+        ],
+        "done": [
+          "UV Editor에서 메쉬가 2D로 보인다",
+          "UV 섬의 크기와 위치를 조절했다"
         ],
         "tasks": [
           {
@@ -1791,10 +2036,6 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week07/uv-editor.png",
-        "done": [
-          "UV Editor에서 메쉬가 2D로 보인다",
-          "UV 섬의 크기와 위치를 조절했다"
-        ],
         "showme": "uv-editor"
       },
       {
@@ -1802,6 +2043,9 @@ const CURRICULUM = [
         "copy": "Seam을 하나하나 그리기 귀찮을 때가 있어요. Smart UV Project는 자동으로 적당히 잘라서 펼쳐줘요. 정밀하진 않지만 초안으로 충분해요.",
         "goal": [
           "수동 Unwrap과 자동 Unwrap을 비교한다"
+        ],
+        "done": [
+          "Smart UV Project로 빠르게 UV를 만들었다"
         ],
         "tasks": [
           {
@@ -1815,10 +2059,7 @@ const CURRICULUM = [
             "detail": "어떤 게 더 깔끔한지 확인"
           }
         ],
-        "image": "assets/images/week07/smart-uv.png",
-        "done": [
-          "Smart UV Project로 빠르게 UV를 만들었다"
-        ]
+        "image": "assets/images/week07/smart-uv.png"
       },
       {
         "title": "AI Texture 생성 및 적용",
@@ -1826,6 +2067,9 @@ const CURRICULUM = [
         "goal": [
           "Image Texture 노드 사용법을 안다",
           "AI 생성 이미지를 재질에 연결한다"
+        ],
+        "done": [
+          "메쉬에 텍스처가 자연스럽게 입혀졌다"
         ],
         "tasks": [
           {
@@ -1849,16 +2093,16 @@ const CURRICULUM = [
             "detail": "텍스처가 늘어나면 UV를 다시 조정"
           }
         ],
-        "image": "assets/images/week07/ai-texture.png",
-        "done": [
-          "메쉬에 텍스처가 자연스럽게 입혀졌다"
-        ]
+        "image": "assets/images/week07/ai-texture.png"
       },
       {
         "title": "Texture Painting 맛보기",
         "copy": "UV가 펼쳐진 위에 직접 색을 칠할 수도 있어요. 3D 뷰에서 바로 칠하면 UV 위치가 자동으로 맞아서 편해요.",
         "goal": [
           "Texture Paint 모드의 존재를 안다"
+        ],
+        "done": [
+          "3D 뷰에서 직접 색을 칠해봤다"
         ],
         "tasks": [
           {
@@ -1872,62 +2116,37 @@ const CURRICULUM = [
             "detail": "브러시 색과 크기 바꿔가며 실험"
           }
         ],
-        "image": "assets/images/week07/texture-paint.png",
-        "done": [
-          "3D 뷰에서 직접 색을 칠해봤다"
-        ]
+        "image": "assets/images/week07/texture-paint.png"
       }
-    ],
-    "assignment": {
-      "title": "텍스처 입힌 소품",
-      "description": "Seam → Unwrap → AI Texture 순서로 텍스처를 입힌 소품을 제출해요. UV Editor 스크린샷도 함께.",
-      "checklist": [
-        "UV Unwrap이 완료된 .blend",
-        "AI 텍스처 이미지 포함",
-        "UV Editor 스크린샷 1장",
-        "렌더 이미지 2장 이상"
-      ]
-    },
-    "mistakes": [
-      "텍스처가 늘어남 → Seam 위치를 조정하거나 UV 섬 크기를 맞추기",
-      "텍스처가 뒤집혀 보임 → UV Editor에서 해당 섬 선택 후 S → Y → -1",
-      "UV가 겹침 → UV Editor에서 섬이 서로 겹치지 않게 배치",
-      "이미지가 흐림 → 텍스처 해상도가 너무 낮으면 1024×1024 이상으로",
-      "연결이 안 됨 → UV Map 이름이 Material과 동일한지 확인"
     ],
     "shortcuts": [
-      { "keys": "U", "action": "UV Unwrap 메뉴", "detail": "Edit Mode에서 UV 매핑 메뉴를 엽니다. Smart UV Project, Unwrap, Cube Projection 등 다양한 언랩 방식을 선택합니다.", "category": "uv" },
-      { "keys": "Ctrl + E → Mark Seam", "action": "UV Seam 지정", "detail": "선택한 엣지를 UV Seam으로 지정합니다. 전개도의 절개선 역할로, 어디서 잘라 펼칠지 결정합니다.", "category": "uv" },
-      { "keys": "Ctrl + E → Clear Seam", "action": "UV Seam 제거", "category": "uv" },
-      { "keys": "L", "action": "UV Editor에서 Island 선택", "detail": "UV Editor에서 커서 아래의 UV Island(펼쳐진 면 그룹) 전체를 한번에 선택합니다.", "category": "uv" },
-      { "keys": "P", "action": "UV Pin 고정", "detail": "선택한 UV 정점을 고정하여 다시 Unwrap해도 위치가 변하지 않게 합니다. 부분 수정 시 유용합니다.", "category": "uv" },
-      { "keys": "A", "action": "UV 전체 선택", "detail": "UV Editor의 모든 UV 정점을 선택합니다. 전체 Island를 한번에 이동/스케일할 때 사용합니다.", "category": "uv" },
-      { "keys": "S + X/Y + 0", "action": "UV Island 정렬", "detail": "UV 정점을 X축 또는 Y축 방향으로 일렬 정렬합니다. 깔끔한 UV 레이아웃을 만드는 데 필수적입니다.", "category": "uv" }
-    ],
-    "docs": [
       {
-        "title": "UV Unwrapping",
-        "url": "https://docs.blender.org/manual/en/latest/modeling/meshes/uv/unwrapping/index.html"
+        "keys": "U",
+        "action": "UV Unwrap 메뉴"
       },
       {
-        "title": "UV Editor",
-        "url": "https://docs.blender.org/manual/en/latest/editors/uv/introduction.html"
+        "keys": "Ctrl + E → Mark Seam",
+        "action": "UV Seam 지정"
       },
       {
-        "title": "Image Texture Node",
-        "url": "https://docs.blender.org/manual/en/latest/render/shader_nodes/textures/image.html"
+        "keys": "Ctrl + E → Clear Seam",
+        "action": "UV Seam 제거"
       },
       {
-        "title": "Texture Painting",
-        "url": "https://docs.blender.org/manual/en/latest/sculpt_paint/texture_paint/index.html"
-      }
-    ],
-    "status": "upcoming",
-    "summary": "UV Unwrapping으로 메쉬를 펼치고 AI 텍스처 이미지를 입혀요. 옷감 재단하듯 3D 표면을 2D로 펼치는 원리예요.",
-    "videos": [
+        "keys": "L",
+        "action": "UV Editor에서 Island 선택"
+      },
       {
-        "title": "Blender Studio - UV Unwrapping",
-        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/uv-unwrapping/"
+        "keys": "P",
+        "action": "UV Pin 고정"
+      },
+      {
+        "keys": "A",
+        "action": "UV 전체 선택"
+      },
+      {
+        "keys": "S + X/Y + 0",
+        "action": "UV Island 정렬"
       }
     ],
     "explore": [
@@ -1947,10 +2166,53 @@ const CURRICULUM = [
         "title": "Normal Map 체험",
         "hint": "AI로 생성한 Normal Map을 연결해서 표면에 가짜 요철 만들기"
       }
-    ]
+    ],
+    "assignment": {
+      "title": "텍스처 입힌 소품",
+      "description": "Seam → Unwrap → AI Texture 순서로 텍스처를 입힌 소품을 제출해요. UV Editor 스크린샷도 함께.",
+      "checklist": [
+        "UV Unwrap이 완료된 .blend",
+        "AI 텍스처 이미지 포함",
+        "UV Editor 스크린샷 1장",
+        "렌더 이미지 2장 이상"
+      ]
+    },
+    "mistakes": [
+      "텍스처가 늘어남 → Seam 위치를 조정하거나 UV 섬 크기를 맞추기",
+      "텍스처가 뒤집혀 보임 → UV Editor에서 해당 섬 선택 후 S → Y → -1",
+      "UV가 겹침 → UV Editor에서 섬이 서로 겹치지 않게 배치",
+      "이미지가 흐림 → 텍스처 해상도가 너무 낮으면 1024×1024 이상으로",
+      "연결이 안 됨 → UV Map 이름이 Material과 동일한지 확인"
+    ],
+    "videos": [
+      {
+        "title": "Blender Studio - UV Unwrapping",
+        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/uv-unwrapping/"
+      }
+    ],
+    "docs": [
+      {
+        "title": "UV Unwrapping",
+        "url": "https://docs.blender.org/manual/en/latest/modeling/meshes/uv/unwrapping/index.html"
+      },
+      {
+        "title": "UV Editor",
+        "url": "https://docs.blender.org/manual/en/latest/editors/uv/introduction.html"
+      },
+      {
+        "title": "Image Texture Node",
+        "url": "https://docs.blender.org/manual/en/latest/render/shader_nodes/textures/image.html"
+      },
+      {
+        "title": "Texture Painting",
+        "url": "https://docs.blender.org/manual/en/latest/sculpt_paint/texture_paint/index.html"
+      }
+    ],
+    "summary": "UV Unwrapping으로 메쉬를 펼치고 AI 텍스처 이미지를 입혀요. 옷감 재단하듯 3D 표면을 2D로 펼치는 원리예요."
   },
   {
     "week": 8,
+    "status": "upcoming",
     "title": "⭐ 중간고사 — 중간 프로젝트 발표",
     "subtitle": "지금까지 배운 것을 담은 작품 발표",
     "duration": "수업 전체 발표",
@@ -1965,6 +2227,10 @@ const CURRICULUM = [
         "copy": "발표 전날까지 렌더 이미지와 .blend 파일을 완성합니다.",
         "goal": [
           "발표 자료 완성"
+        ],
+        "done": [
+          "렌더 이미지 3장 이상",
+          ".blend 파일 깔끔하게 정리"
         ],
         "tasks": [
           {
@@ -1982,13 +2248,11 @@ const CURRICULUM = [
             "label": ".blend 파일 이름 정리 후 제출 폴더에 넣기",
             "detail": ""
           }
-        ],
-        "done": [
-          "렌더 이미지 3장 이상",
-          ".blend 파일 깔끔하게 정리"
         ]
       }
     ],
+    "shortcuts": [],
+    "explore": [],
     "assignment": {
       "title": "중간 프로젝트 발표",
       "description": "3D 모델 + 재질 + 본인만의 컨셉이 담긴 작품을 발표합니다. 3분 내외.",
@@ -1999,12 +2263,22 @@ const CURRICULUM = [
       ]
     },
     "mistakes": [],
-    "docs": [],
-    "status": "upcoming",
+    "videos": [],
+    "docs": [
+      {
+        "title": "Blender Manual: Rendering",
+        "url": "https://docs.blender.org/manual/en/latest/render/index.html"
+      },
+      {
+        "title": "Blender 단축키 모음",
+        "url": "../../resources/blender-shortcuts.md"
+      }
+    ],
     "summary": "Week 01~07에서 배운 모델링·재질·텍스처를 활용한 개인 프로젝트를 발표합니다."
   },
   {
     "week": 9,
+    "status": "upcoming",
     "title": "Lighting 기초 + 조명 연출",
     "subtitle": "빛의 종류 · HDRI · 3점 조명 · 카메라",
     "duration": "~3시간",
@@ -2023,6 +2297,10 @@ const CURRICULUM = [
         "goal": [
           "4가지 Light 타입의 특성을 안다",
           "Energy와 Color를 조절한다"
+        ],
+        "done": [
+          "4가지 Light를 각각 추가해서 차이를 느꼈다",
+          "조명 색을 바꿔봤다"
         ],
         "tasks": [
           {
@@ -2047,10 +2325,6 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week09/light-types.png",
-        "done": [
-          "4가지 Light를 각각 추가해서 차이를 느꼈다",
-          "조명 색을 바꿔봤다"
-        ],
         "showme": "light-types"
       },
       {
@@ -2059,6 +2333,10 @@ const CURRICULUM = [
         "goal": [
           "HDRI의 역할과 장점을 안다",
           "HDRI를 교체해서 분위기를 바꾼다"
+        ],
+        "done": [
+          "HDRI로 씬 분위기가 바뀌었다",
+          "2가지 이상 HDRI를 비교했다"
         ],
         "tasks": [
           {
@@ -2083,10 +2361,6 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week09/hdri-world.png",
-        "done": [
-          "HDRI로 씬 분위기가 바뀌었다",
-          "2가지 이상 HDRI를 비교했다"
-        ],
         "showme": "hdri-lighting"
       },
       {
@@ -2095,6 +2369,10 @@ const CURRICULUM = [
         "goal": [
           "3점 조명의 원리를 이해한다",
           "직접 3점 조명을 세팅한다"
+        ],
+        "done": [
+          "오브젝트가 입체감 있게 보인다",
+          "각 조명의 역할을 설명할 수 있다"
         ],
         "tasks": [
           {
@@ -2114,10 +2392,6 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week09/three-point-light.png",
-        "done": [
-          "오브젝트가 입체감 있게 보인다",
-          "각 조명의 역할을 설명할 수 있다"
-        ],
         "showme": "three-point-light"
       },
       {
@@ -2125,6 +2399,9 @@ const CURRICULUM = [
         "copy": "조명을 아무리 잘 잡아도 카메라 앵글이 안 좋으면 소용없어요. 카메라 위치와 렌즈를 조절하면 같은 씬도 완전히 다르게 보여요.",
         "goal": [
           "카메라를 원하는 위치에 세팅한다"
+        ],
+        "done": [
+          "카메라 뷰에서 원하는 구도가 잡혔다"
         ],
         "tasks": [
           {
@@ -2143,16 +2420,16 @@ const CURRICULUM = [
             "detail": "35mm(넓은) vs 85mm(망원) 차이"
           }
         ],
-        "image": "assets/images/week09/camera-setup.png",
-        "done": [
-          "카메라 뷰에서 원하는 구도가 잡혔다"
-        ]
+        "image": "assets/images/week09/camera-setup.png"
       },
       {
         "title": "분위기 연출 실험",
         "copy": "조명 색온도(따뜻/차가움)와 세기를 바꿔서 같은 로봇으로 낮/저녁/밤 분위기를 만들어요. 같은 오브젝트인데 사진 3장이 완전히 달라 보이면 성공이에요.",
         "goal": [
           "조명으로 분위기를 의도적으로 바꾼다"
+        ],
+        "done": [
+          "3가지 분위기 렌더를 만들었다"
         ],
         "tasks": [
           {
@@ -2166,61 +2443,33 @@ const CURRICULUM = [
             "detail": "Energy 낮추고 Rim만 강하게"
           }
         ],
-        "image": "assets/images/week09/mood-lighting.png",
-        "done": [
-          "3가지 분위기 렌더를 만들었다"
-        ]
+        "image": "assets/images/week09/mood-lighting.png"
       }
-    ],
-    "assignment": {
-      "title": "조명 포트폴리오",
-      "description": "동일한 오브젝트에 3가지 다른 조명 분위기 렌더 이미지를 제출해요.",
-      "checklist": [
-        "낮/저녁/밤 또는 다른 3가지 분위기 렌더",
-        "각 렌더의 조명 구성 간단 메모",
-        "카메라 구도 의식적으로 설정",
-        ".blend 파일"
-      ]
-    },
-    "mistakes": [
-      "빛이 너무 강함 → Energy 값 줄이기 (Area Light은 100~500W 정도)",
-      "그림자가 안 보임 → Rendered 모드에서만 정확히 보여요",
-      "HDRI가 안 보임 → World Properties에서 연결 확인, Rendered 모드 전환",
-      "배경이 너무 밝음 → HDRI Strength 값 줄이기",
-      "카메라 뷰가 안 바뀜 → Numpad 0이 아닌 일반 0을 누른 건 아닌지 확인"
     ],
     "shortcuts": [
-      { "keys": "Shift + A → Light", "action": "조명 추가", "detail": "Point, Sun, Spot, Area 네 종류의 조명을 씬에 추가합니다. 조명 종류에 따라 빛의 퍼짐과 그림자가 달라집니다.", "category": "render" },
-      { "keys": "Z → Rendered", "action": "렌더 미리보기", "detail": "Z 파이 메뉴에서 Rendered를 선택하면 뷰포트에서 실시간 렌더 결과를 확인합니다. 조명과 재질을 바로 확인 가능합니다.", "category": "render" },
-      { "keys": "Shift + Z", "action": "Rendered/Solid 토글", "detail": "Rendered 뷰와 Solid 뷰를 빠르게 토글합니다. 렌더 결과 확인 후 바로 모델링 뷰로 돌아갈 때 편리합니다.", "category": "render" },
-      { "keys": "Numpad 0", "action": "카메라 뷰 전환", "detail": "활성 카메라 시점으로 전환합니다. 렌더링 결과물과 동일한 프레이밍을 뷰포트에서 확인합니다.", "category": "navigation" },
-      { "keys": "Ctrl + Numpad 0", "action": "현재 시점 → 카메라", "detail": "현재 보고 있는 뷰포트 시점을 활성 카메라의 위치/각도로 설정합니다. 원하는 구도를 잡은 뒤 카메라에 적용합니다.", "category": "navigation" },
-      { "keys": "N → Camera Lock to View", "action": "카메라 따라다니기", "category": "navigation" }
-    ],
-    "docs": [
       {
-        "title": "Lighting",
-        "url": "https://docs.blender.org/manual/en/latest/render/lights/light_object.html"
+        "keys": "Shift + A → Light",
+        "action": "조명 추가"
       },
       {
-        "title": "World Environment",
-        "url": "https://docs.blender.org/manual/en/latest/render/lights/world.html"
+        "keys": "Z → Rendered",
+        "action": "렌더 미리보기"
       },
       {
-        "title": "Camera",
-        "url": "https://docs.blender.org/manual/en/latest/render/cameras.html"
+        "keys": "Shift + Z",
+        "action": "Rendered/Solid 토글"
       },
       {
-        "title": "Depth of Field",
-        "url": "https://docs.blender.org/manual/en/latest/render/cameras.html#depth-of-field"
-      }
-    ],
-    "status": "upcoming",
-    "summary": "Point/Sun/Area/Spot Light의 특성과 HDRI 환경 조명을 이해하고 씬 분위기를 연출해요.",
-    "videos": [
+        "keys": "Numpad 0",
+        "action": "카메라 뷰 전환"
+      },
       {
-        "title": "Blender Studio - Lighting Fundamentals",
-        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/lighting/"
+        "keys": "Ctrl + Numpad 0",
+        "action": "현재 시점 → 카메라"
+      },
+      {
+        "keys": "N → Camera Lock to View",
+        "action": "카메라 따라다니기"
       }
     ],
     "explore": [
@@ -2240,10 +2489,53 @@ const CURRICULUM = [
         "title": "Depth of Field 맛보기",
         "hint": "카메라 → Depth of Field 켜고 F-stop을 낮춰서 배경 흐림 효과"
       }
-    ]
+    ],
+    "assignment": {
+      "title": "조명 포트폴리오",
+      "description": "동일한 오브젝트에 3가지 다른 조명 분위기 렌더 이미지를 제출해요.",
+      "checklist": [
+        "낮/저녁/밤 또는 다른 3가지 분위기 렌더",
+        "각 렌더의 조명 구성 간단 메모",
+        "카메라 구도 의식적으로 설정",
+        ".blend 파일"
+      ]
+    },
+    "mistakes": [
+      "빛이 너무 강함 → Energy 값 줄이기 (Area Light은 100~500W 정도)",
+      "그림자가 안 보임 → Rendered 모드에서만 정확히 보여요",
+      "HDRI가 안 보임 → World Properties에서 연결 확인, Rendered 모드 전환",
+      "배경이 너무 밝음 → HDRI Strength 값 줄이기",
+      "카메라 뷰가 안 바뀜 → Numpad 0이 아닌 일반 0을 누른 건 아닌지 확인"
+    ],
+    "videos": [
+      {
+        "title": "Blender Studio - Lighting Fundamentals",
+        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/lighting/"
+      }
+    ],
+    "docs": [
+      {
+        "title": "Lighting",
+        "url": "https://docs.blender.org/manual/en/latest/render/lights/light_object.html"
+      },
+      {
+        "title": "World Environment",
+        "url": "https://docs.blender.org/manual/en/latest/render/lights/world.html"
+      },
+      {
+        "title": "Camera",
+        "url": "https://docs.blender.org/manual/en/latest/render/cameras.html"
+      },
+      {
+        "title": "Depth of Field",
+        "url": "https://docs.blender.org/manual/en/latest/render/cameras.html#depth-of-field"
+      }
+    ],
+    "summary": "Point/Sun/Area/Spot Light의 특성과 HDRI 환경 조명을 이해하고 씬 분위기를 연출해요."
   },
   {
     "week": 10,
+    "status": "upcoming",
     "title": "Animation 기초",
     "subtitle": "키프레임 · Dope Sheet · Graph Editor · 루프",
     "duration": "~3시간",
@@ -2263,6 +2555,9 @@ const CURRICULUM = [
           "키프레임의 개념을 이해한다",
           "이동 키프레임을 직접 찍는다"
         ],
+        "done": [
+          "오브젝트가 A에서 B로 이동하는 애니메이션이 됐다"
+        ],
         "tasks": [
           {
             "id": "w10-t1",
@@ -2281,9 +2576,6 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week10/keyframe-intro.png",
-        "done": [
-          "오브젝트가 A에서 B로 이동하는 애니메이션이 됐다"
-        ],
         "showme": "keyframe-basics"
       },
       {
@@ -2291,6 +2583,9 @@ const CURRICULUM = [
         "copy": "이동만 되는 게 아니에요. 회전, 크기 변화도 키프레임으로 기록할 수 있어요. 로봇 팔이 돌아가거나, 안테나가 쭉 올라오는 움직임을 만들 수 있어요.",
         "goal": [
           "Rotation과 Scale 키프레임을 찍는다"
+        ],
+        "done": [
+          "오브젝트가 회전하면서 커지는 애니메이션을 만들었다"
         ],
         "tasks": [
           {
@@ -2309,10 +2604,7 @@ const CURRICULUM = [
             "detail": "2배로 커지는 애니메이션"
           }
         ],
-        "image": "assets/images/week10/rotation-scale.png",
-        "done": [
-          "오브젝트가 회전하면서 커지는 애니메이션을 만들었다"
-        ]
+        "image": "assets/images/week10/rotation-scale.png"
       },
       {
         "title": "Dope Sheet 타이밍",
@@ -2320,6 +2612,10 @@ const CURRICULUM = [
         "goal": [
           "Dope Sheet에서 키프레임을 이동/복사한다",
           "타이밍을 직접 조절한다"
+        ],
+        "done": [
+          "빠르게/느리게 달라지는 걸 확인했다",
+          "키프레임을 복사해서 반복 구간을 만들었다"
         ],
         "tasks": [
           {
@@ -2338,11 +2634,7 @@ const CURRICULUM = [
             "detail": "반복 동작 만들기에 유용"
           }
         ],
-        "image": "assets/images/week10/dope-sheet.png",
-        "done": [
-          "빠르게/느리게 달라지는 걸 확인했다",
-          "키프레임을 복사해서 반복 구간을 만들었다"
-        ]
+        "image": "assets/images/week10/dope-sheet.png"
       },
       {
         "title": "Graph Editor 커브",
@@ -2350,6 +2642,9 @@ const CURRICULUM = [
         "goal": [
           "Graph Editor에서 보간 커브를 이해한다",
           "Ease In/Out을 적용한다"
+        ],
+        "done": [
+          "직선 보간과 곡선 보간의 차이를 눈으로 구분할 수 있다"
         ],
         "tasks": [
           {
@@ -2369,9 +2664,6 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week10/graph-editor.png",
-        "done": [
-          "직선 보간과 곡선 보간의 차이를 눈으로 구분할 수 있다"
-        ],
         "showme": "graph-editor"
       },
       {
@@ -2379,6 +2671,9 @@ const CURRICULUM = [
         "copy": "끝나면 처음으로 돌아가서 무한 반복되는 움직임이에요. 로봇 눈이 깜빡이거나, 안테나가 흔들리는 걸 만들 때 써요.",
         "goal": [
           "루프 애니메이션을 만든다"
+        ],
+        "done": [
+          "끝과 처음이 자연스럽게 이어지는 루프를 만들었다"
         ],
         "tasks": [
           {
@@ -2392,62 +2687,37 @@ const CURRICULUM = [
             "detail": "자동 반복 설정"
           }
         ],
-        "image": "assets/images/week10/loop-animation.png",
-        "done": [
-          "끝과 처음이 자연스럽게 이어지는 루프를 만들었다"
-        ]
+        "image": "assets/images/week10/loop-animation.png"
       }
-    ],
-    "assignment": {
-      "title": "간단한 움직임 애니메이션",
-      "description": "오브젝트 1개가 이동/회전/크기 변화 중 2가지 이상을 포함한 5초(120프레임) 이상 애니메이션을 만들어요.",
-      "checklist": [
-        "이동+회전 또는 이동+크기 중 2가지 이상 포함",
-        "Ease In/Out 적용된 구간 1곳 이상",
-        "애니메이션 비디오 파일 or GIF",
-        ".blend 파일"
-      ]
-    },
-    "mistakes": [
-      "애니메이션이 끊김 → Graph Editor에서 Bezier 보간인지 확인",
-      "키프레임이 안 찍힘 → Auto Keying이 꺼져 있으면 I 키로 수동 삽입",
-      "오브젝트가 안 움직임 → Timeline 프레임을 이동했는지 확인",
-      "루프가 튀김 → 첫 프레임과 마지막 프레임의 값이 동일해야 해요",
-      "속도가 너무 일정해서 어색 → Graph Editor에서 Ease In/Out 넣기"
     ],
     "shortcuts": [
-      { "keys": "I", "action": "Insert Keyframe", "detail": "현재 프레임에 키프레임을 삽입합니다. 위치, 회전, 스케일 등 애니메이션할 속성을 선택하는 메뉴가 나타납니다.", "category": "general" },
-      { "keys": "Alt + I", "action": "Delete Keyframe", "detail": "현재 프레임의 키프레임을 삭제합니다. 잘못 찍은 키프레임이나 불필요한 키프레임을 정리할 때 사용합니다.", "category": "general" },
-      { "keys": "Space", "action": "재생/정지", "detail": "타임라인의 애니메이션을 재생하거나 정지합니다. 현재 프레임부터 재생이 시작됩니다.", "category": "general" },
-      { "keys": "← / →", "action": "이전/다음 프레임", "detail": "타임라인에서 한 프레임씩 앞뒤로 이동합니다. 키프레임 간의 변화를 정밀하게 확인할 때 사용합니다.", "category": "general" },
-      { "keys": "Shift + ← / →", "action": "시작/끝 프레임", "detail": "타임라인의 맨 처음 또는 맨 끝 프레임으로 이동합니다. 빠른 탐색에 유용합니다.", "category": "general" },
-      { "keys": "T", "action": "Interpolation 변경", "detail": "키프레임 간 보간 방식을 변경합니다. Linear(균일), Bezier(부드럽게), Constant(즉시 전환) 등을 선택합니다.", "category": "general" },
-      { "keys": "V", "action": "핸들 타입 변경 (Free/Auto)", "category": "general" }
-    ],
-    "docs": [
       {
-        "title": "Keyframes",
-        "url": "https://docs.blender.org/manual/en/latest/animation/keyframes/introduction.html"
+        "keys": "I",
+        "action": "Insert Keyframe"
       },
       {
-        "title": "Dope Sheet",
-        "url": "https://docs.blender.org/manual/en/latest/editors/dope_sheet/introduction.html"
+        "keys": "Alt + I",
+        "action": "Delete Keyframe"
       },
       {
-        "title": "Graph Editor",
-        "url": "https://docs.blender.org/manual/en/latest/editors/graph_editor/introduction.html"
+        "keys": "Space",
+        "action": "재생/정지"
       },
       {
-        "title": "Cyclic Extrapolation",
-        "url": "https://docs.blender.org/manual/en/latest/editors/graph_editor/fcurves/modifiers.html"
-      }
-    ],
-    "status": "upcoming",
-    "summary": "키프레임으로 움직임을 기록하고, Dope Sheet과 Graph Editor로 타이밍을 조절해요. 마리오네트 인형에 줄을 매달듯, 움직임을 하나씩 기록하는 거예요.",
-    "videos": [
+        "keys": "← / →",
+        "action": "이전/다음 프레임"
+      },
       {
-        "title": "Blender Studio - Animation Fundamentals",
-        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/animation/"
+        "keys": "Shift + ← / →",
+        "action": "시작/끝 프레임"
+      },
+      {
+        "keys": "T",
+        "action": "Interpolation 변경"
+      },
+      {
+        "keys": "V",
+        "action": "핸들 타입 변경 (Free/Auto)"
       }
     ],
     "explore": [
@@ -2467,10 +2737,53 @@ const CURRICULUM = [
         "title": "자동 키프레임 활용",
         "hint": "Auto Keying 켜고 오브젝트를 움직이기만 해도 자동 기록되는지 확인"
       }
-    ]
+    ],
+    "assignment": {
+      "title": "간단한 움직임 애니메이션",
+      "description": "오브젝트 1개가 이동/회전/크기 변화 중 2가지 이상을 포함한 5초(120프레임) 이상 애니메이션을 만들어요.",
+      "checklist": [
+        "이동+회전 또는 이동+크기 중 2가지 이상 포함",
+        "Ease In/Out 적용된 구간 1곳 이상",
+        "애니메이션 비디오 파일 or GIF",
+        ".blend 파일"
+      ]
+    },
+    "mistakes": [
+      "애니메이션이 끊김 → Graph Editor에서 Bezier 보간인지 확인",
+      "키프레임이 안 찍힘 → Auto Keying이 꺼져 있으면 I 키로 수동 삽입",
+      "오브젝트가 안 움직임 → Timeline 프레임을 이동했는지 확인",
+      "루프가 튀김 → 첫 프레임과 마지막 프레임의 값이 동일해야 해요",
+      "속도가 너무 일정해서 어색 → Graph Editor에서 Ease In/Out 넣기"
+    ],
+    "videos": [
+      {
+        "title": "Blender Studio - Animation Fundamentals",
+        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/animation/"
+      }
+    ],
+    "docs": [
+      {
+        "title": "Keyframes",
+        "url": "https://docs.blender.org/manual/en/latest/animation/keyframes/introduction.html"
+      },
+      {
+        "title": "Dope Sheet",
+        "url": "https://docs.blender.org/manual/en/latest/editors/dope_sheet/introduction.html"
+      },
+      {
+        "title": "Graph Editor",
+        "url": "https://docs.blender.org/manual/en/latest/editors/graph_editor/introduction.html"
+      },
+      {
+        "title": "Cyclic Extrapolation",
+        "url": "https://docs.blender.org/manual/en/latest/editors/graph_editor/fcurves/modifiers.html"
+      }
+    ],
+    "summary": "키프레임으로 움직임을 기록하고, Dope Sheet과 Graph Editor로 타이밍을 조절해요. 마리오네트 인형에 줄을 매달듯, 움직임을 하나씩 기록하는 거예요."
   },
   {
     "week": 11,
+    "status": "upcoming",
     "title": "Rigging 기초",
     "subtitle": "Armature · 본 구조 · 웨이트 페인팅 · 포즈",
     "duration": "~3시간",
@@ -2489,6 +2802,9 @@ const CURRICULUM = [
         "goal": [
           "Armature 구조를 이해한다",
           "부모-자식 관계를 만든다"
+        ],
+        "done": [
+          "몸통-팔-다리 구조의 본 체인이 있다"
         ],
         "tasks": [
           {
@@ -2513,9 +2829,6 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week11/armature-structure.png",
-        "done": [
-          "몸통-팔-다리 구조의 본 체인이 있다"
-        ],
         "showme": "armature-basics"
       },
       {
@@ -2524,6 +2837,9 @@ const CURRICULUM = [
         "goal": [
           "Armature Parent의 개념을 이해한다",
           "Automatic Weights를 적용한다"
+        ],
+        "done": [
+          "본을 움직이면 메쉬도 자연스럽게 따라온다"
         ],
         "tasks": [
           {
@@ -2542,10 +2858,7 @@ const CURRICULUM = [
             "detail": "본이 파란색이면 Pose Mode"
           }
         ],
-        "image": "assets/images/week11/mesh-skinning.png",
-        "done": [
-          "본을 움직이면 메쉬도 자연스럽게 따라온다"
-        ]
+        "image": "assets/images/week11/mesh-skinning.png"
       },
       {
         "title": "Pose Mode로 포즈 잡기",
@@ -2553,6 +2866,10 @@ const CURRICULUM = [
         "goal": [
           "Pose Mode에서 본을 조작한다",
           "원하는 포즈를 만든다"
+        ],
+        "done": [
+          "포즈 2개 이상을 만들었다",
+          "Alt+R로 리셋할 수 있다"
         ],
         "tasks": [
           {
@@ -2571,11 +2888,7 @@ const CURRICULUM = [
             "detail": "전체 리셋은 A → Alt+R"
           }
         ],
-        "image": "assets/images/week11/pose-mode.png",
-        "done": [
-          "포즈 2개 이상을 만들었다",
-          "Alt+R로 리셋할 수 있다"
-        ]
+        "image": "assets/images/week11/pose-mode.png"
       },
       {
         "title": "Weight Paint 수정",
@@ -2583,6 +2896,9 @@ const CURRICULUM = [
         "goal": [
           "Weight Paint의 색 의미를 안다",
           "문제 부분을 직접 수정한다"
+        ],
+        "done": [
+          "딸려오던 메쉬가 수정 후 자연스러워졌다"
         ],
         "tasks": [
           {
@@ -2602,62 +2918,37 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week11/weight-paint.png",
-        "done": [
-          "딸려오던 메쉬가 수정 후 자연스러워졌다"
-        ],
         "showme": "weight-paint"
       }
     ],
-    "assignment": {
-      "title": "기본 캐릭터 리깅",
-      "description": "간단한 캐릭터 메쉬에 Armature를 연결하고 포즈 3가지를 스크린샷으로 제출해요.",
-      "checklist": [
-        "뼈대 구조 스크린샷 1장 (Edit Mode)",
-        "포즈 3가지 스크린샷",
-        "Weight Paint 수정 전후 비교 (선택)",
-        "리깅된 .blend 파일"
-      ]
-    },
-    "mistakes": [
-      "Automatic Weights 오류 → 메쉬에 구멍이 있거나 중복 정점 있음. Merge by Distance 먼저",
-      "팔을 들면 몸이 딸려옴 → Weight Paint에서 해당 본의 Weight를 0으로 칠하기",
-      "본이 안 움직임 → Pose Mode인지 확인 (Edit Mode에서는 구조만 바뀜)",
-      "포즈가 뒤틀림 → 본 방향이 이상하면 Edit Mode에서 Recalculate Roll",
-      "메쉬가 안 따라옴 → Parent가 제대로 됐는지 Outliner에서 확인"
-    ],
     "shortcuts": [
-      { "keys": "Shift + A → Armature", "action": "뼈대 추가", "detail": "씬에 Armature(뼈대)를 추가합니다. 캐릭터나 로봇 제품의 관절 움직임을 만들기 위한 첫 단계입니다.", "category": "rigging" },
-      { "keys": "E", "action": "Bone 확장 (Edit Mode)", "detail": "Armature Edit Mode에서 선택한 Bone의 끝에서 새로운 Bone을 연장합니다. 팔→손→손가락 같은 연쇄 구조를 만듭니다.", "category": "rigging" },
-      { "keys": "Ctrl + P", "action": "Armature Deform 연결", "detail": "메시 오브젝트를 Armature에 연결합니다. Automatic Weights를 선택하면 뼈대 영향 범위가 자동 계산됩니다.", "category": "rigging" },
-      { "keys": "Alt + P", "action": "Parent 해제", "detail": "오브젝트 간의 부모-자식 관계를 해제합니다. Armature 연결을 끊거나 그룹 관계를 풀 때 사용합니다.", "category": "rigging" },
-      { "keys": "Ctrl + Tab", "action": "Pose Mode 전환", "detail": "Armature를 선택한 상태에서 Pose Mode로 전환합니다. Bone을 움직여 포즈를 잡고 키프레임을 찍을 수 있습니다.", "category": "rigging" },
-      { "keys": "Alt + R", "action": "Rotation 초기화 (Pose)", "category": "rigging" },
-      { "keys": "Alt + G", "action": "Location 초기화 (Pose)", "category": "rigging" }
-    ],
-    "docs": [
       {
-        "title": "Armatures",
-        "url": "https://docs.blender.org/manual/en/latest/animation/armatures/index.html"
+        "keys": "Shift + A → Armature",
+        "action": "뼈대 추가"
       },
       {
-        "title": "Skinning",
-        "url": "https://docs.blender.org/manual/en/latest/animation/armatures/skinning/index.html"
+        "keys": "E",
+        "action": "Bone 확장 (Edit Mode)"
       },
       {
-        "title": "Weight Paint",
-        "url": "https://docs.blender.org/manual/en/latest/sculpt_paint/weight_paint/index.html"
+        "keys": "Ctrl + P",
+        "action": "Armature Deform 연결"
       },
       {
-        "title": "Pose Mode",
-        "url": "https://docs.blender.org/manual/en/latest/animation/armatures/posing/index.html"
-      }
-    ],
-    "status": "upcoming",
-    "summary": "Armature(뼈대)를 세팅하고 메쉬에 연결해 캐릭터를 움직여요. 마리오네트 인형에 줄을 매다는 거예요.",
-    "videos": [
+        "keys": "Alt + P",
+        "action": "Parent 해제"
+      },
       {
-        "title": "Blender Studio - Armature and Rigging",
-        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/armature-and-rigging/"
+        "keys": "Ctrl + Tab",
+        "action": "Pose Mode 전환"
+      },
+      {
+        "keys": "Alt + R",
+        "action": "Rotation 초기화 (Pose)"
+      },
+      {
+        "keys": "Alt + G",
+        "action": "Location 초기화 (Pose)"
       }
     ],
     "explore": [
@@ -2677,10 +2968,53 @@ const CURRICULUM = [
         "title": "포즈 라이브러리 저장",
         "hint": "Pose Library에 자주 쓰는 포즈를 등록해두면 나중에 바로 불러올 수 있어요"
       }
-    ]
+    ],
+    "assignment": {
+      "title": "기본 캐릭터 리깅",
+      "description": "간단한 캐릭터 메쉬에 Armature를 연결하고 포즈 3가지를 스크린샷으로 제출해요.",
+      "checklist": [
+        "뼈대 구조 스크린샷 1장 (Edit Mode)",
+        "포즈 3가지 스크린샷",
+        "Weight Paint 수정 전후 비교 (선택)",
+        "리깅된 .blend 파일"
+      ]
+    },
+    "mistakes": [
+      "Automatic Weights 오류 → 메쉬에 구멍이 있거나 중복 정점 있음. Merge by Distance 먼저",
+      "팔을 들면 몸이 딸려옴 → Weight Paint에서 해당 본의 Weight를 0으로 칠하기",
+      "본이 안 움직임 → Pose Mode인지 확인 (Edit Mode에서는 구조만 바뀜)",
+      "포즈가 뒤틀림 → 본 방향이 이상하면 Edit Mode에서 Recalculate Roll",
+      "메쉬가 안 따라옴 → Parent가 제대로 됐는지 Outliner에서 확인"
+    ],
+    "videos": [
+      {
+        "title": "Blender Studio - Armature and Rigging",
+        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/armature-and-rigging/"
+      }
+    ],
+    "docs": [
+      {
+        "title": "Armatures",
+        "url": "https://docs.blender.org/manual/en/latest/animation/armatures/index.html"
+      },
+      {
+        "title": "Skinning",
+        "url": "https://docs.blender.org/manual/en/latest/animation/armatures/skinning/index.html"
+      },
+      {
+        "title": "Weight Paint",
+        "url": "https://docs.blender.org/manual/en/latest/sculpt_paint/weight_paint/index.html"
+      },
+      {
+        "title": "Pose Mode",
+        "url": "https://docs.blender.org/manual/en/latest/animation/armatures/posing/index.html"
+      }
+    ],
+    "summary": "Armature(뼈대)를 세팅하고 메쉬에 연결해 캐릭터를 움직여요. 마리오네트 인형에 줄을 매다는 거예요."
   },
   {
     "week": 12,
+    "status": "upcoming",
     "title": "AI 활용 리깅 (Mixamo)",
     "subtitle": "Mixamo 자동 리깅 · FBX 워크플로우 · NLA",
     "duration": "~3시간",
@@ -2699,6 +3033,9 @@ const CURRICULUM = [
         "goal": [
           "Mixamo 업로드용 메쉬를 준비한다"
         ],
+        "done": [
+          "하나로 합쳐진 깔끔한 메쉬가 준비됐다"
+        ],
         "tasks": [
           {
             "id": "w12-t1",
@@ -2716,16 +3053,17 @@ const CURRICULUM = [
             "detail": "Apply Scalings: FBX All"
           }
         ],
-        "image": "assets/images/week12/export-prep.png",
-        "done": [
-          "하나로 합쳐진 깔끔한 메쉬가 준비됐다"
-        ]
+        "image": "assets/images/week12/export-prep.png"
       },
       {
         "title": "Mixamo 자동 리깅",
         "copy": "AI가 메쉬를 분석해서 자동으로 뼈대를 넣어줘요. 수동으로 본을 하나하나 넣던 시간이 없어져요. 관절 마커를 맞춰주기만 하면 돼요.",
         "goal": [
           "Mixamo 자동 리깅 워크플로우를 안다"
+        ],
+        "done": [
+          "Mixamo에서 캐릭터가 리깅됐다",
+          "미리보기에서 움직이는 걸 확인했다"
         ],
         "tasks": [
           {
@@ -2744,17 +3082,16 @@ const CURRICULUM = [
             "detail": ""
           }
         ],
-        "image": "assets/images/week12/mixamo-upload.png",
-        "done": [
-          "Mixamo에서 캐릭터가 리깅됐다",
-          "미리보기에서 움직이는 걸 확인했다"
-        ]
+        "image": "assets/images/week12/mixamo-upload.png"
       },
       {
         "title": "애니메이션 선택 및 임포트",
         "copy": "Mixamo에서 걷기, 달리기, 춤추기 등 수백 가지 무료 애니메이션을 골라서 Blender로 가져와요. 리깅된 캐릭터에 바로 적용돼요.",
         "goal": [
           "Mixamo 애니메이션을 Blender에서 재생한다"
+        ],
+        "done": [
+          "캐릭터가 걷거나 뛰는 애니메이션이 재생된다"
         ],
         "tasks": [
           {
@@ -2778,16 +3115,16 @@ const CURRICULUM = [
             "detail": "Timeline 범위를 맞춰야 보여요"
           }
         ],
-        "image": "assets/images/week12/mixamo-import.png",
-        "done": [
-          "캐릭터가 걷거나 뛰는 애니메이션이 재생된다"
-        ]
+        "image": "assets/images/week12/mixamo-import.png"
       },
       {
         "title": "NLA Editor로 애니메이션 관리",
         "copy": "NLA Editor는 애니메이션 클립을 레이어처럼 쌓고 이어 붙이는 곳이에요. 걷기 → 달리기 → 정지를 순서대로 이어 붙이면 하나의 긴 애니메이션이 돼요.",
         "goal": [
           "NLA Editor의 기본 개념을 이해한다"
+        ],
+        "done": [
+          "2개 이상 애니메이션 클립을 확인했다"
         ],
         "tasks": [
           {
@@ -2801,56 +3138,29 @@ const CURRICULUM = [
             "detail": "Action을 NLA 스트립으로 Push Down"
           }
         ],
-        "image": "assets/images/week12/nla-editor.png",
-        "done": [
-          "2개 이상 애니메이션 클립을 확인했다"
-        ]
+        "image": "assets/images/week12/nla-editor.png"
       }
-    ],
-    "assignment": {
-      "title": "AI 리깅 캐릭터 애니메이션",
-      "description": "Mixamo로 리깅된 캐릭터에 애니메이션 2가지 이상을 적용해요.",
-      "checklist": [
-        "리깅 과정 스크린샷 (Mixamo 마커 화면)",
-        "애니메이션 2가지 재생 영상 or GIF",
-        "수동 리깅 vs Mixamo 차이 한 줄 메모",
-        ".blend 파일"
-      ]
-    },
-    "mistakes": [
-      "FBX 임포트가 회전됨 → Import 설정에서 Manual Orientation, Forward: -Z, Up: Y",
-      "메쉬가 너무 큼/작음 → Import 시 Scale 조절 또는 Ctrl+A",
-      "Mixamo 업로드 실패 → 메쉬에 구멍이나 뒤집힌 법선 확인 (Shift+N)",
-      "애니메이션이 슬로우 모션 → Frame Rate가 24fps와 맞는지 확인",
-      "관절이 이상하게 꺾임 → Mixamo 마커 위치를 더 정확히 맞추고 재시도"
     ],
     "shortcuts": [
-      { "keys": "Ctrl + J", "action": "오브젝트 합치기 (Join)", "detail": "여러 파츠로 나뉜 오브젝트를 하나로 합칩니다. 최종 제출이나 내보내기 전에 정리 용도로 사용합니다.", "category": "object" },
-      { "keys": "Ctrl + A → All Transforms", "action": "Transform 적용", "detail": "오브젝트의 위치/회전/스케일을 현재 값으로 확정합니다. 내보내기(FBX 등) 전에 필수로 적용합니다.", "category": "object" },
-      { "keys": "Shift + Ctrl + M", "action": "Merge by Distance", "detail": "일정 거리 이내의 겹치는 버텍스를 자동 병합합니다. Join 후 이음새의 중복 정점을 정리할 때 사용합니다.", "category": "object" },
-      { "keys": "Space", "action": "애니메이션 재생/정지", "category": "general" },
-      { "keys": "Shift + N", "action": "법선 재계산", "category": "modeling" }
-    ],
-    "docs": [
       {
-        "title": "Import/Export",
-        "url": "https://docs.blender.org/manual/en/latest/files/import_export/index.html"
+        "keys": "Ctrl + J",
+        "action": "오브젝트 합치기 (Join)"
       },
       {
-        "title": "FBX Import",
-        "url": "https://docs.blender.org/manual/en/latest/addons/import_export/scene_fbx.html"
+        "keys": "Ctrl + A → All Transforms",
+        "action": "Transform 적용"
       },
       {
-        "title": "NLA Editor",
-        "url": "https://docs.blender.org/manual/en/latest/editors/nla/index.html"
-      }
-    ],
-    "status": "upcoming",
-    "summary": "Mixamo를 사용해 자동으로 리깅하고 무료 애니메이션을 Blender에 임포트해요. 수동 리깅과 비교해서 AI 활용의 장단점을 체험해요.",
-    "videos": [
+        "keys": "Shift + Ctrl + M",
+        "action": "Merge by Distance"
+      },
       {
-        "title": "Blender Studio - Importing Animations",
-        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/importing/"
+        "keys": "Space",
+        "action": "애니메이션 재생/정지"
+      },
+      {
+        "keys": "Shift + N",
+        "action": "법선 재계산"
       }
     ],
     "explore": [
@@ -2870,10 +3180,49 @@ const CURRICULUM = [
         "title": "배경 씬에 캐릭터 배치",
         "hint": "조명/카메라 세팅된 씬에 Mixamo 캐릭터를 배치하고 렌더"
       }
-    ]
+    ],
+    "assignment": {
+      "title": "AI 리깅 캐릭터 애니메이션",
+      "description": "Mixamo로 리깅된 캐릭터에 애니메이션 2가지 이상을 적용해요.",
+      "checklist": [
+        "리깅 과정 스크린샷 (Mixamo 마커 화면)",
+        "애니메이션 2가지 재생 영상 or GIF",
+        "수동 리깅 vs Mixamo 차이 한 줄 메모",
+        ".blend 파일"
+      ]
+    },
+    "mistakes": [
+      "FBX 임포트가 회전됨 → Import 설정에서 Manual Orientation, Forward: -Z, Up: Y",
+      "메쉬가 너무 큼/작음 → Import 시 Scale 조절 또는 Ctrl+A",
+      "Mixamo 업로드 실패 → 메쉬에 구멍이나 뒤집힌 법선 확인 (Shift+N)",
+      "애니메이션이 슬로우 모션 → Frame Rate가 24fps와 맞는지 확인",
+      "관절이 이상하게 꺾임 → Mixamo 마커 위치를 더 정확히 맞추고 재시도"
+    ],
+    "videos": [
+      {
+        "title": "Blender Studio - Importing Animations",
+        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/importing/"
+      }
+    ],
+    "docs": [
+      {
+        "title": "Import/Export",
+        "url": "https://docs.blender.org/manual/en/latest/files/import_export/index.html"
+      },
+      {
+        "title": "FBX Import",
+        "url": "https://docs.blender.org/manual/en/latest/addons/import_export/scene_fbx.html"
+      },
+      {
+        "title": "NLA Editor",
+        "url": "https://docs.blender.org/manual/en/latest/editors/nla/index.html"
+      }
+    ],
+    "summary": "Mixamo를 사용해 자동으로 리깅하고 무료 애니메이션을 Blender에 임포트해요. 수동 리깅과 비교해서 AI 활용의 장단점을 체험해요."
   },
   {
     "week": 13,
+    "status": "upcoming",
     "title": "렌더링 + AI 후처리",
     "subtitle": "Cycles vs EEVEE · 출력 설정 · Compositing · AI 후처리",
     "duration": "~3시간",
@@ -2893,6 +3242,9 @@ const CURRICULUM = [
           "두 엔진의 차이를 안다",
           "각각 어떤 상황에 쓰는지 판단한다"
         ],
+        "done": [
+          "같은 씬을 두 엔진으로 렌더해서 비교했다"
+        ],
         "tasks": [
           {
             "id": "w13-t1",
@@ -2911,12 +3263,12 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week13/cycles-eevee.png",
-        "done": [
-          "같은 씬을 두 엔진으로 렌더해서 비교했다"
-        ],
         "showme": "render-settings",
         "widgets": [
-          { "type": "showme", "id": "volume-to-mesh" }
+          {
+            "type": "showme",
+            "id": "volume-to-mesh"
+          }
         ]
       },
       {
@@ -2924,6 +3276,9 @@ const CURRICULUM = [
         "copy": "해상도, 파일 형식, 저장 경로를 설정하고 F12로 렌더해요. 한 번 설정해두면 계속 쓸 수 있어요. 포트폴리오용이면 1920×1080 이상이 좋아요.",
         "goal": [
           "Output Properties를 자유롭게 설정한다"
+        ],
+        "done": [
+          "의도한 해상도와 파일 형식으로 렌더가 저장됐다"
         ],
         "tasks": [
           {
@@ -2942,16 +3297,16 @@ const CURRICULUM = [
             "detail": "Image → Save As로 원하는 위치에 저장"
           }
         ],
-        "image": "assets/images/week13/render-output.png",
-        "done": [
-          "의도한 해상도와 파일 형식으로 렌더가 저장됐다"
-        ]
+        "image": "assets/images/week13/render-output.png"
       },
       {
         "title": "Compositing 기초",
         "copy": "사진 찍고 나서 보정하듯, 렌더 후에 밝기, 색감, 글로우 효과를 추가할 수 있어요. Compositing 노드로 후처리를 하면 렌더를 다시 안 해도 돼요.",
         "goal": [
           "Compositing 노드의 기본 흐름을 이해한다"
+        ],
+        "done": [
+          "Glare나 Color Balance 효과를 적용했다"
         ],
         "tasks": [
           {
@@ -2971,9 +3326,6 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week13/compositing.png",
-        "done": [
-          "Glare나 Color Balance 효과를 적용했다"
-        ],
         "showme": "compositing-basics"
       },
       {
@@ -2981,6 +3333,9 @@ const CURRICULUM = [
         "copy": "프레임을 하나씩 렌더해서 영상으로 만드는 거예요. Ctrl+F12 하나로 시작돼요. 시간이 오래 걸리니까 범위와 해상도를 먼저 확인하세요.",
         "goal": [
           "애니메이션 렌더 파이프라인을 이해한다"
+        ],
+        "done": [
+          "5초 이상 애니메이션 영상 파일이 생성됐다"
         ],
         "tasks": [
           {
@@ -2999,16 +3354,16 @@ const CURRICULUM = [
             "detail": "Ctrl+F12로 시작"
           }
         ],
-        "image": "assets/images/week13/animation-render.png",
-        "done": [
-          "5초 이상 애니메이션 영상 파일이 생성됐다"
-        ]
+        "image": "assets/images/week13/animation-render.png"
       },
       {
         "title": "AI 후처리 체험",
         "copy": "렌더 이미지를 AI 이미지 생성 툴에 넣으면 스타일을 바꾸거나 디테일을 추가할 수 있어요. 3D + AI의 하이브리드 워크플로우예요.",
         "goal": [
           "AI 후처리의 가능성을 이해한다"
+        ],
+        "done": [
+          "렌더 이미지를 AI로 변형해봤다"
         ],
         "tasks": [
           {
@@ -3022,10 +3377,51 @@ const CURRICULUM = [
             "detail": ""
           }
         ],
-        "image": "assets/images/week13/ai-postprocess.png",
-        "done": [
-          "렌더 이미지를 AI로 변형해봤다"
-        ]
+        "image": "assets/images/week13/ai-postprocess.png"
+      }
+    ],
+    "shortcuts": [
+      {
+        "keys": "F12",
+        "action": "이미지 렌더링"
+      },
+      {
+        "keys": "Ctrl + F12",
+        "action": "애니메이션 렌더링"
+      },
+      {
+        "keys": "F11",
+        "action": "마지막 렌더 결과 보기"
+      },
+      {
+        "keys": "Esc",
+        "action": "렌더 중지"
+      },
+      {
+        "keys": "Z → Rendered",
+        "action": "실시간 렌더 미리보기"
+      },
+      {
+        "keys": "Ctrl + B (카메라 뷰)",
+        "action": "렌더 영역 지정"
+      }
+    ],
+    "explore": [
+      {
+        "title": "Denoising 비교",
+        "hint": "Cycles Render → Denoising 켜기/끄기로 낮은 샘플에서 품질 차이 비교"
+      },
+      {
+        "title": "턴테이블 렌더",
+        "hint": "카메라를 오브젝트 주위로 360도 회전시켜 턴테이블 영상 만들기"
+      },
+      {
+        "title": "Transparent Background",
+        "hint": "Film → Transparent 켜고 PNG로 렌더하면 배경 없는 이미지 — 합성용으로 유용"
+      },
+      {
+        "title": "AI로 스타일 변형",
+        "hint": "같은 렌더를 3가지 다른 AI 스타일(사이버펑크/수채화/픽셀아트)로 변형해보기"
       }
     ],
     "assignment": {
@@ -3045,13 +3441,11 @@ const CURRICULUM = [
       "Compositing이 적용 안 됨 → Use Nodes 체크박스가 켜져 있는지 확인",
       "노이즈가 심함 → Cycles Samples 올리거나 Denoising 켜기"
     ],
-    "shortcuts": [
-      { "keys": "F12", "action": "이미지 렌더링", "detail": "현재 카메라 뷰를 기준으로 한 장의 이미지를 렌더링합니다. 결과물은 별도 창에서 확인하고 저장합니다.", "category": "render" },
-      { "keys": "Ctrl + F12", "action": "애니메이션 렌더링", "detail": "설정된 프레임 범위의 전체 애니메이션을 렌더링합니다. Output 설정에서 저장 경로와 파일 형식을 미리 지정해야 합니다.", "category": "render" },
-      { "keys": "F11", "action": "마지막 렌더 결과 보기", "detail": "가장 최근에 렌더링한 이미지를 다시 표시합니다. 렌더 창을 닫았더라도 다시 확인할 수 있습니다.", "category": "render" },
-      { "keys": "Esc", "action": "렌더 중지", "category": "render" },
-      { "keys": "Z → Rendered", "action": "실시간 렌더 미리보기", "detail": "뷰포트에서 Eevee/Cycles 렌더 엔진의 결과를 실시간으로 확인합니다. 조명과 재질 조정 시 즉각적인 피드백을 받습니다.", "category": "render" },
-      { "keys": "Ctrl + B (카메라 뷰)", "action": "렌더 영역 지정", "detail": "카메라 뷰에서 특정 영역만 렌더링하도록 지정합니다. 전체 렌더 대신 일부분만 빠르게 확인할 때 유용합니다.", "category": "render" }
+    "videos": [
+      {
+        "title": "Blender Studio - Rendering",
+        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/rendering/"
+      }
     ],
     "docs": [
       {
@@ -3075,35 +3469,11 @@ const CURRICULUM = [
         "url": "https://docs.blender.org/manual/en/latest/render/cycles/render_settings/sampling.html"
       }
     ],
-    "status": "upcoming",
-    "summary": "Cycles와 EEVEE의 차이를 이해하고 렌더 설정을 최적화해요. 카메라 감독처럼 최종 출력을 결정하는 단계예요.",
-    "videos": [
-      {
-        "title": "Blender Studio - Rendering",
-        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/rendering/"
-      }
-    ],
-    "explore": [
-      {
-        "title": "Denoising 비교",
-        "hint": "Cycles Render → Denoising 켜기/끄기로 낮은 샘플에서 품질 차이 비교"
-      },
-      {
-        "title": "턴테이블 렌더",
-        "hint": "카메라를 오브젝트 주위로 360도 회전시켜 턴테이블 영상 만들기"
-      },
-      {
-        "title": "Transparent Background",
-        "hint": "Film → Transparent 켜고 PNG로 렌더하면 배경 없는 이미지 — 합성용으로 유용"
-      },
-      {
-        "title": "AI로 스타일 변형",
-        "hint": "같은 렌더를 3가지 다른 AI 스타일(사이버펑크/수채화/픽셀아트)로 변형해보기"
-      }
-    ]
+    "summary": "Cycles와 EEVEE의 차이를 이해하고 렌더 설정을 최적화해요. 카메라 감독처럼 최종 출력을 결정하는 단계예요."
   },
   {
     "week": 14,
+    "status": "upcoming",
     "title": "최종 프로젝트 제작",
     "subtitle": "개인 프로젝트 집중 작업",
     "duration": "수업 전체 작업 + 피드백",
@@ -3118,6 +3488,10 @@ const CURRICULUM = [
         "copy": "모델링·재질·조명·렌더링을 종합해서 최종 작품을 완성합니다.",
         "goal": [
           "발표 가능한 완성 작품"
+        ],
+        "done": [
+          "렌더 이미지 5장 이상",
+          ".blend 파일 정리 완료"
         ],
         "tasks": [
           {
@@ -3135,13 +3509,11 @@ const CURRICULUM = [
             "label": "최종 렌더 5장 이상 저장",
             "detail": ""
           }
-        ],
-        "done": [
-          "렌더 이미지 5장 이상",
-          ".blend 파일 정리 완료"
         ]
       }
     ],
+    "shortcuts": [],
+    "explore": [],
     "assignment": {
       "title": "최종 프로젝트 사전 제출",
       "description": "기말 발표 전 .blend + 렌더 이미지를 제출합니다.",
@@ -3151,12 +3523,22 @@ const CURRICULUM = [
       ]
     },
     "mistakes": [],
-    "docs": [],
-    "status": "upcoming",
+    "videos": [],
+    "docs": [
+      {
+        "title": "Blender Manual: Animation",
+        "url": "https://docs.blender.org/manual/en/latest/animation/index.html"
+      },
+      {
+        "title": "Blender Manual: Rendering",
+        "url": "https://docs.blender.org/manual/en/latest/render/index.html"
+      }
+    ],
     "summary": "학기 전체에서 배운 기술을 종합해 최종 프로젝트를 완성합니다. 교수 피드백 세션."
   },
   {
     "week": 15,
+    "status": "upcoming",
     "title": "⭐ 기말고사 — 최종 프로젝트 발표",
     "subtitle": "학기 전체 결과물 발표",
     "duration": "수업 전체 발표",
@@ -3171,6 +3553,9 @@ const CURRICULUM = [
         "copy": "발표 순서와 내용을 정리하고 최종 점검합니다.",
         "goal": [
           "발표 자료 완성"
+        ],
+        "done": [
+          "5분 발표 연습 완료"
         ],
         "tasks": [
           {
@@ -3188,12 +3573,11 @@ const CURRICULUM = [
             "label": "5분 발표 연습 1회 이상",
             "detail": ""
           }
-        ],
-        "done": [
-          "5분 발표 연습 완료"
         ]
       }
     ],
+    "shortcuts": [],
+    "explore": [],
     "assignment": {
       "title": "기말 발표",
       "description": "최종 작품 발표. 작품 소개 + 사용한 기술 + 배운 점을 5분 내외로 발표.",
@@ -3203,30 +3587,16 @@ const CURRICULUM = [
       ]
     },
     "mistakes": [],
-    "docs": [],
-    "status": "upcoming",
+    "videos": [],
+    "docs": [
+      {
+        "title": "Blender Manual",
+        "url": "https://docs.blender.org/manual/en/latest/"
+      }
+    ],
     "summary": "학기 내내 만들어온 최종 작품을 발표합니다. 5분 내외, 제작 과정과 사용 기술 설명 포함."
   }
 ];
 
-// ============================================================
-// 단축키 카테고리 정의
-// ============================================================
-const SHORTCUT_CATEGORIES = {
-  general:    { label: "일반",      order: 0 },
-  navigation: { label: "화면 조작", order: 1 },
-  transform:  { label: "기본 변형", order: 2 },
-  modeling:   { label: "모델링",    order: 3 },
-  modifier:   { label: "Modifier",  order: 4 },
-  object:     { label: "오브젝트",  order: 5 },
-  sculpt:     { label: "Sculpt",    order: 6 },
-  material:   { label: "재질",      order: 7 },
-  uv:         { label: "UV",        order: 8 },
-  rigging:    { label: "리깅",      order: 9 },
-  render:     { label: "렌더링",    order: 10 },
-};
-
 // Node.js 환경 대응
-if (typeof module !== "undefined") {
-  module.exports = { CURRICULUM, SHORTCUT_CATEGORIES };
-}
+if (typeof module !== "undefined") module.exports = CURRICULUM;

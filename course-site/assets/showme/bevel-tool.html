@@ -124,10 +124,105 @@ body {
 .demo-wrap canvas {
   display: block; width: 100%;
 }
-.demo-controls {
-  display: flex; gap: 8px; padding: 12px;
-  border-top: 1px solid var(--line);
-  flex-wrap: wrap;
+.operator-layout {
+  display: grid;
+  grid-template-columns: minmax(220px, 260px) 1fr;
+  gap: 14px;
+  align-items: start;
+}
+.operator-panel {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.03);
+  padding: 14px;
+}
+.operator-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.operator-title {
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.operator-badge {
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(10,132,255,.14);
+  color: var(--key-soft);
+  font-size: .72rem;
+  font-weight: 600;
+}
+.operator-copy {
+  margin: 0 0 14px;
+  font-size: .78rem;
+  color: var(--muted);
+}
+.operator-field {
+  margin-bottom: 12px;
+}
+.operator-field-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.operator-field-head label {
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--muted-strong);
+}
+.operator-field-value {
+  font-size: .76rem;
+  color: var(--key-soft);
+}
+.operator-field-grid {
+  display: grid;
+  grid-template-columns: 1fr 72px;
+  gap: 8px;
+  align-items: center;
+}
+.operator-range {
+  width: 100%;
+  accent-color: var(--key);
+}
+.operator-input {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--text);
+  padding: 7px 10px;
+  font: inherit;
+  font-size: .82rem;
+}
+.operator-status-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-top: 12px;
+}
+.operator-status {
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.03);
+  padding: 10px 12px;
+}
+.operator-status span {
+  display: block;
+  margin-bottom: 4px;
+  font-size: .7rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.operator-status strong {
+  font-size: .85rem;
+  color: var(--muted-strong);
 }
 .demo-hint {
   font-size: .78rem; color: var(--muted);
@@ -348,6 +443,7 @@ body {
 /* ── Responsive ── */
 @media (max-width: 600px) {
   .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
+  .operator-layout { grid-template-columns: 1fr; }
   .tabs { padding: 0 8px; }
   .tab { padding: 10px 12px; font-size: .8rem; }
   .panel { padding: 16px 12px; }
@@ -359,7 +455,7 @@ body {
 <!-- Tab Bar -->
 <nav class="tabs" role="tablist">
   <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
-  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">interaction</button>
   <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
   <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
 </nav>
@@ -418,19 +514,72 @@ body {
   <div id="bevelToolDesc" style="font-size:.84rem; color:var(--muted-strong); margin:0 0 8px;"></div>
   <div class="cause-effect" id="bevelToolCE"></div>
 
-  <div class="demo-wrap">
-    <canvas id="demoCanvas" width="680" height="340"></canvas>
-    <div class="demo-controls">
-      <button class="demo-btn" id="btnSegMinus">Seg -</button>
-      <button class="demo-btn is-active" id="btnSegLabel">Segments: 1</button>
-      <button class="demo-btn" id="btnSegPlus">Seg +</button>
-      <button class="demo-btn" id="btnProfileMinus">Profile -</button>
-      <button class="demo-btn is-active" id="btnProfileLabel">Profile: 0.5</button>
-      <button class="demo-btn" id="btnProfilePlus">Profile +</button>
-      <button class="demo-btn" id="btnReset">초기화</button>
+  <div class="operator-layout">
+    <aside class="operator-panel">
+      <div class="operator-header">
+        <div class="operator-title">Adjust Last Operation</div>
+        <span class="operator-badge">F9</span>
+      </div>
+      <p class="operator-copy">Ctrl+B 직후 Blender 좌하단이나 F9에서 다시 조절하는 패널을 단순화한 버전입니다.</p>
+
+      <div class="operator-field">
+        <div class="operator-field-head">
+          <label for="bevelWidthRange">Width</label>
+          <span class="operator-field-value" id="bevelWidthLabel">0.04</span>
+        </div>
+        <div class="operator-field-grid">
+          <input class="operator-range" type="range" id="bevelWidthRange" min="0.01" max="0.06" step="0.01" value="0.04">
+          <input class="operator-input" type="number" id="bevelWidthNumber" min="0.01" max="0.06" step="0.01" value="0.04" inputmode="decimal">
+        </div>
+      </div>
+
+      <div class="operator-field">
+        <div class="operator-field-head">
+          <label for="bevelSegmentsRange">Segments</label>
+          <span class="operator-field-value" id="bevelSegmentsLabel">1</span>
+        </div>
+        <div class="operator-field-grid">
+          <input class="operator-range" type="range" id="bevelSegmentsRange" min="1" max="6" step="1" value="1">
+          <input class="operator-input" type="number" id="bevelSegmentsNumber" min="1" max="6" step="1" value="1" inputmode="numeric">
+        </div>
+      </div>
+
+      <div class="operator-field">
+        <div class="operator-field-head">
+          <label for="bevelProfileRange">Profile</label>
+          <span class="operator-field-value" id="bevelProfileLabel">0.5</span>
+        </div>
+        <div class="operator-field-grid">
+          <input class="operator-range" type="range" id="bevelProfileRange" min="0.0" max="1.0" step="0.1" value="0.5">
+          <input class="operator-input" type="number" id="bevelProfileNumber" min="0.0" max="1.0" step="0.1" value="0.5" inputmode="decimal">
+        </div>
+      </div>
+
+      <button class="demo-btn" id="btnReset" style="width:100%">기본값으로 되돌리기</button>
+
+      <div class="operator-status-grid" aria-live="polite">
+        <div class="operator-status">
+          <span>Result</span>
+          <strong id="bevelResultStatus">Chamfer cut</strong>
+        </div>
+        <div class="operator-status">
+          <span>Profile</span>
+          <strong id="bevelProfileStatus">Round</strong>
+        </div>
+        <div class="operator-status">
+          <span>Width Feel</span>
+          <strong id="bevelWidthStatus">Medium</strong>
+        </div>
+      </div>
+    </aside>
+
+    <div>
+      <div class="demo-wrap">
+        <canvas id="demoCanvas" width="680" height="340"></canvas>
+      </div>
     </div>
   </div>
-  <p class="demo-hint">Segments 1 = Chamfer(평면 깎기), 2+ = 둥근 모서리. Profile 0.0 = 오목, 0.5 = 평평, 1.0 = 볼록</p>
+  <p class="demo-hint">실제 Blender에서는 마우스 휠로 Segments, P키로 Profile을 바꾸고, 확정 후 F9에서 같은 값을 다시 조절합니다. Profile 0.0 = 오목, 0.25 = 평평, 0.5 = 원형, 1.0 = 볼록</p>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->
@@ -643,9 +792,9 @@ var bevelToolScenarios = {
   profile: {
     desc: "P키로 Profile 값을 조절해 베벨 단면 형태를 볼록/오목으로 변경합니다.",
     ce: [
-      { cause: "Profile = 0.0", result: "오목 (안쪽으로 파인 형태)", resultClass: "result-c" },
-      { cause: "Profile = 0.5", result: "원형 (기본 둥근 베벨)", resultClass: "result-a" },
-      { cause: "Profile = 1.0", result: "볼록 (바깥쪽으로 튀어나온 형태)", resultClass: "result-b" }
+      { cause: "Profile = 0.0", result: "강한 오목 (corner 쪽으로 깊게 파임)", resultClass: "result-c" },
+      { cause: "Profile = 0.25 / 0.5", result: "0.25는 평평한 chamfer, 0.5는 원형 bevel", resultClass: "result-a" },
+      { cause: "Profile = 1.0", result: "강한 볼록 (더 부풀어 오른 bevel)", resultClass: "result-b" }
     ]
   }
 };
@@ -694,6 +843,7 @@ function switchBevelToolScenario(key) {
 (function() {
   var canvas = document.getElementById("demoCanvas");
   var ctx = canvas.getContext("2d");
+  var bevelWidth = 0.04;
   var segments = 1;
   var profile = 0.5;
 
@@ -701,17 +851,70 @@ function switchBevelToolScenario(key) {
   var cornerX = 340;
   var cornerY = 170;
   var edgeLen = 140;
-  var bevelSize = 0;
-  var animDone = false;
-  var animTarget = 50;
+  var bevelSize = 40;
+
+  function widthToPixels(value) {
+    return Math.max(8, Math.min(edgeLen - 10, Math.round(value * 1000)));
+  }
+
+  function clampSegments(value) {
+    var numeric = parseInt(value, 10);
+    if (!isFinite(numeric)) numeric = 1;
+    return Math.max(1, Math.min(6, numeric));
+  }
+
+  function clampProfile(value) {
+    var numeric = parseFloat(value);
+    if (!isFinite(numeric)) numeric = 0.5;
+    numeric = Math.round(numeric * 10) / 10;
+    return Math.max(0, Math.min(1, numeric));
+  }
+
+  function clampWidth(value) {
+    var numeric = parseFloat(value);
+    if (!isFinite(numeric)) numeric = 0.04;
+    numeric = Math.round(numeric * 100) / 100;
+    return Math.max(0.01, Math.min(0.06, numeric));
+  }
+
+  function getProfileStatusText() {
+    if (profile <= 0.15) return "Concave";
+    if (profile <= 0.35) return "Flat chamfer";
+    if (profile <= 0.7) return "Round";
+    return "Convex";
+  }
+
+  function getWidthStatusText() {
+    if (bevelWidth <= 0.02) return "Narrow";
+    if (bevelWidth <= 0.04) return "Medium";
+    return "Wide";
+  }
+
+  function syncControls() {
+    document.getElementById("bevelWidthRange").value = bevelWidth.toFixed(2);
+    document.getElementById("bevelWidthNumber").value = bevelWidth.toFixed(2);
+    document.getElementById("bevelWidthLabel").textContent = bevelWidth.toFixed(2);
+
+    document.getElementById("bevelSegmentsRange").value = String(segments);
+    document.getElementById("bevelSegmentsNumber").value = String(segments);
+    document.getElementById("bevelSegmentsLabel").textContent = String(segments);
+
+    document.getElementById("bevelProfileRange").value = profile.toFixed(1);
+    document.getElementById("bevelProfileNumber").value = profile.toFixed(1);
+    document.getElementById("bevelProfileLabel").textContent = profile.toFixed(1);
+
+    document.getElementById("bevelResultStatus").textContent = segments === 1 ? "Chamfer cut" : "Rounded bevel";
+    document.getElementById("bevelProfileStatus").textContent = getProfileStatusText();
+    document.getElementById("bevelWidthStatus").textContent = getWidthStatusText();
+  }
 
   function reset() {
+    bevelWidth = 0.04;
     segments = 1;
     profile = 0.5;
-    bevelSize = 0;
-    animDone = false;
-    document.getElementById("btnSegLabel").textContent = "Segments: 1";
-    document.getElementById("btnProfileLabel").textContent = "Profile: 0.5";
+    bevelSize = widthToPixels(bevelWidth);
+    syncControls();
+    draw();
   }
 
   function draw() {
@@ -740,6 +943,10 @@ function switchBevelToolScenario(key) {
     ctx.textAlign = "left";
     ctx.fillText("Segments: " + segments, 14, 22);
 
+    ctx.fillStyle = "rgba(255,255,255,.55)";
+    ctx.textAlign = "center";
+    ctx.fillText("Width: " + bevelWidth.toFixed(2), w / 2, 22);
+
     ctx.fillStyle = "rgba(245,158,11,.7)";
     ctx.textAlign = "right";
     ctx.fillText("Profile: " + profile.toFixed(1), w - 14, 22);
@@ -760,6 +967,57 @@ function switchBevelToolScenario(key) {
     ctx.fillStyle = "rgba(16,185,129,.6)";
     ctx.font = "11px sans-serif";
     ctx.fillText(desc, 510, h - 6);
+  }
+
+  function getBevelPoint(t, cx, cy, bs) {
+    var flatX = cx - bs * t;
+    var flatY = cy - bs * (1 - t);
+
+    // A real beveled outer corner bulges toward the original corner,
+    // so the round arc is centered one bevel width inward from that corner.
+    var roundAngle = t * Math.PI / 2;
+    var roundX = (cx - bs) + bs * Math.cos(roundAngle);
+    var roundY = (cy - bs) + bs * Math.sin(roundAngle);
+
+    // Concave profile bows back toward the face interior.
+    var concaveAngle = -Math.PI / 2 - t * Math.PI / 2;
+    var concaveX = cx + bs * Math.cos(concaveAngle);
+    var concaveY = cy + bs * Math.sin(concaveAngle);
+
+    if (profile <= 0.25) {
+      var concaveBlend = profile / 0.25;
+      return {
+        x: concaveX * (1 - concaveBlend) + flatX * concaveBlend,
+        y: concaveY * (1 - concaveBlend) + flatY * concaveBlend
+      };
+    }
+
+    if (profile <= 0.5) {
+      var roundBlend = (profile - 0.25) / 0.25;
+      return {
+        x: flatX * (1 - roundBlend) + roundX * roundBlend,
+        y: flatY * (1 - roundBlend) + roundY * roundBlend
+      };
+    }
+
+    var convexBlend = (profile - 0.5) / 0.5;
+    var bulge = (bs * 0.35) * Math.sin(t * Math.PI / 2) * Math.cos(t * Math.PI / 2) * 2;
+    return {
+      x: roundX + convexBlend * bulge,
+      y: roundY + convexBlend * bulge
+    };
+  }
+
+  function traceBevelPath(ctx, cx, cy, bs) {
+    var bevelEnd = { x: cx - bs, y: cy };
+    if (segments === 1) {
+      ctx.lineTo(bevelEnd.x, bevelEnd.y);
+      return;
+    }
+    for (var i = 1; i <= segments; i++) {
+      var point = getBevelPoint(i / segments, cx, cy, bs);
+      ctx.lineTo(point.x, point.y);
+    }
   }
 
   function drawCorner(cx, cy, beveled) {
@@ -814,82 +1072,38 @@ function switchBevelToolScenario(key) {
       ctx.lineTo(bevelStart.x, bevelStart.y);
 
       // Bevel curve or chamfer
-      if (segments === 1) {
-        // Straight chamfer
-        ctx.lineTo(bevelEnd.x, bevelEnd.y);
-      } else {
-        // Curved bevel with profile control
-        for (var i = 1; i <= segments; i++) {
-          var t = i / segments;
-          var s = 1 - t;
-
-          // Interpolate with profile
-          var midX, midY;
-          if (profile <= 0.5) {
-            // Concave: control point inside the corner
-            var factor = profile * 2; // 0 to 1
-            midX = cx - bs * t;
-            midY = cy - bs * s;
-            // Blend toward the concave (inside) point
-            var concaveX = cx - bs * t;
-            var concaveY = cy - bs * (1 - t);
-            midX = bevelStart.x + (bevelEnd.x - bevelStart.x) * t;
-            midY = bevelStart.y + (bevelEnd.y - bevelStart.y) * t;
-            // Apply profile curvature
-            var straightX = bevelStart.x + (bevelEnd.x - bevelStart.x) * t;
-            var straightY = bevelStart.y + (bevelEnd.y - bevelStart.y) * t;
-            var curvedX = cx - bs * Math.sin(t * Math.PI / 2);
-            var curvedY = cy - bs * Math.cos(t * Math.PI / 2);
-            var innerX = cx;
-            var innerY = cy;
-            // At profile 0: concave (toward corner), at 0.5: circular
-            var px = straightX + (curvedX - straightX) * factor;
-            var py = straightY + (curvedY - straightY) * factor;
-            ctx.lineTo(px, py);
-          } else {
-            // Convex: control point outside
-            var factor2 = (profile - 0.5) * 2; // 0 to 1
-            var circX = cx - bs * Math.sin(t * Math.PI / 2);
-            var circY = cy - bs * Math.cos(t * Math.PI / 2);
-            // At profile 0.5: circular, at 1.0: more convex (bulging out)
-            var bulgeX = circX - factor2 * (bs * 0.35) * Math.sin(t * Math.PI / 2) * Math.cos(t * Math.PI / 2) * 2;
-            var bulgeY = circY - factor2 * (bs * 0.35) * Math.sin(t * Math.PI / 2) * Math.cos(t * Math.PI / 2) * 2;
-            ctx.lineTo(bulgeX, bulgeY);
-          }
-        }
-      }
+      traceBevelPath(ctx, cx, cy, bs);
 
       ctx.lineTo(bottomLeft.x, bottomLeft.y);
       ctx.closePath();
       ctx.fill(); ctx.stroke();
+
+      // Show the removed corner wedge so the bevel reads as a cut, not an extrusion.
+      ctx.save();
+      ctx.fillStyle = "rgba(239,68,68,.10)";
+      ctx.beginPath();
+      ctx.moveTo(bevelStart.x, bevelStart.y);
+      traceBevelPath(ctx, cx, cy, bs);
+      ctx.lineTo(corner.x, corner.y);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = "rgba(255,255,255,.16)";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(bevelStart.x, bevelStart.y);
+      ctx.lineTo(corner.x, corner.y);
+      ctx.lineTo(bevelEnd.x, bevelEnd.y);
+      ctx.stroke();
+      ctx.restore();
 
       // Highlight bevel area
       ctx.strokeStyle = "rgba(10,132,255,.6)";
       ctx.lineWidth = 3;
       ctx.beginPath();
       ctx.moveTo(bevelStart.x, bevelStart.y);
-      if (segments === 1) {
-        ctx.lineTo(bevelEnd.x, bevelEnd.y);
-      } else {
-        for (var j = 1; j <= segments; j++) {
-          var t2 = j / segments;
-          if (profile <= 0.5) {
-            var fac = profile * 2;
-            var sX = bevelStart.x + (bevelEnd.x - bevelStart.x) * t2;
-            var sY = bevelStart.y + (bevelEnd.y - bevelStart.y) * t2;
-            var cX = cx - bs * Math.sin(t2 * Math.PI / 2);
-            var cY = cy - bs * Math.cos(t2 * Math.PI / 2);
-            ctx.lineTo(sX + (cX - sX) * fac, sY + (cY - sY) * fac);
-          } else {
-            var fac2 = (profile - 0.5) * 2;
-            var cX2 = cx - bs * Math.sin(t2 * Math.PI / 2);
-            var cY2 = cy - bs * Math.cos(t2 * Math.PI / 2);
-            var bX = cX2 - fac2 * (bs * 0.35) * Math.sin(t2 * Math.PI / 2) * Math.cos(t2 * Math.PI / 2) * 2;
-            var bY = cY2 - fac2 * (bs * 0.35) * Math.sin(t2 * Math.PI / 2) * Math.cos(t2 * Math.PI / 2) * 2;
-            ctx.lineTo(bX, bY);
-          }
-        }
-      }
+      traceBevelPath(ctx, cx, cy, bs);
       ctx.stroke();
 
       // Vertex dots on bevel
@@ -904,26 +1118,10 @@ function switchBevelToolScenario(key) {
       // Segment dots
       if (segments > 1) {
         for (var k = 1; k < segments; k++) {
-          var t3 = k / segments;
-          var dotX, dotY;
-          if (profile <= 0.5) {
-            var f3 = profile * 2;
-            var sx3 = bevelStart.x + (bevelEnd.x - bevelStart.x) * t3;
-            var sy3 = bevelStart.y + (bevelEnd.y - bevelStart.y) * t3;
-            var cx3 = cx - bs * Math.sin(t3 * Math.PI / 2);
-            var cy3 = cy - bs * Math.cos(t3 * Math.PI / 2);
-            dotX = sx3 + (cx3 - sx3) * f3;
-            dotY = sy3 + (cy3 - sy3) * f3;
-          } else {
-            var f4 = (profile - 0.5) * 2;
-            var cx4 = cx - bs * Math.sin(t3 * Math.PI / 2);
-            var cy4 = cy - bs * Math.cos(t3 * Math.PI / 2);
-            dotX = cx4 - f4 * (bs * 0.35) * Math.sin(t3 * Math.PI / 2) * Math.cos(t3 * Math.PI / 2) * 2;
-            dotY = cy4 - f4 * (bs * 0.35) * Math.sin(t3 * Math.PI / 2) * Math.cos(t3 * Math.PI / 2) * 2;
-          }
+          var dotPoint = getBevelPoint(k / segments, cx, cy, bs);
           ctx.fillStyle = "rgba(16,185,129,.8)";
           ctx.beginPath();
-          ctx.arc(dotX, dotY, 3, 0, Math.PI * 2);
+          ctx.arc(dotPoint.x, dotPoint.y, 3, 0, Math.PI * 2);
           ctx.fill();
         }
       }
@@ -936,66 +1134,34 @@ function switchBevelToolScenario(key) {
     }
   }
 
-  // Controls
-  var btnSegMinus = document.getElementById("btnSegMinus");
-  var btnSegPlus = document.getElementById("btnSegPlus");
-  var btnSegLabel = document.getElementById("btnSegLabel");
-  var btnProfileMinus = document.getElementById("btnProfileMinus");
-  var btnProfilePlus = document.getElementById("btnProfilePlus");
-  var btnProfileLabel = document.getElementById("btnProfileLabel");
+  function setWidth(value) {
+    bevelWidth = clampWidth(value);
+    bevelSize = widthToPixels(bevelWidth);
+    syncControls();
+    draw();
+  }
 
-  function completeAnim() { animDone = true; bevelSize = animTarget; }
+  function setSegments(value) {
+    segments = clampSegments(value);
+    syncControls();
+    draw();
+  }
 
-  btnSegMinus.addEventListener("click", function() {
-    completeAnim();
-    if (segments > 1) {
-      segments--;
-      btnSegLabel.textContent = "Segments: " + segments;
-      draw();
-    }
-  });
+  function setProfile(value) {
+    profile = clampProfile(value);
+    syncControls();
+    draw();
+  }
 
-  btnSegPlus.addEventListener("click", function() {
-    completeAnim();
-    if (segments < 6) {
-      segments++;
-      btnSegLabel.textContent = "Segments: " + segments;
-      draw();
-    }
-  });
-
-  btnProfileMinus.addEventListener("click", function() {
-    completeAnim();
-    if (profile > 0.0) {
-      profile = Math.round((profile - 0.1) * 10) / 10;
-      if (profile < 0) profile = 0;
-      btnProfileLabel.textContent = "Profile: " + profile.toFixed(1);
-      draw();
-    }
-  });
-
-  btnProfilePlus.addEventListener("click", function() {
-    completeAnim();
-    if (profile < 1.0) {
-      profile = Math.round((profile + 0.1) * 10) / 10;
-      if (profile > 1) profile = 1;
-      btnProfileLabel.textContent = "Profile: " + profile.toFixed(1);
-      draw();
-    }
-  });
+  document.getElementById("bevelWidthRange").addEventListener("input", function() { setWidth(this.value); });
+  document.getElementById("bevelWidthNumber").addEventListener("input", function() { setWidth(this.value); });
+  document.getElementById("bevelSegmentsRange").addEventListener("input", function() { setSegments(this.value); });
+  document.getElementById("bevelSegmentsNumber").addEventListener("input", function() { setSegments(this.value); });
+  document.getElementById("bevelProfileRange").addEventListener("input", function() { setProfile(this.value); });
+  document.getElementById("bevelProfileNumber").addEventListener("input", function() { setProfile(this.value); });
 
   document.getElementById("btnReset").addEventListener("click", function() { reset(); });
-
-  // ── Animation loop ──
-  function animate() {
-    if (!animDone) {
-      bevelSize = Math.min(bevelSize + 0.55, animTarget);
-      if (bevelSize >= animTarget) { bevelSize = animTarget; animDone = true; }
-      draw();
-    }
-    requestAnimationFrame(animate);
-  }
-  animate();
+  reset();
 })();
 
 // ── Quiz Data ─────────────────────────────────

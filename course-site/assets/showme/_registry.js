@@ -17,14 +17,14 @@ const SHOWME_REGISTRY = {
   "snap":                   { label: "Snapping 이해",           icon: "🧲", week: 2 },
   "viewport-shading":       { label: "Viewport Shading 이해",   icon: "💡", week: 2 },
   "xray-opacity":           { label: "X-Ray 투명도 조절",        icon: "🔍", week: 2 },
-  "edit-mode":              { label: "Edit Mode 이해",          icon: "✏️", week: 2 },
+  "edit-mode":              { label: "Edit Mode 이해",          icon: "✏️", week: 2, toolName: "Edit Mode", iconKey: "edit-mode" },
 
   // ── Edit Mode Tools (기능별 라이브러리) ──
-  "edit-mode-tools":        { label: "Edit Mode 도구 전체",     icon: "🛠️", week: 3 },
-  "extrude":                { label: "Extrude 작동 원리",       icon: "📐", week: 3 },
-  "loop-cut":               { label: "Loop Cut 이해",           icon: "🔪", week: 3 },
-  "inset":                  { label: "Inset 작동 원리",         icon: "⬜", week: 3 },
-  "bevel-tool":             { label: "Bevel Tool 이해",         icon: "🔧", week: 3 },
+  "edit-mode-tools":        { label: "Edit Mode 도구 전체",     icon: "🛠️", week: 3, toolName: "Toolset", iconKey: "edit-mode" },
+  "extrude":                { label: "Extrude 작동 원리",       icon: "📐", week: 3, toolName: "Extrude", iconKey: "extrude" },
+  "loop-cut":               { label: "Loop Cut 이해",           icon: "🔪", week: 3, toolName: "Loop Cut", iconKey: "loop-cut" },
+  "inset":                  { label: "Inset 작동 원리",         icon: "⬜", week: 3, toolName: "Inset", iconKey: "inset" },
+  "bevel-tool":             { label: "Bevel Tool 이해",         icon: "🔧", week: 3, toolName: "Bevel", iconKey: "bevel" },
 
   // ── Generate Modifiers (기능별 라이브러리) ──
   "array-modifier":         { label: "Array Modifier 이해",     icon: "🔁", week: 3 },
@@ -91,6 +91,9 @@ const SHOWME_REGISTRY = {
 
   // ── Concepts ──
   "origin-vs-3dcursor":     { label: "Origin vs 3D Cursor",    icon: "🎯", week: 0 },
-  "poly-circle":            { label: "다각형으로 원 만들기",       icon: "⭕", week: 0 },
+  "poly-circle":            { label: "다각형으로 원 만들기",       icon: "⭕", week: 0, toolName: "Poly Circle", iconKey: "poly-circle" },
   "box-rounding":           { label: "박스 모서리 라운딩",          icon: "📦", week: 0 },
 };
+
+if (typeof window !== "undefined") window.SHOWME_REGISTRY = SHOWME_REGISTRY;
+if (typeof globalThis !== "undefined") globalThis.SHOWME_REGISTRY = SHOWME_REGISTRY;

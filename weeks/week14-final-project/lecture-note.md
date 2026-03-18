@@ -367,6 +367,11 @@
 - 제출 체크:
   - 렌더 이미지 5장 이상
   - .blend 파일 정리된 상태
+
+### 공식 문서
+
+- [Blender Manual: Animation](https://docs.blender.org/manual/en/latest/animation/index.html)
+- [Blender Manual: Rendering](https://docs.blender.org/manual/en/latest/render/index.html)
 <!-- AUTO:CURRICULUM-SYNC:END -->
 
 ## 참고 자료

@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — Bevel Tool vs Modifier</title>
+<style>
+:root {
+  --bg: #0a0a0a;
+  --bg-soft: #111214;
+  --surface: #17181a;
+  --surface-strong: #1c1d20;
+  --line: rgba(255,255,255,.08);
+  --line-strong: rgba(255,255,255,.14);
+  --key: #0a84ff;
+  --key-soft: #8ec5ff;
+  --success-soft: #6ee7b7;
+  --warn-soft: #fcd34d;
+  --text: #f5f5f7;
+  --muted: #a1a1aa;
+  --muted-strong: #d4d4d8;
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+.tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: none;
+  white-space: nowrap;
+  font-family: inherit;
+}
+.tab.is-active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+.concept-grid,
+.usage-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card,
+.usage-card,
+.compare-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 16px 18px;
+}
+.concept-card h3,
+.usage-card h4,
+.compare-card h4 {
+  margin: 0 0 8px;
+}
+.concept-card p,
+.usage-card p,
+.compare-card p {
+  margin: 0;
+  color: var(--muted-strong);
+  font-size: .86rem;
+  line-height: 1.7;
+}
+.badge {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: .72rem;
+  font-weight: 700;
+}
+.badge-blue { background: rgba(10,132,255,.15); color: var(--key-soft); }
+.badge-amber { background: rgba(245,158,11,.16); color: var(--warn-soft); }
+.badge-green { background: rgba(16,185,129,.14); color: var(--success-soft); }
+.shortcut-list,
+.tip-box,
+.doc-ref {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.shortcut-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+  font-size: .84rem;
+  color: var(--muted-strong);
+}
+.shortcut-row:first-of-type { margin-top: 0; }
+.kbd {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  color: var(--key-soft);
+  font-size: .82rem;
+  font-weight: 700;
+}
+.scenario-nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.scenario-btn,
+.demo-btn {
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit;
+  font-size: .82rem;
+  cursor: pointer;
+}
+.scenario-btn.active,
+.demo-btn.is-active {
+  background: rgba(10,132,255,.14);
+  border-color: rgba(10,132,255,.3);
+  color: var(--key-soft);
+}
+.scene-desc-box {
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(255,255,255,.03);
+  border: 1px solid var(--line);
+  color: var(--muted-strong);
+  font-size: .84rem;
+}
+.before-after {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.ba-panel {
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.ba-label {
+  padding: 6px 12px;
+  font-size: .75rem;
+  text-align: center;
+  color: var(--muted);
+  background: var(--surface-strong);
+  border-bottom: 1px solid var(--line);
+}
+.ba-panel canvas,
+.demo-wrap canvas {
+  display: block;
+  width: 100%;
+}
+.cause-effect {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+.ce-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ce-cause,
+.ce-result {
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-size: .82rem;
+}
+.ce-cause {
+  flex: 1;
+  background: rgba(255,255,255,.03);
+  border: 1px solid var(--line);
+  color: var(--muted-strong);
+}
+.ce-arrow { color: var(--muted); }
+.ce-result {
+  flex: 1.35;
+  font-weight: 600;
+}
+.result-a { background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.25); color: #fca5a5; }
+.result-b { background: rgba(16,185,129,.1); border: 1px solid rgba(16,185,129,.25); color: var(--success-soft); }
+.demo-wrap {
+  margin-top: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+}
+.demo-controls {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.demo-hint {
+  margin-top: 8px;
+  font-size: .78rem;
+  color: var(--muted);
+  text-align: center;
+}
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.compare-card.good {
+  border-color: rgba(16,185,129,.22);
+  background: rgba(16,185,129,.06);
+}
+.compare-card.warn {
+  border-color: rgba(245,158,11,.22);
+  background: rgba(245,158,11,.06);
+}
+.quiz-progress { font-size: .78rem; color: var(--muted); margin-bottom: 12px; }
+.quiz-question {
+  margin-bottom: 18px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.quiz-question h4 { margin: 0 0 12px; font-size: .94rem; }
+.quiz-option {
+  display: block;
+  width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.025);
+  color: var(--text);
+  font: inherit;
+  font-size: .86rem;
+  text-align: left;
+  cursor: pointer;
+}
+.quiz-option.correct { background: rgba(16,185,129,.12); border-color: rgba(16,185,129,.35); color: var(--success-soft); }
+.quiz-option.wrong { background: rgba(239,68,68,.1); border-color: rgba(239,68,68,.3); color: #fca5a5; }
+.quiz-feedback {
+  display: none;
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: .84rem;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb { background: rgba(239,68,68,.08); color: #fca5a5; }
+.quiz-score {
+  text-align: center;
+  padding: 20px;
+  font-size: 1.04rem;
+  font-weight: 600;
+}
+.quiz-retry {
+  display: block;
+  margin: 12px auto 0;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--key);
+  background: rgba(10,132,255,.12);
+  color: var(--key-soft);
+  font: inherit;
+  cursor: pointer;
+}
+.doc-ref a { color: var(--key-soft); text-decoration: none; }
+.doc-ref a:hover { text-decoration: underline; }
+@media (max-width: 600px) {
+  .concept-grid,
+  .usage-grid,
+  .compare-grid,
+  .before-after { grid-template-columns: 1fr; }
+  .panel { padding: 16px 12px; }
+}
+</style>
+</head>
+<body>
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+</nav>
+
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3><span class="badge badge-amber">Tool</span> 지금 바로 깎기</h3>
+      <p>Bevel Tool은 편집 모드에서 선택한 모서리를 즉시 깎아 실제 메시 구조를 바꿔요. 한번 적용하면 결과가 모델 안에 직접 새겨집니다.</p>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">Modifier</span> 나중에도 조절하기</h3>
+      <p>Bevel Modifier는 원본 메시를 유지한 채, 렌더/표시 단계에서 비파괴로 모서리를 만들어 줘요. Width와 Segments를 계속 바꿀 수 있습니다.</p>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-green">핵심</span> 직접 편집 vs 비파괴</h3>
+      <p>둘 다 모서리를 둥글리지만 목적이 달라요. 형태를 손으로 다듬는 순간에는 Tool, 결과를 나중까지 조정하고 싶으면 Modifier가 더 잘 맞아요.</p>
+    </div>
+  </div>
+
+  <div class="shortcut-list">
+    <h4 style="margin:0 0 8px">주요 단축키</h4>
+    <div class="shortcut-row">
+      <span><span class="kbd">Ctrl</span> + <span class="kbd">B</span></span>
+      <span>Bevel Tool — 선택한 엣지를 즉시 베벨</span>
+    </div>
+    <div class="shortcut-row">
+      <span><span class="kbd">Ctrl</span> + <span class="kbd">A</span></span>
+      <span>Apply Scale — Modifier가 예상대로 먹게 기준값 정리</span>
+    </div>
+    <div class="shortcut-row">
+      <span><span class="kbd">Modifier Tab</span></span>
+      <span>Bevel Modifier 추가 — 비파괴 방식으로 모서리 조절</span>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>기억할 한 줄:</strong> 지금 형태를 손으로 깎으면 Tool, 나중까지 수치를 바꾸고 싶으면 Modifier예요.
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/bevel.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Bevel Modifier
+    </a>
+  </div>
+</section>
+
+<section class="panel" id="panel-visual" role="tabpanel">
+  <div class="scenario-nav" id="scenarioNav">
+    <button class="scenario-btn active" data-scene="tool" onclick="switchScenario('tool')">Tool로 바로 깎기</button>
+    <button class="scenario-btn" data-scene="modifier" onclick="switchScenario('modifier')">Modifier로 나중에 조절</button>
+  </div>
+  <div class="scene-desc-box" id="sceneDesc">Tool은 지금 선택한 엣지를 바로 바꾸는 방식이라, 형태를 손으로 조각하듯 빠르게 잡을 때 잘 맞아요.</div>
+
+  <div class="before-after">
+    <div class="ba-panel">
+      <canvas id="beforeCanvas" width="320" height="180"></canvas>
+      <div class="ba-label">작업 전</div>
+    </div>
+    <div class="ba-panel">
+      <canvas id="afterCanvas" width="320" height="180"></canvas>
+      <div class="ba-label" id="afterLabel">Tool 적용 후</div>
+    </div>
+  </div>
+  <div class="cause-effect" id="causeEffect"></div>
+
+  <div class="demo-wrap">
+    <canvas id="demoCanvas" width="680" height="300"></canvas>
+    <div class="demo-controls">
+      <button class="demo-btn is-active" id="btnTool">Tool</button>
+      <button class="demo-btn" id="btnModifier">Modifier</button>
+      <button class="demo-btn" id="btnWidth">Width 변경</button>
+      <button class="demo-btn" id="btnSegments">Segments 변경</button>
+      <button class="demo-btn" id="btnReset">리셋</button>
+    </div>
+  </div>
+  <div class="demo-hint">Tool은 결과가 메시 안에 고정되고, Modifier는 Width·Segments를 계속 바꿀 수 있다는 차이에 집중해 보세요.</div>
+</section>
+
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="compare-grid">
+    <div class="compare-card warn">
+      <h4>Bevel Tool이 잘 맞는 때</h4>
+      <p>하나의 엣지만 빠르게 깎고 싶을 때, 특정 부분만 손으로 조형하듯 수정할 때, 수정 범위가 작고 직접 결정하고 싶을 때 좋아요.</p>
+    </div>
+    <div class="compare-card good">
+      <h4>Bevel Modifier가 잘 맞는 때</h4>
+      <p>제품 모형처럼 일관된 모서리 처리가 필요할 때, Width를 계속 바꿔 보며 찾고 싶을 때, 비파괴 워크플로를 유지하고 싶을 때 좋아요.</p>
+    </div>
+  </div>
+
+  <div class="usage-grid" style="margin-top:14px">
+    <div class="usage-card">
+      <h4>Tool 선택 기준</h4>
+      <p>형태를 이미 확정했고, 특정 모서리만 손으로 다듬는 상황이라면 Tool이 더 빠릅니다.</p>
+    </div>
+    <div class="usage-card">
+      <h4>Modifier 선택 기준</h4>
+      <p>결과를 끝까지 비교하며 조정해야 하거나, 하드서피스 작업에서 여러 엣지를 같은 기준으로 관리해야 할 때 Modifier가 유리합니다.</p>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>주의:</strong> Modifier가 이상하게 먹으면 먼저 <span class="kbd">Ctrl</span> + <span class="kbd">A</span>로 Scale을 정리해 보세요. 겉보기 크기와 실제 데이터가 다르면 베벨 폭도 어긋납니다.
+  </div>
+</section>
+
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(t) {
+      t.classList.remove("is-active");
+      t.setAttribute("aria-selected", "false");
+    });
+    document.querySelectorAll(".panel").forEach(function(panel) { panel.classList.remove("is-active"); });
+    tab.classList.add("is-active");
+    tab.setAttribute("aria-selected", "true");
+    document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+  });
+});
+
+var sceneData = {
+  tool: {
+    desc: "Tool은 지금 선택한 엣지를 바로 바꾸는 방식이라, 형태를 손으로 조각하듯 빠르게 잡을 때 잘 맞아요.",
+    afterLabel: "Tool 적용 후",
+    effect: [
+      { cause: "Ctrl+B 실행", result: "선택한 엣지가 실제 메시로 잘려 들어감", cls: "result-a" },
+      { cause: "적용 후 다른 작업 진행", result: "베벨 값 자체는 다시 수치로 조절하기 어려움", cls: "result-a" }
+    ]
+  },
+  modifier: {
+    desc: "Modifier는 원본 메시를 유지한 채 결과를 겹쳐 보여 주기 때문에, 나중에도 Width와 Segments를 계속 바꿔 볼 수 있어요.",
+    afterLabel: "Modifier 적용 중",
+    effect: [
+      { cause: "Modifier 추가", result: "원본은 유지하고 결과만 비파괴로 표시", cls: "result-b" },
+      { cause: "Width·Segments 수정", result: "형태를 다시 자르지 않고도 계속 조정 가능", cls: "result-b" }
+    ]
+  }
+};
+
+function drawBox(ctx, opts) {
+  var x = opts.x;
+  var y = opts.y;
+  var w = opts.w;
+  var h = opts.h;
+  var radius = opts.radius;
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + w - radius, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+  ctx.lineTo(x + w, y + h - radius);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+  ctx.lineTo(x + radius, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+  ctx.closePath();
+}
+
+function drawBeforeAfter(mode) {
+  var beforeCanvas = document.getElementById("beforeCanvas");
+  var afterCanvas = document.getElementById("afterCanvas");
+  var beforeCtx = beforeCanvas.getContext("2d");
+  var afterCtx = afterCanvas.getContext("2d");
+  [beforeCtx, afterCtx].forEach(function(ctx, index) {
+    var canvas = index === 0 ? beforeCanvas : afterCanvas;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#13151a";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  });
+
+  beforeCtx.fillStyle = "rgba(255,255,255,.04)";
+  beforeCtx.strokeStyle = "rgba(255,255,255,.16)";
+  beforeCtx.lineWidth = 1.5;
+  drawBox(beforeCtx, { x: 95, y: 45, w: 130, h: 90, radius: 6 });
+  beforeCtx.fill();
+  beforeCtx.stroke();
+  beforeCtx.fillStyle = "#a1a1aa";
+  beforeCtx.font = "12px sans-serif";
+  beforeCtx.textAlign = "center";
+  beforeCtx.fillText("기본 박스", 160, 155);
+
+  afterCtx.fillStyle = mode === "tool" ? "rgba(245,158,11,.12)" : "rgba(10,132,255,.12)";
+  afterCtx.strokeStyle = mode === "tool" ? "#fcd34d" : "#8ec5ff";
+  afterCtx.lineWidth = 2;
+  drawBox(afterCtx, { x: 95, y: 45, w: 130, h: 90, radius: mode === "tool" ? 16 : 22 });
+  afterCtx.fill();
+  afterCtx.stroke();
+  afterCtx.fillStyle = "#d4d4d8";
+  afterCtx.font = "12px sans-serif";
+  afterCtx.textAlign = "center";
+  afterCtx.fillText(mode === "tool" ? "결과가 메시에 고정됨" : "값을 계속 조절 가능", 160, 155);
+}
+
+function renderCauseEffect(mode) {
+  var host = document.getElementById("causeEffect");
+  host.innerHTML = "";
+  sceneData[mode].effect.forEach(function(item) {
+    var row = document.createElement("div");
+    row.className = "ce-row";
+
+    var cause = document.createElement("div");
+    cause.className = "ce-cause";
+    cause.textContent = item.cause;
+    row.appendChild(cause);
+
+    var arrow = document.createElement("div");
+    arrow.className = "ce-arrow";
+    arrow.textContent = "→";
+    row.appendChild(arrow);
+
+    var result = document.createElement("div");
+    result.className = "ce-result " + item.cls;
+    result.textContent = item.result;
+    row.appendChild(result);
+
+    host.appendChild(row);
+  });
+}
+
+function switchScenario(mode) {
+  document.querySelectorAll(".scenario-btn").forEach(function(btn) {
+    btn.classList.toggle("active", btn.dataset.scene === mode);
+  });
+  document.getElementById("sceneDesc").textContent = sceneData[mode].desc;
+  document.getElementById("afterLabel").textContent = sceneData[mode].afterLabel;
+  drawBeforeAfter(mode);
+  renderCauseEffect(mode);
+}
+
+var demoState = {
+  mode: "tool",
+  width: 16,
+  segments: 2
+};
+
+function drawModifierGuide(ctx, canvas) {
+  ctx.fillStyle = "rgba(142,197,255,.88)";
+  ctx.font = "12px sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText("Width: " + demoState.width, 24, canvas.height - 20);
+  ctx.fillText("Segments: " + demoState.segments, 120, canvas.height - 20);
+}
+
+function drawDemo() {
+  var canvas = document.getElementById("demoCanvas");
+  var ctx = canvas.getContext("2d");
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#13151a";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = "rgba(255,255,255,.03)";
+  ctx.fillRect(0, 0, canvas.width / 2, canvas.height);
+  ctx.fillStyle = "rgba(255,255,255,.02)";
+  ctx.fillRect(canvas.width / 2, 0, canvas.width / 2, canvas.height);
+
+  ctx.fillStyle = "#a1a1aa";
+  ctx.font = "13px sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText("Tool", canvas.width * 0.25, 28);
+  ctx.fillText("Modifier", canvas.width * 0.75, 28);
+
+  ctx.strokeStyle = "rgba(255,255,255,.08)";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(canvas.width / 2, 16);
+  ctx.lineTo(canvas.width / 2, canvas.height - 16);
+  ctx.stroke();
+
+  ctx.fillStyle = "rgba(245,158,11,.12)";
+  ctx.strokeStyle = "#fcd34d";
+  ctx.lineWidth = 2;
+  drawBox(ctx, { x: 95, y: 70, w: 140, h: 110, radius: 18 });
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = "#fcd34d";
+  ctx.font = "12px sans-serif";
+  ctx.fillText("고정된 결과", 165, 210);
+
+  ctx.fillStyle = "rgba(10,132,255,.12)";
+  ctx.strokeStyle = "#8ec5ff";
+  ctx.lineWidth = 2;
+  drawBox(ctx, {
+    x: 435,
+    y: 70,
+    w: 140,
+    h: 110,
+    radius: Math.max(8, Math.min(34, demoState.width + demoState.segments * 2))
+  });
+  ctx.fill();
+  ctx.stroke();
+  drawModifierGuide(ctx, canvas);
+  ctx.fillStyle = "#8ec5ff";
+  ctx.fillText("조정 가능한 결과", 505, 210);
+
+  if (demoState.mode === "tool") {
+    ctx.fillStyle = "rgba(245,158,11,.12)";
+    ctx.fillRect(28, 244, 300, 32);
+    ctx.fillStyle = "#fcd34d";
+    ctx.textAlign = "left";
+    ctx.fillText("Tool: 지금 손으로 깎고 끝내는 방식", 40, 264);
+  } else {
+    ctx.fillStyle = "rgba(10,132,255,.12)";
+    ctx.fillRect(352, 244, 300, 32);
+    ctx.fillStyle = "#8ec5ff";
+    ctx.textAlign = "left";
+    ctx.fillText("Modifier: 원본 유지 + 계속 조절", 364, 264);
+  }
+}
+
+document.getElementById("btnTool").addEventListener("click", function() {
+  demoState.mode = "tool";
+  document.querySelectorAll(".demo-btn").forEach(function(btn) { btn.classList.remove("is-active"); });
+  this.classList.add("is-active");
+  drawDemo();
+});
+
+document.getElementById("btnModifier").addEventListener("click", function() {
+  demoState.mode = "modifier";
+  document.querySelectorAll(".demo-btn").forEach(function(btn) { btn.classList.remove("is-active"); });
+  this.classList.add("is-active");
+  drawDemo();
+});
+
+document.getElementById("btnWidth").addEventListener("click", function() {
+  demoState.mode = "modifier";
+  demoState.width = demoState.width >= 28 ? 10 : demoState.width + 6;
+  document.querySelectorAll(".demo-btn").forEach(function(btn) { btn.classList.remove("is-active"); });
+  document.getElementById("btnModifier").classList.add("is-active");
+  drawDemo();
+});
+
+document.getElementById("btnSegments").addEventListener("click", function() {
+  demoState.mode = "modifier";
+  demoState.segments = demoState.segments >= 4 ? 1 : demoState.segments + 1;
+  document.querySelectorAll(".demo-btn").forEach(function(btn) { btn.classList.remove("is-active"); });
+  document.getElementById("btnModifier").classList.add("is-active");
+  drawDemo();
+});
+
+document.getElementById("btnReset").addEventListener("click", function() {
+  demoState.mode = "tool";
+  demoState.width = 16;
+  demoState.segments = 2;
+  document.querySelectorAll(".demo-btn").forEach(function(btn) { btn.classList.remove("is-active"); });
+  document.getElementById("btnTool").classList.add("is-active");
+  drawDemo();
+});
+
+function initQuiz(questions) {
+  var container = document.getElementById("quizArea");
+  var score = 0;
+  var answered = 0;
+  var scoreDiv = null;
+
+  var progress = document.createElement("div");
+  progress.className = "quiz-progress";
+  progress.textContent = "문제 0 / " + questions.length + " · 점수 0점";
+  container.appendChild(progress);
+
+  questions.forEach(function(question, qi) {
+    var card = document.createElement("div");
+    card.className = "quiz-question";
+
+    var title = document.createElement("h4");
+    title.textContent = "Q" + (qi + 1) + ". " + question.question;
+    card.appendChild(title);
+
+    var feedback = document.createElement("div");
+    feedback.className = "quiz-feedback";
+
+    question.options.forEach(function(option, oi) {
+      var btn = document.createElement("button");
+      btn.className = "quiz-option";
+      btn.textContent = option;
+      btn.addEventListener("click", function() {
+        if (btn.disabled) return;
+        card.querySelectorAll(".quiz-option").forEach(function(node) { node.disabled = true; });
+        answered += 1;
+        if (oi === question.answer) {
+          score += 1;
+          btn.classList.add("correct");
+          feedback.className = "quiz-feedback show correct-fb";
+          feedback.textContent = "✅ " + question.explanation;
+        } else {
+          btn.classList.add("wrong");
+          card.querySelectorAll(".quiz-option")[question.answer].classList.add("correct");
+          feedback.className = "quiz-feedback show wrong-fb";
+          feedback.textContent = "❌ " + question.explanation;
+        }
+        progress.textContent = "문제 " + answered + " / " + questions.length + " · 점수 " + score + "점";
+        if (answered === questions.length) showScore();
+      });
+      card.appendChild(btn);
+    });
+
+    card.appendChild(feedback);
+    container.appendChild(card);
+  });
+
+  function showScore() {
+    if (scoreDiv) scoreDiv.remove();
+    scoreDiv = document.createElement("div");
+    scoreDiv.className = "quiz-score";
+
+    var result = document.createElement("div");
+    result.textContent = score + " / " + questions.length + " 정답";
+    scoreDiv.appendChild(result);
+
+    var saveBtn = document.createElement("button");
+    saveBtn.className = "quiz-retry";
+    saveBtn.textContent = "기록 저장하기";
+    saveBtn.addEventListener("click", function() {
+      try {
+        var wid = new URLSearchParams(location.search).get("wid")
+          || location.pathname.split("/").pop().replace(".html", "");
+        window.parent.postMessage({
+          type: "showme-quiz-complete",
+          widgetId: wid,
+          score: score,
+          total: questions.length,
+          pass: score >= Math.ceil(questions.length * 0.75)
+        }, "*");
+      } catch (error) {}
+      saveBtn.textContent = "저장 완료!";
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = ".5";
+    });
+    scoreDiv.appendChild(saveBtn);
+
+    var retryBtn = document.createElement("button");
+    retryBtn.className = "quiz-retry";
+    retryBtn.textContent = "처음부터 다시";
+    retryBtn.addEventListener("click", function() { location.reload(); });
+    scoreDiv.appendChild(retryBtn);
+
+    container.appendChild(scoreDiv);
+  }
+}
+
+switchScenario("tool");
+drawDemo();
+initQuiz([
+  {
+    question: "나중에도 Width 값을 계속 바꾸고 싶다면 어느 쪽이 더 적합할까요?",
+    options: ["Bevel Tool", "Bevel Modifier", "둘 다 동일", "Inset"],
+    answer: 1,
+    explanation: "Modifier는 비파괴 방식이라 Width와 Segments를 계속 조정할 수 있어요."
+  },
+  {
+    question: "편집 모드에서 특정 엣지를 바로 깎아 실제 메시를 바꾸는 방식은?",
+    options: ["Bevel Tool", "Bevel Modifier", "Subdivision", "Mirror"],
+    answer: 0,
+    explanation: "Tool은 선택한 엣지에 즉시 베벨을 새겨 넣는 직접 편집 방식이에요."
+  },
+  {
+    question: "Bevel Modifier 결과가 이상하게 먹을 때 먼저 확인하면 좋은 것은?",
+    options: ["카메라 위치", "Apply Scale", "렌더 해상도", "Undo 횟수"],
+    answer: 1,
+    explanation: "겉보기 스케일과 실제 데이터가 어긋나 있으면 베벨 폭도 예상과 달라질 수 있어요."
+  },
+  {
+    question: "하드서피스 작업에서 끝까지 값을 비교하며 조절하고 싶을 때 더 유리한 쪽은?",
+    options: ["Bevel Tool", "Bevel Modifier", "Knife Tool", "Loop Cut"],
+    answer: 1,
+    explanation: "비파괴 워크플로를 유지하며 결과를 계속 다듬기에는 Modifier가 더 잘 맞아요."
+  }
+]);
+</script>
+</body>
+</html>

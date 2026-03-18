@@ -363,7 +363,7 @@ body {
 <!-- Tab Bar -->
 <nav class="tabs" role="tablist">
   <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
-  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">interaction</button>
   <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
   <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
 </nav>
@@ -386,6 +386,33 @@ body {
       <p>Mirror는 <strong>오브젝트의 원점(Origin)을 기준</strong>으로 반전합니다. 원점이 메시 중앙에 없으면 미러가 엉뚱한 곳에 나타나요. <span class="badge badge-amber">가장 흔한 실수</span></p>
       <div class="analogy">Mirror 추가 전 반드시: <strong>Ctrl+A → All Transforms</strong> 적용 → 원점 확인 순서로 시작하세요</div>
     </div>
+  </div>
+  <details style="margin:14px 0 0;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:14px 16px">
+    <summary style="cursor:pointer;color:var(--key-soft);font-weight:600;list-style:none">더보기</summary>
+    <div style="margin-top:10px;color:var(--muted-strong);font-size:.84rem;line-height:1.7">
+      Mirror가 이상한 위치에 생기면 대부분 원점이 어긋난 경우입니다. 먼저 `Ctrl+A`로 변환을 정리하고 원점을 중심으로 맞춘 뒤 다시 보는 게 가장 빠릅니다.
+    </div>
+  </details>
+
+  <div class="showme-concept-visual" style="margin:20px 0 0;padding:16px 18px;border-radius:18px;border:1px solid rgba(10,132,255,.18);background:rgba(255,255,255,.02);">
+    <div style="margin:0 0 12px;padding-bottom:4px;border-bottom:1px solid var(--line);font-size:.92rem;font-weight:600;color:var(--text);">개념 이해 시각화</div>
+    <div class="scenario-nav" id="scenarioNavMM">
+      <button class="scenario-btn active" data-scene="xaxis" onclick="switchScenarioMM('xaxis')">X축 미러</button>
+      <button class="scenario-btn" data-scene="clipping" onclick="switchScenarioMM('clipping')">Clipping ON/OFF</button>
+      <button class="scenario-btn" data-scene="apply" onclick="switchScenarioMM('apply')">Apply 전후</button>
+    </div>
+    <div id="scene-desc-mm" style="font-size:.84rem;color:var(--muted-strong);margin-bottom:10px;padding:10px 14px;border-radius:12px;background:var(--surface);border:1px solid var(--line);">시나리오를 선택하세요.</div>
+    <div class="before-after">
+      <div class="ba-panel">
+        <div class="ba-label">BEFORE</div>
+        <canvas id="mm-before" width="320" height="160"></canvas>
+      </div>
+      <div class="ba-panel">
+        <div class="ba-label">AFTER</div>
+        <canvas id="mm-after" width="320" height="160"></canvas>
+      </div>
+    </div>
+    <div class="cause-effect" id="cause-effect-mm"></div>
   </div>
 
   <div class="shortcut-list">
@@ -415,7 +442,7 @@ body {
   </div>
 </section>
 
-<!-- TAB 2: 시각적 비교 -->
+<!-- TAB 2: interaction -->
 <section class="panel" id="panel-visual" role="tabpanel">
 <style>
 .scenario-nav{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
@@ -434,36 +461,54 @@ body {
 .result-b{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);color:#fcd34d}
 .result-c{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:#fca5a5}
 </style>
-  <div class="scenario-nav">
-    <button class="scenario-btn active" data-scene="xaxis" onclick="switchScenarioMM('xaxis')">X축 미러</button>
-    <button class="scenario-btn" data-scene="clipping" onclick="switchScenarioMM('clipping')">Clipping ON/OFF</button>
-    <button class="scenario-btn" data-scene="apply" onclick="switchScenarioMM('apply')">Apply 전후</button>
-  </div>
-  <div id="scene-desc-mm" style="font-size:.84rem;color:var(--muted-strong);margin-bottom:10px;padding:10px 14px;border-radius:12px;background:var(--surface);border:1px solid var(--line);">시나리오를 선택하세요.</div>
-  <div class="before-after">
-    <div class="ba-panel">
-      <div class="ba-label">BEFORE</div>
-      <canvas id="mm-before" width="320" height="160"></canvas>
-    </div>
-    <div class="ba-panel">
-      <div class="ba-label">AFTER</div>
-      <canvas id="mm-after" width="320" height="160"></canvas>
-    </div>
-  </div>
-  <div class="cause-effect" id="cause-effect-mm"></div>
-
-  <!-- 인터랙티브 데모 -->
   <div style="margin-top:20px">
-    <div style="font-size:.85rem;color:var(--muted-strong);font-weight:600;margin-bottom:6px">인터랙티브 데모 — 버텍스를 직접 드래그해보세요</div>
-    <p style="font-size:.82rem;color:var(--muted);margin:0 0 10px">파란 점을 드래그하면 초록색 미러가 실시간으로 반영됩니다.</p>
-    <div class="demo-wrap">
-      <canvas id="demoCanvas" width="680" height="320" style="cursor:grab"></canvas>
+    <div style="display:grid;grid-template-columns:minmax(220px,260px) 1fr;gap:14px;align-items:start">
+      <aside style="border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:14px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px">
+          <div style="font-size:.9rem;font-weight:700;color:var(--text)">Mirror Modifier</div>
+          <span style="padding:4px 8px;border-radius:999px;background:rgba(10,132,255,.14);color:var(--key-soft);font-size:.72rem;font-weight:600">X Axis</span>
+        </div>
+        <p style="margin:0 0 14px;font-size:.78rem;color:var(--muted)">Clipping과 Merge Distance만 보면 됩니다.</p>
+
+        <div style="margin-bottom:12px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px">
+            <label for="mirrorMergeRange" style="font-size:.82rem;font-weight:600;color:var(--muted-strong)">Merge Distance</label>
+            <span id="mirrorMergeLabel" style="font-size:.76rem;color:var(--key-soft)">0.02</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 72px;gap:8px;align-items:center">
+            <input type="range" id="mirrorMergeRange" min="0.00" max="0.12" step="0.01" value="0.02" style="width:100%;accent-color:var(--key)">
+            <input type="number" id="mirrorMergeNumber" min="0.00" max="0.12" step="0.01" value="0.02" inputmode="decimal" style="width:100%;border-radius:10px;border:1px solid var(--line-strong);background:rgba(255,255,255,.04);color:var(--text);padding:7px 10px;font:inherit;font-size:.82rem">
+          </div>
+        </div>
+
+        <label for="mirrorClipping" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);font-size:.82rem;color:var(--muted-strong);margin-bottom:12px">
+          <span>Clipping</span>
+          <input type="checkbox" id="mirrorClipping" checked style="width:18px;height:18px;accent-color:var(--key)">
+        </label>
+
+        <button class="demo-btn" id="mirrorResetBtn" style="width:100%">기본값으로 되돌리기</button>
+        <div style="display:grid;grid-template-columns:1fr;gap:8px;margin-top:12px" aria-live="polite">
+          <div style="border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:10px 12px">
+            <span style="display:block;margin-bottom:4px;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">Axis</span>
+            <strong id="mirrorAxisStatus" style="font-size:.85rem;color:var(--muted-strong)">X</strong>
+          </div>
+          <div style="border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:10px 12px">
+            <span style="display:block;margin-bottom:4px;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">Clipping</span>
+            <strong id="mirrorClippingStatus" style="font-size:.85rem;color:var(--muted-strong)">ON</strong>
+          </div>
+          <div style="border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:10px 12px">
+            <span style="display:block;margin-bottom:4px;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">Merge</span>
+            <strong id="mirrorMergeStatus" style="font-size:.85rem;color:var(--muted-strong)">0.02</strong>
+          </div>
+        </div>
+      </aside>
+
+      <div>
+        <div class="demo-wrap">
+          <canvas id="demoCanvas" width="680" height="320" style="cursor:grab"></canvas>
+        </div>
+      </div>
     </div>
-    <div class="demo-controls">
-      <button class="demo-btn is-active" id="btnClipping">Clipping ON</button>
-      <button class="demo-btn" id="btnReset">초기화</button>
-    </div>
-    <div class="demo-hint">파란 점 드래그 → 초록 미러 실시간 반영 | Clipping 끄면 중심선을 넘길 수 있어요</div>
   </div>
 </section>
 
@@ -662,7 +707,7 @@ body {
   window.switchScenarioMM = function(key) {
     var scene = scenarios[key];
     document.getElementById('scene-desc-mm').textContent = scene.desc;
-    document.querySelectorAll('#panel-visual .scenario-btn').forEach(function(b) {
+    document.querySelectorAll('#scenarioNavMM .scenario-btn').forEach(function(b) {
       b.classList.toggle('active', b.dataset.scene === key);
     });
     renderBAPanels(scene);
@@ -818,7 +863,12 @@ function initQuiz(questions) {
 (function() {
   var canvas = document.getElementById("demoCanvas");
   var ctx = canvas.getContext("2d");
-  var clipping = true;
+  var mirrorState = {
+    clipping: true,
+    mergeDistance: 0.02
+  };
+  var clipping = mirrorState.clipping;
+  var mergeDistance = mirrorState.mergeDistance;
   var dragging = -1;
   var hitRadius = 14;
 
@@ -878,6 +928,12 @@ function initQuiz(questions) {
     ctx.stroke();
     ctx.setLineDash([]);
 
+    if (clipping) {
+      var mergeZone = mergeDistance * 200;
+      ctx.fillStyle = "rgba(245,158,11,.08)";
+      ctx.fillRect(centerX - mergeZone, 0, mergeZone * 2, h);
+    }
+
     // Axis label
     ctx.fillStyle = "rgba(245,158,11,.7)";
     ctx.font = "11px sans-serif";
@@ -918,7 +974,7 @@ function initQuiz(questions) {
     ctx.fillStyle = clipping ? "rgba(16,185,129,.7)" : "rgba(239,68,68,.7)";
     ctx.font = "bold 11px sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText("Clipping: " + (clipping ? "ON" : "OFF"), 12, 18);
+    ctx.fillText("Clipping: " + (clipping ? "ON" : "OFF") + " · Merge Distance: " + mergeDistance.toFixed(2), 12, 18);
   }
 
   function drawPolygon(pts, side, fillColor, strokeColor) {
@@ -995,7 +1051,8 @@ function initQuiz(questions) {
 
     // Clipping: prevent crossing center line (x must stay >= 0)
     if (clipping) {
-      if (newX < 0) newX = 0;
+      var mergePx = mergeDistance * 200;
+      if (newX < mergePx) newX = 0;
     }
     // Even without clipping, don't go too far right
     if (newX > centerX - 10) newX = centerX - 10;
@@ -1024,32 +1081,53 @@ function initQuiz(questions) {
   canvas.addEventListener("touchend", onUp);
   canvas.addEventListener("touchcancel", onUp);
 
-  // Clipping toggle
-  var btnClipping = document.getElementById("btnClipping");
-  btnClipping.addEventListener("click", function() {
-    clipping = !clipping;
+  function syncMirrorControls() {
+    var mergeRange = document.getElementById("mirrorMergeRange");
+    var mergeNumber = document.getElementById("mirrorMergeNumber");
+    var mergeLabel = document.getElementById("mirrorMergeLabel");
+    var clippingCheckbox = document.getElementById("mirrorClipping");
+    var axisStatus = document.getElementById("mirrorAxisStatus");
+    var clippingStatus = document.getElementById("mirrorClippingStatus");
+    var mergeStatus = document.getElementById("mirrorMergeStatus");
+    if (mergeRange) mergeRange.value = mirrorState.mergeDistance.toFixed(2);
+    if (mergeNumber) mergeNumber.value = mirrorState.mergeDistance.toFixed(2);
+    if (mergeLabel) mergeLabel.textContent = mirrorState.mergeDistance.toFixed(2);
+    if (clippingCheckbox) clippingCheckbox.checked = mirrorState.clipping;
+
+    clipping = mirrorState.clipping;
+    mergeDistance = mirrorState.mergeDistance;
     if (clipping) {
-      btnClipping.textContent = "Clipping ON";
-      btnClipping.classList.add("is-active");
-      // Enforce clipping on current verts
       verts.forEach(function(v) {
-        if (v.x < 0) v.x = 0;
+        if (v.x < mergeDistance * 200) v.x = 0;
       });
-    } else {
-      btnClipping.textContent = "Clipping OFF";
-      btnClipping.classList.remove("is-active");
     }
+    if (axisStatus) axisStatus.textContent = "X";
+    if (clippingStatus) clippingStatus.textContent = clipping ? "ON" : "OFF";
+    if (mergeStatus) mergeStatus.textContent = mergeDistance.toFixed(2);
     draw();
-  });
+  }
 
-  // Reset button
-  document.getElementById("btnReset").addEventListener("click", function() {
+  function setMergeDistance(value) {
+    var next = parseFloat(value);
+    if (!isFinite(next)) next = 0.02;
+    mirrorState.mergeDistance = Math.max(0, Math.min(0.12, next));
+    syncMirrorControls();
+  }
+
+  document.getElementById("mirrorMergeRange").addEventListener("input", function() { setMergeDistance(this.value); });
+  document.getElementById("mirrorMergeNumber").addEventListener("input", function() { setMergeDistance(this.value); });
+  document.getElementById("mirrorClipping").addEventListener("change", function() {
+    mirrorState.clipping = this.checked;
+    syncMirrorControls();
+  });
+  document.getElementById("mirrorResetBtn").addEventListener("click", function() {
+    mirrorState.clipping = true;
+    mirrorState.mergeDistance = 0.02;
     resetVerts();
-    draw();
+    syncMirrorControls();
   });
 
-  // Initial draw
-  draw();
+  syncMirrorControls();
 })();
 
 // ── Quiz Data ─────────────────────────────────

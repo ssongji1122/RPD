@@ -3,14 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>도구 라이브러리 — RPD</title>
+  <title>Show Me 카드 라이브러리 — Blender Archive</title>
+  <meta name="description" content="Blender Archive 안의 Show Me 카드를 Blender 공식 문서 흐름에 맞춰 찾는 라이브러리" />
   <link rel="stylesheet" href="assets/tokens.css" />
   <style>
 /* ── Layout ── */
 .lib-header {
   position: sticky; top: 0; z-index: 10;
-  background: rgba(10,10,10,.85);
-  backdrop-filter: blur(12px);
+  background: var(--topbar-bg);
+  backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--line);
   padding: 0 20px;
 }
@@ -26,21 +27,21 @@
 }
 .lib-back:hover { color: var(--text); }
 .lib-title {
-  margin: 0; font-size: clamp(1.4rem, 3vw, 2rem);
-  font-family: var(--font-display); font-weight: 650;
-  letter-spacing: -.02em;
+  margin: 0; font-size: clamp(1.28rem, 2.2vw, 1.8rem);
+  font-family: var(--font-display); font-weight: 620;
+  letter-spacing: -.028em;
 }
 .lib-subtitle {
-  margin: 4px 0 0; color: var(--muted-strong); font-size: .9rem;
+  margin: 4px 0 0; color: var(--muted-strong); font-size: .84rem;
 }
 .lib-search-wrap {
   display: flex; align-items: center; gap: 12px;
 }
 .lib-search {
   flex: 1; padding: 10px 14px;
-  border-radius: 999px;
-  border: 1px solid var(--line-strong);
-  background: rgba(255,255,255,.05);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface-strong);
   color: var(--text); font: inherit; font-size: .9rem;
   outline: none; transition: border-color .14s;
 }
@@ -49,80 +50,24 @@
 .lib-count {
   font-size: .8rem; color: var(--muted); white-space: nowrap;
 }
-.lib-main {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 24px 20px 80px;
-}
-.lib-tabs {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 0 20px;
-  display: flex; gap: 0;
-  overflow-x: auto;
-  border-bottom: 1px solid var(--line);
-}
-.lib-tabs::-webkit-scrollbar { display: none; }
-.lib-tab {
-  padding: 12px 16px;
-  font-size: .84rem; font-weight: 500;
-  color: var(--muted); cursor: pointer;
-  border: none; border-bottom: 2px solid transparent;
-  white-space: nowrap;
-  transition: color .14s, border-color .14s;
-  background: none; font-family: inherit;
-}
-.lib-tab:hover { color: var(--muted-strong); }
-.lib-tab.is-active {
-  color: var(--key-soft);
-  border-bottom-color: var(--key);
-}
-.lib-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 12px;
-  margin-top: 20px;
-}
-.lib-card {
-  display: flex; flex-direction: column; align-items: center;
-  gap: 8px; padding: 18px 12px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--line);
-  background: var(--surface);
-  cursor: pointer;
-  transition: border-color .14s, background .14s;
-  text-align: center;
-  font-family: inherit;
-}
-.lib-card:hover {
-  border-color: var(--key);
-  background: rgba(10,132,255,.06);
-}
-.lib-card-icon { font-size: 2rem; line-height: 1; }
-.lib-card-label {
-  font-size: .84rem; font-weight: 500; color: var(--text); line-height: 1.4;
-}
-.lib-card-id {
-  font-size: .72rem; color: var(--muted);
-}
-.lib-empty {
-  grid-column: 1 / -1;
-  padding: 60px 0; text-align: center; color: var(--muted);
-  font-size: .9rem;
-}
 .lib-week-filter {
-  max-width: var(--max-width);
+  max-width: calc(var(--max-width) + 120px);
   margin: 0 auto;
   padding: 12px 20px 0;
-  display: flex; gap: 6px; flex-wrap: wrap;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 .lib-week-chip {
   padding: 4px 12px;
   border-radius: 999px;
   border: 1px solid var(--line);
   background: none;
-  color: var(--muted); font-size: .78rem; font-family: inherit;
-  cursor: pointer; white-space: nowrap;
+  color: var(--muted);
+  font-size: .78rem;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
   transition: border-color .14s, color .14s, background .14s;
 }
 .lib-week-chip:hover { color: var(--muted-strong); border-color: var(--line-strong); }
@@ -132,12 +77,215 @@
   background: rgba(10,132,255,.08);
 }
 .lib-card-week {
-  font-size: .68rem; color: var(--muted);
-  background: var(--overlay-white);
-  border: 1px solid var(--line);
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin-top: 6px;
+  padding: 1px 7px;
   border-radius: 999px;
-  padding: 1px 6px;
-  margin-top: 2px;
+  border: 1px solid var(--line);
+  background: var(--overlay-white);
+  font-size: .68rem;
+  color: var(--muted);
+}
+.lib-shell {
+  max-width: calc(var(--max-width) + 120px);
+  margin: 0 auto;
+  padding: 24px 20px 80px;
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
+}
+.lib-main {
+  min-width: 0;
+  padding: 0;
+}
+.lib-nav-shell {
+  position: sticky;
+  top: 96px;
+  z-index: 9;
+  background: none;
+  backdrop-filter: none;
+  border-bottom: none;
+}
+.lib-nav-inner {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 18px;
+}
+.lib-nav-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  align-items: start;
+}
+.lib-nav-label {
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.lib-nav-scroller {
+  display: grid;
+  gap: 4px;
+  overflow: visible;
+}
+.lib-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 0 6px 12px;
+  border-radius: 0;
+  border: none;
+  border-left: 2px solid transparent;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  transition: border-color .14s, color .14s;
+  white-space: normal;
+  font: inherit;
+  font-size: .8rem;
+  text-align: left;
+}
+.lib-chip:hover {
+  color: var(--text);
+}
+.lib-chip.is-active {
+  border-left-color: var(--key-soft);
+  color: var(--text);
+}
+.lib-chip.is-disabled {
+  opacity: .45;
+  cursor: default;
+}
+.lib-chip strong {
+  font-size: .74rem;
+  color: inherit;
+}
+.lib-back:focus-visible,
+.lib-search:focus-visible,
+.lib-chip:focus-visible,
+.lib-card:focus-visible,
+.showme-close:focus-visible,
+#langSwitcher .lang-switcher-btn:focus-visible {
+  outline: 2px solid var(--key-soft);
+  outline-offset: 2px;
+}
+.lib-search:focus-visible,
+.lib-chip:focus-visible,
+.lib-card:focus-visible,
+.showme-close:focus-visible,
+#langSwitcher .lang-switcher-btn:focus-visible {
+  border-color: rgba(10,132,255,.42);
+}
+.lib-section {
+  display: grid;
+  gap: 18px;
+  margin-top: 40px;
+  padding-top: 0;
+  scroll-margin-top: 96px;
+}
+.lib-section:first-child {
+  margin-top: 0;
+}
+.lib-section-head {
+  display: grid;
+  gap: 8px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+.lib-section-eyebrow {
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.lib-section-title-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.lib-section-title {
+  margin: 0;
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  font-weight: 650;
+  letter-spacing: -.02em;
+}
+.lib-section-count {
+  flex-shrink: 0;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.lib-section-copy {
+  margin: 0;
+  max-width: 860px;
+  color: var(--muted-strong);
+  line-height: 1.7;
+  font-size: .9rem;
+}
+.lib-section-body {
+  display: grid;
+  gap: 18px;
+}
+.lib-subsection {
+  display: grid;
+  gap: 12px;
+}
+.lib-subsection-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.lib-subsection-title {
+  margin: 0;
+  font-size: .92rem;
+  font-weight: 620;
+  color: var(--muted-strong);
+}
+.lib-subsection-meta {
+  font-size: .76rem;
+  color: var(--muted);
+}
+.lib-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 20px;
+}
+.lib-card {
+  display: flex; align-items: flex-start;
+  min-height: 0;
+  padding: 12px 0;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  background: none;
+  cursor: pointer;
+  transition: border-color .14s, color .14s;
+  text-align: left;
+  font-family: inherit;
+}
+.lib-card:hover {
+  border-bottom-color: var(--line-strong);
+}
+.lib-card-label {
+  font-size: .88rem;
+  font-weight: 560;
+  color: var(--text);
+  line-height: 1.45;
+  word-break: keep-all;
+}
+.lib-empty {
+  grid-column: 1 / -1;
+  padding: 60px 0; text-align: center; color: var(--muted);
+  font-size: .9rem;
 }
 .showme-overlay {
   display: none; position: fixed; inset: 0;
@@ -146,11 +294,14 @@
   backdrop-filter: blur(8px);
   justify-content: center; align-items: center;
   padding: 20px;
+  overscroll-behavior: contain;
 }
 .showme-overlay.is-open { display: flex; }
 .showme-modal {
-  width: min(720px, 100%);
-  height: min(85vh, 640px);
+  width: min(1280px, 96vw);
+  height: min(92vh, 900px);
+  max-width: 100%;
+  max-height: 100%;
   border-radius: var(--radius-lg);
   border: 1px solid rgba(255,255,255,.12);
   background: var(--surface);
@@ -168,29 +319,101 @@
   padding: 14px 18px;
   border-bottom: 1px solid var(--line);
   flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+  background: var(--surface);
 }
-.showme-modal-title { font-size: .9rem; font-weight: 600; color: var(--text); }
+.showme-modal-title {
+  font-size: .9rem; font-weight: 600; color: var(--text);
+  line-height: 1.35;
+  min-width: 0;
+}
 .showme-close {
   display: grid; place-items: center;
-  width: 32px; height: 32px; border-radius: 8px;
+  width: 44px; height: 44px; border-radius: 12px;
   border: 1px solid var(--line);
   background: rgba(255,255,255,.04);
   color: var(--muted-strong); cursor: pointer;
   transition: background .14s, color .14s;
+  flex-shrink: 0;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 .showme-close:hover { background: rgba(255,255,255,.09); color: var(--text); }
-.showme-iframe { flex: 1; width: 100%; border: none; background: var(--bg); }
+.showme-iframe { flex: 1; width: 100%; border: none; background: var(--bg); min-height: 0; }
+@media (max-width: 980px) {
+  .lib-shell {
+    width: calc(100% - 24px);
+    padding: 20px 0 72px;
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .lib-nav-shell {
+    top: 88px;
+  }
+  .lib-nav-scroller {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .lib-nav-scroller::-webkit-scrollbar { display: none; }
+  .lib-chip {
+    width: fit-content;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line);
+    background: var(--surface-strong);
+    white-space: nowrap;
+  }
+  .lib-chip.is-active {
+    border-left-color: transparent;
+    border-color: var(--line-strong);
+    background: var(--overlay-white-hover);
+  }
+  .lib-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
 @media (max-width: 720px) {
   .showme-overlay { padding: 0; }
-  .showme-modal { width: 100%; height: 100%; border-radius: 0; border: none; }
+  .showme-modal {
+    width: 100%;
+    height: 100dvh;
+    min-height: 100dvh;
+    border-radius: 0;
+    border: none;
+  }
+  .showme-modal-header {
+    padding-top: calc(14px + env(safe-area-inset-top, 0px));
+    padding-right: calc(18px + env(safe-area-inset-right, 0px));
+    padding-left: calc(18px + env(safe-area-inset-left, 0px));
+  }
 }
 @media (max-width: 600px) {
-  .lib-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
-  .lib-card { padding: 14px 8px; }
-  .lib-card-icon { font-size: 1.6rem; }
-  .lib-card-label { font-size: .78rem; }
-  .lib-card-id { display: none; }
-  .lib-main { padding: 16px 12px 60px; }
+  .lib-card { min-height: 0; padding: 12px 0; }
+  .lib-card-label { font-size: .84rem; }
+  .lib-main { padding: 0; }
+  .lib-shell { padding: 16px 0 60px; }
+  .lib-nav-inner {
+    padding: 0;
+  }
+  .lib-nav-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .lib-nav-label {
+    font-size: .68rem;
+  }
+  .lib-section {
+    scroll-margin-top: 156px;
+  }
+  .lib-section-title-row,
+  .lib-subsection-head {
+    display: grid;
+    gap: 4px;
+  }
 }
   </style>
 </head>
@@ -198,10 +421,10 @@
   <div class="page-shell">
     <header class="lib-header">
       <div class="lib-header-inner">
-        <a href="index.html" class="lib-back">← 홈</a>
+        <a href="index.html" class="lib-back" id="libBack">← Blender Archive</a>
         <div>
-          <h1 class="lib-title">도구 라이브러리</h1>
-          <p class="lib-subtitle">Blender 도구·모디파이어 개념 카드 모음</p>
+          <h1 class="lib-title" id="libTitle">Show Me 카드 라이브러리</h1>
+          <p class="lib-subtitle" id="libSubtitle">Blender 공식 문서처럼 큰 흐름으로 먼저 보고, 필요하면 검색과 ABC로 바로 좁혀보세요</p>
         </div>
         <div class="lib-search-wrap">
           <input
@@ -212,13 +435,27 @@
             placeholder="예: Array, Mirror, UV..."
             autocomplete="off"
           />
-          <span class="lib-count" id="libCount"></span>
+          <span class="lib-count" id="libCount" role="status" aria-live="polite"></span>
+          <div id="langSwitcher"></div>
         </div>
       </div>
     </header>
     <nav class="lib-week-filter" id="libWeekFilter" aria-label="주차 필터"></nav>
-    <nav class="lib-tabs" id="libTabs" role="tablist" aria-label="카테고리 필터"></nav>
-    <main class="lib-main" id="libMain"></main>
+    <div class="lib-shell">
+      <aside class="lib-nav-shell">
+        <div class="lib-nav-inner">
+          <div class="lib-nav-row">
+            <span class="lib-nav-label" id="libTocLabel">목차</span>
+            <nav class="lib-nav-scroller" id="libToc" aria-label="라이브러리 목차"></nav>
+          </div>
+          <div class="lib-nav-row">
+            <span class="lib-nav-label" id="libAlphaLabel">ABC</span>
+            <nav class="lib-nav-scroller" id="libAlphabet" aria-label="ABC 필터"></nav>
+          </div>
+        </div>
+      </aside>
+      <main class="lib-main" id="libMain"></main>
+    </div>
 
     <!-- Show Me Modal -->
     <div class="showme-overlay" id="showmeOverlay" aria-hidden="true">
@@ -237,353 +474,583 @@
       </div>
     </div>
   </div>
-  <script src="assets/showme/_registry.js"></script>
-  <script src="assets/showme/_supplements.js"></script>
-  <script>
-// 카테고리 매핑 — ID → 카테고리명
-const CATEGORY_MAP = {
-  "viewport-navigation": "Edit Mode",
-  "transform-grs":       "Edit Mode",
-  "edit-mode":           "Edit Mode",
-  "edit-mode-tools":     "Edit Mode",
-  "extrude":             "Edit Mode",
-  "loop-cut":            "Edit Mode",
-  "inset":               "Edit Mode",
-  "bevel-tool":          "Edit Mode",
-
-  "array-modifier":          "Generate Modifiers",
-  "bevel-modifier":          "Generate Modifiers",
-  "boolean-modifier":        "Generate Modifiers",
-  "build-modifier":          "Generate Modifiers",
-  "curve-to-tube":           "Generate Modifiers",
-  "decimate-modifier":       "Generate Modifiers",
-  "edge-split-modifier":     "Generate Modifiers",
-  "mask-modifier":           "Generate Modifiers",
-  "mirror-modifier":         "Generate Modifiers",
-  "multiresolution-modifier":"Generate Modifiers",
-  "remesh-modifier":         "Generate Modifiers",
-  "scatter-on-surface":      "Generate Modifiers",
-  "screw-modifier":          "Generate Modifiers",
-  "skin-modifier":           "Generate Modifiers",
-  "solidify-modifier":       "Generate Modifiers",
-  "subdivision-surface":     "Generate Modifiers",
-  "triangulate-modifier":    "Generate Modifiers",
-  "volume-to-mesh":          "Generate Modifiers",
-  "weld-modifier":           "Generate Modifiers",
-  "wireframe-modifier":      "Generate Modifiers",
-
-  "weighted-normal":    "Normals",
-
-  "transform-apply":        "기타",
-  "simple-deform":          "기타",
-  "bevel-tool-vs-modifier": "기타",
-  "join-separate":          "기타",
-  "origin-vs-3dcursor":     "기타",
-
-  "sculpt-basics":      "Sculpting",
-
-  "material-basics":    "Material",
-  "principled-bsdf":    "Material",
-  "shader-editor":      "Material",
-
-  "uv-unwrapping":      "UV",
-  "uv-editor":          "UV",
-
-  "light-types":        "Lighting",
-  "hdri-lighting":      "Lighting",
-  "three-point-light":  "Lighting",
-
-  "keyframe-basics":    "Animation",
-  "graph-editor":       "Animation",
-
-  "armature-basics":    "Rigging",
-  "weight-paint":       "Rigging",
-
-  "render-settings":    "Rendering",
-  "compositing-basics": "Rendering",
+  <script src="data/i18n-content.js?v=20260318e"></script>
+  <script src="assets/i18n.js?v=20260318d"></script>
+  <script src="assets/showme/_registry.js?v=20260318f"></script>
+  <script src="assets/showme/_catalog.js?v=20260318c"></script>
+  <script src="assets/showme/_supplements.js?v=20260318c"></script>
+  <script src="assets/showme/_helpers.js?v=20260318c"></script>
+<script>
+var activeLetter = "all";
+var activeWeek = "all";
+var showMeLastTrigger = null;
+var activeShowMeWidgetId = null;
+var lastSectionTargetId = "";
+var params = new URLSearchParams(location.search);
+var requestedShowMeId = params.get("showme") || "";
+var pendingShowMeFromUrl = !!requestedShowMeId;
+var FALLBACK_LIBRARY_TEXT = {
+  pageTitle: "Show Me 카드 라이브러리 - Blender Archive",
+  metaDescription: "Blender Archive 안의 Show Me 카드를 Blender 공식 문서 흐름에 맞춰 찾는 라이브러리",
+  backHome: "← Blender Archive",
+  title: "Show Me 카드 라이브러리",
+  subtitle: "Blender 공식 문서처럼 큰 흐름으로 먼저 보고, 필요하면 검색과 ABC로 바로 좁혀보세요",
+  searchAria: "도구 검색",
+  searchPlaceholder: "예: Array, Mirror, UV...",
+  tocAria: "라이브러리 목차",
+  alphabetFilterAria: "ABC 필터",
+  contentsLabel: "목차",
+  alphabetLabel: "ABC",
+  allLetters: "전체",
+  sectionGettingStartedTitle: "시작 준비",
+  sectionGettingStartedCopy: "환경 설정과 레퍼런스 준비처럼 Blender에 들어가기 전에 먼저 잡아야 하는 시작 단계를 모았습니다.",
+  sectionUserInterfaceTitle: "기초 조작과 작업 흐름",
+  sectionUserInterfaceCopy: "화면 조작, 축 기준, Pivot, 스냅처럼 Blender 인터페이스를 읽는 법과 기본 조작 감각을 먼저 정리합니다.",
+  sectionModelingTitle: "모델링",
+  sectionModelingCopy: "형태를 만들고 다듬는 핵심 구간입니다. Edit Mode 도구, Modifier, 정리용 개념을 한 흐름으로 묶었습니다.",
+  sectionSculptingPaintingTitle: "스컬프팅 · 페인팅",
+  sectionSculptingPaintingCopy: "브러시 기반으로 형태를 밀고 다듬는 흐름을 따로 모았습니다.",
+  sectionMaterialsUvTitle: "셰이딩 · 재질 · UV",
+  sectionMaterialsUvCopy: "재질 표현과 UV 준비를 함께 보게 해 Shader와 Texture 흐름을 한 번에 찾도록 구성했습니다.",
+  sectionRenderingTitle: "렌더링",
+  sectionRenderingCopy: "조명 세팅부터 렌더 엔진, 컴포지팅까지 최종 출력 단계에서 필요한 카드를 모았습니다.",
+  sectionAnimationRiggingTitle: "애니메이션 · 리깅",
+  sectionAnimationRiggingCopy: "키프레임, 그래프 편집, Armature, Weight Paint처럼 움직임과 캐릭터 제어에 필요한 주제를 묶었습니다.",
+  modalCloseAria: "닫기",
+  showmeFrameTitle: "Show Me Widget",
+  emptyResults: "검색 결과가 없습니다"
 };
+var I18N = (function() {
+  if (window.RPDI18n) return window.RPDI18n;
+  return {
+    getStrings: function() { return FALLBACK_LIBRARY_TEXT; },
+    getShowMeLabel: function(id, meta) { return meta && meta.label ? meta.label : id; },
+    getLanguage: function() {
+      var lang = (document.documentElement && document.documentElement.lang) || "ko";
+      return /^en/i.test(lang) ? "en" : "ko";
+    },
+    getLibraryCategoryLabel: function(value) { return value; },
+    mountLanguageSwitcher: function() {},
+    onLanguageChange: function() {},
+    localizeShowMeIframe: function() {}
+  };
+})();
 
-const CATEGORY_ORDER = [
-  "전체", "Edit Mode", "Generate Modifiers", "Normals",
-  "Sculpting", "Material", "UV", "Lighting",
-  "Animation", "Rigging", "Rendering", "기타"
-];
-
-const WEEKS_WITH_CARDS = [0, 2, 3, 4, 5, 6, 7, 9, 10, 11, 13];
-
-function buildWeekFilter() {
-  var el = document.getElementById("libWeekFilter");
-  var allChip = document.createElement("button");
-  allChip.className = "lib-week-chip is-active";
-  allChip.textContent = "전체 주차";
-  allChip.dataset.week = "all";
-  allChip.setAttribute("aria-pressed", "true");
-  allChip.addEventListener("click", function() { selectWeekChip(allChip); });
-  el.appendChild(allChip);
-
-  WEEKS_WITH_CARDS.forEach(function(w) {
-    var btn = document.createElement("button");
-    btn.className = "lib-week-chip";
-    btn.textContent = w === 0 ? "일반 개념" : "Week " + w;
-    btn.dataset.week = String(w);
-    btn.setAttribute("aria-pressed", "false");
-    btn.addEventListener("click", function() { selectWeekChip(btn); });
-    el.appendChild(btn);
-  });
+function getText() {
+  return I18N.getStrings("library");
 }
 
-function selectWeekChip(chip) {
-  document.querySelectorAll(".lib-week-chip").forEach(function(c) {
-    c.classList.remove("is-active");
-    c.setAttribute("aria-pressed", "false");
-  });
-  chip.classList.add("is-active");
-  chip.setAttribute("aria-pressed", "true");
-  if (typeof filterCards === "function") filterCards();
+function getLocalizedMeta(id) {
+  var meta = getShowMeEntry(id);
+  return {
+    raw: meta,
+    icon: meta.icon,
+    label: I18N.getShowMeLabel(id, meta)
+  };
 }
 
-buildWeekFilter();
-
-function buildTabs() {
-  var tabsEl = document.getElementById("libTabs");
-  CATEGORY_ORDER.forEach(function(cat, i) {
-    var btn = document.createElement("button");
-    btn.className = "lib-tab" + (i === 0 ? " is-active" : "");
-    btn.textContent = cat;
-    btn.dataset.cat = cat;
-    btn.setAttribute("role", "tab");
-    btn.setAttribute("aria-selected", i === 0 ? "true" : "false");
-    btn.addEventListener("click", function() {
-      document.querySelectorAll(".lib-tab").forEach(function(t) {
-        t.classList.remove("is-active");
-        t.setAttribute("aria-selected", "false");
-      });
-      btn.classList.add("is-active");
-      btn.setAttribute("aria-selected", "true");
-      if (typeof filterCards === "function") filterCards();
-    });
-    tabsEl.appendChild(btn);
-  });
-}
-buildTabs();
-
-// 카드 빌드
-function buildCards() {
-  var main = document.getElementById("libMain");
-  var grid = document.createElement("div");
-  grid.className = "lib-grid";
-  grid.id = "libGrid";
-  main.appendChild(grid);
-
-  Object.keys(SHOWME_REGISTRY).forEach(function(id) {
-    var meta = SHOWME_REGISTRY[id];
-    var card = document.createElement("button");
-    card.className = "lib-card";
-    card.setAttribute("type", "button");
-    card.dataset.id = id;
-    card.dataset.cat = CATEGORY_MAP[id] || "기타";
-
-    var icon = document.createElement("span");
-    icon.className = "lib-card-icon";
-    icon.textContent = meta.icon;
-
-    var label = document.createElement("span");
-    label.className = "lib-card-label";
-    label.textContent = meta.label;
-
-    var idEl = document.createElement("span");
-    idEl.className = "lib-card-id";
-    idEl.textContent = id;
-
-    card.appendChild(icon);
-    card.appendChild(label);
-    card.appendChild(idEl);
-    var weekVal = meta.week;
-    if (weekVal !== undefined && weekVal > 0) {
-      var weekBadge = document.createElement("span");
-      weekBadge.className = "lib-card-week";
-      weekBadge.textContent = "W" + weekVal;
-      card.appendChild(weekBadge);
+function getLibrarySections() {
+  var text = getText();
+  var textMap = {
+    "getting-started": {
+      title: text.sectionGettingStartedTitle,
+      copy: text.sectionGettingStartedCopy
+    },
+    "user-interface": {
+      title: text.sectionUserInterfaceTitle,
+      copy: text.sectionUserInterfaceCopy
+    },
+    "modeling": {
+      title: text.sectionModelingTitle,
+      copy: text.sectionModelingCopy
+    },
+    "sculpting-painting": {
+      title: text.sectionSculptingPaintingTitle,
+      copy: text.sectionSculptingPaintingCopy
+    },
+    "materials-uv": {
+      title: text.sectionMaterialsUvTitle,
+      copy: text.sectionMaterialsUvCopy
+    },
+    "rendering": {
+      title: text.sectionRenderingTitle,
+      copy: text.sectionRenderingCopy
+    },
+    "animation-rigging": {
+      title: text.sectionAnimationRiggingTitle,
+      copy: text.sectionAnimationRiggingCopy
     }
-    card.addEventListener("click", function() { openShowMe(id); });
-    grid.appendChild(card);
-  });
+  };
 
-  updateCount();
+  var order = typeof getShowMeManualSectionOrder === "function"
+    ? getShowMeManualSectionOrder()
+    : ["getting-started", "user-interface", "modeling", "sculpting-painting", "materials-uv", "rendering", "animation-rigging"];
+
+  return order.map(function(id) {
+    return Object.assign({ id: id }, textMap[id] || { title: id, copy: "" });
+  });
 }
 
-// 필터
-function filterCards() {
-  var query = document.getElementById("libSearch").value.toLowerCase().trim();
-  var activeCat = document.querySelector(".lib-tab.is-active").dataset.cat;
-  var cards = document.querySelectorAll(".lib-card");
-  var visible = 0;
+function getSearchQuery() {
+  return document.getElementById("libSearch").value.toLowerCase().trim();
+}
 
+function getCanonicalLabel(id) {
+  return (SHOWME_REGISTRY[id] && SHOWME_REGISTRY[id].label) || id;
+}
+
+function getWeekValue(meta) {
+  return meta && typeof meta.week === "number" ? meta.week : 0;
+}
+
+function getWeekLabel(week) {
+  var isKo = window.RPDI18n.getLanguage() === "ko";
+  if (week === 0) return isKo ? "공통" : "Core";
+  return "Week " + week;
+}
+
+function getAlphaLabel(id) {
+  return String(id || "").replace(/[-_]+/g, " ").trim();
+}
+
+function getLetterKey(label) {
+  var upper = (label || "").trim().toUpperCase();
+  var first = upper.charAt(0);
+  if (/^[A-Z0-9]$/.test(first)) return first;
+  return "#";
+}
+
+function buildCardData(id) {
+  var localized = getLocalizedMeta(id);
+  var meta = localized.raw;
+  return {
+    id: id,
+    localizedLabel: localized.label,
+    canonicalLabel: getCanonicalLabel(id),
+    alphaLabel: getAlphaLabel(id),
+    alphaKey: getLetterKey(getAlphaLabel(id)),
+    week: getWeekValue(meta),
+    sectionId: getSectionIdForCard(id, meta.category || "기타"),
+    meta: meta,
+    searchText: [
+      localized.label,
+      getCanonicalLabel(id),
+      getAlphaLabel(id),
+      meta.label,
+      id,
+      meta.category,
+      meta.stageLabel,
+      meta.confusionLabel,
+      meta.audienceNeed,
+      (meta.keywords || []).join(" "),
+      (meta.prerequisites || []).join(" ")
+    ].join(" ").toLowerCase()
+  };
+}
+
+function sortCards(a, b) {
+  var primary = a.alphaLabel.localeCompare(b.alphaLabel, "en", { sensitivity: "base" });
+  if (primary !== 0) return primary;
+  return a.localizedLabel.localeCompare(b.localizedLabel, window.RPDI18n.getLanguage(), { sensitivity: "base" });
+}
+
+function getAllCards() {
+  return Object.keys(SHOWME_REGISTRY).map(buildCardData).sort(sortCards);
+}
+
+function matchesQuery(card, query) {
+  return !query || card.searchText.indexOf(query) !== -1;
+}
+
+function matchesLetter(card) {
+  return activeLetter === "all" || card.alphaKey === activeLetter;
+}
+
+function matchesWeek(card) {
+  return activeWeek === "all" || card.week === activeWeek;
+}
+
+function getAvailableLetters(cards, query) {
+  var seen = {};
   cards.forEach(function(card) {
-    var id    = card.dataset.id;
-    var meta  = SHOWME_REGISTRY[id];
-    var cat   = card.dataset.cat;
-
-    var matchCat   = activeCat === "전체" || cat === activeCat;
-    var matchQuery = !query
-      || meta.label.toLowerCase().includes(query)
-      || id.toLowerCase().includes(query);
-    var activeWeekEl = document.querySelector(".lib-week-chip.is-active");
-    var activeWeek = activeWeekEl ? activeWeekEl.dataset.week : "all";
-    var cardWeek = String(SHOWME_REGISTRY[id] && SHOWME_REGISTRY[id].week !== undefined ? SHOWME_REGISTRY[id].week : 0);
-    var matchWeek = activeWeek === "all" || cardWeek === activeWeek;
-
-    card.style.display = (matchCat && matchWeek && matchQuery) ? "" : "none";
-    if (matchCat && matchWeek && matchQuery) visible++;
+    if (!matchesQuery(card, query)) return;
+    seen[card.alphaKey] = true;
   });
 
-  updateCount(visible);
-
-  var grid = document.getElementById("libGrid");
-  var empty = grid.querySelector(".lib-empty");
-  if (visible === 0) {
-    if (!empty) {
-      var el = document.createElement("p");
-      el.className = "lib-empty";
-      el.textContent = "검색 결과가 없습니다";
-      grid.appendChild(el);
-    }
-  } else {
-    if (empty) empty.remove();
-  }
+  return Object.keys(seen).sort(function(a, b) {
+    if (a === "#") return 1;
+    if (b === "#") return -1;
+    return a.localeCompare(b, "en");
+  });
 }
 
-function updateCount(n) {
+function getAvailableWeeks(cards, query) {
+  var seen = {};
+  cards.forEach(function(card) {
+    if (!matchesQuery(card, query) || !matchesLetter(card)) return;
+    seen[card.week] = true;
+  });
+  return Object.keys(seen).map(function(value) {
+    return Number(value);
+  }).sort(function(a, b) {
+    if (a === 0) return 1;
+    if (b === 0) return -1;
+    return a - b;
+  });
+}
+
+function ensureActiveLetter(cards, query) {
+  var available = getAvailableLetters(cards, query);
+  if (activeLetter !== "all" && available.indexOf(activeLetter) === -1) {
+    activeLetter = "all";
+  }
+  return available;
+}
+
+function ensureActiveWeek(cards, query) {
+  var available = getAvailableWeeks(cards, query);
+  if (activeWeek !== "all" && available.indexOf(activeWeek) === -1) {
+    activeWeek = "all";
+  }
+  return available;
+}
+
+function getVisibleCards(cards, query) {
+  return cards.filter(function(card) {
+    return matchesQuery(card, query) && matchesLetter(card) && matchesWeek(card);
+  });
+}
+
+function countCardsForSection(cards, section) {
+  return cards.filter(function(card) { return card.sectionId === section.id; }).length;
+}
+
+function getSectionCategories(sectionCards) {
+  return getShowMeCategoryOrder().filter(function(category) {
+    if (category === "전체") return false;
+    return sectionCards.some(function(card) {
+      return (card.meta.category || "기타") === category;
+    });
+  });
+}
+
+function createCardButton(card) {
+  var btn = document.createElement("button");
+  btn.className = "lib-card";
+  btn.setAttribute("type", "button");
+  btn.setAttribute("aria-label", card.localizedLabel);
+  btn.title = getShowMeTooltipText(card.id);
+
+  var label = document.createElement("span");
+  label.className = "lib-card-label";
+  label.textContent = card.localizedLabel;
+  btn.appendChild(label);
+
+  var week = document.createElement("span");
+  week.className = "lib-card-week";
+  week.textContent = getWeekLabel(card.week);
+  btn.appendChild(week);
+  btn.addEventListener("click", function() { openShowMe(card.id); });
+  return btn;
+}
+
+function renderToc(cards) {
+  var text = getText();
+  var toc = document.getElementById("libToc");
+  var query = getSearchQuery();
+  var visibleCards = getVisibleCards(cards, query);
+
+  toc.textContent = "";
+  document.getElementById("libTocLabel").textContent = text.contentsLabel;
+
+  getLibrarySections().forEach(function(section) {
+    var count = countCardsForSection(visibleCards, section);
+    if (!count) return;
+
+    var btn = document.createElement("button");
+    btn.className = "lib-chip" + (lastSectionTargetId === section.id ? " is-active" : "");
+    btn.type = "button";
+    btn.innerHTML = "<span>" + section.title + "</span><strong>" + count + "</strong>";
+    btn.addEventListener("click", function() {
+      var target = document.getElementById("section-" + section.id);
+      if (!target) return;
+      lastSectionTargetId = section.id;
+      renderToc(cards);
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    toc.appendChild(btn);
+  });
+}
+
+function renderAlphabet(cards, availableLetters) {
+  var text = getText();
+  var nav = document.getElementById("libAlphabet");
+  nav.textContent = "";
+  document.getElementById("libAlphaLabel").textContent = text.alphabetLabel;
+
+  var allBtn = document.createElement("button");
+  allBtn.type = "button";
+  allBtn.className = "lib-chip" + (activeLetter === "all" ? " is-active" : "");
+  allBtn.textContent = text.allLetters;
+  allBtn.setAttribute("aria-pressed", activeLetter === "all" ? "true" : "false");
+  allBtn.addEventListener("click", function() {
+    activeLetter = "all";
+    renderLibrary();
+  });
+  nav.appendChild(allBtn);
+
+  availableLetters.forEach(function(letter) {
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "lib-chip" + (activeLetter === letter ? " is-active" : "");
+    btn.textContent = letter;
+    btn.setAttribute("aria-pressed", activeLetter === letter ? "true" : "false");
+    btn.addEventListener("click", function() {
+      activeLetter = letter;
+      renderLibrary();
+    });
+    nav.appendChild(btn);
+  });
+}
+
+function renderWeekFilter(cards, availableWeeks) {
+  var nav = document.getElementById("libWeekFilter");
+  var isKo = window.RPDI18n.getLanguage() === "ko";
+  if (!nav) return;
+
+  nav.textContent = "";
+  nav.setAttribute("aria-label", isKo ? "주차 필터" : "Week filter");
+
+  var allBtn = document.createElement("button");
+  allBtn.type = "button";
+  allBtn.className = "lib-week-chip" + (activeWeek === "all" ? " is-active" : "");
+  allBtn.textContent = isKo ? "전체" : "All";
+  allBtn.addEventListener("click", function() {
+    activeWeek = "all";
+    lastSectionTargetId = "";
+    renderLibrary();
+  });
+  nav.appendChild(allBtn);
+
+  availableWeeks.forEach(function(week) {
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "lib-week-chip" + (activeWeek === week ? " is-active" : "");
+    btn.textContent = getWeekLabel(week);
+    btn.addEventListener("click", function() {
+      activeWeek = week;
+      lastSectionTargetId = "";
+      renderLibrary();
+    });
+    nav.appendChild(btn);
+  });
+}
+
+function renderSections(cards) {
+  var main = document.getElementById("libMain");
+  var query = getSearchQuery();
+  var visibleCards = getVisibleCards(cards, query);
+  var text = getText();
+  var sectionNumber = 0;
+
+  main.textContent = "";
+  updateCount(visibleCards.length);
+
+  if (!visibleCards.length) {
+    var empty = document.createElement("p");
+    empty.className = "lib-empty";
+    empty.textContent = text.emptyResults;
+    main.appendChild(empty);
+    return;
+  }
+
+  getLibrarySections().forEach(function(section) {
+    var sectionCards = visibleCards.filter(function(card) {
+      return card.sectionId === section.id;
+    });
+    if (!sectionCards.length) return;
+    sectionNumber += 1;
+
+    var sectionEl = document.createElement("section");
+    sectionEl.className = "lib-section";
+    sectionEl.id = "section-" + section.id;
+
+    var head = document.createElement("header");
+    head.className = "lib-section-head";
+
+    var eyebrow = document.createElement("div");
+    eyebrow.className = "lib-section-eyebrow";
+    eyebrow.textContent = String(sectionNumber).padStart(2, "0");
+    head.appendChild(eyebrow);
+
+    var titleRow = document.createElement("div");
+    titleRow.className = "lib-section-title-row";
+
+    var title = document.createElement("h2");
+    title.className = "lib-section-title";
+    title.textContent = section.title;
+    titleRow.appendChild(title);
+
+    var count = document.createElement("span");
+    count.className = "lib-section-count";
+    count.textContent = sectionCards.length;
+    titleRow.appendChild(count);
+    head.appendChild(titleRow);
+
+    var copy = document.createElement("p");
+    copy.className = "lib-section-copy";
+    copy.textContent = section.copy;
+    head.appendChild(copy);
+
+    sectionEl.appendChild(head);
+
+    var body = document.createElement("div");
+    body.className = "lib-section-body";
+
+    getSectionCategories(sectionCards).forEach(function(category) {
+      var groupCards = sectionCards.filter(function(card) {
+        return (card.meta.category || "기타") === category;
+      });
+      if (!groupCards.length) return;
+
+      var subgroup = document.createElement("div");
+      subgroup.className = "lib-subsection";
+
+      var subgroupHead = document.createElement("div");
+      subgroupHead.className = "lib-subsection-head";
+
+      var subgroupTitle = document.createElement("h3");
+      subgroupTitle.className = "lib-subsection-title";
+      subgroupTitle.textContent = I18N.getLibraryCategoryLabel(category);
+      subgroupHead.appendChild(subgroupTitle);
+
+      var subgroupMeta = document.createElement("span");
+      subgroupMeta.className = "lib-subsection-meta";
+      subgroupMeta.textContent = groupCards.length;
+      subgroupHead.appendChild(subgroupMeta);
+      subgroup.appendChild(subgroupHead);
+
+      var grid = document.createElement("div");
+      grid.className = "lib-grid";
+      groupCards.forEach(function(card) {
+        grid.appendChild(createCardButton(card));
+      });
+      subgroup.appendChild(grid);
+
+      body.appendChild(subgroup);
+    });
+
+    sectionEl.appendChild(body);
+    main.appendChild(sectionEl);
+  });
+}
+
+function updateCount(count) {
   var total = Object.keys(SHOWME_REGISTRY).length;
-  var shown = (n === undefined) ? total : n;
-  document.getElementById("libCount").textContent =
-    shown === total ? total + "개 도구" : shown + " / " + total + "개";
+  var shown = count === undefined ? total : count;
+  var lang = I18N.getLanguage();
+  document.getElementById("libCount").textContent = shown === total
+    ? (lang === "ko" ? total + "개 도구" : total + " tools")
+    : (lang === "ko" ? shown + " / " + total + "개" : shown + " / " + total);
 }
 
-document.getElementById("libSearch").addEventListener("input", filterCards);
-
-buildCards();
-
-// ─── Supplement Accordion ──────────────────────────────────
-function findSupplementForWidget(wid) {
-  if (typeof SHOWME_SUPPLEMENTS === "undefined") return null;
-  for (const key in SHOWME_SUPPLEMENTS) {
-    const s = SHOWME_SUPPLEMENTS[key];
-    if (s.targets && s.targets.indexOf(wid) !== -1) return s;
-  }
-  return null;
+function renderLibrary() {
+  var cards = getAllCards();
+  var query = getSearchQuery();
+  var availableLetters = ensureActiveLetter(cards, query);
+  var availableWeeks = ensureActiveWeek(cards, query);
+  renderWeekFilter(cards, availableWeeks);
+  renderAlphabet(cards, availableLetters);
+  renderSections(cards);
+  renderToc(cards);
 }
 
-function buildSupplementAccordion(doc, supplement) {
-  const wrap = doc.createElement("div");
-  wrap.style.cssText = "margin-top:20px;border:1px solid rgba(245,158,11,.18);border-radius:18px;overflow:hidden;background:rgba(245,158,11,.04);";
-
-  const toggle = doc.createElement("button");
-  toggle.style.cssText = "display:flex;align-items:center;gap:8px;width:100%;padding:14px 16px;border:none;background:none;color:#fbbf24;font:inherit;font-size:.88rem;font-weight:600;cursor:pointer;text-align:left;";
-  toggle.textContent = "\uD83D\uDCA1 " + (supplement.title || "\uc544\uc9c1 \ud5f7\uac08\ub9b0\ub2e4\uba74?");
-
-  const arrow = doc.createElement("span");
-  arrow.style.cssText = "margin-left:auto;transition:transform .2s;font-size:.8rem;";
-  arrow.textContent = "\u25BC";
-  toggle.appendChild(arrow);
-
-  const content = doc.createElement("div");
-  content.style.cssText = "display:none;padding:0 16px 16px;";
-
-  let open = false;
-  toggle.addEventListener("click", function() {
-    open = !open;
-    content.style.display = open ? "block" : "none";
-    arrow.style.transform = open ? "rotate(180deg)" : "";
-  });
-
-  if (supplement.analogy) {
-    const analogyDiv = doc.createElement("div");
-    analogyDiv.style.cssText = "margin-bottom:12px;padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);";
-    const headlineEl = doc.createElement("div");
-    headlineEl.style.cssText = "font-size:.9rem;font-weight:600;color:#f5f5f7;margin-bottom:6px;";
-    headlineEl.textContent = (supplement.analogy.emoji || "") + " " + supplement.analogy.headline;
-    const bodyEl = doc.createElement("div");
-    bodyEl.style.cssText = "font-size:.85rem;color:#d4d4d8;line-height:1.7;";
-    bodyEl.textContent = supplement.analogy.body;
-    analogyDiv.appendChild(headlineEl);
-    analogyDiv.appendChild(bodyEl);
-    content.appendChild(analogyDiv);
-  }
-
-  if (supplement.before_after) {
-    const baDiv = doc.createElement("div");
-    baDiv.style.cssText = "display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;";
-    const beforeDiv = doc.createElement("div");
-    beforeDiv.style.cssText = "padding:12px;border-radius:12px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.15);";
-    const beforeLabel = doc.createElement("div");
-    beforeLabel.style.cssText = "font-size:.76rem;font-weight:600;color:#fca5a5;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em;";
-    beforeLabel.textContent = "WITHOUT";
-    const beforeText = doc.createElement("div");
-    beforeText.style.cssText = "font-size:.84rem;color:#d4d4d8;line-height:1.6;";
-    beforeText.textContent = supplement.before_after.before;
-    beforeDiv.appendChild(beforeLabel);
-    beforeDiv.appendChild(beforeText);
-    const afterDiv = doc.createElement("div");
-    afterDiv.style.cssText = "padding:12px;border-radius:12px;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.15);";
-    const afterLabel = doc.createElement("div");
-    afterLabel.style.cssText = "font-size:.76rem;font-weight:600;color:#6ee7b7;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em;";
-    afterLabel.textContent = "WITH";
-    const afterText = doc.createElement("div");
-    afterText.style.cssText = "font-size:.84rem;color:#d4d4d8;line-height:1.6;";
-    afterText.textContent = supplement.before_after.after;
-    afterDiv.appendChild(afterLabel);
-    afterDiv.appendChild(afterText);
-    baDiv.appendChild(beforeDiv);
-    baDiv.appendChild(afterDiv);
-    content.appendChild(baDiv);
-  }
-
-  if (supplement.takeaway) {
-    const takeawayDiv = doc.createElement("div");
-    takeawayDiv.style.cssText = "padding:10px 14px;border-radius:12px;background:rgba(10,132,255,.08);border:1px solid rgba(10,132,255,.18);font-size:.86rem;color:#8ec5ff;font-weight:500;";
-    takeawayDiv.textContent = "\u2192 " + supplement.takeaway;
-    content.appendChild(takeawayDiv);
-  }
-
-  wrap.appendChild(toggle);
-  wrap.appendChild(content);
-  return wrap;
+function renderPage() {
+  var text = getText();
+  document.title = text.pageTitle;
+  var meta = document.querySelector('meta[name="description"]');
+  if (meta) meta.setAttribute("content", text.metaDescription);
+  document.getElementById("libBack").textContent = text.backHome;
+  document.getElementById("libTitle").textContent = text.title;
+  document.getElementById("libSubtitle").textContent = text.subtitle;
+  document.getElementById("libSearch").setAttribute("aria-label", text.searchAria);
+  document.getElementById("libSearch").setAttribute("placeholder", text.searchPlaceholder);
+  document.getElementById("libToc").setAttribute("aria-label", text.tocAria);
+  document.getElementById("libAlphabet").setAttribute("aria-label", text.alphabetFilterAria);
+  document.getElementById("showmeClose").setAttribute("aria-label", text.modalCloseAria);
+  document.getElementById("showmeIframe").setAttribute("title", text.showmeFrameTitle);
+  renderLibrary();
+  maybeOpenRequestedShowMe();
 }
 
-function injectSupplement(iframe, widgetId) {
-  try {
-    const doc = iframe.contentDocument;
-    if (!doc) return;
-    const supplement = findSupplementForWidget(widgetId);
-    if (!supplement) return;
-    const panel = doc.getElementById("panel-concept");
-    if (!panel) return;
-    panel.appendChild(buildSupplementAccordion(doc, supplement));
-  } catch(e) {}
-}
+document.getElementById("libSearch").addEventListener("input", function() {
+  lastSectionTargetId = "";
+  renderLibrary();
+});
 
 function openShowMe(widgetId) {
-  var meta = SHOWME_REGISTRY[widgetId] || { label: widgetId, icon: "📖" };
-  document.getElementById("showmeTitle").textContent = meta.icon + " " + meta.label;
-  document.getElementById("showmeIframe").onload = function() {
-    injectSupplement(this, widgetId);
-  };
-  document.getElementById("showmeIframe").src =
-    "assets/showme/" + widgetId + ".html?wid=" + widgetId;
   var overlay = document.getElementById("showmeOverlay");
+  var iframe = document.getElementById("showmeIframe");
+  var closeBtn = document.getElementById("showmeClose");
+  var meta = getLocalizedMeta(widgetId);
+  var cacheBust = String(Date.now());
+  var active = document.activeElement;
+  showMeLastTrigger = active && active !== document.body ? active : null;
+  activeShowMeWidgetId = widgetId;
+  syncShowMeQuery(widgetId);
+  document.getElementById("showmeTitle").textContent = meta.icon + " " + meta.label;
+  iframe.onload = function() {
+    normalizeShowMeLayout(this);
+    injectShowMeSupplement(this, widgetId);
+    I18N.localizeShowMeIframe(this, widgetId);
+  };
+  iframe.src = "assets/showme/" + widgetId + ".html?wid=" + encodeURIComponent(widgetId) + "&v=" + cacheBust;
   overlay.classList.add("is-open");
   overlay.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
   setTimeout(function() {
-    document.getElementById("showmeClose").focus();
+    closeBtn.focus({ preventScroll: true });
   }, 50);
 }
 
 function closeShowMe() {
   var overlay = document.getElementById("showmeOverlay");
+  var iframe = document.getElementById("showmeIframe");
+  if (!overlay.classList.contains("is-open")) return;
   overlay.classList.remove("is-open");
   overlay.setAttribute("aria-hidden", "true");
-  document.getElementById("showmeIframe").src = "";
+  iframe.onload = null;
+  iframe.src = "about:blank";
+  syncShowMeQuery("");
+  document.body.style.overflow = "";
+  if (showMeLastTrigger && document.contains(showMeLastTrigger)) {
+    showMeLastTrigger.focus({ preventScroll: true });
+  }
+  showMeLastTrigger = null;
+  activeShowMeWidgetId = null;
+}
+
+function refreshOpenShowMe() {
+  var overlay = document.getElementById("showmeOverlay");
+  if (!overlay.classList.contains("is-open") || !activeShowMeWidgetId) return;
+  openShowMe(activeShowMeWidgetId);
+}
+
+function syncShowMeQuery(widgetId) {
+  if (!window.history || typeof window.history.replaceState !== "function") return;
+  var url = new URL(window.location.href);
+  if (widgetId) url.searchParams.set("showme", widgetId);
+  else url.searchParams.delete("showme");
+  window.history.replaceState({}, "", url.pathname + url.search + url.hash);
+}
+
+function maybeOpenRequestedShowMe() {
+  if (!pendingShowMeFromUrl || !requestedShowMeId) return;
+  pendingShowMeFromUrl = false;
+  if (!SHOWME_REGISTRY[requestedShowMeId]) return;
+  setTimeout(function() {
+    openShowMe(requestedShowMeId);
+  }, 0);
 }
 
 document.getElementById("showmeClose").addEventListener("click", closeShowMe);
@@ -592,6 +1059,12 @@ document.getElementById("showmeOverlay").addEventListener("click", function(e) {
 });
 document.addEventListener("keydown", function(e) {
   if (e.key === "Escape") closeShowMe();
+});
+
+I18N.mountLanguageSwitcher(document.getElementById("langSwitcher"));
+I18N.onLanguageChange(function() {
+  renderPage();
+  refreshOpenShowMe();
 });
   </script>
 </body>
