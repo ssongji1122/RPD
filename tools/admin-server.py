@@ -18,6 +18,7 @@ Environment variables:
 from __future__ import annotations
 
 import argparse
+import hashlib
 from http import cookies
 import json
 import mimetypes
@@ -50,6 +51,7 @@ from runtime_paths import (
     IMAGES_DIR,
     ROOT,
     VIDEOS_DIR,
+    WEEK_UI_JSON,
     WEEKS_DIR,
 )
 
@@ -123,6 +125,47 @@ def write_curriculum(data: list[dict]) -> dict[str, str | int]:
     normalized = write_canonical_curriculum(data)
     result = write_generated_outputs(normalized)
     return result
+
+
+def _read_json_file(path: Path) -> dict:
+    with open(path, encoding="utf-8") as handle:
+        payload = json.load(handle)
+    if not isinstance(payload, dict):
+        raise ValueError(f"{path.name} must be a JSON object")
+    return payload
+
+
+def _write_json_file(path: Path, payload: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w", encoding="utf-8") as handle:
+        json.dump(payload, handle, ensure_ascii=False, indent=2)
+        handle.write("\n")
+
+
+def validate_week_ui_config(data: dict) -> dict:
+    if not isinstance(data, dict):
+        raise ValueError("week-ui config must be a JSON object")
+    if not isinstance(data.get("presets"), dict) or not data["presets"]:
+        raise ValueError("week-ui config must include a non-empty presets object")
+    default_preset = str(data.get("defaultPreset", "")).strip()
+    if default_preset and default_preset not in data["presets"]:
+        raise ValueError("defaultPreset must match a preset key")
+    return data
+
+
+def week_ui_version(data: dict) -> str:
+    payload = json.dumps(data, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:12]
+
+
+def read_week_ui() -> dict:
+    return validate_week_ui_config(_read_json_file(WEEK_UI_JSON))
+
+
+def write_week_ui(data: dict) -> dict[str, str]:
+    normalized = validate_week_ui_config(data)
+    _write_json_file(WEEK_UI_JSON, normalized)
+    return {"version": week_ui_version(normalized)}
 
 
 def notion_push_enabled() -> bool:
@@ -557,6 +600,17 @@ class AdminHandler(BaseHTTPRequestHandler):
                 self._send_error_json(500, str(exc))
             return
 
+        if path == "/api/week-ui":
+            if not self._check_auth():
+                return
+            try:
+                data = read_week_ui()
+                self._send_json({"data": data, "version": week_ui_version(data)})
+            except Exception as exc:
+                audit_event("week-ui.read", ok=False, detail=str(exc), request=self)
+                self._send_error_json(500, str(exc))
+            return
+
         # API: GET /api/notion-status
         if path == "/api/notion-status":
             if not self._check_auth():
@@ -584,6 +638,10 @@ class AdminHandler(BaseHTTPRequestHandler):
         # PUT /api/curriculum
         if path == "/api/curriculum":
             self._handle_put_curriculum()
+            return
+
+        if path == "/api/week-ui":
+            self._handle_put_week_ui()
             return
 
         # PUT /api/week/{n}/status
@@ -749,6 +807,28 @@ class AdminHandler(BaseHTTPRequestHandler):
             detail=f"version={result['version']} weeks={result['weeks']}",
             request=self,
         )
+        self._send_json({"ok": True, "version": result["version"]})
+
+    def _handle_put_week_ui(self) -> None:
+        body = self._read_body()
+        try:
+            data = json.loads(body)
+        except json.JSONDecodeError as exc:
+            self._send_error_json(400, f"Invalid JSON: {exc}")
+            return
+
+        if not isinstance(data, dict):
+            self._send_error_json(400, "Body must be a JSON object")
+            return
+
+        try:
+            result = write_week_ui(data)
+        except Exception as exc:
+            audit_event("week-ui.write", ok=False, detail=str(exc), request=self)
+            self._send_error_json(400, str(exc))
+            return
+
+        audit_event("week-ui.write", ok=True, detail=f"version={result['version']}", request=self)
         self._send_json({"ok": True, "version": result["version"]})
 
     def _handle_put_week_status(self, week_num: int) -> None:

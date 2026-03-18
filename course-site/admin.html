@@ -428,6 +428,103 @@
     .field-select option {
       background: #1c1d20; color: var(--text);
     }
+    .ui-preset-panel {
+      display: grid;
+      gap: 14px;
+      padding: 18px 20px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: var(--modal-panel-soft-bg);
+      box-shadow: var(--modal-card-shadow);
+    }
+    .ui-preset-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .ui-preset-copy {
+      display: grid;
+      gap: 8px;
+    }
+    .ui-preset-copy strong {
+      font-size: 1rem;
+      letter-spacing: -.02em;
+    }
+    .ui-preset-copy p,
+    .ui-preset-summary,
+    .ui-preset-note {
+      margin: 0;
+      color: var(--muted);
+      font-size: .84rem;
+      line-height: 1.7;
+    }
+    .ui-preset-summary {
+      color: var(--muted-strong);
+    }
+    .ui-preset-stat-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .ui-preset-stat {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: var(--modal-panel-soft-strong-bg);
+      box-shadow: var(--modal-card-shadow);
+      font-size: .76rem;
+      color: var(--muted);
+    }
+    .ui-preset-stat strong {
+      color: var(--text);
+      font-weight: 620;
+      letter-spacing: -.01em;
+    }
+    .ui-preset-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .ui-preset-toggle {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+      color: var(--muted-strong);
+      font-size: .84rem;
+      line-height: 1.45;
+    }
+    .ui-preset-toggle input {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--key);
+      flex-shrink: 0;
+    }
+    .ui-preset-json-wrap {
+      border-top: 1px solid rgba(255,255,255,.06);
+      padding-top: 12px;
+    }
+    .ui-preset-json-wrap summary {
+      cursor: pointer;
+      color: var(--muted-strong);
+      font-size: .82rem;
+      font-weight: 600;
+    }
+    .ui-preset-json {
+      margin-top: 10px;
+      min-height: 220px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: .8rem;
+      line-height: 1.6;
+    }
 
     .field-row {
       display: flex; gap: 14px;
@@ -702,6 +799,7 @@
         border-radius: 22px;
       }
       .field-row { flex-direction: column; gap: 0; }
+      .ui-preset-grid { grid-template-columns: 1fr; }
       .table-editor-row .field-input.short { max-width: none; flex: 1; }
       .task-editor-row { flex-direction: column; }
       /* sync-review responsive rules removed */
@@ -769,15 +867,46 @@
 
     /* Admin control bar */
     .admin-ctrl-bar {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 8px 12px; margin-bottom: 20px;
-      border-radius: var(--radius-sm);
-      background: rgba(10,132,255,.06);
-      border: 1px dashed rgba(10,132,255,.2);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 2px 0 10px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
     }
     .admin-ctrl-badge {
-      font-size: .78rem; font-weight: 600;
-      color: var(--key-soft); letter-spacing: .04em; text-transform: uppercase;
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding-left: 12px;
+      font-size: .67rem;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .admin-ctrl-badge::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: calc(50% - 3px);
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(147,197,253,.88);
+      box-shadow: 0 0 0 5px rgba(10,132,255,.08);
+    }
+    .admin-ctrl-select {
+      width: auto;
+      min-width: 126px;
+      padding: 4px 30px 4px 10px;
+      border-radius: 999px;
+      font-size: .74rem;
+      background: var(--modal-panel-soft-bg);
+      border-color: rgba(255,255,255,.1);
+      box-shadow: var(--modal-card-shadow);
     }
 
     /* Hero preview */
@@ -1214,6 +1343,9 @@
     var selectedIdx = 0;
     var dirty = false;
     var dirtyWeeks = {};
+    var weekUiConfig = null;
+    var weekUiVersion = "";
+    var weekUiDirty = false;
     var notionConfigured = false;
     var currentVersion = "";
 
@@ -1275,6 +1407,9 @@
 
     function renderAdminChrome() {
       var selectedWeek = getSelectedWeek();
+      var draftLabel = dirty && weekUiDirty
+        ? "저장 상태 · 주차 + UI 초안 있음"
+        : (weekUiDirty ? "저장 상태 · UI preset 초안 있음" : (dirty ? "저장 상태 · 초안 있음" : "저장 상태 · 동기화됨"));
 
       if (sidebarMeta) {
         sidebarMeta.textContent = selectedWeek
@@ -1298,7 +1433,7 @@
         adminHeroWeek.textContent = "선택된 주차 · " + formatWeekLabel(selectedWeek);
       }
       if (adminHeroState) {
-        adminHeroState.textContent = dirty ? "저장 상태 · 초안 있음" : "저장 상태 · 동기화됨";
+        adminHeroState.textContent = draftLabel;
       }
       if (adminHeroVersion) {
         adminHeroVersion.textContent = currentVersion ? "버전 · " + currentVersion : "버전 · —";
@@ -1366,9 +1501,16 @@
       renderAdminChrome();
     }
 
+    function markWeekUiDirty() {
+      weekUiDirty = true;
+      dirtyIndicator.classList.add("visible");
+      renderAdminChrome();
+    }
+
     function clearDirty() {
       dirty = false;
       dirtyWeeks = {};
+      weekUiDirty = false;
       dirtyIndicator.classList.remove("visible");
       renderAdminChrome();
     }
@@ -1402,6 +1544,122 @@
       renderAdminChrome();
     }
 
+    function deepClone(value) {
+      return JSON.parse(JSON.stringify(value));
+    }
+
+    function mergeWeekUiPreset(base, extra) {
+      var result = deepClone(base || {});
+      Object.keys(extra || {}).forEach(function(key) {
+        var nextValue = extra[key];
+        if (Array.isArray(nextValue)) {
+          result[key] = nextValue.slice();
+          return;
+        }
+        if (nextValue && typeof nextValue === "object" && !Array.isArray(nextValue) && result[key] && typeof result[key] === "object" && !Array.isArray(result[key])) {
+          result[key] = mergeWeekUiPreset(result[key], nextValue);
+          return;
+        }
+        result[key] = nextValue;
+      });
+      return result;
+    }
+
+    function resolveWeekUiPreset(config, presetName, seen) {
+      var presets = (config && config.presets) || {};
+      var name = presetName && presets[presetName] ? presetName : ((config && config.defaultPreset) || "inha-rpd");
+      var preset = presets[name] || {};
+      var nextSeen = seen || {};
+      if (!preset.extends || nextSeen[name]) return deepClone(preset);
+      nextSeen[name] = true;
+      var parent = resolveWeekUiPreset(config, preset.extends, nextSeen);
+      var child = deepClone(preset);
+      delete child.extends;
+      return mergeWeekUiPreset(parent, child);
+    }
+
+    function getWeekUiPresetTarget() {
+      if (!weekUiConfig) {
+        weekUiConfig = { version: 1, defaultPreset: "inha-rpd", presets: { "inha-rpd": {} } };
+      }
+      if (!weekUiConfig.presets || typeof weekUiConfig.presets !== "object") {
+        weekUiConfig.presets = {};
+      }
+      var presetName = weekUiConfig.defaultPreset || "inha-rpd";
+      if (!weekUiConfig.presets[presetName]) weekUiConfig.presets[presetName] = {};
+      return {
+        name: presetName,
+        raw: weekUiConfig.presets[presetName],
+        resolved: resolveWeekUiPreset(weekUiConfig, presetName)
+      };
+    }
+
+    function setWeekUiValue(path, value) {
+      var targetInfo = getWeekUiPresetTarget();
+      var cursor = targetInfo.raw;
+      path.slice(0, -1).forEach(function(key) {
+        if (!cursor[key] || typeof cursor[key] !== "object" || Array.isArray(cursor[key])) {
+          cursor[key] = {};
+        }
+        cursor = cursor[key];
+      });
+      cursor[path[path.length - 1]] = value;
+    }
+
+    function buildWeekUiSummary(targetInfo) {
+      var preset = targetInfo.resolved || {};
+      var weekCard = preset.weekCard || {};
+      var weekHero = preset.weekHero || {};
+      var weekSummary = preset.weekSummary || {};
+      var metrics = Array.isArray(weekCard.metrics) ? weekCard.metrics.join("/") : "practice/showme/tasks";
+      return "Week cards show " + metrics + ". Hero uses " + (weekHero.subtitleMode || "subtitle") + ". Summary uses " + (weekSummary.itemSource || "topics") + " in " + (weekSummary.desktopColumns || 2) + " columns and " + (weekSummary.maxItems || 8) + " items.";
+    }
+
+    function buildWeekUiJson() {
+      return JSON.stringify(weekUiConfig || {}, null, 2);
+    }
+
+    function loadWeekUiIntoPanel() {
+      var targetInfo = getWeekUiPresetTarget();
+      var preset = targetInfo.resolved || {};
+      var labels = preset.labels || {};
+      var weekCard = preset.weekCard || {};
+      var weekHero = preset.weekHero || {};
+      var weekSummary = preset.weekSummary || {};
+
+      var schoolKo = document.getElementById("uiSchoolKo");
+      var schoolEn = document.getElementById("uiSchoolEn");
+      var programKo = document.getElementById("uiProgramKo");
+      var programEn = document.getElementById("uiProgramEn");
+      var previewSource = document.getElementById("uiPreviewSource");
+      var metricsOrder = document.getElementById("uiMetricsOrder");
+      var subtitleMode = document.getElementById("uiSubtitleMode");
+      var summarySource = document.getElementById("uiSummarySource");
+      var summaryMax = document.getElementById("uiSummaryMax");
+      var summaryProgress = document.getElementById("uiSummaryProgress");
+      var presetName = document.getElementById("uiPresetName");
+      var presetVersion = document.getElementById("uiPresetVersion");
+      var presetCount = document.getElementById("uiPresetCount");
+      var summaryText = document.getElementById("uiPresetSummary");
+      var jsonView = document.getElementById("uiPresetJson");
+
+      if (schoolKo) schoolKo.value = (labels.school && labels.school.ko) || "";
+      if (schoolEn) schoolEn.value = (labels.school && labels.school.en) || "";
+      if (programKo) programKo.value = (labels.program && labels.program.ko) || "";
+      if (programEn) programEn.value = (labels.program && labels.program.en) || "";
+      if (previewSource) previewSource.value = weekCard.previewSource || "topics";
+      if (metricsOrder) metricsOrder.value = (weekCard.metrics || ["practice", "showme", "tasks"]).join(", ");
+      if (subtitleMode) subtitleMode.value = weekHero.subtitleMode || "subtitle";
+      if (summarySource) summarySource.value = weekSummary.itemSource || "topics";
+      if (summaryMax) summaryMax.value = String(weekSummary.maxItems || 8);
+      if (summaryProgress) summaryProgress.checked = weekSummary.showProgress !== false;
+      if (presetName) presetName.textContent = targetInfo.name;
+      if (presetVersion) presetVersion.textContent = weekUiVersion || "—";
+      if (presetCount) presetCount.textContent = String(Object.keys((weekUiConfig && weekUiConfig.presets) || {}).length);
+      if (summaryText) summaryText.textContent = buildWeekUiSummary(targetInfo);
+      if (jsonView) jsonView.value = buildWeekUiJson();
+    }
+
     function renderDiffOverlay(diff) {
       diffMeta.textContent =
         "현재 " + diff.version_from + " → 저장 예정 " + diff.version_to +
@@ -1428,17 +1686,38 @@
       saveBtn.disabled = true;
       saveBtn.textContent = "\uC800\uC7A5 \uC911...";
       try {
-        var res = await apiFetch("/api/curriculum", {
-          method: "PUT",
-          headers: apiHeaders(),
-          body: JSON.stringify(curriculum),
-        });
-        if (res.status === 401 || res.status === 403) return;
-        if (!res.ok) throw new Error("HTTP " + res.status);
-        var result = await res.json();
-        setCurrentVersion(result.version);
-        clearDirty();
-        toast("\uC800\uC7A5 \uC644\uB8CC (" + result.version + ")", "success");
+        var saved = [];
+        if (dirty) {
+          var res = await apiFetch("/api/curriculum", {
+            method: "PUT",
+            headers: apiHeaders(),
+            body: JSON.stringify(curriculum),
+          });
+          if (res.status === 401 || res.status === 403) return;
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          var result = await res.json();
+          setCurrentVersion(result.version);
+          dirty = false;
+          dirtyWeeks = {};
+          saved.push("커리큘럼 " + result.version);
+        }
+        if (weekUiDirty) {
+          var weekUiRes = await apiFetch("/api/week-ui", {
+            method: "PUT",
+            headers: apiHeaders(),
+            body: JSON.stringify(weekUiConfig),
+          });
+          if (weekUiRes.status === 401 || weekUiRes.status === 403) return;
+          if (!weekUiRes.ok) throw new Error("HTTP " + weekUiRes.status);
+          var weekUiResult = await weekUiRes.json();
+          weekUiVersion = weekUiResult.version || "";
+          weekUiDirty = false;
+          saved.push("UI preset " + weekUiVersion);
+        }
+        dirtyIndicator.classList.toggle("visible", dirty || weekUiDirty);
+        renderAdminChrome();
+        loadWeekUiIntoPanel();
+        toast("\uC800\uC7A5 \uC644\uB8CC (" + saved.join(" · ") + ")", "success");
       } catch (e) {
         toast("\uC800\uC7A5 \uC2E4\uD328: " + e.message, "error");
       } finally {
@@ -1458,12 +1737,48 @@
       // ── Admin control bar (status selector, admin-only) ──
       parts.push(
         '<div class="admin-ctrl-bar">',
-        '<span class="admin-ctrl-badge">Week ', esc(String(w.week).padStart(2,"0")), ' · 편집 모드</span>',
-        '<select class="field-select" data-field="status" style="width:140px;font-size:.82rem;padding:6px 12px">',
+        '<span class="admin-ctrl-badge">편집 모드</span>',
+        '<select class="field-select admin-ctrl-select" data-field="status" aria-label="주차 상태">',
         '<option value="done"',   (w.status === "done"     ? " selected" : ""), '>done (완료)</option>',
         '<option value="active"', (w.status === "active"   ? " selected" : ""), '>active (진행 중)</option>',
         '<option value="upcoming"',(w.status === "upcoming" ? " selected" : ""), '>upcoming (예정)</option>',
         '</select>',
+        '</div>'
+      );
+
+      parts.push(
+        '<div class="preview-section" id="uiPresetSection">',
+        '<div class="section-head"><h3>UI preset</h3><p>홈과 주차 상세가 함께 읽는 공통 표현 규칙입니다. modal 톤은 CSS에 두고, 여기서는 정보 구조와 표시 밀도만 조정합니다.</p></div>',
+        '<div class="ui-preset-panel">',
+        '<div class="ui-preset-head">',
+        '<div class="ui-preset-copy">',
+        '<div class="card-chip">Global UI</div>',
+        '<strong>Shared preset for index + week</strong>',
+        '<p>기본 preset 하나를 운영용으로 관리하고, 주차 콘텐츠와는 분리해서 저장합니다.</p>',
+        '</div>',
+        '<div class="ui-preset-stat-row">',
+        '<span class="ui-preset-stat"><strong id="uiPresetName">—</strong><span>default preset</span></span>',
+        '<span class="ui-preset-stat"><strong id="uiPresetCount">0</strong><span>presets</span></span>',
+        '<span class="ui-preset-stat"><strong id="uiPresetVersion">—</strong><span>version</span></span>',
+        '</div>',
+        '</div>',
+        '<div class="ui-preset-grid">',
+        '<div class="field-group" style="margin-bottom:0"><label class="field-label" for="uiSchoolKo">학교명 (KO)</label><input class="field-input" id="uiSchoolKo" data-ui-field="school-ko" placeholder="인하대학교" /></div>',
+        '<div class="field-group" style="margin-bottom:0"><label class="field-label" for="uiSchoolEn">School (EN)</label><input class="field-input" id="uiSchoolEn" data-ui-field="school-en" placeholder="Inha University" /></div>',
+        '<div class="field-group" style="margin-bottom:0"><label class="field-label" for="uiProgramKo">프로그램명 (KO)</label><input class="field-input" id="uiProgramKo" data-ui-field="program-ko" placeholder="Robot Product Design" /></div>',
+        '<div class="field-group" style="margin-bottom:0"><label class="field-label" for="uiProgramEn">Program (EN)</label><input class="field-input" id="uiProgramEn" data-ui-field="program-en" placeholder="Robot Product Design" /></div>',
+        '<div class="field-group" style="margin-bottom:0"><label class="field-label" for="uiPreviewSource">주차 카드 preview source</label><select class="field-select" id="uiPreviewSource" data-ui-field="preview-source"><option value="topics">topics</option><option value="steps">steps</option></select></div>',
+        '<div class="field-group" style="margin-bottom:0"><label class="field-label" for="uiMetricsOrder">주차 카드 metrics order</label><input class="field-input" id="uiMetricsOrder" data-ui-field="metrics-order" placeholder="practice, showme, tasks" /></div>',
+        '<div class="field-group" style="margin-bottom:0"><label class="field-label" for="uiSubtitleMode">hero subtitle mode</label><select class="field-select" id="uiSubtitleMode" data-ui-field="subtitle-mode"><option value="subtitle">subtitle</option><option value="topics">topics</option></select></div>',
+        '<div class="field-group" style="margin-bottom:0"><label class="field-label" for="uiSummarySource">summary source</label><select class="field-select" id="uiSummarySource" data-ui-field="summary-source"><option value="topics">topics</option><option value="steps">steps</option></select></div>',
+        '<div class="field-group" style="margin-bottom:0"><label class="field-label" for="uiSummaryMax">summary max items</label><input class="field-input" id="uiSummaryMax" data-ui-field="summary-max" type="number" min="1" max="24" /></div>',
+        '<label class="ui-preset-toggle"><input type="checkbox" id="uiSummaryProgress" data-ui-field="summary-progress" /> summary progress 표시</label>',
+        '</div>',
+        '<p class="ui-preset-summary" id="uiPresetSummary"></p>',
+        '<p class="ui-preset-note">주요 semantic controls만 노출합니다. radius, blur, border alpha 같은 modal 디자인 토큰은 여기서 수정하지 않습니다.</p>',
+        '<div class="cta-group"><button class="btn btn-ghost" type="button" data-ui-reset>기본값으로 되돌리기</button></div>',
+        '<details class="ui-preset-json-wrap"><summary>JSON 보기</summary><textarea class="field-textarea ui-preset-json" id="uiPresetJson" readonly></textarea></details>',
+        '</div>',
         '</div>'
       );
 
@@ -1863,6 +2178,22 @@
       setCurrentVersion(Array.isArray(result) ? "" : result.version);
     }
 
+    function parseWeekUiResponse(result) {
+      weekUiConfig = result && result.data ? result.data : result;
+      weekUiVersion = result && result.version ? result.version : "";
+    }
+
+    async function loadWeekUi() {
+      var res = await apiFetch("/api/week-ui");
+      if (res.status === 401 || res.status === 403) {
+        showAuth();
+        return;
+      }
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      var result = await res.json();
+      parseWeekUiResponse(result);
+    }
+
     async function loadCurriculum() {
       try {
         var res = await apiFetch("/api/curriculum");
@@ -1873,6 +2204,7 @@
         if (!res.ok) throw new Error("HTTP " + res.status);
         var result = await res.json();
         parseCurriculumResponse(result);
+        await loadWeekUi();
         renderSidebar();
         selectWeek(0);
         await checkNotionStatus();
@@ -1888,7 +2220,7 @@
 
     // ─── Saving ──────────────────────────────────────────
     saveBtn.addEventListener("click", async function() {
-      if (!dirty) {
+      if (!dirty && !weekUiDirty) {
         toast("\uBCC0\uACBD\uC0AC\uD56D\uC774 \uC5C6\uC2B5\uB2C8\uB2E4.", "success");
         return;
       }
@@ -1923,7 +2255,8 @@
     previewBtn.addEventListener("click", function() {
       if (!curriculum.length) return;
       var weekNum = curriculum[selectedIdx].week;
-      window.open("week.html?week=" + weekNum, "_blank");
+      var defaultPreset = weekUiConfig && weekUiConfig.defaultPreset ? "&preset=" + encodeURIComponent(weekUiConfig.defaultPreset) : "";
+      window.open("week.html?week=" + weekNum + defaultPreset, "_blank");
     });
     if (heroPreviewBtn) {
       heroPreviewBtn.addEventListener("click", function() {
@@ -1933,7 +2266,7 @@
 
     // ─── Unsaved changes warning ─────────────────────────
     window.addEventListener("beforeunload", function(e) {
-      if (dirty) {
+      if (dirty || weekUiDirty) {
         e.preventDefault();
         e.returnValue = "";
       }
@@ -1996,6 +2329,7 @@
       }
       // Safe: buildEditorHTML uses esc() on every dynamic value
       editorInner.innerHTML = buildEditorHTML(w);
+      loadWeekUiIntoPanel();
       initEditorNav();
     }
 
@@ -2003,6 +2337,25 @@
     editorInner.addEventListener("input", function(e) {
       var el = e.target;
       var w = curriculum[selectedIdx];
+
+      if (el.dataset.uiField) {
+        if (!weekUiConfig) return;
+        if (el.dataset.uiField === "school-ko") setWeekUiValue(["labels", "school", "ko"], el.value);
+        if (el.dataset.uiField === "school-en") setWeekUiValue(["labels", "school", "en"], el.value);
+        if (el.dataset.uiField === "program-ko") setWeekUiValue(["labels", "program", "ko"], el.value);
+        if (el.dataset.uiField === "program-en") setWeekUiValue(["labels", "program", "en"], el.value);
+        if (el.dataset.uiField === "metrics-order") {
+          setWeekUiValue(["weekCard", "metrics"], el.value.split(",").map(function(item) {
+            return item.trim();
+          }).filter(Boolean));
+        }
+        if (el.dataset.uiField === "summary-max") {
+          setWeekUiValue(["weekSummary", "maxItems"], Math.max(1, parseInt(el.value || "1", 10) || 1));
+        }
+        markWeekUiDirty();
+        loadWeekUiIntoPanel();
+        return;
+      }
 
       // Top-level fields
       if (el.dataset.field) {
@@ -2100,6 +2453,17 @@
       var el = e.target;
       var w = curriculum[selectedIdx];
 
+      if (el.dataset.uiField) {
+        if (!weekUiConfig) return;
+        if (el.dataset.uiField === "preview-source") setWeekUiValue(["weekCard", "previewSource"], el.value);
+        if (el.dataset.uiField === "subtitle-mode") setWeekUiValue(["weekHero", "subtitleMode"], el.value);
+        if (el.dataset.uiField === "summary-source") setWeekUiValue(["weekSummary", "itemSource"], el.value);
+        if (el.dataset.uiField === "summary-progress") setWeekUiValue(["weekSummary", "showProgress"], !!el.checked);
+        markWeekUiDirty();
+        loadWeekUiIntoPanel();
+        return;
+      }
+
       // Select fields (status)
       if (el.dataset.field === "status") {
         w.status = el.value;
@@ -2131,6 +2495,16 @@
       var btn = e.target.closest("button");
       if (!btn) return;
       var w = curriculum[selectedIdx];
+
+      if (btn.hasAttribute("data-ui-reset")) {
+        var targetInfo = getWeekUiPresetTarget();
+        var resetPreset = {};
+        if (targetInfo.raw && targetInfo.raw.extends) resetPreset.extends = targetInfo.raw.extends;
+        weekUiConfig.presets[targetInfo.name] = resetPreset;
+        markWeekUiDirty();
+        renderEditor();
+        return;
+      }
 
       // Remove from top-level list
       if (btn.dataset.remove) {
