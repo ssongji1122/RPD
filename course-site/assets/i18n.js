@@ -143,7 +143,7 @@
         modalResizeAria: "크기 전환",
         modalBrowseToggleAria: "Show Me 탐색 전환",
         modalCloseAria: "닫기",
-        showmeFrameTitle: "Show Me Widget",
+        showmeFrameTitle: "Show Me 카드",
         modalBrowseSearchAria: "Show Me 카드 검색",
         modalBrowseSearchPlaceholder: "이번 주 카드나 연관 키워드 검색",
         modalBrowseContextHint: "이 브라우저는 이번 주 카드와 연관 카드만 빠르게 보여줍니다.",
@@ -155,6 +155,9 @@
         modalBrowseLibraryLink: "문서형 전체 라이브러리 열기",
         showMeRelatedPrompt: "연관된 Show Me를 더 볼까요?",
         showMeRelatedMore: "더 보기",
+        modalCurrentCardKicker: "현재 카드",
+        modalCurrentCardFallbackMeta: "이 카드 기준으로 같은 주차와 연관 Show Me를 탐색할 수 있어요.",
+        modalBrowserViewing: "보고 있는 카드",
         loginTitle: "\ud83d\udc4b 바로 시작하세요",
         loginSubtitle: "퀴즈 기록은 이 브라우저에만 저장됩니다",
         loginPlaceholder: "이름 없이 사용 가능",
@@ -207,6 +210,10 @@
         assignmentReviewCta: "실습 다시 보기",
         assignmentShowMeCta: "관련 Show Me 열기",
         assignmentStorageNote: "과제 준비 상태는 이 브라우저에만 저장됩니다.",
+        toastQuizSaved: "퀴즈 기록을 저장했어요.",
+        toastAssignmentReady: "제출 준비 완료로 표시했어요.",
+        toastAssignmentDraft: "제출 준비 표시를 해제했어요.",
+        toastProgressReset: "이번 주 학습 체크를 초기화했어요.",
         sectionShortcuts: "단축키 치트시트",
         sectionShortcutsDesc: "이번 주에 쓰는 핵심 단축키입니다. 외우지 말고 반복하세요.",
         shortcutsHeaderKeys: "단축키",
@@ -217,6 +224,11 @@
         stepStatusComplete: "완료",
         stepToggleExpand: "실습 내용 열기",
         stepToggleCollapse: "실습 내용 접기",
+        stepMetaTasks: "체크",
+        stepMetaClips: "클립",
+        stepMetaShowMe: "Show Me",
+        stepMetaReferences: "레퍼런스",
+        stepMetaDownloads: "다운로드",
         clipHint: "클릭하면 일시정지 · 다시 클릭하면 재생",
         clipTitle: "클릭하면 일시정지/재생",
         sidebarOverview: "개요",
@@ -231,7 +243,7 @@
         conceptVizTitle: "개념 이해 시각화",
         conceptWithout: "WITHOUT",
         conceptWith: "WITH",
-        interactionTab: "interaction",
+        interactionTab: "직접 해보기",
       },
       en: {
         pageTitlePrefix: "Week",
@@ -250,7 +262,7 @@
         modalResizeAria: "Toggle size",
         modalBrowseToggleAria: "Toggle Show Me browser",
         modalCloseAria: "Close",
-        showmeFrameTitle: "Show Me widget",
+        showmeFrameTitle: "Show Me card",
         modalBrowseSearchAria: "Search Show Me cards",
         modalBrowseSearchPlaceholder: "Search this week's cards or related keywords",
         modalBrowseContextHint: "This browser stays focused on this week's cards and closely related cards.",
@@ -262,6 +274,9 @@
         modalBrowseLibraryLink: "Open document-style full library",
         showMeRelatedPrompt: "Want to view related Show Me cards?",
         showMeRelatedMore: "More",
+        modalCurrentCardKicker: "Current card",
+        modalCurrentCardFallbackMeta: "Use this card as the current reference while exploring this week's and related Show Me cards.",
+        modalBrowserViewing: "Viewing",
         loginTitle: "\ud83d\udc4b Start right away",
         loginSubtitle: "Quiz progress is stored only in this browser",
         loginPlaceholder: "No sign-in required",
@@ -314,6 +329,10 @@
         assignmentReviewCta: "Review lesson",
         assignmentShowMeCta: "Open related Show Me",
         assignmentStorageNote: "Assignment readiness is stored only in this browser.",
+        toastQuizSaved: "Saved your quiz progress.",
+        toastAssignmentReady: "Marked this assignment as ready to submit.",
+        toastAssignmentDraft: "Removed the ready-to-submit mark.",
+        toastProgressReset: "Reset this week's learning checks.",
         sectionShortcuts: "Shortcut Cheat Sheet",
         sectionShortcutsDesc: "These are the key shortcuts for this week. Don't memorize them all at once. Repeat them in practice.",
         shortcutsHeaderKeys: "Shortcut",
@@ -324,6 +343,16 @@
         stepStatusComplete: "Done",
         stepToggleExpand: "Expand lesson details",
         stepToggleCollapse: "Collapse lesson details",
+        stepMetaTaskSingular: "task",
+        stepMetaTaskPlural: "tasks",
+        stepMetaClipSingular: "clip",
+        stepMetaClipPlural: "clips",
+        stepMetaShowMeSingular: "Show Me card",
+        stepMetaShowMePlural: "Show Me cards",
+        stepMetaReferenceSingular: "reference",
+        stepMetaReferencePlural: "references",
+        stepMetaDownloadSingular: "download",
+        stepMetaDownloadPlural: "downloads",
         clipHint: "Click to pause. Click again to play.",
         clipTitle: "Click to pause or play",
         sidebarOverview: "Overview",
@@ -338,7 +367,7 @@
         conceptVizTitle: "Concept Visualization",
         conceptWithout: "WITHOUT",
         conceptWith: "WITH",
-        interactionTab: "interaction",
+        interactionTab: "Try It",
       },
     },
     library: {
@@ -1100,10 +1129,56 @@
     return typeof value === "string" && HANGUL_RE.test(value);
   }
 
+  function normalizeTranslatableText(value) {
+    return typeof value === "string"
+      ? value.replace(/\s+/g, " ").trim()
+      : value;
+  }
+
   function preserveEdgeWhitespace(source, translated) {
     var leading = (source.match(/^\s*/) || [""])[0];
     var trailing = (source.match(/\s*$/) || [""])[0];
     return leading + translated + trailing;
+  }
+
+  var reverseExactCache = typeof WeakMap === "function" ? new WeakMap() : null;
+
+  function getReverseExactMap(map) {
+    if (!map || typeof map !== "object") return {};
+    if (reverseExactCache && reverseExactCache.has(map)) {
+      return reverseExactCache.get(map);
+    }
+
+    var reverse = {};
+    Object.keys(map).forEach(function(key) {
+      var translated = map[key];
+      if (typeof translated !== "string" || !translated || reverse[translated]) return;
+      reverse[translated] = key;
+    });
+
+    if (reverseExactCache) reverseExactCache.set(map, reverse);
+    return reverse;
+  }
+
+  function getExactTranslation(map, value) {
+    if (!map || typeof map !== "object" || typeof value !== "string" || !value) return "";
+    if (Object.prototype.hasOwnProperty.call(map, value)) return map[value];
+    var normalized = normalizeTranslatableText(value);
+    if (normalized && normalized !== value && Object.prototype.hasOwnProperty.call(map, normalized)) {
+      return map[normalized];
+    }
+    return "";
+  }
+
+  function getReverseExactTranslation(map, value) {
+    if (typeof value !== "string" || !value) return "";
+    var reverse = getReverseExactMap(map);
+    if (Object.prototype.hasOwnProperty.call(reverse, value)) return reverse[value];
+    var normalized = normalizeTranslatableText(value);
+    if (normalized && normalized !== value && Object.prototype.hasOwnProperty.call(reverse, normalized)) {
+      return reverse[normalized];
+    }
+    return "";
   }
 
   function applyOrderedMap(value, map) {
@@ -1131,7 +1206,7 @@
     if (typeof value !== "string" || !value) return value;
     if (!containsHangul(value)) return value;
 
-    var exact = getCurriculumExactMap()[value];
+    var exact = getExactTranslation(getCurriculumExactMap(), value);
     if (exact) return exact;
 
     var result = value;
@@ -1144,8 +1219,10 @@
     if (currentLang !== "en" || typeof value !== "string" || !value) return value;
     if (!containsHangul(value)) return value;
 
-    var exact = getCurriculumExactMap()[value];
+    var exact = getExactTranslation(getCurriculumExactMap(), value);
     if (exact) return exact;
+
+    value = normalizeTranslatableText(value);
 
     for (var i = 0; i < COURSE_PATTERNS.length; i += 1) {
       var rule = COURSE_PATTERNS[i];
@@ -1228,7 +1305,9 @@
 
     if (value === "완벽합니다!") return "Perfect!";
     if (value === "조금 더 연습하면 완벽해질 거예요!") return "A little more practice and you'll nail it.";
-    if (value === "interaction — 버텍스를 직접 드래그해보세요") return "Interaction - drag the vertex handles yourself";
+    if (value === "interaction — 버텍스를 직접 드래그해보세요" || value === "직접 해보기 — 버텍스를 직접 드래그해보세요") {
+      return "Try It - drag the vertex handles yourself";
+    }
     if (value === "파란 점을 드래그하면 초록색 미러가 실시간으로 반영됩니다.") return "Drag the blue points to update the green mirrored side in real time.";
     if (value === "파란 점 드래그 → 초록 미러 실시간 반영 | Clipping 끄면 중심선을 넘길 수 있어요") return "Drag the blue points -> the green mirror updates in real time | Turn Clipping off to cross the center line.";
 
@@ -1262,10 +1341,32 @@
     return value;
   }
 
-  function translateShowMeString(value, widgetId) {
-    if (currentLang !== "en" || typeof value !== "string" || !value) return value;
+  function translateShowMeDynamicTextToKo(value) {
+    var match;
 
-    var trimmed = value.trim();
+    if (value === "Perfect!") return "완벽합니다!";
+    if (value === "A little more practice and you'll nail it.") return "조금 더 연습하면 완벽해질 거예요!";
+    if (value === "Try It - drag the vertex handles yourself") return "직접 해보기 — 버텍스를 직접 드래그해보세요";
+    if (value === "Drag the blue points to update the green mirrored side in real time.") {
+      return "파란 점을 드래그하면 초록색 미러가 실시간으로 반영됩니다.";
+    }
+    if (value === "Drag the blue points -> the green mirror updates in real time | Turn Clipping off to cross the center line.") {
+      return "파란 점 드래그 → 초록 미러 실시간 반영 | Clipping 끄면 중심선을 넘길 수 있어요";
+    }
+
+    match = value.match(/^Question\s+(\d+)\s*\/\s*(\d+)\s*·\s*Score\s+(\d+)$/);
+    if (match) return "문제 " + match[1] + " / " + match[2] + " · 점수 " + match[3] + "점";
+
+    match = value.match(/^(\d+)\s*\/\s*(\d+)\s*correct$/);
+    if (match) return match[1] + " / " + match[2] + " 정답";
+
+    return value;
+  }
+
+  function translateShowMeString(value, widgetId) {
+    if (typeof value !== "string" || !value) return value;
+
+    var trimmed = normalizeTranslatableText(value);
     if (!trimmed) return value;
 
     var showme = getShowMeStore();
@@ -1273,17 +1374,102 @@
     var widgetExact = showme.widgets && showme.widgets[widgetId] && showme.widgets[widgetId].exact
       ? showme.widgets[widgetId].exact
       : {};
-    var translated = widgetExact[trimmed] || commonExact[trimmed];
+    var translated = "";
 
-    if (!translated) {
-      translated = translateShowMeDynamicText(trimmed);
-    }
+    if (currentLang === "en") {
+      translated = getExactTranslation(widgetExact, trimmed) || getExactTranslation(commonExact, trimmed);
 
-    if (translated === trimmed) {
-      translated = translateCourseText(trimmed);
+      if (!translated) {
+        translated = translateShowMeDynamicText(trimmed);
+      }
+
+      if (translated === trimmed) {
+        translated = translateCourseText(trimmed);
+      }
+    } else {
+      translated = getReverseExactTranslation(widgetExact, trimmed)
+        || getReverseExactTranslation(commonExact, trimmed)
+        || getReverseExactTranslation(getCurriculumExactMap(), trimmed);
+
+      if (!translated) {
+        translated = translateShowMeDynamicTextToKo(trimmed);
+      }
     }
 
     return preserveEdgeWhitespace(value, translated || trimmed);
+  }
+
+  var SHOWME_STRUCTURED_TAGS = {
+    A: true,
+    DIV: true,
+    H1: true,
+    H2: true,
+    H3: true,
+    H4: true,
+    H5: true,
+    H6: true,
+    LABEL: true,
+    LI: true,
+    P: true,
+    SUMMARY: true,
+    TD: true,
+    TH: true
+  };
+
+  var SHOWME_INLINE_ONLY_TAGS = {
+    A: true,
+    ABBR: true,
+    B: true,
+    BDI: true,
+    BDO: true,
+    BR: true,
+    CITE: true,
+    CODE: true,
+    DATA: true,
+    DFN: true,
+    EM: true,
+    I: true,
+    KBD: true,
+    MARK: true,
+    Q: true,
+    S: true,
+    SAMP: true,
+    SMALL: true,
+    SPAN: true,
+    STRONG: true,
+    SUB: true,
+    SUP: true,
+    TIME: true,
+    U: true,
+    VAR: true,
+    WBR: true
+  };
+
+  function canTranslateStructuredShowMeElement(el) {
+    if (!el || el.nodeType !== 1 || !SHOWME_STRUCTURED_TAGS[el.nodeName]) return false;
+    if (!el.textContent || !normalizeTranslatableText(el.textContent)) return false;
+
+    var descendants = el.querySelectorAll("*");
+    if (!descendants.length) return false;
+
+    for (var i = 0; i < descendants.length; i += 1) {
+      var name = descendants[i].nodeName.toUpperCase();
+      if (!SHOWME_INLINE_ONLY_TAGS[name]) return false;
+    }
+
+    return true;
+  }
+
+  function localizeShowMeStructuredBlocks(root, widgetId) {
+    var scope = root && root.nodeType === 9 ? root.body : root;
+    if (!scope || !scope.querySelectorAll) return;
+
+    scope.querySelectorAll("*").forEach(function(el) {
+      if (!canTranslateStructuredShowMeElement(el)) return;
+      var original = el.textContent;
+      var translated = translateShowMeString(original, widgetId);
+      if (translated !== original) el.textContent = translated;
+    });
   }
 
   function localizeShowMeTextNodes(doc, widgetId) {
@@ -1370,6 +1556,7 @@
           }
           if (node.nodeType === 1) {
             localizeShowMeAttributes(node, widgetId);
+            localizeShowMeStructuredBlocks(node, widgetId);
             localizeShowMeTextNodes(doc, widgetId);
           }
         });
@@ -1395,6 +1582,7 @@
     patchShowMeCanvasText(frameWin);
     if (typeof doc.title === "string") doc.title = translateShowMeString(doc.title, widgetId);
     localizeShowMeAttributes(doc.body, widgetId);
+    localizeShowMeStructuredBlocks(doc, widgetId);
     localizeShowMeTextNodes(doc, widgetId);
     observeShowMeDocument(doc, widgetId);
   }
@@ -1473,6 +1661,7 @@
     getStrings: getStrings,
     localizeValue: localizeValue,
     translateCourseText: translateCourseText,
+    translateShowMeUiText: translateShowMeString,
     localizeWeekData: localizeWeekData,
     getShowMeLabel: getShowMeLabel,
     getLibraryCategoryLabel: getLibraryCategoryLabel,
