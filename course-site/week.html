@@ -33,6 +33,72 @@
       font-size: .78rem;
       color: var(--muted);
     }
+    .topic-list {
+      display: grid;
+      gap: 14px;
+    }
+    .topic-progress {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .topic-progress-bar {
+      flex: 1;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--line);
+    }
+    .topic-progress-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: 2px;
+      background: var(--key-soft);
+      transition: width .35s ease;
+    }
+    .topic-progress-label {
+      font-size: .78rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .topic-check-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px 16px;
+    }
+    .topic-check-item {
+      position: relative;
+    }
+    .topic-check-item input[type="checkbox"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .topic-check-item label {
+      display: flex;
+      align-items: baseline;
+      gap: 7px;
+      padding: 5px 0;
+      color: var(--muted-strong);
+      font-size: .82rem;
+      cursor: pointer;
+      transition: color .14s;
+      user-select: none;
+    }
+    .topic-check-item label::before {
+      content: "•";
+      flex-shrink: 0;
+      color: var(--line-strong);
+      font-size: 1rem;
+      transition: color .14s;
+    }
+    .topic-check-item input:checked + label {
+      color: var(--key-soft);
+    }
+    .topic-check-item input:checked + label::before {
+      color: var(--key-soft);
+    }
     .learning-panel {
       display: grid;
       gap: 14px;
@@ -571,6 +637,166 @@
     }
     .lab-step.is-collapsed {
       padding-bottom: 18px;
+    }
+    .step-video-figure {
+      margin: 0 0 14px;
+      display: grid;
+      gap: 8px;
+    }
+    .step-video-caption {
+      color: var(--muted);
+      font-size: .78rem;
+      line-height: 1.6;
+    }
+    .step-video-yt {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border: 0;
+      border-radius: var(--radius-md);
+      background: #000;
+    }
+    .task-accordion {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+    }
+    .task-accordion-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      cursor: pointer;
+      list-style: none;
+      color: var(--muted-strong);
+      font-size: .84rem;
+      font-weight: 600;
+    }
+    .task-accordion-summary::-webkit-details-marker {
+      display: none;
+    }
+    .task-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 24px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--overlay-white);
+      color: var(--muted);
+      font-size: .72rem;
+      font-weight: 600;
+    }
+    .ref-accordion {
+      padding: 0;
+      overflow: hidden;
+    }
+    .ref-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 18px;
+      cursor: pointer;
+      list-style: none;
+    }
+    .ref-summary::-webkit-details-marker {
+      display: none;
+    }
+    .ref-summary-title {
+      font-size: .94rem;
+      font-weight: 620;
+      color: var(--text);
+    }
+    .ref-summary-meta {
+      font-size: .76rem;
+      color: var(--muted);
+      text-align: right;
+    }
+    .ref-body {
+      display: grid;
+      gap: 18px;
+      padding: 0 18px 18px;
+      border-top: 1px solid var(--line);
+    }
+    .ref-group {
+      display: grid;
+      gap: 10px;
+    }
+    .ref-group-title {
+      margin: 0;
+      font-size: .82rem;
+      font-weight: 620;
+      color: var(--muted-strong);
+      letter-spacing: .01em;
+    }
+    .ref-video-list,
+    .shortcuts-compact {
+      display: grid;
+      gap: 10px;
+    }
+    .ref-video-item {
+      display: grid;
+      gap: 4px;
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--line);
+      background: var(--surface-strong);
+      color: inherit;
+      text-decoration: none;
+      transition: border-color .15s ease, background .15s ease;
+    }
+    .ref-video-item:hover {
+      border-color: rgba(147,197,253,.28);
+      background: var(--overlay-white);
+    }
+    .ref-video-title {
+      font-size: .84rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .ref-video-desc {
+      font-size: .76rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .sc-row {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--line);
+      background: var(--surface-strong);
+    }
+    .sc-key {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 9px;
+      border-radius: 8px;
+      border: 1px solid var(--line-strong);
+      background: var(--overlay-white);
+      color: var(--key-soft);
+      font-size: .77rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .sc-action {
+      color: var(--muted-strong);
+      font-size: .82rem;
+      line-height: 1.55;
+    }
+    .ref-list {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted-strong);
+      font-size: .84rem;
+      line-height: 1.75;
+    }
+    .ref-hint {
+      color: var(--muted);
     }
 
     /* ── Clip Player ── */
@@ -1119,6 +1345,13 @@
       .hero {
         padding-top: 72px;
       }
+      .topic-check-list {
+        grid-template-columns: 1fr;
+      }
+      .ref-summary {
+        align-items: flex-start;
+        flex-direction: column;
+      }
     }
   </style>
 </head>
@@ -1271,6 +1504,7 @@
     const storageKey = `blender2026-week${weekNum}-v1`;
     var pendingShowMeFromUrl = !!requestedShowMeId;
     var activeWeekView = null;
+    var currentWeekHasReference = false;
 
     function getWeekText() {
       return window.RPDI18n.getStrings("week");
@@ -1543,6 +1777,25 @@
       var text = getWeekText();
       var bundle = buildWeekBundle(w);
       activeWeekView = w;
+      var isKo = window.RPDI18n.getLanguage() === "ko";
+      var topics = Array.isArray(w.topics) ? w.topics : [];
+      var videos = Array.isArray(w.videos) ? w.videos : [];
+      var docs = Array.isArray(w.docs) ? w.docs : [];
+      var shortcuts = Array.isArray(w.shortcuts) ? w.shortcuts : [];
+      var explore = Array.isArray(w.explore) ? w.explore : [];
+      var mistakes = Array.isArray(w.mistakes) ? w.mistakes : [];
+      var assignment = w.assignment || { checklist: [] };
+      var topicStorageKey = storageKey + "-topics";
+      var savedTopics = JSON.parse(localStorage.getItem(topicStorageKey) || "{}");
+      var topicTotal = topics.length;
+      var topicCheckedInit = topics.filter(function(_, idx) {
+        return savedTopics["t" + idx];
+      }).length;
+      var topicSectionLabel = isKo ? "이번 주" : "This week";
+      var taskSummaryLabel = isKo ? "체크리스트" : "Checklist";
+      var referenceSummaryTitle = isKo ? "이번 주 참고자료" : "Week resources";
+      var practiceVideoTitle = isKo ? "실습 영상" : "Practice videos";
+      var referenceSidebarLabel = isKo ? "참고자료" : "References";
       document.title = `Week ${w.week} — ${w.title} | Blender Archive`;
       document.getElementById("brandBadge").textContent = String(w.week).padStart(2, "0");
       document.getElementById("brandTitle").textContent = `Week ${String(w.week).padStart(2, "0")} · ${w.title}`;
@@ -1556,8 +1809,6 @@
         ? `<a href="week.html?week=${next.week}">Week ${next.week} →</a>`
         : `<span style="opacity:.4">${text.lastWeek}</span>`;
 
-      var videos = w.videos || [];
-      var docs = w.docs || [];
       var savedProgressState = (function() {
         try { return JSON.parse(localStorage.getItem(storageKey) || "{}"); }
         catch (error) { return {}; }
@@ -1567,8 +1818,35 @@
         return !tasks.length || !tasks.every(function(task) { return Boolean(savedProgressState[task.id]); });
       });
       if (initialOpenIndex === -1) initialOpenIndex = 0;
+      function renderReferenceLink(label, url, desc) {
+        return `<a class="doc-link" href="${url}" target="_blank" rel="noopener noreferrer">
+          <span class="doc-link-main">${label} ↗</span>
+          ${desc ? `<span class="doc-link-desc">${desc}</span>` : ""}
+        </a>`;
+      }
 
-      var stepsHtml = w.steps.map(function(step, idx) {
+      function stripPracticePrefix(title) {
+        return String(title || "").replace(/^\[실습\]\s*/, "");
+      }
+
+      var topicHtml = topicTotal ? `
+        <section class="content-block" id="section-topics">
+          <div class="section-head"><h3>${topicSectionLabel}</h3></div>
+          <div class="topic-list">
+            <div class="topic-progress">
+              <div class="topic-progress-bar"><div class="topic-progress-fill" id="topicFill" style="width:${topicTotal ? Math.round(topicCheckedInit / topicTotal * 100) : 0}%"></div></div>
+              <div class="topic-progress-label" id="topicCount">${topicCheckedInit} / ${topicTotal}</div>
+            </div>
+            <div class="topic-check-list">
+              ${topics.map(function(topic, idx) {
+                var inputId = "tc-" + weekNum + "-" + idx;
+                var checked = savedTopics["t" + idx] ? " checked" : "";
+                return `<div class="topic-check-item"><input type="checkbox" id="${inputId}"${checked} data-ti="${idx}" /><label for="${inputId}">${topic}</label></div>`;
+              }).join("")}
+            </div>
+          </div>
+        </section>` : "";
+      var stepsHtml = (w.steps || []).map(function(step, idx) {
         var initiallyExpanded = idx === initialOpenIndex;
         var tasks = Array.isArray(step.tasks) ? step.tasks : [];
         var taskItems = tasks.map(function(task) {
@@ -1622,6 +1900,28 @@
         var sectionDivider = step.sectionTitle
           ? `<div class="step-section-divider"><span>${step.sectionTitle}</span></div>` : "";
 
+        var stepVisualHtml = step.images && step.images.length
+          ? `<div class="step-images">${step.images.map(function(img, imageIndex) {
+              return `<img src="${img}" alt="${step.title} ${imageIndex + 1}" class="step-image" loading="lazy" />`;
+            }).join("")}</div>`
+          : step.image ? `<figure class="step-image-wrap">
+              <img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" />
+              ${step.link ? `<figcaption>${renderReferenceLink(text.sectionDocs, step.link, "")}</figcaption>` : ""}
+            </figure>` : "";
+
+        var stepVideoHtml = "";
+        if (step.video) {
+          var videoSrc = typeof step.video === "string" ? step.video : step.video.src;
+          var videoCaption = typeof step.video === "object" && step.video.caption ? step.video.caption : "";
+          if (videoSrc) {
+            var ytMatch = String(videoSrc).match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([A-Za-z0-9_-]{11})/);
+            var videoEl = ytMatch
+              ? `<iframe class="step-video step-video-yt" src="https://www.youtube.com/embed/${ytMatch[1]}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen title="${text.clipTitle}"></iframe>`
+              : `<video class="step-video" controls preload="metadata"><source src="${videoSrc}" type="video/mp4" /><source src="${videoSrc}" type="video/quicktime" /></video>`;
+            stepVideoHtml = `<figure class="step-video-figure">${videoEl}${videoCaption ? `<figcaption class="step-video-caption">${videoCaption}</figcaption>` : ""}</figure>`;
+          }
+        }
+
         return `
           ${sectionDivider}
           <article class="lab-step ${initiallyExpanded ? "is-expanded" : "is-collapsed"}" id="step-${idx}" data-step-index="${idx}">
@@ -1644,15 +1944,8 @@
               </button>
             </div>
             <div class="step-body" id="step-body-${idx}" data-step-body ${initiallyExpanded ? "" : "hidden"}>
-              ${step.images && step.images.length
-                ? `<div class="step-images">${step.images.map(function(img, imageIndex) {
-                    return `<img src="${img}" alt="${step.title} ${imageIndex + 1}" class="step-image" loading="lazy" />`;
-                  }).join("")}</div>`
-                : step.image ? `<figure class="step-image-wrap">
-                    <img src="${step.image}" alt="${step.title}" class="step-image" loading="lazy" />
-                    ${step.link ? `<figcaption><a href="${step.link}" target="_blank" rel="noopener noreferrer" class="doc-link">${text.sectionDocs} →</a></figcaption>` : ""}
-                  </figure>` : ""}
-              ${step.video ? `<video class="step-video" controls preload="metadata"><source src="${step.video}" type="video/mp4" /><source src="${step.video}" type="video/quicktime" /></video>` : ""}
+              ${stepVisualHtml}
+              ${stepVideoHtml}
               ${step.clips && step.clips.length ? `
                 <div class="clip-player" data-step-clips>
                   <video src="${step.clips[0].src}" autoplay loop muted playsinline
@@ -1681,42 +1974,94 @@
           </article>`;
       }).join("");
 
-      var mistakesHtml = w.mistakes.length > 0 ? `
-        <section class="content-block" id="section-mistakes">
-          <div class="section-head"><h3>${text.sectionMistakes}</h3></div>
-          <details class="card mistakes-section" open>
-            <summary>${text.sectionMistakesSummary}</summary>
-            <ul>${w.mistakes.map(function(mistake) { return `<li>${mistake}</li>`; }).join("")}</ul>
+      var practiceVideos = videos.filter(function(video) {
+        return /^\[실습\]/.test(String(video.title || ""));
+      });
+      var officialVideos = videos.filter(function(video) {
+        return !/^\[실습\]/.test(String(video.title || ""));
+      });
+      var refSubsections = [
+        practiceVideos.length ? `<div class="ref-group">
+          <h4 class="ref-group-title">📹 ${practiceVideoTitle}</h4>
+          <div class="ref-video-list">
+            ${practiceVideos.map(function(video) {
+              return `<a class="ref-video-item" href="${video.url}" target="_blank" rel="noopener noreferrer">
+                <span class="ref-video-title">${stripPracticePrefix(video.title)}</span>
+                ${video.description ? `<span class="ref-video-desc">${video.description}</span>` : ""}
+              </a>`;
+            }).join("")}
+          </div>
+        </div>` : "",
+        officialVideos.length ? `<div class="ref-group">
+          <h4 class="ref-group-title">📚 ${text.sectionVideos}</h4>
+          <div class="doc-links-row">
+            ${officialVideos.map(function(video) {
+              return renderReferenceLink("▶ " + video.title, video.url, video.description || "");
+            }).join("")}
+          </div>
+        </div>` : "",
+        docs.length ? `<div class="ref-group">
+          <h4 class="ref-group-title">📄 ${text.sectionDocs}</h4>
+          <div class="doc-links-row">
+            ${docs.map(function(doc) {
+              return renderReferenceLink("📄 " + doc.title, doc.url, doc.description || "");
+            }).join("")}
+          </div>
+        </div>` : "",
+        shortcuts.length ? `<div class="ref-group">
+          <h4 class="ref-group-title">⌨ ${text.sectionShortcuts}</h4>
+          <div class="shortcuts-compact">
+            ${shortcuts.map(function(shortcut) {
+              return `<div class="sc-row"><kbd class="sc-key">${shortcut.keys}</kbd><span class="sc-action">${shortcut.action}</span></div>`;
+            }).join("")}
+          </div>
+        </div>` : "",
+        explore.length ? `<div class="ref-group">
+          <h4 class="ref-group-title">💡 ${text.sectionExplore}</h4>
+          <ul class="ref-list">
+            ${explore.map(function(item) {
+              return `<li><strong>${item.title}</strong>${item.hint ? ` — <span class="ref-hint">${item.hint}</span>` : ""}</li>`;
+            }).join("")}
+          </ul>
+        </div>` : "",
+        mistakes.length ? `<div class="ref-group">
+          <h4 class="ref-group-title">⚠ ${text.sectionMistakes}</h4>
+          <ul class="ref-list">${mistakes.map(function(mistake) {
+            return `<li>${mistake}</li>`;
+          }).join("")}</ul>
+        </div>` : ""
+      ].filter(Boolean).join("");
+      var refMetaParts = [
+        practiceVideos.length ? practiceVideoTitle + " " + practiceVideos.length : "",
+        officialVideos.length ? text.sectionVideos + " " + officialVideos.length : "",
+        docs.length ? text.sectionDocs + " " + docs.length : "",
+        shortcuts.length ? text.sectionShortcuts + " " + shortcuts.length : ""
+      ].filter(Boolean).join(" · ");
+      var hasRef = refSubsections.length > 0;
+      currentWeekHasReference = hasRef;
+      var refHtml = hasRef ? `
+        <section class="content-block" id="section-reference">
+          <details class="card ref-accordion">
+            <summary class="ref-summary">
+              <span class="ref-summary-title">${referenceSummaryTitle}</span>
+              <span class="ref-summary-meta">${refMetaParts}</span>
+            </summary>
+            <div class="ref-body">${refSubsections}</div>
           </details>
         </section>` : "";
 
-      function renderResourceSection(title, icon, items) {
-        return items.length > 0 ? `
-          <section class="content-block">
-            <div class="section-head"><h3>${title}</h3></div>
-            <div class="doc-links-row">
-              ${items.map(function(item) {
-                return `
-                  <a class="doc-link" href="${item.url}" target="_blank" rel="noopener noreferrer">
-                    ${icon} ${item.title} ↗
-                  </a>`;
-              }).join("")}
-            </div>
-          </section>` : "";
-      }
-
-      var videosHtml = renderResourceSection(text.sectionVideos, "▶", videos);
-      var docsHtml = renderResourceSection(text.sectionDocs, "📄", docs);
-      var assignmentChecklist = w.assignment.checklist.map(function(item) { return `<li>${item}</li>`; }).join("");
-      var assignmentHtml = `
+      var assignmentChecklist = Array.isArray(assignment.checklist)
+        ? assignment.checklist.map(function(item) { return `<li>${item}</li>`; }).join("")
+        : "";
+      var assignmentHtml = assignment.title ? `
         <section class="content-block" id="section-assignment">
           <div class="section-head"><h3>${text.sectionAssignment}</h3></div>
           <div class="assignment-card">
             <div class="assignment-head">
               <div class="assignment-copy">
                 <div class="card-chip">${text.assignmentChip}</div>
-                <strong>${w.assignment.title}</strong>
-                <p>${w.assignment.description}</p>
+                <strong>${assignment.title}</strong>
+                <p>${assignment.description || ""}</p>
               </div>
               <span class="assignment-status" id="assignmentStatus">${text.assignmentStatusDraft}</span>
             </div>
@@ -1724,41 +2069,6 @@
             <div class="assignment-meta" id="assignmentMeta"></div>
             <div class="cta-group assignment-actions" id="assignmentActions"></div>
             <p class="assignment-note" id="assignmentNote"></p>
-          </div>
-        </section>`;
-
-      var shortcutsHtml = (w.shortcuts && w.shortcuts.length > 0) ? `
-        <section class="content-block" id="section-shortcuts">
-          <div class="section-head">
-            <h3>${text.sectionShortcuts}</h3>
-            <p>${text.sectionShortcutsDesc}</p>
-          </div>
-          <div class="card shortcut-table-wrap">
-            <table class="shortcut-table">
-              <thead><tr><th>${text.shortcutsHeaderKeys}</th><th>${text.shortcutsHeaderAction}</th></tr></thead>
-              <tbody>
-                ${w.shortcuts.map(function(shortcut) {
-                  return `<tr><td><kbd class="shortcut-key">${shortcut.keys}</kbd></td><td>${shortcut.action}</td></tr>`;
-                }).join("")}
-              </tbody>
-            </table>
-          </div>
-        </section>` : "";
-
-      var exploreHtml = (w.explore && w.explore.length > 0) ? `
-        <section class="content-block" id="section-explore">
-          <div class="section-head">
-            <h3>${text.sectionExplore}</h3>
-            <p>${text.sectionExploreDesc}</p>
-          </div>
-          <div class="explore-grid">
-            ${w.explore.map(function(item) {
-              return `
-                <div class="explore-card">
-                  <strong>${item.title}</strong>
-                  <p>${item.hint}</p>
-                </div>`;
-            }).join("")}
           </div>
         </section>` : "";
 
@@ -1782,6 +2092,8 @@
           </div>
         </section>
 
+        ${topicHtml}
+
         <section class="content-block" id="practice">
           <div class="section-head">
             <h3>${text.sectionPractice}</h3>
@@ -1792,11 +2104,7 @@
           </div>
         </section>
 
-        ${shortcutsHtml}
-        ${exploreHtml}
-        ${mistakesHtml}
-        ${videosHtml}
-        ${docsHtml}
+        ${refHtml}
         ${assignmentHtml}
 
         <section class="content-block">
@@ -1816,6 +2124,7 @@
             player.querySelectorAll(".clip-tab").forEach(function(item) { item.classList.remove("is-active"); });
             tab.classList.add("is-active");
             var video = player.querySelector("video");
+            if (!video) return;
             video.src = tab.dataset.clipSrc;
             video.play();
           });
@@ -1824,6 +2133,7 @@
 
       initProgress();
       refreshWeekActionPanels();
+      initTopicChecks(topicTotal, topicStorageKey);
       initSidebar(w);
       initStepAccordion();
       initTaskAccordion();
@@ -1911,6 +2221,29 @@
           }
           setTaskExpanded(taskItem, shouldExpand);
         });
+      });
+    }
+
+    function initTopicChecks(total, key) {
+      var fill = document.getElementById("topicFill");
+      var count = document.getElementById("topicCount");
+      if (!fill || !count) return;
+
+      function updateTopicProgress() {
+        var all = Array.from(document.querySelectorAll(".topic-check-list input[type='checkbox']"));
+        var checked = all.filter(function(input) { return input.checked; }).length;
+        var pct = total > 0 ? Math.round(checked / total * 100) : 0;
+        var state = {};
+        all.forEach(function(input, idx) {
+          state["t" + idx] = input.checked;
+        });
+        fill.style.width = pct + "%";
+        count.textContent = checked + " / " + total;
+        localStorage.setItem(key, JSON.stringify(state));
+      }
+
+      document.querySelectorAll(".topic-check-list input[type='checkbox']").forEach(function(input) {
+        input.addEventListener("change", updateTopicProgress);
       });
     }
 
@@ -2489,6 +2822,7 @@
 
     function initSidebar(w) {
       var text = getWeekText();
+      var isKo = window.RPDI18n.getLanguage() === "ko";
       var sidebar   = document.getElementById("sidebar");
       var overlay   = document.getElementById("sidebarOverlay");
       var toggleBtn = document.getElementById("sidebarToggle");
@@ -2499,12 +2833,15 @@
       var sections = [
         { id: "hero-section", label: text.sidebarOverview, group: null }
       ];
+      if (w.topics && w.topics.length) {
+        sections.push({ id: "section-topics", label: isKo ? "이번 주" : "This week", group: null });
+      }
       w.steps.forEach(function(step, idx) {
         sections.push({ id: "step-" + idx, label: step.title, group: idx === 0 ? text.sidebarPracticeGroup : null });
       });
-      if (w.shortcuts && w.shortcuts.length) sections.push({ id: "section-shortcuts", label: text.sidebarShortcuts, group: text.sidebarReferenceGroup });
-      if (w.explore && w.explore.length) sections.push({ id: "section-explore", label: text.sidebarExplore, group: null });
-      if (w.mistakes && w.mistakes.length) sections.push({ id: "section-mistakes", label: text.sidebarMistakes, group: null });
+      if (currentWeekHasReference) {
+        sections.push({ id: "section-reference", label: isKo ? "참고자료" : "References", group: text.sidebarReferenceGroup });
+      }
       if (w.assignment) sections.push({ id: "section-assignment", label: text.sidebarAssignment, group: null });
 
       var showmeSet = {};
