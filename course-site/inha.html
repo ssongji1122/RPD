@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inha University RPD — Blender Archive</title>
+  <meta name="description" content="인하대학교 RPD 실제 수업 페이지" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="stylesheet" href="assets/tokens.css" />
+  <script>/* FOUC prevention */ (function(){var t=localStorage.getItem('rpd-theme');if(t)document.documentElement.setAttribute('data-theme',t);var l=localStorage.getItem('rpd-lang');if(l){document.documentElement.lang=l;document.documentElement.setAttribute('data-lang',l);}})()</script>
+  <style>
+    .page-shell {
+      --course-shell-radius: 26px;
+      --course-card-radius: 20px;
+      --course-chip-radius: 14px;
+      --course-control-radius: 12px;
+      --course-accent: #2a7b6f;
+      --course-accent-strong: #205f56;
+      --course-accent-soft: #a7ddd4;
+      --course-accent-rgb: 42, 123, 111;
+    }
+    .topbar .brand-badge,
+    .topbar .btn,
+    .topbar .lang-switcher,
+    .topbar .lang-switcher-btn,
+    .topbar .theme-toggle,
+    .hero-actions .btn,
+    .section-nav,
+    .section-nav-btn,
+    .hero-meta-chip,
+    .overview-card-meta,
+    .cw-active-label,
+    .week-badge,
+    .topic-chip,
+    .week-metric,
+    .go-arrow {
+      border-radius: var(--course-chip-radius);
+    }
+    .topbar .brand-badge,
+    .topbar .btn,
+    .topbar .theme-toggle,
+    .topbar .lang-switcher {
+      border-radius: var(--course-control-radius);
+    }
+    .hero-card,
+    .content-block {
+      border-radius: var(--course-shell-radius);
+    }
+    .hero-meta-wrap,
+    .program-stat,
+    .overview-card,
+    .week-card {
+      border-radius: var(--course-card-radius);
+    }
+    .topbar .btn-primary {
+      padding: 8px 14px;
+      border-color: var(--course-accent-strong);
+      background: var(--course-accent);
+    }
+    .topbar-actions {
+      gap: 8px;
+    }
+    .topbar-actions .btn {
+      min-height: 36px;
+      padding: 8px 14px;
+      justify-content: center;
+      font-size: .8rem;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .topbar-actions #langSwitcher {
+      display: inline-flex;
+      align-items: center;
+      margin-left: 2px;
+    }
+    .topbar-actions #langSwitcher .lang-switcher {
+      padding: 2px;
+      border-radius: 10px;
+      background: rgba(255,255,255,.03);
+    }
+    .topbar-actions #langSwitcher .lang-switcher-btn {
+      min-width: 30px;
+      padding: 5px 8px;
+      border-radius: 8px;
+      font-size: .7rem;
+      letter-spacing: .02em;
+    }
+    .topbar .btn-primary:hover,
+    .hero-actions .btn-primary:hover {
+      background: var(--course-accent-strong);
+    }
+    .course-layout {
+      width: min(var(--max-width), calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 72px;
+      display: grid;
+      gap: 18px;
+    }
+    .hero-card {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(240px, .85fr);
+      gap: 22px;
+      width: 100%;
+      padding: 24px;
+      border: 1px solid var(--line-strong);
+      background:
+        radial-gradient(circle at top left, rgba(var(--course-accent-rgb), .14), transparent 34%),
+        linear-gradient(180deg, var(--surface-tint), transparent 72%),
+        var(--surface);
+      box-shadow:
+        0 24px 64px rgba(0,0,0,.2),
+        inset 0 1px 0 rgba(255,255,255,.05);
+      overflow: hidden;
+      isolation: isolate;
+    }
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(var(--course-accent-rgb), .42), transparent);
+      pointer-events: none;
+    }
+    .hero-copy,
+    .hero-meta-wrap {
+      position: relative;
+      z-index: 1;
+    }
+    .hero-copy {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+    .hero h1 {
+      margin: 0;
+      font-family: var(--font-display);
+      max-width: 18ch;
+      font-size: clamp(1.24rem, 1.58vw, 1.58rem);
+      font-weight: 650;
+      letter-spacing: -.038em;
+      line-height: 1.12;
+      text-wrap: balance;
+    }
+    .hero p {
+      max-width: 56ch;
+      margin: 0;
+      color: var(--muted-strong);
+      font-size: .96rem;
+      line-height: 1.74;
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px 12px;
+      margin-top: 4px;
+    }
+    .hero-actions .btn-primary {
+      border-color: var(--course-accent-strong);
+      background: var(--course-accent);
+      box-shadow: 0 14px 28px rgba(var(--course-accent-rgb), .24);
+    }
+    .hero-actions .btn-ghost {
+      border-color: var(--line-strong);
+      background: rgba(255,255,255,.05);
+    }
+    .hero-actions .btn-link {
+      color: var(--course-accent-soft);
+    }
+    .hero-actions .btn-link:hover {
+      color: var(--text);
+    }
+    .hero-meta-wrap {
+      display: grid;
+      gap: 12px;
+      align-content: end;
+      padding: 18px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.04), transparent 78%),
+        rgba(255,255,255,.02);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+    }
+    .hero-meta-label {
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .hero-meta-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border: 1px solid rgba(var(--course-accent-rgb), .18);
+      background: rgba(255,255,255,.04);
+      font-size: .76rem;
+      line-height: 1.2;
+      color: var(--muted-strong);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+    }
+    .section-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      width: fit-content;
+      padding: 6px;
+      border: 1px solid var(--line);
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.04), transparent 82%),
+        rgba(255,255,255,.02);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    .section-nav-btn {
+      appearance: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 128px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--muted-strong);
+      padding: 10px 14px;
+      font: inherit;
+      font-size: .8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color .16s ease, background .16s ease, color .16s ease, transform .16s ease;
+    }
+    .section-nav-btn:hover {
+      background: rgba(255,255,255,.035);
+      color: var(--text);
+    }
+    .section-nav-btn.is-active {
+      color: var(--text);
+      border-color: rgba(var(--course-accent-rgb), .34);
+      background:
+        linear-gradient(135deg, rgba(var(--course-accent-rgb), .14), rgba(255,255,255,.02)),
+        rgba(255,255,255,.03);
+      box-shadow: inset 0 0 0 1px rgba(var(--course-accent-rgb), .12);
+    }
+    .content-block {
+      position: relative;
+      padding: 24px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, var(--surface-tint), transparent 72%),
+        var(--surface);
+      box-shadow:
+        0 22px 54px rgba(0,0,0,.18),
+        inset 0 1px 0 rgba(255,255,255,.04);
+      overflow: hidden;
+      isolation: isolate;
+    }
+    .content-block::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(var(--course-accent-rgb), .34), transparent);
+      pointer-events: none;
+    }
+    .content-block.is-hidden {
+      display: none;
+    }
+    .section-intro {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 18px;
+      position: relative;
+      z-index: 1;
+    }
+    .section-title {
+      margin: 0;
+      font-size: clamp(1.02rem, 1.45vw, 1.32rem);
+      font-weight: 630;
+      letter-spacing: -.028em;
+    }
+    .section-copy {
+      margin: 0;
+      max-width: 760px;
+      color: var(--muted-strong);
+      line-height: 1.72;
+      font-size: .93rem;
+    }
+    .program-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 1;
+    }
+    .program-stat {
+      display: grid;
+      gap: 4px;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.03), transparent 65%),
+        rgba(255,255,255,.02);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    .program-stat strong {
+      font-size: 1.02rem;
+      font-weight: 630;
+      letter-spacing: -.02em;
+    }
+    .program-stat span {
+      font-size: .75rem;
+      color: var(--muted);
+    }
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 4px;
+      position: relative;
+      z-index: 1;
+    }
+    .overview-card {
+      display: grid;
+      gap: 8px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.03), transparent 62%),
+        rgba(255,255,255,.015);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    .overview-card-kicker {
+      font-size: .68rem;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .overview-card-title {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 620;
+      line-height: 1.38;
+    }
+    .overview-card-copy {
+      margin: 0;
+      color: var(--muted-strong);
+      font-size: .88rem;
+      line-height: 1.65;
+    }
+    .overview-card-meta {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      padding: 6px 10px;
+      border: 1px solid rgba(var(--course-accent-rgb), .18);
+      background: rgba(255,255,255,.04);
+      color: var(--muted-strong);
+      font-size: .72rem;
+    }
+    .week-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+    }
+    .week-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 212px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.03), transparent 62%),
+        rgba(255,255,255,.015);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+      padding: 17px 17px 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease, box-shadow .18s ease;
+    }
+    .week-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(var(--course-accent-rgb), .3);
+      background:
+        linear-gradient(135deg, rgba(var(--course-accent-rgb), .1), rgba(255,255,255,.02)),
+        rgba(255,255,255,.02);
+      box-shadow:
+        0 20px 38px rgba(0,0,0,.16),
+        inset 0 1px 0 rgba(255,255,255,.05);
+    }
+    .week-card.is-locked { cursor: not-allowed; opacity: .52; }
+    .week-card.is-locked:hover {
+      transform: none;
+      border-color: var(--line);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.02), transparent 62%),
+        rgba(255,255,255,.015);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+    }
+    .week-card.is-active {
+      grid-column: 1 / -1;
+      min-height: 0;
+      padding: 21px;
+      gap: 14px;
+      border-left: 1px solid rgba(var(--course-accent-rgb), .34);
+      background:
+        linear-gradient(135deg, rgba(var(--course-accent-rgb), .16), rgba(255,255,255,.03) 56%),
+        rgba(255,255,255,.03);
+      border-color: rgba(var(--course-accent-rgb), .34);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.06),
+        inset 0 0 0 1px rgba(var(--course-accent-rgb), .12),
+        0 24px 46px rgba(0,0,0,.22);
+    }
+    .week-card.is-active::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(var(--course-accent-rgb), .12), transparent 42%);
+      pointer-events: none;
+    }
+    .cw-active-label {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      padding: 6px 10px;
+      border: 1px solid rgba(var(--course-accent-rgb), .22);
+      background: rgba(255,255,255,.06);
+      color: var(--course-accent-soft);
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    .week-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .week-num {
+      font-size: .71rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .week-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+    }
+    .badge-done     { color: var(--success-soft); border-color: rgba(16,185,129,.22); background: rgba(16,185,129,.08); }
+    .badge-active   { color: var(--course-accent-soft); border-color: rgba(var(--course-accent-rgb), .24); background: rgba(var(--course-accent-rgb), .08); }
+    .badge-upcoming { color: var(--muted); }
+    .badge-exam     { color: #fbbf24; border-color: rgba(251,191,36,.24); background: rgba(251,191,36,.08); }
+    .week-title {
+      margin: 0;
+      font-size: 1.04rem;
+      font-weight: 620;
+      line-height: 1.4;
+    }
+    .week-subtitle {
+      margin: 0;
+      font-size: .84rem;
+      color: var(--muted-strong);
+      line-height: 1.62;
+    }
+    .week-topics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 2px;
+    }
+    .topic-chip,
+    .week-metric {
+      padding: 6px 10px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--muted-strong);
+      font-size: .71rem;
+      line-height: 1.2;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+    }
+    .week-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: auto;
+      padding-top: 6px;
+      border-top: 1px solid rgba(255,255,255,.04);
+    }
+    .week-metrics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .go-arrow {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--muted-strong);
+      font-size: .9rem;
+      transition: transform .16s ease;
+    }
+    .week-card:hover .go-arrow,
+    .week-card.is-active .go-arrow {
+      transform: translateX(2px);
+      color: var(--text);
+    }
+    @media (max-width: 980px) {
+      .hero-card {
+        grid-template-columns: 1fr;
+      }
+      .program-stats,
+      .overview-grid,
+      .week-grid {
+        grid-template-columns: 1fr;
+      }
+      .week-card.is-active {
+        grid-column: auto;
+      }
+    }
+    @media (max-width: 720px) {
+      .course-layout {
+        width: calc(100% - 20px);
+      }
+      .hero-card,
+      .content-block {
+        padding: 20px 18px;
+      }
+      .section-nav {
+        display: grid;
+        width: 100%;
+        grid-template-columns: 1fr 1fr;
+      }
+      .section-nav-btn {
+        min-width: 0;
+        width: 100%;
+      }
+      .hero h1 {
+        max-width: 16ch;
+        font-size: clamp(1.08rem, 4.7vw, 1.34rem);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a class="brand-lockup" href="index.html" style="text-decoration:none;color:inherit;">
+          <div class="brand-badge">B</div>
+          <div>
+            <strong id="topbarTitle">Blender Archive</strong>
+            <div class="topbar-meta" id="topbarMeta">Archive Hub · Inha University</div>
+          </div>
+        </a>
+        <div class="topbar-actions">
+          <a href="index.html" class="btn btn-ghost" id="homeLink">홈</a>
+          <a href="inha.html" class="btn btn-primary" id="inhaLink">인하대 수업</a>
+          <a href="library.html" class="btn btn-ghost" id="libraryLink">라이브러리</a>
+          <a href="shortcuts.html" class="btn btn-ghost" id="shortcutsLink">단축키</a>
+          <div id="langSwitcher"></div>
+          <button class="theme-toggle" id="themeToggle" type="button" aria-label="테마 전환">
+            <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+            <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="course-layout">
+      <section class="hero" id="heroSection">
+        <div class="hero-card">
+          <div class="hero-copy">
+            <div class="eyebrow" id="heroEyebrow">Inha University · Course Page</div>
+            <h1 id="heroTitle">인하대학교 · Robot Product Design</h1>
+            <p id="heroDescription">아카이브의 카드와 단축키를 조합해서 만든 실제 수업 페이지입니다. 필요한 주차만 바로 열어볼 수 있습니다.</p>
+            <div class="hero-actions cta-group" id="heroActions"></div>
+          </div>
+          <div class="hero-meta-wrap">
+            <div class="hero-meta-label" id="heroMetaLabel">Course snapshot</div>
+            <div class="hero-meta" id="heroMeta"></div>
+          </div>
+        </div>
+      </section>
+
+      <nav class="section-nav" aria-label="인하대 수업 보기">
+        <button class="section-nav-btn is-active" id="overviewTab" type="button">개요</button>
+        <button class="section-nav-btn" id="weeksTab" type="button">주차별 수업</button>
+      </nav>
+
+      <section class="content-block" id="overviewPanel">
+        <div class="section-intro">
+          <div class="eyebrow" id="overviewEyebrow">Course Page</div>
+          <h2 class="section-title" id="overviewTitle">인하대학교 · Robot Product Design</h2>
+          <p class="section-copy" id="overviewDescription">이 페이지는 Blender Archive의 카드와 참조를 조합해 만든 실제 수업 운영 페이지입니다.</p>
+        </div>
+        <div class="program-stats" id="programStats"></div>
+        <div class="overview-grid" id="overviewGrid"></div>
+      </section>
+
+      <section class="content-block is-hidden" id="weeksPanel">
+        <div class="section-intro">
+          <div class="eyebrow" id="weekSectionEyebrow">Week Assemblies</div>
+          <h2 class="section-title" id="weekSectionTitle">주차별 수업</h2>
+          <p class="section-copy" id="weekSectionDescription">각 주차는 필요한 실습 카드, Show Me 카드, 참고 자료를 묶어서 하나의 수업 페이지로 구성합니다.</p>
+        </div>
+        <div class="week-grid" id="weekGrid"></div>
+      </section>
+    </div>
+
+    <footer class="page-footer">
+      <div id="footerLabel">Robot Product Design 2026</div>
+    </footer>
+  </div>
+
+  <script src="data/i18n-content.js?v=20260318e"></script>
+  <script src="assets/i18n.js?v=20260318d"></script>
+  <script src="assets/week-ui.js?v=20260318a"></script>
+  <script src="assets/showme/_registry.js?v=20260318f"></script>
+  <script src="data/curriculum.js"></script>
+  <script>
+    function getPageStrings() {
+      return window.RPDI18n.getStrings("index");
+    }
+
+    function getUiPreset() {
+      return window.RPDWeekUI ? window.RPDWeekUI.getPreset() : {};
+    }
+
+    function localizeUiLabel(value, fallback) {
+      return window.RPDWeekUI
+        ? window.RPDWeekUI.localize(value, window.RPDI18n.getLanguage(), fallback)
+        : fallback;
+    }
+
+    function withPresetHref(href) {
+      return window.RPDWeekUI ? window.RPDWeekUI.withPreset(href) : href;
+    }
+
+    function getPresetProgramTitle(text) {
+      var preset = getUiPreset();
+      var labels = preset.labels || {};
+      var school = localizeUiLabel(labels.school, "");
+      var program = localizeUiLabel(labels.program, "");
+      if (!school && !program) return text.programTitle;
+      return [school, program].filter(Boolean).join(" · ") || text.programTitle;
+    }
+
+    function getWeekCardPreviewItems(localizedWeek, preset) {
+      var source = preset.weekCard && preset.weekCard.previewSource;
+      if (source === "steps") {
+        return (localizedWeek.steps || []).map(function(step) { return step.title; }).filter(Boolean);
+      }
+      return Array.isArray(localizedWeek.topics) ? localizedWeek.topics.slice() : [];
+    }
+
+    function collectArchiveCardIds(week) {
+      var ids = {};
+      (week.steps || []).forEach(function(step) {
+        if (step.showme) {
+          (Array.isArray(step.showme) ? step.showme : [step.showme]).forEach(function(id) {
+            if (id) ids[id] = true;
+          });
+        }
+        if (Array.isArray(step.widgets)) {
+          step.widgets.forEach(function(widget) {
+            if (widget && widget.type === "showme" && widget.id) ids[widget.id] = true;
+          });
+        }
+      });
+      return Object.keys(ids);
+    }
+
+    function countTasks(week) {
+      return (week.steps || []).reduce(function(total, step) {
+        return total + ((step.tasks || []).length || 0);
+      }, 0);
+    }
+
+    function countReferences(week) {
+      return (week.docs || []).length + (week.shortcuts || []).length + (week.explore || []).length;
+    }
+
+    function countProgramArchiveCards() {
+      var ids = {};
+      CURRICULUM.forEach(function(week) {
+        collectArchiveCardIds(week).forEach(function(id) {
+          ids[id] = true;
+        });
+      });
+      return Object.keys(ids).length;
+    }
+
+    function getBadge(week) {
+      if (String(week.title).indexOf("⭐") >= 0) return ["badge-exam", window.RPDI18n.getLanguage() === "ko" ? "Exam" : "Exam"];
+      if (week.status === "done") return ["badge-done", window.RPDI18n.getLanguage() === "ko" ? "Done" : "Done"];
+      if (week.status === "active") return ["badge-active", window.RPDI18n.getLanguage() === "ko" ? "In Progress" : "In Progress"];
+      return ["badge-upcoming", window.RPDI18n.getLanguage() === "ko" ? "Upcoming" : "Upcoming"];
+    }
+
+    function isExamWeek(week) {
+      return String(week.title).indexOf("⭐") >= 0;
+    }
+
+    function getCardClass(week) {
+      if (isExamWeek(week)) return "is-exam";
+      if (week.status === "done") return "is-done";
+      if (week.status === "active") return "is-active";
+      return "is-upcoming";
+    }
+
+    function getWeekCardMetricLabel(key, text, preset) {
+      var labels = preset.labels || {};
+      var isKo = window.RPDI18n.getLanguage() === "ko";
+      if (key === "practice") return localizeUiLabel(labels.metricPractice, isKo ? "실습" : "practice");
+      if (key === "showme") return localizeUiLabel(labels.metricShowMe, "Show Me");
+      if (key === "tasks") return localizeUiLabel(labels.metricTasks, text.weekMetricTasks);
+      if (key === "refs") return localizeUiLabel(labels.metricRefs, text.weekMetricRefs);
+      if (key === "cards") return text.weekMetricCards;
+      return "";
+    }
+
+    function buildWeekCardMetrics(week, text, preset) {
+      var practiceCount = (week.steps || []).length;
+      var showMeCount = collectArchiveCardIds(week).length;
+      var taskCount = countTasks(week);
+      var referenceCount = countReferences(week);
+      var metricValues = {
+        practice: practiceCount,
+        showme: showMeCount,
+        tasks: taskCount,
+        refs: referenceCount,
+        cards: showMeCount
+      };
+      var metricKeys = (preset.weekCard && Array.isArray(preset.weekCard.metrics) && preset.weekCard.metrics.length)
+        ? preset.weekCard.metrics
+        : ["practice", "showme", "tasks"];
+
+      return metricKeys.map(function(key) {
+        if (!Object.prototype.hasOwnProperty.call(metricValues, key)) return "";
+        var label = getWeekCardMetricLabel(key, text, preset);
+        if (!label) return "";
+        return metricValues[key] + " " + label;
+      }).filter(Boolean);
+    }
+
+    function getCurrentPanel() {
+      try {
+        var panel = new URLSearchParams(window.location.search).get("panel");
+        return panel === "weeks" ? "weeks" : "overview";
+      } catch (error) {
+        return "overview";
+      }
+    }
+
+    function updatePanelUrl(panel) {
+      try {
+        var url = new URL(window.location.href);
+        if (panel === "overview") url.searchParams.delete("panel");
+        else url.searchParams.set("panel", panel);
+        window.history.replaceState({}, "", url.pathname + url.search + url.hash);
+      } catch (error) {}
+    }
+
+    function setActivePanel(panel, updateUrl) {
+      var overviewActive = panel !== "weeks";
+      document.getElementById("overviewTab").classList.toggle("is-active", overviewActive);
+      document.getElementById("weeksTab").classList.toggle("is-active", !overviewActive);
+      document.getElementById("overviewTab").setAttribute("aria-pressed", overviewActive ? "true" : "false");
+      document.getElementById("weeksTab").setAttribute("aria-pressed", overviewActive ? "false" : "true");
+      document.getElementById("overviewPanel").classList.toggle("is-hidden", !overviewActive);
+      document.getElementById("weeksPanel").classList.toggle("is-hidden", overviewActive);
+      if (updateUrl) updatePanelUrl(panel);
+    }
+
+    function buildHeroMeta(text) {
+      var activeWeek = CURRICULUM.find(function(week) { return week.status === "active"; });
+      var isKo = window.RPDI18n.getLanguage() === "ko";
+      return isKo ? [
+        CURRICULUM.length + "주 수업 페이지",
+        countProgramArchiveCards() + "개 연결 카드",
+        activeWeek ? "현재 수업 Week " + String(activeWeek.week).padStart(2, "0") : "현재 진행 주차 없음"
+      ] : [
+        CURRICULUM.length + " weekly pages",
+        countProgramArchiveCards() + " linked cards",
+        activeWeek ? "Current course Week " + String(activeWeek.week).padStart(2, "0") : "No active course week"
+      ];
+    }
+
+    function buildOverviewCards(text) {
+      var activeWeek = CURRICULUM.find(function(week) { return week.status === "active"; }) || CURRICULUM[0];
+      var isKo = window.RPDI18n.getLanguage() === "ko";
+      return [
+        {
+          kicker: isKo ? "아카이브 활용" : "Archive utility",
+          title: isKo ? "카드와 단축키를 조합해서 수업을 만듭니다" : "Build the course from archive cards and shortcuts",
+          copy: isKo
+            ? "실습 카드, Show Me 카드, 참고 링크를 필요한 주차에만 연결해서 실제 수업 흐름으로 씁니다."
+            : "Practice cards, Show Me cards, and reference links are connected only where each week needs them.",
+          meta: countProgramArchiveCards() + (isKo ? "개 카드 연결" : " linked cards")
+        },
+        {
+          kicker: isKo ? "현재 운영" : "Current run",
+          title: isKo ? "현재 진행 주차와 전체 흐름을 바로 확인합니다" : "Check the active week and the full course flow",
+          copy: isKo
+            ? "주차별 수업 탭에서 15주 전체 구성을 한 번에 보고, 현재 주차는 바로 열 수 있습니다."
+            : "Open the weekly lessons tab to scan the full 15-week structure and jump straight into the current week.",
+          meta: activeWeek ? ("Week " + String(activeWeek.week).padStart(2, "0")) : "—"
+        }
+      ];
+    }
+
+    function buildHeroActions(text) {
+      var activeWeek = CURRICULUM.find(function(week) { return week.status === "active"; }) || CURRICULUM[0];
+      var isKo = window.RPDI18n.getLanguage() === "ko";
+      var activeHref = activeWeek ? withPresetHref("week.html?week=" + activeWeek.week) : withPresetHref("inha.html");
+      return [
+        '<a class="btn btn-primary" href="' + activeHref + '">' + text.heroPrimaryCta + '</a>',
+        '<a class="btn btn-ghost" href="' + withPresetHref("index.html") + '">' + (isKo ? "홈으로" : "Back home") + '</a>',
+        '<a class="btn-link" href="' + withPresetHref("library.html") + '">' + text.heroSecondaryCta + ' <span aria-hidden="true">→</span></a>'
+      ].join("");
+    }
+
+    function renderWeeks(text, preset) {
+      var grid = document.getElementById("weekGrid");
+      grid.textContent = "";
+      CURRICULUM.forEach(function(w) {
+        var localized = window.RPDI18n.localizeWeekData(w);
+        var badgeInfo = getBadge(w);
+        var badgeClass = badgeInfo[0];
+        var badgeText = badgeInfo[1];
+        var isActive = w.status === "active";
+        var weekCardPreset = preset.weekCard || {};
+        var maxChips = isActive
+          ? (weekCardPreset.activePreviewMaxItems || weekCardPreset.previewMaxItems || 5)
+          : (weekCardPreset.previewMaxItems || 3);
+        var pageUrl = withPresetHref("week.html?week=" + w.week);
+        var previewItems = getWeekCardPreviewItems(localized, preset);
+        var isUpcoming = w.status !== "done" && w.status !== "active" && !isExamWeek(w);
+
+        var card = document.createElement("a");
+        card.className = "week-card " + getCardClass(w) + (isUpcoming ? " is-locked" : "");
+        if (!isUpcoming) card.href = pageUrl;
+
+        if (isActive) {
+          var activeLabel = document.createElement("div");
+          activeLabel.className = "cw-active-label";
+          activeLabel.textContent = text.activeLabel;
+          card.appendChild(activeLabel);
+        }
+
+        var header = document.createElement("div");
+        header.className = "week-card-header";
+        var num = document.createElement("span");
+        num.className = "week-num";
+        num.textContent = "Week " + String(w.week).padStart(2, "0");
+        var badge = document.createElement("span");
+        badge.className = "week-badge " + badgeClass;
+        badge.textContent = badgeText;
+        header.appendChild(num);
+        header.appendChild(badge);
+        card.appendChild(header);
+
+        var title = document.createElement("p");
+        title.className = "week-title";
+        title.textContent = localized.title;
+        card.appendChild(title);
+
+        var sub = document.createElement("p");
+        sub.className = "week-subtitle";
+        sub.textContent = localized.subtitle;
+        card.appendChild(sub);
+
+        var topics = document.createElement("div");
+        topics.className = "week-topics";
+        previewItems.slice(0, maxChips).forEach(function(topic) {
+          var chip = document.createElement("span");
+          chip.className = "topic-chip";
+          chip.textContent = topic;
+          topics.appendChild(chip);
+        });
+        if (previewItems.length > maxChips) {
+          var more = document.createElement("span");
+          more.className = "topic-chip";
+          more.textContent = "+" + (previewItems.length - maxChips);
+          topics.appendChild(more);
+        }
+        card.appendChild(topics);
+
+        var footer = document.createElement("div");
+        footer.className = "week-footer";
+        var metrics = document.createElement("div");
+        metrics.className = "week-metrics";
+        buildWeekCardMetrics(w, text, preset).forEach(function(label) {
+          var metric = document.createElement("span");
+          metric.className = "week-metric";
+          metric.textContent = label;
+          metrics.appendChild(metric);
+        });
+        var arrow = document.createElement("span");
+        arrow.className = "go-arrow";
+        arrow.textContent = "\u2192";
+        footer.appendChild(metrics);
+        footer.appendChild(arrow);
+        card.appendChild(footer);
+
+        grid.appendChild(card);
+      });
+    }
+
+    function renderPage() {
+      var text = getPageStrings();
+      var preset = getUiPreset();
+      var isKo = window.RPDI18n.getLanguage() === "ko";
+      var activeWeek = CURRICULUM.find(function(week) { return week.status === "active"; }) || CURRICULUM[0];
+      document.title = getPresetProgramTitle(text) + " — Blender Archive";
+      var meta = document.querySelector('meta[name="description"]');
+      if (meta) meta.setAttribute("content", isKo ? "인하대학교 RPD 실제 수업 페이지" : "Inha University RPD course page");
+
+      document.getElementById("topbarTitle").textContent = text.topbarTitle;
+      document.getElementById("topbarMeta").textContent = text.topbarMeta;
+      document.getElementById("homeLink").textContent = isKo ? "홈" : "Home";
+      document.getElementById("homeLink").setAttribute("href", withPresetHref("index.html"));
+      document.getElementById("inhaLink").textContent = isKo ? "인하대 수업" : "Inha RPD";
+      document.getElementById("inhaLink").setAttribute("href", withPresetHref("inha.html"));
+      document.getElementById("libraryLink").textContent = isKo ? "라이브러리" : "Library";
+      document.getElementById("libraryLink").setAttribute("href", withPresetHref("library.html"));
+      document.getElementById("shortcutsLink").textContent = isKo ? "단축키" : "Shortcuts";
+      document.getElementById("shortcutsLink").setAttribute("href", withPresetHref("shortcuts.html"));
+      document.getElementById("themeToggle").setAttribute("aria-label", text.themeToggleAria);
+
+      document.getElementById("heroEyebrow").textContent = isKo ? "실제 수업 페이지" : "Built course page";
+      document.getElementById("heroTitle").textContent = getPresetProgramTitle(text);
+      document.getElementById("heroDescription").textContent = isKo
+        ? "아카이브의 카드와 단축키를 조합해서 만든 실제 수업 페이지입니다. 필요한 주차만 바로 열어볼 수 있습니다."
+        : "This is a real course page assembled from archive cards and shortcuts. Open only the weeks you need.";
+      document.getElementById("heroMetaLabel").textContent = isKo ? "수업 스냅샷" : "Course snapshot";
+      document.getElementById("heroActions").innerHTML = buildHeroActions(text);
+      document.getElementById("heroMeta").innerHTML = buildHeroMeta(text).map(function(item) {
+        return "<span class=\"hero-meta-chip\">" + item + "</span>";
+      }).join("");
+
+      document.getElementById("overviewTab").textContent = isKo ? "개요" : "Overview";
+      document.getElementById("weeksTab").textContent = isKo ? "주차별 수업" : "Weekly lessons";
+      document.getElementById("overviewEyebrow").textContent = isKo ? "실제 수업 페이지" : "Built course page";
+      document.getElementById("overviewTitle").textContent = getPresetProgramTitle(text);
+      document.getElementById("overviewDescription").textContent = isKo
+        ? "이 페이지는 Blender Archive의 카드와 참조를 조합해 만든 실제 수업 운영 페이지입니다."
+        : "This page is a live course page assembled from Blender Archive cards and references.";
+      document.getElementById("weekSectionEyebrow").textContent = text.weekSectionEyebrow;
+      document.getElementById("weekSectionTitle").textContent = isKo ? "주차별 수업" : "Weekly lessons";
+      document.getElementById("weekSectionDescription").textContent = text.weekSectionDescription;
+      document.getElementById("footerLabel").textContent = text.footerLabel;
+
+      document.getElementById("programStats").innerHTML = [
+        { value: CURRICULUM.length, label: text.programStatWeeks },
+        { value: countProgramArchiveCards(), label: text.programStatCards },
+        { value: activeWeek ? "Week " + String(activeWeek.week).padStart(2, "0") : "—", label: text.programStatActive }
+      ].map(function(item) {
+        return '<div class="program-stat"><strong>' + item.value + '</strong><span>' + item.label + '</span></div>';
+      }).join("");
+
+      document.getElementById("overviewGrid").innerHTML = buildOverviewCards(text).map(function(item) {
+        return '<div class="overview-card">' +
+          '<span class="overview-card-kicker">' + item.kicker + '</span>' +
+          '<p class="overview-card-title">' + item.title + '</p>' +
+          '<p class="overview-card-copy">' + item.copy + '</p>' +
+          '<span class="overview-card-meta">' + item.meta + '</span>' +
+        '</div>';
+      }).join("");
+
+      renderWeeks(text, preset);
+      setActivePanel(getCurrentPanel(), false);
+    }
+
+    document.getElementById("overviewTab").addEventListener("click", function() {
+      setActivePanel("overview", true);
+    });
+    document.getElementById("weeksTab").addEventListener("click", function() {
+      setActivePanel("weeks", true);
+    });
+
+    window.RPDWeekUI.init({ url: "data/week-ui.json?v=20260318a" }).finally(function() {
+      window.RPDI18n.mountLanguageSwitcher(document.getElementById("langSwitcher"));
+      window.RPDI18n.onLanguageChange(renderPage);
+    });
+
+    document.getElementById("themeToggle").addEventListener("click", function() {
+      var current = document.documentElement.getAttribute("data-theme");
+      var next = current === "light" ? "" : "light";
+      if (next) {
+        document.documentElement.setAttribute("data-theme", next);
+        localStorage.setItem("rpd-theme", next);
+      } else {
+        document.documentElement.removeAttribute("data-theme");
+        localStorage.removeItem("rpd-theme");
+      }
+    });
+  </script>
+</body>
+</html>

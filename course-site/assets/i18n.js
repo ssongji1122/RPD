@@ -834,8 +834,7 @@
   function detectLang() {
     var stored = getStoredLang();
     if (stored) return stored;
-    var browserLang = (win.navigator && (win.navigator.language || win.navigator.userLanguage) || "").toLowerCase();
-    return browserLang.indexOf("ko") === 0 ? "ko" : "en";
+    return "ko";
   }
 
   var currentLang = detectLang();
