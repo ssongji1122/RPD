@@ -108,53 +108,6 @@
       font-weight: 620;
       letter-spacing: -.01em;
     }
-    .hero-links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px solid var(--line);
-    }
-    .hero-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 7px 10px 7px 7px;
-      border-radius: 12px;
-      border: 1px solid var(--line);
-      background: var(--modal-panel-soft-strong-bg);
-      box-shadow: var(--modal-card-shadow);
-      color: var(--muted-strong);
-      font-size: .76rem;
-      line-height: 1.2;
-      transition: transform .14s ease, border-color .14s ease, background .14s ease, color .14s ease, box-shadow .14s ease;
-    }
-    .hero-link:hover {
-      transform: translateY(-1px);
-      border-color: rgba(96,165,250,.28);
-      background: var(--modal-hover-bg);
-      box-shadow: var(--modal-hover-shadow);
-      color: var(--text);
-    }
-    .hero-link-icon {
-      display: grid;
-      place-items: center;
-      width: 24px;
-      height: 24px;
-      border-radius: 7px;
-      flex-shrink: 0;
-      background: var(--modal-icon-bg);
-      box-shadow: var(--modal-icon-shadow);
-      font-size: .74rem;
-    }
-    .hero-link-label {
-      white-space: nowrap;
-    }
-    .hero-link-arrow {
-      color: var(--muted);
-      font-size: .8rem;
-    }
     .topic-list {
       display: grid;
       gap: 10px;
@@ -1959,12 +1912,6 @@
       .section-head {
         margin-bottom: 12px;
       }
-      .hero-links {
-        gap: 8px;
-      }
-      .hero-link {
-        width: 100%;
-      }
       .topic-list {
         padding: 13px 14px;
       }
@@ -3725,6 +3672,15 @@
 
       if (!sidebar || !overlay || !toggleBtn || !navList) return;
 
+      var globalMenuLabel = isKo ? "전체 메뉴" : "Site";
+      var globalLinks = [
+        { href: "index.html", label: text.homeLabel.replace(/^←\s*/, "") },
+        { href: "library.html", label: text.footerLibrary },
+        { href: "shortcuts.html", label: text.shortcutsLink },
+        { href: "https://www.notion.so/31e54d654971812e9c38f85124b45e3f", label: text.aiRefsLink, external: true },
+        { href: "https://www.notion.so/31e54d65497181c89e8bfa97bb5efaa7", label: text.blenderRefsLink, external: true }
+      ];
+
       var sections = [
         { id: "hero-section", label: text.sidebarOverview, group: null }
       ];
@@ -3746,7 +3702,14 @@
       });
       var showmeIds = Object.keys(showmeSet);
 
-      var navHtml = sections.map(function(s) {
+      var navHtml = "<li><span class=\"nav-section-label\">" + globalMenuLabel + "</span></li>";
+      navHtml += globalLinks.map(function(link) {
+        return "<li><a href=\"" + link.href + "\"" +
+          (link.external ? " target=\"_blank\" rel=\"noopener noreferrer\"" : "") +
+          ">" + link.label + "</a></li>";
+      }).join("");
+
+      navHtml += sections.map(function(s) {
         var g = s.group ? "<li><span class=\"nav-section-label\">" + s.group + "</span></li>" : "";
         return g + "<li data-nav-id=\"" + s.id + "\"><a href=\"#" + s.id + "\">" + s.label + "</a></li>";
       }).join("");
