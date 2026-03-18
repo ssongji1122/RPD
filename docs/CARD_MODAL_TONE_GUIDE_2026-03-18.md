@@ -94,8 +94,8 @@
 
 - 관리 페이지도 예외가 아니다.
 - 좌측 주차 목록, 상단 상태 배지, 입력 필드, step editor를 modal shell 체계로 맞춘다.
-- 단, 공개 웹페이지처럼 `left rail + hero + section flow`를 유지해야 하며 별도 백오피스 대시보드처럼 재구성하지 않는다.
-- 내부 편집 미리보기는 가능하면 `week.html`의 hero / practice / reference / assignment 흐름을 그대로 따라간다.
+- 가능하면 `admin`은 별도 설명용 셸을 만들지 말고, `실제 웹페이지 + 편집 모드` 형태로 유지한다.
+- 내부 편집 미리보기는 `week.html`의 hero / practice / reference / assignment 흐름을 그대로 따라간다.
 - 단, 가독성이 우선이므로 과한 장식은 금지한다.
 
 ### `week.html`
@@ -120,6 +120,7 @@
 - 페이지마다 radius와 shadow 스타일을 새로 만들지 않는다.
 - 밝은 페이지/어두운 페이지를 섞어 톤을 깨지 않는다.
 - `admin.html`을 공개 사이트와 동떨어진 별도 콘솔/대시보드 구조로 바꾸지 않는다.
+- 실제 웹페이지 위에 얇게 얹을 수 있는 편집 모드를, 불필요한 보조 히어로/소개 섹션으로 다시 감싸지 않는다.
 
 ## Implementation Checklist
 

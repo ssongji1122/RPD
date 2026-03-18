@@ -109,6 +109,8 @@
       letter-spacing: -.01em;
     }
     .topic-list {
+      --topic-desktop-columns: 2;
+      --topic-mobile-columns: 1;
       display: grid;
       gap: 10px;
       padding: 14px 16px;
@@ -159,7 +161,7 @@
     }
     .topic-check-list {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(var(--topic-desktop-columns), minmax(0, 1fr));
       gap: 4px 14px;
     }
     .topic-check-item {
@@ -200,6 +202,19 @@
     .topic-check-item input:checked + label::before {
       background: var(--key-soft);
       box-shadow: 0 0 0 3px rgba(147,197,253,.12);
+    }
+    .topic-check-item-more {
+      display: flex;
+      align-items: center;
+      min-height: 100%;
+    }
+    .topic-check-more {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 0;
+      color: var(--muted);
+      font-size: .78rem;
+      line-height: 1.4;
     }
     .learning-panel {
       display: grid;
@@ -565,6 +580,23 @@
       display: block; padding: 14px 0 4px 14px;
       font-size: .72rem; color: var(--muted);
       text-transform: uppercase; letter-spacing: .08em; font-weight: 600;
+    }
+    .sidebar-nav .nav-section-label.nav-section-label-global {
+      font-size: .68rem;
+      color: color-mix(in srgb, var(--muted) 82%, transparent);
+      letter-spacing: .12em;
+    }
+    .sidebar-nav li a.sidebar-link-global {
+      padding-top: 6px;
+      padding-bottom: 6px;
+      font-size: .8rem;
+      color: color-mix(in srgb, var(--muted-strong) 72%, var(--muted) 28%);
+    }
+    .sidebar-nav li a.sidebar-link-global:hover {
+      color: var(--muted-strong);
+    }
+    .sidebar-nav li.sidebar-group-end {
+      margin-bottom: 10px;
     }
 
     /* ── Sidebar toggle button ── */
@@ -1916,7 +1948,7 @@
         padding: 13px 14px;
       }
       .topic-check-list {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(var(--topic-mobile-columns), minmax(0, 1fr));
       }
       .ref-summary {
         align-items: flex-start;
@@ -2034,7 +2066,7 @@
               <rect y="12" width="18" height="1.6" rx="0.8" fill="currentColor"/>
             </svg>
           </button>
-          <a class="brand" href="index.html" style="text-decoration:none;color:inherit;">
+          <a class="brand" id="brandLink" href="index.html" style="text-decoration:none;color:inherit;">
             <div class="brand-badge" id="brandBadge">—</div>
             <div class="brand-copy">
               <strong id="brandTitle">불러오는 중...</strong>
@@ -2050,6 +2082,14 @@
               <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
               <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
             </button>
+          </div>
+          <div class="progress-widget">
+            <div class="progress-label" id="progressLabel">진도</div>
+            <div class="progress-track" aria-hidden="true">
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-count" id="progressCount">0 / 0</div>
+            <button class="btn btn-ghost" id="resetBtn" type="button">초기화</button>
           </div>
         </div>
       </div>
@@ -2148,6 +2188,7 @@
 
   <script src="data/i18n-content.js?v=20260318e"></script>
   <script src="assets/i18n.js?v=20260318t"></script>
+  <script src="assets/week-ui.js?v=20260318a"></script>
   <script src="assets/showme/_registry.js?v=20260318f"></script>
   <script src="assets/showme/_catalog.js?v=20260318c"></script>
   <script src="assets/showme/_supplements.js?v=20260318c"></script>
@@ -2170,6 +2211,79 @@
 
     function getWeekText() {
       return window.RPDI18n.getStrings("week");
+    }
+
+    function getWeekUiPreset() {
+      return window.RPDWeekUI ? window.RPDWeekUI.getPreset() : {};
+    }
+
+    function getWeekUiPresetName() {
+      return window.RPDWeekUI ? window.RPDWeekUI.getPresetName() : "inha-rpd";
+    }
+
+    function localizeWeekUiLabel(value, fallback) {
+      return window.RPDWeekUI
+        ? window.RPDWeekUI.localize(value, window.RPDI18n.getLanguage(), fallback)
+        : fallback;
+    }
+
+    function withPresetHref(href) {
+      return window.RPDWeekUI ? window.RPDWeekUI.withPreset(href) : href;
+    }
+
+    function getWeekPresetMetricLabel(key, text, preset, isKo) {
+      var labels = preset.labels || {};
+      if (key === "practice") return localizeWeekUiLabel(labels.metricPractice, isKo ? "실습" : "practice");
+      if (key === "tasks") return localizeWeekUiLabel(labels.metricTasks, isKo ? "체크리스트" : "Checklist");
+      if (key === "showme") return localizeWeekUiLabel(labels.metricShowMe, "Show Me");
+      if (key === "refs") return localizeWeekUiLabel(labels.metricRefs, isKo ? "참고" : "Refs");
+      return "";
+    }
+
+    function buildWeekHeroSubtitle(w, preset) {
+      var topics = Array.isArray(w.topics) ? w.topics : [];
+      var subtitleMode = preset.weekHero && preset.weekHero.subtitleMode;
+      if (subtitleMode === "topics") {
+        return topics.slice(0, 3).join(" · ") || w.subtitle || "";
+      }
+      return w.subtitle || topics.slice(0, 3).join(" · ");
+    }
+
+    function buildWeekSummaryItems(w, preset) {
+      var summaryPreset = preset.weekSummary || {};
+      var source = summaryPreset.itemSource || "topics";
+      var maxItems = Math.max(1, Number(summaryPreset.maxItems) || 8);
+      var items = [];
+
+      if (source === "steps") {
+        items = (w.steps || []).map(function(step) { return step.title; }).filter(Boolean);
+      } else {
+        items = Array.isArray(w.topics) ? w.topics.slice() : [];
+      }
+
+      return {
+        visibleItems: items.slice(0, maxItems),
+        overflowCount: Math.max(0, items.length - maxItems)
+      };
+    }
+
+    function buildWeekHeroMetaItems(summary, preset, text, isKo) {
+      var order = (preset.weekHero && Array.isArray(preset.weekHero.subtitleMetrics) && preset.weekHero.subtitleMetrics.length)
+        ? preset.weekHero.subtitleMetrics
+        : ["practice", "tasks", "showme"];
+      var valueMap = {
+        practice: summary.practiceCount,
+        tasks: summary.taskCount,
+        showme: summary.showMeCount,
+        refs: summary.referenceCount
+      };
+
+      return order.map(function(key) {
+        if (!Object.prototype.hasOwnProperty.call(valueMap, key)) return "";
+        var label = getWeekPresetMetricLabel(key, text, preset, isKo);
+        if (!label) return "";
+        return '<span class="hero-meta-item"><strong>' + valueMap[key] + '</strong><span>' + label + '</span></span>';
+      }).filter(Boolean);
     }
 
     function getShowMeMeta(widgetId) {
@@ -2471,8 +2585,11 @@
       document.getElementById("sidebarToggle").setAttribute("aria-label", text.sidebarToggleAria);
       document.getElementById("brandMeta").textContent = text.brandMeta;
       document.getElementById("themeToggle").setAttribute("aria-label", text.themeToggleAria);
+      document.getElementById("brandLink").setAttribute("href", withPresetHref("index.html"));
       document.getElementById("footerHomeLink").textContent = text.footerHome;
+      document.getElementById("footerHomeLink").setAttribute("href", withPresetHref("index.html"));
       document.getElementById("footerLibraryLink").textContent = text.footerLibrary;
+      document.getElementById("footerLibraryLink").setAttribute("href", withPresetHref("library.html"));
       document.getElementById("showmeBrowseToggle").setAttribute("aria-label", text.modalBrowseToggleAria);
       document.getElementById("showmeResize").setAttribute("aria-label", text.modalResizeAria);
       document.getElementById("showmeClose").setAttribute("aria-label", text.modalCloseAria);
@@ -2497,7 +2614,7 @@
       document.getElementById("brandTitle").textContent = text.brandLoading;
       document.getElementById("pageContent").innerHTML = `
         <section style="padding:80px 0;text-align:center;color:var(--muted)">
-          <p>${text.notFound} <a href="index.html" style="color:var(--key-soft)">${text.notFoundBack}</a></p>
+          <p>${text.notFound} <a href="${withPresetHref("index.html")}" style="color:var(--key-soft)">${text.notFoundBack}</a></p>
         </section>`;
     }
 
@@ -2513,15 +2630,18 @@
       maybeOpenRequestedShowMe();
     }
 
-    if (weekData) initStudentLogin();
-    window.RPDI18n.mountLanguageSwitcher(document.getElementById("langSwitcher"));
-    window.RPDI18n.onLanguageChange(function() {
-      renderWeekPage();
-      refreshOpenShowMe();
+    window.RPDWeekUI.init({ url: "data/week-ui.json?v=20260318a" }).finally(function() {
+      if (weekData) initStudentLogin();
+      window.RPDI18n.mountLanguageSwitcher(document.getElementById("langSwitcher"));
+      window.RPDI18n.onLanguageChange(function() {
+        renderWeekPage();
+        refreshOpenShowMe();
+      });
     });
 
     function buildPage(w) {
       var text = getWeekText();
+      var preset = getWeekUiPreset();
       activeWeekView = w;
       var isKo = window.RPDI18n.getLanguage() === "ko";
       var topics = Array.isArray(w.topics) ? w.topics : [];
@@ -2531,13 +2651,16 @@
       var explore = Array.isArray(w.explore) ? w.explore : [];
       var mistakes = Array.isArray(w.mistakes) ? w.mistakes : [];
       var assignment = w.assignment || { checklist: [] };
-      var topicStorageKey = storageKey + "-topics";
+      var weekSummaryConfig = preset.weekSummary || {};
+      var weekSummaryItems = buildWeekSummaryItems(w, preset);
+      var summaryItems = weekSummaryItems.visibleItems;
+      var topicStorageKey = storageKey + "-topics-" + getWeekUiPresetName();
       var savedTopics = JSON.parse(localStorage.getItem(topicStorageKey) || "{}");
-      var topicTotal = topics.length;
-      var topicCheckedInit = topics.filter(function(_, idx) {
+      var topicTotal = summaryItems.length;
+      var topicCheckedInit = summaryItems.filter(function(_, idx) {
         return savedTopics["t" + idx];
       }).length;
-      var topicSectionLabel = isKo ? "이번 주" : "This week";
+      var topicSectionLabel = localizeWeekUiLabel((preset.labels || {}).summaryTitle, isKo ? "이번 주" : "This week");
       var taskSummaryLabel = isKo ? "체크리스트" : "Checklist";
       var referenceSummaryTitle = isKo ? "이번 주 참고자료" : "Week resources";
       var practiceVideoTitle = isKo ? "실습 영상" : "Practice videos";
@@ -2549,10 +2672,10 @@
       var prev = CURRICULUM.find(function(item) { return item.week === w.week - 1; });
       var next = CURRICULUM.find(function(item) { return item.week === w.week + 1; });
       var prevLink = prev
-        ? `<a href="week.html?week=${prev.week}">← Week ${prev.week}</a>`
-        : `<a href="index.html">${text.homeLabel}</a>`;
+        ? `<a href="${withPresetHref("week.html?week=" + prev.week)}">← Week ${prev.week}</a>`
+        : `<a href="${withPresetHref("index.html")}">${text.homeLabel}</a>`;
       var nextLink = next
-        ? `<a href="week.html?week=${next.week}">Week ${next.week} →</a>`
+        ? `<a href="${withPresetHref("week.html?week=" + next.week)}">Week ${next.week} →</a>`
         : `<span style="opacity:.4">${text.lastWeek}</span>`;
 
       var savedProgressState = (function() {
@@ -2576,29 +2699,28 @@
 
       var topicHtml = topicTotal ? `
         <section class="content-block" id="section-topics">
-          <div class="topic-list">
+          <div class="topic-list" style="--topic-desktop-columns:${Math.max(1, Number(weekSummaryConfig.desktopColumns) || 2)};--topic-mobile-columns:${Math.max(1, Number(weekSummaryConfig.mobileColumns) || 1)};">
             <div class="topic-list-head">
               <span class="topic-list-title">${topicSectionLabel}</span>
               <span class="topic-list-count" id="topicCount">${topicCheckedInit} / ${topicTotal}</span>
             </div>
-            <div class="topic-progress" aria-hidden="true">
+            ${weekSummaryConfig.showProgress === false ? "" : `<div class="topic-progress" aria-hidden="true">
               <div class="topic-progress-fill" id="topicFill" style="width:${topicTotal ? Math.round(topicCheckedInit / topicTotal * 100) : 0}%"></div>
-            </div>
+            </div>`}
             <div class="topic-check-list">
-              ${topics.map(function(topic, idx) {
+              ${summaryItems.map(function(topic, idx) {
                 var inputId = "tc-" + weekNum + "-" + idx;
                 var checked = savedTopics["t" + idx] ? " checked" : "";
                 return `<div class="topic-check-item"><input type="checkbox" id="${inputId}"${checked} data-ti="${idx}" /><label for="${inputId}">${topic}</label></div>`;
               }).join("")}
+              ${weekSummaryItems.overflowCount > 0 ? `<div class="topic-check-item topic-check-item-more"><span class="topic-check-more">+${weekSummaryItems.overflowCount} ${isKo ? "더" : "more"}</span></div>` : ""}
             </div>
           </div>
         </section>` : "";
       var weekSummary = getWeekSummaryStats(w);
-      var heroMetaItems = [
-        '<span class="hero-meta-item"><strong>' + weekSummary.practiceCount + '</strong><span>' + text.sectionPractice + '</span></span>',
-        '<span class="hero-meta-item"><strong>' + weekSummary.taskCount + '</strong><span>' + taskSummaryLabel + '</span></span>',
-        '<span class="hero-meta-item"><strong>' + weekSummary.showMeCount + '</strong><span>Show Me</span></span>'
-      ];
+      var heroMetaItems = buildWeekHeroMetaItems(weekSummary, preset, text, isKo);
+      var heroKicker = localizeWeekUiLabel((preset.labels || {}).heroEyebrow, "Blender Archive");
+      var heroSubtitle = buildWeekHeroSubtitle(w, preset);
       var stepsHtml = (w.steps || []).map(function(step, idx) {
         var initiallyExpanded = idx === initialOpenIndex;
         var tasks = Array.isArray(step.tasks) ? step.tasks : [];
@@ -2835,9 +2957,9 @@
             <div class="hero-header">
               <span class="hero-week-well">${String(w.week).padStart(2, "0")}</span>
               <div class="hero-copy">
-                <span class="hero-kicker">Blender Archive</span>
+                <span class="hero-kicker">${heroKicker}</span>
                 <h1>Week ${String(w.week).padStart(2, "0")} · ${w.title}</h1>
-                ${w.subtitle ? `<p>${w.subtitle}</p>` : ""}
+                ${heroSubtitle ? `<p>${heroSubtitle}</p>` : ""}
               </div>
             </div>
             <div class="hero-meta">${heroMetaItems.join("")}</div>
@@ -2862,7 +2984,7 @@
         <section class="content-block">
           <div class="week-nav">
             ${prevLink}
-            <a href="index.html" style="color:var(--muted)">${text.listLabel}</a>
+            <a href="${withPresetHref("index.html")}" style="color:var(--muted)">${text.listLabel}</a>
             ${nextLink}
           </div>
         </section>
@@ -3664,9 +3786,9 @@
 
       var globalMenuLabel = isKo ? "전체 메뉴" : "Site";
       var globalLinks = [
-        { href: "index.html", label: text.homeLabel.replace(/^←\s*/, "") },
-        { href: "library.html", label: text.footerLibrary },
-        { href: "shortcuts.html", label: stripNavGlyph(text.shortcutsLink) },
+        { href: withPresetHref("index.html"), label: text.homeLabel.replace(/^←\s*/, "") },
+        { href: withPresetHref("library.html"), label: text.footerLibrary },
+        { href: withPresetHref("shortcuts.html"), label: stripNavGlyph(text.shortcutsLink) },
         { href: "https://www.notion.so/31e54d654971812e9c38f85124b45e3f", label: stripNavGlyph(text.aiRefsLink), external: true },
         { href: "https://www.notion.so/31e54d65497181c89e8bfa97bb5efaa7", label: stripNavGlyph(text.blenderRefsLink), external: true }
       ];
@@ -3692,9 +3814,9 @@
       });
       var showmeIds = Object.keys(showmeSet);
 
-      var navHtml = "<li><span class=\"nav-section-label\">" + globalMenuLabel + "</span></li>";
-      navHtml += globalLinks.map(function(link) {
-        return "<li><a href=\"" + link.href + "\"" +
+      var navHtml = "<li><span class=\"nav-section-label nav-section-label-global\">" + globalMenuLabel + "</span></li>";
+      navHtml += globalLinks.map(function(link, idx) {
+        return "<li" + (idx === globalLinks.length - 1 ? " class=\"sidebar-group-end\"" : "") + "><a class=\"sidebar-link-global\" href=\"" + link.href + "\"" +
           (link.external ? " target=\"_blank\" rel=\"noopener noreferrer\"" : "") +
           ">" + link.label + "</a></li>";
       }).join("");

@@ -74,116 +74,118 @@
 
     /* ── Layout body ──────────────────────────────────── */
     .admin-body {
-      width: min(var(--max-width), calc(100% - 32px));
+      width: min(calc(var(--max-width) + 120px), calc(100% - 32px));
       margin: 0 auto;
       padding: 28px 0 72px;
       display: grid;
-      grid-template-columns: 272px minmax(0, 1fr);
-      gap: 26px;
+      grid-template-columns: 250px minmax(0, 1fr);
+      gap: 36px;
       align-items: start;
     }
 
     /* ── Sidebar ──────────────────────────────────────── */
     .sidebar {
-      width: 272px; flex-shrink: 0;
-      padding: 18px 12px;
-      background: var(--modal-panel-bg);
-      border: 1px solid var(--line);
-      border-radius: 24px;
-      box-shadow: var(--modal-panel-shadow);
+      width: 100%;
       overflow-y: auto; overflow-x: hidden;
-      position: relative;
-      top: 82px;
-      max-height: calc(100vh - 112px);
-      align-self: start;
       position: sticky;
+      top: 76px;
+      height: calc(100vh - 88px);
+      align-self: start;
+      padding: 12px 18px 32px 0;
+      background: none;
+      border-right: 1px solid var(--line);
+      box-shadow: none;
+      border-radius: 0;
     }
     .sidebar::before {
-      content: "";
-      position: absolute;
-      inset: 0 0 auto;
-      height: 1px;
-      background: var(--modal-top-line);
-      pointer-events: none;
+      display: none;
     }
     .sidebar-block {
       display: grid;
-      gap: 8px;
-      position: relative;
-      z-index: 1;
+      gap: 4px;
     }
     .sidebar-block + .sidebar-block {
-      margin-top: 8px;
-      padding-top: 14px;
-      border-top: 1px solid rgba(255,255,255,.05);
+      margin-top: 14px;
+      padding-top: 0;
+      border-top: none;
     }
     .sidebar-title {
-      font-size: .96rem;
-      font-weight: 650;
+      padding-left: 14px;
+      font-size: .9rem;
+      font-weight: 620;
       letter-spacing: -.02em;
     }
     .sidebar-meta {
+      padding-left: 14px;
       color: var(--muted);
-      font-size: .78rem;
+      font-size: .76rem;
       line-height: 1.6;
     }
     .sidebar-link {
       display: block;
-      padding: 11px 13px;
-      border: 1px solid transparent;
-      border-radius: 16px;
+      padding: 7px 0 7px 14px;
+      border-left: 2px solid transparent;
       color: var(--muted);
-      font-size: .83rem;
-      line-height: 1.55;
-      transition: color .14s ease, border-color .14s ease, background .14s ease, transform .14s ease;
+      font-size: .84rem;
+      line-height: 1.45;
+      transition: color .14s ease, border-color .14s ease;
     }
     .sidebar-link:hover {
       color: var(--text);
-      border-color: var(--line);
-      background: rgba(255,255,255,.03);
-      transform: translateX(2px);
     }
     .sidebar-link.is-active {
       color: var(--text);
-      border-color: rgba(96,165,250,.34);
-      background: var(--modal-nav-active-bg);
-      box-shadow: inset 0 0 0 1px rgba(147,197,253,.12);
+      border-left-color: var(--key-soft);
     }
     .sidebar-label {
-      padding: 16px 10px 10px; font-size: .72rem; font-weight: 700;
-      color: var(--muted); letter-spacing: .12em; text-transform: uppercase;
+      display: block;
+      padding: 18px 0 6px 14px;
+      font-size: .7rem;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    .sidebar-label.sidebar-label-global {
+      font-size: .68rem;
+      color: color-mix(in srgb, var(--muted) 82%, transparent);
+      letter-spacing: .12em;
     }
     .sidebar-item {
       display: flex; align-items: center; gap: 10px;
-      padding: 10px 12px; cursor: pointer;
-      border: 1px solid transparent;
-      border-radius: 16px;
-      transition: background .12s, border-color .12s, transform .12s;
-      font-size: .88rem; color: var(--muted-strong);
+      padding: 7px 0 7px 14px; cursor: pointer;
+      border-left: 2px solid transparent;
+      transition: color .12s, border-color .12s;
+      font-size: .84rem; color: var(--muted);
     }
     .sidebar-item:hover {
-      background: rgba(255,255,255,.03);
-      border-color: var(--line);
-      transform: translateX(2px);
+      color: var(--text);
     }
     .sidebar-item.active {
-      background: var(--modal-nav-active-bg);
-      border-color: rgba(96,165,250,.34);
+      border-left-color: var(--key-soft);
       color: var(--text);
-      box-shadow: inset 0 0 0 1px rgba(147,197,253,.1);
     }
     .sidebar-dot {
-      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+      width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
     }
     .sidebar-dot.done     { background: var(--success); }
     .sidebar-dot.active   { background: var(--key); }
-    .sidebar-dot.upcoming { background: rgba(255,255,255,.2); }
+    .sidebar-dot.upcoming { background: rgba(255,255,255,.18); }
     .sidebar-week-num {
       font-size: .72rem; font-weight: 600; color: var(--muted);
       min-width: 18px;
     }
     .sidebar-week-title {
       flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .sidebar-link-global {
+      padding-top: 6px;
+      padding-bottom: 6px;
+      font-size: .8rem;
+      color: color-mix(in srgb, var(--muted-strong) 72%, var(--muted) 28%);
+    }
+    .sidebar-link-global:hover {
+      color: var(--muted-strong);
     }
 
     /* ── Main editor ──────────────────────────────────── */
@@ -654,9 +656,12 @@
       .sidebar {
         position: relative;
         top: 0;
-        max-height: none;
+        height: auto;
         width: 100%;
         order: 2;
+        padding: 0 0 18px;
+        border-right: none;
+        border-bottom: 1px solid var(--line);
       }
       .editor-pane { order: 1; }
       .admin-hero-card {
@@ -675,12 +680,15 @@
       .sidebar {
         position: fixed; left: 0; top: 0; bottom: 0;
         z-index: 50; width: 280px;
-        max-height: none;
+        height: auto;
         margin: 0;
         border-radius: 0;
         transform: translateX(-100%);
         transition: transform .22s ease;
         order: initial;
+        background: var(--surface);
+        border-right: 1px solid var(--line);
+        padding: 16px 20px 32px 0;
       }
       .sidebar.open { transform: translateX(0); }
       .sidebar-overlay {
@@ -1131,15 +1139,18 @@
           <span class="sidebar-meta" id="sidebarMeta">커리큘럼 구조를 웹페이지 흐름 그대로 편집합니다.</span>
         </div>
         <div class="sidebar-block">
-          <a class="sidebar-link is-active" href="#adminHero">관리 개요</a>
-          <a class="sidebar-link" href="#editorWorkspace">편집 워크스페이스</a>
-          <a class="sidebar-link" href="#practiceSection">실습 섹션</a>
-          <a class="sidebar-link" href="#assignmentSection">과제 섹션</a>
+          <span class="sidebar-label sidebar-label-global">페이지</span>
+          <a class="sidebar-link sidebar-link-global" href="index.html">홈</a>
+          <a class="sidebar-link sidebar-link-global" href="library.html">카드 라이브러리</a>
+          <a class="sidebar-link sidebar-link-global" href="shortcuts.html">단축키 DB</a>
         </div>
         <div class="sidebar-block">
-          <a class="sidebar-link" href="index.html">홈 페이지</a>
-          <a class="sidebar-link" href="library.html">카드 라이브러리</a>
-          <a class="sidebar-link" href="shortcuts.html">단축키 DB</a>
+          <span class="sidebar-label">현재 주차</span>
+          <a class="sidebar-link is-active" href="#editorPreview" data-nav-target="editorPreview">개요</a>
+          <a class="sidebar-link" href="#topicsSection" data-nav-target="topicsSection">이번 주</a>
+          <a class="sidebar-link" href="#practiceSection" data-nav-target="practiceSection">실습</a>
+          <a class="sidebar-link" href="#shortcutsSection" data-nav-target="shortcutsSection">참고 자료</a>
+          <a class="sidebar-link" href="#assignmentSection" data-nav-target="assignmentSection">과제</a>
         </div>
         <div class="sidebar-label">주차 목록</div>
         <div id="sidebarList"></div>
@@ -1147,41 +1158,9 @@
 
       <!-- Editor -->
       <main class="editor-pane" id="editorPane">
-        <section class="hero admin-hero" id="adminHero">
-          <div class="admin-hero-card">
-            <div class="admin-hero-copy">
-              <div class="eyebrow" id="adminHeroEyebrow">Curriculum Editor</div>
-              <h1 id="adminHeroTitle">원래 웹 구조를 유지하는 RPD Admin</h1>
-              <p id="adminHeroDescription">홈과 주차 페이지의 흐름 그대로, 선택한 주차를 편집하고 바로 공개 페이지로 미리볼 수 있습니다.</p>
-              <div class="hero-actions cta-group admin-hero-actions">
-                <button class="btn btn-primary" id="heroPreviewBtn" type="button">현재 주차 미리보기</button>
-                <a class="btn btn-ghost" href="index.html">홈 보기</a>
-                <a class="btn-link" href="library.html">카드 라이브러리 <span aria-hidden="true">→</span></a>
-              </div>
-            </div>
-            <div class="admin-hero-meta-wrap">
-              <div class="hero-meta-label">Admin Snapshot</div>
-              <div class="admin-hero-meta">
-                <span class="hero-meta-chip" id="adminHeroWeek">선택된 주차 · —</span>
-                <span class="hero-meta-chip" id="adminHeroState">저장 상태 · 동기화됨</span>
-                <span class="hero-meta-chip" id="adminHeroVersion">버전 · —</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="content-block" id="editorWorkspace">
-          <div class="admin-workspace-panel">
-            <div class="admin-section-intro">
-              <div class="eyebrow">Editable Week Preview</div>
-              <h2 class="admin-section-title" id="workspaceTitle">선택한 주차를 실제 페이지 구조 그대로 편집합니다</h2>
-              <p class="admin-section-copy" id="workspaceDescription">이 영역은 공개 주차 페이지의 정보 순서를 따라가는 편집 캔버스입니다.</p>
-            </div>
-            <div class="editor-inner" id="editorInner">
-              <div class="empty-state">불러오는 중...</div>
-            </div>
-          </div>
-        </section>
+        <div class="editor-inner" id="editorInner">
+          <div class="empty-state">불러오는 중...</div>
+        </div>
       </main>
     </div>
 
@@ -1255,6 +1234,7 @@
     var hamburgerBtn   = document.getElementById("hamburgerBtn");
     var sidebarEl      = document.getElementById("sidebar");
     var sidebarOverlay = document.getElementById("sidebarOverlay");
+    var sectionNavLinks = Array.from(document.querySelectorAll(".sidebar-link[data-nav-target]"));
     var notionGroup    = document.getElementById("notionGroup");
     var notionPushAllBtn = document.getElementById("notionPushAllBtn");
     var pushAllOverlay   = document.getElementById("pushAllOverlay");
@@ -1333,6 +1313,45 @@
           ? "현재 선택된 주차를 공개 페이지와 같은 섹션 순서로 수정합니다. 저장 전까지는 관리자 화면에서만 반영됩니다."
           : "이 영역은 공개 주차 페이지의 정보 순서를 따라가는 편집 캔버스입니다.";
       }
+    }
+
+    var editorNavObserver = null;
+
+    function setActiveSectionLink(targetId) {
+      sectionNavLinks.forEach(function(link) {
+        link.classList.toggle("is-active", link.dataset.navTarget === targetId);
+      });
+    }
+
+    function initEditorNav() {
+      if (editorNavObserver) {
+        editorNavObserver.disconnect();
+        editorNavObserver = null;
+      }
+
+      var observedTargets = sectionNavLinks.map(function(link) {
+        return document.getElementById(link.dataset.navTarget);
+      }).filter(Boolean);
+
+      if (!observedTargets.length) return;
+
+      setActiveSectionLink(observedTargets[0].id);
+
+      editorNavObserver = new IntersectionObserver(function(entries) {
+        var visible = entries
+          .filter(function(entry) { return entry.isIntersecting; })
+          .sort(function(a, b) { return a.boundingClientRect.top - b.boundingClientRect.top; });
+        if (!visible.length) return;
+        setActiveSectionLink(visible[0].target.id);
+      }, {
+        root: null,
+        rootMargin: "-24% 0px -58% 0px",
+        threshold: [0.05, 0.2, 0.4]
+      });
+
+      observedTargets.forEach(function(target) {
+        editorNavObserver.observe(target);
+      });
     }
 
     function markDirty(weekNum) {
@@ -1827,6 +1846,15 @@
       sidebarEl.classList.remove("open");
       sidebarOverlay.classList.remove("visible");
     });
+    sectionNavLinks.forEach(function(link) {
+      link.addEventListener("click", function() {
+        setActiveSectionLink(link.dataset.navTarget);
+        if (window.matchMedia("(max-width: 800px)").matches) {
+          sidebarEl.classList.remove("open");
+          sidebarOverlay.classList.remove("visible");
+        }
+      });
+    });
 
     // ─── Data loading ────────────────────────────────────
     /** Parse API response: supports both bare array and { data } envelope */
@@ -1897,9 +1925,11 @@
       var weekNum = curriculum[selectedIdx].week;
       window.open("week.html?week=" + weekNum, "_blank");
     });
-    heroPreviewBtn.addEventListener("click", function() {
-      previewBtn.click();
-    });
+    if (heroPreviewBtn) {
+      heroPreviewBtn.addEventListener("click", function() {
+        previewBtn.click();
+      });
+    }
 
     // ─── Unsaved changes warning ─────────────────────────
     window.addEventListener("beforeunload", function(e) {
@@ -1966,6 +1996,7 @@
       }
       // Safe: buildEditorHTML uses esc() on every dynamic value
       editorInner.innerHTML = buildEditorHTML(w);
+      initEditorNav();
     }
 
     // ─── Event delegation ────────────────────────────────

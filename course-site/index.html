@@ -786,12 +786,78 @@
 
   <script src="data/i18n-content.js?v=20260318e"></script>
   <script src="assets/i18n.js?v=20260318d"></script>
+  <script src="assets/week-ui.js?v=20260318a"></script>
   <script src="assets/showme/_registry.js?v=20260318f"></script>
   <script src="data/curriculum.js"></script>
   <script>
     // curriculum.js의 CURRICULUM 배열은 정적 파일로 사용자 입력이 없는 신뢰된 소스입니다.
     function getPageStrings() {
       return window.RPDI18n.getStrings("index");
+    }
+
+    function getUiPreset() {
+      return window.RPDWeekUI ? window.RPDWeekUI.getPreset() : {};
+    }
+
+    function localizeUiLabel(value, fallback) {
+      return window.RPDWeekUI
+        ? window.RPDWeekUI.localize(value, window.RPDI18n.getLanguage(), fallback)
+        : fallback;
+    }
+
+    function withPresetHref(href) {
+      return window.RPDWeekUI ? window.RPDWeekUI.withPreset(href) : href;
+    }
+
+    function getPresetProgramTitle(text) {
+      var preset = getUiPreset();
+      var labels = preset.labels || {};
+      var school = localizeUiLabel(labels.school, "");
+      var program = localizeUiLabel(labels.program, "");
+      if (!school && !program) return text.programTitle;
+      return [school, program].filter(Boolean).join(" · ") || text.programTitle;
+    }
+
+    function getWeekCardPreviewItems(localizedWeek, preset) {
+      var source = preset.weekCard && preset.weekCard.previewSource;
+      if (source === "steps") {
+        return (localizedWeek.steps || []).map(function(step) { return step.title; }).filter(Boolean);
+      }
+      return Array.isArray(localizedWeek.topics) ? localizedWeek.topics.slice() : [];
+    }
+
+    function getWeekCardMetricLabel(key, text, preset) {
+      var labels = (preset.labels || {});
+      if (key === "practice") return localizeUiLabel(labels.metricPractice, window.RPDI18n.getLanguage() === "ko" ? "실습" : "practice");
+      if (key === "showme") return localizeUiLabel(labels.metricShowMe, "Show Me");
+      if (key === "tasks") return localizeUiLabel(labels.metricTasks, text.weekMetricTasks);
+      if (key === "refs") return localizeUiLabel(labels.metricRefs, text.weekMetricRefs);
+      if (key === "cards") return text.weekMetricCards;
+      return "";
+    }
+
+    function buildWeekCardMetrics(week, text, preset) {
+      var practiceCount = (week.steps || []).length;
+      var showMeCount = collectArchiveCardIds(week).length;
+      var taskCount = countTasks(week);
+      var referenceCount = countReferences(week);
+      var metricValues = {
+        practice: practiceCount,
+        showme: showMeCount,
+        tasks: taskCount,
+        refs: referenceCount,
+        cards: showMeCount
+      };
+      var metricKeys = (preset.weekCard && Array.isArray(preset.weekCard.metrics) && preset.weekCard.metrics.length)
+        ? preset.weekCard.metrics
+        : ["practice", "showme", "tasks"];
+
+      return metricKeys.map(function(key) {
+        if (!Object.prototype.hasOwnProperty.call(metricValues, key)) return "";
+        var label = getWeekCardMetricLabel(key, text, preset);
+        if (!label) return "";
+        return metricValues[key] + " " + label;
+      }).filter(Boolean);
     }
 
     function isExamWeek(w) {
@@ -870,7 +936,7 @@
       var libraryCount = typeof SHOWME_REGISTRY !== "undefined" ? Object.keys(SHOWME_REGISTRY).length : 0;
       return [
         {
-          href: "library.html",
+          href: withPresetHref("library.html"),
           icon: "◫",
           kicker: text.archiveCardLibraryKicker,
           title: text.archiveCardLibraryTitle,
@@ -878,7 +944,7 @@
           meta: libraryCount + " " + text.archiveCardLibraryMeta
         },
         {
-          href: "shortcuts.html",
+          href: withPresetHref("shortcuts.html"),
           icon: "⌨",
           kicker: text.archiveCardShortcutKicker,
           title: text.archiveCardShortcutTitle,
@@ -898,11 +964,11 @@
 
     function buildHeroActions(text) {
       var activeWeek = CURRICULUM.find(function(week) { return week.status === "active"; }) || CURRICULUM[0];
-      var activeHref = activeWeek ? ("week.html?week=" + activeWeek.week) : "#programSection";
+      var activeHref = activeWeek ? withPresetHref("week.html?week=" + activeWeek.week) : "#programSection";
       return [
         '<a class="btn btn-primary" href="' + activeHref + '">' + text.heroPrimaryCta + '</a>',
-        '<a class="btn btn-ghost" href="library.html">' + text.heroSecondaryCta + '</a>',
-        '<a class="btn-link" href="shortcuts.html">' + text.heroTertiaryCta + ' <span aria-hidden="true">→</span></a>'
+        '<a class="btn btn-ghost" href="' + withPresetHref("library.html") + '">' + text.heroSecondaryCta + '</a>',
+        '<a class="btn-link" href="' + withPresetHref("shortcuts.html") + '">' + text.heroTertiaryCta + ' <span aria-hidden="true">→</span></a>'
       ].join("");
     }
 
@@ -938,13 +1004,17 @@
 
     function renderPage() {
       var text = getPageStrings();
+      var preset = getUiPreset();
+      var labels = preset.labels || {};
       document.title = text.pageTitle;
       var meta = document.querySelector('meta[name="description"]');
       if (meta) meta.setAttribute("content", text.metaDescription);
       document.getElementById("topbarTitle").textContent = text.topbarTitle;
       document.getElementById("topbarMeta").textContent = text.topbarMeta;
       document.getElementById("libraryLink").textContent = text.libraryLink;
+      document.getElementById("libraryLink").setAttribute("href", withPresetHref("library.html"));
       document.getElementById("shortcutsLink").textContent = text.shortcutsLink;
+      document.getElementById("shortcutsLink").setAttribute("href", withPresetHref("shortcuts.html"));
       document.getElementById("sideTitle").textContent = text.topbarTitle;
       document.getElementById("sideMeta").textContent = text.topbarMeta;
       document.getElementById("sideHeroLink").textContent = text.heroTitle;
@@ -952,9 +1022,11 @@
       document.getElementById("sideProgramLink").textContent = text.programTitle;
       document.getElementById("sideWeeksLink").textContent = text.weekSectionTitle;
       document.getElementById("sideLibraryLink").textContent = text.libraryLink;
+      document.getElementById("sideLibraryLink").setAttribute("href", withPresetHref("library.html"));
       document.getElementById("sideShortcutsLink").textContent = text.shortcutsLink;
+      document.getElementById("sideShortcutsLink").setAttribute("href", withPresetHref("shortcuts.html"));
       document.getElementById("themeToggle").setAttribute("aria-label", text.themeToggleAria);
-      document.getElementById("heroEyebrow").textContent = text.heroEyebrow;
+      document.getElementById("heroEyebrow").textContent = localizeUiLabel(labels.heroEyebrow, text.heroEyebrow);
       document.getElementById("heroTitle").textContent = text.heroTitle;
       document.getElementById("heroDescription").textContent = text.heroDescription;
       document.getElementById("heroMetaLabel").textContent = text.heroMetaLabel;
@@ -963,7 +1035,7 @@
       document.getElementById("archiveSectionTitle").textContent = text.archiveSectionTitle;
       document.getElementById("archiveSectionDescription").textContent = text.archiveSectionDescription;
       document.getElementById("programEyebrow").textContent = text.programEyebrow;
-      document.getElementById("programTitle").textContent = text.programTitle;
+      document.getElementById("programTitle").textContent = getPresetProgramTitle(text);
       document.getElementById("programDescription").textContent = text.programDescription;
       document.getElementById("weekSectionEyebrow").textContent = text.weekSectionEyebrow;
       document.getElementById("weekSectionTitle").textContent = text.weekSectionTitle;
@@ -1007,15 +1079,17 @@
         var badgeClass = badgeInfo[0];
         var badgeText = badgeInfo[1];
         var isActive = w.status === "active";
-        var maxChips = isActive ? 5 : 3;
-        var pageUrl = "week.html?week=" + w.week;
-        var archiveCardCount = collectArchiveCardIds(w).length;
-        var taskCount = countTasks(w);
-        var referenceCount = countReferences(w);
+        var weekCardPreset = preset.weekCard || {};
+        var maxChips = isActive
+          ? (weekCardPreset.activePreviewMaxItems || weekCardPreset.previewMaxItems || 5)
+          : (weekCardPreset.previewMaxItems || 3);
+        var pageUrl = withPresetHref("week.html?week=" + w.week);
+        var previewItems = getWeekCardPreviewItems(localized, preset);
 
         var isUpcoming = w.status !== "done" && w.status !== "active" && !isExamWeek(w);
         var a = document.createElement("a");
         a.className = "week-card " + getCardClass(w) + (isUpcoming ? " is-locked" : "");
+        a.dataset.highlightMode = weekCardPreset.highlightMode || "status";
         if (!isUpcoming) a.href = pageUrl;
 
         if (isActive) {
@@ -1049,16 +1123,16 @@
 
         var topics = document.createElement("div");
         topics.className = "week-topics";
-        localized.topics.slice(0, maxChips).forEach(function(topic) {
+        previewItems.slice(0, maxChips).forEach(function(topic) {
           var chip = document.createElement("span");
           chip.className = "topic-chip";
           chip.textContent = topic;
           topics.appendChild(chip);
         });
-        if (localized.topics.length > maxChips) {
+        if (previewItems.length > maxChips) {
           var more = document.createElement("span");
           more.className = "topic-chip";
-          more.textContent = "+" + (localized.topics.length - maxChips);
+          more.textContent = "+" + (previewItems.length - maxChips);
           topics.appendChild(more);
         }
         a.appendChild(topics);
@@ -1067,11 +1141,7 @@
         footer.className = "week-footer";
         var metrics = document.createElement("div");
         metrics.className = "week-metrics";
-        [
-          archiveCardCount + " " + text.weekMetricCards,
-          taskCount + " " + text.weekMetricTasks,
-          referenceCount + " " + text.weekMetricRefs
-        ].forEach(function(label) {
+        buildWeekCardMetrics(w, text, preset).forEach(function(label) {
           var metric = document.createElement("span");
           metric.className = "week-metric";
           metric.textContent = label;
@@ -1090,8 +1160,10 @@
       initIndexSidebar();
     }
 
-    window.RPDI18n.mountLanguageSwitcher(document.getElementById("langSwitcher"));
-    window.RPDI18n.onLanguageChange(renderPage);
+    window.RPDWeekUI.init({ url: "data/week-ui.json?v=20260318a" }).finally(function() {
+      window.RPDI18n.mountLanguageSwitcher(document.getElementById("langSwitcher"));
+      window.RPDI18n.onLanguageChange(renderPage);
+    });
 
     // Theme toggle
     document.getElementById("themeToggle").addEventListener("click", function() {
