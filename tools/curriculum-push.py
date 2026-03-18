@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-curriculum-push.py — curriculum.js → Notion 단방향 push
-=========================================================
+curriculum-push.py — canonical curriculum → Notion 단방향 push
+===============================================================
 Usage:
     python3 tools/curriculum-push.py              # 전체 15주
     python3 tools/curriculum-push.py --week 3     # Week 3만
@@ -15,24 +15,18 @@ Exit codes:
 from __future__ import annotations
 
 import argparse
-import json
-import re
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
+from content_pipeline import content_version, load_canonical_curriculum
 from notion_api import get_notion_token, load_notion_mapping, sync_week_to_notion
 
 ROOT = Path(__file__).resolve().parent.parent
-CURRICULUM_JS = ROOT / "course-site" / "data" / "curriculum.js"
 
 
 def load_curriculum() -> list[dict]:
-    text = CURRICULUM_JS.read_text(encoding="utf-8")
-    match = re.search(r"const CURRICULUM\s*=\s*(\[.*?\])\s*;", text, re.DOTALL)
-    if not match:
-        raise ValueError("curriculum.js에서 CURRICULUM 배열을 찾을 수 없음")
-    return json.loads(match.group(1))
+    return load_canonical_curriculum()
 
 
 def push_weeks(weeks: list[dict], token: str) -> tuple[int, int]:
@@ -56,7 +50,7 @@ def push_weeks(weeks: list[dict], token: str) -> tuple[int, int]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="curriculum.js → Notion push")
+    parser = argparse.ArgumentParser(description="weeks/site-data.json → Notion push")
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--week", type=int, metavar="N", help="특정 주차만 push")
     group.add_argument("--weeks", type=int, nargs="+", metavar="N", help="복수 주차 push")
@@ -70,7 +64,7 @@ def main() -> int:
     try:
         all_weeks = load_curriculum()
     except Exception as exc:
-        print(f"Error: curriculum.js 읽기 실패 — {exc}", file=sys.stderr)
+        print(f"Error: canonical curriculum 읽기 실패 — {exc}", file=sys.stderr)
         return 1
 
     if args.week is not None:
@@ -84,7 +78,7 @@ def main() -> int:
         weeks_to_push = [w for w in all_weeks if w.get("week") in target_nums]
         missing = target_nums - {w.get("week") for w in weeks_to_push}
         for n in sorted(missing):
-            print(f"⚠ Week {n}: curriculum.js에 없음", file=sys.stderr)
+            print(f"⚠ Week {n}: canonical curriculum에 없음", file=sys.stderr)
     else:
         weeks_to_push = all_weeks
 
@@ -92,7 +86,10 @@ def main() -> int:
         print("push할 주차가 없습니다.", file=sys.stderr)
         return 2
 
-    print(f"Pushing {len(weeks_to_push)} week(s) to Notion...")
+    print(
+        f"Pushing {len(weeks_to_push)} week(s) to Notion "
+        f"(source version {content_version(all_weeks)})..."
+    )
     ok, fail = push_weeks(weeks_to_push, token)
     print(f"\nDone — {ok} succeeded, {fail} failed.")
     return 0 if ok > 0 else 1

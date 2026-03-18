@@ -27,13 +27,21 @@ import re
 import urllib.request
 from pathlib import Path
 
+from runtime_paths import COURSE_SITE, ROOT
+
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
 NOTION_API = "https://api.notion.com/v1"
-ROOT = Path(__file__).resolve().parent.parent
-NOTION_MAPPING = ROOT / "tools" / "notion-mapping.json"
-SUPPLEMENTS_JSON = ROOT / "course-site" / "assets" / "showme" / "_supplements.json"
+NOTION_MAPPING = Path(
+    os.environ.get("RPD_NOTION_MAPPING_JSON", str(ROOT / "tools" / "notion-mapping.json"))
+).expanduser().resolve()
+SUPPLEMENTS_JSON = Path(
+    os.environ.get(
+        "RPD_SUPPLEMENTS_JSON",
+        str(COURSE_SITE / "assets" / "showme" / "_supplements.json"),
+    )
+).expanduser().resolve()
 
 
 # ---------------------------------------------------------------------------

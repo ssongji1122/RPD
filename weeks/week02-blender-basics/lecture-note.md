@@ -1093,6 +1093,7 @@ Tab 키 하나로 '보는 모드'와 '편집 모드'를 오가요. Extrude(E)는
 
 - Tab으로 Edit Mode 진입/복귀
 - 면 선택 후 E로 Extrude 하기 (위나 아래 방향으로 뽑기)
+- I 키로 Inset 적용해보기 (면 선택 후 I → 드래그로 안쪽 면 생성)
 - Ctrl+R로 Loop Cut 추가해보기 (마우스로 위치 조정 후 클릭)
 
 #### 5. Bevel 마무리
@@ -1112,13 +1113,37 @@ Tab 키 하나로 '보는 모드'와 '편집 모드'를 오가요. Extrude(E)는
 - Tab으로 Object Mode 복귀 후 확인
 - F12로 렌더 or 스크린샷 저장
 
+#### 6. 뷰포트 셰이딩
+
+같은 모델도 어떤 '조명 방식'으로 보느냐에 따라 전혀 다르게 보여요. Solid는 작업 중 기본 뷰, Material Preview는 재질 확인, Rendered는 실제 렌더 결과예요.
+
+배울 것
+
+- 4가지 Shading 모드를 구분한다
+- 작업 목적에 맞는 모드를 선택한다
+
+체크해볼 것
+
+- Z 키로 Pie Menu 열어 모드 전환 (Wireframe / Solid / Material Preview / Rendered)
+- Solid 모드에서 Cavity/Matcap 바꿔보기 (헤더 오른쪽 구 아이콘 클릭)
+- Material Preview로 HDRI 환경 확인 (재질 없어도 형태는 확인 가능)
+
 ### 핵심 단축키
 
 - `MMB Drag`: Orbit (시점 회전)
 - `Shift + MMB`: Pan (시점 이동)
 - `Scroll`: Zoom (확대/축소)
 - `Numpad 1/3/7`: Front/Right/Top View
-- `G / R / S`: Grab / Rotate / Scale
+- `Numpad 5`: Perspective ↔ Orthographic 전환
+- `Numpad 2/4/6/8`: Orbit 상/하/좌/우 회전
+- `Numpad .`: Frame Selected (선택 오브젝트 포커스)
+- `Ctrl + Numpad 1/3/7`: Back/Left/Bottom View
+- `Shift + Numpad 4/6`: Roll (뷰 좌우 기울이기)
+- `Numpad Plus`: Zoom In
+- `Numpad Minus`: Zoom Out
+- `G`: Grab (이동)
+- `R`: Rotate (회전)
+- `S`: Scale (크기 조절)
 - `G + X/Y/Z`: 축 고정 이동
 - `Tab`: Object ↔ Edit Mode 전환
 
@@ -1148,6 +1173,7 @@ Tab 키 하나로 '보는 모드'와 '편집 모드'를 오가요. Extrude(E)는
 - [Preferences](https://docs.blender.org/manual/en/latest/editors/preferences/introduction.html)
 - [3D Navigation](https://docs.blender.org/manual/en/latest/editors/3dview/navigate/introduction.html)
 - [Extrude Region](https://docs.blender.org/manual/en/latest/modeling/meshes/tools/extrude_region.html)
+- [Inset Faces](https://docs.blender.org/manual/en/latest/modeling/meshes/tools/inset_faces.html)
 - [Loop Cut](https://docs.blender.org/manual/en/latest/modeling/meshes/tools/loop.html)
 - [Bevel](https://docs.blender.org/manual/en/latest/modeling/meshes/tools/bevel.html)
 <!-- AUTO:CURRICULUM-SYNC:END -->

@@ -531,8 +531,8 @@ Graph Editor는 움직임의 속도 곡선을 보여줘요. 직선이면 일정 
 - `Alt + I`: Delete Keyframe
 - `Space`: 재생/정지
 - `← / →`: 이전/다음 프레임
-- `Shift + ← / →`: 시작/끝 프레임으로 이동
-- `T`: Interpolation 변경 (Bezier/Linear)
+- `Shift + ← / →`: 시작/끝 프레임
+- `T`: Interpolation 변경
 - `V`: 핸들 타입 변경 (Free/Auto)
 
 ### 과제 한눈에 보기
