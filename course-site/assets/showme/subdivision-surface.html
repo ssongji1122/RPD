@@ -567,7 +567,7 @@ body {
 <!-- Tab Bar -->
 <nav class="tabs" role="tablist">
   <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
-  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">interaction</button>
   <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
   <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
 </nav>
@@ -598,30 +598,13 @@ body {
       <p>엣지를 선택 후 <span class="kbd">Shift</span>+<span class="kbd">E</span>로 Crease 값(0~1)을 설정합니다. 값이 1이면 Subdivision이 올라가도 그 모서리는 날카롭게 유지됩니다.</p>
       <div class="analogy">풍선에서 실로 꽉 묶인 부분만 날카롭게 남는 것</div>
     </div>
-    <div class="concept-card" style="border-color:rgba(16,185,129,.25); background:rgba(16,185,129,.06); grid-column: 1 / -1;">
-      <h3><span class="badge" style="background:rgba(16,185,129,.18); color:#6ee7b7;">셰이딩</span> Shade Smooth &amp; Auto Smooth</h3>
-      <p style="margin:0 0 10px;">Subdivision은 <strong>지오메트리(폴리곤 수)</strong>를 늘리고, Shade Smooth는 <strong>노멀(빛 반사 방향)</strong>을 부드럽게 만듭니다. 두 가지는 독립적으로 작동합니다.</p>
-      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:12px;">
-        <div style="background:var(--surface-strong); border-radius:10px; padding:12px; border:1px solid var(--line);">
-          <div style="font-weight:600; font-size:.82rem; color:var(--muted-strong); margin-bottom:6px;">Shade Flat</div>
-          <div style="font-size:.8rem; color:var(--muted);">각 페이스가 고유 노멀 사용 → 각진 패싯(faceted) 표면. 로우폴리 스타일에 사용.</div>
-        </div>
-        <div style="background:var(--surface-strong); border-radius:10px; padding:12px; border:1px solid rgba(16,185,129,.2);">
-          <div style="font-weight:600; font-size:.82rem; color:#6ee7b7; margin-bottom:6px;">Shade Smooth</div>
-          <div style="font-size:.8rem; color:var(--muted);">모든 엣지에서 노멀을 보간 → 완전 부드러운 표면. 날카로운 코너에서 얼룩 발생 가능.</div>
-        </div>
-        <div style="background:var(--surface-strong); border-radius:10px; padding:12px; border:1px solid rgba(10,132,255,.2);">
-          <div style="font-weight:600; font-size:.82rem; color:var(--key-soft); margin-bottom:6px;">Shade Smooth by Angle</div>
-          <div style="font-size:.8rem; color:var(--muted);">기준각(기본 30°) 이하 = 부드럽게, 초과 = 날카롭게. 자동으로 구분해주는 <strong>스마트 셰이딩</strong>.</div>
-        </div>
-      </div>
-      <div style="font-size:.82rem; color:var(--muted); background:var(--surface); border-radius:8px; padding:10px 12px; border-left:2px solid var(--key);">
-        <strong style="color:var(--key-soft);">적용 방법</strong> — 오브젝트 선택 후 우클릭 → <em>Shade Smooth by Angle</em>. 각도 임계값(Threshold)은 Operator 패널(<span class="kbd">F9</span>)에서 조정.<br>
-        <span style="color:var(--muted);">→ Modifier 스택에 <strong>Smooth by Angle</strong> 노드가 자동 추가됩니다.</span>
-      </div>
-      <div class="analogy" style="margin-top:10px;">조각상에 물감을 칠할 때 — Subdivision은 조각을 더 세밀하게 깎는 것, Shade Smooth는 광택제를 발라 빛이 부드럽게 반사되게 하는 것</div>
-    </div>
   </div>
+  <details style="margin-top:14px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:14px 16px">
+    <summary style="cursor:pointer;color:var(--key-soft);font-weight:600;list-style:none">더보기</summary>
+    <div style="margin-top:10px;color:var(--muted-strong);font-size:.84rem;line-height:1.7">
+      Subdivision은 폴리곤 수를 늘리고, Shade Smooth는 빛 반사를 부드럽게 만듭니다. 둘은 다른 기능입니다. 결과가 너무 둥글면 Crease를, 셰이딩만 거칠면 Shade Smooth by Angle을 먼저 확인하면 됩니다.
+    </div>
+  </details>
 
   <div class="shortcut-list">
     <h4>주요 단축키</h4>
@@ -646,19 +629,42 @@ body {
   </div>
 </section>
 
-<!-- TAB 2: 시각적 비교 -->
+<!-- TAB 2: interaction -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <div class="scenario-nav" id="scenarioNav">
-    <button class="scenario-btn is-active" data-scene="level0">Level 0→1: 첫 세분화</button>
-    <button class="scenario-btn" data-scene="level2">Level 1→2: 더욱 부드럽게</button>
-    <button class="scenario-btn" data-scene="crease">Crease: 날카로운 엣지 유지</button>
+  <div style="display:grid;grid-template-columns:minmax(220px,260px) 1fr;gap:14px;align-items:start">
+    <aside style="border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px">
+        <div style="font-size:.9rem;font-weight:700;color:var(--text)">Subdivision Surface</div>
+        <span style="padding:4px 8px;border-radius:999px;background:rgba(10,132,255,.14);color:var(--key-soft);font-size:.72rem;font-weight:600">Modifier</span>
+      </div>
+      <p style="margin:0 0 14px;font-size:.78rem;color:var(--muted)">Levels와 Crease만 보면 됩니다.</p>
+
+      <div style="margin-bottom:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px">
+          <label for="subdivLevelRange" style="font-size:.82rem;font-weight:600;color:var(--muted-strong)">Viewport Levels</label>
+          <span id="subdivLevelLabel" style="font-size:.76rem;color:var(--key-soft)">1</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 72px;gap:8px;align-items:center">
+          <input type="range" id="subdivLevelRange" min="1" max="2" step="1" value="1" style="width:100%;accent-color:var(--key)">
+          <input type="number" id="subdivLevelNumber" min="1" max="2" step="1" value="1" inputmode="numeric" style="width:100%;border-radius:10px;border:1px solid var(--line-strong);background:rgba(255,255,255,.04);color:var(--text);padding:7px 10px;font:inherit;font-size:.82rem">
+        </div>
+      </div>
+
+      <label for="subdivCrease" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);font-size:.82rem;color:var(--muted-strong)">
+        <span>Crease Edge 유지</span>
+        <input type="checkbox" id="subdivCrease" style="width:18px;height:18px;accent-color:var(--key)">
+      </label>
+    </aside>
+
+    <div>
+      <div class="scenario-desc" id="sceneDesc">기본 8각형 메쉬에 Level 1 Subdivision을 적용합니다. 각 면이 4개로 분할되어 폴리곤 수가 4배가 됩니다.</div>
+      <div class="before-after" id="baWrap">
+        <div class="ba-panel"><span class="ba-label label-before">BEFORE</span><canvas id="cvBefore" width="320" height="220"></canvas></div>
+        <div class="ba-panel"><span class="ba-label label-after">AFTER</span><canvas id="cvAfter" width="320" height="220"></canvas></div>
+      </div>
+      <div class="cause-effect" id="ceFlow"></div>
+    </div>
   </div>
-  <div class="scenario-desc" id="sceneDesc">기본 8각형 메쉬에 Level 1 Subdivision을 적용합니다. 각 면이 4개로 분할되어 폴리곤 수가 4배가 됩니다.</div>
-  <div class="before-after" id="baWrap">
-    <div class="ba-panel"><span class="ba-label label-before">BEFORE</span><canvas id="cvBefore" width="320" height="220"></canvas></div>
-    <div class="ba-panel"><span class="ba-label label-after">AFTER</span><canvas id="cvAfter" width="320" height="220"></canvas></div>
-  </div>
-  <div class="cause-effect" id="ceFlow"></div>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->
@@ -841,7 +847,7 @@ var baseHex = (function() {
 // ── Scenario Definitions ──────────────────────
 var scenarios = {
   level0: {
-    desc: "기본 8각형 메쉬에 Level 1 Subdivision을 적용합니다. 각 면이 4개로 분할되어 폴리곤 수가 4배가 됩니다.",
+    desc: "Level 1을 주면 기본 메쉬가 한 번 더 잘게 나뉩니다.",
     ce: [
       { cause: "Level 0 — 8 버텍스, 각진 형태", result: "변화 없음 (원본 유지)", resultClass: "result-b" },
       { cause: "Level 1 적용 — Catmull-Clark 1회", result: "버텍스 4배, 곡면 생성", resultClass: "result-a" }
@@ -864,7 +870,7 @@ var scenarios = {
     }
   },
   level2: {
-    desc: "Level 1에서 Level 2로 추가 세분화합니다. 폴리곤 수가 다시 4배 늘어나 원본의 16배가 됩니다. 곡면이 훨씬 부드러워집니다.",
+    desc: "Level 2는 더 부드럽지만 폴리곤도 크게 늘어납니다.",
     ce: [
       { cause: "Level 1 — 부드럽지만 면 수 부족", result: "Level 2 적용 → 폴리곤 x16", resultClass: "result-a" },
       { cause: "Viewport 레벨 높임", result: "렌더 품질 향상 (렌더 시간 증가)", resultClass: "result-b" }
@@ -887,7 +893,7 @@ var scenarios = {
     }
   },
   crease: {
-    desc: "엣지에 Crease=1.0을 설정하면 Subdivision이 적용되어도 그 엣지는 날카롭게 유지됩니다. 오른쪽 상단 모서리에 Crease가 적용됩니다.",
+    desc: "Crease를 주면 필요한 엣지만 날카롭게 남길 수 있습니다.",
     ce: [
       { cause: "Crease 없이 Subdivision 적용", result: "모든 모서리 둥글어짐", resultClass: "result-warn" },
       { cause: "Shift+E → Crease=1.0 설정 후 Subdivision", result: "해당 엣지 날카롭게 유지", resultClass: "result-success" }
@@ -947,22 +953,38 @@ var scenarios = {
 };
 
 var currentScene = "level0";
+var subdivState = {
+  level: 1,
+  crease: false
+};
 
 function buildCauseEffect(ceData) {
   var container = document.getElementById("ceFlow");
   while (container.firstChild) container.removeChild(container.firstChild);
+  container.style.display = "grid";
+  container.style.gridTemplateColumns = "repeat(auto-fit,minmax(180px,1fr))";
+  container.style.gap = "10px";
   ceData.forEach(function(item) {
-    var row = document.createElement("div"); row.className = "ce-row";
-    var cause = document.createElement("div"); cause.className = "ce-cause";
-    var lbl = document.createElement("span"); lbl.className = "ce-label"; lbl.textContent = "원인";
-    cause.appendChild(lbl); cause.appendChild(document.createTextNode(item.cause));
-    row.appendChild(cause);
-    var arr = document.createElement("div"); arr.className = "ce-arrow"; arr.textContent = "→"; row.appendChild(arr);
-    var res = document.createElement("div"); res.className = "ce-result " + item.resultClass;
-    var rLbl = document.createElement("span"); rLbl.className = "ce-label"; rLbl.textContent = "결과";
-    res.appendChild(rLbl); res.appendChild(document.createTextNode(item.result));
-    row.appendChild(res);
-    container.appendChild(row);
+    var card = document.createElement("div");
+    card.style.borderRadius = "12px";
+    card.style.border = "1px solid var(--line)";
+    card.style.background = "rgba(255,255,255,.03)";
+    card.style.padding = "12px";
+    var lbl = document.createElement("span");
+    lbl.style.display = "block";
+    lbl.style.marginBottom = "6px";
+    lbl.style.fontSize = ".7rem";
+    lbl.style.color = "var(--muted)";
+    lbl.style.textTransform = "uppercase";
+    lbl.style.letterSpacing = ".04em";
+    lbl.textContent = item.cause;
+    var value = document.createElement("strong");
+    value.style.fontSize = ".85rem";
+    value.style.color = "var(--muted-strong)";
+    value.textContent = item.result;
+    card.appendChild(lbl);
+    card.appendChild(value);
+    container.appendChild(card);
   });
 }
 
@@ -984,14 +1006,45 @@ function switchScenario(key) {
   buildCauseEffect(scene.ce);
 }
 
-document.querySelectorAll(".scenario-btn").forEach(function(btn) {
-  btn.addEventListener("click", function() { switchScenario(btn.dataset.scene); });
-  btn.addEventListener("touchend", function(e) { e.preventDefault(); switchScenario(btn.dataset.scene); });
-});
+function syncSubdivisionControls() {
+  var levelRange = document.getElementById("subdivLevelRange");
+  var levelNumber = document.getElementById("subdivLevelNumber");
+  var levelLabel = document.getElementById("subdivLevelLabel");
+  var creaseCheckbox = document.getElementById("subdivCrease");
+  if (!levelRange || !levelNumber || !levelLabel || !creaseCheckbox) return;
+
+  levelRange.value = String(subdivState.level);
+  levelNumber.value = String(subdivState.level);
+  levelLabel.textContent = String(subdivState.level);
+  creaseCheckbox.checked = subdivState.crease;
+
+  switchScenario(subdivState.crease ? "crease" : (subdivState.level >= 2 ? "level2" : "level0"));
+}
+
+(function bindSubdivisionPanel() {
+  var levelRange = document.getElementById("subdivLevelRange");
+  var levelNumber = document.getElementById("subdivLevelNumber");
+  var creaseCheckbox = document.getElementById("subdivCrease");
+  if (!levelRange || !levelNumber || !creaseCheckbox) return;
+
+  function setLevel(value) {
+    var next = Math.max(1, Math.min(2, parseInt(value, 10) || 1));
+    subdivState.level = next;
+    syncSubdivisionControls();
+  }
+
+  levelRange.addEventListener("input", function() { setLevel(levelRange.value); });
+  levelNumber.addEventListener("input", function() { setLevel(levelNumber.value); });
+  creaseCheckbox.addEventListener("change", function() {
+    subdivState.crease = creaseCheckbox.checked;
+    if (subdivState.crease) subdivState.level = 2;
+    syncSubdivisionControls();
+  });
+})();
 
 var visualInited = false;
 function initVisual() {
-  switchScenario(currentScene);
+  syncSubdivisionControls();
   visualInited = true;
 }
 

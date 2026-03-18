@@ -65,7 +65,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash(python3 -m http.server:*), Ba
 <body>
   <nav class="tabs" role="tablist">
     <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true">개념 이해</button>
-    <button class="tab" data-tab="visual" role="tab" aria-selected="false">시각적 비교</button>
+    <button class="tab" data-tab="visual" role="tab" aria-selected="false">interaction</button>
     <button class="tab" data-tab="when" role="tab" aria-selected="false">언제 쓰나요?</button>
     <button class="tab" data-tab="quiz" role="tab" aria-selected="false">퀴즈</button>
   </nav>
@@ -87,13 +87,20 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash(python3 -m http.server:*), Ba
 **탭 1 — 개념 이해**:
 - `.concept-grid` > `.concept-card` (2~3개)
   - 각 카드에 `.badge` + 설명 + `.analogy` 비유 박스
+- 길거나 부차적인 설명은 `<details class="concept-more"><summary>더보기</summary>...</details>`로 숨김
+- 필요하면 개념 시각화 요약(예: before/after, cause-effect, 시나리오 핵심 한 장면)도 이 탭 하단에 함께 배치
 - `.shortcut-list` > `.shortcut-row` (주요 단축키 3~5개)
 - `.doc-ref` 또는 `.doc-ref-list` (Blender 공식 문서 링크)
 
-**탭 2 — 시각적 비교**:
+**탭 2 — interaction**:
 - `.demo-wrap` > `<canvas>` (680x300 권장)
-- `.demo-controls` > `.demo-btn` (인터랙션 버튼)
-- `.demo-hint` (조작 안내)
+- 파라미터형 기능은 `.modifier-panel` + `input[type="range"]` + `input[type="number"]` + checkbox 조합을 우선 사용
+- `.demo-controls` > `.demo-btn` 는 모드 전환이나 Reset 같이 꼭 필요한 경우만 사용
+- 문장형 보조 설명은 최소화하고, 꼭 필요한 정보는 작은 카드 2~3개로 요약
+- `.demo-hint` 는 조작 안내 한 줄만 남김
+- 이 탭에는 `/showme` 스타일의 잘 그려진 HTML 인터랙션만 둠
+- 개념 설명용 시각화(before/after, cause-effect, 시나리오 설명)는 탭 1로 이동
+- "얇은 벽 / 두꺼운 벽" 같은 프리셋 이름보다 `Thickness`, `Offset`, `Count`, `Bevel Width`처럼 Blender 실제 파라미터명을 그대로 노출
 - Canvas에 `requestAnimationFrame` 애니메이션 사용
 - 터치 이벤트 지원 (`touchend` with `preventDefault`)
 

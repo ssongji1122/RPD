@@ -17,14 +17,14 @@ const SHOWME_REGISTRY = {
   "snap":                   { label: "Snapping 이해",           icon: "🧲" },
   "viewport-shading":       { label: "Viewport Shading 이해",   icon: "💡" },
   "xray-opacity":           { label: "X-Ray 투명도 조절",        icon: "🔍" },
-  "edit-mode":              { label: "Edit Mode 이해",          icon: "✏️" },
+  "edit-mode":              { label: "Edit Mode 이해",          icon: "✏️", toolName: "Edit Mode", iconKey: "edit-mode" },
 
   // ── Edit Mode Tools (기능별 라이브러리) ──
-  "edit-mode-tools":        { label: "Edit Mode 도구 전체",     icon: "🛠️" },
-  "extrude":                { label: "Extrude 작동 원리",       icon: "📐" },
-  "loop-cut":               { label: "Loop Cut 이해",           icon: "🔪" },
-  "inset":                  { label: "Inset 작동 원리",         icon: "⬜" },
-  "bevel-tool":             { label: "Bevel Tool 이해",         icon: "🔧" },
+  "edit-mode-tools":        { label: "Edit Mode 도구 전체",     icon: "🛠️", toolName: "Toolset", iconKey: "edit-mode" },
+  "extrude":                { label: "Extrude 작동 원리",       icon: "📐", toolName: "Extrude", iconKey: "extrude" },
+  "loop-cut":               { label: "Loop Cut 이해",           icon: "🔪", toolName: "Loop Cut", iconKey: "loop-cut" },
+  "inset":                  { label: "Inset 작동 원리",         icon: "⬜", toolName: "Inset", iconKey: "inset" },
+  "bevel-tool":             { label: "Bevel Tool 이해",         icon: "🔧", toolName: "Bevel", iconKey: "bevel" },
 
   // ── Generate Modifiers (기능별 라이브러리) ──
   "array-modifier":         { label: "Array Modifier 이해",     icon: "🔁" },
@@ -91,6 +91,9 @@ const SHOWME_REGISTRY = {
 
   // ── Concepts ──
   "origin-vs-3dcursor":     { label: "Origin vs 3D Cursor",    icon: "🎯" },
-  "poly-circle":            { label: "다각형으로 원 만들기",       icon: "⭕" },
+  "poly-circle":            { label: "다각형으로 원 만들기",       icon: "⭕", toolName: "Poly Circle", iconKey: "poly-circle" },
   "box-rounding":           { label: "박스 모서리 라운딩",          icon: "📦" },
 };
+
+if (typeof window !== "undefined") window.SHOWME_REGISTRY = SHOWME_REGISTRY;
+if (typeof globalThis !== "undefined") globalThis.SHOWME_REGISTRY = SHOWME_REGISTRY;

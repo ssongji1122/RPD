@@ -794,9 +794,13 @@ function drawPrefCanvas(key) {
   var ctx = canvas.getContext("2d");
   var scenario = prefScenarios[key] || prefScenarios.input;
   var panel = scenario.panel;
+  var rowHeight = 34;
+  var rowGap = 44;
+  var rowStartOffset = 84;
+  var footerTop = 18 + rowStartOffset + panel.rows.length * rowGap + 8;
 
   canvas.width = Math.max(520, Math.floor(canvas.clientWidth || 680));
-  canvas.height = 260;
+  canvas.height = Math.max(304, footerTop + 54);
 
   var w = canvas.width;
   var h = canvas.height;
@@ -867,9 +871,9 @@ function drawPrefCanvas(key) {
 
   panel.rows.forEach(function(row, index) {
     var rowX = frameX + sidebarW + 24;
-    var rowY = frameY + 84 + index * 44;
+    var rowY = frameY + rowStartOffset + index * rowGap;
     var rowW = frameW - sidebarW - 48;
-    roundedRect(rowX, rowY, rowW, 34, 12);
+    roundedRect(rowX, rowY, rowW, rowHeight, 12);
     ctx.fillStyle = "rgba(255,255,255,.03)";
     ctx.fill();
     ctx.strokeStyle = "rgba(255,255,255,.08)";
@@ -889,25 +893,30 @@ function drawPrefCanvas(key) {
       : row.tone === "active"
         ? "#6ee7b7"
         : "#8ec5ff";
-    var pillW = Math.max(56, row.value.length * 9 + 18);
-    roundedRect(rowX + rowW - pillW - 12, rowY + 7, pillW, 20, 10);
+    var pillW = Math.max(64, row.value.length * 10 + 24);
+    var pillX = rowX + rowW - pillW - 12;
+    roundedRect(pillX, rowY + 7, pillW, 20, 10);
     ctx.fillStyle = toneFill;
     ctx.fill();
     ctx.strokeStyle = toneStroke;
     ctx.stroke();
     ctx.fillStyle = toneStroke;
     ctx.font = "600 11px sans-serif";
-    ctx.fillText(row.value, rowX + rowW - pillW, rowY + 21);
+    ctx.textAlign = "center";
+    ctx.fillText(row.value, pillX + pillW / 2, rowY + 21);
+    ctx.textAlign = "left";
   });
 
-  roundedRect(frameX + sidebarW + 24, frameY + frameH - 44, 112, 26, 12);
+  var footerX = frameX + sidebarW + 24;
+  var footerY = frameY + rowStartOffset + panel.rows.length * rowGap + 8;
+  roundedRect(footerX, footerY, 128, 28, 12);
   ctx.fillStyle = "rgba(10,132,255,.14)";
   ctx.fill();
   ctx.strokeStyle = "rgba(10,132,255,.28)";
   ctx.stroke();
   ctx.fillStyle = "#8ec5ff";
   ctx.font = "600 11px sans-serif";
-  ctx.fillText("Save Preferences", frameX + sidebarW + 38, frameY + frameH - 27);
+  ctx.fillText("Save Preferences", footerX + 16, footerY + 18);
 }
 
 function updatePrefMeta(meta) {

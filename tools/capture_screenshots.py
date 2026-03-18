@@ -97,8 +97,48 @@ CLEAN_JS = """
 """
 
 
+def _crop_figures(page, out_path: Path) -> bool:
+    """콘텐츠 내 figure/img 요소들을 찾아 합쳐서 크롭 스크린샷. 성공 시 True."""
+    # figure 우선 탐색
+    locator = page.locator("article figure, .bd-content figure")
+    count = locator.count()
+
+    # figure 없으면 큰 img 직접 탐색
+    if count == 0:
+        locator = page.locator("article img, .bd-content img")
+        count = locator.count()
+
+    boxes = []
+    for i in range(min(count, 3)):  # 최대 3개
+        try:
+            box = locator.nth(i).bounding_box()
+            if box and box["width"] > 150 and box["height"] > 80:
+                boxes.append(box)
+        except Exception:
+            pass
+
+    if not boxes:
+        return False
+
+    # 여러 박스의 합집합 → 하나의 clip 영역
+    x1 = min(b["x"] for b in boxes)
+    y1 = min(b["y"] for b in boxes)
+    x2 = max(b["x"] + b["width"] for b in boxes)
+    y2 = max(b["y"] + b["height"] for b in boxes)
+
+    pad = 16
+    clip = {
+        "x": max(0, x1 - pad),
+        "y": max(0, y1 - pad),
+        "width": (x2 - x1) + pad * 2,
+        "height": (y2 - y1) + pad * 2,
+    }
+    page.screenshot(path=str(out_path), clip=clip, full_page=True)
+    return True
+
+
 def take_screenshot(page, url: str, out_path: Path) -> bool:
-    """URL을 열고 메인 콘텐츠만 스크린샷 저장. 성공 여부 반환."""
+    """URL을 열고 주요 figure 이미지만 크롭 저장. 없으면 전체 화면 fallback."""
     try:
         resp = page.goto(url, timeout=20_000, wait_until="networkidle")
         if resp and resp.status >= 400:
@@ -109,8 +149,13 @@ def take_screenshot(page, url: str, out_path: Path) -> bool:
         page.wait_for_timeout(600)
 
         out_path.parent.mkdir(parents=True, exist_ok=True)
-        page.screenshot(path=str(out_path), full_page=False)
-        print(f"  ✓ saved → {out_path.relative_to(Path.cwd())}")
+
+        cropped = _crop_figures(page, out_path)
+        if cropped:
+            print(f"  ✓ cropped → {out_path.relative_to(Path.cwd())}")
+        else:
+            page.screenshot(path=str(out_path), full_page=False)
+            print(f"  ✓ fullpage → {out_path.relative_to(Path.cwd())}")
         return True
     except Exception as e:
         print(f"  ✗ error: {e}")

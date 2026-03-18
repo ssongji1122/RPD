@@ -374,7 +374,7 @@ body {
 <!-- Tab Bar -->
 <nav class="tabs" role="tablist">
   <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
-  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">interaction</button>
   <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
   <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
 </nav>
@@ -400,6 +400,12 @@ body {
       <p>Fast vs Exact 두 가지 솔버를 선택할 수 있습니다. Exact가 더 정확하지만 느립니다. Blender 5.0에서는 Exact가 기본값입니다.</p>
     </div>
   </div>
+  <details style="margin-top:14px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:14px 16px">
+    <summary style="cursor:pointer;color:var(--key-soft);font-weight:600;list-style:none">더보기</summary>
+    <div style="margin-top:10px;color:var(--muted-strong);font-size:.84rem;line-height:1.7">
+      학생 단계에서는 `Difference = 구멍`, `Union = 합치기`, `Intersect = 겹친 부분만` 이 세 가지로 먼저 기억하면 충분합니다. 결과가 깨지면 Solver를 `Exact`로 다시 확인하세요.
+    </div>
+  </details>
 
   <div class="shortcut-list">
     <h4>주요 단축키</h4>
@@ -424,28 +430,64 @@ body {
   </div>
 </section>
 
-<!-- TAB 2: 시각적 비교 -->
+<!-- TAB 2: interaction -->
 <section class="panel" id="panel-visual" role="tabpanel">
+  <div style="display:grid;grid-template-columns:minmax(220px,260px) 1fr;gap:14px;align-items:start">
+    <aside style="border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px">
+        <div style="font-size:.9rem;font-weight:700;color:var(--text)">Boolean Modifier</div>
+        <span style="padding:4px 8px;border-radius:999px;background:rgba(10,132,255,.14);color:var(--key-soft);font-size:.72rem;font-weight:600">Exact</span>
+      </div>
+      <p style="margin:0 0 14px;font-size:.78rem;color:var(--muted)">Operation과 Operand 크기만 보면 됩니다.</p>
 
-  <div class="scenario-nav" id="boolScenarioNav">
-    <button class="scenario-btn active" onclick="switchBoolScenario('union')">Union (합)</button>
-    <button class="scenario-btn" onclick="switchBoolScenario('difference')">Difference (차)</button>
-    <button class="scenario-btn" onclick="switchBoolScenario('intersect')">Intersect (교)</button>
-    <button class="scenario-btn" onclick="switchBoolScenario('role')">Active vs Operand</button>
-  </div>
+      <div style="margin-bottom:12px">
+        <label for="boolOperation" style="display:block;font-size:.82rem;font-weight:600;color:var(--muted-strong);margin-bottom:6px">Operation</label>
+        <select id="boolOperation" style="width:100%;border-radius:10px;border:1px solid var(--line-strong);background:rgba(255,255,255,.04);color:var(--text);padding:9px 10px;font:inherit;font-size:.82rem">
+          <option value="union">Union</option>
+          <option value="difference">Difference</option>
+          <option value="intersect">Intersect</option>
+        </select>
+      </div>
 
-  <div id="boolDesc" style="font-size:.84rem; color:var(--muted-strong); margin:0 0 8px;"></div>
-  <div class="cause-effect" id="boolCE"></div>
+      <div style="margin-bottom:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px">
+          <label for="boolRadiusRange" style="font-size:.82rem;font-weight:600;color:var(--muted-strong)">Operand Radius</label>
+          <span id="boolRadiusLabel" style="font-size:.76rem;color:var(--key-soft)">70</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 72px;gap:8px;align-items:center">
+          <input type="range" id="boolRadiusRange" min="40" max="100" step="1" value="70" style="width:100%;accent-color:var(--key)">
+          <input type="number" id="boolRadiusNumber" min="40" max="100" step="1" value="70" inputmode="numeric" style="width:100%;border-radius:10px;border:1px solid var(--line-strong);background:rgba(255,255,255,.04);color:var(--text);padding:7px 10px;font:inherit;font-size:.82rem">
+        </div>
+      </div>
 
-  <div class="demo-wrap">
-    <canvas id="demoCanvas" width="680" height="300"></canvas>
-    <div class="demo-controls">
-      <button class="demo-btn is-active" id="btnUnion">Union (합)</button>
-      <button class="demo-btn" id="btnDifference">Difference (차)</button>
-      <button class="demo-btn" id="btnIntersect">Intersect (교)</button>
+      <label for="boolHideOperand" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);font-size:.82rem;color:var(--muted-strong);margin-bottom:12px">
+        <span>Hide Operand Overlay</span>
+        <input type="checkbox" id="boolHideOperand" style="width:18px;height:18px;accent-color:var(--key)">
+      </label>
+
+      <button class="demo-btn" id="boolResetBtn" style="width:100%">기본값으로 되돌리기</button>
+      <div style="display:grid;grid-template-columns:1fr;gap:8px;margin-top:12px" aria-live="polite">
+        <div style="border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:10px 12px">
+          <span style="display:block;margin-bottom:4px;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">Operation</span>
+          <strong id="boolOperationStatus" style="font-size:.85rem;color:var(--muted-strong)">Union</strong>
+        </div>
+        <div style="border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:10px 12px">
+          <span style="display:block;margin-bottom:4px;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">Operand</span>
+          <strong id="boolRadiusStatus" style="font-size:.85rem;color:var(--muted-strong)">70</strong>
+        </div>
+        <div style="border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:10px 12px">
+          <span style="display:block;margin-bottom:4px;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">Overlay</span>
+          <strong id="boolOverlayStatus" style="font-size:.85rem;color:var(--muted-strong)">Visible</strong>
+        </div>
+      </div>
+    </aside>
+
+    <div>
+      <div class="demo-wrap">
+        <canvas id="demoCanvas" width="680" height="300"></canvas>
+      </div>
     </div>
   </div>
-  <p class="demo-hint">각 버튼을 눌러 두 오브젝트의 Boolean 연산 결과를 비교해 보세요.</p>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->
@@ -681,47 +723,27 @@ var boolScenarios = {
 };
 
 function buildBoolCE(ces) {
-  var container = document.getElementById('boolCE');
-  while (container.firstChild) { container.removeChild(container.firstChild); }
-  ces.forEach(function(item) {
-    var row = document.createElement('div');
-    row.className = 'ce-row';
-    var cause = document.createElement('div');
-    cause.className = 'ce-cause';
-    cause.textContent = item.cause;
-    var arrow = document.createElement('div');
-    arrow.className = 'ce-arrow';
-    arrow.textContent = '\u2192';
-    var result = document.createElement('div');
-    result.className = 'ce-result ' + item.resultClass;
-    result.textContent = item.result;
-    row.appendChild(cause);
-    row.appendChild(arrow);
-    row.appendChild(result);
-    container.appendChild(row);
-  });
+  return ces;
 }
 
-function switchBoolScenario(key) {
-  var s = boolScenarios[key];
-  document.getElementById('boolDesc').textContent = s.desc;
-  buildBoolCE(s.ce);
-  document.querySelectorAll('#boolScenarioNav .scenario-btn').forEach(function(btn) {
-    btn.classList.remove('active');
-    if (btn.getAttribute('onclick') && btn.getAttribute('onclick').indexOf("'" + key + "'") >= 0) {
-      btn.classList.add('active');
-    }
-  });
-  var controls = document.querySelector('.demo-controls');
-  if (key === 'role') {
-    if (controls) controls.style.display = 'none';
-    drawRoleDiagram();
-  } else {
-    if (controls) controls.style.display = '';
-    var modeMap = { union: 'btnUnion', difference: 'btnDifference', intersect: 'btnIntersect' };
-    var targetBtn = document.getElementById(modeMap[key]);
-    if (targetBtn) { targetBtn.click(); }
+var boolState = {
+  mode: "union",
+  radius: 70,
+  hideOperand: false
+};
+
+function updateBoolStatus() {
+  var radiusLabel = document.getElementById("boolRadiusLabel");
+  var operationStatus = document.getElementById("boolOperationStatus");
+  var radiusStatus = document.getElementById("boolRadiusStatus");
+  var overlayStatus = document.getElementById("boolOverlayStatus");
+  if (radiusLabel) radiusLabel.textContent = String(boolState.radius);
+  if (operationStatus) {
+    operationStatus.textContent = boolState.mode === "union" ? "Union" :
+      boolState.mode === "difference" ? "Difference" : "Intersect";
   }
+  if (radiusStatus) radiusStatus.textContent = String(boolState.radius);
+  if (overlayStatus) overlayStatus.textContent = boolState.hideOperand ? "Hidden" : "Visible";
 }
 
 function drawRoleDiagram() {
@@ -843,17 +865,13 @@ function drawRoleDiagram() {
   });
 }
 
-(function() {
-  var s = boolScenarios['union'];
-  document.getElementById('boolDesc').textContent = s.desc;
-  buildBoolCE(s.ce);
-})();
-
 // ── Canvas Boolean Demo ───────────────────────
 (function() {
   var canvas = document.getElementById("demoCanvas");
   var ctx = canvas.getContext("2d");
-  var currentMode = "union"; // union, difference, intersect
+  var currentMode = boolState.mode; // union, difference, intersect
+  var operandRadius = boolState.radius;
+  var hideOperand = boolState.hideOperand;
   var animProgress = 1; // 0..1 for transition animation
   var animTarget = 1;
   var animFrame = null;
@@ -865,7 +883,7 @@ function drawRoleDiagram() {
   // Shape A: rounded rectangle (blue) — left-center
   var shapeA = { x: cx - 50, y: cy, w: 160, h: 120 };
   // Shape B: circle (green) — right-center, overlapping
-  var shapeB = { x: cx + 60, y: cy, r: 70 };
+  var shapeB = { x: cx + 60, y: cy, r: operandRadius };
 
   // Color palette
   var colorA = { fill: "rgba(10,132,255,.3)", stroke: "rgba(10,132,255,.7)", label: "#8ec5ff" };
@@ -1012,8 +1030,10 @@ function drawRoleDiagram() {
     // Shape labels
     ctx.fillStyle = colorA.label;
     ctx.fillText("Shape A (Rectangle)", shapeA.x, shapeA.y - shapeA.h / 2 - 12);
-    ctx.fillStyle = colorB.label;
-    ctx.fillText("Shape B (Circle)", shapeB.x, shapeB.y - shapeB.r - 12);
+    if (!hideOperand) {
+      ctx.fillStyle = colorB.label;
+      ctx.fillText("Shape B (Circle)", shapeB.x, shapeB.y - shapeB.r - 12);
+    }
 
     // Mode label
     var modeText = "";
@@ -1033,7 +1053,7 @@ function drawRoleDiagram() {
     // Ghost shapes (dimmed original shapes)
     var ghostAlpha = 0.35;
     drawShapeA(ghostAlpha);
-    drawShapeB(ghostAlpha);
+    if (!hideOperand) drawShapeB(ghostAlpha);
 
     // Draw Boolean result
     drawResult();
@@ -1062,30 +1082,48 @@ function drawRoleDiagram() {
     animFrame = requestAnimationFrame(step);
   }
 
-  // Button handlers
-  var btns = {
-    union: document.getElementById("btnUnion"),
-    difference: document.getElementById("btnDifference"),
-    intersect: document.getElementById("btnIntersect")
-  };
+  function syncBooleanControls() {
+    var opSelect = document.getElementById("boolOperation");
+    var radiusRange = document.getElementById("boolRadiusRange");
+    var radiusNumber = document.getElementById("boolRadiusNumber");
+    var hideCheckbox = document.getElementById("boolHideOperand");
+    if (opSelect) opSelect.value = boolState.mode;
+    if (radiusRange) radiusRange.value = String(boolState.radius);
+    if (radiusNumber) radiusNumber.value = String(boolState.radius);
+    if (hideCheckbox) hideCheckbox.checked = boolState.hideOperand;
 
-  function setActiveBtn(mode) {
-    Object.keys(btns).forEach(function(k) {
-      btns[k].classList.toggle("is-active", k === mode);
-    });
+    currentMode = boolState.mode;
+    operandRadius = boolState.radius;
+    hideOperand = boolState.hideOperand;
+    shapeB.r = operandRadius;
+    updateBoolStatus();
+    draw();
   }
 
-  btns.union.addEventListener("click", function() { setActiveBtn("union"); animateTo("union"); });
-  btns.difference.addEventListener("click", function() { setActiveBtn("difference"); animateTo("difference"); });
-  btns.intersect.addEventListener("click", function() { setActiveBtn("intersect"); animateTo("intersect"); });
+  function setRadius(value) {
+    boolState.radius = Math.max(40, Math.min(100, parseInt(value, 10) || 70));
+    syncBooleanControls();
+  }
 
-  // Touch events for mobile
-  btns.union.addEventListener("touchend", function(e) { e.preventDefault(); setActiveBtn("union"); animateTo("union"); });
-  btns.difference.addEventListener("touchend", function(e) { e.preventDefault(); setActiveBtn("difference"); animateTo("difference"); });
-  btns.intersect.addEventListener("touchend", function(e) { e.preventDefault(); setActiveBtn("intersect"); animateTo("intersect"); });
+  document.getElementById("boolOperation").addEventListener("change", function() {
+    boolState.mode = this.value;
+    syncBooleanControls();
+    animateTo(boolState.mode);
+  });
+  document.getElementById("boolRadiusRange").addEventListener("input", function() { setRadius(this.value); });
+  document.getElementById("boolRadiusNumber").addEventListener("input", function() { setRadius(this.value); });
+  document.getElementById("boolHideOperand").addEventListener("change", function() {
+    boolState.hideOperand = this.checked;
+    syncBooleanControls();
+  });
+  document.getElementById("boolResetBtn").addEventListener("click", function() {
+    boolState.mode = "union";
+    boolState.radius = 70;
+    boolState.hideOperand = false;
+    syncBooleanControls();
+  });
 
-  // Initial draw
-  draw();
+  syncBooleanControls();
 })();
 
 // ── Quiz Data ─────────────────────────────────
