@@ -2585,9 +2585,9 @@
       document.getElementById("sidebarToggle").setAttribute("aria-label", text.sidebarToggleAria);
       document.getElementById("brandMeta").textContent = text.brandMeta;
       document.getElementById("themeToggle").setAttribute("aria-label", text.themeToggleAria);
-      document.getElementById("brandLink").setAttribute("href", withPresetHref("index.html"));
+      document.getElementById("brandLink").setAttribute("href", withPresetHref("inha.html"));
       document.getElementById("footerHomeLink").textContent = text.footerHome;
-      document.getElementById("footerHomeLink").setAttribute("href", withPresetHref("index.html"));
+      document.getElementById("footerHomeLink").setAttribute("href", withPresetHref("inha.html?panel=weeks"));
       document.getElementById("footerLibraryLink").textContent = text.footerLibrary;
       document.getElementById("footerLibraryLink").setAttribute("href", withPresetHref("library.html"));
       document.getElementById("showmeBrowseToggle").setAttribute("aria-label", text.modalBrowseToggleAria);
@@ -2614,7 +2614,7 @@
       document.getElementById("brandTitle").textContent = text.brandLoading;
       document.getElementById("pageContent").innerHTML = `
         <section style="padding:80px 0;text-align:center;color:var(--muted)">
-          <p>${text.notFound} <a href="${withPresetHref("index.html")}" style="color:var(--key-soft)">${text.notFoundBack}</a></p>
+          <p>${text.notFound} <a href="${withPresetHref("inha.html?panel=weeks")}" style="color:var(--key-soft)">${text.notFoundBack}</a></p>
         </section>`;
     }
 
@@ -2673,7 +2673,7 @@
       var next = CURRICULUM.find(function(item) { return item.week === w.week + 1; });
       var prevLink = prev
         ? `<a href="${withPresetHref("week.html?week=" + prev.week)}">← Week ${prev.week}</a>`
-        : `<a href="${withPresetHref("index.html")}">${text.homeLabel}</a>`;
+        : `<a href="${withPresetHref("inha.html?panel=weeks")}">${text.homeLabel}</a>`;
       var nextLink = next
         ? `<a href="${withPresetHref("week.html?week=" + next.week)}">Week ${next.week} →</a>`
         : `<span style="opacity:.4">${text.lastWeek}</span>`;
@@ -2984,7 +2984,7 @@
         <section class="content-block">
           <div class="week-nav">
             ${prevLink}
-            <a href="${withPresetHref("index.html")}" style="color:var(--muted)">${text.listLabel}</a>
+            <a href="${withPresetHref("inha.html?panel=weeks")}" style="color:var(--muted)">${text.listLabel}</a>
             ${nextLink}
           </div>
         </section>
@@ -3786,7 +3786,8 @@
 
       var globalMenuLabel = isKo ? "전체 메뉴" : "Site";
       var globalLinks = [
-        { href: withPresetHref("index.html"), label: text.homeLabel.replace(/^←\s*/, "") },
+        { href: withPresetHref("index.html"), label: isKo ? "홈" : "Home" },
+        { href: withPresetHref("inha.html?panel=weeks"), label: isKo ? "인하대 수업" : "Inha RPD" },
         { href: withPresetHref("library.html"), label: text.footerLibrary },
         { href: withPresetHref("shortcuts.html"), label: stripNavGlyph(text.shortcutsLink) },
         { href: "https://www.notion.so/31e54d654971812e9c38f85124b45e3f", label: stripNavGlyph(text.aiRefsLink), external: true },
