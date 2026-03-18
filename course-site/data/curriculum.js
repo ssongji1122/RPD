@@ -927,7 +927,6 @@ const CURRICULUM = [
             "detail": "화살표 아이콘 클릭 → 실수로 이동 방지"
           }
         ],
-        "video": "assets/videos/week03/001-ref-setting.mov",
         "images": [
           "assets/images/week03/robot-ref-front.png",
           "assets/images/week03/robot-ref-side.png",
@@ -945,6 +944,20 @@ const CURRICULUM = [
           {
             "label": "후면 (Back)",
             "url": "assets/images/week03/robot-ref-back.png"
+          }
+        ],
+        "clips": [
+          {
+            "label": "Import",
+            "src": "assets/clips/week03/ref-import.mp4"
+          },
+          {
+            "label": "Position",
+            "src": "assets/clips/week03/ref-position.mp4"
+          },
+          {
+            "label": "Opacity",
+            "src": "assets/clips/week03/ref-opacity.mp4"
           }
         ],
         "showme": "image-reference"
