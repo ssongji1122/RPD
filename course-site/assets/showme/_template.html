@@ -155,6 +155,88 @@ body {
   color: var(--key-soft);
   border-color: rgba(10,132,255,.3);
 }
+.modifier-panel {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.03);
+  padding: 14px;
+}
+.control-group + .control-group { margin-top: 12px; }
+.control-row {
+  display: grid;
+  grid-template-columns: 1fr 72px;
+  gap: 8px;
+  align-items: center;
+}
+.control-row input[type="range"] {
+  width: 100%;
+  accent-color: var(--key);
+}
+.control-row input[type="number"] {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--text);
+  padding: 7px 10px;
+  font: inherit;
+  font-size: .82rem;
+}
+.modifier-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.03);
+}
+.mini-note-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+.mini-note-card {
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.03);
+  padding: 12px;
+}
+.mini-note-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: .7rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.mini-note-value {
+  font-size: .86rem;
+  color: var(--muted-strong);
+  font-weight: 600;
+}
+.concept-more {
+  margin-top: 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.03);
+  padding: 14px 16px;
+}
+.concept-more summary {
+  cursor: pointer;
+  color: var(--key-soft);
+  font-weight: 600;
+  list-style: none;
+}
+.concept-more summary::-webkit-details-marker { display: none; }
+.concept-more-body {
+  margin-top: 10px;
+  color: var(--muted-strong);
+  font-size: .84rem;
+  line-height: 1.7;
+}
 
 /* ── Usage Grid ── */
 .usage-grid {
@@ -335,7 +417,7 @@ body {
 <!-- Tab Bar -->
 <nav class="tabs" role="tablist">
   <button class="tab is-active" data-tab="concept" role="tab">개념 이해</button>
-  <button class="tab" data-tab="visual" role="tab">시각적 비교</button>
+  <button class="tab" data-tab="visual" role="tab">interaction</button>
   <button class="tab" data-tab="when" role="tab">언제 쓰나요?</button>
   <button class="tab" data-tab="quiz" role="tab">퀴즈</button>
 </nav>
@@ -355,20 +437,40 @@ body {
       <p><!-- 설명 --></p>
     </div>
   </div>
+  <details class="concept-more">
+    <summary>더보기</summary>
+    <div class="concept-more-body">
+      <!-- 기본 화면에 안 보여도 되는 보조 설명. 공홈 이동이 아니라 내부 펼침으로 유지 -->
+    </div>
+  </details>
+  <!-- 필요하면 개념 시각화(before/after, cause-effect 요약)를 이 탭 하단에 함께 배치 -->
 </section>
 
-<!-- TAB 2: 시각적 비교 -->
+<!-- TAB 2: interaction -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    <!-- 인터랙션 안내 -->
-  </p>
+  <!-- 긴 설명 문장은 줄이고, 꼭 필요한 안내만 남기기 -->
+  <!-- 파라미터형 카드는 modifier-panel + range + number + checkbox 조합을 우선 사용 -->
   <div class="demo-wrap">
     <canvas id="demoCanvas" width="680" height="300"></canvas>
     <div class="demo-controls">
-      <!-- 토글 버튼 등 -->
+      <!-- 필요 시 토글 버튼 또는 Reset 버튼 -->
     </div>
   </div>
-  <p class="demo-hint"><!-- 조작 힌트 --></p>
+  <div class="mini-note-grid">
+    <div class="mini-note-card">
+      <span class="mini-note-label">핵심 1</span>
+      <strong class="mini-note-value"><!-- 학생이 꼭 알아야 하는 상태 --></strong>
+    </div>
+    <div class="mini-note-card">
+      <span class="mini-note-label">핵심 2</span>
+      <strong class="mini-note-value"><!-- 파라미터 의미 --></strong>
+    </div>
+    <div class="mini-note-card">
+      <span class="mini-note-label">핵심 3</span>
+      <strong class="mini-note-value"><!-- 바로 써먹는 주의 포인트 --></strong>
+    </div>
+  </div>
+  <p class="demo-hint"><!-- 조작 힌트는 한 줄만. 개념 설명은 concept 탭으로 이동 --></p>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->

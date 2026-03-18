@@ -381,7 +381,7 @@ body {
 <!-- Tab Bar -->
 <nav class="tabs" role="tablist">
   <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
-  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">interaction</button>
   <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
   <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
 </nav>
@@ -417,6 +417,12 @@ body {
       <p>Bevel 후 Normal 방향이 꼬여 셰이딩이 이상해지는 문제를 해결합니다. Weighted Normal 모디파이어를 Bevel 아래에 추가하면 깔끔한 셰이딩을 유지할 수 있습니다.</p>
     </div>
   </div>
+  <details style="margin-top:14px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:14px 16px">
+    <summary style="cursor:pointer;color:var(--key-soft);font-weight:600;list-style:none">더보기</summary>
+    <div style="margin-top:10px;color:var(--muted-strong);font-size:.84rem;line-height:1.7">
+      입문 단계에서는 `Segments`, `Width`, `Weighted Normal` 세 가지만 먼저 익혀도 충분합니다. 선택 적용이 필요할 때만 `Limit Method = Weight`까지 확장하면 됩니다.
+    </div>
+  </details>
 
   <div class="shortcut-list">
     <h4>주요 단축키</h4>
@@ -448,29 +454,75 @@ body {
   </div>
 </section>
 
-<!-- TAB 2: 시각적 비교 -->
+<!-- TAB 2: interaction -->
 <section class="panel" id="panel-visual" role="tabpanel">
+  <div style="display:grid;grid-template-columns:minmax(220px,260px) 1fr;gap:14px;align-items:start">
+    <aside style="border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px">
+        <div style="font-size:.9rem;font-weight:700;color:var(--text)">Bevel Modifier</div>
+        <span style="padding:4px 8px;border-radius:999px;background:rgba(10,132,255,.14);color:var(--key-soft);font-size:.72rem;font-weight:600">Generate</span>
+      </div>
+      <p style="margin:0 0 14px;font-size:.78rem;color:var(--muted)">Segments와 Width 중심으로 보면 됩니다.</p>
 
-  <div class="scenario-nav" id="bevelModScenarioNav">
-    <button class="scenario-btn active" onclick="switchBevelModScenario('segments')">Segments 효과</button>
-    <button class="scenario-btn" onclick="switchBevelModScenario('weighted')">Weighted Normal</button>
-    <button class="scenario-btn" onclick="switchBevelModScenario('limit')">Limit Method</button>
-  </div>
+      <div style="margin-bottom:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px">
+          <label for="bevelSegmentsRange" style="font-size:.82rem;font-weight:600;color:var(--muted-strong)">Segments</label>
+          <span id="bevelSegmentsLabel" style="font-size:.76rem;color:var(--key-soft)">3</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 72px;gap:8px;align-items:center">
+          <input type="range" id="bevelSegmentsRange" min="1" max="6" step="1" value="3" style="width:100%;accent-color:var(--key)">
+          <input type="number" id="bevelSegmentsNumber" min="1" max="6" step="1" value="3" inputmode="numeric" style="width:100%;border-radius:10px;border:1px solid var(--line-strong);background:rgba(255,255,255,.04);color:var(--text);padding:7px 10px;font:inherit;font-size:.82rem">
+        </div>
+      </div>
 
-  <div id="bevelModDesc" style="font-size:.84rem; color:var(--muted-strong); margin:0 0 8px;"></div>
-  <div class="cause-effect" id="bevelModCE"></div>
+      <div style="margin-bottom:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px">
+          <label for="bevelWidthRange" style="font-size:.82rem;font-weight:600;color:var(--muted-strong)">Width</label>
+          <span id="bevelWidthLabel" style="font-size:.76rem;color:var(--key-soft)">0.04</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 72px;gap:8px;align-items:center">
+          <input type="range" id="bevelWidthRange" min="0.01" max="0.12" step="0.01" value="0.04" style="width:100%;accent-color:var(--key)">
+          <input type="number" id="bevelWidthNumber" min="0.01" max="0.12" step="0.01" value="0.04" inputmode="decimal" style="width:100%;border-radius:10px;border:1px solid var(--line-strong);background:rgba(255,255,255,.04);color:var(--text);padding:7px 10px;font:inherit;font-size:.82rem">
+        </div>
+      </div>
 
-  <div class="demo-wrap">
-    <canvas id="demoCanvas" width="680" height="300"></canvas>
-    <div class="demo-controls">
-      <button class="demo-btn is-active" data-seg="1">Seg 1</button>
-      <button class="demo-btn" data-seg="2">Seg 2</button>
-      <button class="demo-btn" data-seg="3">Seg 3</button>
-      <button class="demo-btn" data-seg="5">Seg 5</button>
-      <button class="demo-btn is-active" id="btnWN">Weighted Normal ON</button>
+      <div style="margin-bottom:12px">
+        <label for="bevelLimitMethod" style="display:block;font-size:.82rem;font-weight:600;color:var(--muted-strong);margin-bottom:6px">Limit Method</label>
+        <select id="bevelLimitMethod" style="width:100%;border-radius:10px;border:1px solid var(--line-strong);background:rgba(255,255,255,.04);color:var(--text);padding:9px 10px;font:inherit;font-size:.82rem">
+          <option value="none">None</option>
+          <option value="angle" selected>Angle</option>
+          <option value="weight">Weight</option>
+        </select>
+      </div>
+
+      <label for="bevelWeightedNormal" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);font-size:.82rem;color:var(--muted-strong);margin-bottom:12px">
+        <span>Weighted Normal</span>
+        <input type="checkbox" id="bevelWeightedNormal" checked style="width:18px;height:18px;accent-color:var(--key)">
+      </label>
+
+      <button class="demo-btn" id="bevelResetBtn" style="width:100%">기본값으로 되돌리기</button>
+      <div style="display:grid;grid-template-columns:1fr;gap:8px;margin-top:12px" aria-live="polite">
+        <div style="border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:10px 12px">
+          <span style="display:block;margin-bottom:4px;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">Shape</span>
+          <strong id="bevelShapeStatus" style="font-size:.85rem;color:var(--muted-strong)">Round</strong>
+        </div>
+        <div style="border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:10px 12px">
+          <span style="display:block;margin-bottom:4px;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">Limit</span>
+          <strong id="bevelLimitStatus" style="font-size:.85rem;color:var(--muted-strong)">Angle</strong>
+        </div>
+        <div style="border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:10px 12px">
+          <span style="display:block;margin-bottom:4px;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">Shading</span>
+          <strong id="bevelShadingStatus" style="font-size:.85rem;color:var(--muted-strong)">Weighted Normal ON</strong>
+        </div>
+      </div>
+    </aside>
+
+    <div>
+      <div class="demo-wrap">
+        <canvas id="demoCanvas" width="680" height="300"></canvas>
+      </div>
     </div>
   </div>
-  <p class="demo-hint">Segments가 늘어날수록 모서리가 부드러운 곡면으로 변합니다. Weighted Normal을 끄면 면마다 셰이딩이 나뉘어 보입니다.</p>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->
@@ -673,117 +725,41 @@ function initQuiz(questions) {
   }
 }
 
-// ── Scenario System ───────────────────────────
-var bevelModScenarios = {
-  segments: {
-    desc: "Segments 값이 높을수록 모서리가 더 부드럽게 분할됩니다. 1은 평면 chamfer, 3 이상은 둥근 곡면이 됩니다.",
-    ce: [
-      { cause: "Segments = 1", result: "평면 Chamfer (45도 경사면)", resultClass: "result-b" },
-      { cause: "Segments = 3 이상", result: "부드러운 둥근 곡면", resultClass: "result-a" },
-      { cause: "Width 증가", result: "베벨 폭이 넓어져 더 많이 깎임", resultClass: "result-b" }
-    ]
-  },
-  weighted: {
-    desc: "Bevel 후 Weighted Normal 모디파이어를 추가하면 셰이딩이 매끄럽게 유지됩니다.",
-    ce: [
-      { cause: "Weighted Normal OFF", result: "면마다 셰이딩이 달라 계단처럼 보임", resultClass: "result-c" },
-      { cause: "Weighted Normal ON", result: "모든 면이 부드럽게 연결된 셰이딩", resultClass: "result-a" },
-      { cause: "모디파이어 순서: Bevel → WN", result: "올바른 셰이딩 적용", resultClass: "result-a" }
-    ]
-  },
-  limit: {
-    desc: "Limit Method로 베벨을 적용할 모서리를 선택적으로 지정합니다. Weight 방식이 가장 정밀합니다.",
-    ce: [
-      { cause: "Limit: None", result: "모든 모서리에 베벨 적용", resultClass: "result-b" },
-      { cause: "Limit: Angle", result: "지정 각도 이상의 모서리만 자동 선택", resultClass: "result-a" },
-      { cause: "Limit: Weight + Ctrl+Shift+E", result: "원하는 모서리만 선택적으로 베벨", resultClass: "result-a" }
-    ]
-  }
+var bevelModState = {
+  segments: 3,
+  width: 0.04,
+  weightedNormal: true,
+  limitMethod: "angle"
 };
 
-function buildBevelModCE(ces) {
-  var container = document.getElementById('bevelModCE');
-  while (container.firstChild) { container.removeChild(container.firstChild); }
-  ces.forEach(function(item) {
-    var row = document.createElement('div');
-    row.className = 'ce-row';
-    var cause = document.createElement('div');
-    cause.className = 'ce-cause';
-    cause.textContent = item.cause;
-    var arrow = document.createElement('div');
-    arrow.className = 'ce-arrow';
-    arrow.textContent = '\u2192';
-    var result = document.createElement('div');
-    result.className = 'ce-result ' + item.resultClass;
-    result.textContent = item.result;
-    row.appendChild(cause);
-    row.appendChild(arrow);
-    row.appendChild(result);
-    container.appendChild(row);
-  });
+function updateBevelStatus() {
+  var segmentsLabel = document.getElementById("bevelSegmentsLabel");
+  var widthLabel = document.getElementById("bevelWidthLabel");
+  var shapeStatus = document.getElementById("bevelShapeStatus");
+  var limitStatus = document.getElementById("bevelLimitStatus");
+  var shadingStatus = document.getElementById("bevelShadingStatus");
+  if (segmentsLabel) segmentsLabel.textContent = String(bevelModState.segments);
+  if (widthLabel) widthLabel.textContent = bevelModState.width.toFixed(2);
+  if (shapeStatus) {
+    shapeStatus.textContent = bevelModState.segments <= 1 ? "Chamfer" : "Round";
+  }
+  if (limitStatus) {
+    limitStatus.textContent = bevelModState.limitMethod === "none" ? "None" :
+      bevelModState.limitMethod === "angle" ? "Angle" : "Weight";
+  }
+  if (shadingStatus) {
+    shadingStatus.textContent = bevelModState.weightedNormal ? "Weighted Normal ON" : "Weighted Normal OFF";
+  }
 }
-
-function switchBevelModScenario(key) {
-  var s = bevelModScenarios[key];
-  document.getElementById('bevelModDesc').textContent = s.desc;
-  buildBevelModCE(s.ce);
-  document.querySelectorAll('#bevelModScenarioNav .scenario-btn').forEach(function(btn) {
-    btn.classList.remove('active');
-    if (btn.getAttribute('onclick') && btn.getAttribute('onclick').indexOf("'" + key + "'") >= 0) {
-      btn.classList.add('active');
-    }
-  });
-}
-
-(function() {
-  var s = bevelModScenarios['segments'];
-  document.getElementById('bevelModDesc').textContent = s.desc;
-  buildBevelModCE(s.ce);
-})();
 
 // ── Canvas Bevel Demo ─────────────────────────
 (function() {
   var canvas = document.getElementById("demoCanvas");
   var ctx = canvas.getContext("2d");
-  var segments = 1;
-  var weightedNormal = true;
-
-  // Segment buttons
-  var segBtns = document.querySelectorAll("[data-seg]");
-  segBtns.forEach(function(btn) {
-    btn.addEventListener("click", function() {
-      segBtns.forEach(function(b) { b.classList.remove("is-active"); });
-      btn.classList.add("is-active");
-      segments = parseInt(btn.dataset.seg, 10);
-      draw();
-    });
-  });
-
-  // Touch support for segment buttons
-  segBtns.forEach(function(btn) {
-    btn.addEventListener("touchend", function(e) {
-      e.preventDefault();
-      btn.click();
-    });
-  });
-
-  // Weighted Normal toggle
-  var btnWN = document.getElementById("btnWN");
-  btnWN.addEventListener("click", function() {
-    weightedNormal = !weightedNormal;
-    if (weightedNormal) {
-      btnWN.textContent = "Weighted Normal ON";
-      btnWN.classList.add("is-active");
-    } else {
-      btnWN.textContent = "Weighted Normal OFF";
-      btnWN.classList.remove("is-active");
-    }
-    draw();
-  });
-  btnWN.addEventListener("touchend", function(e) {
-    e.preventDefault();
-    btnWN.click();
-  });
+  var segments = bevelModState.segments;
+  var weightedNormal = bevelModState.weightedNormal;
+  var bevelWidth = bevelModState.width;
+  var limitMethod = bevelModState.limitMethod;
 
   function draw() {
     var w = canvas.width;
@@ -833,9 +809,13 @@ function switchBevelModScenario(key) {
     drawCorner(ctx, leftCx, cy, 100, 0, false, false);
 
     // Draw beveled corner (right)
-    drawCorner(ctx, rightCx, cy, 100, segments, true, weightedNormal);
+    drawCorner(ctx, rightCx, cy, 100, segments, true, weightedNormal, bevelWidth, limitMethod);
 
-    // Weighted Normal indicator
+    // Status indicators
+    ctx.fillStyle = "rgba(255,255,255,.45)";
+    ctx.font = "11px sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("Limit Method: " + limitMethod.toUpperCase(), 12, h - 30);
     var wnLabel = weightedNormal ? "Weighted Normal: ON" : "Weighted Normal: OFF";
     ctx.fillStyle = weightedNormal ? "rgba(16,185,129,.7)" : "rgba(239,68,68,.7)";
     ctx.font = "bold 11px sans-serif";
@@ -843,7 +823,7 @@ function switchBevelModScenario(key) {
     ctx.fillText(wnLabel, 12, h - 12);
   }
 
-  function drawCorner(cx2d, cx, cy, size, segs, showBevel, wn) {
+  function drawCorner(cx2d, cx, cy, size, segs, showBevel, wn, widthValue, limit) {
     var halfSize = size;
 
     // The two edges meeting at a 90-degree corner
@@ -896,7 +876,7 @@ function switchBevelModScenario(key) {
       cx2d.fillText("Sharp", cornerX + 8, cornerY - 8);
     } else {
       // Beveled corner
-      var bevelSize = 30;
+      var bevelSize = 16 + Math.round(widthValue * 280);
 
       // Calculate bevel start/end points along the two edges
       var bStartX = cornerX;
@@ -1028,11 +1008,75 @@ function switchBevelModScenario(key) {
       cx2d.font = "10px sans-serif";
       cx2d.textAlign = "center";
       cx2d.fillText(labelText, cornerX + bevelSize * 0.7, cornerY - bevelSize * 0.7 - 10);
+
+      cx2d.fillStyle = "rgba(245,158,11,.85)";
+      cx2d.font = "bold 10px sans-serif";
+      cx2d.textAlign = "left";
+      if (limit === "weight") {
+        cx2d.fillText("Weight edge only", cornerX - 12, cornerY + 56);
+      } else if (limit === "angle") {
+        cx2d.fillText("Angle > threshold", cornerX - 10, cornerY + 56);
+      } else {
+        cx2d.fillText("All edges affected", cornerX - 6, cornerY + 56);
+      }
     }
   }
 
-  // Initial draw
-  draw();
+  function syncBevelControls() {
+    var segmentsRange = document.getElementById("bevelSegmentsRange");
+    var segmentsNumber = document.getElementById("bevelSegmentsNumber");
+    var widthRange = document.getElementById("bevelWidthRange");
+    var widthNumber = document.getElementById("bevelWidthNumber");
+    var limitSelect = document.getElementById("bevelLimitMethod");
+    var wnCheckbox = document.getElementById("bevelWeightedNormal");
+    if (segmentsRange) segmentsRange.value = String(bevelModState.segments);
+    if (segmentsNumber) segmentsNumber.value = String(bevelModState.segments);
+    if (widthRange) widthRange.value = bevelModState.width.toFixed(2);
+    if (widthNumber) widthNumber.value = bevelModState.width.toFixed(2);
+    if (limitSelect) limitSelect.value = bevelModState.limitMethod;
+    if (wnCheckbox) wnCheckbox.checked = bevelModState.weightedNormal;
+
+    segments = bevelModState.segments;
+    weightedNormal = bevelModState.weightedNormal;
+    bevelWidth = bevelModState.width;
+    limitMethod = bevelModState.limitMethod;
+    updateBevelStatus();
+    draw();
+  }
+
+  function setSegments(value) {
+    bevelModState.segments = Math.max(1, Math.min(6, parseInt(value, 10) || 1));
+    syncBevelControls();
+  }
+
+  function setWidth(value) {
+    var next = parseFloat(value);
+    if (!isFinite(next)) next = 0.04;
+    bevelModState.width = Math.max(0.01, Math.min(0.12, next));
+    syncBevelControls();
+  }
+
+  document.getElementById("bevelSegmentsRange").addEventListener("input", function() { setSegments(this.value); });
+  document.getElementById("bevelSegmentsNumber").addEventListener("input", function() { setSegments(this.value); });
+  document.getElementById("bevelWidthRange").addEventListener("input", function() { setWidth(this.value); });
+  document.getElementById("bevelWidthNumber").addEventListener("input", function() { setWidth(this.value); });
+  document.getElementById("bevelLimitMethod").addEventListener("change", function() {
+    bevelModState.limitMethod = this.value;
+    syncBevelControls();
+  });
+  document.getElementById("bevelWeightedNormal").addEventListener("change", function() {
+    bevelModState.weightedNormal = this.checked;
+    syncBevelControls();
+  });
+  document.getElementById("bevelResetBtn").addEventListener("click", function() {
+    bevelModState.segments = 3;
+    bevelModState.width = 0.04;
+    bevelModState.weightedNormal = true;
+    bevelModState.limitMethod = "angle";
+    syncBevelControls();
+  });
+
+  syncBevelControls();
 })();
 
 // ── Quiz Data ─────────────────────────────────

@@ -10,6 +10,7 @@ description: RPD 수업 사이트 CSS/HTML 디자인 개선. tokens.css 수정, 
 - `course-site/index.html` — 메인 페이지 (inline styles)
 - `course-site/week.html` — 주차 상세 페이지 (inline styles + JS 템플릿)
 - `course-site/admin.html` — 관리자 편집기 (tokens.css 의존)
+- `course-site/assets/showme/*.html` — Show Me 카드 인터랙션/탭 구조
 
 ## 핵심 제약
 
@@ -25,6 +26,24 @@ admin.html이 사용하는 주요 클래스:
 2. Low Noise: 불필요하게 큰 타이틀, 과한 glow 줄이기
 3. Read First: 학생은 디자인보다 먼저 "무엇을 해야 하는지"를 읽어야 함
 4. Action Oriented: 읽기 자료가 아닌 행동 유도 인터페이스
+
+### 인지부하 우선 규칙
+- 반복 카드가 많으면 기본 상태에서는 이름만 먼저 보여주기
+- 카테고리/난이도/slug 같은 보조 메타는 검색, 필터, 모달로 이동
+- 한 카드에서 동시에 비교하게 만드는 정보 축은 1개만 남기기
+- 클릭 전에 필요 없는 장식 아이콘, 배지, 보조 문장을 기본 화면에서 줄이기
+
+### Show Me 카드 규칙
+- 탭 1 `개념 이해`에 개념 설명 + 개념 시각화 요약을 함께 둔다
+- 탭 2 라벨은 항상 `interaction`으로 통일한다
+- `interaction` 탭에는 설명용 before/after, cause-effect, 긴 시나리오 문장을 두지 않는다
+- 파라미터형 카드는 `.modifier-panel` + `range` + `number` + `checkbox/select` 조합을 우선 사용한다
+- `"얇은 벽 / 두꺼운 벽"` 같은 프리셋 대신 `Thickness`, `Offset`, `Count`, `Width`, `Merge Distance`처럼 Blender 실제 파라미터명을 그대로 노출한다
+- 학생이 꼭 알아야 하는 정보만 남기고, 긴 문장형 보조 설명은 줄인다
+- 주석/보조 안내는 작은 카드 2~3개로 요약하는 쪽을 우선한다
+- 개념 탭의 부가 설명은 외부 이동 대신 `더보기` 내부 펼침으로 둔다
+- 버튼은 모드 전환이나 Reset처럼 꼭 필요한 경우만 남긴다
+- 기존 카드 보정 시에도 라이브러리/주차 모달과 개별 HTML이 같은 UX를 보이도록 맞춘다
 
 ### 컬러 토큰
 ```
@@ -74,7 +93,10 @@ CSS 변경 시 아래를 순서대로 확인:
 4. [ ] 키보드 Tab 탐색 시 focus ring 보이는지 확인
 5. [ ] `prefers-reduced-motion: reduce` 시 애니메이션 비활성화 확인
 6. [ ] 콘솔 에러 없음 확인
+7. [ ] Show Me 카드 수정 시 `개념 이해 / interaction / 언제 쓰나요? / 퀴즈` 4탭 구조 유지 확인
+8. [ ] 파라미터형 interaction이 버튼 프리셋보다 슬라이더/숫자 입력 중심인지 확인
 
 ## 참고 문서
 - `docs/COURSE_SITE_STYLE_GUIDE_2026-03-13.md`
+- `docs/COGNITIVE_UI_GUIDE_2026-03-18.md`
 - `docs/REFERENCE_RESEARCH_2026-03-15.md`

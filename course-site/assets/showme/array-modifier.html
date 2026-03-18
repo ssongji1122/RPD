@@ -310,7 +310,7 @@ body {
 <!-- Tab Bar -->
 <nav class="tabs" role="tablist">
   <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
-  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">interaction</button>
   <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
   <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
 </nav>
@@ -333,6 +333,12 @@ body {
       </ul>
     </div>
   </div>
+  <details style="margin-top:14px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:14px 16px">
+    <summary style="cursor:pointer;color:var(--key-soft);font-weight:600;list-style:none">더보기</summary>
+    <div style="margin-top:10px;color:var(--muted-strong);font-size:.84rem;line-height:1.7">
+      Relative는 일렬 반복, Object는 원형 반복, Constant는 절대 거리 기준 반복으로 기억하면 됩니다.
+    </div>
+  </details>
 
   <div class="shortcut-list">
     <h4>주요 단축키</h4>
@@ -357,28 +363,64 @@ body {
   </div>
 </section>
 
-<!-- TAB 2: 시각적 비교 -->
+<!-- TAB 2: interaction -->
 <section class="panel" id="panel-visual" role="tabpanel">
+  <div style="display:grid;grid-template-columns:minmax(220px,260px) 1fr;gap:14px;align-items:start">
+    <aside style="border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px">
+        <div style="font-size:.9rem;font-weight:700;color:var(--text)">Array Modifier</div>
+        <span style="padding:4px 8px;border-radius:999px;background:rgba(10,132,255,.14);color:var(--key-soft);font-size:.72rem;font-weight:600">Generate</span>
+      </div>
+      <p style="margin:0 0 14px;font-size:.78rem;color:var(--muted)">Count와 Offset만 조절해 보세요.</p>
 
-  <div class="scenario-nav" id="scenarioNav">
-    <button class="scenario-btn active" onclick="switchArrayScenario('linear')">직선 배열</button>
-    <button class="scenario-btn" onclick="switchArrayScenario('circular')">원형 배열</button>
-    <button class="scenario-btn" onclick="switchArrayScenario('staircase')">계단 배열</button>
-  </div>
+      <div style="margin-bottom:12px">
+        <label for="arrayModeSelect" style="display:block;font-size:.82rem;font-weight:600;color:var(--muted-strong);margin-bottom:6px">Offset Type</label>
+        <select id="arrayModeSelect" style="width:100%;border-radius:10px;border:1px solid var(--line-strong);background:rgba(255,255,255,.04);color:var(--text);padding:9px 10px;font:inherit;font-size:.82rem">
+          <option value="linear">Relative Offset</option>
+          <option value="circular">Object Offset</option>
+          <option value="staircase">Constant Offset</option>
+        </select>
+      </div>
 
-  <div id="scenarioDesc" style="font-size:.84rem; color:var(--muted-strong); margin:0 0 8px;"></div>
-  <div class="cause-effect" id="causeEffect"></div>
+      <div style="margin-bottom:12px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px">
+          <label for="arrayCountRange" style="font-size:.82rem;font-weight:600;color:var(--muted-strong)">Count</label>
+          <span id="arrayCountLabel" style="font-size:.76rem;color:var(--key-soft)">5</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 72px;gap:8px;align-items:center">
+          <input type="range" id="arrayCountRange" min="2" max="12" step="1" value="5" style="width:100%;accent-color:var(--key)">
+          <input type="number" id="arrayCountNumber" min="2" max="12" step="1" value="5" inputmode="numeric" style="width:100%;border-radius:10px;border:1px solid var(--line-strong);background:rgba(255,255,255,.04);color:var(--text);padding:7px 10px;font:inherit;font-size:.82rem">
+        </div>
+      </div>
 
-  <div class="demo-wrap">
-    <canvas id="demoCanvas" width="680" height="340"></canvas>
-    <div class="demo-controls">
-      <button class="demo-btn is-active" id="btnLinear">직선 배열</button>
-      <button class="demo-btn" id="btnCircular">원형 배열</button>
-      <button class="demo-btn" id="btnStaircase">계단 배열</button>
-      <button class="demo-btn" id="btnReset">초기화</button>
+      <label for="arrayMerge" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);font-size:.82rem;color:var(--muted-strong);margin-bottom:12px">
+        <span>Merge</span>
+        <input type="checkbox" id="arrayMerge" style="width:18px;height:18px;accent-color:var(--key)">
+      </label>
+
+      <button class="demo-btn" id="arrayResetBtn" style="width:100%">기본값으로 되돌리기</button>
+      <div style="display:grid;grid-template-columns:1fr;gap:8px;margin-top:12px" aria-live="polite">
+        <div style="border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:10px 12px">
+          <span style="display:block;margin-bottom:4px;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">Type</span>
+          <strong id="arrayModeStatus" style="font-size:.85rem;color:var(--muted-strong)">Relative Offset</strong>
+        </div>
+        <div style="border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:10px 12px">
+          <span style="display:block;margin-bottom:4px;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">Count</span>
+          <strong id="arrayCountStatus" style="font-size:.85rem;color:var(--muted-strong)">5</strong>
+        </div>
+        <div style="border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:10px 12px">
+          <span style="display:block;margin-bottom:4px;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">Merge</span>
+          <strong id="arrayMergeStatus" style="font-size:.85rem;color:var(--muted-strong)">OFF</strong>
+        </div>
+      </div>
+    </aside>
+
+    <div>
+      <div class="demo-wrap">
+        <canvas id="demoCanvas" width="680" height="340"></canvas>
+      </div>
     </div>
   </div>
-  <p class="demo-hint">캔버스를 좌우로 드래그하면 복제 개수가 변합니다 (2~12개)</p>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->
@@ -571,83 +613,50 @@ function initQuiz(questions) {
 // ── Scenario System ───────────────────────────
 var arrayScenarios = {
   linear: {
-    desc: "Relative Offset X=1로 오브젝트 크기만큼 간격을 두어 직선 복제합니다. 울타리, 기둥 등에 활용합니다.",
-    ce: [
-      { cause: "Count 증가", result: "복제본이 더 많이 생성됨", resultClass: "result-a" },
-      { cause: "Relative Offset X=1", result: "오브젝트 너비만큼 딱 붙어서 배치", resultClass: "result-a" },
-      { cause: "Offset 값 변경", result: "복제본 사이 간격 조절 가능", resultClass: "result-b" }
-    ]
+    desc: "Relative Offset X=1로 오브젝트 크기만큼 간격을 두어 직선 복제합니다.",
+    footer: "Relative Offset X = 1.0"
   },
   circular: {
-    desc: "Empty 오브젝트의 Z축 회전을 기준으로 원형 배열합니다. Object Offset 방식으로 원형 패턴을 만듭니다.",
-    ce: [
-      { cause: "Empty Z회전 = 360/개수", result: "균등 간격 원형 배열 완성", resultClass: "result-a" },
-      { cause: "Object Offset 선택", result: "Empty 위치/회전 기준으로 배치", resultClass: "result-b" },
-      { cause: "Count 변경", result: "Empty 회전값도 함께 조정 필요", resultClass: "result-b" }
-    ]
+    desc: "Object Offset은 Empty의 회전값을 기준으로 원형 패턴을 만듭니다.",
+    footer: "Object Offset Empty Z rotation"
   },
   staircase: {
-    desc: "Constant Offset으로 X와 Z 방향을 동시에 지정하면 계단 패턴을 만들 수 있습니다.",
-    ce: [
-      { cause: "Constant Offset X+Z 동시 설정", result: "대각선 방향으로 계단처럼 배치", resultClass: "result-a" },
-      { cause: "Z Offset만 사용", result: "수직 방향 스택 (탑 구조)", resultClass: "result-b" },
-      { cause: "Merge 옵션 ON", result: "겹친 버텍스를 자동으로 합침", resultClass: "result-a" }
-    ]
+    desc: "Constant Offset으로 X와 Z를 동시에 주면 계단처럼 반복됩니다.",
+    footer: "Constant Offset X + Z"
   }
 };
 
-function buildArrayCauseEffect(ces) {
-  var container = document.getElementById('causeEffect');
-  while (container.firstChild) { container.removeChild(container.firstChild); }
-  ces.forEach(function(item) {
-    var row = document.createElement('div');
-    row.className = 'ce-row';
-    var cause = document.createElement('div');
-    cause.className = 'ce-cause';
-    cause.textContent = item.cause;
-    var arrow = document.createElement('div');
-    arrow.className = 'ce-arrow';
-    arrow.textContent = '\u2192';
-    var result = document.createElement('div');
-    result.className = 'ce-result ' + item.resultClass;
-    result.textContent = item.result;
-    row.appendChild(cause);
-    row.appendChild(arrow);
-    row.appendChild(result);
-    container.appendChild(row);
-  });
-}
+var arrayState = {
+  mode: "linear",
+  count: 5,
+  merge: false
+};
 
-function switchArrayScenario(key) {
-  var s = arrayScenarios[key];
-  document.getElementById('scenarioDesc').textContent = s.desc;
-  buildArrayCauseEffect(s.ce);
-  document.querySelectorAll('#scenarioNav .scenario-btn').forEach(function(btn) {
-    btn.classList.remove('active');
-    if (btn.getAttribute('onclick') && btn.getAttribute('onclick').indexOf("'" + key + "'") >= 0) {
-      btn.classList.add('active');
-    }
-  });
-  // Also sync canvas demo buttons
-  var modeMap = { linear: 'btnLinear', circular: 'btnCircular', staircase: 'btnStaircase' };
-  var targetBtn = document.getElementById(modeMap[key]);
-  if (targetBtn) { targetBtn.click(); }
+function updateArrayStatus() {
+  var info = arrayScenarios[arrayState.mode];
+  var countLabel = document.getElementById("arrayCountLabel");
+  var modeStatus = document.getElementById("arrayModeStatus");
+  var countStatus = document.getElementById("arrayCountStatus");
+  var mergeStatus = document.getElementById("arrayMergeStatus");
+  if (countLabel) countLabel.textContent = String(arrayState.count);
+  if (modeStatus) {
+    modeStatus.textContent = arrayState.mode === "linear"
+      ? "Relative Offset"
+      : arrayState.mode === "circular"
+      ? "Object Offset"
+      : "Constant Offset";
+  }
+  if (countStatus) countStatus.textContent = String(arrayState.count);
+  if (mergeStatus) mergeStatus.textContent = arrayState.merge ? "ON" : "OFF";
 }
-
-(function() {
-  var s = arrayScenarios['linear'];
-  document.getElementById('scenarioDesc').textContent = s.desc;
-  buildArrayCauseEffect(s.ce);
-})();
 
 // ── Canvas Array Demo ────────────────────────
 (function() {
   var canvas = document.getElementById("demoCanvas");
   var ctx = canvas.getContext("2d");
-  var mode = "linear";
-  var count = 5;
-  var dragging = false;
-  var startX = 0;
+  var mode = arrayState.mode;
+  var count = arrayState.count;
+  var merge = arrayState.merge;
 
   function draw() {
     var w = canvas.width;
@@ -673,7 +682,7 @@ function switchArrayScenario(key) {
     ctx.font = "bold 11px sans-serif";
     ctx.textAlign = "left";
     var modeLabel = mode === "linear" ? "Linear Array" : mode === "circular" ? "Circular Array (Object Offset)" : "Staircase Array";
-    ctx.fillText(modeLabel + " \u00b7 Count: " + count, 12, 18);
+    ctx.fillText(modeLabel + " \u00b7 Count: " + count + (merge ? " \u00b7 Merge ON" : ""), 12, 18);
 
     if (mode === "linear") {
       drawLinear(w, h);
@@ -701,8 +710,8 @@ function switchArrayScenario(key) {
   function drawLinear(w, h) {
     var blockW = 40;
     var blockH = 60;
-    var gap = (w - 80) / count;
-    if (gap < blockW + 5) gap = blockW + 5;
+    var gap = merge ? blockW - 2 : (w - 80) / count;
+    if (!merge && gap < blockW + 5) gap = blockW + 5;
     var sx = (w - (count * gap - (gap - blockW))) / 2;
     var y = (h - blockH) / 2;
 
@@ -734,7 +743,7 @@ function switchArrayScenario(key) {
     ctx.fillStyle = "rgba(255,255,255,.3)";
     ctx.font = "11px sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("Relative Offset X = 1.0", w / 2, h - 20);
+    ctx.fillText("Relative Offset X = 1.0" + (merge ? " · Merge" : ""), w / 2, h - 20);
   }
 
   function drawCircular(w, h) {
@@ -802,61 +811,49 @@ function switchArrayScenario(key) {
     ctx.fillStyle = "rgba(255,255,255,.3)";
     ctx.font = "11px sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("Constant Offset: X=" + stepX + "  Z=" + stepY, w / 2, h - 14);
+    ctx.fillText("Constant Offset: X=" + stepX + "  Z=" + stepY + (merge ? " · Merge" : ""), w / 2, h - 14);
   }
 
-  // Event handlers
-  function onDown(e) {
-    dragging = true;
-    var rect = canvas.getBoundingClientRect();
-    startX = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-    e.preventDefault();
+  function syncArrayControls() {
+    var modeSelect = document.getElementById("arrayModeSelect");
+    var countRange = document.getElementById("arrayCountRange");
+    var countNumber = document.getElementById("arrayCountNumber");
+    var mergeCheckbox = document.getElementById("arrayMerge");
+    if (modeSelect) modeSelect.value = arrayState.mode;
+    if (countRange) countRange.value = String(arrayState.count);
+    if (countNumber) countNumber.value = String(arrayState.count);
+    if (mergeCheckbox) mergeCheckbox.checked = arrayState.merge;
+    mode = arrayState.mode;
+    count = arrayState.count;
+    merge = arrayState.merge;
+    updateArrayStatus();
+    draw();
   }
 
-  function onMove(e) {
-    if (!dragging) return;
-    e.preventDefault();
-    var rect = canvas.getBoundingClientRect();
-    var curX = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-    var dx = curX - startX;
-    if (Math.abs(dx) > 20) {
-      if (dx > 0 && count < 12) { count++; startX = curX; }
-      else if (dx < 0 && count > 2) { count--; startX = curX; }
-      draw();
-    }
+  function setCount(value) {
+    arrayState.count = Math.max(2, Math.min(12, parseInt(value, 10) || 5));
+    syncArrayControls();
   }
 
-  function onUp() { dragging = false; }
-
-  canvas.addEventListener("mousedown", onDown);
-  canvas.addEventListener("mousemove", onMove);
-  canvas.addEventListener("mouseup", onUp);
-  canvas.addEventListener("mouseleave", onUp);
-  canvas.addEventListener("touchstart", onDown, { passive: false });
-  canvas.addEventListener("touchmove", onMove, { passive: false });
-  canvas.addEventListener("touchend", onUp);
-  canvas.addEventListener("touchcancel", onUp);
-
-  // Mode buttons
-  document.getElementById("btnLinear").addEventListener("click", function() {
-    mode = "linear"; count = 5; updateButtons(this); draw();
+  document.getElementById("arrayModeSelect").addEventListener("change", function() {
+    arrayState.mode = this.value;
+    if (arrayState.mode === "circular" && arrayState.count < 3) arrayState.count = 6;
+    syncArrayControls();
   });
-  document.getElementById("btnCircular").addEventListener("click", function() {
-    mode = "circular"; count = 6; updateButtons(this); draw();
+  document.getElementById("arrayCountRange").addEventListener("input", function() { setCount(this.value); });
+  document.getElementById("arrayCountNumber").addEventListener("input", function() { setCount(this.value); });
+  document.getElementById("arrayMerge").addEventListener("change", function() {
+    arrayState.merge = this.checked;
+    syncArrayControls();
   });
-  document.getElementById("btnStaircase").addEventListener("click", function() {
-    mode = "staircase"; count = 5; updateButtons(this); draw();
-  });
-  document.getElementById("btnReset").addEventListener("click", function() {
-    count = 5; draw();
+  document.getElementById("arrayResetBtn").addEventListener("click", function() {
+    arrayState.mode = "linear";
+    arrayState.count = 5;
+    arrayState.merge = false;
+    syncArrayControls();
   });
 
-  function updateButtons(active) {
-    document.querySelectorAll(".demo-btn").forEach(function(b) { b.classList.remove("is-active"); });
-    active.classList.add("is-active");
-  }
-
-  draw();
+  syncArrayControls();
 })();
 
 // ── Quiz Data ─────────────────────────────────
