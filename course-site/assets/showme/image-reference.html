@@ -130,19 +130,33 @@ body {
   margin: 14px 0;
 }
 .demo-wrap canvas {
-  display: block; width: 100%;
+  display: block;
+  width: 100%;
+  height: auto;
 }
 .demo-controls {
-  display: flex; gap: 8px; padding: 12px;
+  display: flex;
+  gap: 10px;
+  padding: 14px 12px 0;
   border-top: 1px solid var(--line);
   flex-wrap: wrap;
 }
 .demo-hint {
-  font-size: .78rem; color: var(--muted);
-  text-align: center; padding: 6px 0 0;
+  font-size: .81rem;
+  color: var(--muted);
+  text-align: center;
+  padding: 10px 4px 0;
+  line-height: 1.7;
+  max-width: 54rem;
+  margin: 0 auto;
 }
 .demo-btn {
-  padding: 7px 14px; border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 8px 15px;
+  border-radius: 999px;
   border: 1px solid var(--line-strong);
   background: rgba(255,255,255,.04);
   color: var(--muted-strong);
@@ -380,30 +394,44 @@ body {
 
 /* ── Scenario Visualization ── */
 .scenario-nav{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
-.scenario-btn{padding:6px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.15);background:transparent;color:#cbd5e1;cursor:pointer;font-size:13px;transition:all .2s;font-family:var(--font)}
+.scenario-btn{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:7px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.15);background:transparent;color:#cbd5e1;cursor:pointer;font-size:13px;transition:all .2s;font-family:var(--font)}
 .scenario-btn.active{background:rgba(99,102,241,.25);border-color:rgba(99,102,241,.5);color:#a5b4fc}
-.before-after{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.before-after{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}
 .ba-panel{border-radius:var(--radius-sm);border:1px solid var(--line);background:var(--surface);overflow:hidden}
-.ba-panel canvas{display:block;width:100%;height:160px}
+.ba-panel canvas{display:block;width:100%;height:auto}
 .ba-label{text-align:center;padding:6px;font-size:.78rem;color:var(--muted);border-top:1px solid var(--line)}
 .cause-effect{margin-top:12px}
 .ce-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line)}
 .ce-row:last-child{border-bottom:none}
-.ce-cause{flex:1;font-size:.84rem;color:var(--muted-strong);padding:4px 8px;background:var(--surface);border-radius:6px;border:1px solid var(--line)}
+.ce-cause{flex:1;font-size:.84rem;color:var(--muted-strong);padding:4px 8px;background:var(--surface);border-radius:6px;border:1px solid var(--line);line-height:1.55}
 .ce-arrow{color:var(--muted);font-size:1rem;flex-shrink:0}
-.ce-result{flex:1.2;font-size:.84rem;padding:4px 8px;border-radius:6px;border:1px solid transparent}
+.ce-result{flex:1.2;font-size:.84rem;padding:4px 8px;border-radius:6px;border:1px solid transparent;line-height:1.55}
 .result-a{background:rgba(10,132,255,.1);border-color:rgba(10,132,255,.25);color:#93c5fd}
 .result-b{background:rgba(16,185,129,.1);border-color:rgba(16,185,129,.25);color:#6ee7b7}
 .result-warn{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.25);color:#fcd34d}
 .scene-desc-box{font-size:.85rem;color:var(--muted-strong);background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:12px}
 
 /* ── Responsive ── */
+@media (max-width: 720px) {
+  .before-after { grid-template-columns: 1fr; }
+  .ce-row { flex-direction: column; align-items: stretch; gap: 6px; }
+  .ce-arrow { align-self: center; transform: rotate(90deg); }
+}
 @media (max-width: 600px) {
   .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
   .tabs { padding: 0 8px; }
   .tab { padding: 10px 12px; font-size: .8rem; }
   .panel { padding: 16px 12px; }
   .compare-table { font-size: .78rem; }
+  .shortcut-row { align-items: flex-start; flex-direction: column; }
+}
+@media (max-width: 520px) {
+  .scenario-nav, .demo-controls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .scenario-btn, .demo-btn { width: 100%; }
+  .demo-hint { text-align: left; }
 }
 </style>
 </head>
@@ -897,18 +925,97 @@ function buildCauseEffectIR(ces) {
   });
 }
 
+function getCanvasPixelRatio() {
+  return Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
+}
+
+function setupHiDPICanvas(canvas, cssWidth, cssHeight) {
+  var ratio = getCanvasPixelRatio();
+  var width = Math.max(1, Math.round(cssWidth));
+  var height = Math.max(1, Math.round(cssHeight));
+  canvas.width = width * ratio;
+  canvas.height = height * ratio;
+  canvas.style.width = '100%';
+  canvas.style.height = height + 'px';
+  var context = canvas.getContext('2d');
+  context.setTransform(ratio, 0, 0, ratio, 0, 0);
+  return context;
+}
+
+function drawRoundedRectPath(ctx, x, y, w, h, radius) {
+  var r = Math.max(0, Math.min(radius || 0, w / 2, h / 2));
+  if (ctx.roundRect) {
+    ctx.beginPath();
+    ctx.roundRect(x, y, w, h, r);
+    return;
+  }
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+}
+
+function fitCanvasText(ctx, text, maxWidth) {
+  var value = String(text || '');
+  if (!value || ctx.measureText(value).width <= maxWidth) return value;
+  var trimmed = value;
+  while (trimmed.length > 1 && ctx.measureText(trimmed + '…').width > maxWidth) {
+    trimmed = trimmed.slice(0, -1);
+  }
+  return trimmed + '…';
+}
+
+function drawCanvasPill(ctx, x, y, label, options) {
+  var cfg = options || {};
+  var padX = cfg.paddingX || 10;
+  var height = cfg.height || 24;
+  ctx.save();
+  ctx.font = cfg.font || '600 11px sans-serif';
+  var width = Math.ceil(ctx.measureText(label).width) + padX * 2;
+  drawRoundedRectPath(ctx, x, y, width, height, cfg.radius || Math.floor(height / 2));
+  if (cfg.fill) {
+    ctx.fillStyle = cfg.fill;
+    ctx.fill();
+  }
+  if (cfg.stroke) {
+    ctx.strokeStyle = cfg.stroke;
+    ctx.lineWidth = cfg.lineWidth || 1;
+    ctx.stroke();
+  }
+  ctx.fillStyle = cfg.text || '#fff';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(label, x + padX, y + height / 2);
+  ctx.restore();
+  return { width: width, height: height };
+}
+
+var activeScenarioIR = 'reference';
+
 function renderBAPanelsIR(scene) {
   var bc=document.getElementById('canvas-before-ir');
   var ac=document.getElementById('canvas-after-ir');
-  bc.width=bc.offsetWidth||280; ac.width=ac.offsetWidth||280;
-  scene.before(bc.getContext('2d'),bc.width,bc.height);
-  scene.after(ac.getContext('2d'),ac.width,ac.height);
+  var beforeWidth = Math.max(220, Math.floor(bc.clientWidth || bc.offsetWidth || 280));
+  var afterWidth = Math.max(220, Math.floor(ac.clientWidth || ac.offsetWidth || 280));
+  var beforeHeight = beforeWidth < 260 ? 148 : 160;
+  var afterHeight = afterWidth < 260 ? 148 : 160;
+  var beforeCtx = setupHiDPICanvas(bc, beforeWidth, beforeHeight);
+  var afterCtx = setupHiDPICanvas(ac, afterWidth, afterHeight);
+  scene.before(beforeCtx, beforeWidth, beforeHeight);
+  scene.after(afterCtx, afterWidth, afterHeight);
   var lbl=document.getElementById('ba-label-after-ir');
   if(lbl) lbl.textContent=scene.label;
 }
 
 function switchScenarioIR(key) {
   var scene=scenariosIR[key]; if(!scene) return;
+  activeScenarioIR = key;
   document.querySelectorAll('#scenarioNavIR .scenario-btn').forEach(function(b){
     b.classList.toggle('active',b.dataset.scene===key);
   });
@@ -929,11 +1036,10 @@ switchScenarioIR('reference');
 // ── Canvas Image Type Demo ────────────────────
 (function() {
   var canvas = document.getElementById("demoCanvas");
-  var ctx = canvas.getContext("2d");
   var activeType = "reference";
-
-  var W = canvas.width;
-  var H = canvas.height;
+  var ctx = canvas.getContext("2d");
+  var W = 680;
+  var H = 320;
 
   var types = {
     reference: {
@@ -942,6 +1048,7 @@ switchScenarioIR('reference');
       colorAlpha: "rgba(10,132,255,",
       badge: "모델링용",
       desc: "뷰포트에 반투명하게 떠 있는 가이드",
+      note: "Opacity 조절 가능",
       tags: ["렌더 ✕", "메쉬 아님", "항상 보임", "Opacity 조절 가능"],
       tagColors: ["rgba(239,68,68,.7)", "rgba(161,161,170,.7)", "rgba(10,132,255,.7)", "rgba(16,185,129,.7)"]
     },
@@ -951,6 +1058,7 @@ switchScenarioIR('reference');
       colorAlpha: "rgba(245,158,11,",
       badge: "카메라 배경",
       desc: "Camera View(Numpad 0)에서만 보임",
+      note: "Camera View 전용",
       tags: ["렌더 ✕", "Camera View만", "VFX 합성", "카메라 연동"],
       tagColors: ["rgba(239,68,68,.7)", "rgba(245,158,11,.7)", "rgba(142,197,255,.7)", "rgba(245,158,11,.7)"]
     },
@@ -960,6 +1068,7 @@ switchScenarioIR('reference');
       colorAlpha: "rgba(16,185,129,",
       badge: "실제 메쉬",
       desc: "실제 메쉬로 렌더링에 포함됨",
+      note: "렌더 포함",
       tags: ["렌더 ○", "Edit Mode 편집 가능", "UV 자동 설정", "Modifier 적용 가능"],
       tagColors: ["rgba(16,185,129,.8)", "rgba(16,185,129,.7)", "rgba(142,197,255,.7)", "rgba(142,197,255,.7)"]
     },
@@ -969,6 +1078,7 @@ switchScenarioIR('reference');
       colorAlpha: "rgba(161,161,170,",
       badge: "빈 슬롯",
       desc: "이미지 없는 빈 자리 — 나중에 할당",
+      note: "나중에 이미지 할당",
       tags: ["렌더 ✕", "이미지 없음", "플레이스홀더", "나중에 할당"],
       tagColors: ["rgba(239,68,68,.7)", "rgba(161,161,170,.7)", "rgba(245,158,11,.7)", "rgba(142,197,255,.7)"]
     }
@@ -1014,218 +1124,348 @@ switchScenarioIR('reference');
     ctx.restore();
   }
 
-  function draw() {
-    ctx.clearRect(0, 0, W, H);
+  function getCanvasSize() {
+    var width = Math.max(320, Math.floor(canvas.clientWidth || 680));
+    var compact = width < 560;
+    var height = compact ? Math.max(260, Math.round(width * 0.72)) : Math.max(292, Math.round(width * 0.48));
+    return { width: width, height: height, compact: compact, veryCompact: width < 420 };
+  }
 
-    // Background
+  function buildTagRows(tags, compact) {
+    var font = compact ? "700 10px sans-serif" : "700 11px sans-serif";
+    var padX = compact ? 8 : 10;
+    var gap = compact ? 6 : 8;
+    var maxWidth = W - 28;
+    var rows = [];
+    var row = [];
+    var cursor = 0;
+
+    ctx.save();
+    ctx.font = font;
+    tags.forEach(function(tag, index) {
+      var width = Math.ceil(ctx.measureText(tag).width) + padX * 2;
+      if (row.length && cursor + width > maxWidth) {
+        rows.push(row);
+        row = [];
+        cursor = 0;
+      }
+      row.push({ text: tag, width: width, index: index });
+      cursor += width + gap;
+    });
+    if (row.length) rows.push(row);
+    ctx.restore();
+
+    return {
+      rows: rows,
+      font: font,
+      padX: padX,
+      gap: gap,
+      pillHeight: compact ? 22 : 24
+    };
+  }
+
+  function applyCanvasSize() {
+    var size = getCanvasSize();
+    ctx = setupHiDPICanvas(canvas, size.width, size.height);
+    W = size.width;
+    H = size.height;
+
+    var tagLayout = buildTagRows(types[activeType].tags, size.compact);
+    var extraHeight = Math.max(0, tagLayout.rows.length - 1) * (tagLayout.pillHeight + 6);
+    if (extraHeight) {
+      ctx = setupHiDPICanvas(canvas, size.width, size.height + extraHeight);
+      W = size.width;
+      H = size.height + extraHeight;
+      tagLayout = buildTagRows(types[activeType].tags, size.compact);
+    }
+
+    return {
+      compact: size.compact,
+      veryCompact: size.veryCompact,
+      tagLayout: tagLayout
+    };
+  }
+
+  function drawTagRows(layout, colors) {
+    var startX = 14;
+    var startY = H - 14 - layout.rows.length * layout.pillHeight - (layout.rows.length - 1) * 6;
+
+    ctx.save();
+    ctx.font = layout.font;
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+
+    layout.rows.forEach(function(row, rowIndex) {
+      var x = startX;
+      var y = startY + rowIndex * (layout.pillHeight + 6);
+      row.forEach(function(tag) {
+        drawRoundedRectPath(ctx, x, y, tag.width, layout.pillHeight, layout.pillHeight / 2);
+        ctx.fillStyle = colors[tag.index] || "rgba(161,161,170,.5)";
+        ctx.fill();
+        ctx.fillStyle = "#fff";
+        ctx.fillText(tag.text, x + layout.padX, y + layout.pillHeight / 2);
+        x += tag.width + layout.gap;
+      });
+    });
+
+    ctx.restore();
+  }
+
+  function drawDemoFrame(bounds, compact) {
+    drawRoundedRectPath(ctx, bounds.x, bounds.y, bounds.w, bounds.h, compact ? 16 : 18);
+    ctx.fillStyle = "#1a1c20";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,.08)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(bounds.x, bounds.y, bounds.w, bounds.h);
+    ctx.clip();
+    ctx.strokeStyle = "rgba(255,255,255,.035)";
+    ctx.lineWidth = 1;
+    var gridSize = compact ? 32 : 38;
+    for (var gx = bounds.x + gridSize; gx < bounds.x + bounds.w; gx += gridSize) {
+      ctx.beginPath();
+      ctx.moveTo(gx, bounds.y);
+      ctx.lineTo(gx, bounds.y + bounds.h);
+      ctx.stroke();
+    }
+    for (var gy = bounds.y + gridSize; gy < bounds.y + bounds.h; gy += gridSize) {
+      ctx.beginPath();
+      ctx.moveTo(bounds.x, gy);
+      ctx.lineTo(bounds.x + bounds.w, gy);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawSceneNote(bounds, t, compact) {
+    drawCanvasPill(ctx, bounds.x + 12, bounds.y + 12, t.note, {
+      fill: t.colorAlpha + (compact ? ".12)" : ".14)"),
+      stroke: t.colorAlpha + ".28)",
+      text: t.color,
+      font: compact ? "600 10px sans-serif" : "600 11px sans-serif",
+      height: compact ? 22 : 24,
+      paddingX: compact ? 9 : 10
+    });
+  }
+
+  function draw() {
+    var layout = applyCanvasSize();
+    var compact = layout.compact;
+    var veryCompact = layout.veryCompact;
+    var t = types[activeType];
+
+    ctx.clearRect(0, 0, W, H);
     ctx.fillStyle = "#17181a";
     ctx.fillRect(0, 0, W, H);
 
-    // Grid
-    ctx.strokeStyle = "rgba(255,255,255,.04)";
-    ctx.lineWidth = 1;
-    for (var gx = 40; gx < W; gx += 40) {
-      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke();
-    }
-    for (var gy = 40; gy < H; gy += 40) {
-      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke();
-    }
+    drawCanvasPill(ctx, 14, 12, t.badge, {
+      fill: t.colorAlpha + ".14)",
+      stroke: t.colorAlpha + ".26)",
+      text: t.color,
+      font: compact ? "600 10px sans-serif" : "600 11px sans-serif",
+      height: compact ? 22 : 24,
+      paddingX: compact ? 9 : 10
+    });
 
-    var t = types[activeType];
-    var cx = W / 2;
-    var cy = H / 2 - 10;
+    ctx.fillStyle = t.color;
+    ctx.font = (compact ? "700 15px sans-serif" : "700 16px sans-serif");
+    ctx.textAlign = "right";
+    ctx.textBaseline = "alphabetic";
+    ctx.fillText(t.label, W - 14, compact ? 30 : 32);
+
+    ctx.fillStyle = "rgba(255,255,255,.44)";
+    ctx.font = (compact ? "11px sans-serif" : "12px sans-serif");
+    ctx.fillText(fitCanvasText(ctx, t.desc, Math.max(140, W * 0.45)), W - 14, compact ? 46 : 50);
+
+    var footerHeight = 24 + layout.tagLayout.rows.length * layout.tagLayout.pillHeight + (layout.tagLayout.rows.length - 1) * 6;
+    var frameTop = compact ? 58 : 62;
+    var frameBottom = H - footerHeight - 12;
+    var frame = {
+      x: 14,
+      y: frameTop,
+      w: W - 28,
+      h: Math.max(150, frameBottom - frameTop)
+    };
+    var cx = frame.x + frame.w / 2;
+    var cy = frame.y + frame.h / 2 + (compact ? 6 : 2);
+
+    drawDemoFrame(frame, compact);
+    drawSceneNote(frame, t, compact);
 
     if (activeType === "reference") {
-      // Blue semi-transparent image layer + robot silhouette on top
-      var rw = 200, rh = 160;
-      var rx = cx - rw/2, ry = cy - rh/2 - 10;
+      var rw = Math.min(frame.w * 0.46, compact ? 180 : 220);
+      var rh = Math.min(frame.h * 0.68, compact ? 116 : 160);
+      var rx = cx - rw / 2;
+      var ry = cy - rh / 2 + (compact ? 8 : 0);
 
-      // Image placeholder (semi-transparent)
+      drawRoundedRectPath(ctx, rx, ry, rw, rh, compact ? 12 : 16);
       ctx.fillStyle = "rgba(10,132,255,.08)";
-      ctx.strokeStyle = "rgba(10,132,255,.5)";
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.roundRect ? ctx.roundRect(rx, ry, rw, rh, 8) : (function(){ctx.rect(rx,ry,rw,rh);})();
       ctx.fill();
+      ctx.strokeStyle = "rgba(10,132,255,.58)";
+      ctx.lineWidth = compact ? 1.8 : 2;
       ctx.stroke();
 
-      // Image grid pattern (reference blueprint feel)
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(rx, ry, rw, rh);
+      ctx.clip();
       ctx.strokeStyle = "rgba(10,132,255,.12)";
       ctx.lineWidth = 1;
-      for (var ix = rx+20; ix < rx+rw; ix += 20) {
-        ctx.beginPath(); ctx.moveTo(ix, ry); ctx.lineTo(ix, ry+rh); ctx.stroke();
+      var cell = compact ? 18 : 22;
+      for (var ix = rx + cell; ix < rx + rw; ix += cell) {
+        ctx.beginPath();
+        ctx.moveTo(ix, ry);
+        ctx.lineTo(ix, ry + rh);
+        ctx.stroke();
       }
-      for (var iy = ry+20; iy < ry+rh; iy += 20) {
-        ctx.beginPath(); ctx.moveTo(rx, iy); ctx.lineTo(rx+rw, iy); ctx.stroke();
+      for (var iy = ry + cell; iy < ry + rh; iy += cell) {
+        ctx.beginPath();
+        ctx.moveTo(rx, iy);
+        ctx.lineTo(rx + rw, iy);
+        ctx.stroke();
       }
+      ctx.restore();
 
-      // "IMAGE" label inside
-      ctx.fillStyle = "rgba(10,132,255,.4)";
-      ctx.font = "bold 13px sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText("REFERENCE IMAGE", cx, ry + rh/2 - 6);
-      ctx.font = "11px sans-serif";
-      ctx.fillStyle = "rgba(10,132,255,.3)";
-      ctx.fillText("(선택 불가 · 렌더 제외)", cx, ry + rh/2 + 12);
+      drawCanvasPill(ctx, rx + 12, ry + 12, veryCompact ? "Guide" : "Reference image", {
+        fill: "rgba(10,132,255,.14)",
+        stroke: "rgba(10,132,255,.22)",
+        text: "rgba(142,197,255,.95)",
+        font: compact ? "600 10px sans-serif" : "600 11px sans-serif",
+        height: compact ? 20 : 22,
+        paddingX: compact ? 8 : 9
+      });
 
-      // Robot silhouette on top (representing model being built over reference)
-      drawRobotSilhouette(cx, cy, 1.1, 0.85);
-
-      // "Opacity" label
-      ctx.fillStyle = "rgba(10,132,255,.7)";
-      ctx.font = "11px sans-serif";
+      ctx.fillStyle = "rgba(10,132,255,.42)";
+      ctx.font = compact ? "10px sans-serif" : "11px sans-serif";
       ctx.textAlign = "left";
-      ctx.fillText("기본 Opacity: 1.0 (Properties에서 낮출 수 있음)", rx, ry - 8);
+      ctx.fillText(veryCompact ? "렌더 제외" : "선택용 가이드 · 렌더 제외", rx + 14, ry + (compact ? 42 : 46));
+
+      drawRobotSilhouette(cx, cy + (compact ? 10 : 4), compact ? 0.92 : 1.12, 0.82);
 
     } else if (activeType === "background") {
-      // Camera frame around entire area
-      drawCameraFrame(cx, cy - 10, 340, 220, 0.9);
+      var camW = Math.min(frame.w * 0.78, compact ? 250 : 340);
+      var camH = Math.min(frame.h * 0.72, compact ? 140 : 220);
+      drawCameraFrame(cx, cy - (compact ? 6 : 12), camW, camH, 0.9);
 
-      // Background image inside
-      var bw = 300, bh = 180;
-      ctx.fillStyle = "rgba(245,158,11,.07)";
-      ctx.fillRect(cx - bw/2, cy - bh/2 - 10, bw, bh);
+      ctx.fillStyle = "rgba(245,158,11,.08)";
+      ctx.fillRect(cx - camW / 2 + 16, cy - camH / 2 - (compact ? 4 : 8), camW - 32, camH - 28);
 
-      // Horizon line
-      ctx.strokeStyle = "rgba(245,158,11,.3)";
+      ctx.strokeStyle = "rgba(245,158,11,.28)";
       ctx.lineWidth = 1;
-      ctx.setLineDash([6,4]);
+      ctx.setLineDash([6, 4]);
       ctx.beginPath();
-      ctx.moveTo(cx - bw/2, cy);
-      ctx.lineTo(cx + bw/2, cy);
+      ctx.moveTo(cx - camW / 2 + 18, cy + (compact ? 2 : 0));
+      ctx.lineTo(cx + camW / 2 - 18, cy + (compact ? 2 : 0));
       ctx.stroke();
       ctx.setLineDash([]);
 
-      // "Camera View Only" label
-      ctx.fillStyle = "rgba(245,158,11,.8)";
-      ctx.font = "bold 14px sans-serif";
+      ctx.fillStyle = "rgba(245,158,11,.84)";
+      ctx.font = compact ? "700 13px sans-serif" : "700 15px sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("Camera View Only", cx, cy - 35);
-      ctx.font = "11px sans-serif";
-      ctx.fillStyle = "rgba(245,158,11,.55)";
-      ctx.fillText("Numpad 0 에서만 표시됩니다", cx, cy - 16);
+      ctx.fillText("Camera View Only", cx, cy - (compact ? 20 : 34));
 
-      // Camera icon
-      ctx.fillStyle = "rgba(245,158,11,.6)";
-      ctx.font = "28px sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText("📷", cx, cy + 40);
+      ctx.fillStyle = "rgba(245,158,11,.58)";
+      ctx.font = compact ? "10px sans-serif" : "11px sans-serif";
+      ctx.fillText("Numpad 0 에서만 보입니다", cx, cy - (compact ? 4 : 16));
 
-      // Outside camera frame indicator
-      ctx.fillStyle = "rgba(161,161,170,.4)";
-      ctx.font = "11px sans-serif";
-      ctx.fillText("← 일반 뷰포트에서는 보이지 않음", cx, H - 16);
+      ctx.fillStyle = "rgba(255,255,255,.34)";
+      ctx.fillText("일반 뷰포트에서는 숨김", cx, frame.y + frame.h - 14);
 
     } else if (activeType === "mesh") {
-      // Solid mesh plane with texture grid
-      var mw = 200, mh = 150;
-      var mx = cx - mw/2, my = cy - mh/2 - 10;
+      var mw = Math.min(frame.w * 0.44, compact ? 180 : 220);
+      var mh = Math.min(frame.h * 0.54, compact ? 120 : 160);
+      var mx = cx - mw / 2;
+      var my = cy - mh / 2 + (compact ? 12 : 4);
 
-      // Solid fill
-      ctx.fillStyle = "rgba(16,185,129,.15)";
-      ctx.strokeStyle = "rgba(16,185,129,.8)";
-      ctx.lineWidth = 2.5;
+      ctx.fillStyle = "rgba(16,185,129,.14)";
       ctx.fillRect(mx, my, mw, mh);
+      ctx.strokeStyle = "rgba(16,185,129,.84)";
+      ctx.lineWidth = compact ? 2 : 2.5;
       ctx.strokeRect(mx, my, mw, mh);
 
-      // UV grid (checkerboard feel)
-      var gs = 25;
-      for (var gi = 0; gi < Math.ceil(mw/gs); gi++) {
-        for (var gj = 0; gj < Math.ceil(mh/gs); gj++) {
+      var gs = compact ? 22 : 25;
+      for (var gi = 0; gi < Math.ceil(mw / gs); gi++) {
+        for (var gj = 0; gj < Math.ceil(mh / gs); gj++) {
           if ((gi + gj) % 2 === 0) {
             ctx.fillStyle = "rgba(16,185,129,.08)";
-            ctx.fillRect(mx + gi*gs, my + gj*gs, Math.min(gs, mw - gi*gs), Math.min(gs, mh - gj*gs));
+            ctx.fillRect(mx + gi * gs, my + gj * gs, Math.min(gs, mw - gi * gs), Math.min(gs, mh - gj * gs));
           }
         }
       }
 
-      // Edge vertex dots (edit mode feel)
-      var corners = [[mx,my],[mx+mw,my],[mx+mw,my+mh],[mx,my+mh]];
-      corners.forEach(function(c) {
+      [[mx, my], [mx + mw, my], [mx + mw, my + mh], [mx, my + mh]].forEach(function(corner) {
         ctx.beginPath();
-        ctx.arc(c[0], c[1], 5, 0, Math.PI*2);
+        ctx.arc(corner[0], corner[1], compact ? 4 : 5, 0, Math.PI * 2);
         ctx.fillStyle = "#10b981";
         ctx.fill();
         ctx.strokeStyle = "#fff";
-        ctx.lineWidth = 1.5;
+        ctx.lineWidth = 1.2;
         ctx.stroke();
       });
 
-      ctx.fillStyle = "rgba(16,185,129,.85)";
-      ctx.font = "bold 13px sans-serif";
+      ctx.fillStyle = "rgba(16,185,129,.88)";
+      ctx.font = compact ? "700 12px sans-serif" : "700 14px sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("렌더링 포함 ○", cx, my - 10);
+      ctx.fillText("렌더링 포함", cx, my - 12);
 
-      ctx.fillStyle = "rgba(16,185,129,.6)";
-      ctx.font = "11px sans-serif";
-      ctx.fillText("Edit Mode에서 편집 가능 · UV 자동", cx, my + mh + 18);
+      ctx.fillStyle = "rgba(16,185,129,.62)";
+      ctx.font = compact ? "10px sans-serif" : "11px sans-serif";
+      ctx.fillText(veryCompact ? "Edit Mode 가능" : "Edit Mode에서 편집 가능 · UV 자동", cx, my + mh + 18);
 
-      // "Mesh" badge
-      ctx.fillStyle = "rgba(16,185,129,.5)";
-      ctx.font = "10px sans-serif";
+      ctx.fillStyle = "rgba(16,185,129,.55)";
+      ctx.font = compact ? "700 10px sans-serif" : "700 11px sans-serif";
       ctx.textAlign = "left";
-      ctx.fillText("MESH", mx + 6, my + 14);
+      ctx.fillText("MESH", mx + 8, my + 16);
 
     } else if (activeType === "empty") {
-      // Dashed rectangle placeholder
-      var ew = 200, eh = 150;
-      var ex = cx - ew/2, ey = cy - eh/2 - 10;
+      var ew = Math.min(frame.w * 0.46, compact ? 180 : 220);
+      var eh = Math.min(frame.h * 0.56, compact ? 124 : 160);
+      var ex = cx - ew / 2;
+      var ey = cy - eh / 2 + (compact ? 10 : 2);
 
-      ctx.strokeStyle = "rgba(161,161,170,.5)";
-      ctx.lineWidth = 2;
-      ctx.setLineDash([10, 7]);
+      ctx.strokeStyle = "rgba(161,161,170,.52)";
+      ctx.lineWidth = compact ? 1.8 : 2;
+      ctx.setLineDash(compact ? [8, 6] : [10, 7]);
       ctx.strokeRect(ex, ey, ew, eh);
       ctx.setLineDash([]);
 
-      // Diagonal cross
-      ctx.strokeStyle = "rgba(161,161,170,.2)";
+      ctx.strokeStyle = "rgba(161,161,170,.22)";
       ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(ex, ey); ctx.lineTo(ex+ew, ey+eh); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(ex+ew, ey); ctx.lineTo(ex, ey+eh); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(ex, ey);
+      ctx.lineTo(ex + ew, ey + eh);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(ex + ew, ey);
+      ctx.lineTo(ex, ey + eh);
+      ctx.stroke();
 
-      // "?" in center
-      ctx.fillStyle = "rgba(161,161,170,.5)";
-      ctx.font = "bold 40px sans-serif";
+      ctx.fillStyle = "rgba(161,161,170,.52)";
+      ctx.font = compact ? "700 34px sans-serif" : "700 42px sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("?", cx, cy + 6);
+      ctx.fillText("?", cx, cy + 10);
 
-      ctx.fillStyle = "rgba(161,161,170,.7)";
-      ctx.font = "bold 12px sans-serif";
+      ctx.fillStyle = "rgba(161,161,170,.72)";
+      ctx.font = compact ? "700 11px sans-serif" : "700 12px sans-serif";
       ctx.fillText("이미지 없음", cx, ey - 10);
 
-      ctx.fillStyle = "rgba(161,161,170,.5)";
-      ctx.font = "11px sans-serif";
-      ctx.fillText("Properties에서 이미지 나중에 할당", cx, ey + eh + 18);
+      ctx.fillStyle = "rgba(161,161,170,.52)";
+      ctx.font = compact ? "10px sans-serif" : "11px sans-serif";
+      ctx.fillText(veryCompact ? "나중에 할당" : "Properties에서 이미지 나중에 할당", cx, ey + eh + 18);
     }
 
-    // Type label top-right
-    ctx.fillStyle = t.color;
-    ctx.font = "bold 13px sans-serif";
-    ctx.textAlign = "right";
-    ctx.fillText(t.label, W - 14, 24);
-    ctx.fillStyle = "rgba(255,255,255,.4)";
-    ctx.font = "11px sans-serif";
-    ctx.fillText(t.desc, W - 14, 40);
+    ctx.strokeStyle = "rgba(255,255,255,.06)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(14, H - footerHeight - 8);
+    ctx.lineTo(W - 14, H - footerHeight - 8);
+    ctx.stroke();
 
-    // Tag pills bottom
-    var tagY = H - 10;
-    var tagX = 14;
-    t.tags.forEach(function(tag, i) {
-      var tw = ctx.measureText(tag).width + 16;
-      ctx.fillStyle = t.tagColors[i] || "rgba(161,161,170,.5)";
-      ctx.beginPath();
-      if (ctx.roundRect) {
-        ctx.roundRect(tagX, tagY - 20, tw, 20, 10);
-      } else {
-        ctx.rect(tagX, tagY - 20, tw, 20);
-      }
-      ctx.fill();
-      ctx.fillStyle = "#fff";
-      ctx.font = "bold 10px sans-serif";
-      ctx.textAlign = "left";
-      ctx.fillText(tag, tagX + 8, tagY - 5);
-      tagX += tw + 8;
-    });
+    drawTagRows(layout.tagLayout, t.tagColors);
   }
 
   var btnIds = ["btnRef", "btnBg", "btnMesh", "btnEmpty"];
@@ -1240,6 +1480,15 @@ switchScenarioIR('reference');
       this.classList.add("is-active");
       draw();
     });
+  });
+
+  var resizeTimer = null;
+  window.addEventListener("resize", function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function() {
+      switchScenarioIR(activeScenarioIR);
+      draw();
+    }, 80);
   });
 
   draw();
