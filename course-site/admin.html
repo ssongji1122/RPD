@@ -9,26 +9,25 @@
   <link rel="stylesheet" href="assets/tokens.css" />
   <style>
     /* ── Admin layout ─────────────────────────────────── */
-    body { overflow: hidden; }
+    body { overflow-x: hidden; }
 
     .admin-shell {
-      display: flex; flex-direction: column;
-      height: 100vh; overflow: hidden;
+      min-height: 100vh;
     }
 
     /* ── Topbar override ──────────────────────────────── */
     .admin-topbar {
-      position: sticky; top: 0; z-index: 40;
+      z-index: 60;
       backdrop-filter: blur(18px);
-      background: rgba(10,10,10,.88);
-      border-bottom: 1px solid rgba(255,255,255,.05);
-      flex-shrink: 0;
     }
     .admin-topbar-inner {
       display: flex; align-items: center; justify-content: space-between;
-      gap: 14px; padding: 12px 20px;
+      gap: 14px;
     }
-    .admin-brand { display: flex; align-items: center; gap: 12px; }
+    .admin-topbar-primary {
+      display: flex; align-items: center; gap: 12px; min-width: 0;
+    }
+    .admin-brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
     .admin-brand-badge {
       width: 36px; height: 36px; display: grid; place-items: center;
       border-radius: var(--radius-sm);
@@ -37,7 +36,7 @@
       color: var(--key-soft); font-weight: 700; font-size: .85rem;
     }
     .admin-brand strong { font-size: .92rem; color: var(--text); }
-    .admin-brand span { color: var(--muted); font-size: .78rem; margin-left: 8px; }
+    .admin-brand span { color: var(--muted); font-size: .78rem; margin: 2px 0 0; display: block; }
 
     .topbar-actions { display: flex; align-items: center; gap: 10px; }
     .dirty-indicator {
@@ -75,33 +74,103 @@
 
     /* ── Layout body ──────────────────────────────────── */
     .admin-body {
-      display: flex; flex: 1; overflow: hidden;
+      width: min(var(--max-width), calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 72px;
+      display: grid;
+      grid-template-columns: 272px minmax(0, 1fr);
+      gap: 26px;
+      align-items: start;
     }
 
     /* ── Sidebar ──────────────────────────────────────── */
     .sidebar {
-      width: 260px; flex-shrink: 0;
-      background: var(--bg-soft);
-      border-right: 1px solid rgba(255,255,255,.05);
+      width: 272px; flex-shrink: 0;
+      padding: 18px 12px;
+      background: var(--modal-panel-bg);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      box-shadow: var(--modal-panel-shadow);
       overflow-y: auto; overflow-x: hidden;
-      padding: 14px 0;
+      position: relative;
+      top: 82px;
+      max-height: calc(100vh - 112px);
+      align-self: start;
+      position: sticky;
+    }
+    .sidebar::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 1px;
+      background: var(--modal-top-line);
+      pointer-events: none;
+    }
+    .sidebar-block {
+      display: grid;
+      gap: 8px;
+      position: relative;
+      z-index: 1;
+    }
+    .sidebar-block + .sidebar-block {
+      margin-top: 8px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255,255,255,.05);
+    }
+    .sidebar-title {
+      font-size: .96rem;
+      font-weight: 650;
+      letter-spacing: -.02em;
+    }
+    .sidebar-meta {
+      color: var(--muted);
+      font-size: .78rem;
+      line-height: 1.6;
+    }
+    .sidebar-link {
+      display: block;
+      padding: 11px 13px;
+      border: 1px solid transparent;
+      border-radius: 16px;
+      color: var(--muted);
+      font-size: .83rem;
+      line-height: 1.55;
+      transition: color .14s ease, border-color .14s ease, background .14s ease, transform .14s ease;
+    }
+    .sidebar-link:hover {
+      color: var(--text);
+      border-color: var(--line);
+      background: rgba(255,255,255,.03);
+      transform: translateX(2px);
+    }
+    .sidebar-link.is-active {
+      color: var(--text);
+      border-color: rgba(96,165,250,.34);
+      background: var(--modal-nav-active-bg);
+      box-shadow: inset 0 0 0 1px rgba(147,197,253,.12);
     }
     .sidebar-label {
-      padding: 8px 18px; font-size: .72rem; font-weight: 600;
-      color: var(--muted); letter-spacing: .06em; text-transform: uppercase;
+      padding: 16px 10px 10px; font-size: .72rem; font-weight: 700;
+      color: var(--muted); letter-spacing: .12em; text-transform: uppercase;
     }
     .sidebar-item {
       display: flex; align-items: center; gap: 10px;
-      padding: 10px 18px; cursor: pointer;
-      border-left: 3px solid transparent;
-      transition: background .12s, border-color .12s;
+      padding: 10px 12px; cursor: pointer;
+      border: 1px solid transparent;
+      border-radius: 16px;
+      transition: background .12s, border-color .12s, transform .12s;
       font-size: .88rem; color: var(--muted-strong);
     }
-    .sidebar-item:hover { background: rgba(255,255,255,.03); }
+    .sidebar-item:hover {
+      background: rgba(255,255,255,.03);
+      border-color: var(--line);
+      transform: translateX(2px);
+    }
     .sidebar-item.active {
-      background: rgba(10,132,255,.06);
-      border-left-color: var(--key);
+      background: var(--modal-nav-active-bg);
+      border-color: rgba(96,165,250,.34);
       color: var(--text);
+      box-shadow: inset 0 0 0 1px rgba(147,197,253,.1);
     }
     .sidebar-dot {
       width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
@@ -119,11 +188,200 @@
 
     /* ── Main editor ──────────────────────────────────── */
     .editor-pane {
-      flex: 1; overflow-y: auto; overflow-x: hidden;
-      padding: 32px 24px 80px;
+      min-width: 0;
+      display: grid;
+      gap: 26px;
     }
     .editor-inner {
-      max-width: 900px; margin: 0 auto;
+      max-width: none;
+      margin: 0;
+      padding: 0;
+      border: none;
+      background: none;
+      box-shadow: none;
+      position: relative;
+      overflow: visible;
+      isolation: isolate;
+    }
+    .editor-inner::before {
+      display: none;
+    }
+
+    .admin-hero {
+      padding: 0;
+    }
+    .admin-hero-card {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1.18fr) minmax(250px, .82fr);
+      gap: 24px;
+      width: 100%;
+      padding: 30px;
+      border-radius: 28px;
+      border: 1px solid var(--line-strong);
+      background:
+        radial-gradient(circle at top left, rgba(10,132,255,.18), transparent 34%),
+        linear-gradient(180deg, var(--surface-tint), transparent 72%),
+        var(--surface);
+      box-shadow:
+        0 28px 80px rgba(0,0,0,.22),
+        inset 0 1px 0 rgba(255,255,255,.05);
+      overflow: hidden;
+      isolation: isolate;
+    }
+    .admin-hero-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(147,197,253,.56), transparent);
+      pointer-events: none;
+    }
+    .admin-hero-card::after {
+      content: "";
+      position: absolute;
+      right: -12%;
+      bottom: -38%;
+      width: 54%;
+      aspect-ratio: 1;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(10,132,255,.16), transparent 68%);
+      opacity: .82;
+      pointer-events: none;
+    }
+    .admin-hero-copy,
+    .admin-hero-meta-wrap {
+      position: relative;
+      z-index: 1;
+    }
+    .admin-hero-copy {
+      display: grid;
+      gap: 14px;
+      align-content: start;
+    }
+    .admin-hero h1 {
+      margin: 0;
+      font-family: var(--font-display);
+      max-width: 12ch;
+      font-size: clamp(2.1rem, 3.7vw, 3.18rem);
+      font-weight: 650;
+      letter-spacing: -.05em;
+      line-height: 1.04;
+      text-wrap: balance;
+    }
+    .admin-hero p {
+      max-width: 54ch;
+      margin: 0;
+      color: var(--muted-strong);
+      font-size: .98rem;
+      line-height: 1.76;
+    }
+    .admin-hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px 12px;
+      margin-top: 6px;
+    }
+    .admin-hero-actions .btn-primary {
+      box-shadow: 0 16px 32px rgba(10,132,255,.26);
+    }
+    .admin-hero-actions .btn-ghost {
+      border-color: var(--line-strong);
+      background: rgba(255,255,255,.05);
+    }
+    .admin-hero-meta-wrap {
+      display: grid;
+      gap: 14px;
+      align-content: end;
+      align-self: stretch;
+      padding: 18px;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.04), transparent 78%),
+        rgba(255,255,255,.02);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+      min-height: 100%;
+    }
+    .hero-meta-label {
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .admin-hero-meta {
+      display: grid;
+      gap: 10px;
+      justify-items: start;
+    }
+    .hero-meta-chip {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      padding-left: 14px;
+      border: none;
+      background: none;
+      font-size: .82rem;
+      line-height: 1.55;
+      color: var(--muted-strong);
+    }
+    .hero-meta-chip::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: calc(50% - 3px);
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(147,197,253,.92);
+      box-shadow: 0 0 0 6px rgba(10,132,255,.08);
+    }
+
+    .admin-workspace-panel {
+      position: relative;
+      padding: 28px;
+      border-radius: 26px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, var(--surface-tint), transparent 72%),
+        var(--surface);
+      box-shadow:
+        0 22px 54px rgba(0,0,0,.18),
+        inset 0 1px 0 rgba(255,255,255,.04);
+      overflow: hidden;
+      isolation: isolate;
+    }
+    .admin-workspace-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(147,197,253,.46), transparent);
+      pointer-events: none;
+    }
+    .admin-section-intro {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 22px;
+      position: relative;
+      z-index: 1;
+    }
+    .admin-section-title {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: clamp(1.18rem, 2vw, 1.42rem);
+      font-weight: 620;
+      letter-spacing: -.03em;
+      line-height: 1.2;
+    }
+    .admin-section-copy {
+      margin: 0;
+      color: var(--muted);
+      font-size: .92rem;
+      line-height: 1.72;
+      max-width: 64ch;
     }
 
     /* ── Form fields ──────────────────────────────────── */
@@ -142,16 +400,18 @@
       padding: 10px 14px;
       border-radius: var(--radius-sm);
       border: 1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.06);
+      background: var(--modal-panel-soft-strong-bg);
+      box-shadow: var(--modal-card-shadow);
       color: var(--text);
       font: inherit; font-size: .92rem;
-      transition: border-color .15s;
+      transition: border-color .15s, background .15s;
       outline: none;
     }
     .field-input:focus,
     .field-textarea:focus,
     .field-select:focus {
       border-color: var(--key);
+      background: var(--modal-hover-bg);
     }
     .field-textarea {
       resize: vertical; min-height: 70px; line-height: 1.6;
@@ -199,8 +459,8 @@
     .list-editor-row .field-input { flex: 1; }
     .btn-icon {
       width: 32px; height: 32px; display: grid; place-items: center;
-      border-radius: 8px; border: 1px solid rgba(255,255,255,.08);
-      background: transparent; color: var(--muted-strong);
+      border-radius: 10px; border: 1px solid rgba(255,255,255,.08);
+      background: var(--modal-panel-soft-bg); color: var(--muted-strong);
       cursor: pointer; font-size: .9rem; flex-shrink: 0;
       transition: border-color .15s, color .15s, background .15s;
     }
@@ -214,8 +474,8 @@
     .btn-add {
       display: inline-flex; align-items: center; gap: 6px;
       padding: 6px 12px; border-radius: 999px;
-      border: 1px dashed rgba(147,197,253,.2);
-      background: transparent; color: var(--muted-strong);
+      border: 1px solid rgba(147,197,253,.2);
+      background: rgba(255,255,255,.03); color: var(--muted-strong);
       cursor: pointer; font: inherit; font-size: .82rem;
       transition: border-color .15s, color .15s;
       margin-top: 6px;
@@ -228,8 +488,8 @@
     .step-card {
       border-radius: var(--radius-lg);
       border: 1px solid var(--line);
-      background: linear-gradient(180deg, rgba(23,24,26,.98), rgba(18,18,20,.98));
-      box-shadow: var(--shadow-card);
+      background: var(--modal-panel-soft-bg);
+      box-shadow: var(--modal-card-shadow);
       margin-bottom: 12px;
     }
     .step-card > summary {
@@ -387,13 +647,40 @@
     /* sync-review styles removed: save flow simplified */
 
     /* ── Responsive ────────────────────────────────────── */
+    @media (max-width: 1100px) {
+      .admin-body {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        position: relative;
+        top: 0;
+        max-height: none;
+        width: 100%;
+        order: 2;
+      }
+      .editor-pane { order: 1; }
+      .admin-hero-card {
+        grid-template-columns: 1fr;
+      }
+      .admin-hero-meta-wrap {
+        min-height: auto;
+      }
+    }
     @media (max-width: 800px) {
       .hamburger { display: flex; }
+      .admin-body {
+        width: calc(100% - 20px);
+        padding: 20px 0 64px;
+      }
       .sidebar {
         position: fixed; left: 0; top: 0; bottom: 0;
         z-index: 50; width: 280px;
+        max-height: none;
+        margin: 0;
+        border-radius: 0;
         transform: translateX(-100%);
         transition: transform .22s ease;
+        order: initial;
       }
       .sidebar.open { transform: translateX(0); }
       .sidebar-overlay {
@@ -401,7 +688,11 @@
         background: rgba(0,0,0,.5);
       }
       .sidebar-overlay.visible { display: block; }
-      .editor-pane { padding: 20px 14px 80px; }
+      .admin-hero-card,
+      .admin-workspace-panel {
+        padding: 22px 18px;
+        border-radius: 22px;
+      }
       .field-row { flex-direction: column; gap: 0; }
       .table-editor-row .field-input.short { max-width: none; flex: 1; }
       .task-editor-row { flex-direction: column; }
@@ -483,11 +774,18 @@
 
     /* Hero preview */
     .preview-hero {
-      padding: 40px 0 24px; text-align: center; margin-bottom: 8px;
+      padding: 0 0 26px;
+      text-align: left;
+      margin-bottom: 0;
+      border-bottom: 1px solid rgba(255,255,255,.06);
     }
-    .preview-hero-card { display: grid; gap: 12px; justify-items: center; }
+    .preview-hero-card {
+      display: grid;
+      gap: 12px;
+      justify-items: stretch;
+    }
     .preview-hero-meta {
-      display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; align-items: center;
+      display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-start; align-items: center;
     }
 
     /* Inline editable fields — transparent, only show border on hover/focus */
@@ -506,9 +804,9 @@
     .edit-h1 {
       border: none; background: transparent; color: inherit;
       font-family: var(--font-display);
-      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-size: clamp(1.8rem, 3vw, 2.55rem);
       font-weight: 650; letter-spacing: -.026em; line-height: 1.1;
-      text-align: center; width: 100%; outline: none;
+      text-align: left; width: 100%; outline: none;
       border-bottom: 1px dashed transparent; transition: border-color .15s;
     }
     .edit-h1:hover { border-bottom-color: rgba(10,132,255,.3); }
@@ -517,7 +815,7 @@
     .edit-p {
       border: none; background: transparent;
       color: var(--muted-strong); font: inherit; outline: none;
-      resize: none; width: 100%; line-height: 1.8; text-align: center;
+      resize: none; width: 100%; line-height: 1.8; text-align: left;
       border-bottom: 1px dashed transparent; transition: border-color .15s;
     }
     .edit-p:hover { border-bottom-color: rgba(10,132,255,.3); }
@@ -531,9 +829,10 @@
     /* Topic pills */
     .preview-topic-pill {
       display: inline-flex; align-items: center; gap: 4px;
-      padding: 5px 6px 5px 12px; border-radius: 999px;
+      padding: 7px 8px 7px 12px; border-radius: 999px;
       border: 1px solid rgba(255,255,255,.1);
-      background: rgba(255,255,255,.04);
+      background: var(--modal-panel-soft-bg);
+      box-shadow: var(--modal-card-shadow);
     }
     .preview-topic-pill input {
       border: none; background: transparent; color: var(--muted-strong);
@@ -564,8 +863,9 @@
     .preview-admin-row {
       display: flex; align-items: center; gap: 10px;
       margin: 6px 0 12px; flex-wrap: wrap;
-      padding: 8px; border-radius: 8px;
-      background: rgba(10,132,255,.04); border: 1px dashed rgba(10,132,255,.14);
+      padding: 10px 12px; border-radius: 14px;
+      background: var(--modal-panel-soft-bg);
+      border: 1px dashed rgba(10,132,255,.18);
     }
 
     /* Step edit list rows (goal/done/task) */
@@ -580,7 +880,9 @@
     .admin-task-edit {
       display: flex; align-items: start; gap: 10px;
       padding: 10px 12px; border-radius: var(--radius-md);
-      background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.04);
+      background: var(--modal-panel-soft-bg);
+      border: 1px solid rgba(255,255,255,.06);
+      box-shadow: var(--modal-card-shadow);
     }
     .admin-task-fields { flex: 1; display: grid; gap: 4px; }
 
@@ -589,7 +891,8 @@
       display: flex; align-items: center; gap: 8px;
       padding: 8px 12px; border-radius: var(--radius-md);
       border: 1px solid rgba(255,255,255,.06);
-      background: rgba(255,255,255,.02);
+      background: var(--modal-panel-soft-bg);
+      box-shadow: var(--modal-card-shadow);
     }
     .preview-link-edit .link-fields { flex: 1; display: grid; gap: 3px; }
 
@@ -602,11 +905,11 @@
   </style>
 </head>
 <body>
-  <div class="admin-shell">
+  <div class="page-shell admin-shell">
     <!-- Topbar -->
-    <header class="admin-topbar">
-      <div class="admin-topbar-inner">
-        <div style="display:flex;align-items:center;gap:12px;">
+    <header class="topbar admin-topbar">
+      <div class="topbar-inner admin-topbar-inner">
+        <div class="admin-topbar-primary">
           <button class="hamburger" id="hamburgerBtn" type="button" aria-label="메뉴 열기">&#9776;</button>
           <div class="admin-brand">
             <div class="admin-brand-badge">R</div>
@@ -639,16 +942,63 @@
     <!-- Body -->
     <div class="admin-body">
       <!-- Sidebar -->
-      <nav class="sidebar" id="sidebar" aria-label="주차 목록">
+      <nav class="sidebar" id="sidebar" aria-label="관리 탐색">
+        <div class="sidebar-block">
+          <strong class="sidebar-title" id="sidebarTitle">RPD Admin</strong>
+          <span class="sidebar-meta" id="sidebarMeta">커리큘럼 구조를 웹페이지 흐름 그대로 편집합니다.</span>
+        </div>
+        <div class="sidebar-block">
+          <a class="sidebar-link is-active" href="#adminHero">관리 개요</a>
+          <a class="sidebar-link" href="#editorWorkspace">편집 워크스페이스</a>
+          <a class="sidebar-link" href="#practiceSection">실습 섹션</a>
+          <a class="sidebar-link" href="#assignmentSection">과제 섹션</a>
+        </div>
+        <div class="sidebar-block">
+          <a class="sidebar-link" href="index.html">홈 페이지</a>
+          <a class="sidebar-link" href="library.html">카드 라이브러리</a>
+          <a class="sidebar-link" href="shortcuts.html">단축키 DB</a>
+        </div>
         <div class="sidebar-label">주차 목록</div>
         <div id="sidebarList"></div>
       </nav>
 
       <!-- Editor -->
       <main class="editor-pane" id="editorPane">
-        <div class="editor-inner" id="editorInner">
-          <div class="empty-state">불러오는 중...</div>
-        </div>
+        <section class="hero admin-hero" id="adminHero">
+          <div class="admin-hero-card">
+            <div class="admin-hero-copy">
+              <div class="eyebrow" id="adminHeroEyebrow">Curriculum Editor</div>
+              <h1 id="adminHeroTitle">원래 웹 구조를 유지하는 RPD Admin</h1>
+              <p id="adminHeroDescription">홈과 주차 페이지의 흐름 그대로, 선택한 주차를 편집하고 바로 공개 페이지로 미리볼 수 있습니다.</p>
+              <div class="hero-actions cta-group admin-hero-actions">
+                <button class="btn btn-primary" id="heroPreviewBtn" type="button">현재 주차 미리보기</button>
+                <a class="btn btn-ghost" href="index.html">홈 보기</a>
+                <a class="btn-link" href="library.html">카드 라이브러리 <span aria-hidden="true">→</span></a>
+              </div>
+            </div>
+            <div class="admin-hero-meta-wrap">
+              <div class="hero-meta-label">Admin Snapshot</div>
+              <div class="admin-hero-meta">
+                <span class="hero-meta-chip" id="adminHeroWeek">선택된 주차 · —</span>
+                <span class="hero-meta-chip" id="adminHeroState">저장 상태 · 동기화됨</span>
+                <span class="hero-meta-chip" id="adminHeroVersion">버전 · —</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="content-block" id="editorWorkspace">
+          <div class="admin-workspace-panel">
+            <div class="admin-section-intro">
+              <div class="eyebrow">Editable Week Preview</div>
+              <h2 class="admin-section-title" id="workspaceTitle">선택한 주차를 실제 페이지 구조 그대로 편집합니다</h2>
+              <p class="admin-section-copy" id="workspaceDescription">이 영역은 공개 주차 페이지의 정보 순서를 따라가는 편집 캔버스입니다.</p>
+            </div>
+            <div class="editor-inner" id="editorInner">
+              <div class="empty-state">불러오는 중...</div>
+            </div>
+          </div>
+        </section>
       </main>
     </div>
 
@@ -731,6 +1081,13 @@
     var diffMeta         = document.getElementById("diffMeta");
     var diffLog          = document.getElementById("diffLog");
     var diffCloseBtn     = document.getElementById("diffCloseBtn");
+    var heroPreviewBtn   = document.getElementById("heroPreviewBtn");
+    var adminHeroWeek    = document.getElementById("adminHeroWeek");
+    var adminHeroState   = document.getElementById("adminHeroState");
+    var adminHeroVersion = document.getElementById("adminHeroVersion");
+    var sidebarMeta      = document.getElementById("sidebarMeta");
+    var workspaceTitle   = document.getElementById("workspaceTitle");
+    var workspaceDescription = document.getElementById("workspaceDescription");
 
     // ─── Helpers ─────────────────────────────────────────
 
@@ -742,6 +1099,43 @@
       return d.innerHTML;
     }
 
+    function getSelectedWeek() {
+      return curriculum[selectedIdx] || curriculum[0] || null;
+    }
+
+    function formatWeekLabel(week) {
+      return week ? "Week " + String(week.week).padStart(2, "0") : "—";
+    }
+
+    function renderAdminChrome() {
+      var selectedWeek = getSelectedWeek();
+
+      if (sidebarMeta) {
+        sidebarMeta.textContent = selectedWeek
+          ? curriculum.length + "주 커리큘럼 · " + formatWeekLabel(selectedWeek) + " 편집 중"
+          : "커리큘럼 구조를 웹페이지 흐름 그대로 편집합니다.";
+      }
+      if (adminHeroWeek) {
+        adminHeroWeek.textContent = "선택된 주차 · " + formatWeekLabel(selectedWeek);
+      }
+      if (adminHeroState) {
+        adminHeroState.textContent = dirty ? "저장 상태 · 초안 있음" : "저장 상태 · 동기화됨";
+      }
+      if (adminHeroVersion) {
+        adminHeroVersion.textContent = currentVersion ? "버전 · " + currentVersion : "버전 · —";
+      }
+      if (workspaceTitle) {
+        workspaceTitle.textContent = selectedWeek
+          ? formatWeekLabel(selectedWeek) + " · " + (selectedWeek.title || "제목 없음") + " 편집"
+          : "선택한 주차를 실제 페이지 구조 그대로 편집합니다";
+      }
+      if (workspaceDescription) {
+        workspaceDescription.textContent = selectedWeek
+          ? "현재 선택된 주차를 공개 페이지와 같은 섹션 순서로 수정합니다. 저장 전까지는 관리자 화면에서만 반영됩니다."
+          : "이 영역은 공개 주차 페이지의 정보 순서를 따라가는 편집 캔버스입니다.";
+      }
+    }
+
     function markDirty(weekNum) {
       dirty = true;
       if (weekNum == null && curriculum[selectedIdx]) {
@@ -751,12 +1145,14 @@
         dirtyWeeks[String(weekNum)] = true;
       }
       dirtyIndicator.classList.add("visible");
+      renderAdminChrome();
     }
 
     function clearDirty() {
       dirty = false;
       dirtyWeeks = {};
       dirtyIndicator.classList.remove("visible");
+      renderAdminChrome();
     }
 
     function toast(msg, type) {
@@ -785,6 +1181,7 @@
     function setCurrentVersion(version) {
       currentVersion = version || "";
       versionBadge.textContent = currentVersion ? "버전 " + currentVersion : "버전 —";
+      renderAdminChrome();
     }
 
     function renderDiffOverlay(diff) {
@@ -854,7 +1251,7 @@
 
       // ── HERO ────────────────────────────────────────────
       parts.push(
-        '<section class="preview-hero">',
+        '<section class="preview-hero" id="editorPreview">',
         '<div class="preview-hero-card">',
         '<div class="eyebrow">Week ', esc(String(w.week).padStart(2,"0")), ' · RPD</div>'
       );
@@ -874,7 +1271,7 @@
       // ── TOPICS ──────────────────────────────────────────
       var topicsHTML = [];
       topicsHTML.push(
-        '<div class="preview-section">',
+        '<div class="preview-section" id="topicsSection">',
         '<div class="section-head"><h3>이번 주</h3></div>',
         '<div id="topicsList" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">'
       );
@@ -895,7 +1292,7 @@
 
       // ── STEPS ───────────────────────────────────────────
       parts.push(
-        '<div class="preview-section">',
+        '<div class="preview-section" id="practiceSection">',
         '<div class="section-head"><h3>실습</h3></div>',
         '<div class="lab" id="stepsList">'
       );
@@ -912,7 +1309,7 @@
       var shortcuts = w.shortcuts || [];
       var shortcutsHTML = [];
       shortcutsHTML.push(
-        '<div class="preview-section">',
+        '<div class="preview-section" id="shortcutsSection">',
         '<div class="section-head"><h3>단축키 치트시트</h3></div>',
         '<div class="card shortcut-table-wrap">',
         '<table class="shortcut-table" style="width:100%">',
@@ -939,7 +1336,7 @@
       // ── EXPLORE ─────────────────────────────────────────
       var explore = w.explore || [];
       parts.push(
-        '<div class="preview-section">',
+        '<div class="preview-section" id="exploreSection">',
         '<div class="section-head"><h3>더 해보기</h3></div>',
         '<div class="explore-grid" id="exploreList">'
       );
@@ -962,7 +1359,7 @@
       var mistakes = w.mistakes || [];
       var mistakesHTML = [];
       mistakesHTML.push(
-        '<div class="preview-section">',
+        '<div class="preview-section" id="mistakesSection">',
         '<div class="section-head"><h3>막히는 지점</h3></div>',
         '<details class="card mistakes-section" open>',
         '<summary>막혔을 때</summary>',
@@ -987,7 +1384,7 @@
       // ── VIDEOS ──────────────────────────────────────────
       var videos = w.videos || [];
       parts.push(
-        '<div class="preview-section">',
+        '<div class="preview-section" id="videosSection">',
         '<div class="section-head"><h3>공식 영상 튜토리얼</h3></div>',
         '<div id="videosList" style="display:grid;gap:8px">'
       );
@@ -1018,7 +1415,7 @@
       var docs = w.docs || [];
       var docsHTML = [];
       docsHTML.push(
-        '<div class="preview-section">',
+        '<div class="preview-section" id="docsSection">',
         '<div class="section-head"><h3>공식 문서</h3></div>',
         '<div id="docsList" style="display:grid;gap:8px">'
       );
@@ -1044,7 +1441,7 @@
       var a = w.assignment || { title: "", description: "", checklist: [] };
       var assignmentHTML = [];
       assignmentHTML.push(
-        '<div class="preview-section">',
+        '<div class="preview-section" id="assignmentSection">',
         '<div class="section-head"><h3>과제</h3></div>',
         '<div class="card assignment-card">',
         '<div class="card-chip">과제</div>',
@@ -1235,6 +1632,7 @@
         msg.className = "empty-state";
         msg.textContent = "서버 연결 실패. API 서버가 실행 중인지 확인하세요.";
         editorInner.appendChild(msg);
+        if (sidebarMeta) sidebarMeta.textContent = "API 연결이 필요합니다.";
       }
     }
 
@@ -1277,6 +1675,9 @@
       var weekNum = curriculum[selectedIdx].week;
       window.open("week.html?week=" + weekNum, "_blank");
     });
+    heroPreviewBtn.addEventListener("click", function() {
+      previewBtn.click();
+    });
 
     // ─── Unsaved changes warning ─────────────────────────
     window.addEventListener("beforeunload", function(e) {
@@ -1303,6 +1704,7 @@
       });
       weekSelectTopbar.innerHTML = opts.join("");
       weekSelectTopbar.style.display = curriculum.length ? "" : "none";
+      renderAdminChrome();
     }
 
     weekSelectTopbar.addEventListener("change", function() {
@@ -1326,6 +1728,7 @@
       }
       weekSelectTopbar.value = String(idx);
       renderEditor();
+      renderAdminChrome();
     }
 
     // ─── Editor rendering ────────────────────────────────
@@ -1756,6 +2159,7 @@
       sidebarList.innerHTML = "";
       weekSelectTopbar.innerHTML = "";
       weekSelectTopbar.style.display = "none";
+      renderAdminChrome();
       showAuth();
     });
     document.addEventListener("keydown", function(e) {
@@ -1768,6 +2172,7 @@
     });
 
     // ─── Init ────────────────────────────────────────────
+    renderAdminChrome();
     loadCurriculum();
 
   })();
