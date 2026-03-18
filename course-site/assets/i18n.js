@@ -1181,6 +1181,56 @@
     return "";
   }
 
+  function getShowMeExactMaps(widgetId) {
+    var showme = getShowMeStore();
+    return {
+      common: showme.common && showme.common.exact ? showme.common.exact : {},
+      widget: showme.widgets && showme.widgets[widgetId] && showme.widgets[widgetId].exact
+        ? showme.widgets[widgetId].exact
+        : {}
+    };
+  }
+
+  function getShowMeExactTranslation(widgetId, value) {
+    var maps = getShowMeExactMaps(widgetId);
+    return getExactTranslation(maps.widget, value) || getExactTranslation(maps.common, value);
+  }
+
+  function getShowMeReverseExactTranslation(widgetId, value) {
+    var maps = getShowMeExactMaps(widgetId);
+    return getReverseExactTranslation(maps.widget, value) || getReverseExactTranslation(maps.common, value);
+  }
+
+  function translateShowMeStaticSnippet(value, widgetId) {
+    return getShowMeExactTranslation(widgetId, value) || translateCourseText(value) || value;
+  }
+
+  function translateShowMeStaticSnippetToKo(value, widgetId) {
+    return getShowMeReverseExactTranslation(widgetId, value)
+      || getReverseExactTranslation(getCurriculumExactMap(), value)
+      || value;
+  }
+
+  function translateShowMeSentenceGroup(value, widgetId) {
+    var parts = typeof value === "string" ? value.match(/[^.?!]+[.?!]?/g) : null;
+    if (!parts || !parts.length) return translateShowMeStaticSnippet(value, widgetId);
+    return parts.map(function(part) {
+      var trimmed = normalizeTranslatableText(part);
+      if (!trimmed) return "";
+      return translateShowMeStaticSnippet(trimmed, widgetId);
+    }).filter(Boolean).join(" ");
+  }
+
+  function translateShowMeSentenceGroupToKo(value, widgetId) {
+    var parts = typeof value === "string" ? value.match(/[^.?!]+[.?!]?/g) : null;
+    if (!parts || !parts.length) return translateShowMeStaticSnippetToKo(value, widgetId);
+    return parts.map(function(part) {
+      var trimmed = normalizeTranslatableText(part);
+      if (!trimmed) return "";
+      return translateShowMeStaticSnippetToKo(trimmed, widgetId);
+    }).filter(Boolean).join(" ");
+  }
+
   function applyOrderedMap(value, map) {
     var result = value;
     Object.keys(map || {})
@@ -1300,7 +1350,7 @@
     return localized;
   }
 
-  function translateShowMeDynamicText(value) {
+  function translateShowMeDynamicText(value, widgetId) {
     var match;
 
     if (value === "완벽합니다!") return "Perfect!";
@@ -1323,6 +1373,39 @@
     match = value.match(/^📖\s*Blender 공식 문서\s*[—-]\s*(.+)$/);
     if (match) return "📖 Blender Official Manual - " + translateCourseText(match[1]);
 
+    match = value.match(/^interaction\s*[—-]\s*(.+)$/i);
+    if (match) return "Interactive Demo - " + translateShowMeSentenceGroup(match[1], widgetId);
+
+    match = value.match(/^직접 체험[:：]\s*(.+)$/);
+    if (match) return "Try it: " + translateShowMeSentenceGroup(match[1], widgetId);
+
+    match = value.match(/^분할 수:\s*(\d+)$/);
+    if (match) return "Segments: " + match[1];
+
+    match = value.match(/^(\d+)각형$/);
+    if (match) return match[1] + "-gon";
+
+    match = value.match(/^(\d+)각형\s+\((\d+)개 꼭짓점\)$/);
+    if (match) return match[1] + "-gon (" + match[2] + " vertices)";
+
+    match = value.match(/^(\d+)각형\s+[—-]\s+([0-9.]+%)$/);
+    if (match) return match[1] + "-gon - " + match[2];
+
+    match = value.match(/^단면:\s*(\d+)각형$/);
+    if (match) return "Cross-section: " + match[1] + "-gon";
+
+    match = value.match(/^현재 Radius\s+([0-9.]+),\s*Resolution\s+(\d+)\s+설정입니다\.\s+(.+)$/);
+    if (match) {
+      return "Current settings: Radius " + match[1] + ", Resolution " + match[2] + ". "
+        + translateShowMeSentenceGroup(match[3], widgetId);
+    }
+
+    match = value.match(/^(\d+)각형은 원 면적의\s+([0-9.]+%)를 커버합니다\.\s+(.+)$/);
+    if (match) {
+      return "A " + match[1] + "-gon covers " + match[2] + " of the true circle area. "
+        + translateShowMeSentenceGroup(match[3], widgetId);
+    }
+
     match = value.match(/^(.+?)(란|이란)\?$/);
     if (match) return "What is " + translateCourseText(match[1]) + "?";
 
@@ -1341,12 +1424,15 @@
     return value;
   }
 
-  function translateShowMeDynamicTextToKo(value) {
+  function translateShowMeDynamicTextToKo(value, widgetId) {
     var match;
 
     if (value === "Perfect!") return "완벽합니다!";
     if (value === "A little more practice and you'll nail it.") return "조금 더 연습하면 완벽해질 거예요!";
     if (value === "Try It - drag the vertex handles yourself") return "직접 해보기 — 버텍스를 직접 드래그해보세요";
+    if (value.indexOf("Interactive Demo - ") === 0) {
+      return "interaction — " + translateShowMeSentenceGroupToKo(value.slice("Interactive Demo - ".length), widgetId);
+    }
     if (value === "Drag the blue points to update the green mirrored side in real time.") {
       return "파란 점을 드래그하면 초록색 미러가 실시간으로 반영됩니다.";
     }
@@ -1360,6 +1446,36 @@
     match = value.match(/^(\d+)\s*\/\s*(\d+)\s*correct$/);
     if (match) return match[1] + " / " + match[2] + " 정답";
 
+    match = value.match(/^Try it:\s*(.+)$/i);
+    if (match) return "직접 체험: " + translateShowMeSentenceGroupToKo(match[1], widgetId);
+
+    match = value.match(/^Segments:\s*(\d+)$/);
+    if (match) return "분할 수: " + match[1];
+
+    match = value.match(/^(\d+)-gon$/);
+    if (match) return match[1] + "각형";
+
+    match = value.match(/^(\d+)-gon\s+\((\d+) vertices\)$/);
+    if (match) return match[1] + "각형 (" + match[2] + "개 꼭짓점)";
+
+    match = value.match(/^(\d+)-gon\s+-\s+([0-9.]+%)$/);
+    if (match) return match[1] + "각형 — " + match[2];
+
+    match = value.match(/^Cross-section:\s*(\d+)-gon$/);
+    if (match) return "단면: " + match[1] + "각형";
+
+    match = value.match(/^Current settings:\s+Radius\s+([0-9.]+),\s*Resolution\s+(\d+)\.\s+(.+)$/);
+    if (match) {
+      return "현재 Radius " + match[1] + ", Resolution " + match[2] + " 설정입니다. "
+        + translateShowMeSentenceGroupToKo(match[3], widgetId);
+    }
+
+    match = value.match(/^A\s+(\d+)-gon covers\s+([0-9.]+%)\s+of the true circle area\.\s+(.+)$/);
+    if (match) {
+      return match[1] + "각형은 원 면적의 " + match[2] + "를 커버합니다. "
+        + translateShowMeSentenceGroupToKo(match[3], widgetId);
+    }
+
     return value;
   }
 
@@ -1369,30 +1485,24 @@
     var trimmed = normalizeTranslatableText(value);
     if (!trimmed) return value;
 
-    var showme = getShowMeStore();
-    var commonExact = showme.common && showme.common.exact ? showme.common.exact : {};
-    var widgetExact = showme.widgets && showme.widgets[widgetId] && showme.widgets[widgetId].exact
-      ? showme.widgets[widgetId].exact
-      : {};
     var translated = "";
 
     if (currentLang === "en") {
-      translated = getExactTranslation(widgetExact, trimmed) || getExactTranslation(commonExact, trimmed);
+      translated = getShowMeExactTranslation(widgetId, trimmed);
 
       if (!translated) {
-        translated = translateShowMeDynamicText(trimmed);
+        translated = translateShowMeDynamicText(trimmed, widgetId);
       }
 
       if (translated === trimmed) {
         translated = translateCourseText(trimmed);
       }
     } else {
-      translated = getReverseExactTranslation(widgetExact, trimmed)
-        || getReverseExactTranslation(commonExact, trimmed)
+      translated = getShowMeReverseExactTranslation(widgetId, trimmed)
         || getReverseExactTranslation(getCurriculumExactMap(), trimmed);
 
       if (!translated) {
-        translated = translateShowMeDynamicTextToKo(trimmed);
+        translated = translateShowMeDynamicTextToKo(trimmed, widgetId);
       }
     }
 

@@ -81,6 +81,7 @@
   display: inline-flex;
   align-items: center;
   width: fit-content;
+  margin-left: 12px;
   margin-top: 6px;
   padding: 1px 7px;
   border-radius: 999px;
@@ -88,6 +89,7 @@
   background: var(--overlay-white);
   font-size: .68rem;
   color: var(--muted);
+  flex-shrink: 0;
 }
 .lib-shell {
   max-width: calc(var(--max-width) + 120px);
@@ -172,6 +174,7 @@
 .lib-search:focus-visible,
 .lib-chip:focus-visible,
 .lib-card:focus-visible,
+.showme-browse-toggle:focus-visible,
 .showme-close:focus-visible,
 #langSwitcher .lang-switcher-btn:focus-visible {
   outline: 2px solid var(--key-soft);
@@ -180,6 +183,7 @@
 .lib-search:focus-visible,
 .lib-chip:focus-visible,
 .lib-card:focus-visible,
+.showme-browse-toggle:focus-visible,
 .showme-close:focus-visible,
 #langSwitcher .lang-switcher-btn:focus-visible {
   border-color: rgba(10,132,255,.42);
@@ -287,10 +291,22 @@
   color: var(--key-soft);
   background: rgba(10,132,255,.08);
 }
+.lib-card-copy {
+  min-width: 0;
+  flex: 1;
+  display: grid;
+  gap: 4px;
+}
 .lib-card-label {
   font-size: .88rem;
   font-weight: 560;
   color: var(--text);
+  line-height: 1.45;
+  word-break: keep-all;
+}
+.lib-card-reason {
+  font-size: .74rem;
+  color: var(--muted);
   line-height: 1.45;
   word-break: keep-all;
 }
@@ -310,15 +326,16 @@
 }
 .showme-overlay.is-open { display: flex; }
 .showme-modal {
-  width: min(1280px, 96vw);
-  height: min(92vh, 900px);
+  width: min(1360px, 96vw);
+  height: min(92vh, 920px);
   max-width: 100%;
   max-height: 100%;
   border-radius: var(--radius-lg);
   border: 1px solid rgba(255,255,255,.12);
   background: var(--surface);
   box-shadow: 0 24px 80px rgba(0,0,0,.6);
-  display: flex; flex-direction: column;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   animation: showme-in .22s ease;
 }
@@ -327,7 +344,10 @@
   to   { opacity: 1; transform: scale(1) translateY(0); }
 }
 .showme-modal-header {
-  display: flex; justify-content: space-between; align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
   padding: 14px 18px;
   border-bottom: 1px solid var(--line);
   flex-shrink: 0;
@@ -335,24 +355,288 @@
   z-index: 1;
   background: var(--surface);
 }
-.showme-modal-title {
-  font-size: .9rem; font-weight: 600; color: var(--text);
-  line-height: 1.35;
+.showme-modal-header-copy {
   min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
+.showme-modal-card-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  border: 1px solid rgba(122,162,247,.2);
+  background: linear-gradient(145deg, rgba(10,132,255,.18), rgba(255,255,255,.04)), rgba(255,255,255,.03);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 14px 32px rgba(0,0,0,.22);
+  display: grid;
+  place-items: center;
+  color: #eaf3ff;
+  flex-shrink: 0;
+  font-size: 1.25rem;
+}
+.showme-modal-title-block {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+.showme-modal-title {
+  font-size: 1.08rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+  min-width: 0;
+  letter-spacing: -.02em;
+}
+.showme-modal-title-meta {
+  font-size: .8rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+.showme-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.showme-browse-toggle,
 .showme-close {
-  display: grid; place-items: center;
-  width: 44px; height: 44px; border-radius: 12px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   border: 1px solid var(--line);
   background: rgba(255,255,255,.04);
-  color: var(--muted-strong); cursor: pointer;
-  transition: background .14s, color .14s;
+  color: var(--muted-strong);
+  cursor: pointer;
+  transition: background .14s, color .14s, border-color .14s;
   flex-shrink: 0;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
 }
+.showme-browse-toggle:hover,
 .showme-close:hover { background: rgba(255,255,255,.09); color: var(--text); }
-.showme-iframe { flex: 1; width: 100%; border: none; background: var(--bg); min-height: 0; }
+.showme-browse-toggle.is-active {
+  border-color: rgba(10,132,255,.34);
+  background: rgba(10,132,255,.1);
+  color: var(--key-soft);
+}
+.showme-modal-body {
+  display: grid;
+  grid-template-columns: 0 minmax(0, 1fr);
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  transition: grid-template-columns .24s ease;
+}
+.showme-modal.is-browser-open .showme-modal-body {
+  grid-template-columns: minmax(300px, 332px) minmax(0, 1fr);
+}
+.showme-browser {
+  min-width: 0;
+  border-right: 1px solid var(--line);
+  background: var(--surface-strong);
+  overflow: hidden auto;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease;
+}
+.showme-modal.is-browser-open .showme-browser {
+  opacity: 1;
+  pointer-events: auto;
+}
+.showme-browser-header {
+  display: grid;
+  gap: 8px;
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.showme-browser-search {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line-strong);
+  background: var(--surface-strong);
+  color: var(--text);
+  font: inherit;
+  font-size: .86rem;
+  outline: none;
+}
+.showme-browser-search:focus { border-color: rgba(10,132,255,.42); }
+.showme-browser-search::placeholder { color: var(--muted); }
+.showme-browser-hint {
+  margin: -2px 0 0;
+  font-size: .76rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.showme-browser-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+}
+.showme-browser-reset,
+.showme-browser-library-link {
+  font-size: .78rem;
+}
+.showme-browser-content {
+  display: grid;
+  gap: 16px;
+  padding: 16px;
+}
+.showme-browser-section {
+  display: grid;
+  gap: 8px;
+}
+.showme-browser-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.showme-browser-section-title {
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.showme-browser-section-count {
+  font-size: .74rem;
+  color: var(--muted);
+}
+.showme-browser-list {
+  display: grid;
+  gap: 8px;
+}
+.showme-browser-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  padding: 11px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .14s ease, background .14s ease, transform .14s ease;
+  font: inherit;
+  overflow: hidden;
+}
+.showme-browser-item:hover {
+  border-color: rgba(10,132,255,.34);
+  background: rgba(255,255,255,.04);
+  transform: translateY(-1px);
+}
+.showme-browser-item.is-active {
+  border-color: rgba(96,165,250,.44);
+  background: linear-gradient(135deg, rgba(15,23,42,.94), rgba(18,34,58,.82)), rgba(255,255,255,.04);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06), inset 0 0 0 1px rgba(96,165,250,.16), 0 18px 36px rgba(0,0,0,.24);
+}
+.showme-browser-item.is-active::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(10,132,255,.14), transparent 42%);
+  pointer-events: none;
+}
+.showme-browser-item-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.04);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  font-size: 1rem;
+}
+.showme-browser-item.is-active .showme-browser-item-icon {
+  border-color: rgba(122,162,247,.32);
+  background: rgba(10,132,255,.12);
+}
+.showme-browser-item-copy {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+.showme-browser-item-kicker-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.showme-browser-item-kicker {
+  font-size: .62rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: rgba(191,219,254,.82);
+}
+.showme-browser-item-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(122,162,247,.22);
+  background: rgba(255,255,255,.05);
+  color: #d7e8ff;
+  font-size: .61rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.showme-browser-item-label {
+  font-size: .85rem;
+  font-weight: 590;
+  line-height: 1.45;
+}
+.showme-browser-item-meta {
+  font-size: .74rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+.showme-browser-item.is-active .showme-browser-item-kicker,
+.showme-browser-item.is-active .showme-browser-item-label {
+  color: #f8fbff;
+}
+.showme-browser-item.is-active .showme-browser-item-meta {
+  color: rgba(220,234,255,.8);
+}
+.showme-browser-empty {
+  padding: 12px 2px 4px;
+  color: var(--muted);
+  font-size: .82rem;
+  line-height: 1.6;
+}
+.showme-browser-backdrop { display: none; }
+.showme-viewer {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.showme-iframe {
+  flex: 1;
+  width: 100%;
+  border: none;
+  background: var(--bg);
+  min-height: 0;
+}
 @media (max-width: 980px) {
   .lib-shell {
     width: calc(100% - 24px);
@@ -387,6 +671,27 @@
     grid-template-columns: 1fr;
     gap: 0;
   }
+  .showme-modal-body { display: block; }
+  .showme-browser {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: min(86vw, 340px);
+    max-width: 100%;
+    border-right: 1px solid var(--line);
+    box-shadow: 18px 0 42px rgba(0,0,0,.32);
+    transform: translateX(-100%);
+    transition: transform .24s ease, opacity .18s ease;
+    z-index: 2;
+  }
+  .showme-modal.is-browser-open .showme-browser { transform: translateX(0); }
+  .showme-browser-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,.4);
+    z-index: 1;
+  }
+  .showme-modal.is-browser-open .showme-browser-backdrop { display: block; }
+  .showme-viewer { height: 100%; }
 }
 @media (max-width: 720px) {
   .showme-overlay { padding: 0; }
@@ -402,6 +707,13 @@
     padding-right: calc(18px + env(safe-area-inset-right, 0px));
     padding-left: calc(18px + env(safe-area-inset-left, 0px));
   }
+  .showme-modal-card-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 13px;
+  }
+  .showme-modal-title { font-size: 1rem; }
+  .showme-modal-title-meta { font-size: .76rem; }
 }
 @media (max-width: 600px) {
   .lib-card { min-height: 0; padding: 12px 0; }
@@ -473,16 +785,46 @@
     <div class="showme-overlay" id="showmeOverlay" aria-hidden="true">
       <div class="showme-modal" role="dialog" aria-modal="true" aria-labelledby="showmeTitle">
         <div class="showme-modal-header">
-          <span class="showme-modal-title" id="showmeTitle"></span>
-          <button class="showme-close" id="showmeClose" aria-label="닫기" type="button">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-            </svg>
-          </button>
+          <div class="showme-modal-header-copy">
+            <div class="showme-modal-card-icon" id="showmeTitleIcon" aria-hidden="true"></div>
+            <div class="showme-modal-title-block">
+              <span class="showme-modal-title" id="showmeTitle"></span>
+              <span class="showme-modal-title-meta" id="showmeTitleMeta"></span>
+            </div>
+          </div>
+          <div class="showme-header-actions">
+            <button class="showme-browse-toggle" id="showmeBrowseToggle" aria-label="Show Me 탐색 전환" type="button" aria-pressed="false">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <rect x="1.5" y="2" width="4" height="12" rx="1.2" stroke="currentColor" stroke-width="1.4"/>
+                <path d="M8.5 4H14M8.5 8H14M8.5 12H12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <button class="showme-close" id="showmeClose" aria-label="닫기" type="button">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
         </div>
-        <iframe class="showme-iframe" id="showmeIframe"
-                sandbox="allow-scripts allow-same-origin"
-                title="Show Me Widget"></iframe>
+        <div class="showme-modal-body">
+          <aside class="showme-browser" id="showmeBrowser" aria-hidden="true">
+            <div class="showme-browser-header">
+              <input class="showme-browser-search" id="showmeBrowserSearch" type="search" autocomplete="off" aria-label="Show Me 카드 검색" placeholder="연관 카드나 키워드 검색" />
+              <div class="showme-browser-actions">
+                <button class="btn-link showme-browser-reset" id="showmeBrowserReset" type="button">현재 카드 기준으로 보기</button>
+                <button class="btn-link showme-browser-library-link" id="showmeBrowserLibraryLink" type="button">라이브러리 위치 보기</button>
+              </div>
+              <p class="showme-browser-hint" id="showmeBrowserHint">현재 카드와 연관 카드, 또는 검색 결과를 빠르게 탐색합니다.</p>
+            </div>
+            <div class="showme-browser-content" id="showmeBrowserContent"></div>
+          </aside>
+          <div class="showme-browser-backdrop" id="showmeBrowserBackdrop"></div>
+          <div class="showme-viewer">
+            <iframe class="showme-iframe" id="showmeIframe"
+                    sandbox="allow-scripts allow-same-origin"
+                    title="Show Me Widget"></iframe>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -491,12 +833,14 @@
   <script src="assets/showme/_registry.js?v=20260318f"></script>
   <script src="assets/showme/_catalog.js?v=20260318c"></script>
   <script src="assets/showme/_supplements.js?v=20260318c"></script>
-  <script src="assets/showme/_helpers.js?v=20260318s"></script>
+  <script src="assets/showme/_helpers.js?v=20260318z"></script>
 <script>
 var activeLetter = "all";
 var activeWeek = "all";
 var showMeLastTrigger = null;
 var activeShowMeWidgetId = null;
+var showMeBrowserOpen = window.innerWidth >= 1100;
+var showMeBrowserQuery = "";
 var lastSectionTargetId = "";
 var params = new URLSearchParams(location.search);
 var requestedShowMeId = params.get("showme") || "";
@@ -550,6 +894,24 @@ var I18N = (function() {
 
 function getText() {
   return I18N.getStrings("library");
+}
+
+function getShowMeModalText() {
+  var isKo = I18N.getLanguage() === "ko";
+  var weekText = window.RPDI18n && typeof window.RPDI18n.getStrings === "function"
+    ? window.RPDI18n.getStrings("week")
+    : {};
+  return Object.assign({}, weekText, {
+    modalBrowseContextHint: isKo
+      ? "현재 카드, 연관 카드, 또는 검색 결과를 빠르게 탐색합니다."
+      : "Quickly browse the current card, related cards, or search results.",
+    modalBrowseCurrent: isKo ? "현재 카드" : "Current card",
+    modalBrowseResetCta: isKo ? "현재 카드 기준으로 보기" : "Back to current card",
+    modalBrowseLibraryLink: isKo ? "라이브러리 위치 보기" : "Locate in library",
+    modalCurrentCardFallbackMeta: isKo
+      ? "현재 카드를 기준으로 연관 카드를 바로 이어서 둘러볼 수 있어요."
+      : "Use this card as the current reference while exploring related cards."
+  });
 }
 
 function getLocalizedMeta(id) {
@@ -635,6 +997,14 @@ function getLetterKey(label) {
 function buildCardData(id) {
   var localized = getLocalizedMeta(id);
   var meta = localized.raw;
+  var localizeShowMeUiText = window.RPDI18n.translateShowMeUiText || function(value) { return value; };
+  var keywords = Array.isArray(meta.keywords) ? meta.keywords : [];
+  var prerequisites = Array.isArray(meta.prerequisites) ? meta.prerequisites : [];
+  var toolName = localizeShowMeUiText(meta.toolName || "", id);
+  var categoryLabel = meta.category ? I18N.getLibraryCategoryLabel(meta.category) : "";
+  var stageLabelText = localizeShowMeUiText(meta.stageLabel || "", id);
+  var confusionLabelText = localizeShowMeUiText(meta.confusionLabel || "", id);
+  var audienceNeedText = localizeShowMeUiText(meta.audienceNeed || "", id);
   return {
     id: id,
     localizedLabel: localized.label,
@@ -643,6 +1013,16 @@ function buildCardData(id) {
     alphaKey: getLetterKey(getAlphaLabel(id)),
     week: getWeekValue(meta),
     sectionId: getSectionIdForCard(id, meta.category || "기타"),
+    category: meta.category || "",
+    stageLabel: meta.stageLabel || "",
+    toolName: toolName,
+    categoryLabel: categoryLabel,
+    stageLabelText: stageLabelText,
+    confusionLabelText: confusionLabelText,
+    audienceNeedText: audienceNeedText,
+    keywords: keywords,
+    prerequisites: prerequisites,
+    manualSection: typeof getShowMeManualSectionId === "function" ? getShowMeManualSectionId(id) : "",
     meta: meta,
     searchText: [
       localized.label,
@@ -650,12 +1030,17 @@ function buildCardData(id) {
       getAlphaLabel(id),
       meta.label,
       id,
+      toolName,
+      categoryLabel,
+      stageLabelText,
+      confusionLabelText,
+      audienceNeedText,
       meta.category,
       meta.stageLabel,
       meta.confusionLabel,
       meta.audienceNeed,
-      (meta.keywords || []).join(" "),
-      (meta.prerequisites || []).join(" ")
+      keywords.join(" "),
+      prerequisites.join(" ")
     ].join(" ").toLowerCase()
   };
 }
@@ -782,6 +1167,379 @@ function prioritizeActiveCategoryList(categories, sectionCards) {
   return activeCategories.concat(otherCategories);
 }
 
+function getLibraryFocusText() {
+  var isKo = I18N.getLanguage() === "ko";
+  return {
+    eyebrow: isKo ? "현재 기준" : "Now Viewing",
+    title: isKo ? "선택 카드와 연관 카드" : "Current + related cards",
+    copy: isKo
+      ? "지금 보고 있는 카드와 연관도가 높은 카드를 먼저 이어서 보여줍니다."
+      : "This keeps the current card followed by the most related cards."
+  };
+}
+
+function getLibraryReasonText() {
+  var isKo = I18N.getLanguage() === "ko";
+  return {
+    current: isKo ? "현재 보고 있는 카드" : "Current card",
+    sameCategory: isKo ? "같은 카테고리" : "Same category",
+    sameManualSection: isKo ? "같은 문서 흐름" : "Same manual flow",
+    sameStage: isKo ? "같은 작업 단계" : "Same workflow stage",
+    sharedTerms: isKo ? "공통 키워드" : "Shared keywords"
+  };
+}
+
+function getSharedLibraryTermScore(baseCard, candidateCard) {
+  var score = 0;
+  var baseTerms = {};
+
+  []
+    .concat(baseCard.keywords || [])
+    .concat(baseCard.prerequisites || [])
+    .concat((baseCard.canonicalLabel || "").split(/[\s/,-]+/))
+    .forEach(function(term) {
+      var normalized = String(term || "").trim().toLowerCase();
+      if (normalized.length >= 3) baseTerms[normalized] = true;
+    });
+
+  []
+    .concat(candidateCard.keywords || [])
+    .concat(candidateCard.prerequisites || [])
+    .concat((candidateCard.canonicalLabel || "").split(/[\s/,-]+/))
+    .forEach(function(term) {
+      var normalized = String(term || "").trim().toLowerCase();
+      if (baseTerms[normalized]) score += 1;
+    });
+
+  return score;
+}
+
+function getTunedLibraryRelationScore(current, card) {
+  var sharesCategory = card.category && current.category && card.category === current.category;
+  var sharesManualSection = card.manualSection && current.manualSection && card.manualSection === current.manualSection;
+  var sharesStage = card.stageLabel && current.stageLabel && card.stageLabel === current.stageLabel;
+  var sharedTermScore = Math.min(getSharedLibraryTermScore(current, card), 3);
+  var score = 0;
+
+  if (sharesCategory) score += 7;
+  if (sharesManualSection) score += 4;
+  if (sharesStage) score += 2;
+  if (sharesCategory && sharesManualSection) score += 2;
+  if (sharesManualSection && sharesStage) score += 1;
+  score += sharedTermScore;
+
+  return {
+    score: score,
+    sharesCategory: sharesCategory,
+    sharesManualSection: sharesManualSection,
+    sharesStage: sharesStage,
+    sharedTermScore: sharedTermScore
+  };
+}
+
+function getRelatedLibraryCards(cards, widgetId, limit) {
+  var current = null;
+  var reasonText = getLibraryReasonText();
+  cards.some(function(card) {
+    if (card.id !== widgetId) return false;
+    current = card;
+    return true;
+  });
+  if (!current) return [];
+
+  return cards
+    .filter(function(card) {
+      return card.id !== widgetId;
+    })
+    .map(function(card) {
+      var relation = getTunedLibraryRelationScore(current, card);
+      var reasons = [];
+      if (relation.sharesCategory) reasons.push(reasonText.sameCategory);
+      if (relation.sharesManualSection) reasons.push(reasonText.sameManualSection);
+      if (relation.sharesStage) reasons.push(reasonText.sameStage);
+      if (relation.sharedTermScore > 0) reasons.push(reasonText.sharedTerms);
+      return {
+        card: card,
+        score: relation.score,
+        reason: reasons.slice(0, 2).join(" · ")
+      };
+    })
+    .filter(function(item) { return item.score > 0; })
+    .sort(function(a, b) {
+      if (b.score !== a.score) return b.score - a.score;
+      return a.card.localizedLabel.localeCompare(b.card.localizedLabel, I18N.getLanguage(), { sensitivity: "base" });
+    })
+    .slice(0, limit || 6);
+}
+
+function getLibraryFocusSection(visibleCards) {
+  if (!activeShowMeWidgetId) return null;
+  var reasonText = getLibraryReasonText();
+
+  var currentCard = null;
+  visibleCards.some(function(card) {
+    if (card.id !== activeShowMeWidgetId) return false;
+    currentCard = card;
+    return true;
+  });
+  if (!currentCard) return null;
+
+  var entries = [{ card: currentCard, reason: reasonText.current }].concat(
+    getRelatedLibraryCards(visibleCards, activeShowMeWidgetId, 6)
+  );
+  var cardSet = {};
+  entries.forEach(function(entry) {
+    cardSet[entry.card.id] = true;
+  });
+
+  return {
+    id: "focus-cards",
+    cardSet: cardSet,
+    entries: entries,
+    text: getLibraryFocusText()
+  };
+}
+
+function renderLibraryFocusSection(main, focusSection) {
+  if (!focusSection || !focusSection.entries.length) return;
+
+  var sectionEl = document.createElement("section");
+  sectionEl.className = "lib-section";
+  sectionEl.id = "section-" + focusSection.id;
+
+  var head = document.createElement("header");
+  head.className = "lib-section-head";
+
+  var eyebrow = document.createElement("div");
+  eyebrow.className = "lib-section-eyebrow";
+  eyebrow.textContent = focusSection.text.eyebrow;
+  head.appendChild(eyebrow);
+
+  var titleRow = document.createElement("div");
+  titleRow.className = "lib-section-title-row";
+
+  var title = document.createElement("h2");
+  title.className = "lib-section-title";
+  title.textContent = focusSection.text.title;
+  titleRow.appendChild(title);
+
+  var count = document.createElement("span");
+  count.className = "lib-section-count";
+  count.textContent = focusSection.entries.length;
+  titleRow.appendChild(count);
+  head.appendChild(titleRow);
+
+  var copy = document.createElement("p");
+  copy.className = "lib-section-copy";
+  copy.textContent = focusSection.text.copy;
+  head.appendChild(copy);
+
+  sectionEl.appendChild(head);
+
+  var body = document.createElement("div");
+  body.className = "lib-section-body";
+
+  var grid = document.createElement("div");
+  grid.className = "lib-grid";
+  focusSection.entries.forEach(function(entry) {
+    grid.appendChild(createCardButton(entry.card, { reason: entry.reason }));
+  });
+
+  body.appendChild(grid);
+  sectionEl.appendChild(body);
+  main.appendChild(sectionEl);
+}
+
+function scrollToLibraryFocusContext(behavior) {
+  if (!activeShowMeWidgetId) return;
+  var focusSection = document.getElementById("section-focus-cards");
+  if (!focusSection) return;
+  focusSection.scrollIntoView({ behavior: behavior || "smooth", block: "start" });
+}
+
+function getShowMeKickerText(card) {
+  if (!card) return "";
+  return card.toolName || card.categoryLabel || card.category || "";
+}
+
+function getShowMeMetaLine(card) {
+  return [card.toolName, card.categoryLabel, card.stageLabelText].filter(Boolean).join(" · ");
+}
+
+function createShowMeBrowserItem(entry) {
+  var text = getShowMeModalText();
+  var card = entry.card || entry;
+  var reason = entry.reason || "";
+  var isActive = card.id === activeShowMeWidgetId;
+  var button = document.createElement("button");
+  button.type = "button";
+  button.className = "showme-browser-item" + (isActive ? " is-active" : "");
+  button.setAttribute("aria-current", isActive ? "true" : "false");
+
+  var icon = document.createElement("span");
+  icon.className = "showme-browser-item-icon";
+  icon.textContent = card.icon || (card.meta && card.meta.icon) || "📖";
+  button.appendChild(icon);
+
+  var copy = document.createElement("span");
+  copy.className = "showme-browser-item-copy";
+
+  var kickerRow = document.createElement("span");
+  kickerRow.className = "showme-browser-item-kicker-row";
+  var hasKickerRow = false;
+
+  if (reason) {
+    var reasonLabel = document.createElement("span");
+    reasonLabel.className = "showme-browser-item-kicker";
+    reasonLabel.textContent = reason;
+    kickerRow.appendChild(reasonLabel);
+    hasKickerRow = true;
+  } else {
+    var kickerText = getShowMeKickerText(card);
+    if (kickerText) {
+      var kicker = document.createElement("span");
+      kicker.className = "showme-browser-item-kicker";
+      kicker.textContent = kickerText;
+      kickerRow.appendChild(kicker);
+      hasKickerRow = true;
+    }
+  }
+
+  if (isActive) {
+    var state = document.createElement("span");
+    state.className = "showme-browser-item-state";
+    state.textContent = text.modalBrowserViewing;
+    kickerRow.appendChild(state);
+    hasKickerRow = true;
+  }
+
+  if (hasKickerRow) copy.appendChild(kickerRow);
+
+  var label = document.createElement("span");
+  label.className = "showme-browser-item-label";
+  label.textContent = card.localizedLabel;
+  copy.appendChild(label);
+
+  var meta = document.createElement("span");
+  meta.className = "showme-browser-item-meta";
+  meta.textContent = getShowMeMetaLine(card) || getWeekLabel(card.week);
+  copy.appendChild(meta);
+
+  button.appendChild(copy);
+  button.addEventListener("click", function() {
+    openShowMe(card.id);
+  });
+  return button;
+}
+
+function appendShowMeBrowserSection(container, title, entries) {
+  if (!entries || !entries.length) return false;
+
+  var section = document.createElement("section");
+  section.className = "showme-browser-section";
+
+  var head = document.createElement("div");
+  head.className = "showme-browser-section-head";
+
+  var heading = document.createElement("div");
+  heading.className = "showme-browser-section-title";
+  heading.textContent = title;
+  head.appendChild(heading);
+
+  var count = document.createElement("span");
+  count.className = "showme-browser-section-count";
+  count.textContent = entries.length;
+  head.appendChild(count);
+  section.appendChild(head);
+
+  var list = document.createElement("div");
+  list.className = "showme-browser-list";
+  entries.forEach(function(entry) {
+    list.appendChild(createShowMeBrowserItem(entry));
+  });
+  section.appendChild(list);
+  container.appendChild(section);
+  return true;
+}
+
+function setShowMeBrowserOpen(nextOpen) {
+  var modal = document.querySelector(".showme-modal");
+  var browser = document.getElementById("showmeBrowser");
+  var toggle = document.getElementById("showmeBrowseToggle");
+  if (!modal || !browser || !toggle) return;
+  showMeBrowserOpen = Boolean(nextOpen);
+  modal.classList.toggle("is-browser-open", showMeBrowserOpen);
+  browser.setAttribute("aria-hidden", showMeBrowserOpen ? "false" : "true");
+  toggle.classList.toggle("is-active", showMeBrowserOpen);
+  toggle.setAttribute("aria-pressed", showMeBrowserOpen ? "true" : "false");
+}
+
+function renderShowMeBrowser() {
+  var text = getShowMeModalText();
+  var container = document.getElementById("showmeBrowserContent");
+  var locateButton = document.getElementById("showmeBrowserLibraryLink");
+  if (!container || !locateButton) return;
+
+  locateButton.textContent = text.modalBrowseLibraryLink;
+  container.textContent = "";
+
+  var allCards = getAllCards();
+  var query = String(showMeBrowserQuery || "").trim().toLowerCase();
+
+  if (query) {
+    var results = prioritizeActiveCardList(allCards.filter(function(card) {
+      return card.searchText.indexOf(query) !== -1;
+    })).slice(0, 24).map(function(card) {
+      return { card: card, reason: "" };
+    });
+
+    if (!appendShowMeBrowserSection(container, text.modalBrowseResults, results)) {
+      var empty = document.createElement("div");
+      empty.className = "showme-browser-empty";
+      empty.textContent = text.modalBrowseEmpty;
+      container.appendChild(empty);
+    }
+    return;
+  }
+
+  var currentEntry = null;
+  allCards.some(function(card) {
+    if (card.id !== activeShowMeWidgetId) return false;
+    currentEntry = { card: card, reason: getLibraryReasonText().current };
+    return true;
+  });
+  var relatedEntries = activeShowMeWidgetId ? getRelatedLibraryCards(allCards, activeShowMeWidgetId, 8) : [];
+  var hasContent = false;
+  if (currentEntry) hasContent = appendShowMeBrowserSection(container, text.modalBrowseCurrent, [currentEntry]) || hasContent;
+  hasContent = appendShowMeBrowserSection(container, text.modalBrowseRelated, relatedEntries) || hasContent;
+
+  if (!hasContent) {
+    var fallback = document.createElement("div");
+    fallback.className = "showme-browser-empty";
+    fallback.textContent = text.modalBrowseEmpty;
+    container.appendChild(fallback);
+  }
+
+  var activeItem = container.querySelector(".showme-browser-item.is-active");
+  if (activeItem) {
+    window.requestAnimationFrame(function() {
+      activeItem.scrollIntoView({ block: "nearest", inline: "nearest" });
+    });
+  }
+}
+
+function locateCurrentShowMeCard() {
+  var widgetId = activeShowMeWidgetId;
+  if (!widgetId) return;
+  closeShowMe();
+  window.requestAnimationFrame(function() {
+    var target = document.querySelector('.lib-card[data-showme-id="' + widgetId + '"]');
+    if (!target) return;
+    target.scrollIntoView({ behavior: "smooth", block: "center" });
+    target.focus({ preventScroll: true });
+  });
+}
+
 function countCardsForSection(cards, section) {
   return cards.filter(function(card) { return card.sectionId === section.id; }).length;
 }
@@ -795,7 +1553,8 @@ function getSectionCategories(sectionCards) {
   });
 }
 
-function createCardButton(card) {
+function createCardButton(card, options) {
+  options = options || {};
   var btn = document.createElement("button");
   var isActive = card.id === activeShowMeWidgetId;
   btn.className = "lib-card" + (isActive ? " is-active" : "");
@@ -805,10 +1564,22 @@ function createCardButton(card) {
   btn.setAttribute("aria-current", isActive ? "true" : "false");
   btn.title = getShowMeTooltipText(card.id);
 
+  var copy = document.createElement("span");
+  copy.className = "lib-card-copy";
+
   var label = document.createElement("span");
   label.className = "lib-card-label";
   label.textContent = card.localizedLabel;
-  btn.appendChild(label);
+  copy.appendChild(label);
+
+  if (options.reason) {
+    var reason = document.createElement("span");
+    reason.className = "lib-card-reason";
+    reason.textContent = options.reason;
+    copy.appendChild(reason);
+  }
+
+  btn.appendChild(copy);
 
   var week = document.createElement("span");
   week.className = "lib-card-week";
@@ -823,13 +1594,32 @@ function renderToc(cards) {
   var toc = document.getElementById("libToc");
   var query = getSearchQuery();
   var visibleCards = getVisibleCards(cards, query);
-  var orderedSections = prioritizeActiveSectionList(getLibrarySections(), visibleCards);
+  var focusSection = getLibraryFocusSection(visibleCards);
+  var remainingCards = focusSection
+    ? visibleCards.filter(function(card) { return !focusSection.cardSet[card.id]; })
+    : visibleCards;
+  var orderedSections = prioritizeActiveSectionList(getLibrarySections(), remainingCards);
 
   toc.textContent = "";
   document.getElementById("libTocLabel").textContent = text.contentsLabel;
 
+  if (focusSection) {
+    var focusBtn = document.createElement("button");
+    focusBtn.className = "lib-chip" + (lastSectionTargetId === focusSection.id ? " is-active" : "");
+    focusBtn.type = "button";
+    focusBtn.innerHTML = "<span>" + focusSection.text.title + "</span><strong>" + focusSection.entries.length + "</strong>";
+    focusBtn.addEventListener("click", function() {
+      var target = document.getElementById("section-" + focusSection.id);
+      if (!target) return;
+      lastSectionTargetId = focusSection.id;
+      renderToc(cards);
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    toc.appendChild(focusBtn);
+  }
+
   orderedSections.forEach(function(section) {
-    var count = countCardsForSection(visibleCards, section);
+    var count = countCardsForSection(remainingCards, section);
     if (!count) return;
 
     var btn = document.createElement("button");
@@ -917,7 +1707,11 @@ function renderSections(cards) {
   var visibleCards = getVisibleCards(cards, query);
   var text = getText();
   var sectionNumber = 0;
-  var orderedSections = prioritizeActiveSectionList(getLibrarySections(), visibleCards);
+  var focusSection = getLibraryFocusSection(visibleCards);
+  var remainingCards = focusSection
+    ? visibleCards.filter(function(card) { return !focusSection.cardSet[card.id]; })
+    : visibleCards;
+  var orderedSections = prioritizeActiveSectionList(getLibrarySections(), remainingCards);
 
   main.textContent = "";
   updateCount(visibleCards.length);
@@ -930,8 +1724,10 @@ function renderSections(cards) {
     return;
   }
 
+  renderLibraryFocusSection(main, focusSection);
+
   orderedSections.forEach(function(section) {
-    var sectionCards = prioritizeActiveCardList(visibleCards.filter(function(card) {
+    var sectionCards = prioritizeActiveCardList(remainingCards.filter(function(card) {
       return card.sectionId === section.id;
     }));
     if (!sectionCards.length) return;
@@ -1065,6 +1861,7 @@ function openShowMe(widgetId) {
   activeShowMeWidgetId = widgetId;
   syncShowMeQuery(widgetId);
   renderLibrary();
+  scrollToLibraryFocusContext(pendingShowMeFromUrl ? "auto" : "smooth");
   showMeLastTrigger = document.querySelector('.lib-card[data-showme-id="' + widgetId + '"]') || showMeLastTrigger;
   document.getElementById("showmeTitle").textContent = meta.icon + " " + meta.label;
   iframe.onload = function() {
@@ -1092,8 +1889,8 @@ function closeShowMe() {
   iframe.src = "about:blank";
   syncShowMeQuery("");
   document.body.style.overflow = "";
-  activeShowMeWidgetId = null;
   renderLibrary();
+  scrollToLibraryFocusContext("smooth");
   var focusTarget = showMeLastTrigger;
   if ((!focusTarget || !document.contains(focusTarget)) && lastWidgetId) {
     focusTarget = document.querySelector('.lib-card[data-showme-id="' + lastWidgetId + '"]');
