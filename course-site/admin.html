@@ -784,8 +784,191 @@
       gap: 12px;
       justify-items: stretch;
     }
+    .editor-inner .hero-card {
+      display: grid;
+      gap: 12px;
+      justify-items: stretch;
+      width: 100%;
+    }
+    .editor-inner .hero-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      min-width: 0;
+    }
+    .editor-inner .hero-week-well {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      border: 1px solid rgba(122,162,247,.16);
+      background:
+        linear-gradient(145deg, rgba(10,132,255,.14), rgba(255,255,255,.03)),
+        rgba(255,255,255,.02);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      color: #eaf3ff;
+      font-size: .95rem;
+      font-weight: 700;
+      letter-spacing: -.03em;
+    }
+    .editor-inner .hero-copy {
+      min-width: 0;
+      display: grid;
+      gap: 4px;
+    }
+    .editor-inner .hero-kicker {
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .editor-hero-title {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 8px;
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: clamp(1.42rem, 2.2vw, 1.9rem);
+      font-weight: 620;
+      letter-spacing: -.03em;
+      line-height: 1.16;
+    }
+    .editor-hero-prefix {
+      color: var(--text);
+      white-space: nowrap;
+    }
+    .edit-h1-inline {
+      flex: 1 1 280px;
+      min-width: 200px;
+      font-size: inherit;
+      font-weight: inherit;
+      letter-spacing: inherit;
+      line-height: inherit;
+      padding: 0;
+    }
     .preview-hero-meta {
       display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-start; align-items: center;
+    }
+    .editor-inner .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+    .editor-inner .hero-meta-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      font-size: .78rem;
+      line-height: 1.4;
+      white-space: nowrap;
+    }
+    .editor-inner .hero-meta-item strong {
+      color: var(--muted-strong);
+      font-weight: 620;
+      letter-spacing: -.01em;
+    }
+    .editor-inner .hero-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+    }
+    .editor-inner .hero-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 10px 7px 7px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: var(--modal-panel-soft-strong-bg);
+      box-shadow: var(--modal-card-shadow);
+      color: var(--muted-strong);
+      font-size: .76rem;
+      line-height: 1.2;
+      transition: transform .14s ease, border-color .14s ease, background .14s ease, color .14s ease, box-shadow .14s ease;
+    }
+    .editor-inner .hero-link:hover {
+      transform: translateY(-1px);
+      border-color: rgba(96,165,250,.28);
+      background: var(--modal-hover-bg);
+      box-shadow: var(--modal-hover-shadow);
+      color: var(--text);
+    }
+    .editor-inner .hero-link-icon {
+      display: grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 7px;
+      flex-shrink: 0;
+      background: var(--modal-icon-bg);
+      box-shadow: var(--modal-icon-shadow);
+      font-size: .74rem;
+    }
+    .editor-inner .hero-link-label {
+      white-space: nowrap;
+    }
+    .editor-inner .hero-link-arrow {
+      color: var(--muted);
+      font-size: .8rem;
+    }
+    .topic-list {
+      display: grid;
+      gap: 10px;
+      padding: 14px 16px;
+    }
+    .topic-list-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .topic-list-title {
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .topic-list-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 48px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--modal-panel-soft-strong-bg);
+      box-shadow: var(--modal-card-shadow);
+      color: var(--muted-strong);
+      font-size: .74rem;
+      font-weight: 620;
+      letter-spacing: -.01em;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .topic-progress {
+      position: relative;
+      height: 4px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255,255,255,.07);
+    }
+    .topic-progress-fill {
+      width: 100%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, rgba(147,197,253,.4), rgba(147,197,253,.72));
+      transition: width .24s ease;
     }
 
     /* Inline editable fields — transparent, only show border on hover/focus */
@@ -1082,6 +1265,9 @@
     var diffLog          = document.getElementById("diffLog");
     var diffCloseBtn     = document.getElementById("diffCloseBtn");
     var heroPreviewBtn   = document.getElementById("heroPreviewBtn");
+    var adminHeroEyebrow = document.getElementById("adminHeroEyebrow");
+    var adminHeroTitle   = document.getElementById("adminHeroTitle");
+    var adminHeroDescription = document.getElementById("adminHeroDescription");
     var adminHeroWeek    = document.getElementById("adminHeroWeek");
     var adminHeroState   = document.getElementById("adminHeroState");
     var adminHeroVersion = document.getElementById("adminHeroVersion");
@@ -1114,6 +1300,19 @@
         sidebarMeta.textContent = selectedWeek
           ? curriculum.length + "주 커리큘럼 · " + formatWeekLabel(selectedWeek) + " 편집 중"
           : "커리큘럼 구조를 웹페이지 흐름 그대로 편집합니다.";
+      }
+      if (adminHeroEyebrow) {
+        adminHeroEyebrow.textContent = selectedWeek ? formatWeekLabel(selectedWeek) + " Editor" : "Curriculum Editor";
+      }
+      if (adminHeroTitle) {
+        adminHeroTitle.textContent = selectedWeek
+          ? formatWeekLabel(selectedWeek) + " · " + (selectedWeek.title || "제목 없음")
+          : "원래 웹 구조를 유지하는 RPD Admin";
+      }
+      if (adminHeroDescription) {
+        adminHeroDescription.textContent = selectedWeek
+          ? ((selectedWeek.subtitle || "").trim() || "공개 주차 페이지의 순서와 카드 구조를 유지한 채 내용을 수정하고 미리볼 수 있습니다.")
+          : "홈과 주차 페이지의 흐름 그대로, 선택한 주차를 편집하고 바로 공개 페이지로 미리볼 수 있습니다.";
       }
       if (adminHeroWeek) {
         adminHeroWeek.textContent = "선택된 주차 · " + formatWeekLabel(selectedWeek);
@@ -1252,17 +1451,34 @@
       // ── HERO ────────────────────────────────────────────
       parts.push(
         '<section class="preview-hero" id="editorPreview">',
-        '<div class="preview-hero-card">',
-        '<div class="eyebrow">Week ', esc(String(w.week).padStart(2,"0")), ' · RPD</div>'
+        '<div class="hero-card">',
+        '<div class="hero-header">',
+        '<span class="hero-week-well">', esc(String(w.week).padStart(2,"0")), '</span>',
+        '<div class="hero-copy">',
+        '<span class="hero-kicker">RPD Week Editor</span>'
       );
-      parts.push('<h1 style="margin:0"><input class="edit-h1" data-field="title" value="' + esc(w.title) + '" placeholder="주차 제목" /></h1>');
+      parts.push(
+        '<h1 class="editor-hero-title">',
+        '<span class="editor-hero-prefix">Week ', esc(String(w.week).padStart(2,"0")), ' ·</span>',
+        '<input class="edit-h1 edit-h1-inline" data-field="title" value="', esc(w.title), '" placeholder="주차 제목" />',
+        '</h1>'
+      );
       parts.push('<p style="max-width:640px;margin:0"><textarea class="edit-p" data-field="subtitle" rows="2" placeholder="부제목 (선택)">' + esc(w.subtitle || "") + '</textarea></p>');
       parts.push(
-        '<div class="preview-hero-meta">'
+        '</div>',
+        '</div>',
+        '<div class="hero-meta">'
       );
-      parts.push('<span class="meta-chip">\u23F1 <input class="edit-chip" data-field="duration" value="' + esc(w.duration) + '" placeholder="시간" /></span>');
       parts.push(
-        '<span class="meta-chip">\uD83D\uDCCB ', w.steps.length, '단계 실습</span>',
+        '<span class="hero-meta-item"><strong><input class="edit-chip" data-field="duration" value="', esc(w.duration), '" placeholder="시간" /></strong><span>예상 시간</span></span>'
+      );
+      parts.push(
+        '<span class="hero-meta-item"><strong>', w.steps.length, '</strong><span>단계 실습</span></span>',
+        '</div>',
+        '<div class="hero-links">',
+        '<a class="hero-link" href="#topicsSection"><span class="hero-link-icon">T</span><span class="hero-link-label">이번 주 정리</span><span class="hero-link-arrow">→</span></a>',
+        '<a class="hero-link" href="#practiceSection"><span class="hero-link-icon">P</span><span class="hero-link-label">실습 카드</span><span class="hero-link-arrow">→</span></a>',
+        '<a class="hero-link" href="#assignmentSection"><span class="hero-link-icon">A</span><span class="hero-link-label">과제 카드</span><span class="hero-link-arrow">→</span></a>',
         '</div>',
         '</div>',
         '</section>'
@@ -1272,7 +1488,12 @@
       var topicsHTML = [];
       topicsHTML.push(
         '<div class="preview-section" id="topicsSection">',
-        '<div class="section-head"><h3>이번 주</h3></div>',
+        '<div class="card topic-list">',
+        '<div class="topic-list-head">',
+        '<span class="topic-list-title">이번 주</span>',
+        '<span class="topic-list-count">', (w.topics || []).length, '개</span>',
+        '</div>',
+        '<div class="topic-progress" aria-hidden="true"><div class="topic-progress-fill"></div></div>',
         '<div id="topicsList" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">'
       );
       (w.topics || []).forEach(function(t, i) {
@@ -1286,6 +1507,7 @@
       topicsHTML.push(
         '</div>',
         '<button class="btn-add" data-add="topics" type="button" style="margin-top:10px">+ 주제 추가</button>',
+        '</div>',
         '</div>'
       );
       parts.push(topicsHTML.join(""));
@@ -1293,7 +1515,7 @@
       // ── STEPS ───────────────────────────────────────────
       parts.push(
         '<div class="preview-section" id="practiceSection">',
-        '<div class="section-head"><h3>실습</h3></div>',
+        '<div class="section-head"><h3>실습</h3><p>공개 주차 페이지의 실습 카드 순서를 유지한 채 단계, 이미지, 작업 내용을 편집합니다.</p></div>',
         '<div class="lab" id="stepsList">'
       );
       w.steps.forEach(function(step, si) {
@@ -1310,7 +1532,7 @@
       var shortcutsHTML = [];
       shortcutsHTML.push(
         '<div class="preview-section" id="shortcutsSection">',
-        '<div class="section-head"><h3>단축키 치트시트</h3></div>',
+        '<div class="section-head"><h3>단축키 치트시트</h3><p>학생 화면의 참고 섹션에 그대로 노출되는 키 조합과 설명을 관리합니다.</p></div>',
         '<div class="card shortcut-table-wrap">',
         '<table class="shortcut-table" style="width:100%">',
         '<thead><tr><th>단축키</th><th>기능</th><th style="width:36px"></th></tr></thead>',
@@ -1337,7 +1559,7 @@
       var explore = w.explore || [];
       parts.push(
         '<div class="preview-section" id="exploreSection">',
-        '<div class="section-head"><h3>더 해보기</h3></div>',
+        '<div class="section-head"><h3>더 해보기</h3><p>이번 주 실습 뒤에 이어지는 확장 과제를 카드 형식으로 유지합니다.</p></div>',
         '<div class="explore-grid" id="exploreList">'
       );
       explore.forEach(function(e, i) {
@@ -1360,7 +1582,7 @@
       var mistakesHTML = [];
       mistakesHTML.push(
         '<div class="preview-section" id="mistakesSection">',
-        '<div class="section-head"><h3>막히는 지점</h3></div>',
+        '<div class="section-head"><h3>막히는 지점</h3><p>학생이 자주 멈추는 포인트를 참고 아코디언 안에서 바로 수정합니다.</p></div>',
         '<details class="card mistakes-section" open>',
         '<summary>막혔을 때</summary>',
         '<ul id="mistakesList" style="padding-left:0;margin:6px 0 4px;list-style:none">'
@@ -1385,7 +1607,7 @@
       var videos = w.videos || [];
       parts.push(
         '<div class="preview-section" id="videosSection">',
-        '<div class="section-head"><h3>공식 영상 튜토리얼</h3></div>',
+        '<div class="section-head"><h3>공식 영상 튜토리얼</h3><p>참고 자료 섹션의 공식 영상 링크와 업로드 파일을 연결합니다.</p></div>',
         '<div id="videosList" style="display:grid;gap:8px">'
       );
       videos.forEach(function(v, i) {
@@ -1416,7 +1638,7 @@
       var docsHTML = [];
       docsHTML.push(
         '<div class="preview-section" id="docsSection">',
-        '<div class="section-head"><h3>공식 문서</h3></div>',
+        '<div class="section-head"><h3>공식 문서</h3><p>학생 페이지 참고 섹션에 붙는 문서 링크를 같은 순서로 정리합니다.</p></div>',
         '<div id="docsList" style="display:grid;gap:8px">'
       );
       docs.forEach(function(d, i) {
@@ -1442,7 +1664,7 @@
       var assignmentHTML = [];
       assignmentHTML.push(
         '<div class="preview-section" id="assignmentSection">',
-        '<div class="section-head"><h3>과제</h3></div>',
+        '<div class="section-head"><h3>과제</h3><p>week.html 과제 카드의 제목, 설명, 체크리스트 구조를 그대로 유지합니다.</p></div>',
         '<div class="card assignment-card">',
         '<div class="card-chip">과제</div>',
         '<strong><input class="edit-inline" data-assignment="title" value="', esc(a.title), '" placeholder="과제 제목" style="font-size:1rem;font-weight:600;width:100%" /></strong>',
