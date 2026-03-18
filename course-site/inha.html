@@ -7,13 +7,17 @@
   <meta name="description" content="인하대학교 RPD 실제 수업 페이지" />
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
   <link rel="stylesheet" href="assets/tokens.css" />
+  <link rel="stylesheet" href="assets/surface.css?v=20260318a" />
+  <link rel="stylesheet" href="assets/meta.css?v=20260318a" />
+  <link rel="stylesheet" href="assets/chrome.css?v=20260318a" />
   <script>/* FOUC prevention */ (function(){var t=localStorage.getItem('rpd-theme');if(t)document.documentElement.setAttribute('data-theme',t);var l=localStorage.getItem('rpd-lang');if(l){document.documentElement.lang=l;document.documentElement.setAttribute('data-lang',l);}})()</script>
   <style>
     .page-shell {
       --course-shell-radius: 26px;
       --course-card-radius: 20px;
-      --course-chip-radius: 14px;
-      --course-control-radius: 12px;
+      --course-chip-radius: var(--pill-radius);
+      --course-control-radius: var(--pill-radius);
+      --course-panel-pad-x: 24px;
       --course-accent: #2a7b6f;
       --course-accent-strong: #205f56;
       --course-accent-soft: #a7ddd4;
@@ -25,8 +29,6 @@
     .topbar .lang-switcher-btn,
     .topbar .theme-toggle,
     .hero-actions .btn,
-    .section-nav,
-    .section-nav-btn,
     .hero-meta-chip,
     .overview-card-meta,
     .cw-active-label,
@@ -53,35 +55,62 @@
       border-radius: var(--course-card-radius);
     }
     .topbar .btn-primary {
-      padding: 8px 14px;
+      padding: 8px 16px;
       border-color: var(--course-accent-strong);
       background: var(--course-accent);
     }
-    .topbar-actions {
-      gap: 8px;
+    .brand-lockup {
+      max-width: 304px;
     }
-    .topbar-actions .btn {
-      min-height: 36px;
-      padding: 8px 14px;
+    .brand-lockup > div:last-child {
+      min-width: 0;
+    }
+    .brand-lockup strong {
+      letter-spacing: -.02em;
+    }
+    .topbar-meta {
+      color: var(--muted);
+    }
+    .inha-topbar-inner.rpd-topbar-3col {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 18px;
+    }
+    .inha-topbar-nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      justify-self: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-width: 0;
+      width: max-content;
+    }
+    .inha-topbar-nav .btn {
+      min-height: var(--pill-control-height);
+      padding: 8px 15px;
       justify-content: center;
       font-size: .8rem;
       line-height: 1;
       white-space: nowrap;
     }
-    .topbar-actions #langSwitcher {
+    .inha-topbar-utils {
+      gap: 8px;
+      justify-self: end;
+    }
+    .inha-topbar-utils #langSwitcher {
       display: inline-flex;
       align-items: center;
       margin-left: 2px;
     }
-    .topbar-actions #langSwitcher .lang-switcher {
+    .inha-topbar-utils #langSwitcher .lang-switcher {
       padding: 2px;
-      border-radius: 10px;
+      border-radius: var(--course-control-radius);
       background: rgba(255,255,255,.03);
     }
-    .topbar-actions #langSwitcher .lang-switcher-btn {
+    .inha-topbar-utils #langSwitcher .lang-switcher-btn {
       min-width: 30px;
-      padding: 5px 8px;
-      border-radius: 8px;
+      padding: 5px 10px;
+      border-radius: var(--pill-inner-radius);
       font-size: .7rem;
       letter-spacing: .02em;
     }
@@ -96,13 +125,17 @@
       display: grid;
       gap: 18px;
     }
+    .course-layout > section,
+    .course-layout > nav {
+      width: 100%;
+      max-width: 100%;
+      margin: 0;
+    }
     .hero-card {
       position: relative;
-      display: grid;
-      grid-template-columns: minmax(0, 1.15fr) minmax(240px, .85fr);
-      gap: 22px;
+      grid-template-columns: minmax(0, 1fr) minmax(220px, 286px);
+      align-items: start;
       width: 100%;
-      padding: 24px;
       border: 1px solid var(--line-strong);
       background:
         radial-gradient(circle at top left, rgba(var(--course-accent-rgb), .14), transparent 34%),
@@ -127,27 +160,32 @@
       position: relative;
       z-index: 1;
     }
-    .hero-copy {
-      display: grid;
-      gap: 10px;
-      align-content: start;
-    }
     .hero h1 {
-      margin: 0;
-      font-family: var(--font-display);
-      max-width: 18ch;
-      font-size: clamp(1.24rem, 1.58vw, 1.58rem);
-      font-weight: 650;
-      letter-spacing: -.038em;
-      line-height: 1.12;
-      text-wrap: balance;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0 8px;
+      text-wrap: initial;
     }
-    .hero p {
-      max-width: 56ch;
-      margin: 0;
+    .hero-title-line {
+      display: inline-flex;
+      align-items: baseline;
+    }
+    .hero-title-school {
       color: var(--muted-strong);
-      font-size: .96rem;
-      line-height: 1.74;
+      font-size: .86em;
+      font-weight: 600;
+      letter-spacing: -.025em;
+    }
+    .hero-title-divider {
+      color: var(--muted);
+      font-size: .72em;
+      font-weight: 600;
+    }
+    .hero-title-program {
+      color: var(--text);
+      font-weight: 680;
+      letter-spacing: -.038em;
     }
     .hero-actions {
       display: flex;
@@ -172,83 +210,56 @@
       color: var(--text);
     }
     .hero-meta-wrap {
-      display: grid;
-      gap: 12px;
-      align-content: end;
-      padding: 18px;
-      border: 1px solid var(--line);
       background:
         linear-gradient(180deg, rgba(255,255,255,.04), transparent 78%),
         rgba(255,255,255,.02);
       box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
     }
     .hero-meta-label {
-      font-size: .72rem;
+      font-size: .68rem;
       font-weight: 700;
-      letter-spacing: .14em;
+      letter-spacing: .12em;
       text-transform: uppercase;
       color: var(--muted);
     }
     .hero-meta {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
       gap: 8px;
     }
-    .hero-meta-chip {
-      display: inline-flex;
-      align-items: center;
-      padding: 6px 10px;
-      border: 1px solid rgba(var(--course-accent-rgb), .18);
-      background: rgba(255,255,255,.04);
-      font-size: .76rem;
-      line-height: 1.2;
-      color: var(--muted-strong);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
-    }
-    .section-nav {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      width: fit-content;
-      padding: 6px;
-      border: 1px solid var(--line);
-      overflow: hidden;
+    .hero-snapshot-item {
+      display: grid;
+      gap: 4px;
+      padding: 10px 12px;
+      border: 1px solid rgba(255,255,255,.06);
       background:
-        linear-gradient(180deg, rgba(255,255,255,.04), transparent 82%),
+        linear-gradient(180deg, rgba(255,255,255,.03), transparent 72%),
         rgba(255,255,255,.02);
       box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
     }
-    .section-nav-btn {
-      appearance: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 128px;
-      border: 1px solid transparent;
-      background: transparent;
-      color: var(--muted-strong);
-      padding: 10px 14px;
-      font: inherit;
-      font-size: .8rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: border-color .16s ease, background .16s ease, color .16s ease, transform .16s ease;
-    }
-    .section-nav-btn:hover {
-      background: rgba(255,255,255,.035);
-      color: var(--text);
-    }
-    .section-nav-btn.is-active {
-      color: var(--text);
-      border-color: rgba(var(--course-accent-rgb), .34);
+    .hero-snapshot-item.is-emphasis {
+      border-color: rgba(var(--course-accent-rgb), .3);
       background:
-        linear-gradient(135deg, rgba(var(--course-accent-rgb), .14), rgba(255,255,255,.02)),
+        linear-gradient(135deg, rgba(var(--course-accent-rgb), .16), rgba(255,255,255,.02)),
         rgba(255,255,255,.03);
-      box-shadow: inset 0 0 0 1px rgba(var(--course-accent-rgb), .12);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.05),
+        inset 0 0 0 1px rgba(var(--course-accent-rgb), .08);
+    }
+    .hero-snapshot-value {
+      color: var(--text);
+      font-size: .98rem;
+      font-weight: 640;
+      letter-spacing: -.02em;
+      line-height: 1.2;
+    }
+    .hero-snapshot-key {
+      color: var(--muted);
+      font-size: .72rem;
+      line-height: 1.25;
     }
     .content-block {
       position: relative;
-      padding: 24px;
+      padding: 24px var(--course-panel-pad-x);
       border: 1px solid var(--line);
       background:
         linear-gradient(180deg, var(--surface-tint), transparent 72%),
@@ -269,6 +280,14 @@
     }
     .content-block.is-hidden {
       display: none;
+    }
+    .overview-note {
+      margin: 0;
+      position: relative;
+      z-index: 1;
+      color: var(--muted-strong);
+      font-size: .94rem;
+      line-height: 1.74;
     }
     .section-intro {
       display: grid;
@@ -367,23 +386,23 @@
     .week-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
+      gap: 10px;
       position: relative;
       z-index: 1;
     }
     .week-card {
       position: relative;
       overflow: hidden;
-      min-height: 212px;
+      min-height: 194px;
       border: 1px solid var(--line);
       background:
         linear-gradient(180deg, rgba(255,255,255,.03), transparent 62%),
         rgba(255,255,255,.015);
       box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
-      padding: 17px 17px 15px;
+      padding: 15px 15px 13px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
       text-decoration: none;
       color: inherit;
       transition: transform .18s ease, border-color .18s ease, background .18s ease, box-shadow .18s ease;
@@ -410,8 +429,8 @@
     .week-card.is-active {
       grid-column: 1 / -1;
       min-height: 0;
-      padding: 21px;
-      gap: 14px;
+      padding: 18px;
+      gap: 12px;
       border-left: 1px solid rgba(var(--course-accent-rgb), .34);
       background:
         linear-gradient(135deg, rgba(var(--course-accent-rgb), .16), rgba(255,255,255,.03) 56%),
@@ -446,7 +465,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
+      gap: 8px;
     }
     .week-num {
       font-size: .71rem;
@@ -472,29 +491,29 @@
     .badge-exam     { color: #fbbf24; border-color: rgba(251,191,36,.24); background: rgba(251,191,36,.08); }
     .week-title {
       margin: 0;
-      font-size: 1.04rem;
+      font-size: 1rem;
       font-weight: 620;
-      line-height: 1.4;
+      line-height: 1.34;
     }
     .week-subtitle {
       margin: 0;
-      font-size: .84rem;
+      font-size: .82rem;
       color: var(--muted-strong);
-      line-height: 1.62;
+      line-height: 1.54;
     }
     .week-topics {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 2px;
+      gap: 6px;
+      margin-top: 0;
     }
     .topic-chip,
     .week-metric {
-      padding: 6px 10px;
+      padding: 5px 9px;
       border: 1px solid var(--line);
       background: rgba(255,255,255,.04);
       color: var(--muted-strong);
-      font-size: .71rem;
+      font-size: .69rem;
       line-height: 1.2;
       box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
     }
@@ -502,26 +521,26 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 10px;
       margin-top: auto;
-      padding-top: 6px;
+      padding-top: 4px;
       border-top: 1px solid rgba(255,255,255,.04);
     }
     .week-metrics {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 6px;
     }
     .go-arrow {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 36px;
-      height: 36px;
+      width: 32px;
+      height: 32px;
       border: 1px solid var(--line);
       background: rgba(255,255,255,.04);
       color: var(--muted-strong);
-      font-size: .9rem;
+      font-size: .84rem;
       transition: transform .16s ease;
     }
     .week-card:hover .go-arrow,
@@ -543,24 +562,37 @@
       }
     }
     @media (max-width: 720px) {
+      .page-shell {
+        --course-panel-pad-x: 18px;
+      }
       .course-layout {
         width: calc(100% - 20px);
       }
+      .brand-lockup {
+        gap: 12px;
+        max-width: none;
+      }
+      .brand-lockup strong {
+        font-size: clamp(1rem, 5.6vw, 1.12rem);
+      }
+      .topbar-meta {
+        margin-top: 4px;
+      }
+      .inha-topbar-nav {
+        justify-content: flex-start;
+      }
+      .inha-topbar-nav .btn {
+        padding: 8px 12px;
+      }
+      .course-layout > section,
+      .course-layout > nav {
+        width: 100%;
+      }
       .hero-card,
       .content-block {
-        padding: 20px 18px;
-      }
-      .section-nav {
-        display: grid;
-        width: 100%;
-        grid-template-columns: 1fr 1fr;
-      }
-      .section-nav-btn {
-        min-width: 0;
-        width: 100%;
+        padding: 20px var(--course-panel-pad-x);
       }
       .hero h1 {
-        max-width: 16ch;
         font-size: clamp(1.08rem, 4.7vw, 1.34rem);
       }
     }
@@ -569,19 +601,21 @@
 <body>
   <div class="page-shell">
     <header class="topbar">
-      <div class="topbar-inner">
-        <a class="brand-lockup" href="index.html" style="text-decoration:none;color:inherit;">
+      <div class="topbar-inner inha-topbar-inner rpd-topbar-3col">
+        <a class="brand-lockup rpd-brand-lockup" href="index.html" style="text-decoration:none;color:inherit;">
           <div class="brand-badge">B</div>
-          <div>
+          <div class="brand-copy">
             <strong id="topbarTitle">Blender Archive</strong>
             <div class="topbar-meta" id="topbarMeta">Archive Hub · Inha University</div>
           </div>
         </a>
-        <div class="topbar-actions">
+        <nav class="inha-topbar-nav rpd-topbar-nav" aria-label="공개 페이지">
           <a href="index.html" class="btn btn-ghost" id="homeLink">홈</a>
           <a href="inha.html" class="btn btn-primary" id="inhaLink">인하대 수업</a>
           <a href="library.html" class="btn btn-ghost" id="libraryLink">라이브러리</a>
           <a href="shortcuts.html" class="btn btn-ghost" id="shortcutsLink">단축키</a>
+        </nav>
+        <div class="topbar-actions inha-topbar-utils rpd-topbar-actions rpd-topbar-utils">
           <div id="langSwitcher"></div>
           <button class="theme-toggle" id="themeToggle" type="button" aria-label="테마 전환">
             <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
@@ -593,40 +627,24 @@
 
     <div class="course-layout">
       <section class="hero" id="heroSection">
-        <div class="hero-card">
-          <div class="hero-copy">
+        <div class="hero-card rpd-hero-card">
+          <div class="hero-copy rpd-hero-copy">
             <div class="eyebrow" id="heroEyebrow">Inha University · Course Page</div>
-            <h1 id="heroTitle">인하대학교 · Robot Product Design</h1>
-            <p id="heroDescription">아카이브의 카드와 단축키를 조합해서 만든 실제 수업 페이지입니다. 필요한 주차만 바로 열어볼 수 있습니다.</p>
+            <h1 class="rpd-hero-title" id="heroTitle">인하대학교 · Robot Product Design</h1>
+            <p class="rpd-readable-copy rpd-hero-description" id="heroDescription">아카이브의 카드와 단축키를 조합해서 만든 실제 수업 페이지입니다. 필요한 주차만 바로 열어볼 수 있습니다.</p>
             <div class="hero-actions cta-group" id="heroActions"></div>
           </div>
-          <div class="hero-meta-wrap">
-            <div class="hero-meta-label" id="heroMetaLabel">Course snapshot</div>
+          <div class="hero-meta-wrap rpd-hero-meta-wrap">
+            <div class="hero-meta-label rpd-hero-meta-label" id="heroMetaLabel">Course snapshot</div>
             <div class="hero-meta" id="heroMeta"></div>
           </div>
         </div>
       </section>
 
-      <nav class="section-nav" aria-label="인하대 수업 보기">
-        <button class="section-nav-btn is-active" id="overviewTab" type="button">개요</button>
-        <button class="section-nav-btn" id="weeksTab" type="button">주차별 수업</button>
-      </nav>
-
-      <section class="content-block" id="overviewPanel">
-        <div class="section-intro">
-          <div class="eyebrow" id="overviewEyebrow">Course Page</div>
-          <h2 class="section-title" id="overviewTitle">인하대학교 · Robot Product Design</h2>
-          <p class="section-copy" id="overviewDescription">이 페이지는 Blender Archive의 카드와 참조를 조합해 만든 실제 수업 운영 페이지입니다.</p>
-        </div>
-        <div class="program-stats" id="programStats"></div>
-        <div class="overview-grid" id="overviewGrid"></div>
-      </section>
-
-      <section class="content-block is-hidden" id="weeksPanel">
+      <section class="content-block" id="weeksPanel">
         <div class="section-intro">
           <div class="eyebrow" id="weekSectionEyebrow">Week Assemblies</div>
           <h2 class="section-title" id="weekSectionTitle">주차별 수업</h2>
-          <p class="section-copy" id="weekSectionDescription">각 주차는 필요한 실습 카드, Show Me 카드, 참고 자료를 묶어서 하나의 수업 페이지로 구성합니다.</p>
         </div>
         <div class="week-grid" id="weekGrid"></div>
       </section>
@@ -668,6 +686,49 @@
       var program = localizeUiLabel(labels.program, "");
       if (!school && !program) return text.programTitle;
       return [school, program].filter(Boolean).join(" · ") || text.programTitle;
+    }
+
+    function getPresetProgramParts(text) {
+      var preset = getUiPreset();
+      var labels = preset.labels || {};
+      var school = localizeUiLabel(labels.school, "");
+      var program = localizeUiLabel(labels.program, "");
+      if (school || program) {
+        return {
+          school: school || text.programTitle,
+          program: program || ""
+        };
+      }
+      var title = String(text.programTitle || "");
+      var parts = title.split(" · ");
+      return {
+        school: parts[0] || title,
+        program: parts.slice(1).join(" · ")
+      };
+    }
+
+    function renderHeroTitle(text) {
+      var parts = getPresetProgramParts(text);
+      var titleEl = document.getElementById("heroTitle");
+      titleEl.textContent = "";
+
+      var schoolLine = document.createElement("span");
+      schoolLine.className = "hero-title-line hero-title-school";
+      schoolLine.textContent = parts.school;
+      titleEl.appendChild(schoolLine);
+
+      if (parts.program) {
+        var divider = document.createElement("span");
+        divider.className = "hero-title-line hero-title-divider";
+        divider.setAttribute("aria-hidden", "true");
+        divider.textContent = "·";
+        titleEl.appendChild(divider);
+
+        var programLine = document.createElement("span");
+        programLine.className = "hero-title-line hero-title-program";
+        programLine.textContent = parts.program;
+        titleEl.appendChild(programLine);
+      }
     }
 
     function getWeekCardPreviewItems(localizedWeek, preset) {
@@ -768,81 +829,43 @@
       }).filter(Boolean);
     }
 
-    function getCurrentPanel() {
-      try {
-        var panel = new URLSearchParams(window.location.search).get("panel");
-        return panel === "weeks" ? "weeks" : "overview";
-      } catch (error) {
-        return "overview";
-      }
-    }
-
-    function updatePanelUrl(panel) {
-      try {
-        var url = new URL(window.location.href);
-        if (panel === "overview") url.searchParams.delete("panel");
-        else url.searchParams.set("panel", panel);
-        window.history.replaceState({}, "", url.pathname + url.search + url.hash);
-      } catch (error) {}
-    }
-
-    function setActivePanel(panel, updateUrl) {
-      var overviewActive = panel !== "weeks";
-      document.getElementById("overviewTab").classList.toggle("is-active", overviewActive);
-      document.getElementById("weeksTab").classList.toggle("is-active", !overviewActive);
-      document.getElementById("overviewTab").setAttribute("aria-pressed", overviewActive ? "true" : "false");
-      document.getElementById("weeksTab").setAttribute("aria-pressed", overviewActive ? "false" : "true");
-      document.getElementById("overviewPanel").classList.toggle("is-hidden", !overviewActive);
-      document.getElementById("weeksPanel").classList.toggle("is-hidden", overviewActive);
-      if (updateUrl) updatePanelUrl(panel);
-    }
-
     function buildHeroMeta(text) {
+      var preset = getUiPreset();
+      var labels = preset.labels || {};
+      var courseHero = preset.courseHero || {};
       var activeWeek = CURRICULUM.find(function(week) { return week.status === "active"; });
-      var isKo = window.RPDI18n.getLanguage() === "ko";
-      return isKo ? [
-        CURRICULUM.length + "주 수업 페이지",
-        countProgramArchiveCards() + "개 연결 카드",
-        activeWeek ? "현재 수업 Week " + String(activeWeek.week).padStart(2, "0") : "현재 진행 주차 없음"
-      ] : [
-        CURRICULUM.length + " weekly pages",
-        countProgramArchiveCards() + " linked cards",
-        activeWeek ? "Current course Week " + String(activeWeek.week).padStart(2, "0") : "No active course week"
-      ];
-    }
-
-    function buildOverviewCards(text) {
-      var activeWeek = CURRICULUM.find(function(week) { return week.status === "active"; }) || CURRICULUM[0];
-      var isKo = window.RPDI18n.getLanguage() === "ko";
-      return [
-        {
-          kicker: isKo ? "아카이브 활용" : "Archive utility",
-          title: isKo ? "카드와 단축키를 조합해서 수업을 만듭니다" : "Build the course from archive cards and shortcuts",
-          copy: isKo
-            ? "실습 카드, Show Me 카드, 참고 링크를 필요한 주차에만 연결해서 실제 수업 흐름으로 씁니다."
-            : "Practice cards, Show Me cards, and reference links are connected only where each week needs them.",
-          meta: countProgramArchiveCards() + (isKo ? "개 카드 연결" : " linked cards")
+      var snapshotItems = Array.isArray(courseHero.snapshotItems) && courseHero.snapshotItems.length
+        ? courseHero.snapshotItems
+        : ["weeks", "active"];
+      var emphasisKey = courseHero.emphasis || "active";
+      var definitions = {
+        weeks: {
+          key: "weeks",
+          label: localizeUiLabel(labels.courseSnapshotWeeks, "Weeks"),
+          value: window.RPDI18n.getLanguage() === "ko" ? (CURRICULUM.length + "주") : (CURRICULUM.length + " weeks")
         },
-        {
-          kicker: isKo ? "현재 운영" : "Current run",
-          title: isKo ? "현재 진행 주차와 전체 흐름을 바로 확인합니다" : "Check the active week and the full course flow",
-          copy: isKo
-            ? "주차별 수업 탭에서 15주 전체 구성을 한 번에 보고, 현재 주차는 바로 열 수 있습니다."
-            : "Open the weekly lessons tab to scan the full 15-week structure and jump straight into the current week.",
-          meta: activeWeek ? ("Week " + String(activeWeek.week).padStart(2, "0")) : "—"
+        active: {
+          key: "active",
+          label: localizeUiLabel(labels.courseSnapshotActive, "Current week"),
+          value: activeWeek ? ("Week " + String(activeWeek.week).padStart(2, "0")) : "—"
         }
-      ];
+      };
+      return snapshotItems.map(function(key) {
+        var item = definitions[key];
+        if (!item) return null;
+        return {
+          key: item.key,
+          label: item.label,
+          value: item.value,
+          emphasis: item.key === emphasisKey
+        };
+      }).filter(Boolean);
     }
 
     function buildHeroActions(text) {
       var activeWeek = CURRICULUM.find(function(week) { return week.status === "active"; }) || CURRICULUM[0];
-      var isKo = window.RPDI18n.getLanguage() === "ko";
       var activeHref = activeWeek ? withPresetHref("week.html?week=" + activeWeek.week) : withPresetHref("inha.html");
-      return [
-        '<a class="btn btn-primary" href="' + activeHref + '">' + text.heroPrimaryCta + '</a>',
-        '<a class="btn btn-ghost" href="' + withPresetHref("index.html") + '">' + (isKo ? "홈으로" : "Back home") + '</a>',
-        '<a class="btn-link" href="' + withPresetHref("library.html") + '">' + text.heroSecondaryCta + ' <span aria-hidden="true">→</span></a>'
-      ].join("");
+      return '<a class="btn btn-primary" href="' + activeHref + '">' + text.heroPrimaryCta + '</a>';
     }
 
     function renderWeeks(text, preset) {
@@ -954,55 +977,22 @@
       document.getElementById("themeToggle").setAttribute("aria-label", text.themeToggleAria);
 
       document.getElementById("heroEyebrow").textContent = isKo ? "실제 수업 페이지" : "Built course page";
-      document.getElementById("heroTitle").textContent = getPresetProgramTitle(text);
-      document.getElementById("heroDescription").textContent = isKo
-        ? "아카이브의 카드와 단축키를 조합해서 만든 실제 수업 페이지입니다. 필요한 주차만 바로 열어볼 수 있습니다."
-        : "This is a real course page assembled from archive cards and shortcuts. Open only the weeks you need.";
-      document.getElementById("heroMetaLabel").textContent = isKo ? "수업 스냅샷" : "Course snapshot";
+      renderHeroTitle(text);
+      document.getElementById("heroDescription").innerHTML = isKo
+        ? "인하대학교 Robot Product Design 수업 페이지입니다.<wbr> <span class=\"rpd-phrase-keep\">필요한 주차만</span> 바로 열어볼 수 있습니다."
+        : "This is the Inha University Robot Product Design course page.<wbr> Open only the weeks you need.";
+      document.getElementById("heroMetaLabel").textContent = localizeUiLabel((preset.labels || {}).courseSnapshotTitle, isKo ? "수업 스냅샷" : "Course snapshot");
       document.getElementById("heroActions").innerHTML = buildHeroActions(text);
       document.getElementById("heroMeta").innerHTML = buildHeroMeta(text).map(function(item) {
-        return "<span class=\"hero-meta-chip\">" + item + "</span>";
+        return "<div class=\"hero-snapshot-item" + (item.emphasis ? " is-emphasis" : "") + "\"><strong class=\"hero-snapshot-value\">" + item.value + "</strong><span class=\"hero-snapshot-key\">" + item.label + "</span></div>";
       }).join("");
 
-      document.getElementById("overviewTab").textContent = isKo ? "개요" : "Overview";
-      document.getElementById("weeksTab").textContent = isKo ? "주차별 수업" : "Weekly lessons";
-      document.getElementById("overviewEyebrow").textContent = isKo ? "실제 수업 페이지" : "Built course page";
-      document.getElementById("overviewTitle").textContent = getPresetProgramTitle(text);
-      document.getElementById("overviewDescription").textContent = isKo
-        ? "이 페이지는 Blender Archive의 카드와 참조를 조합해 만든 실제 수업 운영 페이지입니다."
-        : "This page is a live course page assembled from Blender Archive cards and references.";
       document.getElementById("weekSectionEyebrow").textContent = text.weekSectionEyebrow;
       document.getElementById("weekSectionTitle").textContent = isKo ? "주차별 수업" : "Weekly lessons";
-      document.getElementById("weekSectionDescription").textContent = text.weekSectionDescription;
       document.getElementById("footerLabel").textContent = text.footerLabel;
 
-      document.getElementById("programStats").innerHTML = [
-        { value: CURRICULUM.length, label: text.programStatWeeks },
-        { value: countProgramArchiveCards(), label: text.programStatCards },
-        { value: activeWeek ? "Week " + String(activeWeek.week).padStart(2, "0") : "—", label: text.programStatActive }
-      ].map(function(item) {
-        return '<div class="program-stat"><strong>' + item.value + '</strong><span>' + item.label + '</span></div>';
-      }).join("");
-
-      document.getElementById("overviewGrid").innerHTML = buildOverviewCards(text).map(function(item) {
-        return '<div class="overview-card">' +
-          '<span class="overview-card-kicker">' + item.kicker + '</span>' +
-          '<p class="overview-card-title">' + item.title + '</p>' +
-          '<p class="overview-card-copy">' + item.copy + '</p>' +
-          '<span class="overview-card-meta">' + item.meta + '</span>' +
-        '</div>';
-      }).join("");
-
       renderWeeks(text, preset);
-      setActivePanel(getCurrentPanel(), false);
     }
-
-    document.getElementById("overviewTab").addEventListener("click", function() {
-      setActivePanel("overview", true);
-    });
-    document.getElementById("weeksTab").addEventListener("click", function() {
-      setActivePanel("weeks", true);
-    });
 
     window.RPDWeekUI.init({ url: "data/week-ui.json?v=20260318a" }).finally(function() {
       window.RPDI18n.mountLanguageSwitcher(document.getElementById("langSwitcher"));
