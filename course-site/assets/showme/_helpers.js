@@ -78,6 +78,412 @@
     return getShowMeManualSectionFallback(entry.category || "기타");
   }
 
+  function activateShowMeTab(doc, tabName) {
+    if (!doc || !tabName) return;
+    var tabs = Array.from(doc.querySelectorAll(".tab"));
+    var panels = Array.from(doc.querySelectorAll(".panel"));
+    tabs.forEach(function(tab) {
+      var active = tab.dataset.tab === tabName;
+      tab.classList.toggle("is-active", active);
+      tab.setAttribute("aria-selected", active ? "true" : "false");
+    });
+    panels.forEach(function(panel) {
+      panel.classList.toggle("is-active", panel.id === ("panel-" + tabName));
+    });
+    updateShowMeTabNavigation(doc);
+  }
+
+  function triggerShowMeTab(doc, tabName) {
+    if (!doc || !tabName) return;
+    var tab = doc.querySelector('.tab[data-tab="' + tabName + '"]');
+    if (tab && typeof tab.click === "function") {
+      tab.click();
+      return;
+    }
+    activateShowMeTab(doc, tabName);
+  }
+
+  function bindShowMeTabs(doc) {
+    if (!doc) return;
+    Array.from(doc.querySelectorAll(".tab")).forEach(function(tab) {
+      if (tab.dataset.rpdTabBound === "true") return;
+      tab.dataset.rpdTabBound = "true";
+      tab.setAttribute("aria-selected", tab.classList.contains("is-active") ? "true" : "false");
+      tab.addEventListener("click", function() {
+        activateShowMeTab(doc, tab.dataset.tab);
+      });
+    });
+  }
+
+  function getShowMeDocLang(doc) {
+    try {
+      if (global.parent && global.parent.RPDI18n && typeof global.parent.RPDI18n.getLanguage === "function") {
+        return global.parent.RPDI18n.getLanguage();
+      }
+    } catch (error) {}
+    if (doc && doc.documentElement) {
+      return doc.documentElement.getAttribute("data-lang") || doc.documentElement.lang || "ko";
+    }
+    return "ko";
+  }
+
+  function getShowMeActionLabel(doc, key) {
+    var lang = getShowMeDocLang(doc) === "en" ? "en" : "ko";
+    var labels = {
+      visual: { ko: "직접 해보기", en: "Try It" },
+      quiz: { ko: "퀴즈 풀기", en: "Take Quiz" }
+    };
+    return labels[key] ? labels[key][lang] : "";
+  }
+
+  function getShowMeActionPromptCopy(doc, hasInteractiveDemo, hasQuiz) {
+    var lang = getShowMeDocLang(doc) === "en" ? "en" : "ko";
+    if (lang === "en") {
+      return {
+        aria: "Suggested actions",
+        kicker: "Next",
+        title: "You can continue right away.",
+        body: hasInteractiveDemo && hasQuiz
+          ? "Once the idea clicks, jump into the interactive demo or confirm it with a quick quiz."
+          : (hasInteractiveDemo
+            ? "Once the idea clicks, jump into the interactive demo."
+            : "Once the idea clicks, confirm it with a quick quiz.")
+      };
+    }
+
+    return {
+      aria: "추천 액션",
+      kicker: "다음 액션",
+      title: "이어서 바로 해볼 수 있어요.",
+      body: hasInteractiveDemo && hasQuiz
+        ? "원리를 봤다면 직접 조작해보거나 짧은 퀴즈로 바로 확인해보세요."
+        : (hasInteractiveDemo
+          ? "원리를 봤다면 바로 직접 조작해보세요."
+          : "원리를 봤다면 짧은 퀴즈로 바로 확인해보세요.")
+    };
+  }
+
+  function getShowMeConceptMoreSummaryLabel(doc) {
+    return getShowMeDocLang(doc) === "en" ? "Expand details" : "보충 설명 펼치기";
+  }
+
+  function getShowMeWidgetId(doc) {
+    if (!doc || !doc.defaultView || !doc.defaultView.location) return "";
+    try {
+      var params = new URLSearchParams(doc.defaultView.location.search || "");
+      var wid = params.get("wid");
+      if (wid) return wid;
+    } catch (error) {}
+
+    var pathname = doc.defaultView.location.pathname || "";
+    var match = pathname.match(/\/([^/]+)\.html$/);
+    return match ? match[1] : "";
+  }
+
+  function getShowMeVideoSectionCopy(doc) {
+    return getShowMeDocLang(doc) === "en"
+      ? { label: "Official videos", icon: "▶" }
+      : { label: "공식 영상", icon: "▶" };
+  }
+
+  function getShowMeTabArrowLabel(doc, direction) {
+    var lang = getShowMeDocLang(doc) === "en" ? "en" : "ko";
+    var labels = {
+      prev: { ko: "이전 탭", en: "Previous tab" },
+      next: { ko: "다음 탭", en: "Next tab" }
+    };
+    return labels[direction] ? labels[direction][lang] : "";
+  }
+
+  function isShowMeTabNavLocked(doc) {
+    if (!doc || !doc.documentElement) return false;
+    var lockUntil = Number(doc.documentElement.dataset.rpdTabNavLockUntil || 0);
+    return lockUntil > Date.now();
+  }
+
+  function lockShowMeTabNav(doc) {
+    if (!doc || !doc.documentElement) return;
+    var unlockAt = Date.now() + 180;
+    doc.documentElement.dataset.rpdTabNavLockUntil = String(unlockAt);
+    global.setTimeout(function() {
+      if (!doc.documentElement) return;
+      var current = Number(doc.documentElement.dataset.rpdTabNavLockUntil || 0);
+      if (current === unlockAt) {
+        delete doc.documentElement.dataset.rpdTabNavLockUntil;
+      }
+    }, 220);
+  }
+
+  function ensureShowMeSharedStyles(doc) {
+    if (!doc || !doc.head || doc.getElementById("rpd-showme-shared-styles")) return;
+
+    var style = doc.createElement("style");
+    style.id = "rpd-showme-shared-styles";
+    style.textContent = [
+      ".showme-tab-shell{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg,rgba(17,18,20,.98),rgba(17,18,20,.9));backdrop-filter:blur(18px);}",
+      ".showme-tab-nav{position:relative;flex:1;min-width:0;padding:0 2px;}",
+      ".showme-tab-nav::before,.showme-tab-nav::after{content:'';position:absolute;top:0;bottom:0;width:26px;pointer-events:none;z-index:2;}",
+      ".showme-tab-nav::before{left:0;background:linear-gradient(90deg,rgba(17,18,20,.98),rgba(17,18,20,0));}",
+      ".showme-tab-nav::after{right:0;background:linear-gradient(270deg,rgba(17,18,20,.98),rgba(17,18,20,0));}",
+      ".showme-tab-arrow{width:40px;height:40px;display:grid;place-items:center;border:none;border-radius:999px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.025));box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),0 8px 20px rgba(0,0,0,.22);color:rgba(237,240,246,.72);font:inherit;font-size:1.05rem;cursor:pointer;transition:transform .16s ease,background .16s ease,box-shadow .16s ease,color .16s ease,opacity .16s ease;flex-shrink:0;}",
+      ".showme-tab-arrow:hover,.showme-tab-arrow:focus-visible{transform:translateY(-1px);background:linear-gradient(180deg,rgba(255,255,255,.1),rgba(255,255,255,.04));box-shadow:inset 0 0 0 1px rgba(255,255,255,.12),0 12px 24px rgba(0,0,0,.22);color:var(--text);outline:none;}",
+      ".showme-tab-arrow[disabled]{opacity:.2;cursor:default;transform:none;}",
+      ".showme-tab-arrow[disabled]:hover{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.025));box-shadow:inset 0 0 0 1px rgba(255,255,255,.08),0 8px 20px rgba(0,0,0,.22);color:rgba(237,240,246,.72);}",
+      ".tabs{display:flex !important;gap:8px !important;border-bottom:none !important;padding:0 !important;background:transparent !important;overflow-x:auto;scrollbar-width:none;scroll-behavior:smooth;}",
+      ".tabs::-webkit-scrollbar{display:none;}",
+      ".tab{position:relative;padding:11px 14px !important;border:none !important;border-bottom:none !important;border-radius:16px;background:transparent !important;color:rgba(230,232,238,.62) !important;font-size:.84rem !important;font-weight:600 !important;line-height:1.2;letter-spacing:-.01em;transition:background .16s ease,color .16s ease,box-shadow .16s ease,transform .16s ease;}",
+      ".tab:hover{color:rgba(248,250,252,.9) !important;background:rgba(255,255,255,.045) !important;}",
+      ".tab:focus{outline:none;}",
+      ".tab:focus-visible{box-shadow:inset 0 0 0 1px rgba(255,255,255,.1);color:var(--text) !important;background:rgba(255,255,255,.05) !important;}",
+      ".tab.is-active{color:#f7f8fb !important;background:linear-gradient(180deg,rgba(255,255,255,.085),rgba(255,255,255,.03)) !important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.1),0 10px 24px rgba(0,0,0,.16);}",
+      ".tab.is-active::after{content:'';position:absolute;left:14px;right:14px;bottom:6px;height:2px;border-radius:999px;background:linear-gradient(90deg,rgba(132,194,255,.55),rgba(132,194,255,0));opacity:.9;}",
+      ".tab.is-active:hover{background:linear-gradient(180deg,rgba(255,255,255,.095),rgba(255,255,255,.035)) !important;}",
+      ".showme-quick-actions{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin:16px 0 0;padding:14px 16px;border-radius:18px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(135deg,rgba(10,132,255,.1),rgba(255,255,255,.03));box-shadow:0 18px 38px rgba(0,0,0,.2);backdrop-filter:blur(14px);}",
+      ".showme-quick-actions-copy{min-width:0;display:grid;gap:4px;}",
+      ".showme-quick-actions-kicker{font-size:.66rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--key-soft);}",
+      ".showme-quick-actions-title{font-size:.92rem;font-weight:600;line-height:1.35;color:var(--text);}",
+      ".showme-quick-actions-meta{font-size:.8rem;line-height:1.65;color:var(--muted);max-width:42ch;}",
+      ".showme-quick-action-list{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px;}",
+      ".showme-quick-link{display:inline-flex;align-items:center;gap:8px;padding:9px 12px;border:none;border-radius:999px;background:rgba(255,255,255,.055);box-shadow:inset 0 0 0 1px rgba(255,255,255,.09);color:var(--muted-strong);font:inherit;font-size:.82rem;font-weight:600;cursor:pointer;transition:transform .16s ease,background .16s ease,box-shadow .16s ease,color .16s ease;}",
+      ".showme-quick-link:hover,.showme-quick-link:focus-visible{transform:translateY(-1px);background:rgba(255,255,255,.09);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);color:var(--text);outline:none;}",
+      ".showme-quick-link.is-primary{background:rgba(10,132,255,.16);box-shadow:inset 0 0 0 1px rgba(10,132,255,.26);color:var(--key-soft);}",
+      ".showme-quick-link-arrow{font-size:.9rem;opacity:.72;transition:transform .16s ease,opacity .16s ease;}",
+      ".showme-quick-link:hover .showme-quick-link-arrow,.showme-quick-link:focus-visible .showme-quick-link-arrow{transform:translateX(2px);opacity:1;}",
+      ".showme-video-ref-group{margin-top:16px;display:grid;gap:8px;}",
+      ".showme-ref-section-label{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}",
+      ".concept-more{margin-top:16px;padding:0 16px;border-radius:16px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.025);}",
+      ".concept-more summary{display:flex;align-items:center;gap:10px;padding:14px 0;color:var(--muted-strong);font-size:.82rem;font-weight:600;line-height:1.45;list-style:none;cursor:pointer;}",
+      ".concept-more summary::-webkit-details-marker{display:none;}",
+      ".concept-more summary::before{content:'+';display:grid;place-items:center;width:20px;height:20px;border-radius:999px;background:rgba(255,255,255,.05);box-shadow:inset 0 0 0 1px rgba(255,255,255,.1);color:var(--muted);font-size:.92rem;font-weight:500;flex-shrink:0;}",
+      ".concept-more[open] summary::before{content:'-';background:rgba(10,132,255,.14);box-shadow:inset 0 0 0 1px rgba(10,132,255,.24);color:var(--key-soft);}",
+      ".concept-more-body{margin:0;padding:0 0 14px 30px;color:var(--muted-strong);font-size:.84rem;line-height:1.72;}",
+      "@media (max-width:640px){.showme-tab-shell{gap:8px;padding:8px 10px;}.showme-tab-arrow{width:34px;height:34px;font-size:.96rem;}.tab{padding:10px 12px !important;font-size:.8rem !important;}.showme-quick-actions{flex-direction:column;align-items:stretch;}.showme-quick-action-list{justify-content:flex-start;}.showme-quick-actions-meta{max-width:none;}.concept-more-body{padding-left:0;}}"
+    ].join("");
+    doc.head.appendChild(style);
+  }
+
+  function ensureShowMeTabNavigation(doc) {
+    if (!doc) return;
+    var tabs = doc.querySelector(".tabs");
+    if (!tabs || tabs.dataset.rpdTabUiEnhanced === "true") return;
+    tabs.dataset.rpdTabUiEnhanced = "true";
+
+    var shell = doc.createElement("div");
+    shell.className = "showme-tab-shell";
+
+    var prev = doc.createElement("button");
+    prev.type = "button";
+    prev.className = "showme-tab-arrow is-prev";
+    prev.setAttribute("aria-label", getShowMeTabArrowLabel(doc, "prev"));
+    prev.setAttribute("data-tab-nav", "prev");
+    prev.innerHTML = "&#x2039;";
+
+    var nav = doc.createElement("div");
+    nav.className = "showme-tab-nav";
+
+    var next = doc.createElement("button");
+    next.type = "button";
+    next.className = "showme-tab-arrow is-next";
+    next.setAttribute("aria-label", getShowMeTabArrowLabel(doc, "next"));
+    next.setAttribute("data-tab-nav", "next");
+    next.innerHTML = "&#x203A;";
+
+    var parent = tabs.parentNode;
+    if (!parent) return;
+    parent.insertBefore(shell, tabs);
+    shell.appendChild(prev);
+    shell.appendChild(nav);
+    nav.appendChild(tabs);
+    shell.appendChild(next);
+
+    prev.addEventListener("click", function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      stepShowMeTab(doc, -1);
+    });
+    next.addEventListener("click", function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      stepShowMeTab(doc, 1);
+    });
+
+    updateShowMeTabNavigation(doc);
+  }
+
+  function stepShowMeTab(doc, direction) {
+    if (!doc || !direction) return;
+    if (isShowMeTabNavLocked(doc)) return;
+    var tabs = Array.from(doc.querySelectorAll(".tab"));
+    if (!tabs.length) return;
+    var currentIndex = tabs.findIndex(function(tab) { return tab.classList.contains("is-active"); });
+    if (currentIndex === -1) currentIndex = 0;
+    var nextIndex = Math.max(0, Math.min(tabs.length - 1, currentIndex + direction));
+    if (nextIndex === currentIndex) {
+      updateShowMeTabNavigation(doc);
+      return;
+    }
+    var target = tabs[nextIndex];
+    lockShowMeTabNav(doc);
+    if (target && typeof target.click === "function") target.click();
+  }
+
+  function updateShowMeTabNavigation(doc) {
+    if (!doc) return;
+    var tabs = Array.from(doc.querySelectorAll(".tab"));
+    if (!tabs.length) return;
+    var currentIndex = tabs.findIndex(function(tab) { return tab.classList.contains("is-active"); });
+    if (currentIndex === -1) currentIndex = 0;
+
+    var activeTab = tabs[currentIndex];
+    if (activeTab && typeof activeTab.scrollIntoView === "function") {
+      try {
+        activeTab.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      } catch (error) {}
+    }
+
+    var prev = doc.querySelector('.showme-tab-arrow[data-tab-nav="prev"]');
+    var next = doc.querySelector('.showme-tab-arrow[data-tab-nav="next"]');
+    if (prev) prev.disabled = currentIndex <= 0;
+    if (next) next.disabled = currentIndex >= tabs.length - 1;
+  }
+
+  function refineShowMeConceptMore(doc) {
+    if (!doc) return;
+    Array.from(doc.querySelectorAll(".concept-more summary")).forEach(function(summary) {
+      var text = summary.textContent ? summary.textContent.trim() : "";
+      if (!text || text === "더보기" || text === "더 보기" || text === "More") {
+        summary.textContent = getShowMeConceptMoreSummaryLabel(doc);
+      }
+    });
+  }
+
+  function injectShowMeOfficialVideos(doc) {
+    var conceptPanel = doc && doc.getElementById("panel-concept");
+    if (!conceptPanel || conceptPanel.querySelector(".showme-video-ref-group")) return;
+
+    var widgetId = getShowMeWidgetId(doc);
+    if (!widgetId) return;
+
+    var entry = getShowMeEntry(widgetId);
+    var videos = Array.isArray(entry.officialVideos) ? entry.officialVideos.filter(function(video) {
+      return video && video.url;
+    }) : [];
+    if (!videos.length) return;
+
+    var copy = getShowMeVideoSectionCopy(doc);
+    var group = doc.createElement("div");
+    group.className = "showme-video-ref-group";
+
+    var label = doc.createElement("div");
+    label.className = "showme-ref-section-label";
+    label.textContent = copy.label;
+    group.appendChild(label);
+
+    var list = doc.createElement("div");
+    list.className = "doc-ref-list";
+
+    videos.forEach(function(video) {
+      var item = doc.createElement("div");
+      item.className = "doc-ref";
+
+      var link = doc.createElement("a");
+      link.href = video.url;
+      link.target = "_blank";
+      link.rel = "noopener";
+      link.textContent = copy.icon + " " + (video.label || video.title || video.url);
+
+      item.appendChild(link);
+      list.appendChild(item);
+    });
+
+    group.appendChild(list);
+
+    var refs = conceptPanel.querySelectorAll(".doc-ref-list, .doc-ref");
+    if (refs.length) {
+      refs[refs.length - 1].insertAdjacentElement("afterend", group);
+    } else {
+      conceptPanel.appendChild(group);
+    }
+  }
+
+  function injectShowMeQuickActions(doc, hasInteractiveDemo) {
+    var conceptPanel = doc.getElementById("panel-concept");
+    if (!conceptPanel || conceptPanel.querySelector(".showme-quick-actions")) return;
+
+    var actions = [];
+    var hasQuiz = !!doc.querySelector('.tab[data-tab="quiz"]');
+    if (hasInteractiveDemo && doc.querySelector('.tab[data-tab="visual"]')) {
+      actions.push({ tab: "visual", label: getShowMeActionLabel(doc, "visual"), primary: true });
+    }
+    if (hasQuiz) {
+      actions.push({ tab: "quiz", label: getShowMeActionLabel(doc, "quiz"), primary: !hasInteractiveDemo });
+    }
+    if (!actions.length) return;
+
+    var wrap = doc.createElement("div");
+    wrap.className = "showme-quick-actions";
+    wrap.setAttribute("role", "region");
+    wrap.setAttribute("aria-label", getShowMeActionPromptCopy(doc, hasInteractiveDemo, hasQuiz).aria);
+
+    var copy = getShowMeActionPromptCopy(doc, hasInteractiveDemo, hasQuiz);
+    var copyWrap = doc.createElement("div");
+    copyWrap.className = "showme-quick-actions-copy";
+
+    var kicker = doc.createElement("span");
+    kicker.className = "showme-quick-actions-kicker";
+    kicker.textContent = copy.kicker;
+    copyWrap.appendChild(kicker);
+
+    var title = doc.createElement("span");
+    title.className = "showme-quick-actions-title";
+    title.textContent = copy.title;
+    copyWrap.appendChild(title);
+
+    var meta = doc.createElement("span");
+    meta.className = "showme-quick-actions-meta";
+    meta.textContent = copy.body;
+    copyWrap.appendChild(meta);
+
+    wrap.appendChild(copyWrap);
+
+    var list = doc.createElement("div");
+    list.className = "showme-quick-action-list";
+
+    actions.forEach(function(action) {
+      var button = doc.createElement("button");
+      button.type = "button";
+      button.className = "showme-quick-link" + (action.primary ? " is-primary" : "");
+
+      var label = doc.createElement("span");
+      label.className = "showme-quick-link-label";
+      label.textContent = action.label;
+      button.appendChild(label);
+
+      var arrow = doc.createElement("span");
+      arrow.className = "showme-quick-link-arrow";
+      arrow.setAttribute("aria-hidden", "true");
+      arrow.textContent = "→";
+      button.appendChild(arrow);
+
+      button.addEventListener("click", function() {
+        triggerShowMeTab(doc, action.tab);
+      });
+      list.appendChild(button);
+    });
+
+    wrap.appendChild(list);
+
+    var intro = Array.from(conceptPanel.children).find(function(child) {
+      return child.tagName === "P";
+    });
+    if (intro) {
+      intro.insertAdjacentElement("afterend", wrap);
+      return;
+    }
+
+    conceptPanel.insertBefore(wrap, conceptPanel.firstChild);
+  }
+
   function collectShowMeIdsFromStep(step) {
     var ids = [];
     var seen = {};
@@ -118,13 +524,13 @@
     wrap.style.cssText = "margin:12px 0 0;display:grid;gap:10px;";
 
     var title = doc.createElement("div");
-    title.style.cssText = "font-size:.82rem;font-weight:700;color:#fcd34d;";
+    title.style.cssText = "font-size:.74rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);";
     title.textContent = "헷갈리는 포인트";
     wrap.appendChild(title);
 
     confusionItems.forEach(function(item) {
       var card = doc.createElement("div");
-      card.style.cssText = "padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);";
+      card.style.cssText = "padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.08);";
 
       var symptom = doc.createElement("div");
       symptom.style.cssText = "font-size:.84rem;font-weight:600;color:#f5f5f7;margin-bottom:6px;";
@@ -154,10 +560,10 @@
   function buildShowMeSupplementAccordion(doc, supplement) {
     var wrap = doc.createElement("div");
     wrap.className = "showme-supplement";
-    wrap.style.cssText = "margin-top:20px;border:1px solid rgba(245,158,11,.18);border-radius:18px;overflow:hidden;background:rgba(245,158,11,.04);";
+    wrap.style.cssText = "margin-top:20px;border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;background:rgba(255,255,255,.02);";
 
     var toggle = doc.createElement("button");
-    toggle.style.cssText = "display:flex;align-items:center;gap:8px;width:100%;padding:14px 16px;border:none;background:none;color:#fbbf24;font:inherit;font-size:.88rem;font-weight:600;cursor:pointer;text-align:left;";
+    toggle.style.cssText = "display:flex;align-items:center;gap:8px;width:100%;padding:14px 16px;border:none;background:none;color:#f5f5f7;font:inherit;font-size:.86rem;font-weight:600;cursor:pointer;text-align:left;";
     toggle.textContent = "💡 " + (supplement.title || "아직 헷갈린다면?");
 
     var arrow = doc.createElement("span");
@@ -177,7 +583,7 @@
 
     if (supplement.analogy) {
       var analogyDiv = doc.createElement("div");
-      analogyDiv.style.cssText = "margin-bottom:12px;padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);";
+      analogyDiv.style.cssText = "margin-bottom:12px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.08);";
 
       var headlineEl = doc.createElement("div");
       headlineEl.style.cssText = "font-size:.9rem;font-weight:600;color:#f5f5f7;margin-bottom:6px;";
@@ -197,7 +603,7 @@
       baDiv.style.cssText = "display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;";
 
       var beforeDiv = doc.createElement("div");
-      beforeDiv.style.cssText = "padding:12px;border-radius:12px;background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.15);";
+      beforeDiv.style.cssText = "padding:12px;border-radius:14px;background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.14);";
       var beforeLabel = doc.createElement("div");
       beforeLabel.style.cssText = "font-size:.76rem;font-weight:600;color:#fca5a5;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em;";
       beforeLabel.textContent = "WITHOUT";
@@ -208,7 +614,7 @@
       beforeDiv.appendChild(beforeText);
 
       var afterDiv = doc.createElement("div");
-      afterDiv.style.cssText = "padding:12px;border-radius:12px;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.15);";
+      afterDiv.style.cssText = "padding:12px;border-radius:14px;background:rgba(16,185,129,.05);border:1px solid rgba(16,185,129,.14);";
       var afterLabel = doc.createElement("div");
       afterLabel.style.cssText = "font-size:.76rem;font-weight:600;color:#6ee7b7;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em;";
       afterLabel.textContent = "WITH";
@@ -228,7 +634,7 @@
 
     if (supplement.takeaway) {
       var takeawayDiv = doc.createElement("div");
-      takeawayDiv.style.cssText = "margin-top:12px;padding:10px 14px;border-radius:12px;background:rgba(10,132,255,.08);border:1px solid rgba(10,132,255,.18);font-size:.86rem;color:#8ec5ff;font-weight:500;";
+      takeawayDiv.style.cssText = "margin-top:12px;padding:10px 14px;border-radius:12px;background:rgba(10,132,255,.05);border:1px solid rgba(10,132,255,.16);font-size:.84rem;color:#8ec5ff;font-weight:500;";
       takeawayDiv.textContent = "→ " + supplement.takeaway;
       content.appendChild(takeawayDiv);
     }
@@ -289,7 +695,7 @@
 
     var wrap = doc.createElement("div");
     wrap.className = "showme-concept-visual";
-    wrap.style.cssText = "margin:20px 0 0;padding:16px 18px;border-radius:18px;border:1px solid rgba(10,132,255,.18);background:rgba(255,255,255,.02);";
+    wrap.style.cssText = "margin:20px 0 0;padding:16px 18px;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.02);";
 
     var title = doc.createElement("div");
     title.className = "section-divider";
@@ -299,7 +705,7 @@
 
     if (activeScenario) {
       var chip = doc.createElement("div");
-      chip.style.cssText = "display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;background:rgba(10,132,255,.12);color:#8ec5ff;font-size:.76rem;font-weight:600;margin-bottom:10px;";
+      chip.style.cssText = "display:inline-flex;align-items:center;padding:0;border:none;background:none;color:var(--muted);font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;";
       chip.textContent = activeScenario.textContent.trim();
       wrap.appendChild(chip);
     }
@@ -328,42 +734,62 @@
     return wrap;
   }
 
+  function normalizeShowMeDocument(doc) {
+    if (!doc || !doc.body || doc.body.dataset.showmeLayoutNormalized === "true") return;
+
+    var conceptPanel = doc.getElementById("panel-concept");
+    var visualPanel = doc.getElementById("panel-visual");
+    var visualTab = doc.querySelector('.tab[data-tab="visual"]');
+    var quizTab = doc.querySelector('.tab[data-tab="quiz"]');
+    if (!conceptPanel || !visualPanel) return;
+
+    ensureShowMeSharedStyles(doc);
+    ensureShowMeTabNavigation(doc);
+    bindShowMeTabs(doc);
+    refineShowMeConceptMore(doc);
+
+    var hasDedicatedInteractiveDemo = !!visualPanel.querySelector(".demo-wrap");
+    var hasLegacyComparisonDemo = !hasDedicatedInteractiveDemo && hasLegacyInteractiveDemo(visualPanel);
+    var hasInteractiveDemo = hasDedicatedInteractiveDemo || hasLegacyComparisonDemo;
+    var hasVisualExplainer = Array.from(visualPanel.children).some(isVisualExplainerBlock);
+
+    if (hasInteractiveDemo && visualTab) {
+      visualTab.textContent = getShowMeActionLabel(doc, "visual");
+    }
+    if (quizTab) {
+      quizTab.textContent = getShowMeActionLabel(doc, "quiz");
+    }
+
+    if (hasInteractiveDemo && hasVisualExplainer && !conceptPanel.querySelector(".showme-concept-visual")) {
+      var summary = buildConceptVisualizationSummary(doc, visualPanel);
+      if (summary) {
+        var anchor = conceptPanel.querySelector(".shortcut-list, .doc-ref-list, .doc-ref");
+        if (anchor) conceptPanel.insertBefore(summary, anchor);
+        else conceptPanel.appendChild(summary);
+
+        Array.from(visualPanel.children).forEach(function(child) {
+          if (!isVisualExplainerBlock(child)) return;
+          if (hasDedicatedInteractiveDemo || isVisualDescriptionBlock(child)) {
+            child.style.display = "none";
+          }
+        });
+      }
+    }
+
+    injectShowMeOfficialVideos(doc);
+    injectShowMeQuickActions(doc, hasInteractiveDemo);
+    doc.body.dataset.showmeLayoutNormalized = "true";
+  }
+
   function normalizeShowMeLayout(iframe) {
     try {
-      var doc = iframe.contentDocument;
-      if (!doc || doc.body.dataset.showmeLayoutNormalized === "true") return;
+      normalizeShowMeDocument(iframe && iframe.contentDocument);
+    } catch (error) {}
+  }
 
-      var conceptPanel = doc.getElementById("panel-concept");
-      var visualPanel = doc.getElementById("panel-visual");
-      var visualTab = doc.querySelector('.tab[data-tab="visual"]');
-      if (!conceptPanel || !visualPanel) return;
-
-      var hasDedicatedInteractiveDemo = !!visualPanel.querySelector(".demo-wrap");
-      var hasLegacyComparisonDemo = !hasDedicatedInteractiveDemo && hasLegacyInteractiveDemo(visualPanel);
-      var hasInteractiveDemo = hasDedicatedInteractiveDemo || hasLegacyComparisonDemo;
-      var hasVisualExplainer = Array.from(visualPanel.children).some(isVisualExplainerBlock);
-
-      if (hasInteractiveDemo && visualTab) {
-        visualTab.textContent = "interaction";
-      }
-
-      if (hasInteractiveDemo && hasVisualExplainer && !conceptPanel.querySelector(".showme-concept-visual")) {
-        var summary = buildConceptVisualizationSummary(doc, visualPanel);
-        if (summary) {
-          var anchor = conceptPanel.querySelector(".shortcut-list, .doc-ref-list, .doc-ref");
-          if (anchor) conceptPanel.insertBefore(summary, anchor);
-          else conceptPanel.appendChild(summary);
-
-          Array.from(visualPanel.children).forEach(function(child) {
-            if (!isVisualExplainerBlock(child)) return;
-            if (hasDedicatedInteractiveDemo || isVisualDescriptionBlock(child)) {
-              child.style.display = "none";
-            }
-          });
-        }
-      }
-
-      doc.body.dataset.showmeLayoutNormalized = "true";
+  function normalizeStandaloneShowMeLayout(doc) {
+    try {
+      normalizeShowMeDocument(doc || (typeof document !== "undefined" ? document : null));
     } catch (error) {}
   }
 
@@ -389,5 +815,6 @@
   global.findShowMeSupplement = findShowMeSupplement;
   global.buildShowMeSupplementAccordion = buildShowMeSupplementAccordion;
   global.normalizeShowMeLayout = normalizeShowMeLayout;
+  global.normalizeStandaloneShowMeLayout = normalizeStandaloneShowMeLayout;
   global.injectShowMeSupplement = injectShowMeSupplement;
 })(typeof window !== "undefined" ? window : globalThis);

@@ -276,6 +276,8 @@
           "설정 가이드": "Setup Guide",
           "언제 쓰나요?": "When to Use It",
           "퀴즈": "Quiz",
+          "직접 해보기": "Try It",
+          "퀴즈 풀기": "Take Quiz",
           "주요 단축키": "Key Shortcuts",
           "주요 단축키 · 경로": "Key Shortcuts · Paths",
           "개념 이해 시각화": "Concept Visualization",
@@ -300,7 +302,23 @@
           "결과": "Result",
           "뷰포트 표시": "Viewport",
           "렌더 결과": "Render Result",
-          "Blender 공식 문서": "Blender Official Manual"
+          "Blender 공식 문서": "Blender Official Manual",
+          "기준점 이해": "Reference Points",
+          "기초 조작": "Core Workflow",
+          "기초 형태": "Base Forms",
+          "레퍼런스 세팅": "Reference Setup",
+          "모션": "Motion",
+          "보조 개념": "Supporting Concepts",
+          "장면 세팅": "Scene Setup",
+          "재질": "Materials",
+          "최종 출력": "Final Output",
+          "캐릭터": "Character",
+          "텍스처 준비": "Texture Prep",
+          "폴리시": "Polish",
+          "하드서피스 기초": "Hard-Surface Basics",
+          "형태 다듬기": "Form Refinement",
+          "형태 생성": "Form Building",
+          "환경 설정": "Setup"
         }
       },
       widgets: {

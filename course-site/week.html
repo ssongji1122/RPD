@@ -465,6 +465,27 @@
       stroke-linecap: round;
       stroke-linejoin: round;
     }
+    .showme-icon-badge .showme-icon-base {
+      stroke: rgba(241,245,249,.96);
+    }
+    .showme-icon-badge .showme-icon-base-fill {
+      fill: rgba(241,245,249,.2);
+      stroke: none;
+    }
+    .showme-icon-badge .showme-icon-accent {
+      stroke: #f59e0b;
+    }
+    .showme-icon-badge .showme-icon-accent-fill {
+      fill: #f59e0b;
+      stroke: none;
+    }
+    .showme-icon-badge .showme-icon-soft {
+      stroke: #7dd3fc;
+    }
+    .showme-icon-badge .showme-icon-soft-fill {
+      fill: #7dd3fc;
+      stroke: none;
+    }
     .showme-icon-badge--card {
       width: 42px;
       height: 42px;
@@ -491,6 +512,16 @@
     .showme-icon-badge--pill svg {
       width: 13px;
       height: 13px;
+    }
+    .showme-icon-badge--title {
+      width: 24px;
+      height: 24px;
+      border-radius: 8px;
+      background: rgba(255,255,255,.03);
+    }
+    .showme-icon-badge--title svg {
+      width: 14px;
+      height: 14px;
     }
     .showme-icon-badge.is-fallback {
       font-size: 1rem;
@@ -586,10 +617,39 @@
       align-items: flex-start;
       gap: 14px;
     }
+    .step-title-block {
+      min-width: 0;
+      display: grid;
+      gap: 5px;
+      padding-top: 2px;
+    }
     .step-title-text {
       display: block;
       line-height: 1.35;
-      padding-top: 2px;
+    }
+    .step-meta-line {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 3px 0;
+      color: var(--muted);
+      font-size: .76rem;
+      line-height: 1.45;
+      letter-spacing: .01em;
+    }
+    .step-meta-token {
+      display: inline-flex;
+      align-items: center;
+      white-space: nowrap;
+    }
+    .step-meta-token + .step-meta-token::before {
+      content: "·";
+      color: rgba(255,255,255,.22);
+      margin: 0 6px;
+    }
+    .step-meta-line strong {
+      color: var(--muted-strong);
+      font-weight: 600;
     }
     .step-header-right {
       display: inline-flex;
@@ -880,6 +940,7 @@
 
     .showme-modal-header {
       display: flex; justify-content: space-between; align-items: center;
+      gap: 16px;
       padding: 14px 18px;
       border-bottom: 1px solid var(--line);
       flex-shrink: 0;
@@ -887,10 +948,70 @@
       z-index: 1;
       background: var(--surface);
     }
-    .showme-modal-title {
-      font-size: .9rem; font-weight: 600; color: var(--text);
-      line-height: 1.35;
+    .showme-modal-header-copy {
       min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .showme-modal-card-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      border: 1px solid rgba(122,162,247,.2);
+      background:
+        linear-gradient(145deg, rgba(10,132,255,.18), rgba(255,255,255,.04)),
+        rgba(255,255,255,.03);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.08),
+        0 14px 32px rgba(0,0,0,.22);
+      backdrop-filter: blur(18px);
+      display: grid;
+      place-items: center;
+      color: #eaf3ff;
+      flex-shrink: 0;
+    }
+    .showme-modal-card-icon .showme-icon-badge {
+      width: 100%;
+      height: 100%;
+      border: none;
+      border-radius: inherit;
+      background: transparent;
+      color: inherit;
+    }
+    .showme-modal-card-icon .showme-icon-badge svg {
+      width: 20px;
+      height: 20px;
+    }
+    .showme-modal-title-block {
+      min-width: 0;
+      display: grid;
+      gap: 2px;
+    }
+    .showme-modal-kicker {
+      font-size: .67rem;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: rgba(191,219,254,.86);
+    }
+    .showme-modal-title {
+      font-size: 1.12rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.2;
+      min-width: 0;
+      letter-spacing: -.02em;
+    }
+    .showme-modal-title-label,
+    .showme-modal-title-meta {
+      min-width: 0;
+    }
+    .showme-modal-title-meta {
+      font-size: .8rem;
+      line-height: 1.45;
+      color: var(--muted);
     }
     .showme-header-actions {
       display: flex; align-items: center; gap: 6px;
@@ -1031,6 +1152,7 @@
       gap: 8px;
     }
     .showme-browser-item {
+      position: relative;
       display: grid;
       grid-template-columns: auto minmax(0, 1fr);
       align-items: flex-start;
@@ -1045,11 +1167,18 @@
       cursor: pointer;
       transition: border-color .14s ease, background .14s ease, transform .14s ease;
       font: inherit;
+      overflow: hidden;
     }
     .showme-browser-item-copy {
       min-width: 0;
       display: grid;
       gap: 2px;
+    }
+    .showme-browser-item-kicker-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
     }
     .showme-browser-item-kicker {
       font-size: .62rem;
@@ -1059,15 +1188,58 @@
       text-transform: uppercase;
       color: rgba(191,219,254,.82);
     }
+    .showme-browser-item-state {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(122,162,247,.22);
+      background: rgba(255,255,255,.05);
+      color: #d7e8ff;
+      font-size: .61rem;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      backdrop-filter: blur(16px);
+    }
     .showme-browser-item:hover {
       border-color: rgba(10,132,255,.34);
       background: rgba(255,255,255,.04);
       transform: translateY(-1px);
     }
     .showme-browser-item.is-active {
-      border-color: rgba(10,132,255,.46);
-      background: rgba(10,132,255,.08);
-      box-shadow: inset 0 0 0 1px rgba(10,132,255,.12);
+      border-color: rgba(96,165,250,.44);
+      background:
+        linear-gradient(135deg, rgba(15,23,42,.94), rgba(18,34,58,.82)),
+        rgba(255,255,255,.04);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.06),
+        inset 0 0 0 1px rgba(96,165,250,.16),
+        0 18px 36px rgba(0,0,0,.24);
+      backdrop-filter: blur(22px);
+    }
+    .showme-browser-item.is-active::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(10,132,255,.14), transparent 42%);
+      pointer-events: none;
+    }
+    .showme-browser-item.is-active .showme-icon-badge {
+      border-color: rgba(122,162,247,.32);
+      background: rgba(10,132,255,.12);
+      color: #eef6ff;
+      box-shadow: inset 0 0 0 1px rgba(122,162,247,.12);
+    }
+    .showme-browser-item.is-active .showme-browser-item-kicker,
+    .showme-browser-item.is-active .showme-browser-item-label {
+      color: #f8fbff;
+    }
+    .showme-browser-item.is-active .showme-browser-item-meta {
+      color: rgba(220,234,255,.8);
     }
     .showme-browser-item-label {
       font-size: .85rem;
@@ -1144,6 +1316,74 @@
       background: var(--bg);
       min-height: 0;
     }
+    .toast-stack {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      display: grid;
+      gap: 10px;
+      z-index: 160;
+      pointer-events: none;
+    }
+    .toast-card {
+      position: relative;
+      min-width: min(320px, calc(100vw - 24px));
+      max-width: 380px;
+      padding: 13px 15px 13px 18px;
+      border-radius: 18px;
+      border: 1px solid var(--line-strong);
+      background: rgba(17,18,20,.9);
+      box-shadow: 0 20px 42px rgba(0,0,0,.28);
+      backdrop-filter: blur(18px);
+      color: var(--muted-strong);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity .2s ease, transform .2s ease;
+      overflow: hidden;
+    }
+    .toast-card::before {
+      content: "";
+      position: absolute;
+      top: 12px;
+      left: 0;
+      bottom: 12px;
+      width: 3px;
+      border-radius: 999px;
+      background: rgba(142,197,255,.85);
+    }
+    .toast-card.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .toast-card.is-exiting {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    .toast-card--success {
+      border-color: rgba(52,211,153,.2);
+    }
+    .toast-card--success::before {
+      background: rgba(52,211,153,.9);
+    }
+    .toast-card--info::before {
+      background: rgba(142,197,255,.85);
+    }
+    .toast-body {
+      font-size: .84rem;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 640px) {
+      .toast-stack {
+        left: 12px;
+        right: 12px;
+        bottom: 14px;
+      }
+      .toast-card {
+        min-width: 0;
+        max-width: none;
+      }
+    }
 
     @media (max-width: 768px) {
       .showme-overlay { padding: 0; }
@@ -1161,6 +1401,17 @@
         padding-top: calc(14px + env(safe-area-inset-top, 0px));
         padding-right: calc(18px + env(safe-area-inset-right, 0px));
         padding-left: calc(18px + env(safe-area-inset-left, 0px));
+      }
+      .showme-modal-card-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 13px;
+      }
+      .showme-modal-title {
+        font-size: 1rem;
+      }
+      .showme-modal-title-meta {
+        font-size: .76rem;
       }
       .showme-resize { display: none; }
     }
@@ -1353,6 +1604,82 @@
         align-items: flex-start;
         flex-direction: column;
       }
+      .lab-step {
+        padding: 18px 16px;
+      }
+      .step-toggle {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: flex-start;
+        column-gap: 12px;
+      }
+      .step-title-group {
+        gap: 12px;
+        min-width: 0;
+      }
+      .step-title-block {
+        gap: 4px;
+      }
+      .step-title-text {
+        font-size: 1rem;
+      }
+      .step-meta-line {
+        font-size: .73rem;
+        line-height: 1.4;
+        max-width: 30ch;
+      }
+      .step-meta-token + .step-meta-token::before {
+        margin: 0 5px;
+      }
+      .step-header-right {
+        margin-left: 0;
+        gap: 8px;
+        align-self: flex-start;
+      }
+      .step-toggle-indicator {
+        width: 32px;
+        height: 32px;
+      }
+      .status-pill {
+        padding: 4px 7px;
+        font-size: .68rem;
+      }
+    }
+    @media (max-width: 480px) {
+      .step-title-group {
+        gap: 10px;
+      }
+      .step-number {
+        min-width: 34px;
+        height: 34px;
+        border-radius: 11px;
+        font-size: .88rem;
+      }
+      .step-title-text {
+        font-size: .95rem;
+        line-height: 1.32;
+      }
+      .step-meta-line {
+        font-size: .71rem;
+        max-width: 24ch;
+      }
+      .step-meta-line .step-meta-token:nth-child(n+4) {
+        display: none;
+      }
+      .step-meta-token + .step-meta-token::before {
+        margin: 0 4px;
+      }
+      .step-header-right {
+        gap: 6px;
+      }
+      .step-toggle-indicator {
+        width: 30px;
+        height: 30px;
+        border-radius: 10px;
+      }
+      .status-pill {
+        letter-spacing: .03em;
+      }
     }
   </style>
 </head>
@@ -1423,7 +1750,14 @@
     <div class="showme-overlay" id="showmeOverlay" aria-hidden="true">
       <div class="showme-modal">
         <div class="showme-modal-header">
-          <span class="showme-modal-title" id="showmeTitle"></span>
+          <div class="showme-modal-header-copy">
+            <div class="showme-modal-card-icon" id="showmeTitleIcon" aria-hidden="true"></div>
+            <div class="showme-modal-title-block">
+              <span class="showme-modal-kicker" id="showmeTitleKicker"></span>
+              <span class="showme-modal-title showme-modal-title-label" id="showmeTitle"></span>
+              <span class="showme-modal-title-meta" id="showmeTitleMeta"></span>
+            </div>
+          </div>
           <div class="showme-header-actions">
             <button class="showme-browse-toggle" id="showmeBrowseToggle" aria-label="Show Me 탐색 전환" type="button" aria-pressed="false">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -1471,6 +1805,8 @@
       </div>
     </div>
 
+    <div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="true"></div>
+
     <!-- Student Login (full-page, shown when ?sid= is missing) -->
     <div class="student-login-overlay" id="studentLoginOverlay">
       <div class="student-login-card">
@@ -1486,11 +1822,11 @@
   </div>
 
   <script src="data/i18n-content.js?v=20260318e"></script>
-  <script src="assets/i18n.js?v=20260318o"></script>
+  <script src="assets/i18n.js?v=20260318q"></script>
   <script src="assets/showme/_registry.js?v=20260318f"></script>
   <script src="assets/showme/_catalog.js?v=20260318c"></script>
   <script src="assets/showme/_supplements.js?v=20260318c"></script>
-  <script src="assets/showme/_helpers.js?v=20260318c"></script>
+  <script src="assets/showme/_helpers.js?v=20260318s"></script>
   <script src="data/curriculum.js?v=20260318c"></script>
   <script>
     // ════════════════════════════════════════════════
@@ -1513,8 +1849,13 @@
 
     function getShowMeMeta(widgetId) {
       var meta = getShowMeEntry(widgetId);
+      var localizeShowMeUiText = window.RPDI18n.translateShowMeUiText || function(value) { return value; };
       return Object.assign({}, meta, {
-        label: window.RPDI18n.getShowMeLabel(widgetId, meta)
+        label: window.RPDI18n.getShowMeLabel(widgetId, meta),
+        toolName: localizeShowMeUiText(meta.toolName || "", widgetId),
+        category: meta.category ? window.RPDI18n.getLibraryCategoryLabel(meta.category) : "",
+        stageLabel: localizeShowMeUiText(meta.stageLabel || "", widgetId),
+        confusionLabel: localizeShowMeUiText(meta.confusionLabel || "", widgetId)
       });
     }
 
@@ -1531,14 +1872,18 @@
       return meta && meta.toolName ? "Show Me · " + meta.toolName : "Show Me";
     }
 
+    function getShowMeMetaLine(meta) {
+      return [meta.toolName, meta.category, meta.stageLabel].filter(Boolean).join(" · ");
+    }
+
     function getShowMeToolIconSvg(iconKey) {
       var icons = {
-        "edit-mode": '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="7" cy="7" r="2"></circle><circle cx="17" cy="7" r="2"></circle><circle cx="12" cy="17" r="2"></circle><path d="M8.8 8.2 10.9 15"></path><path d="M15.2 8.2 13.1 15"></path><path d="M9 7h6"></path></svg>',
-        "extrude": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 14h8v6H8z"></path><path d="M10 4h4v3h-4z"></path><path d="M12 14V7"></path><path d="m9 9 3-3 3 3"></path></svg>',
-        "loop-cut": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h12v12H6z"></path><path d="M10 6v12"></path><path d="M14 6v12"></path><path d="m8 9 2-2 2 2"></path><path d="m12 15 2 2 2-2"></path></svg>',
-        "inset": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h12v12H6z"></path><path d="M9.5 9.5h5v5h-5z"></path><path d="M6 10h3.5"></path><path d="M10 6v3.5"></path></svg>',
-        "bevel": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18V7h11"></path><path d="M12 18h6"></path><path d="M18 12v6"></path><path d="M18 7 7 18"></path><path d="M14 7h4v4"></path></svg>',
-        "poly-circle": '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 5 5 3v6l-5 3-5-3V8z"></path><circle cx="12" cy="11" r="2.8"></circle></svg>'
+        "edit-mode": '<svg viewBox="0 0 24 24" aria-hidden="true"><path class="showme-icon-base" d="M7.2 7.2h9.6v7.2H7.2z"></path><path class="showme-icon-soft" d="M7.2 7.2 12 4.8l4.8 2.4"></path><path class="showme-icon-base" d="M12 4.8V12"></path><circle class="showme-icon-accent-fill" cx="12" cy="12" r="1.9"></circle></svg>',
+        "extrude": '<svg viewBox="0 0 24 24" aria-hidden="true"><path class="showme-icon-base" d="M7.5 13.5h8v5.5h-8z"></path><path class="showme-icon-base-fill" d="M9.8 5.2h4.4V8H9.8z"></path><path class="showme-icon-base" d="M9.8 5.2h4.4V8H9.8z"></path><path class="showme-icon-accent" d="M12 13.5V8.6"></path><path class="showme-icon-accent" d="m9.5 10.7 2.5-2.5 2.5 2.5"></path></svg>',
+        "loop-cut": '<svg viewBox="0 0 24 24" aria-hidden="true"><path class="showme-icon-base" d="M6.5 6.5h11v11h-11z"></path><path class="showme-icon-base" d="M9 6.5v11"></path><path class="showme-icon-base" d="M15 6.5v11"></path><path class="showme-icon-accent" d="M12 6.5v11"></path><path class="showme-icon-soft" d="m10.3 9.3 1.7-1.7 1.7 1.7"></path><path class="showme-icon-soft" d="m10.3 14.7 1.7 1.7 1.7-1.7"></path></svg>',
+        "inset": '<svg viewBox="0 0 24 24" aria-hidden="true"><path class="showme-icon-base" d="M6.5 6.5h11v11h-11z"></path><path class="showme-icon-accent-fill" d="M10 10h4v4h-4z"></path><path class="showme-icon-accent" d="M9.2 9.2h5.6v5.6H9.2z"></path><path class="showme-icon-soft" d="M6.5 10.5h2.7"></path><path class="showme-icon-soft" d="M10.5 6.5v2.7"></path></svg>',
+        "bevel": '<svg viewBox="0 0 24 24" aria-hidden="true"><path class="showme-icon-base" d="M7 17.5V7h10.5"></path><path class="showme-icon-accent" d="M17.5 11.5v6H11.5"></path><path class="showme-icon-accent-fill" d="M13 7h4.5v4.5z"></path><path class="showme-icon-base" d="M17.5 7 7 17.5"></path></svg>',
+        "poly-circle": '<svg viewBox="0 0 24 24" aria-hidden="true"><path class="showme-icon-base" d="m12 5.2 4.8 2.8v5.6l-4.8 2.8-4.8-2.8V8z"></path><circle class="showme-icon-soft" cx="12" cy="10.8" r="2.9"></circle><circle class="showme-icon-accent-fill" cx="12" cy="10.8" r="1.1"></circle></svg>'
       };
       return icons[iconKey] || "";
     }
@@ -1546,7 +1891,7 @@
     function renderShowMeIcon(meta, variant) {
       var sizeClass = variant === "browser"
         ? "showme-icon-badge--browser"
-        : (variant === "pill" ? "showme-icon-badge--pill" : "showme-icon-badge--card");
+        : (variant === "pill" ? "showme-icon-badge--pill" : (variant === "title" ? "showme-icon-badge--title" : "showme-icon-badge--card"));
       var rootClass = (variant === "card" ? "btn-showme-icon " : "") + "showme-icon-badge " + sizeClass;
       if (meta && meta.iconKey) {
         return '<span class="' + rootClass + ' is-tool" aria-hidden="true">' + getShowMeToolIconSvg(meta.iconKey) + '</span>';
@@ -1571,6 +1916,43 @@
         taskCount: taskCount,
         referenceCount: (w.docs || []).length + (w.videos || []).length + (w.shortcuts || []).length
       };
+    }
+
+    function formatStepMeta(step, text) {
+      var taskCount = Array.isArray(step.tasks) ? step.tasks.length : 0;
+      var clipCount = (Array.isArray(step.clips) ? step.clips.length : 0) + (step.video ? 1 : 0);
+      var showMeCount = collectShowMeIdsFromStep(step).length;
+      var referenceCount = 0;
+      if (step.image) referenceCount += 1;
+      if (Array.isArray(step.images) && step.images.length) referenceCount += 1;
+      if (step.link) referenceCount += 1;
+      var downloadCount = Array.isArray(step.downloads) ? step.downloads.length : 0;
+      var lang = window.RPDI18n.getLanguage();
+      var parts = [];
+
+      function metaToken(html) {
+        return '<span class="step-meta-token">' + html + '</span>';
+      }
+
+      if (lang === "ko") {
+        if (taskCount > 0) parts.push(metaToken(text.stepMetaTasks + " <strong>" + taskCount + "</strong>"));
+        if (showMeCount > 0) parts.push(metaToken(text.stepMetaShowMe + " <strong>" + showMeCount + "</strong>"));
+        if (downloadCount > 0) parts.push(metaToken(text.stepMetaDownloads + " <strong>" + downloadCount + "</strong>"));
+        else if (referenceCount > 0) parts.push(metaToken(text.stepMetaReferences + " <strong>" + referenceCount + "</strong>"));
+        if (clipCount > 0) parts.push(metaToken(text.stepMetaClips + " <strong>" + clipCount + "</strong>"));
+        return parts.join("");
+      }
+
+      function pluralize(count, singular, plural) {
+        return metaToken("<strong>" + count + "</strong> " + (count === 1 ? singular : plural));
+      }
+
+      if (taskCount > 0) parts.push(pluralize(taskCount, text.stepMetaTaskSingular, text.stepMetaTaskPlural));
+      if (showMeCount > 0) parts.push(pluralize(showMeCount, text.stepMetaShowMeSingular, text.stepMetaShowMePlural));
+      if (downloadCount > 0) parts.push(pluralize(downloadCount, text.stepMetaDownloadSingular, text.stepMetaDownloadPlural));
+      else if (referenceCount > 0) parts.push(pluralize(referenceCount, text.stepMetaReferenceSingular, text.stepMetaReferencePlural));
+      if (clipCount > 0) parts.push(pluralize(clipCount, text.stepMetaClipSingular, text.stepMetaClipPlural));
+      return parts.join("");
     }
 
     function getLearningState(w) {
@@ -1676,6 +2058,10 @@
         else localStorage.removeItem(getAssignmentReadyKey());
       } catch (error) {}
       refreshWeekActionPanels();
+      showToast(
+        nextReady ? getWeekText().toastAssignmentReady : getWeekText().toastAssignmentDraft,
+        nextReady ? "success" : "info"
+      );
     }
 
     function updateAssignmentPanel() {
@@ -1711,7 +2097,6 @@
     }
 
     function refreshWeekActionPanels() {
-      updateLearningPanel();
       updateAssignmentPanel();
     }
 
@@ -1776,7 +2161,6 @@
 
     function buildPage(w) {
       var text = getWeekText();
-      var bundle = buildWeekBundle(w);
       activeWeekView = w;
       var isKo = window.RPDI18n.getLanguage() === "ko";
       var topics = Array.isArray(w.topics) ? w.topics : [];
@@ -1850,6 +2234,7 @@
       var stepsHtml = (w.steps || []).map(function(step, idx) {
         var initiallyExpanded = idx === initialOpenIndex;
         var tasks = Array.isArray(step.tasks) ? step.tasks : [];
+        var stepMetaSummary = formatStepMeta(step, text);
         var taskItems = tasks.map(function(task) {
           var detailId = "task-detail-" + task.id;
           return `
@@ -1936,7 +2321,10 @@
                 aria-controls="step-body-${idx}">
                 <span class="step-title-group">
                   <span class="step-number">${idx + 1}</span>
-                  <span class="step-title-text">${step.title}</span>
+                  <span class="step-title-block">
+                    <span class="step-title-text">${step.title}</span>
+                    ${stepMetaSummary ? `<span class="step-meta-line">${stepMetaSummary}</span>` : ""}
+                  </span>
                 </span>
                 <span class="step-header-right">
                   <span class="status-pill active" data-step-status>${text.stepStatusActive}</span>
@@ -2078,18 +2466,6 @@
           <div class="hero-card">
             <h1>Week ${String(w.week).padStart(2, "0")} · ${w.title}</h1>
             ${w.subtitle ? `<p>${w.subtitle}</p>` : ""}
-            <div class="hero-support">${[w.duration, bundle.practiceCount + " " + text.bundleStatPractice, bundle.showMeCount + " " + text.bundleStatShowme].filter(Boolean).join(" · ")}</div>
-          </div>
-        </section>
-
-        <section class="content-block">
-          <div class="learning-panel">
-            <div class="learning-panel-copy">
-              <span class="eyebrow">${text.learningEyebrow}</span>
-              <h2 class="learning-panel-title" id="learningPanelTitle"></h2>
-              <p class="learning-panel-text" id="learningPanelText"></p>
-            </div>
-            <div id="learningPanel"></div>
           </div>
         </section>
 
@@ -2313,6 +2689,7 @@
           getTasks(step).forEach(function(task) { task.checked = false; });
         });
         sync();
+        showToast(text.toastProgressReset, "info");
       };
 
       sync();
@@ -2372,6 +2749,17 @@
       });
     }
 
+    function prioritizeActiveShowMeBrowserCard(cards) {
+      if (!activeShowMeWidgetId) return cards.slice();
+      var activeCards = [];
+      var otherCards = [];
+      cards.forEach(function(card) {
+        if (card.id === activeShowMeWidgetId) activeCards.push(card);
+        else otherCards.push(card);
+      });
+      return activeCards.concat(otherCards);
+    }
+
     function getAllShowMeBrowserCards() {
       return sortShowMeBrowserCards(Object.keys(SHOWME_REGISTRY || {}).map(buildShowMeBrowserCard));
     }
@@ -2428,9 +2816,12 @@
     }
 
     function createShowMeBrowserItem(card) {
+      var text = getWeekText();
+      var isActive = card.id === activeShowMeWidgetId;
       var button = document.createElement("button");
       button.type = "button";
-      button.className = "showme-browser-item" + (card.id === activeShowMeWidgetId ? " is-active" : "");
+      button.className = "showme-browser-item" + (isActive ? " is-active" : "");
+      button.setAttribute("aria-current", isActive ? "true" : "false");
 
       var iconWrap = document.createElement("span");
       iconWrap.innerHTML = renderShowMeIcon(card, "browser");
@@ -2439,10 +2830,21 @@
       var copy = document.createElement("span");
       copy.className = "showme-browser-item-copy";
 
+      var kickerRow = document.createElement("span");
+      kickerRow.className = "showme-browser-item-kicker-row";
+
       var kicker = document.createElement("span");
       kicker.className = "showme-browser-item-kicker";
       kicker.textContent = getShowMeKickerText(card);
-      copy.appendChild(kicker);
+      kickerRow.appendChild(kicker);
+
+      if (isActive) {
+        var state = document.createElement("span");
+        state.className = "showme-browser-item-state";
+        state.textContent = text.modalBrowserViewing;
+        kickerRow.appendChild(state);
+      }
+      copy.appendChild(kickerRow);
 
       var label = document.createElement("span");
       label.className = "showme-browser-item-label";
@@ -2451,7 +2853,7 @@
 
       var meta = document.createElement("span");
       meta.className = "showme-browser-item-meta";
-      meta.textContent = [card.category, card.stageLabel].filter(Boolean).join(" · ");
+      meta.textContent = getShowMeMetaLine(card);
       copy.appendChild(meta);
       button.appendChild(copy);
 
@@ -2525,13 +2927,14 @@
       weekIds.forEach(function(id) { weekIdSet[id] = true; });
 
       if (query) {
-        var results = getAllShowMeBrowserCards()
-          .filter(function(card) { return matchesShowMeBrowserQuery(card, query); })
-          .sort(function(a, b) {
-            if (weekIdSet[a.id] !== weekIdSet[b.id]) return weekIdSet[a.id] ? -1 : 1;
-            return a.label.localeCompare(b.label, window.RPDI18n.getLanguage(), { sensitivity: "base" });
-          })
-          .slice(0, 24);
+        var results = prioritizeActiveShowMeBrowserCard(
+          getAllShowMeBrowserCards()
+            .filter(function(card) { return matchesShowMeBrowserQuery(card, query); })
+            .sort(function(a, b) {
+              if (weekIdSet[a.id] !== weekIdSet[b.id]) return weekIdSet[a.id] ? -1 : 1;
+              return a.label.localeCompare(b.label, window.RPDI18n.getLanguage(), { sensitivity: "base" });
+            })
+        ).slice(0, 24);
 
         if (!appendShowMeBrowserSection(container, text.modalBrowseResults, results)) {
           var empty = document.createElement("div");
@@ -2542,7 +2945,9 @@
         return;
       }
 
-      var weekCards = sortShowMeBrowserCards(weekIds.map(buildShowMeBrowserCard));
+      var weekCards = prioritizeActiveShowMeBrowserCard(
+        sortShowMeBrowserCards(weekIds.map(buildShowMeBrowserCard))
+      );
       var relatedCards = activeShowMeWidgetId
         ? getRelatedShowMeCards(activeShowMeWidgetId, weekIdSet, 8)
         : [];
@@ -2555,6 +2960,13 @@
         fallback.className = "showme-browser-empty";
         fallback.textContent = text.modalBrowseEmpty;
         container.appendChild(fallback);
+      }
+
+      var activeItem = container.querySelector(".showme-browser-item.is-active");
+      if (activeItem) {
+        window.requestAnimationFrame(function() {
+          activeItem.scrollIntoView({ block: "nearest", inline: "nearest" });
+        });
       }
     }
 
@@ -2614,7 +3026,11 @@
       var overlay = document.getElementById("showmeOverlay");
       var iframe = document.getElementById("showmeIframe");
       var title = document.getElementById("showmeTitle");
+      var titleIcon = document.getElementById("showmeTitleIcon");
+      var titleKicker = document.getElementById("showmeTitleKicker");
+      var titleMeta = document.getElementById("showmeTitleMeta");
       var closeBtn = document.getElementById("showmeClose");
+      var text = getWeekText();
       var meta = getShowMeMeta(widgetId);
       var cacheBust = String(Date.now());
       var active = document.activeElement;
@@ -2623,7 +3039,10 @@
       activeShowMeWidgetId = widgetId;
       syncShowMeQuery(widgetId);
 
-      title.textContent = meta.icon + " " + meta.label;
+      title.textContent = meta.label;
+      titleKicker.textContent = text.modalCurrentCardKicker;
+      titleMeta.textContent = getShowMeMetaLine(meta) || text.modalCurrentCardFallbackMeta;
+      titleIcon.innerHTML = renderShowMeIcon(meta, "browser");
       renderShowMeBrowser();
       renderShowMeRelatedPrompt(widgetId);
       setShowMeBrowserOpen(showMeBrowserOpen);
@@ -2756,6 +3175,36 @@
       initStudentLogin();
     }
 
+    function showToast(message, type) {
+      var stack = document.getElementById("toastStack");
+      if (!stack || !message) return;
+
+      var toast = document.createElement("div");
+      toast.className = "toast-card toast-card--" + (type || "info");
+      toast.setAttribute("role", "status");
+
+      var body = document.createElement("div");
+      body.className = "toast-body";
+      body.textContent = message;
+      toast.appendChild(body);
+      stack.appendChild(toast);
+
+      window.requestAnimationFrame(function() {
+        toast.classList.add("is-visible");
+      });
+
+      function dismiss() {
+        if (!toast.parentNode) return;
+        toast.classList.remove("is-visible");
+        toast.classList.add("is-exiting");
+        window.setTimeout(function() {
+          if (toast.parentNode) toast.parentNode.removeChild(toast);
+        }, 200);
+      }
+
+      window.setTimeout(dismiss, 2400);
+    }
+
     function updateShowMeBadges() {
       var quizzes = JSON.parse(localStorage.getItem(getQuizKey()) || "{}");
       document.querySelectorAll(".btn-showme").forEach(function(btn) {
@@ -2782,6 +3231,7 @@
       };
       localStorage.setItem(key, JSON.stringify(quizzes));
       updateShowMeBadges();
+      showToast(getWeekText().toastQuizSaved, d.pass ? "success" : "info");
     });
 
     var sidebarObserver = null;
