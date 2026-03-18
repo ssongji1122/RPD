@@ -23,14 +23,15 @@ from typing import Any
 
 from lecture_notes_sync import sync_lecture_notes
 from markdown_import import build_curriculum_from_markdown
-
-ROOT = Path(__file__).resolve().parent.parent
-WEEKS_DIR = ROOT / "weeks"
-CANONICAL_JSON = WEEKS_DIR / "site-data.json"
-SCHEMA_JSON = WEEKS_DIR / "site-data.schema.json"
-COURSE_SITE = ROOT / "course-site"
-GENERATED_JSON = COURSE_SITE / "data" / "curriculum.json"
-GENERATED_JS = COURSE_SITE / "data" / "curriculum.js"
+from runtime_paths import (
+    CANONICAL_JSON,
+    COURSE_SITE,
+    GENERATED_JS,
+    GENERATED_JSON,
+    ROOT,
+    SCHEMA_JSON,
+    WEEKS_DIR,
+)
 
 CURRICULUM_HEADER = """\
 // ============================================================

@@ -1,0 +1,186 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rpd.local/weeks/contracts.schema.json",
+  "title": "RPD Contracts",
+  "$defs": {
+    "ShowMeRef": {
+      "oneOf": [
+        { "type": "string", "minLength": 1 },
+        {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      ]
+    },
+    "Task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "detail"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "label": { "type": "string", "minLength": 1 },
+        "detail": { "type": "string" }
+      }
+    },
+    "Resource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "url"],
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "url": { "type": "string", "minLength": 1 }
+      }
+    },
+    "Assignment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "description", "checklist"],
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "description": { "type": "string", "minLength": 1 },
+        "checklist": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "CurriculumStep": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["title", "copy", "goal", "done", "tasks"],
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "copy": { "type": "string", "minLength": 1 },
+        "goal": { "type": "array", "items": { "type": "string" } },
+        "done": { "type": "array", "items": { "type": "string" } },
+        "tasks": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/Task" }
+        },
+        "showme": { "$ref": "#/$defs/ShowMeRef" },
+        "image": { "type": "string" },
+        "images": { "type": "array", "items": { "type": "string" } },
+        "link": { "type": "string" },
+        "video": { "type": "string" },
+        "sectionTitle": { "type": "string" }
+      }
+    },
+    "CurriculumWeek": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "week",
+        "status",
+        "title",
+        "subtitle",
+        "duration",
+        "topics",
+        "steps",
+        "shortcuts",
+        "explore",
+        "assignment",
+        "mistakes",
+        "videos",
+        "docs"
+      ],
+      "properties": {
+        "week": { "type": "integer", "minimum": 1 },
+        "status": {
+          "type": "string",
+          "enum": ["done", "active", "upcoming"]
+        },
+        "title": { "type": "string", "minLength": 1 },
+        "subtitle": { "type": "string" },
+        "summary": { "type": "string" },
+        "duration": { "type": "string", "minLength": 1 },
+        "topics": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/CurriculumStep" }
+        },
+        "shortcuts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["keys", "action"],
+            "additionalProperties": false,
+            "properties": {
+              "keys": { "type": "string", "minLength": 1 },
+              "action": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "explore": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["title", "hint"],
+            "additionalProperties": false,
+            "properties": {
+              "title": { "type": "string", "minLength": 1 },
+              "hint": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "assignment": { "$ref": "#/$defs/Assignment" },
+        "mistakes": { "type": "array", "items": { "type": "string" } },
+        "videos": { "type": "array", "items": { "$ref": "#/$defs/Resource" } },
+        "docs": { "type": "array", "items": { "$ref": "#/$defs/Resource" } }
+      }
+    },
+    "StudentProgress": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["learnerId", "week", "tasks", "quizSummary", "updatedAt"],
+      "properties": {
+        "learnerId": { "type": "string", "minLength": 1 },
+        "week": { "type": "integer", "minimum": 1 },
+        "tasks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["taskId", "completed"],
+            "properties": {
+              "taskId": { "type": "string", "minLength": 1 },
+              "completed": { "type": "boolean" },
+              "completedAt": { "type": "string" }
+            }
+          }
+        },
+        "quizSummary": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["widgetsCompleted", "lastCompletedAt"],
+          "properties": {
+            "widgetsCompleted": { "type": "integer", "minimum": 0 },
+            "lastCompletedAt": { "type": ["string", "null"] }
+          }
+        },
+        "updatedAt": { "type": "string", "minLength": 1 }
+      }
+    },
+    "PublishResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target", "version", "ok", "errors"],
+      "properties": {
+        "target": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 },
+        "ok": { "type": "boolean" },
+        "errors": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}

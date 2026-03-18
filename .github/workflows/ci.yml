@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install test dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install pytest
+          python3 -m pip install playwright
+          python3 -m pip install -e ./tools/lessonforge[dev]
+
+      - name: Install Chromium for Playwright
+        run: |
+          python3 -m playwright install --with-deps chromium
+
+      - name: Validate canonical curriculum
+        run: |
+          python3 tools/content_pipeline.py check
+          python3 tools/content_pipeline.py sync-from-markdown
+          python3 tools/content_pipeline.py build
+          python3 tools/content_pipeline.py build-public --output dist/public-site
+
+      - name: Run repository unit tests
+        run: |
+          python3 -m unittest discover -s tools/tests -p 'test_*.py'
+          python3 -m pytest tools/lessonforge/tests -q
+
+      - name: Compile critical Python entrypoints
+        run: |
+          python3 -m py_compile \
+            tools/admin-server.py \
+            tools/content_pipeline.py \
+            tools/curriculum-push.py \
+            tools/notion_api.py \
+            tools/notion-sync.py \
+            tools/runtime_paths.py \
+            tools/lecture_notes_sync.py
