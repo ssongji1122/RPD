@@ -155,6 +155,19 @@ body {
   color: var(--key-soft);
   border-color: rgba(10,132,255,.3);
 }
+.scenario-nav { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.control-guide { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+.control-kind { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; font-size: .72rem; font-weight: 600; letter-spacing: .02em; }
+.control-kind.discrete { background: rgba(10,132,255,.14); color: var(--key-soft); }
+.control-kind.range { background: rgba(16,185,129,.14); color: var(--success-soft); }
+.control-copy { font-size: .78rem; color: var(--muted); line-height: 1.6; }
+.scene-desc { font-size: .84rem; color: var(--muted-strong); margin-bottom: 12px; padding: 10px 14px; border-radius: var(--radius-sm); background: var(--surface); border: 1px solid var(--line); line-height: 1.7; }
+.cause-effect { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0 14px; }
+.cause-card { padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--surface); }
+.cause-card h4 { margin: 0 0 6px; font-size: .82rem; text-transform: uppercase; letter-spacing: .04em; }
+.cause-card p { margin: 0; font-size: .82rem; color: var(--muted-strong); line-height: 1.65; }
+.cause-card.bad h4 { color: #fca5a5; }
+.cause-card.good h4 { color: var(--success-soft); }
 
 /* ── Usage Grid ── */
 .usage-grid {
@@ -406,12 +419,24 @@ body {
 
 <!-- TAB 2: 시각적 비교 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    버튼을 눌러 Quad 원본과 각 Triangulate 방법의 차이를 비교해 보세요.
-  </p>
+  <div class="control-guide">
+    <span class="control-kind discrete">상태 전환</span>
+    <span class="control-copy">버튼으로 삼각화 방식을 바꿔서, 같은 쿼드에도 대각선 방향과 분할 품질이 어떻게 달라지는지 비교합니다.</span>
+  </div>
+  <div class="scene-desc" id="triangulateDesc">Quad 원본은 대각선이 아직 정해지지 않은 상태이고, Triangulate는 그 면을 어느 방향으로 잘라 삼각형 두 개로 만들지 결정하는 과정입니다. 이 선택이 게임 엔진 결과를 바꿉니다.</div>
+  <div class="cause-effect">
+    <div class="cause-card bad">
+      <h4>Uncontrolled Diagonal</h4>
+      <p>삼각화 방향을 엔진에 맡기면 예상과 다른 대각선이 생겨 노멀, 실루엣, 애니메이션 변형이 미묘하게 달라질 수 있어요.</p>
+    </div>
+    <div class="cause-card good">
+      <h4>Predictable Triangles</h4>
+      <p>Blender에서 미리 삼각화 방식을 정해 두면, Export 이후에도 어떤 대각선이 들어가는지 예측 가능해서 리깅과 쉐이딩이 더 안정적입니다.</p>
+    </div>
+  </div>
   <div class="demo-wrap">
     <canvas id="demoCanvas" width="680" height="300"></canvas>
-    <div class="demo-controls">
+    <div class="demo-controls scenario-nav">
       <button class="demo-btn is-active" id="btnQuad" data-mode="quad">Quad (원본)</button>
       <button class="demo-btn" id="btnBeauty" data-mode="beauty">Triangulate (Beauty)</button>
       <button class="demo-btn" id="btnFixed" data-mode="fixed">Triangulate (Fixed)</button>
@@ -769,11 +794,24 @@ function initQuiz(questions) {
 
   // Button handlers
   var buttons = document.querySelectorAll(".demo-btn[data-mode]");
+  var triangulateDesc = document.getElementById("triangulateDesc");
+
+  function updateTriangulateDesc() {
+    if (!triangulateDesc) return;
+    if (mode === "quad") {
+      triangulateDesc.textContent = "Quad 원본 상태입니다. 아직 대각선이 정해지지 않아 Blender 안에서는 깔끔한 쿼드지만, 게임 엔진이나 Export 과정에서는 결국 어떤 방향으로든 삼각화가 일어납니다.";
+    } else if (mode === "beauty") {
+      triangulateDesc.textContent = "Beauty 상태입니다. 가능한 한 균일한 삼각형이 되도록 대각선을 배치해서, 실루엣과 쉐이딩이 비교적 자연스럽게 유지됩니다.";
+    } else {
+      triangulateDesc.textContent = "Fixed 상태입니다. 항상 같은 방향 대각선을 사용하므로 결과가 매우 예측 가능하지만, 경우에 따라 한쪽으로 힘이 쏠린 분할이 생길 수 있습니다.";
+    }
+  }
   buttons.forEach(function(btn) {
     btn.addEventListener("click", function() {
       buttons.forEach(function(b) { b.classList.remove("is-active"); });
       btn.classList.add("is-active");
       mode = btn.dataset.mode;
+      updateTriangulateDesc();
       draw();
     });
   });
@@ -787,6 +825,7 @@ function initQuiz(questions) {
   });
 
   // Initial draw
+  updateTriangulateDesc();
   draw();
 })();
 

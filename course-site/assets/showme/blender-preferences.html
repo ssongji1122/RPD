@@ -349,8 +349,14 @@ body {
 }
 .doc-ref a:hover { text-decoration: underline; }
 .scenario-nav { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+.control-guide { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:12px; }
+.control-kind { display:inline-flex; align-items:center; padding:4px 10px; border-radius:999px; font-size:.72rem; font-weight:600; letter-spacing:.02em; }
+.control-kind.discrete { background:rgba(10,132,255,.14); color:var(--key-soft); }
+.control-kind.range { background:rgba(16,185,129,.14); color:var(--success-soft); }
+.control-copy { font-size:.78rem; color:var(--muted); line-height:1.6; }
 .scenario-btn { padding:6px 14px; border-radius:20px; border:1px solid rgba(255,255,255,.15); background:transparent; color:#cbd5e1; cursor:pointer; font-size:13px; transition:all .2s; font-family:inherit; }
 .scenario-btn.active { background:rgba(99,102,241,.25); border-color:rgba(99,102,241,.5); color:#a5b4fc; }
+.scene-desc { font-size:.84rem; color:var(--muted-strong); margin:0 0 8px; padding:10px 14px; border-radius:var(--radius-sm); background:var(--surface); border:1px solid var(--line); line-height:1.7; }
 .cause-effect { display:flex; flex-direction:column; gap:8px; margin:12px 0; }
 .ce-row { display:flex; align-items:center; gap:8px; }
 .ce-cause { background:rgba(99,102,241,.12); border:1px solid rgba(99,102,241,.25); border-radius:8px; padding:6px 12px; font-size:13px; flex:1; }
@@ -359,6 +365,26 @@ body {
 .result-a { background:rgba(16,185,129,.1); border:1px solid rgba(16,185,129,.25); color:#6ee7b7; }
 .result-b { background:rgba(245,158,11,.1); border:1px solid rgba(245,158,11,.25); color:#fcd34d; }
 .result-c { background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.25); color:#fca5a5; }
+.pref-demo-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 10px 12px;
+  border-top: 1px solid var(--line);
+  background: rgba(255,255,255,.02);
+}
+.pref-demo-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font-size: .74rem;
+}
+.pref-demo-pill strong { color: var(--key-soft); }
 
 /* ── Responsive ── */
 @media (max-width: 600px) {
@@ -433,14 +459,23 @@ body {
 <!-- TAB 2: 설정 가이드 -->
 <section class="panel" id="panel-visual" role="tabpanel">
 
+  <div class="control-guide">
+    <span class="control-kind discrete">상태 전환</span>
+    <span class="control-copy">버튼으로 처음 세팅할 주제를 바꿔 보면서, 입력·저장·Add-on 중 무엇을 먼저 맞춰야 하는지 장면별로 읽습니다.</span>
+  </div>
   <div class="scenario-nav" id="prefScenarioNav">
     <button class="scenario-btn active" onclick="switchPrefScenario('input')">입력 설정</button>
     <button class="scenario-btn" onclick="switchPrefScenario('save')">저장 설정</button>
     <button class="scenario-btn" onclick="switchPrefScenario('addons')">Add-on 활성화</button>
   </div>
 
-  <div id="prefDesc" style="font-size:.84rem; color:var(--muted-strong); margin:0 0 8px;"></div>
+  <div id="prefDesc" class="scene-desc"></div>
   <div class="cause-effect" id="prefCE"></div>
+  <div class="demo-wrap">
+    <canvas id="prefCanvas" width="680" height="260" aria-label="Preferences preview"></canvas>
+    <div class="pref-demo-meta" id="prefCanvasMeta"></div>
+  </div>
+  <p class="demo-hint" id="prefHint">Input 탭에서는 회전 입력과 숫자패드 대체부터 확인합니다.</p>
 
   <p style="font-size:.84rem; color:var(--muted); margin:12px 0 16px;">
     Blender를 처음 켰을 때 해두면 좋은 설정 순서예요.
@@ -682,6 +717,21 @@ function initQuiz(questions) {
 var prefScenarios = {
   input: {
     desc: "Input 탭에서 마우스와 키보드 입력 방식을 설정합니다. 마우스 중간 버튼이 없거나 Numpad가 없는 경우 필수 설정입니다.",
+    hint: "트랙패드나 노트북 환경이라면 Input 탭에서 회전 입력과 숫자패드 대체를 먼저 맞춰 둡니다.",
+    meta: [
+      { label: "핵심 탭", value: "Input" },
+      { label: "먼저 볼 것", value: "Emulate 3 Button Mouse" },
+      { label: "보조 옵션", value: "Emulate Numpad" }
+    ],
+    panel: {
+      title: "Input",
+      subtitle: "Navigation setup",
+      rows: [
+        { label: "Emulate 3 Button Mouse", value: "ON", tone: "active" },
+        { label: "Emulate Numpad", value: "선택", tone: "info" },
+        { label: "Orbit Around Selection", value: "추천", tone: "active" }
+      ]
+    },
     ce: [
       { cause: "Emulate 3 Button Mouse ON", result: "Alt+좌클릭으로 화면 회전 가능", resultClass: "result-a" },
       { cause: "Emulate Numpad ON", result: "일반 숫자키 1~9로 뷰 전환 가능", resultClass: "result-a" },
@@ -690,6 +740,21 @@ var prefScenarios = {
   },
   save: {
     desc: "Save & Load 탭에서 자동 저장 설정을 확인합니다. 작업 중 데이터 손실을 방지하는 중요한 설정입니다.",
+    hint: "작업이 갑자기 종료될 수 있다는 전제로, Save & Load 탭에서 자동 저장 간격과 환경설정 저장 여부를 먼저 점검합니다.",
+    meta: [
+      { label: "핵심 탭", value: "Save & Load" },
+      { label: "먼저 볼 것", value: "Auto Save" },
+      { label: "주의", value: "Save Preferences" }
+    ],
+    panel: {
+      title: "Save & Load",
+      subtitle: "Recovery setup",
+      rows: [
+        { label: "Auto Save", value: "2 min", tone: "active" },
+        { label: "Save Versions", value: "1", tone: "info" },
+        { label: "Save Preferences", value: "필수", tone: "warn" }
+      ]
+    },
     ce: [
       { cause: "Auto Save ON (기본값)", result: "2분 간격으로 임시 파일 자동 저장", resultClass: "result-a" },
       { cause: "Auto Save 간격 줄이기", result: "더 자주 저장, 복구 가능 범위 최소화", resultClass: "result-a" },
@@ -698,6 +763,21 @@ var prefScenarios = {
   },
   addons: {
     desc: "Add-ons 탭에서 추가 기능을 활성화합니다. Node Wrangler, Looptools 등이 자주 사용됩니다.",
+    hint: "Add-ons는 많이 켜는 것보다 필요한 기능만 찾고, 활성화 후 저장까지 이어지는 흐름을 익히는 게 중요합니다.",
+    meta: [
+      { label: "핵심 탭", value: "Add-ons" },
+      { label: "추천", value: "Node Wrangler" },
+      { label: "추천", value: "Looptools" }
+    ],
+    panel: {
+      title: "Add-ons",
+      subtitle: "Tool expansion",
+      rows: [
+        { label: "Search: Node Wrangler", value: "검색", tone: "info" },
+        { label: "Node Wrangler", value: "활성화", tone: "active" },
+        { label: "Looptools", value: "활성화", tone: "active" }
+      ]
+    },
     ce: [
       { cause: "Node Wrangler 활성화", result: "Ctrl+Shift+Click으로 노드 미리보기 등 단축키 추가", resultClass: "result-a" },
       { cause: "Looptools 활성화", result: "Edit Mode에서 원형 정렬, Bridge 등 기능 추가", resultClass: "result-a" },
@@ -705,6 +785,144 @@ var prefScenarios = {
     ]
   }
 };
+var activePrefScenario = "input";
+
+function drawPrefCanvas(key) {
+  var canvas = document.getElementById("prefCanvas");
+  if (!canvas) return;
+
+  var ctx = canvas.getContext("2d");
+  var scenario = prefScenarios[key] || prefScenarios.input;
+  var panel = scenario.panel;
+
+  canvas.width = Math.max(520, Math.floor(canvas.clientWidth || 680));
+  canvas.height = 260;
+
+  var w = canvas.width;
+  var h = canvas.height;
+  var accent = key === "save" ? "#fbbf24" : (key === "addons" ? "#6ee7b7" : "#8ec5ff");
+  var frameX = 22;
+  var frameY = 18;
+  var frameW = w - 44;
+  var frameH = h - 36;
+  var sidebarW = Math.max(140, Math.floor(frameW * 0.26));
+
+  function roundedRect(x, y, width, height, radius) {
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + width - radius, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    ctx.lineTo(x + radius, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+  }
+
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = "#101215";
+  ctx.fillRect(0, 0, w, h);
+
+  roundedRect(frameX, frameY, frameW, frameH, 18);
+  ctx.fillStyle = "#15171a";
+  ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,.08)";
+  ctx.stroke();
+
+  roundedRect(frameX + 1, frameY + 1, sidebarW - 2, frameH - 2, 18);
+  ctx.fillStyle = "#111317";
+  ctx.fill();
+
+  ctx.fillStyle = "#f5f5f7";
+  ctx.font = "600 13px sans-serif";
+  ctx.fillText("Preferences", frameX + 18, frameY + 24);
+
+  ["Input", "Save & Load", "Add-ons", "Interface", "Themes"].forEach(function(label, index) {
+    var itemY = frameY + 48 + index * 30;
+    var isActive = (key === "input" && label === "Input") ||
+      (key === "save" && label === "Save & Load") ||
+      (key === "addons" && label === "Add-ons");
+
+    if (isActive) {
+      roundedRect(frameX + 10, itemY - 14, sidebarW - 20, 24, 10);
+      ctx.fillStyle = accent === "#fbbf24" ? "rgba(245,158,11,.16)" : (accent === "#6ee7b7" ? "rgba(16,185,129,.16)" : "rgba(10,132,255,.16)");
+      ctx.fill();
+      ctx.strokeStyle = accent;
+      ctx.stroke();
+    }
+
+    ctx.fillStyle = isActive ? accent : "#94a3b8";
+    ctx.font = isActive ? "600 12px sans-serif" : "12px sans-serif";
+    ctx.fillText(label, frameX + 20, itemY + 2);
+  });
+
+  ctx.fillStyle = "#f5f5f7";
+  ctx.font = "600 16px sans-serif";
+  ctx.fillText(panel.title, frameX + sidebarW + 24, frameY + 44);
+  ctx.fillStyle = "#94a3b8";
+  ctx.font = "12px sans-serif";
+  ctx.fillText(panel.subtitle, frameX + sidebarW + 24, frameY + 64);
+
+  panel.rows.forEach(function(row, index) {
+    var rowX = frameX + sidebarW + 24;
+    var rowY = frameY + 84 + index * 44;
+    var rowW = frameW - sidebarW - 48;
+    roundedRect(rowX, rowY, rowW, 34, 12);
+    ctx.fillStyle = "rgba(255,255,255,.03)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,.08)";
+    ctx.stroke();
+
+    ctx.fillStyle = "#e5e7eb";
+    ctx.font = "12px sans-serif";
+    ctx.fillText(row.label, rowX + 14, rowY + 21);
+
+    var toneFill = row.tone === "warn"
+      ? "rgba(245,158,11,.16)"
+      : row.tone === "active"
+        ? "rgba(16,185,129,.16)"
+        : "rgba(10,132,255,.16)";
+    var toneStroke = row.tone === "warn"
+      ? "#fbbf24"
+      : row.tone === "active"
+        ? "#6ee7b7"
+        : "#8ec5ff";
+    var pillW = Math.max(56, row.value.length * 9 + 18);
+    roundedRect(rowX + rowW - pillW - 12, rowY + 7, pillW, 20, 10);
+    ctx.fillStyle = toneFill;
+    ctx.fill();
+    ctx.strokeStyle = toneStroke;
+    ctx.stroke();
+    ctx.fillStyle = toneStroke;
+    ctx.font = "600 11px sans-serif";
+    ctx.fillText(row.value, rowX + rowW - pillW, rowY + 21);
+  });
+
+  roundedRect(frameX + sidebarW + 24, frameY + frameH - 44, 112, 26, 12);
+  ctx.fillStyle = "rgba(10,132,255,.14)";
+  ctx.fill();
+  ctx.strokeStyle = "rgba(10,132,255,.28)";
+  ctx.stroke();
+  ctx.fillStyle = "#8ec5ff";
+  ctx.font = "600 11px sans-serif";
+  ctx.fillText("Save Preferences", frameX + sidebarW + 38, frameY + frameH - 27);
+}
+
+function updatePrefMeta(meta) {
+  var container = document.getElementById("prefCanvasMeta");
+  while (container.firstChild) { container.removeChild(container.firstChild); }
+  meta.forEach(function(item) {
+    var pill = document.createElement("span");
+    pill.className = "pref-demo-pill";
+    var label = document.createElement("strong");
+    label.textContent = item.label;
+    pill.appendChild(label);
+    pill.appendChild(document.createTextNode(" " + item.value));
+    container.appendChild(pill);
+  });
+}
 
 function buildPrefCE(ces) {
   var container = document.getElementById('prefCE');
@@ -730,8 +948,12 @@ function buildPrefCE(ces) {
 
 function switchPrefScenario(key) {
   var s = prefScenarios[key];
+  activePrefScenario = key;
   document.getElementById('prefDesc').textContent = s.desc;
+  document.getElementById('prefHint').textContent = s.hint;
   buildPrefCE(s.ce);
+  updatePrefMeta(s.meta);
+  drawPrefCanvas(key);
   document.querySelectorAll('#prefScenarioNav .scenario-btn').forEach(function(btn) {
     btn.classList.remove('active');
     if (btn.getAttribute('onclick') && btn.getAttribute('onclick').indexOf("'" + key + "'") >= 0) {
@@ -741,10 +963,19 @@ function switchPrefScenario(key) {
 }
 
 (function() {
-  var s = prefScenarios['input'];
-  document.getElementById('prefDesc').textContent = s.desc;
-  buildPrefCE(s.ce);
+  switchPrefScenario('input');
 })();
+
+window.addEventListener("resize", function() {
+  drawPrefCanvas(activePrefScenario);
+});
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    if (tab.dataset.tab === "visual") {
+      setTimeout(function() { drawPrefCanvas(activePrefScenario); }, 40);
+    }
+  });
+});
 
 // ── Quiz Data ──────────────────────────────────
 initQuiz([

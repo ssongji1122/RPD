@@ -1,12 +1,352 @@
 {
+  "viewport-navigation": {
+    "title": "아직 헷갈린다면?",
+    "analogy": {
+      "emoji": "🗺️",
+      "headline": "구글 지도처럼 생각하면 쉬워요",
+      "body": "화면 조작은 오브젝트를 움직이는 게 아니라 카메라를 돌리고 밀고 당기는 거예요. 구글 지도에서 지구를 돌리고, 밀고, 줌인하는 느낌과 같아요."
+    },
+    "before_after": {
+      "before": "카메라 개념 없이 오브젝트를 계속 옮기면, 모델 자체가 엉뚱한 위치로 가고 방향도 흐트러진다.",
+      "after": "Orbit·Pan·Zoom을 카메라 조작으로 이해하면, 모델은 제자리에 두고 다양한 각도에서 안정적으로 관찰할 수 있다."
+    },
+    "confusion": [
+      {
+        "symptom": "모델을 봐야 하는데 자꾸 모델을 직접 움직이게 돼요.",
+        "reason": "화면 조작과 오브젝트 이동을 같은 행동으로 느끼고 있기 때문이에요.",
+        "fix": "먼저 MMB·Shift+MMB·스크롤을 카메라 조작이라고 분리해서 익히세요."
+      }
+    ],
+    "takeaway": "화면 조작은 모델링이 아니라 카메라 잡기예요. 모델은 두고, 시점만 바꾼다고 생각하면 쉬워져요.",
+    "targets": ["viewport-navigation"]
+  },
+  "edit-mode": {
+    "title": "같은 큐브인데 왜 다르게 잡힐까요?",
+    "analogy": {
+      "emoji": "🧩",
+      "headline": "완성품과 부품의 차이예요",
+      "body": "Object Mode는 큐브 전체를 하나의 완성품으로 잡는 모드예요. Edit Mode는 그 안의 점·선·면 같은 부품을 만지는 모드예요."
+    },
+    "before_after": {
+      "before": "모드 차이를 모르고 작업하면 큐브 전체를 움직여야 할 때 점만 잡히거나, 점을 만져야 할 때 큐브 통째로 움직여 버린다.",
+      "after": "Object Mode와 Edit Mode를 구분하면, 언제 전체를 다루고 언제 구조를 편집하는지 바로 판단할 수 있다."
+    },
+    "confusion": [
+      {
+        "symptom": "어제는 면이 잡혔는데 오늘은 큐브 전체만 움직여요.",
+        "reason": "Mode가 바뀌면 조작 단위가 완전히 바뀌어요.",
+        "fix": "문제가 생기면 먼저 지금 Object Mode인지 Edit Mode인지부터 확인하세요."
+      }
+    ],
+    "takeaway": "Mode는 조작 단위를 바꾸는 스위치예요. 전체를 만질지, 부품을 만질지 먼저 정하는 단계라고 보면 돼요.",
+    "targets": ["edit-mode", "edit-mode-tools"]
+  },
   "extrude": {
     "title": "아직 헷갈린다면?",
-    "analogy": null,
+    "analogy": {
+      "emoji": "🧱",
+      "headline": "찰흙을 이어서 늘리는 동작이에요",
+      "body": "Extrude는 새 블록을 따로 붙이는 게 아니라, 원래 있던 면을 이어서 늘리는 거예요. 그래서 같은 오브젝트 안에서 형태가 계속 이어져요."
+    },
     "before_after": {
       "before": "큐브 하나에서 팔 모양을 만들려면 별도 오브젝트를 추가한 뒤 붙여야 해서, 한 오브젝트 안에서 형태를 이어가기 어렵다.",
       "after": "팔이 될 면을 선택하고 E를 누르면, 그 면에서 새 지오메트리가 기존 메시에 연결된 채로 뽑혀 나와 하나의 오브젝트 안에서 형태를 계속 키울 수 있다."
     },
+    "confusion": [
+      {
+        "symptom": "새 오브젝트를 만든 건지 기존 오브젝트를 늘린 건지 모르겠어요.",
+        "reason": "겉모양만 보면 둘 다 바깥으로 튀어나와 보여서 그래요.",
+        "fix": "Extrude는 연결된 메시가 생긴다는 점에 집중하세요. 같은 덩어리 안에서 자란 거예요."
+      },
+      {
+        "symptom": "E 누르고 ESC 했는데 뭔가 이상해졌어요.",
+        "reason": "겉보기엔 그대로여도 안쪽에 겹친 면이 생겼을 가능성이 커요.",
+        "fix": "그 상태면 Undo하고 다시 작업하는 게 가장 안전해요."
+      }
+    ],
     "takeaway": "Extrude는 기존 메시에서 새 부분을 연결된 채로 뽑아내는 작업이라, 같은 오브젝트 안에서 형태를 계속 늘려나갈 수 있다.",
     "targets": ["extrude"]
+  },
+  "transform-apply": {
+    "title": "눈에 보이는 값과 실제 값은 달라요",
+    "analogy": {
+      "emoji": "📦",
+      "headline": "포장된 크기와 실제 치수가 다른 상태예요",
+      "body": "오브젝트를 키웠다고 해서 데이터 자체가 새 기준으로 바뀐 건 아닐 수 있어요. Apply는 겉으로 바뀐 상태를 실제 기준값으로 확정하는 버튼이에요."
+    },
+    "before_after": {
+      "before": "눈에 보이는 크기는 맞는데, Modifier나 Physics는 예전 스케일을 기준으로 계산해서 결과가 이상해진다.",
+      "after": "Scale/Rotation을 Apply하면 겉모양과 내부 기준값이 맞춰져서, 이후 작업들이 예상한 방식으로 동작한다."
+    },
+    "confusion": [
+      {
+        "symptom": "Boolean, Bevel, Mirror가 예상보다 너무 크거나 작게 먹어요.",
+        "reason": "내부 변환값이 아직 적용되지 않아 계산 기준이 어긋난 거예요.",
+        "fix": "Ctrl+A로 Scale부터 Apply해 보고 다시 확인하세요."
+      }
+    ],
+    "takeaway": "Apply는 겉으로만 변한 상태를 내부 데이터에도 반영해서, 다음 작업의 기준을 바로잡는 과정이에요.",
+    "targets": ["transform-apply"]
+  },
+  "transform-core": {
+    "title": "움직임, 방향, 기준점을 따로 보면 쉬워져요",
+    "analogy": {
+      "emoji": "🕹️",
+      "headline": "같은 조이스틱이라도 '무엇을 할지'와 '어느 축을 기준으로 할지'는 다릅니다",
+      "body": "G/R/S는 이동·회전·크기라는 행동 버튼이고, Orientation은 축의 방향, Pivot Point는 어디를 중심으로 돌고 커질지를 정하는 기준점이에요. 셋이 한꺼번에 섞이면 조작이 갑자기 이상해진 것처럼 느껴집니다."
+    },
+    "before_after": {
+      "before": "X축으로 움직인다고 눌렀는데 비스듬히 움직이거나, 여러 오브젝트를 돌렸더니 생각보다 엉뚱한 중심에서 회전해서 조작이 불안해진다.",
+      "after": "먼저 G/R/S로 행동을 정하고, 그다음 Orientation으로 축 기준을, Pivot으로 중심을 정하면 왜 그렇게 움직이는지 바로 설명할 수 있다."
+    },
+    "confusion": [
+      {
+        "symptom": "같은 X축인데 어떤 때는 월드 기준으로, 어떤 때는 오브젝트가 기울어진 방향으로 움직여요.",
+        "reason": "Orientation이 Global인지 Local인지에 따라 같은 축 이름이라도 실제 방향이 달라지기 때문이에요.",
+        "fix": "축이 이상하면 먼저 상단 Orientation을 확인하고, Global과 Local을 번갈아 비교해 보세요."
+      },
+      {
+        "symptom": "여러 개를 회전했더니 각자 제자리에서 돌지 않고 한가운데로 뭉쳐 돌아요.",
+        "reason": "Pivot Point가 Median Point, Individual Origins, 3D Cursor 중 무엇으로 잡혀 있는지에 따라 회전 중심이 달라져요.",
+        "fix": "여러 개를 다룰 때는 문제를 '축'보다 '중심' 문제로 보고 Pivot부터 체크하세요."
+      }
+    ],
+    "takeaway": "G/R/S는 행동, Orientation은 방향 기준, Pivot은 중심 기준이에요. 세 가지를 분리해서 생각하면 변형 도구가 훨씬 안정적으로 느껴집니다.",
+    "targets": ["transform-grs", "transform-orientation", "pivot-point"]
+  },
+  "precision-modeling-core": {
+    "title": "정확히 붙일지, 부드럽게 퍼뜨릴지 먼저 정하세요",
+    "analogy": {
+      "emoji": "🧲",
+      "headline": "Snap은 자석, Proportional Editing은 말랑한 브러시예요",
+      "body": "Snap은 점이나 면을 딱 맞는 위치에 붙이는 도구이고, Proportional Editing은 선택한 점 주위까지 함께 영향을 퍼뜨리는 도구예요. 둘 다 움직임을 돕지만 성격은 완전히 달라요."
+    },
+    "before_after": {
+      "before": "정확히 맞춰야 할 파츠를 손으로 대충 끌거나, 한 점만 움직여야 하는데 주변이 함께 따라와서 모양이 무너진다.",
+      "after": "맞춰야 할 작업은 Snap으로, 부드럽게 이어야 할 작업은 Proportional Editing으로 나누면 조작 목적이 분명해진다."
+    },
+    "confusion": [
+      {
+        "symptom": "붙이려고 했는데 딱 안 맞고 계속 근처에서 어긋나요.",
+        "reason": "Free move 상태로 작업하고 있어서 기준점에 흡착되지 않는 거예요.",
+        "fix": "정확한 위치가 필요하면 먼저 Snap 타깃을 Vertex, Edge, Face 중 무엇으로 쓸지 정하세요."
+      },
+      {
+        "symptom": "한 버텍스만 옮기고 싶었는데 주변까지 같이 울어요.",
+        "reason": "Proportional Editing이 켜져 있거나 영향 반경이 너무 크게 잡혀 있을 수 있어요.",
+        "fix": "원형 반경 표시가 보이면 마우스 휠로 범위를 줄이거나, O 키로 끄고 비교해 보세요."
+      }
+    ],
+    "takeaway": "정확한 정렬은 Snap, 자연스러운 흐름 조정은 Proportional Editing이에요. 둘을 같은 '이동 보조'로 보지 말고 목적별로 나누면 덜 헷갈립니다.",
+    "targets": ["snap", "proportional-editing"]
+  },
+  "mirror-core": {
+    "title": "Mirror가 어긋나는 건 보통 기준점 문제예요",
+    "analogy": {
+      "emoji": "🪞",
+      "headline": "거울의 위치가 틀리면 반사도 틀어져요",
+      "body": "Mirror는 메시를 복사하는 기능이 아니라, 원점을 거울 중심으로 삼아 반대편 결과를 계산하는 기능이에요."
+    },
+    "before_after": {
+      "before": "원점이 한쪽에 치우쳐 있으면, 한쪽을 수정해도 반대쪽이 중앙 기준으로 맞지 않고 이상한 곳에 복제된다.",
+      "after": "원점을 대칭 중심에 두면, 한쪽에서 만든 변화가 반대쪽에 정확히 맞물리며 따라온다."
+    },
+    "confusion": [
+      {
+        "symptom": "Mirror를 켰는데 반대쪽이 안 맞거나 중앙선에서 벌어져요.",
+        "reason": "대칭축은 오브젝트 자체가 아니라 Origin 기준으로 잡히기 때문이에요.",
+        "fix": "먼저 Origin 위치를 확인하고, 필요하면 Clipping과 Merge도 같이 점검하세요."
+      }
+    ],
+    "takeaway": "Mirror에서 제일 중요한 건 메시보다 기준점이에요. 원점이 거울의 위치라고 생각하면 이해가 쉬워져요.",
+    "targets": ["mirror-modifier", "mirror-workflow", "mirror-origin-mode"]
+  },
+  "origin-vs-3dcursor": {
+    "title": "Origin과 3D Cursor는 역할이 달라요",
+    "analogy": {
+      "emoji": "🎯",
+      "headline": "하나는 물체의 손잡이, 하나는 작업대의 표시점이에요",
+      "body": "Origin은 오브젝트에 붙어 다니는 기준점이고, 3D Cursor는 장면 안에 따로 놓인 작업 기준점이에요. 둘 다 점처럼 보여도 소속이 달라요."
+    },
+    "before_after": {
+      "before": "Origin과 3D Cursor를 같은 것으로 생각하면, 새 오브젝트 생성 위치와 회전 중심을 계속 헷갈리게 된다.",
+      "after": "Origin은 오브젝트 기준, 3D Cursor는 장면 기준이라고 나누면 대부분의 기준점 혼란이 풀린다."
+    },
+    "confusion": [
+      {
+        "symptom": "오브젝트를 옮겼는데 커서는 왜 안 따라와요?",
+        "reason": "3D Cursor는 어느 오브젝트에도 속하지 않는 독립 기준점이기 때문이에요.",
+        "fix": "오브젝트와 함께 움직이는 건 Origin, 따로 남아 있는 건 3D Cursor라고 기억하세요."
+      }
+    ],
+    "takeaway": "Origin은 오브젝트의 기준점, 3D Cursor는 장면의 기준점이에요. 같은 점처럼 보여도 역할이 다릅니다.",
+    "targets": ["origin-vs-3dcursor"]
+  },
+  "reference-image-core": {
+    "title": "Reference는 따라 그리는 가이드지, 최종 오브젝트가 아니에요",
+    "analogy": {
+      "emoji": "🖼️",
+      "headline": "투명한 트레이싱 종이를 작업대 위에 올려둔 상태예요",
+      "body": "Image Reference는 화면 위에 놓는 시각 가이드예요. 메시에 직접 붙는 재질도 아니고, 렌더에 그대로 나오는 배경도 아니에요. 모델링 기준선을 눈앞에 두는 도구에 가깝습니다."
+    },
+    "before_after": {
+      "before": "레퍼런스를 재질이나 배경처럼 생각하면 렌더에 왜 안 나오지, 왜 오브젝트처럼 선택되지 않지 같은 혼란이 생긴다.",
+      "after": "Reference는 '보고 맞추는 판', Background는 '장면 뒤 이미지', Mesh Plane은 '실제 지오메트리'라고 나누면 각각 언제 써야 하는지 분명해진다."
+    },
+    "confusion": [
+      {
+        "symptom": "이미지를 넣었는데 렌더에는 안 나오고 뷰포트에서만 보여요.",
+        "reason": "Reference/Empty 계열은 모델링 보조용이기 때문에 기본적으로 작업 화면 가이드로만 쓰여요.",
+        "fix": "렌더에 포함할 목적이면 배경 세팅이나 실제 Plane+Texture 흐름으로 바꾸세요."
+      },
+      {
+        "symptom": "이미지가 오브젝트처럼 안 잡혀서 위치 조정이 헷갈려요.",
+        "reason": "Reference 방식마다 소속과 선택 방식이 달라서 그래요.",
+        "fix": "지금 쓰는 방식이 Reference인지, Background인지, Mesh Plane인지부터 구분해서 보세요."
+      }
+    ],
+    "takeaway": "Image Reference는 모델링 눈금을 맞추는 가이드예요. 렌더 결과물이나 실제 메시와는 역할이 다릅니다.",
+    "targets": ["image-reference"]
+  },
+  "subdivision-surface": {
+    "title": "부드럽게 나누면 모서리도 같이 퍼져요",
+    "analogy": {
+      "emoji": "✏️",
+      "headline": "러프 스케치를 더 촘촘하게 다시 그리는 느낌이에요",
+      "body": "Subdivision은 폴리곤을 잘게 나누면서 전체 형태를 평균내어 부드럽게 만들어요. 그래서 날카로운 모서리를 그대로 남기려면 보조선이 필요해요."
+    },
+    "before_after": {
+      "before": "Subdivision만 걸면 박스 모서리가 전부 녹듯이 퍼져서 제품 느낌이 사라진다.",
+      "after": "Loop Cut이나 Bevel로 지지선을 만들어 주면, 부드러움은 유지하면서도 모서리의 긴장감을 남길 수 있다."
+    },
+    "confusion": [
+      {
+        "symptom": "부드럽게는 됐는데 형태가 전부 둥글어졌어요.",
+        "reason": "Subdivision은 평균을 내며 표면을 정리해서, 날카로운 형태를 자동으로 보존하지 않아요.",
+        "fix": "지키고 싶은 모서리 옆에 support loop를 넣어 형태를 고정하세요."
+      }
+    ],
+    "takeaway": "Subdivision은 부드럽게 만드는 기능이지, 모서리를 지켜주는 기능은 아니에요. 형태를 유지하려면 support loop가 같이 가야 해요.",
+    "targets": ["subdivision-surface"]
+  },
+  "surface-detail-core": {
+    "title": "Inset, Loop Cut, Bevel은 디테일을 여는 세 단계예요",
+    "analogy": {
+      "emoji": "📐",
+      "headline": "패널 선 긋기, 접는 선 넣기, 모서리 다듬기를 나눠 생각하면 쉬워요",
+      "body": "Inset은 면 안에 새 경계선을 만드는 단계, Loop Cut은 흐름을 따라 제어선을 추가하는 단계, Bevel은 날카로운 모서리를 안전하게 깎아 마감하는 단계예요. 셋 다 비슷해 보이지만 만드는 결과가 달라요."
+    },
+    "before_after": {
+      "before": "면을 줄이고 싶을 때 Loop Cut을 쓰거나, 모서리를 둥글게 해야 하는데 Inset으로 억지로 해결하려 하면 형태가 점점 복잡해지고 의도도 흐려진다.",
+      "after": "면 안쪽 경계는 Inset, 형태 제어용 선은 Loop Cut, 모서리 마감은 Bevel로 나누면 하드서피스 디테일이 훨씬 깔끔해진다."
+    },
+    "confusion": [
+      {
+        "symptom": "Inset을 했는데 두께가 생긴 게 아니라 안쪽에 면만 하나 더 생겨요.",
+        "reason": "Inset은 돌출이 아니라 경계 생성 도구라서 면 안에 새 테두리를 만드는 역할만 해요.",
+        "fix": "깊이를 주고 싶다면 Inset 뒤에 Extrude를 이어서 쓰세요."
+      },
+      {
+        "symptom": "Loop Cut이 어떤 면에서는 잘 들어가고 어떤 곳에서는 안 들어가요.",
+        "reason": "Loop Cut은 쿼드 흐름을 따라 이어지는 고리 구조에서 가장 안정적으로 작동해요.",
+        "fix": "끊긴 지점이나 삼각형/N-gon이 있는지 먼저 확인하세요."
+      },
+      {
+        "symptom": "Bevel을 했더니 모서리가 찌그러지거나 너무 두꺼워 보여요.",
+        "reason": "폭이 너무 크거나 주변 토폴로지가 받쳐주지 않아서 그래요.",
+        "fix": "Width를 아주 작게 시작하고, 필요한 경우 Segments를 천천히 올리세요."
+      }
+    ],
+    "takeaway": "Inset은 경계 만들기, Loop Cut은 제어선 추가, Bevel은 모서리 마감이에요. 셋을 구분하면 하드서피스 디테일 설계가 쉬워집니다.",
+    "targets": ["inset", "loop-cut", "bevel-tool"]
+  },
+  "viewport-visibility-core": {
+    "title": "같은 모델이라도 지금 보고 싶은 정보가 다르면 모드도 달라져요",
+    "analogy": {
+      "emoji": "🔦",
+      "headline": "손전등, 엑스레이, 최종 조명을 번갈아 켜는 것과 비슷해요",
+      "body": "Viewport Shading은 지금 무엇을 확인할지 정하는 표시 모드이고, X-Ray는 그중에서도 겹친 구조를 비쳐 보게 만드는 보조 필터예요. 둘을 섞어 쓰면 '형태 확인'과 '선택 확인'을 빠르게 오갈 수 있어요."
+    },
+    "before_after": {
+      "before": "항상 같은 모드만 쓰면 형태는 잘 보여도 뒤쪽 선택이 안 되고, 반대로 X-Ray만 켜두면 화면이 흐릿해서 표면 판단이 어려워진다.",
+      "after": "형태를 볼 땐 Solid/Material Preview, 내부 구조나 관통 선택이 필요할 땐 X-Ray를 섞어 쓰면 작업 목적에 맞는 화면을 바로 만들 수 있다."
+    },
+    "confusion": [
+      {
+        "symptom": "왜 어떤 모드에선 재질이 안 보이고, 어떤 모드에선 너무 느려져요?",
+        "reason": "Wireframe, Solid, Material Preview, Rendered는 보여주는 정보량과 계산량이 각각 달라요.",
+        "fix": "지금 확인하려는 게 토폴로지인지, 재질인지, 최종 빛인지 먼저 정하고 모드를 고르세요."
+      },
+      {
+        "symptom": "X-Ray를 켰더니 뒤쪽 버텍스까지 같이 잡혀서 선택이 과하게 돼요.",
+        "reason": "X-Ray는 가려진 요소도 통과해서 보이게 하므로 선택 범위도 함께 넓어질 수 있어요.",
+        "fix": "선택이 끝나면 다시 끄거나 Opacity를 낮춰서 필요한 만큼만 비치게 조절하세요."
+      }
+    ],
+    "takeaway": "Viewport Shading은 '무엇을 볼지', X-Ray는 '얼마나 관통해서 볼지'를 정하는 도구예요. 화면을 고정하지 말고 목적에 맞춰 바꾸는 습관이 중요합니다.",
+    "targets": ["viewport-shading", "xray-opacity"]
+  },
+  "uv-core": {
+    "title": "UV는 3D 표면을 2D로 번역하는 과정이에요",
+    "analogy": {
+      "emoji": "📦",
+      "headline": "상자를 잘라 펼쳐서 라벨 붙일 면을 만드는 거예요",
+      "body": "UV Unwrap은 입체 표면을 평면으로 펼치는 단계이고, UV Editor는 그 펼쳐진 조각을 정리하고 배치하는 단계예요."
+    },
+    "before_after": {
+      "before": "바로 텍스처를 얹으면 그림이 늘어나거나 찌그러져서, 원하는 위치에 정확히 들어가지 않는다.",
+      "after": "먼저 절개선(Seam)으로 펼치고 UV Editor에서 조각을 정리하면, 2D 이미지를 예측 가능한 방식으로 입힐 수 있다."
+    },
+    "confusion": [
+      {
+        "symptom": "텍스처를 넣었는데 얼굴이 옆면으로 번지거나 비율이 찌그러져요.",
+        "reason": "3D 표면이 아직 2D 좌표로 제대로 정리되지 않았기 때문이에요.",
+        "fix": "어디를 자를지 먼저 정하고, Unwrap 후 UV Editor에서 섬 크기와 방향을 다시 맞추세요."
+      }
+    ],
+    "takeaway": "UV는 텍스처를 그리는 단계가 아니라, 텍스처가 들어갈 좌표계를 만드는 단계예요.",
+    "targets": ["uv-unwrapping", "uv-editor"]
+  },
+  "animation-core": {
+    "title": "애니메이션은 움직임을 그리는 게 아니라 상태를 찍는 거예요",
+    "analogy": {
+      "emoji": "📸",
+      "headline": "중요한 장면을 사진으로 찍고, 중간은 Blender가 이어줘요",
+      "body": "키프레임은 시간축 위에 '이때는 이런 상태'를 저장하는 점이에요. Graph Editor는 그 점들 사이를 얼마나 빠르게, 어떤 곡선으로 이동할지 다듬는 공간이에요."
+    },
+    "before_after": {
+      "before": "프레임마다 직접 움직임을 다 그리려 하면 애니메이션이 너무 힘들고, 속도도 제어하기 어렵다.",
+      "after": "핵심 상태만 키프레임으로 찍고 Graph Editor에서 속도 곡선을 다듬으면, 적은 작업으로도 자연스러운 움직임을 만들 수 있다."
+    },
+    "confusion": [
+      {
+        "symptom": "움직이긴 하는데 너무 딱딱하고 기계적이에요.",
+        "reason": "키프레임 사이 보간이 기본 직선/기본 곡선으로만 되어 있을 수 있어요.",
+        "fix": "문제는 키프레임 개수보다 Graph Editor의 곡선일 가능성이 커요."
+      }
+    ],
+    "takeaway": "Keyframe은 상태 기록, Graph Editor는 그 상태 사이의 속도 조절이라고 나눠 생각하면 쉬워집니다.",
+    "targets": ["keyframe-basics", "graph-editor"]
+  },
+  "rigging-core": {
+    "title": "Bone과 Weight는 역할이 달라요",
+    "analogy": {
+      "emoji": "🦴",
+      "headline": "뼈대는 움직임의 축, Weight는 피부가 얼마나 따라올지 정하는 힘이에요",
+      "body": "Armature는 어떤 구조로 움직일지를 정하고, Weight Paint는 그 움직임이 메시 각 부분에 얼마나 전달될지 조절해요."
+    },
+    "before_after": {
+      "before": "Bone만 만들면 움직일 수는 있지만, 메시가 같이 안 오거나 이상하게 찢어져서 캐릭터처럼 보이지 않는다.",
+      "after": "Bone 구조와 Weight를 같이 맞추면, 움직임의 방향과 피부 변형이 함께 정리되어 자연스럽게 포즈가 잡힌다."
+    },
+    "confusion": [
+      {
+        "symptom": "팔 본을 움직였는데 어깨랑 가슴까지 같이 끌려와요.",
+        "reason": "Weight가 넓게 퍼져 있어서 영향 범위가 과하게 공유되고 있기 때문이에요.",
+        "fix": "문제는 Bone 개수보다 Weight 분배일 가능성이 높아요."
+      }
+    ],
+    "takeaway": "Armature는 구조, Weight Paint는 영향 범위예요. 둘을 따로 이해해야 리깅이 풀려요.",
+    "targets": ["armature-basics", "weight-paint"]
   }
 }

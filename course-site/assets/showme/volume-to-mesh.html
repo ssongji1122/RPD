@@ -156,6 +156,18 @@ body {
   color: var(--key-soft);
   border-color: rgba(10,132,255,.3);
 }
+.control-guide { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+.control-kind { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; font-size: .72rem; font-weight: 600; letter-spacing: .02em; }
+.control-kind.discrete { background: rgba(10,132,255,.14); color: var(--key-soft); }
+.control-kind.range { background: rgba(16,185,129,.14); color: var(--success-soft); }
+.control-copy { font-size: .78rem; color: var(--muted); line-height: 1.6; }
+.scene-desc { font-size: .84rem; color: var(--muted-strong); margin-bottom: 12px; padding: 10px 14px; border-radius: var(--radius-sm); background: var(--surface); border: 1px solid var(--line); line-height: 1.7; }
+.cause-effect { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0 14px; }
+.cause-card { padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--surface); }
+.cause-card h4 { margin: 0 0 6px; font-size: .82rem; text-transform: uppercase; letter-spacing: .04em; }
+.cause-card p { margin: 0; font-size: .82rem; color: var(--muted-strong); line-height: 1.65; }
+.cause-card.bad h4 { color: #fca5a5; }
+.cause-card.good h4 { color: var(--success-soft); }
 
 /* ── Slider ── */
 .slider-group {
@@ -170,6 +182,8 @@ body {
 .slider-group .slider-val {
   font-size: .8rem; color: var(--key-soft); min-width: 36px; text-align: right;
 }
+.control-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; width: 100%; }
+.control-row + .control-row { padding-top: 8px; border-top: 1px solid var(--line); }
 
 /* ── Usage Grid ── */
 .usage-grid {
@@ -419,18 +433,34 @@ body {
 
 <!-- TAB 2: 인터랙티브 데모 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    Threshold 슬라이더를 조절하면 볼륨에서 메쉬로 변환되는 영역이 달라집니다.
-  </p>
+  <div class="control-guide">
+    <span class="control-kind range">연속 조절</span>
+    <span class="control-copy">Threshold 슬라이더는 메쉬로 바뀌는 밀도 기준을 연속적으로 바꾸고, 초기화 버튼은 기본 임계값으로 되돌립니다.</span>
+  </div>
+  <div class="scene-desc" id="volumeMeshDesc">Volume to Mesh는 안개 전체를 다 고체로 만드는 게 아니라, 일정 밀도 이상인 부분만 표면으로 추출하는 과정입니다. Threshold가 그 경계선을 정합니다.</div>
+  <div class="cause-effect">
+    <div class="cause-card bad">
+      <h4>Lost Shape</h4>
+      <p>Threshold를 너무 높이면 볼륨의 핵심만 남아 형태가 쪼그라들고, 너무 낮으면 노이즈와 외곽까지 따라와 메쉬가 지나치게 부풀 수 있어요.</p>
+    </div>
+    <div class="cause-card good">
+      <h4>Density Surface</h4>
+      <p>밀도 기준을 천천히 조절하면 연기나 구름 덩어리에서 “어디까지를 표면으로 볼 것인가”를 훨씬 직관적으로 설명할 수 있습니다.</p>
+    </div>
+  </div>
   <div class="demo-wrap">
     <canvas id="demoCanvas" width="680" height="300"></canvas>
-    <div class="demo-controls">
-      <div class="slider-group">
-        <label>Threshold</label>
-        <input type="range" id="thresholdSlider" min="0" max="100" value="40">
-        <span class="slider-val" id="thresholdVal">0.40</span>
+    <div class="demo-controls scenario-nav">
+      <div class="control-row">
+        <div class="slider-group">
+          <label>Threshold</label>
+          <input type="range" id="thresholdSlider" min="0" max="100" value="40">
+          <span class="slider-val" id="thresholdVal">0.40</span>
+        </div>
       </div>
-      <button class="demo-btn" id="btnReset">초기화</button>
+      <div class="control-row">
+        <button class="demo-btn" id="btnReset">초기화</button>
+      </div>
     </div>
   </div>
   <p class="demo-hint">Threshold를 높이면 밀도가 높은 내부만, 낮추면 외곽까지 메쉬화됩니다.</p>
@@ -754,6 +784,7 @@ function initQuiz(questions) {
   slider.addEventListener("input", function() {
     threshold = parseInt(slider.value) / 100;
     valLabel.textContent = threshold.toFixed(2);
+    updateVolumeMeshDesc();
     draw();
   });
 
@@ -765,9 +796,22 @@ function initQuiz(questions) {
     threshold = 0.4;
     slider.value = 40;
     valLabel.textContent = "0.40";
+    updateVolumeMeshDesc();
     draw();
   });
 
+  function updateVolumeMeshDesc() {
+    var desc = document.getElementById("volumeMeshDesc");
+    if (!desc) return;
+    var tone = threshold < 0.25
+      ? "외곽의 희미한 밀도까지 메쉬로 끌어오기 시작해 덩어리가 크게 부풀고 작은 노이즈도 따라올 가능성이 큽니다."
+      : threshold < 0.55
+        ? "주요 볼륨은 유지하면서 외곽을 어느 정도 정리하는 중간 기준이라, 형태와 안정성의 균형이 가장 읽기 좋습니다."
+        : "밀도가 높은 핵심부만 남기고 바깥은 과감히 버리기 때문에, 응축된 내부 구조만 뽑아내는 느낌이 강해집니다.";
+    desc.textContent = "현재 Threshold는 " + threshold.toFixed(2) + "입니다. " + tone;
+  }
+
+  updateVolumeMeshDesc();
   draw();
 })();
 

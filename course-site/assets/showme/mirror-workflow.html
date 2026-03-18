@@ -148,6 +148,20 @@ body {
   color: var(--key-soft);
   border-color: rgba(10,132,255,.3);
 }
+.scenario-nav { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.control-guide { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+.control-kind { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; font-size: .72rem; font-weight: 600; letter-spacing: .02em; }
+.control-kind.discrete { background: rgba(10,132,255,.14); color: var(--key-soft); }
+.control-kind.range { background: rgba(16,185,129,.14); color: var(--success-soft); }
+.control-copy { font-size: .78rem; color: var(--muted); line-height: 1.6; }
+.scenario-btn { border-radius: 999px; }
+.scene-desc { font-size: .84rem; color: var(--muted-strong); margin-bottom: 12px; padding: 10px 14px; border-radius: var(--radius-sm); background: var(--surface); border: 1px solid var(--line); line-height: 1.7; }
+.cause-effect { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0 14px; }
+.cause-card { padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--surface); }
+.cause-card h4 { margin: 0 0 6px; font-size: .82rem; text-transform: uppercase; letter-spacing: .04em; }
+.cause-card p { margin: 0; font-size: .82rem; color: var(--muted-strong); line-height: 1.65; }
+.cause-card.bad h4 { color: #fca5a5; }
+.cause-card.good h4 { color: var(--success-soft); }
 /* ── Usage Grid ── */
 .usage-grid {
   display: grid;
@@ -317,17 +331,29 @@ body {
 
 <!-- TAB 2: 시각적 비교 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    버튼을 눌러 Mirror 워크플로우의 각 단계를 확인하세요. 4단계에서는 편집이 자동 애니메이션됩니다.
-  </p>
+  <div class="control-guide">
+    <span class="control-kind discrete">상태 전환</span>
+    <span class="control-copy">버튼이 워크플로우 단계를 바꾸므로, 한 장면 안에서 모델링 순서를 차례대로 따라가며 설명하기 좋습니다.</span>
+  </div>
+  <div class="scenario-nav" id="mirrorWorkflowNav">
+    <button class="demo-btn scenario-btn is-active" id="btnPhase1">전체 형태</button>
+    <button class="demo-btn scenario-btn" id="btnPhase2">절반 삭제</button>
+    <button class="demo-btn scenario-btn" id="btnPhase3">Mirror 추가</button>
+    <button class="demo-btn scenario-btn" id="btnPhase4">한쪽 편집</button>
+  </div>
+  <div class="scene-desc" id="mirrorWorkflowDesc">대칭 모델링을 시작하기 전에는 보통 완성형을 한 번 떠올려요. 어떤 실루엣을 만들지 감을 잡아두면, 절반 삭제 이후에도 기준을 잃지 않습니다.</div>
+  <div class="cause-effect">
+    <div class="cause-card bad">
+      <h4>Before Workflow</h4>
+      <p>양쪽을 따로 만들면 수정이 두 배로 늘고, 한쪽만 바뀌어도 좌우 균형이 금방 무너져요.</p>
+    </div>
+    <div class="cause-card good">
+      <h4>After Workflow</h4>
+      <p>절반을 기준으로 Mirror를 걸어두면, 한쪽만 편집해도 반대쪽이 즉시 맞춰져 반복 수정이 크게 줄어듭니다.</p>
+    </div>
+  </div>
   <div class="demo-wrap">
     <canvas id="demoCanvas" width="680" height="320"></canvas>
-    <div class="demo-controls">
-      <button class="demo-btn is-active" id="btnPhase1">전체 형태</button>
-      <button class="demo-btn" id="btnPhase2">절반 삭제</button>
-      <button class="demo-btn" id="btnPhase3">Mirror 추가</button>
-      <button class="demo-btn" id="btnPhase4">한쪽 편집</button>
-    </div>
   </div>
   <p class="demo-hint">각 단계 버튼을 클릭하여 Mirror Modifier 워크플로우를 단계별로 확인하세요.</p>
 </section>
@@ -505,6 +531,17 @@ function initQuiz(questions) {
   var animTime = 0;
   var transitionProgress = 1; // 0→1 for smooth transitions
   var prevPhase = 1;
+  var phaseDescriptions = {
+    1: "대칭 모델링을 시작하기 전에는 보통 완성형을 한 번 떠올려요. 어떤 실루엣을 만들지 감을 잡아두면, 절반 삭제 이후에도 기준을 잃지 않습니다.",
+    2: "절반을 지우는 단계는 작업량을 줄이기 위한 준비예요. 한쪽만 남겨도 최종 결과는 그대로 복원할 수 있다는 게 Mirror의 핵심입니다.",
+    3: "Mirror를 추가하면 남은 절반이 원본, 반대편은 계산된 복사본이 됩니다. 이제부터는 한쪽만 책임지고 수정하면 돼요.",
+    4: "실제 편집은 마지막 단계에서 일어나요. 원본 쪽 버텍스를 움직이면 반대편은 자동으로 따라와서 좌우 균형을 계속 유지할 수 있습니다."
+  };
+
+  function updatePhaseDesc() {
+    var desc = document.getElementById("mirrorWorkflowDesc");
+    if (desc) desc.textContent = phaseDescriptions[phase];
+  }
 
   // Base shape vertices (right half — a simplified face-like silhouette, front view)
   // These are offsets from center; positive X = right side
@@ -697,8 +734,9 @@ function initQuiz(questions) {
     phase = p;
     transitionProgress = 0;
     // Update buttons
-    document.querySelectorAll(".demo-btn").forEach(function(b) { b.classList.remove("is-active"); });
+    document.querySelectorAll("#mirrorWorkflowNav .scenario-btn").forEach(function(b) { b.classList.remove("is-active"); });
     document.getElementById("btnPhase" + p).classList.add("is-active");
+    updatePhaseDesc();
   }
 
   document.getElementById("btnPhase1").addEventListener("click", function() { setPhase(1); });
@@ -706,6 +744,7 @@ function initQuiz(questions) {
   document.getElementById("btnPhase3").addEventListener("click", function() { setPhase(3); });
   document.getElementById("btnPhase4").addEventListener("click", function() { setPhase(4); });
 
+  updatePhaseDesc();
   render();
 })();
 

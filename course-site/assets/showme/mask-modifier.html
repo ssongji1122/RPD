@@ -155,6 +155,19 @@ body {
   color: var(--key-soft);
   border-color: rgba(10,132,255,.3);
 }
+.scenario-nav { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.control-guide { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+.control-kind { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; font-size: .72rem; font-weight: 600; letter-spacing: .02em; }
+.control-kind.discrete { background: rgba(10,132,255,.14); color: var(--key-soft); }
+.control-kind.range { background: rgba(16,185,129,.14); color: var(--success-soft); }
+.control-copy { font-size: .78rem; color: var(--muted); line-height: 1.6; }
+.scene-desc { font-size: .84rem; color: var(--muted-strong); margin-bottom: 12px; padding: 10px 14px; border-radius: var(--radius-sm); background: var(--surface); border: 1px solid var(--line); line-height: 1.7; }
+.cause-effect { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0 14px; }
+.cause-card { padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--surface); }
+.cause-card h4 { margin: 0 0 6px; font-size: .82rem; text-transform: uppercase; letter-spacing: .04em; }
+.cause-card p { margin: 0; font-size: .82rem; color: var(--muted-strong); line-height: 1.65; }
+.cause-card.bad h4 { color: #fca5a5; }
+.cause-card.good h4 { color: var(--success-soft); }
 
 /* ── Usage Grid ── */
 .usage-grid {
@@ -395,12 +408,24 @@ body {
 
 <!-- TAB 2: 인터랙티브 데모 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    그리드의 셀을 클릭하여 Vertex Group 멤버십을 토글하세요. Mask가 적용되면 선택된 셀만 표시됩니다.
-  </p>
+  <div class="control-guide">
+    <span class="control-kind discrete">상태 전환</span>
+    <span class="control-copy">버튼은 Mask와 Invert 상태를 바꾸고, 캔버스 클릭은 어떤 셀이 그룹에 속하는지 직접 지정합니다.</span>
+  </div>
+  <div class="scene-desc" id="maskDesc">Mask는 선택한 Vertex Group만 남기고 나머지를 숨기는 필터입니다. Invert를 켜면 같은 그룹 정보를 뒤집어서, 그룹 밖을 남기고 그룹 안을 숨길 수 있습니다.</div>
+  <div class="cause-effect">
+    <div class="cause-card bad">
+      <h4>Hidden by Guess</h4>
+      <p>어떤 셀이 그룹에 속했는지 모른 채 Mask만 켜고 끄면, 왜 일부가 사라졌는지 이해하기 어려워 작업이 더 혼란스러워집니다.</p>
+    </div>
+    <div class="cause-card good">
+      <h4>Readable Filter</h4>
+      <p>먼저 그룹 멤버십을 만들고, 그다음 Mask와 Invert를 켜 보면 “선택 집합을 보여 주는 필터”라는 개념이 훨씬 선명하게 보입니다.</p>
+    </div>
+  </div>
   <div class="demo-wrap">
     <canvas id="demoCanvas" width="680" height="360"></canvas>
-    <div class="demo-controls">
+    <div class="demo-controls scenario-nav">
       <button class="demo-btn is-active" id="btnMaskOn">Mask ON</button>
       <button class="demo-btn" id="btnInvert">Invert OFF</button>
       <button class="demo-btn" id="btnReset">초기화</button>
@@ -809,6 +834,18 @@ function initQuiz(questions) {
   var btnInvert = document.getElementById("btnInvert");
   var btnReset = document.getElementById("btnReset");
 
+  function updateMaskDesc() {
+    var desc = document.getElementById("maskDesc");
+    if (!desc) return;
+    if (!maskOn) {
+      desc.textContent = "Mask가 꺼진 상태라 전체 그리드가 그대로 보입니다. 지금은 Vertex Group 멤버십을 편집하는 준비 단계라고 보면 됩니다.";
+    } else if (invert) {
+      desc.textContent = "Mask ON + Invert ON 상태입니다. 그룹에 속한 셀은 숨기고, 그룹 바깥 셀만 보여 주는 반전 필터가 적용되고 있어요.";
+    } else {
+      desc.textContent = "Mask ON 상태입니다. 현재 Vertex Group에 속한 셀만 남기고 나머지는 가려서, 특정 부위만 분리해 보는 효과를 만듭니다.";
+    }
+  }
+
   btnMaskOn.addEventListener("click", function() {
     maskOn = !maskOn;
     btnMaskOn.textContent = maskOn ? "Mask ON" : "Mask OFF";
@@ -817,6 +854,7 @@ function initQuiz(questions) {
     } else {
       btnMaskOn.classList.remove("is-active");
     }
+    updateMaskDesc();
     draw();
   });
 
@@ -828,6 +866,7 @@ function initQuiz(questions) {
     } else {
       btnInvert.classList.remove("is-active");
     }
+    updateMaskDesc();
     draw();
   });
 
@@ -839,6 +878,7 @@ function initQuiz(questions) {
     btnMaskOn.classList.add("is-active");
     btnInvert.textContent = "Invert OFF";
     btnInvert.classList.remove("is-active");
+    updateMaskDesc();
     draw();
   });
 
@@ -850,6 +890,7 @@ function initQuiz(questions) {
     }, { passive: false });
   });
 
+  updateMaskDesc();
   // Initial draw
   draw();
 })();

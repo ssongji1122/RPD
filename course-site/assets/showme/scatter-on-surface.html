@@ -156,6 +156,43 @@ body {
   color: var(--key-soft);
   border-color: rgba(10,132,255,.3);
 }
+.scenario-nav { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.control-guide { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+.control-kind { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; font-size: .72rem; font-weight: 600; letter-spacing: .02em; }
+.control-kind.discrete { background: rgba(10,132,255,.14); color: var(--key-soft); }
+.control-kind.range { background: rgba(16,185,129,.14); color: var(--success-soft); }
+.control-copy { font-size: .78rem; color: var(--muted); line-height: 1.6; }
+.scene-desc {
+  font-size: .84rem;
+  color: var(--muted-strong);
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  line-height: 1.7;
+}
+.cause-effect { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0 14px; }
+.cause-card {
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.cause-card h4 {
+  margin: 0 0 6px;
+  font-size: .82rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.cause-card p {
+  margin: 0;
+  font-size: .82rem;
+  color: var(--muted-strong);
+  line-height: 1.65;
+}
+.cause-card.bad h4 { color: #fca5a5; }
+.cause-card.good h4 { color: var(--success-soft); }
 
 /* ── Slider ── */
 .demo-slider-wrap {
@@ -168,6 +205,8 @@ body {
 .demo-slider-wrap .slider-label {
   min-width: 50px; font-size: .78rem; color: var(--muted);
 }
+.control-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; width: 100%; }
+.control-row + .control-row { padding-top: 8px; border-top: 1px solid var(--line); }
 
 /* ── Usage Grid ── */
 .usage-grid {
@@ -377,7 +416,7 @@ body {
 <!-- Tab Bar -->
 <nav class="tabs" role="tablist">
   <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
-  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">인터랙티브 데모</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">interaction</button>
   <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
   <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
 </nav>
@@ -410,19 +449,36 @@ body {
 
 <!-- TAB 2: 인터랙티브 데모 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <p style="font-size:.84rem; color:var(--muted); margin:0 0 10px;">
-    Density 슬라이더로 배치 밀도를 조절하고, Seed 변경 버튼으로 패턴을 바꿔 보세요.
-  </p>
+  <div class="control-guide">
+    <span class="control-kind range">연속 조절</span>
+    <span class="control-kind discrete">상태 전환</span>
+    <span class="control-copy">Density는 슬라이더로 연속 조절하고, Seed와 Random Scale은 버튼으로 패턴 상태를 바꿔 비교합니다.</span>
+  </div>
+  <div class="scene-desc" id="scatterDesc">Scatter on Surface는 복제 개수를 늘리는 기능이 아니라, 표면 위에 어떤 밀도와 편차로 분포시킬지 결정하는 도구입니다. Density는 양, Seed는 패턴, Random Scale은 자연스러운 편차를 담당합니다.</div>
+  <div class="cause-effect">
+    <div class="cause-card bad">
+      <h4>Copy Paste Look</h4>
+      <p>밀도와 랜덤 편차를 같이 보지 않으면, 표면 위에 오브젝트가 그냥 복사 붙여넣기된 것처럼 보여 자연스러움이 금방 무너집니다.</p>
+    </div>
+    <div class="cause-card good">
+      <h4>Natural Distribution</h4>
+      <p>밀도는 얼마나 덮을지, Seed는 어떤 패턴인지, Scale Random은 얼마나 살아 있는 편차를 줄지로 나누면 잔디와 나무 배치를 훨씬 쉽게 설명할 수 있어요.</p>
+    </div>
+  </div>
   <div class="demo-wrap">
     <canvas id="demoCanvas" width="680" height="300"></canvas>
     <div class="demo-controls">
-      <div class="demo-slider-wrap">
-        <span class="slider-label">Density</span>
-        <input type="range" id="sliderDensity" min="3" max="40" value="12">
-        <span id="densityVal" style="min-width:24px">12</span>
+      <div class="control-row">
+        <div class="demo-slider-wrap">
+          <span class="slider-label">Density</span>
+          <input type="range" id="sliderDensity" min="3" max="40" value="12">
+          <span id="densityVal" style="min-width:24px">12</span>
+        </div>
       </div>
-      <button class="demo-btn" id="btnSeed">Seed 변경</button>
-      <button class="demo-btn" id="btnScaleRandom">Scale Random: OFF</button>
+      <div class="control-row">
+        <button class="demo-btn" id="btnSeed">Seed 변경</button>
+        <button class="demo-btn" id="btnScaleRandom">Scale Random: OFF</button>
+      </div>
     </div>
   </div>
   <p class="demo-hint">표면 곡선 위에 나무 아이콘이 분포됩니다. 슬라이더와 버튼으로 다양한 설정을 체험해 보세요.</p>
@@ -629,6 +685,7 @@ function initQuiz(questions) {
   var seed = 42;
   var scaleRandom = false;
   var instances = [];
+  var scatterDesc = document.getElementById("scatterDesc");
 
   // Simple seeded random
   function seededRandom(s) {
@@ -755,8 +812,22 @@ function initQuiz(questions) {
     ctx.fillText("Scale Random: " + (scaleRandom ? "ON" : "OFF"), w - 12, 34);
   }
 
+  function updateScatterDesc() {
+    if (!scatterDesc) return;
+    var densityText = density < 10
+      ? "밀도가 낮아서 기준점을 잡거나 큰 오브젝트를 드문드문 배치하는 블로킹 단계에 가깝습니다."
+      : density < 25
+        ? "중간 밀도라서 표면 실루엣은 읽히면서도 개별 인스턴스가 아직 구분됩니다."
+        : "밀도가 높아져 표면이 거의 덮이기 시작하므로 잔디나 자갈 같은 군집 표현에 어울립니다.";
+    var randomText = scaleRandom
+      ? "Scale Random이 켜져 있어서 크기와 방향 차이가 생기며, 복사본 느낌이 줄어든 상태예요."
+      : "Scale Random이 꺼져 있어서 모든 인스턴스가 비슷하게 보여 패턴이 더 인공적으로 읽힙니다.";
+    scatterDesc.textContent = "현재 Density " + density + ", Seed " + seed + " 설정입니다. " + densityText + " " + randomText;
+  }
+
   generateInstances();
   draw();
+  updateScatterDesc();
 
   // Density slider
   var sliderDensity = document.getElementById("sliderDensity");
@@ -766,6 +837,7 @@ function initQuiz(questions) {
     densityVal.textContent = density;
     generateInstances();
     draw();
+    updateScatterDesc();
   });
   // Touch support for slider
   sliderDensity.addEventListener("touchstart", function(e) { e.stopPropagation(); }, { passive: true });
@@ -775,6 +847,7 @@ function initQuiz(questions) {
     seed = Math.floor(Math.random() * 10000);
     generateInstances();
     draw();
+    updateScatterDesc();
   });
 
   // Scale Random toggle
@@ -790,6 +863,7 @@ function initQuiz(questions) {
     }
     generateInstances();
     draw();
+    updateScatterDesc();
   });
 })();
 
