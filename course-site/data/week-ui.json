@@ -1,0 +1,73 @@
+{
+  "version": 1,
+  "defaultPreset": "inha-rpd",
+  "presets": {
+    "base": {
+      "labels": {
+        "school": {
+          "ko": "인하대학교",
+          "en": "Inha University"
+        },
+        "program": {
+          "ko": "Robot Product Design",
+          "en": "Robot Product Design"
+        },
+        "heroEyebrow": {
+          "ko": "Blender Archive · 인하대학교",
+          "en": "Blender Archive · Inha University"
+        },
+        "summaryTitle": {
+          "ko": "이번 주",
+          "en": "This week"
+        },
+        "metricPractice": {
+          "ko": "실습",
+          "en": "practice"
+        },
+        "metricShowMe": {
+          "ko": "Show Me",
+          "en": "Show Me"
+        },
+        "metricTasks": {
+          "ko": "체크",
+          "en": "tasks"
+        },
+        "metricRefs": {
+          "ko": "참고",
+          "en": "refs"
+        }
+      },
+      "weekCard": {
+        "metrics": [
+          "practice",
+          "showme",
+          "tasks"
+        ],
+        "previewSource": "topics",
+        "previewMaxItems": 3,
+        "activePreviewMaxItems": 5,
+        "highlightMode": "status"
+      },
+      "weekHero": {
+        "iconMode": "week",
+        "subtitleMode": "subtitle",
+        "subtitleMetrics": [
+          "practice",
+          "tasks",
+          "showme"
+        ],
+        "showUtilityRow": false
+      },
+      "weekSummary": {
+        "showProgress": true,
+        "itemSource": "topics",
+        "maxItems": 8,
+        "desktopColumns": 2,
+        "mobileColumns": 1
+      }
+    },
+    "inha-rpd": {
+      "extends": "base"
+    }
+  }
+}
