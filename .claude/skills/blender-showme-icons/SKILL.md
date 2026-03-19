@@ -96,3 +96,8 @@ python3 "$PWD/.claude/skills/blender-showme-icons/scripts/extract_showme_icons.p
 ```bash
 ./tools/sync-codex-skill.sh blender-showme-icons
 ```
+
+## Gotchas ⚠️
+> Claude가 이 스킬을 쓸 때 실수했던 것들. 새 함정 발견 시 여기에 추가.
+
+1. (아직 없음 — 사용하면서 추가)

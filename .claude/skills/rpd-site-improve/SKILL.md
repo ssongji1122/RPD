@@ -100,3 +100,8 @@ CSS 변경 시 아래를 순서대로 확인:
 - `docs/COURSE_SITE_STYLE_GUIDE_2026-03-13.md`
 - `docs/COGNITIVE_UI_GUIDE_2026-03-18.md`
 - `docs/REFERENCE_RESEARCH_2026-03-15.md`
+
+## Gotchas ⚠️
+> Claude가 이 스킬을 쓸 때 실수했던 것들. 새 함정 발견 시 여기에 추가.
+
+1. (아직 없음 — 사용하면서 추가)
