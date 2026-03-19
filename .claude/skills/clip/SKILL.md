@@ -1,6 +1,6 @@
 ---
 name: clip
-description: 영상 클립 추출 자동화. 예: /clip week 3 001.mov 1:30-3:00 "이미지 불러오기"
+description: "클립 추출", "영상 자르기", "/clip" 요청 시 호출. curriculum.js 연동 영상 클립 추출 자동화. 예: /clip week 3 001.mov 1:30-3:00 "이미지 불러오기"
 user_invocable: true
 ---
 

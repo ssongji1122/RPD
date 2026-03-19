@@ -1,6 +1,6 @@
 ---
 name: rpd-site-improve
-description: RPD 수업 사이트 CSS/HTML 디자인 개선. tokens.css 수정, 레이아웃 조정, 컴포넌트 스타일링 시 사용. Use when modifying course-site CSS, layout, or visual design.
+description: "CSS 수정", "디자인 개선", "레이아웃 조정" 요청 시 호출. tokens.css 수정, 레이아웃 조정, 컴포넌트 스타일링. Use when modifying course-site CSS, layout, or visual design.
 ---
 
 # RPD Site Improve

@@ -1,6 +1,6 @@
 ---
 name: rpd-research
-description: 블렌더/디자인 교안 콘텐츠 리서치. 공식 문서 + 커뮤니티 혼란 포인트 수집, 크로스팩트체크 후 검증된 브리프 생성. Use before /rpd-content-write or /showme to ensure content accuracy.
+description: "리서치", "블렌더 조사", "교안 리서치" 요청 시 호출. 공식 문서 + 커뮤니티 혼란 포인트 수집, 크로스팩트체크 후 검증된 브리프 생성. Use before /rpd-content-write or /showme to ensure content accuracy.
 ---
 
 # RPD Research — 교안 콘텐츠 리서치 스킬

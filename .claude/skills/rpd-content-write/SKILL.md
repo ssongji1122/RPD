@@ -1,6 +1,6 @@
 ---
 name: rpd-content-write
-description: RPD curriculum.js 콘텐츠 작성/편집. 주차 데이터 추가, 수정, 톤 교정 시 사용. Use when editing curriculum.js week data, writing step copy, or tasks.
+description: "콘텐츠 작성", "curriculum 편집", "톤 교정" 요청 시 호출. curriculum.js 주차 데이터 추가/수정/톤 교정. Use when editing curriculum.js week data, writing step copy, or tasks.
 ---
 
 # RPD Content Write

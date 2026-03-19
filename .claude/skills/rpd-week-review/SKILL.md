@@ -1,6 +1,6 @@
 ---
 name: rpd-week-review
-description: RPD 주차 페이지 품질 검수. 콘텐츠 완성도, 카피 품질, 접근성, 반응형 확인. Use after completing a week's content to verify quality before marking as done.
+description: "주차 검수", "품질 검토", "week review" 요청 시 호출. 콘텐츠 완성도, 카피 품질, 접근성, 반응형 검수. Use after completing a week's content to verify quality before marking as done.
 ---
 
 # RPD Week Review
