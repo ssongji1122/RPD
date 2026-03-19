@@ -34,7 +34,7 @@
     .app-topbar-left {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 0;
     }
     .app-logo {
       width: 56px;
@@ -44,16 +44,18 @@
       font-weight: 700;
       color: var(--key-soft);
       letter-spacing: -.02em;
+      flex-shrink: 0;
     }
     .app-title {
-      font-size: .88rem;
-      font-weight: 600;
+      font-size: var(--text-base);
+      font-weight: var(--fw-semi);
       letter-spacing: -.01em;
+      padding-left: var(--sp-8);
     }
     .app-title span {
       color: var(--muted);
-      font-weight: 400;
-      margin-left: 6px;
+      font-weight: var(--fw-normal);
+      margin-left: var(--sp-2);
     }
     .app-search {
       flex: 1;
