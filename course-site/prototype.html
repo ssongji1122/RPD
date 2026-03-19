@@ -728,8 +728,8 @@
       }
       /* 모바일 탑바: 검색 중심, 로고 최소화 */
       .app-topbar {
-        padding: 8px 12px;
-        gap: 10px;
+        padding: var(--sp-2) var(--sp-3);
+        gap: var(--sp-2);
       }
       .app-logo {
         width: 32px;
@@ -739,8 +739,8 @@
       .app-search {
         flex: 1;
         max-width: none;
-        padding: 9px 12px;
-        font-size: .82rem;
+        padding: var(--sp-2) var(--sp-3);
+        font-size: var(--text-sm);
       }
       /* 하단 탭바 */
       .rail {
@@ -763,23 +763,37 @@
       .rail-toggle { display: none !important; }
       .rail-item {
         flex-direction: column;
-        gap: 2px;
-        padding: 6px 0;
+        justify-content: center;
+        align-items: center;
+        width: auto;
         height: auto;
         min-height: auto;
-        font-size: .92rem;
+        gap: 2px;
+        padding: var(--sp-1) 0;
+        margin: 0;
+        border: none;
+        background: transparent;
       }
       .rail-item .rail-text {
         display: block !important;
         opacity: 1 !important;
+        position: static !important;
+        transform: none !important;
+        padding: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        background: none !important;
+        box-shadow: none !important;
+        width: auto !important;
+        pointer-events: auto !important;
         font-size: .6rem;
         color: inherit;
       }
       .rail-item .rail-icon {
-        font-size: 1rem;
+        font-size: 1.1rem;
       }
       .main {
-        padding: 20px 16px 80px;
+        padding: var(--sp-4) var(--sp-4) 80px;
       }
       /* 페이지 헤더 축소 */
       .page-header h1 {
@@ -791,8 +805,8 @@
       /* 필터 바 모바일 */
       .filter-bar {
         flex-direction: column;
-        gap: 8px;
-        padding: 8px 10px;
+        gap: var(--sp-2);
+        padding: var(--sp-2) 0;
       }
       .filter-search {
         width: 100%;
