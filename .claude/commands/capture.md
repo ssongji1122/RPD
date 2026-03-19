@@ -182,3 +182,8 @@ STEP_MAP = {
 | `tools/capture_screenshots.py` | 기존 캡처 스크립트 (Playwright 기반) |
 | `course-site/data/curriculum.js` | step.image 필드 소스 |
 | `course-site/assets/images/weekNN/` | 캡처 이미지 저장 디렉토리 |
+
+## Gotchas ⚠️
+> Claude가 이 스킬을 쓸 때 실수했던 것들. 새 함정 발견 시 여기에 추가.
+
+1. (아직 없음 — 사용하면서 추가)

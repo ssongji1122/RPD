@@ -166,3 +166,8 @@ curriculum.js → weeks/weekNN-*/lecture-note.md 동기화를 실행합니다.
 
 **읽기**: `const CURRICULUM = ` 이후부터 `];` 까지 추출 → JS→JSON 변환 → parse
 **쓰기**: JSON.stringify(indent=2) → 헤더/푸터 재부착 → 파일 저장
+
+## Gotchas ⚠️
+> Claude가 이 스킬을 쓸 때 실수했던 것들. 새 함정 발견 시 여기에 추가.
+
+1. (아직 없음 — 사용하면서 추가)

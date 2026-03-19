@@ -155,3 +155,8 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash(node:*), Bash(ls:*), Bash(wc:
 | `.claude/skills/rpd-a11y-audit/SKILL.md` | 접근성 점검 기준 |
 | `course-site/library.html` | 라이브러리 브라우징 페이지 |
 | `course-site/week.html` | 주차 상세 페이지 |
+
+## Gotchas ⚠️
+> Claude가 이 스킬을 쓸 때 실수했던 것들. 새 함정 발견 시 여기에 추가.
+
+1. (아직 없음 — 사용하면서 추가)

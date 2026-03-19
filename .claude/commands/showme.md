@@ -211,3 +211,8 @@ window.parent.postMessage({
 | `course-site/assets/showme/_supplements.json` | 보충 설명 데이터 (Notion sync용) |
 
 > 보충 설명 생성은 `/brainstormC` 스킬 사용
+
+## Gotchas ⚠️
+> Claude가 이 스킬을 쓸 때 실수했던 것들. 새 함정 발견 시 여기에 추가.
+
+1. (아직 없음 — 사용하면서 추가)
