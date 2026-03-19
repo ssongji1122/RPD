@@ -102,3 +102,8 @@ ls course-site/assets/showme/{widget-id}.html
 | `course-site/assets/showme/_supplements.json` | 보충 데이터 (JSON, Notion sync) |
 | `course-site/assets/showme/_registry.js` | 위젯 메타데이터 |
 | `course-site/assets/showme/{id}.html` | 대상 showme 카드 |
+
+## Gotchas ⚠️
+> Claude가 이 스킬을 쓸 때 실수했던 것들. 새 함정 발견 시 여기에 추가.
+
+1. (아직 없음 — 사용하면서 추가)
