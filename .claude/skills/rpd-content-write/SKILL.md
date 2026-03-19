@@ -117,3 +117,8 @@ curriculum.js의 각 섹션이 Bloom's 단계에 대응:
 ## 참고 문서
 - `course-site/CONTENT_GUIDE.md` (마스터 레퍼런스)
 - `docs/REFERENCE_RESEARCH_2026-03-15.md` (교육학 섹션)
+
+## Gotchas ⚠️
+> Claude가 이 스킬을 쓸 때 실수했던 것들. 새 함정 발견 시 여기에 추가.
+
+1. (아직 없음 — 사용하면서 추가)

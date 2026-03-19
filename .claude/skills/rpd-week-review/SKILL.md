@@ -75,3 +75,8 @@ description: RPD 주차 페이지 품질 검수. 콘텐츠 완성도, 카피 품
 - `course-site/CONTENT_GUIDE.md` (섹션 6: 검증 체크리스트)
 - `docs/COURSE_SITE_STYLE_GUIDE_2026-03-13.md`
 - `docs/REFERENCE_RESEARCH_2026-03-15.md`
+
+## Gotchas ⚠️
+> Claude가 이 스킬을 쓸 때 실수했던 것들. 새 함정 발견 시 여기에 추가.
+
+1. (아직 없음 — 사용하면서 추가)
