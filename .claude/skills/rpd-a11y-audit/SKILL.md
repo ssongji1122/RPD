@@ -1,6 +1,6 @@
 ---
 name: rpd-a11y-audit
-description: RPD 수업 사이트 접근성 점검. WCAG 2.1 AA 기준 다크테마 한국어 교육 사이트 감사. Use when checking accessibility, adding ARIA attributes, or fixing keyboard navigation.
+description: "접근성 점검", "a11y", "WCAG 감사" 요청 시 호출. WCAG 2.1 AA 기준 다크테마 한국어 교육 사이트 접근성 감사. Use when checking accessibility, adding ARIA attributes, or fixing keyboard navigation.
 ---
 
 # RPD Accessibility Audit
