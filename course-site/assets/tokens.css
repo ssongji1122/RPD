@@ -85,6 +85,23 @@
   --radius-2xl:  28px;
   --radius-pill: 999px;
 
+  /* Glass / tint — theme-aware */
+  --glass-tint:          rgba(255,255,255,.03);
+  --glass-tint-strong:   rgba(255,255,255,.05);
+  --glass-tint-hover:    rgba(255,255,255,.08);
+  --glass-border:        rgba(255,255,255,.08);
+  --glass-border-strong: rgba(255,255,255,.14);
+  --glass-shadow:        rgba(0,0,0,.18);
+  --glass-shadow-light:  rgba(0,0,0,.08);
+  --glass-inset:         rgba(255,255,255,.05);
+  --glass-accent:        rgba(10,132,255,.12);
+  --glass-accent-strong: rgba(10,132,255,.18);
+  --key-border:          rgba(96,165,250,.34);
+  --key-glow:            rgba(147,197,253,.46);
+  --key-glow-soft:       rgba(147,197,253,.12);
+  --success-border:      rgba(16,185,129,.35);
+  --success-glow:        rgba(16,185,129,.06);
+
   /* Font weight scale */
   --fw-normal:  500;
   --fw-medium:  600;
@@ -157,6 +174,21 @@
   --modal-icon-shadow:
     inset 0 1px 0 rgba(255,255,255,.92),
     0 12px 24px rgba(0,0,0,.08);
+  --glass-tint:          rgba(0,0,0,.02);
+  --glass-tint-strong:   rgba(0,0,0,.04);
+  --glass-tint-hover:    rgba(0,0,0,.06);
+  --glass-border:        rgba(0,0,0,.08);
+  --glass-border-strong: rgba(0,0,0,.14);
+  --glass-shadow:        rgba(0,0,0,.06);
+  --glass-shadow-light:  rgba(0,0,0,.03);
+  --glass-inset:         rgba(255,255,255,.78);
+  --glass-accent:        rgba(0,113,227,.08);
+  --glass-accent-strong: rgba(0,113,227,.14);
+  --key-border:          rgba(0,113,227,.24);
+  --key-glow:            rgba(0,113,227,.24);
+  --key-glow-soft:       rgba(0,113,227,.08);
+  --success-border:      rgba(5,150,105,.3);
+  --success-glow:        rgba(5,150,105,.06);
   --shadow-card: none;
 }
 
