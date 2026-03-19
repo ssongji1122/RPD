@@ -609,12 +609,12 @@
 
     /* ── Deck view (deck.html preview) ── */
     .deck-view {
-      max-width: 760px;
+      max-width: 640px;
     }
     .deck-view-header {
       display: grid;
       gap: 8px;
-      padding-bottom: 20px;
+      padding-bottom: var(--sp-8);
       border-bottom: 1px solid var(--line);
       margin-bottom: 20px;
     }
@@ -627,13 +627,13 @@
     }
     .deck-card-list {
       display: grid;
-      gap: 10px;
+      gap: var(--sp-3);
     }
     .deck-card-item {
       display: flex;
       align-items: flex-start;
       gap: 14px;
-      padding: 16px;
+      padding: var(--sp-6);
       border-radius: 14px;
       border: 1px solid var(--line);
       background: var(--surface);
@@ -1276,6 +1276,11 @@ function showView(name, e) {
     el.classList.remove('is-active');
   });
   if (e && e.currentTarget) e.currentTarget.classList.add('is-active');
+  if (name === 'decks') {
+    document.documentElement.setAttribute('data-mode', 'learn');
+  } else {
+    document.documentElement.removeAttribute('data-mode');
+  }
 }
 
 function searchCards(query) {
