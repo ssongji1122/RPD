@@ -769,10 +769,19 @@
         height: auto;
         min-height: auto;
         gap: 2px;
-        padding: var(--sp-1) 0;
+        padding: var(--sp-2) 0;
         margin: 0;
-        border: none;
-        background: transparent;
+        border: none !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+      }
+      .rail-item.is-active {
+        background: transparent !important;
+        border: none !important;
+        color: var(--key-soft);
+      }
+      .rail-item:hover {
+        background: transparent !important;
       }
       .rail-item .rail-text {
         display: block !important;
@@ -786,11 +795,18 @@
         box-shadow: none !important;
         width: auto !important;
         pointer-events: auto !important;
-        font-size: .6rem;
+        font-size: .58rem;
+        font-weight: 500;
         color: inherit;
+        letter-spacing: .01em;
       }
       .rail-item .rail-icon {
-        font-size: 1.1rem;
+        font-size: 1.15rem;
+        width: 24px;
+        height: 24px;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
       }
       .main {
         padding: var(--sp-4) var(--sp-4) 80px;
