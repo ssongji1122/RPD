@@ -260,12 +260,6 @@ cd tools/lessonforge && python3 -m lessonforge --help
 필요 패키지: `click`, `rich`, `edge-tts`, `pyyaml`, `Pillow`
 선택 패키지: `ffmpeg-python` (영상 합성), `google-api-python-client` (YouTube)
 
-## 실행 로그
-실행 완료 시 아래 형식으로 기록:
-```bash
-echo "[$(date '+%Y-%m-%d %H:%M')] mode=$MODE result=$RESULT target=$TARGET" >> .claude/skill-logs/lessonforge.log
-```
-
 ## Gotchas ⚠️
 > Claude가 이 스킬을 쓸 때 실수했던 것들. 새 함정 발견 시 여기에 추가.
 
