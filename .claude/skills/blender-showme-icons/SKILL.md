@@ -1,6 +1,6 @@
 ---
 name: blender-showme-icons
-description: 블렌더 Show Me 카드용 실제 도구 아이콘 캡처/추출/반영 스킬. Use when expanding the archive with new Blender tool cards, replacing placeholder icons with official Blender icon captures, wiring icon assets into course-site pages, or verifying updated card grids and Show Me modals in browser.
+description: "아이콘 캡처", "아이콘 추출", "showme 아이콘" 요청 시 호출. 블렌더 Show Me 카드용 실제 도구 아이콘 캡처/추출/반영. Use when expanding the archive with new Blender tool cards, replacing placeholder icons, wiring icon assets into course-site pages, or verifying updated card grids.
 ---
 
 # Blender Show Me Icons
@@ -96,3 +96,8 @@ python3 "$PWD/.claude/skills/blender-showme-icons/scripts/extract_showme_icons.p
 ```bash
 ./tools/sync-codex-skill.sh blender-showme-icons
 ```
+
+## Gotchas ⚠️
+> Claude가 이 스킬을 쓸 때 실수했던 것들. 새 함정 발견 시 여기에 추가.
+
+1. (아직 없음 — 사용하면서 추가)

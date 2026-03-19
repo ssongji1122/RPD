@@ -182,3 +182,14 @@ STEP_MAP = {
 | `tools/capture_screenshots.py` | 기존 캡처 스크립트 (Playwright 기반) |
 | `course-site/data/curriculum.js` | step.image 필드 소스 |
 | `course-site/assets/images/weekNN/` | 캡처 이미지 저장 디렉토리 |
+
+## 실행 로그
+실행 완료 시 아래 형식으로 기록:
+```bash
+echo "[$(date '+%Y-%m-%d %H:%M')] mode=$MODE result=$RESULT target=$TARGET" >> .claude/skill-logs/capture.log
+```
+
+## Gotchas ⚠️
+> Claude가 이 스킬을 쓸 때 실수했던 것들. 새 함정 발견 시 여기에 추가.
+
+1. (아직 없음 — 사용하면서 추가)

@@ -1,6 +1,6 @@
 ---
 name: rpd-research
-description: 블렌더/디자인 교안 콘텐츠 리서치. 공식 문서 + 커뮤니티 혼란 포인트 수집, 크로스팩트체크 후 검증된 브리프 생성. Use before /rpd-content-write or /showme to ensure content accuracy.
+description: "리서치", "블렌더 조사", "교안 리서치" 요청 시 호출. 공식 문서 + 커뮤니티 혼란 포인트 수집, 크로스팩트체크 후 검증된 브리프 생성. Use before /rpd-content-write or /showme to ensure content accuracy.
 ---
 
 # RPD Research — 교안 콘텐츠 리서치 스킬
@@ -282,3 +282,8 @@ Phase 3~4는 Phase 1+2 결과에 의존하므로 **순차 실행**.
 | `docs/REFERENCE_RESEARCH_2026-03-15.md` | 교육학 섹션 |
 | `course-site/data/curriculum.js` | 주차별 showme 필드 (week 모드) |
 | `docs/plans/2026-03-17-rpd-research-skill-design.md` | 설계 문서 |
+
+## Gotchas ⚠️
+> Claude가 이 스킬을 쓸 때 실수했던 것들. 새 함정 발견 시 여기에 추가.
+
+1. (아직 없음 — 사용하면서 추가)
