@@ -1,6 +1,6 @@
 ---
 name: clip
-description: 영상 클립 추출 자동화. 예: /clip week 3 001.mov 1:30-3:00 "이미지 불러오기"
+description: "클립 추출", "영상 자르기", "/clip" 요청 시 호출. curriculum.js 연동 영상 클립 추출 자동화. 예: /clip week 3 001.mov 1:30-3:00 "이미지 불러오기"
 user_invocable: true
 ---
 
@@ -61,3 +61,8 @@ clips 배열이 없으면 새로 생성합니다.
 - 클립은 10-120초 범위 권장
 - 파일 크기 10MB 이하 유지 (crf 값 조절)
 - 무음(오디오 제거): `-an` 플래그 필수
+
+## Gotchas ⚠️
+> Claude가 이 스킬을 쓸 때 실수했던 것들. 새 함정 발견 시 여기에 추가.
+
+1. (아직 없음 — 사용하면서 추가)

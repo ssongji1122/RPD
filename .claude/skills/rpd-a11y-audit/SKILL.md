@@ -1,6 +1,6 @@
 ---
 name: rpd-a11y-audit
-description: RPD 수업 사이트 접근성 점검. WCAG 2.1 AA 기준 다크테마 한국어 교육 사이트 감사. Use when checking accessibility, adding ARIA attributes, or fixing keyboard navigation.
+description: "접근성 점검", "a11y", "WCAG 감사" 요청 시 호출. WCAG 2.1 AA 기준 다크테마 한국어 교육 사이트 접근성 감사. Use when checking accessibility, adding ARIA attributes, or fixing keyboard navigation.
 ---
 
 # RPD Accessibility Audit
@@ -129,3 +129,8 @@ description: RPD 수업 사이트 접근성 점검. WCAG 2.1 AA 기준 다크테
 - WCAG 2.1 Quick Reference: https://www.w3.org/WAI/WCAG21/quickref/
 - WebAIM Contrast Checker: https://webaim.org/resources/contrastchecker/
 - `docs/REFERENCE_RESEARCH_2026-03-15.md` (접근성 섹션)
+
+## Gotchas ⚠️
+> Claude가 이 스킬을 쓸 때 실수했던 것들. 새 함정 발견 시 여기에 추가.
+
+1. (아직 없음 — 사용하면서 추가)

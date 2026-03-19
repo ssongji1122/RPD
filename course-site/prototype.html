@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RPD Prototype — Card Dashboard + Rail</title>
+  <link rel="stylesheet" href="assets/tokens.css" />
+  <style>
+    /* ── Reset page-shell for prototype ── */
+    .page-shell::before { display: none; }
+
+    /* ── Layout ── */
+    .app {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      grid-template-rows: auto minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    /* ── Topbar ── */
+    .app-topbar {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: var(--sp-4) var(--sp-6) var(--sp-4) 0;
+      border-bottom: 1px solid var(--line);
+      background: var(--bg);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .app-topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    .app-logo {
+      width: 56px;
+      display: grid;
+      place-items: center;
+      font-size: .8rem;
+      font-weight: 700;
+      color: var(--key-soft);
+      letter-spacing: -.02em;
+      flex-shrink: 0;
+    }
+    .app-title {
+      font-size: var(--text-base);
+      font-weight: var(--fw-semi);
+      letter-spacing: -.01em;
+      padding-left: var(--sp-8);
+    }
+    .app-title span {
+      color: var(--muted);
+      font-weight: var(--fw-normal);
+      margin-left: var(--sp-2);
+    }
+    .app-search {
+      flex: 1;
+      max-width: 400px;
+      padding: var(--sp-3) var(--sp-4);
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--text);
+      font: inherit;
+      font-size: var(--text-sm);
+      outline: none;
+      transition: border-color .14s;
+    }
+    .app-search:focus { border-color: rgba(10,132,255,.4); }
+    .app-search::placeholder { color: var(--muted); }
+    .app-topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ── Side Rail (expandable) ── */
+    .rail {
+      grid-row: 2;
+      width: 56px;
+      border-right: 1px solid var(--line);
+      background: var(--bg);
+      padding: var(--sp-2);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-1);
+      position: sticky;
+      top: 49px;
+      height: calc(100vh - 49px);
+      overflow: visible;
+      transition: width .2s ease;
+      z-index: 40;
+    }
+    .rail.is-expanded {
+      width: 220px;
+      overflow: hidden;
+    }
+    .rail-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      margin: 0 auto;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: color .14s, background .14s, border-color .14s;
+      text-decoration: none;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .rail-item .rail-icon {
+      font-size: 1.25rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .rail-item .rail-text {
+      position: absolute;
+      left: calc(100% + 8px);
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 6px 14px;
+      border-radius: 8px;
+      background: var(--surface-strong, #2a2a2e);
+      border: 1px solid var(--line-strong, #444);
+      box-shadow: 0 4px 16px rgba(0,0,0,.5);
+      width: max-content;
+      font-size: .82rem;
+      font-weight: 500;
+      color: var(--text);
+      pointer-events: none;
+      z-index: 100;
+      opacity: 0;
+      transition: opacity .15s;
+    }
+    .rail-item:hover .rail-text {
+      opacity: 1;
+    }
+    .rail-item:hover {
+      color: var(--text);
+      background: var(--overlay-white-hover);
+    }
+    .rail-item.is-active {
+      color: var(--key-soft);
+      background: rgba(10,132,255,.08);
+      border-color: rgba(10,132,255,.16);
+    }
+    /* 펼침 상태: 인라인 표시 */
+    .rail.is-expanded .rail-item {
+      width: auto;
+      justify-content: flex-start;
+      gap: 10px;
+      padding: 0 12px;
+      margin: 0;
+    }
+    .rail.is-expanded .rail-item .rail-text {
+      position: static;
+      transform: none;
+      padding: 0;
+      border-radius: 0;
+      background: none;
+      border: none;
+      box-shadow: none;
+      opacity: 1;
+      pointer-events: auto;
+    }
+    /* Sub-items (덱 목록 등) */
+    .rail-sub {
+      display: grid;
+      gap: 1px;
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height .2s ease;
+    }
+    .rail.is-expanded .rail-sub {
+      max-height: 200px;
+    }
+    .rail-sub-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px 7px 42px;
+      border-radius: 10px;
+      color: var(--muted);
+      font-size: var(--text-sm);
+      cursor: pointer;
+      transition: color .14s, background .14s;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .rail-sub-item:hover {
+      color: var(--text);
+      background: var(--overlay-white);
+    }
+    .rail-sub-item.is-active {
+      color: var(--key-soft);
+    }
+    .rail-sub-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 999px;
+      background: var(--muted);
+      flex-shrink: 0;
+    }
+    .rail-sub-item.is-active .rail-sub-dot {
+      background: var(--key-soft);
+    }
+    .rail-spacer { flex: 1; }
+    .rail-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      height: 36px;
+      padding: 0 12px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--muted);
+      font-size: .82rem;
+      cursor: pointer;
+      transition: color .14s, background .14s;
+      flex-shrink: 0;
+    }
+    .rail-toggle:hover {
+      color: var(--text);
+      background: var(--overlay-white);
+    }
+    .rail-toggle .rail-text {
+      opacity: 0;
+      transition: opacity .15s;
+      font-size: .78rem;
+      font-weight: 500;
+    }
+    .rail:not(.is-expanded) .rail-toggle .rail-text {
+      position: absolute;
+      left: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      margin-left: 8px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: var(--surface-strong);
+      border: 1px solid var(--line);
+      box-shadow: 0 4px 12px rgba(0,0,0,.3);
+      width: auto;
+      pointer-events: none;
+      z-index: 100;
+    }
+    .rail:not(.is-expanded) .rail-toggle:hover .rail-text {
+      opacity: 1;
+    }
+    .rail.is-expanded .rail-toggle .rail-text {
+      position: static;
+      transform: none;
+      margin-left: 0;
+      padding: 0;
+      border-radius: 0;
+      background: none;
+      border: none;
+      box-shadow: none;
+      opacity: 1;
+    }
+    .rail-toggle-arrow {
+      transition: transform .2s;
+    }
+    .rail.is-expanded .rail-toggle-arrow {
+      transform: rotate(180deg);
+    }
+
+    /* ── Main ── */
+    .main {
+      grid-row: 2;
+      padding: var(--sp-8) var(--sp-8) var(--sp-16);
+      overflow-y: auto;
+    }
+    .main-inner {
+      max-width: 1180px;
+    }
+
+    /* ── Page header ── */
+    .page-header {
+      display: grid;
+      gap: 8px;
+      margin-bottom: var(--sp-8);
+      max-width: 680px;
+    }
+    .page-header h1 {
+      margin: 0;
+      font-size: var(--text-2xl);
+      font-weight: 700;
+      letter-spacing: -.04em;
+      line-height: 1.1;
+    }
+    .page-header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: var(--text-base);
+      line-height: 1.7;
+    }
+
+    /* ── Filter bar (덱 필터 + 인라인 검색) ── */
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+      margin-bottom: var(--sp-8);
+    }
+    .filter-search {
+      flex-shrink: 0;
+      width: 180px;
+      padding: var(--sp-2) var(--sp-4);
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--text);
+      font: inherit;
+      font-size: var(--text-base);
+      outline: none;
+      transition: border-color .14s, width .2s;
+    }
+    .filter-search:focus {
+      border-color: rgba(10,132,255,.4);
+      width: 260px;
+    }
+    .filter-search::placeholder { color: var(--muted); }
+
+    /* ── Deck strip ── */
+    .deck-strip {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      flex: 1;
+      min-width: 0;
+      scrollbar-width: none;
+    }
+    .deck-strip::-webkit-scrollbar { display: none; }
+    .deck-chip {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: var(--sp-2) var(--sp-4);
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--muted-strong);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      cursor: pointer;
+      transition: border-color .14s, color .14s, background .14s;
+      white-space: nowrap;
+    }
+    .deck-chip:hover {
+      border-color: var(--line-strong);
+      color: var(--text);
+    }
+    .deck-chip.is-active {
+      border-color: rgba(10,132,255,.3);
+      background: rgba(10,132,255,.06);
+      color: var(--text);
+    }
+    .deck-chip-icon {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: rgba(10,132,255,.1);
+      color: var(--key-soft);
+      font-size: .8rem;
+    }
+    .deck-chip-add {
+      border-style: dashed;
+      border-color: var(--line-strong);
+      color: var(--muted);
+    }
+    .deck-chip-add:hover {
+      border-color: rgba(10,132,255,.3);
+      color: var(--key-soft);
+    }
+
+    /* ── Section header ── */
+    .sec-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .sec-title {
+      margin: 0;
+      font-size: var(--text-xl);
+      font-weight: var(--fw-semi);
+      letter-spacing: -.02em;
+    }
+    .sec-count {
+      font-size: var(--text-xs);
+      color: var(--muted);
+    }
+    .sec-divider {
+      border: none;
+      border-top: 1px solid var(--line);
+      margin: var(--sp-8) 0;
+    }
+
+    /* ── Card grid ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: var(--sp-4);
+    }
+
+    /* ── Card (compact: icon + title only) ── */
+    .sm-card {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+      padding: var(--sp-4);
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: var(--surface);
+      cursor: pointer;
+      transition: border-color .14s, box-shadow .14s, background .14s;
+    }
+    .sm-card:hover {
+      border-color: rgba(10,132,255,.22);
+      background: var(--surface-strong);
+      box-shadow: 0 4px 16px rgba(0,0,0,.12);
+    }
+    .sm-card-top {
+      display: contents;
+    }
+    .sm-card-icon {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border-radius: var(--radius-sm);
+      background: rgba(10,132,255,.08);
+      border: 1px solid rgba(10,132,255,.12);
+      font-size: var(--text-lg);
+      flex-shrink: 0;
+    }
+    .sm-card-title {
+      margin: 0;
+      font-size: var(--text-base);
+      font-weight: 600;
+      line-height: 1.36;
+      letter-spacing: -.01em;
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    /* 설명/태그: 기본 숨김, hover에서 표시 */
+    .sm-card-desc {
+      display: none;
+    }
+    .sm-card-footer {
+      display: none;
+    }
+    .sm-card-badge {
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--surface-strong);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: .02em;
+    }
+    .sm-card-tag {
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--line);
+      font-size: .66rem;
+      color: var(--muted);
+    }
+    /* Deck indicators on cards — colored left accent bar */
+    .sm-card-decks {
+      display: flex;
+      gap: 3px;
+      margin-left: auto;
+      flex-shrink: 0;
+      align-items: center;
+    }
+    .deck-flag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: .6rem;
+      font-weight: 600;
+      letter-spacing: .02em;
+      white-space: nowrap;
+      background: transparent;
+      color: var(--muted);
+      border: none;
+    }
+    .deck-flag-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      flex-shrink: 0;
+    }
+    /* Deck key colors */
+    .deck-flag[data-color="blue"] .deck-flag-dot,
+    .deck-flag .deck-flag-dot { background: var(--key-soft); }
+    .deck-flag[data-color="green"] .deck-flag-dot { background: #34d399; }
+    .deck-flag[data-color="purple"] .deck-flag-dot { background: #a78bfa; }
+    .deck-flag[data-color="amber"] .deck-flag-dot { background: #fbbf24; }
+    .deck-flag[data-color="rose"] .deck-flag-dot { background: #fb7185; }
+    .deck-flag[data-color="cyan"] .deck-flag-dot { background: #22d3ee; }
+
+    /* Deck chip key colors */
+    .deck-chip[data-color="blue"] { border-color: rgba(10,132,255,.28); }
+    .deck-chip[data-color="blue"].is-active { background: rgba(10,132,255,.06); border-color: rgba(10,132,255,.36); }
+    .deck-chip[data-color="green"] { border-color: rgba(52,211,153,.2); }
+    .deck-chip[data-color="green"].is-active { background: rgba(52,211,153,.06); border-color: rgba(52,211,153,.3); }
+    .deck-chip[data-color="purple"] { border-color: rgba(167,139,250,.2); }
+    .deck-chip[data-color="purple"].is-active { background: rgba(167,139,250,.06); border-color: rgba(167,139,250,.3); }
+    .deck-chip-icon[data-color="blue"] { background: rgba(10,132,255,.12); color: var(--key-soft); }
+    .deck-chip-icon[data-color="green"] { background: rgba(52,211,153,.12); color: #34d399; }
+    .deck-chip-icon[data-color="purple"] { background: rgba(167,139,250,.12); color: #a78bfa; }
+
+    /* ── Shortcuts table with Show Me links ── */
+    .shortcut-section {
+      max-width: 640px;
+    }
+    .shortcut-list {
+      display: grid;
+      gap: 2px;
+    }
+    .shortcut-row {
+      display: grid;
+      grid-template-columns: 100px 1fr auto;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      transition: background .12s;
+    }
+    .shortcut-row:hover {
+      background: var(--overlay-white);
+    }
+    .shortcut-keys {
+      display: flex;
+      gap: 4px;
+    }
+    .shortcut-kbd {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--surface-strong);
+      border: 1px solid var(--line-strong);
+      color: var(--key-soft);
+      font-size: .8rem;
+      font-weight: 600;
+      font-family: var(--font-body);
+      white-space: nowrap;
+    }
+    .shortcut-action {
+      flex: 1;
+      color: var(--muted-strong);
+      font-size: .86rem;
+    }
+    .shortcut-showme {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(10,132,255,.16);
+      background: rgba(10,132,255,.06);
+      color: var(--key-soft);
+      font-size: .7rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .14s, border-color .14s;
+      text-decoration: none;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .shortcut-showme:hover {
+      background: rgba(10,132,255,.12);
+      border-color: rgba(10,132,255,.3);
+    }
+    .shortcut-cat {
+      margin-top: 24px;
+      margin-bottom: 8px;
+    }
+    .shortcut-cat-title {
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ── Deck view (deck.html preview) ── */
+    .deck-view {
+      max-width: 640px;
+    }
+    .deck-view-header {
+      display: grid;
+      gap: 8px;
+      padding-bottom: var(--sp-8);
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 20px;
+    }
+    .deck-view-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: .78rem;
+    }
+    .deck-card-list {
+      display: grid;
+      gap: var(--sp-3);
+    }
+    .deck-card-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: var(--sp-6);
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      transition: border-color .14s;
+      cursor: pointer;
+    }
+    .deck-card-item:hover {
+      border-color: rgba(10,132,255,.2);
+    }
+    .deck-card-num {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      background: var(--surface-strong);
+      border: 1px solid var(--line);
+      color: var(--muted-strong);
+      font-size: .82rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .deck-card-body {
+      flex: 1;
+      min-width: 0;
+    }
+    .deck-card-body strong {
+      display: block;
+      font-size: .9rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .deck-card-note {
+      color: var(--muted);
+      font-size: .8rem;
+      line-height: 1.55;
+    }
+    .deck-card-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--surface-strong);
+      font-size: .68rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+    .deck-card-status.done {
+      border-color: rgba(16,185,129,.2);
+      background: rgba(16,185,129,.06);
+      color: var(--success-soft);
+    }
+
+    /* ── View tabs ── */
+    .view-tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 24px;
+      padding: 3px;
+      border-radius: 12px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      width: fit-content;
+    }
+    .view-tab {
+      padding: 7px 14px;
+      border-radius: 9px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font: inherit;
+      font-size: .8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: color .14s, background .14s;
+    }
+    .view-tab:hover { color: var(--text); }
+    .view-tab.is-active {
+      background: rgba(10,132,255,.1);
+      color: var(--key-soft);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 720px) {
+      .app {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto minmax(0, 1fr) 56px;
+      }
+      /* 모바일 탑바: 검색 중심, 로고 최소화 */
+      .app-topbar {
+        padding: var(--sp-2) var(--sp-3);
+        gap: var(--sp-2);
+      }
+      .app-logo {
+        width: 32px;
+        font-size: .7rem;
+      }
+      .app-title { display: none; }
+      .app-search {
+        flex: 1;
+        max-width: none;
+        padding: var(--sp-2) var(--sp-3);
+        font-size: var(--text-sm);
+      }
+      /* 하단 탭바 */
+      .rail {
+        grid-row: 3;
+        width: 100% !important;
+        height: 64px;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+        border-right: none;
+        border-top: 1px solid var(--line);
+        padding: 0 var(--sp-2);
+        padding-bottom: env(safe-area-inset-bottom, 0);
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        z-index: 50;
+        background: var(--bg);
+      }
+      .rail.is-expanded { width: 100% !important; }
+      .rail-spacer,
+      .rail-sub,
+      .rail-toggle { display: none !important; }
+      .rail-item {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: auto;
+        height: auto;
+        min-height: auto;
+        gap: 2px;
+        padding: var(--sp-2) 0;
+        margin: 0;
+        border: none !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+      }
+      .rail-item.is-active {
+        background: transparent !important;
+        border: none !important;
+        color: var(--key-soft);
+      }
+      .rail-item:hover {
+        background: transparent !important;
+      }
+      .rail-item .rail-text {
+        display: block !important;
+        opacity: 1 !important;
+        position: static !important;
+        transform: none !important;
+        padding: 0 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        background: none !important;
+        box-shadow: none !important;
+        width: auto !important;
+        pointer-events: auto !important;
+        font-size: .58rem;
+        font-weight: 500;
+        color: inherit;
+        letter-spacing: .01em;
+      }
+      .rail-item .rail-icon {
+        font-size: 1.15rem;
+        width: 24px;
+        height: 24px;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+      }
+      .main {
+        padding: var(--sp-4) var(--sp-4) 80px;
+      }
+      /* 페이지 헤더 축소 */
+      .page-header h1 {
+        font-size: 1.4rem;
+      }
+      .page-header p {
+        font-size: .84rem;
+      }
+      /* 필터 바 모바일 */
+      .filter-bar {
+        flex-direction: column;
+        gap: var(--sp-2);
+        padding: var(--sp-2) 0;
+      }
+      .filter-search {
+        width: 100%;
+        order: -1;
+      }
+      .filter-search:focus {
+        width: 100%;
+      }
+      .deck-strip {
+        width: 100%;
+      }
+      .deck-chip {
+        padding: 7px 10px;
+        font-size: .76rem;
+      }
+      /* 모바일: 카드 리스트 뷰 */
+      .card-grid {
+        grid-template-columns: 1fr;
+        gap: 6px;
+      }
+      .sm-card {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 14px;
+        min-height: auto;
+        border-radius: 12px;
+      }
+      .sm-card:hover {
+        transform: none;
+      }
+      .sm-card-icon {
+        width: 36px;
+        height: 36px;
+        flex-shrink: 0;
+        font-size: .88rem;
+      }
+      .sm-card-top {
+        display: contents;
+      }
+      .sm-card-badge {
+        order: 3;
+        margin-left: auto;
+      }
+      .sm-card-title {
+        font-size: .84rem;
+        flex: 1;
+        min-width: 0;
+      }
+      .sm-card-desc {
+        display: none;
+      }
+      .sm-card-footer {
+        display: none;
+      }
+      .sm-card-decks {
+        display: flex;
+        flex-wrap: nowrap;
+        order: 3;
+        margin: 0;
+        margin-left: auto;
+        gap: 3px;
+        flex-shrink: 0;
+      }
+      .deck-flag {
+        font-size: .58rem;
+        padding: 2px 6px;
+      }
+      /* 섹션 헤드 */
+      .sec-head {
+        margin-bottom: 10px;
+      }
+      .sec-title {
+        font-size: .94rem;
+      }
+      .sec-divider {
+        margin: 24px 0;
+      }
+      /* 단축키 뷰 모바일 */
+      .shortcut-row {
+        padding: 8px 10px;
+        gap: 10px;
+      }
+      .shortcut-keys {
+        min-width: 72px;
+      }
+      .shortcut-kbd {
+        font-size: .72rem;
+        padding: 2px 6px;
+      }
+      .shortcut-action {
+        font-size: .8rem;
+      }
+      .shortcut-showme {
+        font-size: .64rem;
+        padding: 3px 8px;
+      }
+    }
+
+    /* ── Utility ── */
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ── Topbar ── -->
+  <header class="app-topbar">
+    <div class="app-topbar-left">
+      <div class="app-logo">BA</div>
+      <div class="app-title">Blender Archive <span>RPD</span></div>
+    </div>
+    <input class="app-search" type="search" placeholder="카드 검색... (Extrude, Boolean, UV...)" />
+    <div class="app-topbar-right">
+      <button class="theme-toggle" onclick="document.documentElement.setAttribute('data-theme', document.documentElement.getAttribute('data-theme')==='light'?'dark':'light')">
+        <span class="icon-sun">&#9788;</span>
+        <span class="icon-moon">&#9790;</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ── Side Rail (expandable) ── -->
+  <nav class="rail" id="sideRail" aria-label="메인 탐색">
+    <a href="#" class="rail-item is-active" onclick="showView('home',event);return false">
+      <span class="rail-icon">&#9751;</span>
+      <span class="rail-text">홈</span>
+    </a>
+    <a href="#" class="rail-item" onclick="showView('decks',event);return false">
+      <span class="rail-icon">&#9776;</span>
+      <span class="rail-text">내 덱</span>
+    </a>
+    <div class="rail-sub">
+      <a href="#" class="rail-sub-item is-active"><span class="rail-sub-dot"></span>Week 3: 모델링 기초</a>
+      <a href="#" class="rail-sub-item"><span class="rail-sub-dot"></span>Week 6: Material</a>
+      <a href="#" class="rail-sub-item"><span class="rail-sub-dot"></span>내 UV 복습 덱</a>
+      <a href="#" class="rail-sub-item" style="color:var(--key-soft)">+ 새 덱</a>
+    </div>
+    <a href="#" class="rail-item" onclick="showView('library',event);return false">
+      <span class="rail-icon">&#128269;</span>
+      <span class="rail-text">카드 찾기</span>
+    </a>
+    <a href="#" class="rail-item" onclick="showView('shortcuts',event);return false">
+      <span class="rail-icon">&#9000;</span>
+      <span class="rail-text">단축키</span>
+    </a>
+    <div class="rail-spacer"></div>
+    <a href="#" class="rail-item">
+      <span class="rail-icon">&#9881;</span>
+      <span class="rail-text">설정</span>
+    </a>
+    <button class="rail-toggle" onclick="document.getElementById('sideRail').classList.toggle('is-expanded')">
+      <span class="rail-toggle-arrow">&#9654;</span>
+      <span class="rail-text">접기</span>
+    </button>
+  </nav>
+
+  <!-- ── Main Content ── -->
+  <main class="main" id="mainContent">
+   <div class="main-inner">
+
+    <!-- === HOME VIEW === -->
+    <div id="view-home">
+      <div class="page-header">
+        <h1>카드 탐색</h1>
+        <p>카드를 훑어보고, 덱에 추가하세요.</p>
+      </div>
+
+      <!-- 필터 + 검색 통합 바 -->
+      <div class="filter-bar">
+        <div class="deck-strip">
+          <div class="deck-chip is-active" onclick="filterDeck('all',this)">전체</div>
+          <div class="deck-chip" data-color="blue" onclick="filterDeck('w3',this)">
+            <div class="deck-chip-icon" data-color="blue">3</div>W3 모델링
+          </div>
+          <div class="deck-chip" data-color="green" onclick="filterDeck('w6',this)">
+            <div class="deck-chip-icon" data-color="green">6</div>W6 Material
+          </div>
+          <div class="deck-chip" data-color="purple" onclick="filterDeck('uv',this)">
+            <div class="deck-chip-icon" data-color="purple">&#9733;</div>UV 복습
+          </div>
+          <div class="deck-chip deck-chip-add">+ 새 덱</div>
+        </div>
+        <input class="filter-search" type="search" placeholder="카드 검색..." oninput="searchCards(this.value)" />
+      </div>
+
+      <!-- 카드 섹션: Edit Mode -->
+      <div class="sec-head">
+        <h2 class="sec-title">Edit Mode Tools</h2>
+        <span class="sec-count">5개 카드</span>
+      </div>
+      <div class="card-grid">
+        <div class="sm-card" data-decks="w3,uv">
+          <div class="sm-card-top">
+            <div class="sm-card-icon">&#128208;</div>
+          </div>
+          <h3 class="sm-card-title">Extrude 작동 원리</h3>
+          <div class="sm-card-decks">
+            <span class="deck-flag"><span class="deck-flag-dot"></span>W3</span>
+            <span class="deck-flag"><span class="deck-flag-dot"></span>UV</span>
+          </div>
+        </div>
+        <div class="sm-card" data-decks="w3">
+          <div class="sm-card-top">
+            <div class="sm-card-icon">&#128298;</div>
+          </div>
+          <h3 class="sm-card-title">Loop Cut 이해</h3>
+          <div class="sm-card-decks">
+            <span class="deck-flag"><span class="deck-flag-dot"></span>W3</span>
+          </div>
+        </div>
+        <div class="sm-card" data-decks="">
+          <div class="sm-card-top">
+            <div class="sm-card-icon">&#11036;</div>
+          </div>
+          <h3 class="sm-card-title">Inset 작동 원리</h3>
+        </div>
+        <div class="sm-card" data-decks="w3,w6">
+          <div class="sm-card-top">
+            <div class="sm-card-icon">&#128295;</div>
+          </div>
+          <h3 class="sm-card-title">Bevel Tool 이해</h3>
+          <div class="sm-card-decks">
+            <span class="deck-flag"><span class="deck-flag-dot"></span>W3</span>
+            <span class="deck-flag"><span class="deck-flag-dot"></span>W6</span>
+          </div>
+        </div>
+        <div class="sm-card" data-decks="">
+          <div class="sm-card-top">
+            <div class="sm-card-icon">&#128736;</div>
+          </div>
+          <h3 class="sm-card-title">Edit Mode 도구 전체</h3>
+        </div>
+      </div>
+
+      <hr class="sec-divider" />
+
+      <!-- 카드 섹션: Modifiers -->
+      <div class="sec-head">
+        <h2 class="sec-title">Generate Modifiers</h2>
+        <span class="sec-count">12개 카드</span>
+      </div>
+      <div class="card-grid">
+        <div class="sm-card" data-decks="w3">
+          <div class="sm-card-top"><div class="sm-card-icon">&#128257;</div></div>
+          <h3 class="sm-card-title">Array Modifier</h3>
+          <div class="sm-card-decks"><span class="deck-flag"><span class="deck-flag-dot"></span>W3</span></div>
+        </div>
+        <div class="sm-card" data-decks="w3">
+          <div class="sm-card-top"><div class="sm-card-icon">&#9986;</div></div>
+          <h3 class="sm-card-title">Boolean 작동 원리</h3>
+          <div class="sm-card-decks"><span class="deck-flag"><span class="deck-flag-dot"></span>W3</span></div>
+        </div>
+        <div class="sm-card" data-decks="w3">
+          <div class="sm-card-top"><div class="sm-card-icon">&#129526;</div></div>
+          <h3 class="sm-card-title">Mirror Modifier</h3>
+          <div class="sm-card-decks"><span class="deck-flag"><span class="deck-flag-dot"></span>W3</span></div>
+        </div>
+        <div class="sm-card" data-decks="">
+          <div class="sm-card-top"><div class="sm-card-icon">&#129531;</div></div>
+          <h3 class="sm-card-title">Subdivision Surface</h3>
+        </div>
+        <div class="sm-card" data-decks="">
+          <div class="sm-card-top"><div class="sm-card-icon">&#128230;</div></div>
+          <h3 class="sm-card-title">Solidify 이해</h3>
+        </div>
+        <div class="sm-card" data-decks="">
+          <div class="sm-card-top"><div class="sm-card-icon">&#128310;</div></div>
+          <h3 class="sm-card-title">Bevel Modifier</h3>
+        </div>
+      </div>
+
+      <hr class="sec-divider" />
+
+      <!-- 카드 섹션: Material & Shader -->
+      <div class="sec-head">
+        <h2 class="sec-title">Material &amp; Shader</h2>
+        <span class="sec-count">3개 카드</span>
+      </div>
+      <div class="card-grid">
+        <div class="sm-card" data-decks="w6">
+          <div class="sm-card-top"><div class="sm-card-icon">&#127912;</div></div>
+          <h3 class="sm-card-title">Material 시스템 기초</h3>
+          <div class="sm-card-decks"><span class="deck-flag"><span class="deck-flag-dot"></span>W6</span></div>
+        </div>
+        <div class="sm-card" data-decks="w6">
+          <div class="sm-card-top"><div class="sm-card-icon">&#127917;</div></div>
+          <h3 class="sm-card-title">Principled BSDF</h3>
+          <div class="sm-card-decks"><span class="deck-flag"><span class="deck-flag-dot"></span>W6</span></div>
+        </div>
+        <div class="sm-card" data-decks="w6">
+          <div class="sm-card-top"><div class="sm-card-icon">&#128268;</div></div>
+          <h3 class="sm-card-title">Shader Editor</h3>
+          <div class="sm-card-decks"><span class="deck-flag"><span class="deck-flag-dot"></span>W6</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- === DECK VIEW (preview) === -->
+    <div id="view-decks" class="hidden">
+      <div class="view-tabs">
+        <button class="view-tab is-active">내 덱</button>
+        <button class="view-tab">프리셋 (인하대 RPD)</button>
+      </div>
+
+      <div class="deck-view">
+        <div class="deck-view-header">
+          <h1 style="font-size:1.5rem; margin:0; font-weight:700; letter-spacing:-.03em;">Week 3: 모델링 기초</h1>
+          <div class="deck-view-meta">
+            <span>카드 4장</span>
+            <span>&middot;</span>
+            <span>by 송지</span>
+            <span>&middot;</span>
+            <span>진행 1/4</span>
+          </div>
+        </div>
+
+        <div class="deck-card-list">
+          <div class="deck-card-item">
+            <div class="deck-card-num">1</div>
+            <div class="deck-card-body">
+              <strong>&#128208; Extrude 작동 원리</strong>
+              <div class="deck-card-note">꼭 따라해보세요 — E키로 면을 밀어낸 뒤 바로 S로 스케일 조절해보기</div>
+            </div>
+            <div class="deck-card-status done">&#10003; 완료</div>
+          </div>
+          <div class="deck-card-item">
+            <div class="deck-card-num">2</div>
+            <div class="deck-card-body">
+              <strong>&#128298; Loop Cut 이해</strong>
+              <div class="deck-card-note">Ctrl+R로 루프컷 추가, 마우스 휠로 분할 수 조절</div>
+            </div>
+            <div class="deck-card-status">진행 중</div>
+          </div>
+          <div class="deck-card-item">
+            <div class="deck-card-num">3</div>
+            <div class="deck-card-body">
+              <strong>&#128295; Bevel Tool 이해</strong>
+              <div class="deck-card-note">Ctrl+B로 베벨, 마우스 휠로 세그먼트 조절</div>
+            </div>
+            <div class="deck-card-status">대기</div>
+          </div>
+          <div class="deck-card-item">
+            <div class="deck-card-num">4</div>
+            <div class="deck-card-body">
+              <strong>&#9986; Boolean 작동 원리</strong>
+              <div class="deck-card-note">Union vs Difference 차이에 주목해서 실습</div>
+            </div>
+            <div class="deck-card-status">대기</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- === LIBRARY VIEW === -->
+    <div id="view-library" class="hidden">
+      <div class="page-header">
+        <h1>카드 라이브러리</h1>
+        <p>Blender의 모든 도구와 개념을 Show Me 카드로 탐색하세요. 카드를 클릭하면 덱에 추가할 수 있습니다.</p>
+      </div>
+      <div class="view-tabs" style="margin-bottom:20px;">
+        <button class="view-tab is-active">전체</button>
+        <button class="view-tab">Edit Mode</button>
+        <button class="view-tab">Modifiers</button>
+        <button class="view-tab">Material</button>
+        <button class="view-tab">UV</button>
+        <button class="view-tab">Light</button>
+        <button class="view-tab">Animation</button>
+      </div>
+      <p style="color:var(--muted); font-size:.86rem;">(카테고리별 탐색 + 덱에 추가 기능)</p>
+    </div>
+
+    <!-- === SHORTCUTS VIEW === -->
+    <div id="view-shortcuts" class="hidden">
+      <div class="page-header">
+        <h1>단축키</h1>
+        <p>Blender 핵심 단축키를 검색하고, Show Me 카드가 있는 기능은 바로 학습할 수 있습니다.</p>
+      </div>
+
+      <div class="shortcut-section">
+      <input class="app-search" type="search" placeholder="단축키 검색... (Ctrl+B, Extrude, 베벨...)" style="max-width:480px; margin-bottom:24px;" />
+
+      <div class="shortcut-cat">
+        <span class="shortcut-cat-title">General</span>
+      </div>
+      <div class="shortcut-list">
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><span class="shortcut-kbd">Tab</span></div>
+          <span class="shortcut-action">Edit Mode 전환</span>
+          <a href="#" class="shortcut-showme">&#128214; Show Me &rarr;</a>
+        </div>
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><span class="shortcut-kbd">G</span></div>
+          <span class="shortcut-action">이동 (Grab)</span>
+          <a href="#" class="shortcut-showme">&#128214; Show Me &rarr;</a>
+        </div>
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><span class="shortcut-kbd">R</span></div>
+          <span class="shortcut-action">회전 (Rotate)</span>
+          <a href="#" class="shortcut-showme">&#128214; Show Me &rarr;</a>
+        </div>
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><span class="shortcut-kbd">S</span></div>
+          <span class="shortcut-action">크기 (Scale)</span>
+          <a href="#" class="shortcut-showme">&#128214; Show Me &rarr;</a>
+        </div>
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><span class="shortcut-kbd">Ctrl</span><span class="shortcut-kbd">S</span></div>
+          <span class="shortcut-action">파일 저장</span>
+        </div>
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><span class="shortcut-kbd">Ctrl</span><span class="shortcut-kbd">Z</span></div>
+          <span class="shortcut-action">실행 취소</span>
+        </div>
+      </div>
+
+      <div class="shortcut-cat">
+        <span class="shortcut-cat-title">Edit Mode</span>
+      </div>
+      <div class="shortcut-list">
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><span class="shortcut-kbd">E</span></div>
+          <span class="shortcut-action">Extrude</span>
+          <a href="#" class="shortcut-showme">&#128214; Show Me &rarr;</a>
+        </div>
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><span class="shortcut-kbd">Ctrl</span><span class="shortcut-kbd">R</span></div>
+          <span class="shortcut-action">Loop Cut</span>
+          <a href="#" class="shortcut-showme">&#128214; Show Me &rarr;</a>
+        </div>
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><span class="shortcut-kbd">I</span></div>
+          <span class="shortcut-action">Inset</span>
+          <a href="#" class="shortcut-showme">&#128214; Show Me &rarr;</a>
+        </div>
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><span class="shortcut-kbd">Ctrl</span><span class="shortcut-kbd">B</span></div>
+          <span class="shortcut-action">Bevel</span>
+          <a href="#" class="shortcut-showme">&#128214; Show Me &rarr;</a>
+        </div>
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><span class="shortcut-kbd">M</span></div>
+          <span class="shortcut-action">Merge</span>
+        </div>
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><span class="shortcut-kbd">F</span></div>
+          <span class="shortcut-action">Fill (면 채우기)</span>
+        </div>
+      </div>
+
+      <div class="shortcut-cat">
+        <span class="shortcut-cat-title">Viewport</span>
+      </div>
+      <div class="shortcut-list">
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><span class="shortcut-kbd">Z</span></div>
+          <span class="shortcut-action">Shading Pie Menu</span>
+          <a href="#" class="shortcut-showme">&#128214; Show Me &rarr;</a>
+        </div>
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><span class="shortcut-kbd">Alt</span><span class="shortcut-kbd">Z</span></div>
+          <span class="shortcut-action">X-Ray 토글</span>
+          <a href="#" class="shortcut-showme">&#128214; Show Me &rarr;</a>
+        </div>
+        <div class="shortcut-row">
+          <div class="shortcut-keys"><span class="shortcut-kbd">Numpad .</span></div>
+          <span class="shortcut-action">선택 오브젝트에 포커스</span>
+        </div>
+      </div>
+      </div><!-- .shortcut-section -->
+    </div>
+
+   </div><!-- .main-inner -->
+  </main>
+</div>
+
+<script>
+function showView(name, e) {
+  document.querySelectorAll('[id^="view-"]').forEach(function(el) {
+    el.classList.add('hidden');
+  });
+  document.getElementById('view-' + name).classList.remove('hidden');
+  document.querySelectorAll('.rail-item').forEach(function(el) {
+    el.classList.remove('is-active');
+  });
+  if (e && e.currentTarget) e.currentTarget.classList.add('is-active');
+  if (name === 'decks') {
+    document.documentElement.setAttribute('data-mode', 'learn');
+  } else {
+    document.documentElement.removeAttribute('data-mode');
+  }
+}
+
+function searchCards(query) {
+  var q = query.toLowerCase().trim();
+  document.querySelectorAll('.sm-card').forEach(function(card) {
+    var title = (card.querySelector('.sm-card-title') || {}).textContent || '';
+    card.style.display = (!q || title.toLowerCase().indexOf(q) !== -1) ? '' : 'none';
+  });
+}
+
+function filterDeck(deck, el) {
+  // Update active chip
+  document.querySelectorAll('.deck-chip').forEach(function(c) {
+    c.classList.remove('is-active');
+  });
+  el.classList.add('is-active');
+
+  // Filter cards
+  document.querySelectorAll('.sm-card').forEach(function(card) {
+    if (deck === 'all') {
+      card.style.display = '';
+      return;
+    }
+    var decks = card.getAttribute('data-decks') || '';
+    card.style.display = decks.indexOf(deck) !== -1 ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>
