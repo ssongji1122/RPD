@@ -210,6 +210,26 @@
   --shadow-card: none;
 }
 
+/* ─── Learning mode (warm tone) ──────────────────── */
+[data-mode="learn"] {
+  --bg:             #0D0B09;
+  --bg-soft:        #100E0B;
+  --surface:        #141210;
+  --surface-strong: #1C1A17;
+  --surface-alt:    #121009;
+  --text:           #F0EDE8;
+  --muted:          #9C9590;
+  --muted-strong:   #D4CFC8;
+  --body-bg: linear-gradient(180deg, #0D0B09 0%, #100E0C 100%);
+  --topbar-bg: rgba(13, 11, 9, .9);
+
+  /* Learning mode typography: base+ offset +2px */
+  --text-base: 1rem;      /* 16px */
+  --text-lg:   1.25rem;   /* 20px */
+  --text-xl:   1.5rem;    /* 24px */
+  --text-2xl:  2rem;      /* 32px */
+}
+
 /* ─── Reset ─────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
