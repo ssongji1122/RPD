@@ -7,11 +7,12 @@
 
 :root {
   /* Colors — Dark (default) */
-  --bg:            #0a0a0a;
-  --bg-soft:       #101113;
-  --surface:       #141517;
-  --surface-strong:#191b1e;
-  --surface-alt:   #111214;
+  /* 3-layer background system (Vercel) */
+  --bg:             #0A0A0A;  /* Layer 0: deepest background */
+  --surface:        #111111;  /* Layer 1: card/panel surface */
+  --surface-strong: #1A1A1A;  /* Layer 2: hover, selected */
+  --bg-soft:        #0E0E0E;  /* Layer 0.5 */
+  --surface-alt:    #151515;  /* Layer 1.5 */
   --surface-tint:  rgba(255, 255, 255, 0.03);
   --line:          rgba(255, 255, 255, 0.08);
   --line-strong:   rgba(255, 255, 255, 0.14);
