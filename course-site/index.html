@@ -12,6 +12,7 @@
   <script>/* FOUC prevention */ (function(){var t=localStorage.getItem('rpd-theme');if(t)document.documentElement.setAttribute('data-theme',t);var l=localStorage.getItem('rpd-lang');if(l){document.documentElement.lang=l;document.documentElement.setAttribute('data-lang',l);}})()</script>
 </head>
 <body>
+  <a href="#main-content" class="skip-link">본문으로 건너뛰기</a>
   <div class="page-shell">
 
     <!-- Topbar -->
@@ -42,7 +43,7 @@
           <strong class="index-sidebar-title" id="sideTitle">Blender Archive</strong>
           <span class="index-sidebar-meta" id="sideMeta">2026 Spring · 15주</span>
         </div>
-        <nav class="index-sidebar-block">
+        <nav class="index-sidebar-block" aria-label="페이지 내 탐색">
           <a class="index-sidebar-link" href="#heroSection" id="sideHeroLink">Blender Archive</a>
           <a class="index-sidebar-link" href="#archiveSection" id="sideArchiveLink">아카이브</a>
           <a class="index-sidebar-link" href="#programSection" id="sideProgramLink">수업 컬렉션</a>
@@ -54,7 +55,7 @@
         </div>
       </aside>
 
-      <main class="index-main">
+      <main class="index-main" id="main-content">
         <!-- Hero -->
         <section class="hero" id="heroSection">
           <div class="hero-card">
