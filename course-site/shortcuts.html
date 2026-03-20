@@ -12,6 +12,7 @@
   <script>/* FOUC prevention */ (function(){var t=localStorage.getItem('rpd-theme');if(t)document.documentElement.setAttribute('data-theme',t);var l=localStorage.getItem('rpd-lang');if(l){document.documentElement.lang=l;document.documentElement.setAttribute('data-lang',l);}})()</script>
 </head>
 <body>
+  <a href="#main-content" class="skip-link">본문으로 건너뛰기</a>
   <div class="page-shell">
 
     <!-- Topbar -->
@@ -32,7 +33,7 @@
     </header>
 
     <!-- Hero -->
-    <section class="hero">
+    <section class="hero" id="main-content">
       <div class="hero-card rpd-glass-panel">
         <div class="eyebrow" id="heroEyebrow">Blender Shortcuts</div>
         <h1 id="heroTitle">단축키 DB</h1>
