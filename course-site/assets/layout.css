@@ -1,0 +1,298 @@
+/* =====================================================================
+   course-site/assets/layout.css
+   공통 레이아웃 셸 — topbar + rail + main grid
+   tokens.css + components.css 다음, page-*.css 이전에 로드
+   ===================================================================== */
+
+/* ── App grid ── */
+.app {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+/* ── Topbar ── */
+.app-topbar {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 20px 10px 0;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.app-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.app-logo {
+  width: 56px;
+  display: grid;
+  place-items: center;
+  font-size: .8rem;
+  font-weight: var(--fw-bold);
+  color: var(--key-soft);
+  letter-spacing: -.02em;
+}
+.app-title {
+  font-size: .88rem;
+  font-weight: var(--fw-semi);
+  letter-spacing: -.01em;
+}
+.app-title span {
+  color: var(--muted);
+  font-weight: var(--fw-normal);
+  margin-left: 6px;
+}
+.app-search {
+  flex: 1;
+  max-width: 400px;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: .84rem;
+  outline: none;
+  transition: border-color .14s;
+}
+.app-search:focus { border-color: var(--key-border); }
+.app-search::placeholder { color: var(--muted); }
+.app-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Side Rail (expandable) ── */
+.rail {
+  grid-row: 2;
+  width: 56px;
+  border-right: 1px solid var(--line);
+  background: var(--bg);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  position: sticky;
+  top: 49px;
+  height: calc(100vh - 49px);
+  overflow: hidden;
+  transition: width .2s ease;
+  z-index: 40;
+}
+.rail.is-expanded {
+  width: 220px;
+}
+
+/* Rail items */
+.rail-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 40px;
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: color .14s, background .14s, border-color .14s;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.rail-item .rail-icon {
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.rail-item .rail-text {
+  font-size: .82rem;
+  font-weight: var(--fw-medium);
+  opacity: 0;
+  transition: opacity .15s;
+  overflow: hidden;
+}
+.rail.is-expanded .rail-item .rail-text {
+  opacity: 1;
+}
+.rail-item:hover {
+  color: var(--text);
+  background: var(--overlay-white-hover);
+}
+.rail-item.is-active {
+  color: var(--key-soft);
+  background: var(--glass-accent);
+  border-color: var(--glass-accent-strong);
+}
+
+/* Sub-items (deck sublist) */
+.rail-sub {
+  display: grid;
+  gap: 1px;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height .2s ease;
+}
+.rail.is-expanded .rail-sub {
+  max-height: 200px;
+}
+.rail-sub-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px 7px 42px;
+  border-radius: var(--radius-sm);
+  color: var(--muted);
+  font-size: .78rem;
+  cursor: pointer;
+  transition: color .14s, background .14s;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.rail-sub-item:hover {
+  color: var(--text);
+  background: var(--overlay-white);
+}
+.rail-sub-item.is-active {
+  color: var(--key-soft);
+}
+.rail-sub-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: var(--radius-pill);
+  background: var(--muted);
+  flex-shrink: 0;
+}
+.rail-sub-item.is-active .rail-sub-dot {
+  background: var(--key-soft);
+}
+
+/* Rail spacer & toggle */
+.rail-spacer { flex: 1; }
+.rail-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 36px;
+  padding: 0 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  font-size: .82rem;
+  cursor: pointer;
+  transition: color .14s, background .14s;
+  flex-shrink: 0;
+}
+.rail-toggle:hover {
+  color: var(--text);
+  background: var(--overlay-white);
+}
+.rail-toggle .rail-text {
+  opacity: 0;
+  transition: opacity .15s;
+  font-size: .76rem;
+  font-weight: var(--fw-medium);
+}
+.rail.is-expanded .rail-toggle .rail-text {
+  opacity: 1;
+}
+.rail-toggle-arrow {
+  transition: transform .2s;
+}
+.rail.is-expanded .rail-toggle-arrow {
+  transform: rotate(180deg);
+}
+
+/* ── Main content area ── */
+.main {
+  grid-row: 2;
+  padding: 24px 28px 64px;
+  overflow-y: auto;
+}
+.main-inner {
+  max-width: 1180px;
+}
+
+/* ── Override page-shell grid overlay when .app is used ── */
+.app .page-shell::before,
+.app.page-shell::before { display: none; }
+
+/* ── Mobile (<=720px) ── */
+@media (max-width: 720px) {
+  .app {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr) 56px;
+  }
+
+  /* Topbar: search-centric, minimal logo */
+  .app-topbar {
+    padding: 8px 12px;
+    gap: 10px;
+  }
+  .app-logo {
+    width: 32px;
+    font-size: .7rem;
+  }
+  .app-title { display: none; }
+  .app-search {
+    flex: 1;
+    max-width: none;
+    padding: 9px 12px;
+    font-size: .82rem;
+  }
+
+  /* Bottom tabbar */
+  .rail {
+    grid-row: 3;
+    width: 100% !important;
+    height: 56px;
+    flex-direction: row;
+    justify-content: space-around;
+    border-right: none;
+    border-top: 1px solid var(--line);
+    padding: 0 8px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 50;
+  }
+  .rail.is-expanded { width: 100% !important; }
+  .rail-spacer,
+  .rail-sub,
+  .rail-toggle { display: none !important; }
+  .rail-item {
+    flex-direction: column;
+    gap: 2px;
+    padding: 6px 0;
+    height: auto;
+    min-height: auto;
+    font-size: .92rem;
+  }
+  .rail-item .rail-text {
+    display: block !important;
+    opacity: 1 !important;
+    font-size: .6rem;
+    color: inherit;
+  }
+  .rail-item .rail-icon {
+    font-size: 1rem;
+  }
+
+  /* Main padding adjusted for bottom tabbar */
+  .main {
+    padding: 20px 16px 80px;
+  }
+}
