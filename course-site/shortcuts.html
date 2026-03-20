@@ -7,506 +7,43 @@
   <meta name="description" content="Blender 단축키 전체 검색 — Robot Product Design" />
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
   <link rel="stylesheet" href="assets/tokens.css" />
-  <script>/* FOUC prevention */ (function(){var t=localStorage.getItem('rpd-theme');if(t)document.documentElement.setAttribute('data-theme',t);var l=localStorage.getItem('rpd-lang');if(l){document.documentElement.lang=l;document.documentElement.setAttribute('data-lang',l);}})()</script>
-  <style>
-    .shortcuts-page {
-      --shortcuts-shell-radius: 26px;
-      --shortcuts-card-radius: 20px;
-      --shortcuts-chip-radius: var(--pill-radius);
-      --shortcuts-control-radius: var(--pill-radius);
-      --shortcuts-accent: #2f7489;
-      --shortcuts-accent-strong: #255f70;
-      --shortcuts-accent-soft: #d3edf4;
-      --shortcuts-accent-rgb: 47, 116, 137;
-      --shortcuts-panel-bg: var(--modal-panel-bg);
-      --shortcuts-panel-soft-bg:
-        linear-gradient(180deg, rgba(255,255,255,.02), transparent 72%),
-        rgba(255,255,255,.014);
-      --shortcuts-panel-strong-bg:
-        linear-gradient(180deg, rgba(255,255,255,.034), transparent 72%),
-        rgba(255,255,255,.02);
-      --shortcuts-top-line: linear-gradient(90deg, transparent, rgba(var(--shortcuts-accent-rgb), .18), transparent);
-    }
-    .shortcuts-page .topbar .btn,
-    .shortcuts-page .theme-toggle,
-    .shortcuts-page #langSwitcher .lang-switcher {
-      border-radius: var(--shortcuts-control-radius);
-    }
-    .shortcuts-brand {
-      max-width: 316px;
-    }
-    .shortcuts-brand strong {
-      letter-spacing: -.02em;
-    }
-    .shortcuts-brand .topbar-meta {
-      color: var(--muted);
-    }
-    .shortcuts-page .topbar .btn-primary {
-      border-color: rgba(var(--shortcuts-accent-rgb), .46);
-      background: rgba(255,255,255,.03);
-      color: #f7fbfc;
-      box-shadow:
-        inset 0 0 0 1px rgba(var(--shortcuts-accent-rgb), .12),
-        0 10px 20px rgba(0,0,0,.14);
-    }
-    .shortcuts-topbar-inner.rpd-topbar-3col {
-      grid-template-columns: auto minmax(0, 1fr) auto;
-      gap: 18px;
-    }
-    .hero {
-      padding: 24px 0 14px;
-      text-align: left;
-    }
-    .hero-card {
-      position: relative;
-      grid-template-columns: minmax(0, 1fr) minmax(210px, .56fr);
-      align-items: start;
-      width: 100%;
-      border-radius: var(--shortcuts-shell-radius);
-      border: 1px solid var(--line);
-      background: var(--shortcuts-panel-bg);
-      box-shadow: var(--modal-panel-shadow);
-      overflow: hidden;
-      isolation: isolate;
-    }
-    .hero-card::before {
-      content: "";
-      position: absolute;
-      inset: 0 0 auto;
-      height: 1px;
-      background: var(--shortcuts-top-line);
-      pointer-events: none;
-    }
-    .hero-copy,
-    .hero-meta-wrap {
-      position: relative;
-      z-index: 1;
-    }
-    .hero h1 {
-      max-width: 14ch;
-      text-wrap: balance;
-    }
-    .hero p {
-      max-width: 54ch;
-    }
-    .hero-meta-wrap {
-      background: var(--modal-panel-soft-bg);
-    }
-    .hero-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .shortcuts-page .topbar .btn-primary:hover {
-      border-color: rgba(var(--shortcuts-accent-rgb), .58);
-      background:
-        linear-gradient(180deg, rgba(var(--shortcuts-accent-rgb), .08), rgba(255,255,255,.02)),
-        rgba(255,255,255,.04);
-    }
-
-    /* Search bar */
-    .search-wrap {
-      position: sticky; top: 60px; z-index: 40;
-      padding: 10px 0 16px;
-      background: linear-gradient(180deg, rgba(10,10,10,.92), rgba(10,10,10,.72));
-      backdrop-filter: blur(18px);
-    }
-    .search-inner {
-      width: min(var(--max-width), calc(100% - 32px));
-      margin: 0 auto;
-      display: grid;
-      gap: 10px;
-      padding: 16px;
-      border-radius: var(--shortcuts-shell-radius);
-      border: 1px solid var(--line);
-      background: var(--shortcuts-panel-bg);
-      box-shadow: var(--modal-panel-shadow);
-      overflow: hidden;
-      isolation: isolate;
-      position: relative;
-    }
-    .search-inner::before {
-      content: "";
-      position: absolute;
-      inset: 0 0 auto;
-      height: 1px;
-      background: var(--shortcuts-top-line);
-      pointer-events: none;
-    }
-    .search-input {
-      width: 100%; padding: 12px 18px 12px 44px;
-      border-radius: var(--shortcuts-card-radius);
-      border: 1px solid var(--line);
-      background: var(--shortcuts-panel-strong-bg);
-      box-shadow: var(--modal-card-shadow);
-      color: var(--text); font-family: var(--font-body); font-size: .94rem;
-      outline: none;
-      transition: border-color .18s, background .18s;
-    }
-    .search-input:focus { border-color: rgba(var(--shortcuts-accent-rgb), .42); background: rgba(255,255,255,.04); }
-    .search-input::placeholder { color: var(--muted); }
-    .search-icon {
-      position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
-      color: var(--muted); pointer-events: none; font-size: 1rem;
-    }
-    .search-field { position: relative; }
-    .search-meta-row {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px 16px;
-    }
-    .results-meta {
-      display: inline-flex;
-      align-items: center;
-      width: fit-content;
-      padding: 7px 12px;
-      border-radius: var(--shortcuts-chip-radius);
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.04);
-      font-size: .78rem;
-      color: var(--muted-strong);
-    }
-
-    /* Category filter chips */
-    .filter-chips {
-      display: flex; flex-wrap: wrap; gap: 8px;
-    }
-    .filter-chip {
-      padding: 7px 12px;
-      border-radius: var(--shortcuts-chip-radius);
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      color: var(--muted); font-size: .82rem; font-weight: 500;
-      cursor: pointer;
-      transition: border-color .14s, color .14s, background .14s, transform .14s;
-    }
-    .filter-chip:hover {
-      color: var(--text);
-      transform: translateY(-1px);
-    }
-    .filter-chip.is-active {
-      border-color: rgba(var(--shortcuts-accent-rgb), .32);
-      color: var(--text);
-      background:
-        linear-gradient(135deg, rgba(var(--shortcuts-accent-rgb), .07), rgba(255,255,255,.02)),
-        rgba(255,255,255,.03);
-      box-shadow: inset 0 0 0 1px rgba(var(--shortcuts-accent-rgb), .1);
-    }
-
-    /* View toggle */
-    .view-toggle {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 3px;
-      border-radius: var(--shortcuts-control-radius);
-      border: 1px solid var(--line);
-      background: var(--shortcuts-panel-strong-bg);
-      box-shadow: var(--modal-card-shadow);
-    }
-    .view-btn {
-      min-height: calc(var(--pill-control-height) - 6px);
-      padding: 7px 14px;
-      border-radius: calc(var(--shortcuts-control-radius) - 4px);
-      border: 1px solid transparent;
-      background: transparent;
-      color: var(--muted);
-      font-size: .82rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background .14s, border-color .14s, color .14s, transform .14s;
-    }
-    .view-btn:hover {
-      color: var(--text);
-      transform: translateY(-1px);
-    }
-    .view-btn.is-active {
-      background:
-        linear-gradient(135deg, rgba(var(--shortcuts-accent-rgb), .14), rgba(255,255,255,.04)),
-        rgba(255,255,255,.04);
-      border-color: rgba(var(--shortcuts-accent-rgb), .36);
-      color: #fff;
-      box-shadow:
-        inset 0 0 0 1px rgba(var(--shortcuts-accent-rgb), .12),
-        0 10px 22px rgba(0,0,0,.18);
-      transform: none;
-    }
-
-    /* Category groups */
-    .content-block {
-      position: relative;
-      padding: 24px;
-      border-radius: var(--shortcuts-shell-radius);
-      border: 1px solid var(--line);
-      background: var(--shortcuts-panel-bg);
-      box-shadow: var(--modal-panel-shadow);
-      overflow: hidden;
-      isolation: isolate;
-    }
-    .content-block::before {
-      content: "";
-      position: absolute;
-      inset: 0 0 auto;
-      height: 1px;
-      background: var(--shortcuts-top-line);
-      pointer-events: none;
-    }
-    .cat-group {
-      margin-bottom: 18px;
-      padding: 20px;
-      border-radius: var(--shortcuts-card-radius);
-      border: 1px solid var(--line);
-      background: var(--shortcuts-panel-soft-bg);
-      box-shadow: var(--modal-card-shadow);
-    }
-    .cat-group:last-child { margin-bottom: 0; }
-    .cat-group-header {
-      display: flex; align-items: center; gap: 10px;
-      margin-bottom: 14px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--line);
-    }
-    .cat-group-label {
-      font-size: 1.1rem; font-weight: 620;
-      color: var(--text); font-family: var(--font-display);
-    }
-    .cat-group-count {
-      font-size: .76rem; color: var(--muted);
-      padding: 4px 10px; border-radius: var(--shortcuts-chip-radius);
-      background: rgba(255,255,255,.05);
-      border: 1px solid var(--line);
-    }
-
-    /* Shortcut rows */
-    .shortcut-row {
-      display: flex; align-items: center; gap: 14px;
-      flex-wrap: wrap;
-      padding: 14px 16px;
-      border: 1px solid var(--line);
-      border-radius: var(--shortcuts-card-radius);
-      background: rgba(255,255,255,.018);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
-      transition: transform .12s, border-color .12s, background .12s;
-      margin-top: 10px;
-    }
-    .shortcut-row:hover {
-      transform: translateY(-1px);
-      border-color: rgba(var(--shortcuts-accent-rgb), .3);
-      background: var(--modal-hover-bg);
-    }
-    .shortcut-row-keys { min-width: 160px; flex-shrink: 0; }
-    .shortcut-row-action {
-      flex: 1; color: rgba(245,245,247,.94); font-size: .9rem; line-height: 1.5;
-    }
-    /* Empty state */
-    .empty-state {
-      text-align: center; padding: 60px 20px;
-      color: var(--muted); font-size: .94rem;
-    }
-
-    /* ── Keyboard view ────────────────────────────── */
-    .page-shell { overflow: visible !important; }
-    .kbd-svg-wrap { overflow-x: auto; padding: 8px 0 16px; }
-
-    /* Key detail panel */
-    .kbd-detail-panel {
-      margin-top: 20px;
-      background: var(--modal-panel-soft-bg);
-      border: 1px solid var(--line);
-      border-radius: 22px;
-      box-shadow: var(--modal-card-shadow);
-      padding: 20px 24px;
-    }
-    .kbd-detail-title {
-      font-size: .9rem; font-weight: 620; color: var(--text);
-      margin-bottom: 14px;
-      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-    }
-    .kbd-detail-key-badge {
-      font-family: var(--font-mono, monospace);
-      background: rgba(var(--shortcuts-accent-rgb), .1);
-      border: 1px solid rgba(var(--shortcuts-accent-rgb), .24);
-      color: var(--shortcuts-accent-soft);
-      padding: 2px 10px; border-radius: 6px; font-size: .9rem;
-    }
-    .kbd-toast {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 12px;
-      align-items: start;
-      margin-bottom: 14px;
-      padding: 13px 14px;
-      border-radius: var(--shortcuts-card-radius);
-      border: 1px solid rgba(255,255,255,.08);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.03), transparent 72%),
-        rgba(255,255,255,.022);
-      box-shadow: var(--modal-card-shadow);
-    }
-    .kbd-toast.is-selected {
-      border-color: rgba(var(--shortcuts-accent-rgb), .24);
-      background:
-        linear-gradient(180deg, rgba(var(--shortcuts-accent-rgb), .07), transparent 76%),
-        rgba(255,255,255,.022);
-      box-shadow:
-        inset 0 0 0 1px rgba(var(--shortcuts-accent-rgb), .06),
-        var(--modal-card-shadow);
-    }
-    .kbd-toast-icon {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 32px;
-      height: 32px;
-      padding: 0 8px;
-      border-radius: 12px;
-      border: 1px solid rgba(var(--shortcuts-accent-rgb), .18);
-      background: rgba(var(--shortcuts-accent-rgb), .08);
-      color: var(--shortcuts-accent-soft);
-      font-size: .78rem;
-      font-weight: 620;
-      line-height: 1;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
-      white-space: nowrap;
-    }
-    .kbd-toast-copy {
-      display: grid;
-      gap: 3px;
-      min-width: 0;
-    }
-    .kbd-toast-title {
-      color: var(--text);
-      font-size: .84rem;
-      font-weight: 620;
-      line-height: 1.35;
-    }
-    .kbd-toast-body {
-      color: var(--muted-strong);
-      font-size: .78rem;
-      line-height: 1.55;
-    }
-
-    .shortcut-row-detail {
-      flex-basis: 100%;
-      font-size: .82rem; color: var(--muted);
-      line-height: 1.6;
-      padding: 6px 0 2px 0;
-    }
-    .shortcut-related {
-      display: flex;
-      flex-basis: 100%;
-      flex-wrap: wrap;
-      gap: 8px;
-      padding-top: 2px;
-    }
-    .shortcut-related-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 10px;
-      border-radius: var(--shortcuts-chip-radius);
-      border: 1px solid rgba(var(--shortcuts-accent-rgb), .22);
-      background:
-        linear-gradient(135deg, rgba(var(--shortcuts-accent-rgb), .06), rgba(255,255,255,.02)),
-        rgba(255,255,255,.03);
-      color: rgba(245,245,247,.96);
-      font-size: .76rem;
-      font-weight: 600;
-      line-height: 1.2;
-      text-decoration: none;
-      box-shadow: inset 0 0 0 1px rgba(var(--shortcuts-accent-rgb), .06);
-      transition: transform .14s, border-color .14s, background .14s;
-    }
-    .shortcut-related-link:hover {
-      transform: translateY(-1px);
-      border-color: rgba(var(--shortcuts-accent-rgb), .3);
-      background:
-        linear-gradient(135deg, rgba(var(--shortcuts-accent-rgb), .08), rgba(255,255,255,.02)),
-        rgba(34,47,55,.92);
-    }
-    .shortcut-related-icon {
-      font-size: .88rem;
-      line-height: 1;
-    }
-
-    @media (max-width: 720px) {
-      .hero-card,
-      .search-inner,
-      .content-block {
-        padding: 20px;
-      }
-      .hero-card {
-        grid-template-columns: 1fr;
-        gap: 14px;
-      }
-      .shortcut-row { flex-wrap: wrap; gap: 8px; }
-      .shortcut-row-keys { min-width: unset; }
-      .kbd-svg-wrap { overflow-x: scroll; -webkit-overflow-scrolling: touch; cursor: grab; }
-      .kbd-svg-wrap svg { min-width: 780px; }
-      .search-meta-row {
-        align-items: start;
-      }
-      .view-toggle {
-        width: 100%;
-      }
-      .results-meta {
-        order: 2;
-      }
-    }
-  </style>
-  <link rel="stylesheet" href="assets/surface.css?v=20260318a" />
-  <link rel="stylesheet" href="assets/meta.css?v=20260318a" />
-  <link rel="stylesheet" href="assets/chrome.css?v=20260318a" />
+  <link rel="stylesheet" href="assets/components.css" />
+  <link rel="stylesheet" href="assets/page-shortcuts.css" />
 </head>
 <body>
-  <div class="page-shell shortcuts-page">
+  <div class="page-shell">
 
     <!-- Topbar -->
     <header class="topbar">
-      <div class="topbar-inner shortcuts-topbar-inner rpd-topbar-3col">
-        <div class="brand shortcuts-brand rpd-brand-lockup">
-          <div class="brand-badge">S</div>
+      <div class="topbar-inner">
+        <div class="brand">
+          <div class="brand-badge">R</div>
           <div class="brand-copy">
             <strong id="brandTitle">Blender Shortcuts DB</strong>
-            <div class="topbar-meta" id="brandMeta">Archive Support · Inha University</div>
+            <span id="brandMeta">Robot Product Design · 2026</span>
           </div>
         </div>
-        <nav class="rpd-topbar-nav" aria-label="공개 페이지">
-          <a href="index.html" class="btn btn-ghost" id="topHomeLink">홈</a>
-          <a href="inha.html" class="btn btn-ghost" id="topCollectionLink">인하대 수업</a>
-          <a href="library.html" class="btn btn-ghost" id="topLibraryLink">카드 라이브러리</a>
-          <a href="shortcuts.html" class="btn btn-primary" id="topShortcutsLink">단축키 DB</a>
-        </nav>
-        <div class="topbar-actions rpd-topbar-actions rpd-topbar-utils">
+        <div class="topbar-actions">
           <div id="langSwitcher"></div>
-          <button class="theme-toggle" id="themeToggle" type="button" aria-label="테마 전환">
-            <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-            <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-          </button>
+          <a href="index.html" class="btn btn-ghost" id="backToList" style="font-size:.84rem">&larr; 전체 목록</a>
         </div>
       </div>
     </header>
 
     <!-- Hero -->
     <section class="hero">
-      <div class="hero-card rpd-hero-card">
-        <div class="hero-copy rpd-hero-copy">
-          <div class="eyebrow" id="heroEyebrow">Blender Shortcuts</div>
-          <h1 class="rpd-hero-title" id="heroTitle">단축키 DB</h1>
-          <p class="rpd-hero-description" id="heroDescription">수업에서 다루는 모든 Blender 단축키를 한 곳에서 검색하세요.</p>
-        </div>
-        <div class="hero-meta-wrap rpd-hero-meta-wrap">
-          <div class="hero-meta-label rpd-hero-meta-label" id="heroMetaLabel">Quick view</div>
-          <div class="hero-meta rpd-meta-row" id="heroMeta"></div>
-        </div>
+      <div class="hero-card rpd-glass-panel">
+        <div class="eyebrow" id="heroEyebrow">Blender Shortcuts</div>
+        <h1 id="heroTitle">단축키 DB</h1>
+        <p id="heroDescription">수업에서 다루는 모든 Blender 단축키를 한 곳에서 검색하세요.</p>
+        <div class="hero-actions cta-group" id="heroActions"></div>
+        <div class="stats-bar" id="statsBar"></div>
       </div>
     </section>
 
     <!-- Search + View Toggle -->
     <div class="search-wrap">
-      <div class="search-inner">
+      <div class="search-inner rpd-glass-panel">
         <div class="search-field">
           <span class="search-icon" aria-hidden="true">&#x1F50D;</span>
           <input type="text" class="search-input" id="searchInput"
@@ -516,8 +53,8 @@
         <div class="search-meta-row">
           <div class="results-meta" id="resultsMeta"></div>
           <div class="view-toggle" id="viewToggle" role="group" aria-label="보기 방식">
-            <button class="view-btn is-active" id="viewListBtn" data-view="list" type="button" aria-pressed="true">목록</button>
-            <button class="view-btn" id="viewKeyboardBtn" data-view="kbd" type="button" aria-pressed="false">&#x2328; 키보드</button>
+            <button class="view-btn is-active" id="viewListBtn" data-view="list">목록</button>
+            <button class="view-btn" id="viewKeyboardBtn" data-view="kbd">&#x2328; 키보드</button>
           </div>
         </div>
         <div class="filter-chips" id="filterChips" role="group" aria-label="카테고리 필터"></div>
@@ -540,8 +77,6 @@
   </div>
 
   <script src="assets/i18n.js"></script>
-  <script src="assets/site-shell.js?v=20260318a"></script>
-  <script src="assets/showme/_registry.js?v=20260318f"></script>
   <script src="data/curriculum.js"></script>
   <script>
     var SHORTCUT_CATEGORIES = {
@@ -562,88 +97,11 @@
       return window.RPDI18n.getStrings("shortcuts");
     }
 
-    function withPresetHref(href) {
-      return window.RPDAppShell ? window.RPDAppShell.withPreset(href) : href;
-    }
-
     function formatCount(count, nounKo, nounEn) {
       return window.RPDI18n.getLanguage() === "ko"
         ? count + "개 " + nounKo
         : count + " " + nounEn;
     }
-
-    function normalizeMatchText(value) {
-      return String(value || "")
-        .toLowerCase()
-        .replace(/[−–—]/g, "-")
-        .replace(/[^a-z0-9가-힣+]+/g, " ")
-        .replace(/\s+/g, " ")
-        .trim();
-    }
-
-    function collectWeekShowMeIds(week) {
-      var ids = {};
-      (week.steps || []).forEach(function(step) {
-        if (step.showme) {
-          (Array.isArray(step.showme) ? step.showme : [step.showme]).forEach(function(id) {
-            if (id) ids[id] = true;
-          });
-        }
-        (step.widgets || []).forEach(function(widget) {
-          if (widget && widget.type === "showme" && widget.id) ids[widget.id] = true;
-        });
-      });
-      return Object.keys(ids);
-    }
-
-    function buildWeekShowMeMap() {
-      var map = {};
-      CURRICULUM.forEach(function(week) {
-        map[week.week] = collectWeekShowMeIds(week);
-      });
-      return map;
-    }
-
-    var SHOWME_SHORTCUT_HINTS = {
-      "blender-preferences": ["preferences", "프리퍼런스", "ctrl + ,", "ctrl ,"],
-      "viewport-navigation": ["orbit", "pan", "zoom", "view", "시점", "화면 조작", "numpad", "orthographic", "perspective", "frame selected", "mmb", "scroll"],
-      "transform-grs": ["grab", "move", "이동", "rotate", "회전", "scale", "크기 조절", "축 고정", "g r s"],
-      "transform-orientation": ["orientation", "로컬", "global", "local"],
-      "pivot-point": ["pivot"],
-      "snap": ["snap", "snapping"],
-      "viewport-shading": ["shading", "rendered", "solid", "wireframe", "matcap", "viewport"],
-      "xray-opacity": ["x ray", "xray"],
-      "edit-mode": ["edit mode", "tab"],
-      "image-reference": ["reference", "image reference", "레퍼런스", "참고 이미지"],
-      "extrude": ["extrude"],
-      "loop-cut": ["loop cut", "ctrl + r", "ctrl r", "루프 분할"],
-      "inset": ["inset"],
-      "bevel-tool": ["bevel", "ctrl + b", "ctrl b"],
-      "mirror-modifier": ["mirror", "대칭"],
-      "subdivision-surface": ["subdivision", "ctrl + 1", "ctrl + 2", "ctrl + 3", "level"],
-      "solidify-modifier": ["solidify"],
-      "array-modifier": ["array"],
-      "boolean-modifier": ["boolean"],
-      "weighted-normal": ["weighted normal"],
-      "transform-apply": ["apply all transforms", "apply transform", "ctrl + a", "ctrl a"],
-      "join-separate": ["join", "separate", "ctrl + j", "ctrl j", "선택 파츠 분리", "오브젝트 합치기"],
-      "sculpt-basics": ["sculpt", "조각"],
-      "remesh-modifier": ["remesh", "voxel remesh"],
-      "material-basics": ["material", "재질"],
-      "principled-bsdf": ["principled"],
-      "shader-editor": ["shader editor", "node", "노드"],
-      "uv-unwrapping": ["uv unwrap", "unwrap", "seam", "mark seam", "clear seam"],
-      "uv-editor": ["uv editor", "island", "uv pin", "pin"],
-      "light-types": ["light", "조명"],
-      "hdri-lighting": ["hdri"],
-      "keyframe-basics": ["keyframe", "insert keyframe", "delete keyframe"],
-      "graph-editor": ["graph editor"],
-      "armature-basics": ["armature", "bone", "뼈대"],
-      "weight-paint": ["weight paint"],
-      "render-settings": ["render", "rendered", "eevee", "cycles", "카메라 뷰"],
-      "compositing-basics": ["compositing", "컴포지팅"]
-    };
-    var SHOWME_MATCH_TOKEN_CACHE = {};
 
     function normalizeShortcutValue(value) {
       return String(value || "")
@@ -662,44 +120,9 @@
       ].join("||");
     }
 
-    function canonicalizeShortcutAction(action) {
-      var normalized = normalizeShortcutValue(action);
-      var aliasMatchers = [
-        [/^되돌리기(?:\s*\(undo\))?$/, "undo"],
-        [/^bevel(?:\s*\(.+\))?$/, "bevel"],
-        [/^apply all transforms(?:\s*\(.+\))?$/, "apply-all-transforms"],
-        [/^(?:join\s*\(오브젝트 합치기\)|오브젝트 합치기\s*\(join\))$/, "join-object"],
-        [/^(?:실시간\s*)?렌더 미리보기$/, "render-preview"],
-        [/^(?:애니메이션\s*)?재생\/정지$/, "play-pause"]
-      ];
-      for (var i = 0; i < aliasMatchers.length; i++) {
-        if (aliasMatchers[i][0].test(normalized)) return aliasMatchers[i][1];
-      }
-      return normalized;
-    }
-
-    function buildShortcutMergeIdentity(shortcut) {
-      return [
-        normalizeShortcutValue(shortcut.keys),
-        canonicalizeShortcutAction(shortcut.action),
-        normalizeShortcutValue(shortcut.category || "general")
-      ].join("||");
-    }
-
-    function scoreShortcutCopy(shortcut) {
-      var action = String(shortcut.action || "");
-      var score = action.length;
-      if (/[A-Za-z]/.test(action)) score += 12;
-      if (/[가-힣]/.test(action)) score += 12;
-      if (/\(/.test(action)) score += 6;
-      if (shortcut.detail) score += 10 + String(shortcut.detail).length;
-      return score;
-    }
-
     function buildDB() {
       var db = [];
       var seen = {};
-      var mergedSeen = {};
       CURRICULUM.forEach(function(week) {
         if (!week.shortcuts || !week.shortcuts.length) return;
         week.shortcuts.forEach(function(shortcut) {
@@ -717,113 +140,19 @@
             }
             return;
           }
-
-          var mergeIdentity = buildShortcutMergeIdentity(entry);
-          if (mergedSeen[mergeIdentity]) {
-            var existing = mergedSeen[mergeIdentity];
-            seen[identity] = existing;
-            if (existing.weeks.indexOf(week.week) === -1) {
-              existing.weeks.push(week.week);
-            }
-            if (!existing.detail && entry.detail) {
-              existing.detail = entry.detail;
-            }
-            if (scoreShortcutCopy(entry) > scoreShortcutCopy(existing)) {
-              existing.action = entry.action;
-              if (entry.detail) existing.detail = entry.detail;
-            }
-            return;
-          }
-
           seen[identity] = entry;
-          mergedSeen[mergeIdentity] = entry;
           db.push(entry);
         });
       });
       return db;
     }
 
-    var weekShowMeMap = buildWeekShowMeMap();
-
-    function getLocalizedShowMeLabel(id) {
-      var meta = (typeof SHOWME_REGISTRY !== "undefined" && SHOWME_REGISTRY[id]) ? SHOWME_REGISTRY[id] : null;
-      return window.RPDI18n.getShowMeLabel(id, meta || { label: id });
-    }
-
-    function getRelatedShowMeIds(shortcut, limit) {
-      if (typeof SHOWME_REGISTRY === "undefined") return [];
-      var candidateSet = {};
-      (shortcut.weeks || []).forEach(function(week) {
-        (weekShowMeMap[week] || []).forEach(function(id) {
-          candidateSet[id] = true;
-        });
-      });
-      var text = normalizeMatchText([shortcut.keys, shortcut.action, shortcut.detail].join(" "));
-      return Object.keys(candidateSet).map(function(id) {
-        var meta = SHOWME_REGISTRY[id] || {};
-        var score = 0;
-        var hints = SHOWME_SHORTCUT_HINTS[id] || [];
-        hints.forEach(function(hint) {
-          if (text.indexOf(normalizeMatchText(hint)) !== -1) score += 100;
-        });
-        getShowMeMatchTokens(id, meta).forEach(function(token) {
-          if (text.indexOf(token) !== -1) {
-            score += token.indexOf(" ") !== -1 ? 56 : 28;
-          }
-        });
-        if (meta.week && shortcut.weeks && shortcut.weeks.indexOf(meta.week) !== -1) {
-          score += 6;
-        }
-        return { id: id, score: score };
-      }).filter(function(item) {
-        return item.score > 0;
-      }).sort(function(a, b) {
-        return b.score - a.score;
-      }).slice(0, limit || 1).map(function(item) {
-        return item.id;
-      });
-    }
-
-    function getShowMeMatchTokens(id, meta) {
-      if (SHOWME_MATCH_TOKEN_CACHE[id]) return SHOWME_MATCH_TOKEN_CACHE[id];
-      var values = [
-        meta && meta.toolName,
-        meta && meta.label,
-        id ? id.replace(/-/g, " ") : "",
-        meta && meta.iconKey ? String(meta.iconKey).replace(/-/g, " ") : ""
-      ];
-      var tokens = {};
-      values.forEach(function(value) {
-        var normalized = normalizeMatchText(value);
-        if (!normalized || normalized.length < 3) return;
-        tokens[normalized] = true;
-      });
-      SHOWME_MATCH_TOKEN_CACHE[id] = Object.keys(tokens);
-      return SHOWME_MATCH_TOKEN_CACHE[id];
-    }
-
-    function collectRelatedShowMeIds(shortcuts) {
-      var ids = {};
-      (shortcuts || []).forEach(function(shortcut) {
-        (shortcut.relatedShowMeIds || []).forEach(function(id) {
-          ids[id] = true;
-        });
-      });
-      return Object.keys(ids);
-    }
-
     var fullDB = buildDB();
-    fullDB.forEach(function(shortcut) {
-      shortcut.relatedShowMeIds = getRelatedShowMeIds(shortcut, 1);
-    });
-    var shortcutsPageStyles = window.getComputedStyle(document.querySelector(".shortcuts-page"));
-    var shortcutsAccentRgb = (shortcutsPageStyles.getPropertyValue("--shortcuts-accent-rgb") || "").trim() || "59, 152, 184";
+    var statsEl = document.getElementById("statsBar");
     var chipContainer = document.getElementById("filterChips");
     var contentEl = document.getElementById("shortcutsContent");
     var kbdEl = document.getElementById("kbdView");
     var resultsMetaEl = document.getElementById("resultsMeta");
-    var heroMetaLabelEl = document.getElementById("heroMetaLabel");
-    var heroMetaEl = document.getElementById("heroMeta");
     var activeFilter = "all";
     var currentView = "list";
     var selectedKeyId = null;
@@ -832,6 +161,24 @@
     fullDB.forEach(function(shortcut) {
       catCounts[shortcut.category] = (catCounts[shortcut.category] || 0) + 1;
     });
+    var weekSet = {};
+    fullDB.forEach(function(shortcut) {
+      (shortcut.weeks || []).forEach(function(week) {
+        weekSet[week] = true;
+      });
+    });
+    var weekCount = Object.keys(weekSet).length;
+
+    function buildHeroActions(text) {
+      var activeWeek = CURRICULUM.find(function(week) { return week.status === "active"; }) || CURRICULUM[0];
+      var weekHref = activeWeek ? ("week.html?week=" + activeWeek.week) : "index.html";
+      return [
+        '<button class="btn btn-primary" type="button" id="heroKeyboardCta">' + text.heroPrimaryCta + '</button>',
+        '<a class="btn btn-ghost" href="' + weekHref + '">' + text.heroSecondaryCta + '</a>',
+        '<a class="btn-link" href="library.html">' + text.heroTertiaryCta + ' <span aria-hidden="true">→</span></a>'
+      ].join("");
+    }
+
     function renderResultsMeta(count) {
       if (!resultsMetaEl) return;
       resultsMetaEl.textContent = formatCount(count, "단축키", "shortcuts");
@@ -839,37 +186,16 @@
 
     function renderStaticText() {
       var text = getText();
-      var isKo = window.RPDI18n.getLanguage() === "ko";
-      var publicLinks = window.RPDAppShell
-        ? window.RPDAppShell.getPublicLinks({ lang: isKo ? "ko" : "en" })
-        : null;
       document.title = text.pageTitle;
       var meta = document.querySelector('meta[name="description"]');
       if (meta) meta.setAttribute("content", text.metaDescription);
       document.getElementById("brandTitle").textContent = text.brandTitle;
-      document.getElementById("brandMeta").textContent = isKo ? "아카이브 지원 · 인하대학교" : "Archive Support · Inha University";
-      document.getElementById("topHomeLink").textContent = publicLinks ? publicLinks.home.label : (isKo ? "홈" : "Home");
-      document.getElementById("topHomeLink").setAttribute("href", publicLinks ? publicLinks.home.href : withPresetHref("index.html"));
-      document.getElementById("topCollectionLink").textContent = publicLinks ? publicLinks.collection.label : (isKo ? "인하대 수업" : "Inha RPD");
-      document.getElementById("topCollectionLink").setAttribute("href", publicLinks ? publicLinks.collection.href : withPresetHref("inha.html?panel=weeks"));
-      document.getElementById("topLibraryLink").textContent = publicLinks ? publicLinks.library.label : (isKo ? "카드 라이브러리" : "Card Library");
-      document.getElementById("topLibraryLink").setAttribute("href", publicLinks ? publicLinks.library.href : withPresetHref("library.html"));
-      document.getElementById("topShortcutsLink").textContent = publicLinks ? publicLinks.shortcuts.label : (isKo ? "단축키 DB" : "Shortcut DB");
-      document.getElementById("topShortcutsLink").setAttribute("href", publicLinks ? publicLinks.shortcuts.href : withPresetHref("shortcuts.html"));
-      document.getElementById("themeToggle").setAttribute("aria-label", isKo ? "테마 전환" : "Toggle theme");
+      document.getElementById("brandMeta").textContent = text.brandMeta;
+      document.getElementById("backToList").textContent = text.backToList;
       document.getElementById("heroEyebrow").textContent = text.heroEyebrow;
       document.getElementById("heroTitle").textContent = text.heroTitle;
       document.getElementById("heroDescription").textContent = text.heroDescription;
-      if (heroMetaLabelEl) heroMetaLabelEl.textContent = isKo ? "빠른 보기" : "Quick view";
-      if (heroMetaEl) {
-        var relatedCardCount = fullDB.reduce(function(total, shortcut) {
-          return total + (Array.isArray(shortcut.relatedShowMeIds) ? shortcut.relatedShowMeIds.length : 0);
-        }, 0);
-        heroMetaEl.innerHTML = [
-          '<span class="rpd-meta-chip"><strong>' + fullDB.length + '</strong><span>' + (isKo ? '단축키' : 'shortcuts') + '</span></span>',
-          '<span class="rpd-meta-chip"><strong>' + relatedCardCount + '</strong><span>' + (isKo ? '연결 카드' : 'linked cards') + '</span></span>'
-        ].join("");
-      }
+      document.getElementById("heroActions").innerHTML = buildHeroActions(text);
       document.getElementById("searchInput").setAttribute("placeholder", text.searchPlaceholder);
       document.getElementById("searchInput").setAttribute("aria-label", text.searchAria);
       document.getElementById("filterChips").setAttribute("aria-label", text.categoryFilterAria);
@@ -877,7 +203,26 @@
       document.getElementById("viewListBtn").textContent = text.viewList;
       document.getElementById("viewKeyboardBtn").textContent = text.viewKeyboard;
       document.getElementById("footerBackLink").textContent = text.footerBack;
-      document.getElementById("footerBackLink").setAttribute("href", publicLinks ? publicLinks.home.href : withPresetHref("index.html"));
+
+      statsEl.textContent = "";
+      [
+        formatCount(fullDB.length, "단축키", "shortcuts"),
+        formatCount(Object.keys(catCounts).length, "카테고리", "categories"),
+        formatCount(weekCount, "주차", "weeks")
+      ].forEach(function(label) {
+        var span = document.createElement("span");
+        span.className = "stat-chip";
+        span.textContent = label;
+        statsEl.appendChild(span);
+      });
+
+      var heroKeyboardCta = document.getElementById("heroKeyboardCta");
+      if (heroKeyboardCta) {
+        heroKeyboardCta.addEventListener("click", function() {
+          switchView("kbd");
+          document.getElementById("searchInput").focus({ preventScroll: true });
+        });
+      }
     }
 
     function renderChips() {
@@ -967,21 +312,6 @@
         detailDiv.className = "shortcut-row-detail";
         detailDiv.textContent = shortcut.detail;
         row.appendChild(detailDiv);
-      }
-
-      if (shortcut.relatedShowMeIds && shortcut.relatedShowMeIds.length) {
-        var related = document.createElement("div");
-        related.className = "shortcut-related";
-        shortcut.relatedShowMeIds.forEach(function(id) {
-          var meta = SHOWME_REGISTRY[id] || {};
-          var link = document.createElement("a");
-          link.className = "shortcut-related-link";
-          link.href = withPresetHref("library.html?showme=" + encodeURIComponent(id));
-          link.setAttribute("aria-label", (window.RPDI18n.getLanguage() === "ko" ? "관련 카드 열기: " : "Open related card: ") + getLocalizedShowMeLabel(id));
-          link.innerHTML = '<span class="shortcut-related-icon" aria-hidden="true">' + (meta.icon || "◫") + '</span><span>' + getLocalizedShowMeLabel(id) + '</span>';
-          related.appendChild(link);
-        });
-        row.appendChild(related);
       }
 
       return row;
@@ -1138,8 +468,6 @@
 
       kbdEl.textContent = "";
 
-      kbdEl.appendChild(makeKeyboardToast(selectedKeyId && kmap[selectedKeyId] ? selectedKeyId : null, kmap));
-
       var svg = svgEl("svg", {
         viewBox: "0 0 764 258",
         width: "100%",
@@ -1185,9 +513,9 @@
             var shortcuts = kmap[keyId];
             var hasShortcut = !!(shortcuts && shortcuts.length);
             var isSelected = selectedKeyId === keyId;
-            var fill = isSelected ? "rgba(" + shortcutsAccentRgb + ",0.42)" : hasShortcut ? "rgba(" + shortcutsAccentRgb + ",0.16)" : "rgba(255,255,255,0.055)";
-            var stroke = isSelected ? "rgba(" + shortcutsAccentRgb + ",0.95)" : hasShortcut ? "rgba(" + shortcutsAccentRgb + ",0.55)" : "rgba(255,255,255,0.11)";
-            var textFill = isSelected ? "#ffffff" : hasShortcut ? "rgba(" + shortcutsAccentRgb + ",0.98)" : "rgba(255,255,255,0.40)";
+            var fill = isSelected ? "rgba(10,132,255,0.42)" : hasShortcut ? "rgba(10,132,255,0.16)" : "rgba(255,255,255,0.055)";
+            var stroke = isSelected ? "rgba(10,132,255,0.95)" : hasShortcut ? "rgba(10,132,255,0.55)" : "rgba(255,255,255,0.11)";
+            var textFill = isSelected ? "#ffffff" : hasShortcut ? "rgba(100,178,255,1)" : "rgba(255,255,255,0.40)";
             var fontSize = rowHeight <= FH ? 8 : 9;
 
             svg.appendChild(svgEl("rect", { x: x, y: rowY, width: width, height: rowHeight, rx: 5, fill: fill, stroke: stroke, "stroke-width": 1 }));
@@ -1247,52 +575,6 @@
       return found;
     }
 
-    function makeKeyboardToast(keyId, kmap) {
-      var isKo = window.RPDI18n.getLanguage() === "ko";
-      var toast = document.createElement("div");
-      toast.className = "kbd-toast" + (keyId ? " is-selected" : "");
-      toast.setAttribute("role", "status");
-      toast.setAttribute("aria-live", "polite");
-
-      var icon = document.createElement("div");
-      icon.className = "kbd-toast-icon";
-      icon.setAttribute("aria-hidden", "true");
-      icon.textContent = keyId ? keyIdToLabel(keyId) : "⌨";
-      toast.appendChild(icon);
-
-      var copy = document.createElement("div");
-      copy.className = "kbd-toast-copy";
-
-      var title = document.createElement("div");
-      title.className = "kbd-toast-title";
-
-      var body = document.createElement("div");
-      body.className = "kbd-toast-body";
-
-      if (keyId && kmap[keyId]) {
-        var shortcuts = kmap[keyId];
-        var relatedIds = collectRelatedShowMeIds(shortcuts);
-        title.textContent = isKo
-          ? keyIdToLabel(keyId) + " 키 설명을 아래에 바로 열었습니다."
-          : "Opened the " + keyIdToLabel(keyId) + " key details below.";
-        body.textContent = isKo
-          ? shortcuts.length + "개 단축키를 확인할 수 있고" + (relatedIds.length ? ", 관련 Show Me 카드 " + relatedIds.length + "개도 함께 연결했습니다." : " 관련 카드가 있으면 함께 연결됩니다.")
-          : shortcuts.length + " shortcuts are listed below" + (relatedIds.length ? ", including " + relatedIds.length + " related Show Me cards." : ", and related cards appear when available.");
-      } else {
-        title.textContent = isKo
-          ? "강조된 키를 클릭하면 설명이 바로 나옵니다."
-          : "Click any highlighted key to open its explanation.";
-        body.textContent = isKo
-          ? "선택한 키에 연결된 단축키를 아래에서 보고, 맞는 Show Me 카드가 있으면 바로 이동할 수 있습니다."
-          : "See the shortcuts tied to that key below, then jump straight to a matching Show Me card when one exists.";
-      }
-
-      copy.appendChild(title);
-      copy.appendChild(body);
-      toast.appendChild(copy);
-      return toast;
-    }
-
     function renderKeyDetail(keyId, kmap) {
       var detailHolder = document.getElementById("kbdDetailSection");
       if (!detailHolder) return;
@@ -1331,9 +613,7 @@
       currentView = view;
       var listEl = document.getElementById("shortcutsContent");
       document.querySelectorAll(".view-btn").forEach(function(btn) {
-        var isActive = btn.dataset.view === view;
-        btn.classList.toggle("is-active", isActive);
-        btn.setAttribute("aria-pressed", isActive ? "true" : "false");
+        btn.classList.toggle("is-active", btn.dataset.view === view);
       });
       var detailSection = document.getElementById("kbdDetailSection");
       if (view === "kbd") {
@@ -1369,7 +649,6 @@
 
     window.RPDI18n.mountLanguageSwitcher(document.getElementById("langSwitcher"));
     window.RPDI18n.onLanguageChange(renderPage);
-    window.RPDAppShell.bindThemeToggle(document.getElementById("themeToggle"));
   </script>
 </body>
 </html>

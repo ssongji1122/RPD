@@ -1,0 +1,171 @@
+/* =====================================================================
+   course-site/assets/components.css
+   공유 컴포넌트 — 모든 페이지가 tokens.css 다음에 이 파일을 로드
+   ===================================================================== */
+
+/* ─── Glass panel (모달, 사이드바, 검색바, 섹션 컨테이너) ─── */
+.rpd-glass-panel {
+  position: relative;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--line);
+  background: var(--modal-panel-bg);
+  box-shadow: var(--modal-panel-shadow);
+  overflow: hidden;
+  isolation: isolate;
+}
+.rpd-glass-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  background: var(--modal-top-line);
+  pointer-events: none;
+}
+
+/* ─── Glass card (패널 안의 자식 카드) ─── */
+.rpd-glass-card {
+  position: relative;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: var(--modal-panel-soft-bg);
+  box-shadow: var(--modal-card-shadow);
+  overflow: hidden;
+  isolation: isolate;
+}
+.rpd-glass-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  background: var(--modal-top-line);
+  pointer-events: none;
+}
+
+/* ─── Glass surface (대형 섹션 블록) ─── */
+.rpd-glass-surface {
+  position: relative;
+  border-radius: var(--radius-2xl);
+  border: 1px solid var(--line);
+  background:
+    linear-gradient(180deg, var(--surface-tint), transparent 72%),
+    var(--surface);
+  box-shadow:
+    0 22px 54px var(--glass-shadow),
+    inset 0 1px 0 var(--glass-inset);
+  overflow: hidden;
+  isolation: isolate;
+}
+.rpd-glass-surface::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--key-glow), transparent);
+  pointer-events: none;
+}
+
+/* ─── Active state chip / nav item ─── */
+.rpd-chip-active {
+  border-color: var(--key-border);
+  color: var(--text);
+  background: var(--modal-nav-active-bg);
+  box-shadow: inset 0 0 0 1px var(--key-glow-soft);
+}
+
+/* ─── Icon well (44px 아이콘 박스) ─── */
+.rpd-icon-well {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 14px;
+  border: 1px solid rgba(122,162,247,.2);
+  background: var(--modal-icon-bg);
+  box-shadow: var(--modal-icon-shadow);
+  color: #eaf3ff;
+  font-size: 1rem;
+}
+
+/* ─── Eyebrow / kicker text ─── */
+.rpd-kicker {
+  font-size: .68rem;
+  font-weight: var(--fw-bold);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ─── Pill counter ─── */
+.rpd-pill-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  padding: 4px 9px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--line);
+  background: var(--modal-panel-soft-strong-bg);
+  box-shadow: var(--modal-card-shadow);
+  color: var(--muted-strong);
+  font-size: .74rem;
+  font-weight: var(--fw-semi);
+  letter-spacing: -.01em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ─── Filter chip (검색/필터 UI) ─── */
+.rpd-filter-chip {
+  padding: 7px 12px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--line);
+  background: var(--glass-tint);
+  color: var(--muted);
+  font-size: .78rem;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color .14s, color .14s, background .14s, transform .14s;
+}
+.rpd-filter-chip:hover {
+  color: var(--muted-strong);
+  border-color: var(--line-strong);
+  transform: translateY(-1px);
+}
+.rpd-filter-chip.is-active {
+  border-color: var(--key-border);
+  color: var(--text);
+  background: var(--modal-nav-active-bg);
+  box-shadow: inset 0 0 0 1px var(--key-glow-soft);
+}
+
+/* ─── Search input ─── */
+.rpd-search-input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: var(--modal-panel-soft-strong-bg);
+  box-shadow: var(--modal-card-shadow);
+  color: var(--text);
+  font: inherit;
+  font-size: .92rem;
+  outline: none;
+  transition: border-color .14s, background .14s;
+}
+.rpd-search-input:focus {
+  border-color: rgba(10,132,255,.42);
+  background: var(--modal-hover-bg);
+}
+.rpd-search-input::placeholder { color: var(--muted); }
+
+/* ─── Focus visible (전역) ─── */
+.rpd-focusable:focus-visible,
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--key-soft);
+  outline-offset: 2px;
+}
