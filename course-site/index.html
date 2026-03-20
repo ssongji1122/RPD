@@ -8,54 +8,65 @@
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
   <link rel="stylesheet" href="assets/tokens.css" />
   <link rel="stylesheet" href="assets/components.css" />
+  <link rel="stylesheet" href="assets/layout.css" />
   <link rel="stylesheet" href="assets/page-index.css" />
   <script>/* FOUC prevention */ (function(){var t=localStorage.getItem('rpd-theme');if(t)document.documentElement.setAttribute('data-theme',t);var l=localStorage.getItem('rpd-lang');if(l){document.documentElement.lang=l;document.documentElement.setAttribute('data-lang',l);}})()</script>
 </head>
 <body>
   <a href="#main-content" class="skip-link">본문으로 건너뛰기</a>
-  <div class="page-shell">
+  <div class="app">
 
     <!-- Topbar -->
-    <header class="topbar">
-      <div class="topbar-inner">
-        <div class="brand">
-          <div class="brand-badge">B</div>
-          <div class="brand-copy">
-            <strong id="topbarTitle">Blender Archive</strong>
-            <span id="topbarMeta">2026 Spring · 15주</span>
-          </div>
-        </div>
-        <div class="topbar-actions">
-          <a href="library.html" class="btn btn-ghost" id="libraryLink" style="font-size:.84rem">◫ 카드 라이브러리</a>
-          <div id="langSwitcher"></div>
-          <a href="shortcuts.html" class="btn btn-ghost" id="shortcutsLink" style="font-size:.84rem">&#x2328; 단축키 DB</a>
-          <button class="theme-toggle" id="themeToggle" type="button" aria-label="테마 전환">
-            <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-            <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-          </button>
-        </div>
+    <header class="app-topbar">
+      <div class="app-topbar-left">
+        <div class="app-logo">BA</div>
+        <div class="app-title">Blender Archive <span>RPD</span></div>
+      </div>
+      <input class="app-search" type="search" placeholder="카드 검색... (Extrude, Boolean, UV...)" />
+      <div class="app-topbar-right">
+        <div id="langSwitcher"></div>
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="테마 전환">
+          <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+          <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
       </div>
     </header>
 
-    <div class="index-layout">
-      <aside class="index-sidebar" aria-label="페이지 탐색">
-        <div class="index-sidebar-block">
-          <strong class="index-sidebar-title" id="sideTitle">Blender Archive</strong>
-          <span class="index-sidebar-meta" id="sideMeta">2026 Spring · 15주</span>
-        </div>
-        <nav class="index-sidebar-block" aria-label="페이지 내 탐색">
-          <a class="index-sidebar-link" href="#heroSection" id="sideHeroLink">Blender Archive</a>
-          <a class="index-sidebar-link" href="#archiveSection" id="sideArchiveLink">아카이브</a>
-          <a class="index-sidebar-link" href="#programSection" id="sideProgramLink">수업 컬렉션</a>
-          <a class="index-sidebar-link" href="#weekGrid" id="sideWeeksLink">주차별 수업</a>
-        </nav>
-        <div class="index-sidebar-block">
-          <a class="index-sidebar-link" href="library.html" id="sideLibraryLink">◫ 카드 라이브러리</a>
-          <a class="index-sidebar-link" href="shortcuts.html" id="sideShortcutsLink">⌨ 단축키 DB</a>
-        </div>
-      </aside>
+    <!-- Side Rail -->
+    <nav class="rail" id="sideRail" aria-label="메인 탐색">
+      <a href="index.html" class="rail-item" data-page="index.html">
+        <span class="rail-icon">&#9751;</span>
+        <span class="rail-text">홈</span>
+      </a>
+      <a href="#" class="rail-item" data-page="">
+        <span class="rail-icon">&#9776;</span>
+        <span class="rail-text">내 덱</span>
+      </a>
+      <div class="rail-sub" id="railDeckList">
+        <!-- JS로 채워짐 -->
+      </div>
+      <a href="library.html" class="rail-item" data-page="library.html">
+        <span class="rail-icon">&#128269;</span>
+        <span class="rail-text">카드 찾기</span>
+      </a>
+      <a href="shortcuts.html" class="rail-item" data-page="shortcuts.html">
+        <span class="rail-icon">&#9000;</span>
+        <span class="rail-text">단축키</span>
+      </a>
+      <div class="rail-spacer"></div>
+      <a href="#" class="rail-item">
+        <span class="rail-icon">&#9881;</span>
+        <span class="rail-text">설정</span>
+      </a>
+      <button class="rail-toggle" id="railToggle">
+        <span class="rail-toggle-arrow">&#9654;</span>
+        <span class="rail-text">접기</span>
+      </button>
+    </nav>
 
-      <main class="index-main" id="main-content">
+    <!-- Main Content -->
+    <main class="main" id="main-content">
+      <div class="main-inner">
         <!-- Hero -->
         <section class="hero" id="heroSection">
           <div class="hero-card">
@@ -101,14 +112,13 @@
             </div>
           </div>
         </section>
-      </main>
-    </div>
 
-    <!-- Footer -->
-    <footer class="page-footer">
-      <div id="footerLabel">Robot Product Design 2026</div>
-    </footer>
-
+        <!-- Footer -->
+        <footer class="page-footer">
+          <div id="footerLabel">Robot Product Design 2026</div>
+        </footer>
+      </div>
+    </main>
   </div>
 
   <script src="data/i18n-content.js?v=20260318e"></script>
@@ -116,8 +126,9 @@
   <script src="assets/week-ui.js?v=20260318a"></script>
   <script src="assets/showme/_registry.js?v=20260318f"></script>
   <script src="data/curriculum.js"></script>
+  <script src="assets/layout.js"></script>
   <script>
-    // curriculum.js의 CURRICULUM 배열은 정적 파일로 사용자 입력이 없는 신뢰된 소스입니다.
+    // curriculum.js CURRICULUM array is a static trusted source with no user input.
     function getPageStrings() {
       return window.RPDI18n.getStrings("index");
     }
@@ -142,7 +153,7 @@
       var school = localizeUiLabel(labels.school, "");
       var program = localizeUiLabel(labels.program, "");
       if (!school && !program) return text.programTitle;
-      return [school, program].filter(Boolean).join(" · ") || text.programTitle;
+      return [school, program].filter(Boolean).join(" \u00b7 ") || text.programTitle;
     }
 
     function getWeekCardPreviewItems(localizedWeek, preset) {
@@ -155,7 +166,7 @@
 
     function getWeekCardMetricLabel(key, text, preset) {
       var labels = (preset.labels || {});
-      if (key === "practice") return localizeUiLabel(labels.metricPractice, window.RPDI18n.getLanguage() === "ko" ? "실습" : "practice");
+      if (key === "practice") return localizeUiLabel(labels.metricPractice, window.RPDI18n.getLanguage() === "ko" ? "\uc2e4\uc2b5" : "practice");
       if (key === "showme") return localizeUiLabel(labels.metricShowMe, "Show Me");
       if (key === "tasks") return localizeUiLabel(labels.metricTasks, text.weekMetricTasks);
       if (key === "refs") return localizeUiLabel(labels.metricRefs, text.weekMetricRefs);
@@ -188,10 +199,9 @@
     }
 
     function isExamWeek(w) {
-      return String(w.title).includes("⭐");
+      return String(w.title).includes("\u2b50");
     }
 
-    // ─── Week grid ───────────────────────────────────────
     function getBadge(w) {
       var text = getPageStrings();
       if (isExamWeek(w))        return ["badge-exam", text.badgeExam];
@@ -264,7 +274,7 @@
       return [
         {
           href: withPresetHref("library.html"),
-          icon: "◫",
+          icon: "\u25eb",
           kicker: text.archiveCardLibraryKicker,
           title: text.archiveCardLibraryTitle,
           copy: text.archiveCardLibraryCopy,
@@ -272,7 +282,7 @@
         },
         {
           href: withPresetHref("shortcuts.html"),
-          icon: "⌨",
+          icon: "\u2328",
           kicker: text.archiveCardShortcutKicker,
           title: text.archiveCardShortcutTitle,
           copy: text.archiveCardShortcutCopy,
@@ -280,7 +290,7 @@
         },
         {
           href: "#programCollection",
-          icon: "◌",
+          icon: "\u25cc",
           kicker: text.archiveCardAssemblyKicker,
           title: text.archiveCardAssemblyTitle,
           copy: text.archiveCardAssemblyCopy,
@@ -295,39 +305,13 @@
       return [
         '<a class="btn btn-primary" href="' + activeHref + '">' + text.heroPrimaryCta + '</a>',
         '<a class="btn btn-ghost" href="' + withPresetHref("library.html") + '">' + text.heroSecondaryCta + '</a>',
-        '<a class="btn-link" href="' + withPresetHref("shortcuts.html") + '">' + text.heroTertiaryCta + ' <span aria-hidden="true">→</span></a>'
+        '<a class="btn-link" href="' + withPresetHref("shortcuts.html") + '">' + text.heroTertiaryCta + ' <span aria-hidden="true">\u2192</span></a>'
       ].join("");
     }
 
-    const grid = document.getElementById("weekGrid");
-    const archiveGrid = document.getElementById("archiveGrid");
-    const programStats = document.getElementById("programStats");
-    var indexSidebarObserver = null;
-
-    function initIndexSidebar() {
-      var sections = [
-        { targetId: "heroSection", linkId: "sideHeroLink" },
-        { targetId: "archiveSection", linkId: "sideArchiveLink" },
-        { targetId: "programSection", linkId: "sideProgramLink" },
-        { targetId: "weekGrid", linkId: "sideWeeksLink" }
-      ];
-
-      if (indexSidebarObserver) indexSidebarObserver.disconnect();
-      indexSidebarObserver = new IntersectionObserver(function(entries) {
-        entries.forEach(function(entry) {
-          if (!entry.isIntersecting) return;
-          sections.forEach(function(section) {
-            var link = document.getElementById(section.linkId);
-            if (link) link.classList.toggle("is-active", section.targetId === entry.target.id);
-          });
-        });
-      }, { rootMargin: "-20% 0px -65% 0px", threshold: 0 });
-
-      sections.forEach(function(section) {
-        var target = document.getElementById(section.targetId);
-        if (target) indexSidebarObserver.observe(target);
-      });
-    }
+    var grid = document.getElementById("weekGrid");
+    var archiveGrid = document.getElementById("archiveGrid");
+    var programStats = document.getElementById("programStats");
 
     function renderPage() {
       var text = getPageStrings();
@@ -336,22 +320,6 @@
       document.title = text.pageTitle;
       var meta = document.querySelector('meta[name="description"]');
       if (meta) meta.setAttribute("content", text.metaDescription);
-      document.getElementById("topbarTitle").textContent = text.topbarTitle;
-      document.getElementById("topbarMeta").textContent = text.topbarMeta;
-      document.getElementById("libraryLink").textContent = text.libraryLink;
-      document.getElementById("libraryLink").setAttribute("href", withPresetHref("library.html"));
-      document.getElementById("shortcutsLink").textContent = text.shortcutsLink;
-      document.getElementById("shortcutsLink").setAttribute("href", withPresetHref("shortcuts.html"));
-      document.getElementById("sideTitle").textContent = text.topbarTitle;
-      document.getElementById("sideMeta").textContent = text.topbarMeta;
-      document.getElementById("sideHeroLink").textContent = text.heroTitle;
-      document.getElementById("sideArchiveLink").textContent = text.archiveSectionTitle;
-      document.getElementById("sideProgramLink").textContent = text.programTitle;
-      document.getElementById("sideWeeksLink").textContent = text.weekSectionTitle;
-      document.getElementById("sideLibraryLink").textContent = text.libraryLink;
-      document.getElementById("sideLibraryLink").setAttribute("href", withPresetHref("library.html"));
-      document.getElementById("sideShortcutsLink").textContent = text.shortcutsLink;
-      document.getElementById("sideShortcutsLink").setAttribute("href", withPresetHref("shortcuts.html"));
       document.getElementById("themeToggle").setAttribute("aria-label", text.themeToggleAria);
       document.getElementById("heroEyebrow").textContent = localizeUiLabel(labels.heroEyebrow, text.heroEyebrow);
       document.getElementById("heroTitle").textContent = text.heroTitle;
@@ -370,33 +338,28 @@
       document.getElementById("footerLabel").textContent = text.footerLabel;
 
       document.getElementById("heroMeta").innerHTML = buildHeroMeta(text).map(function(item) {
-        return "<span class=\"hero-meta-chip\">" + item + "</span>";
+        return '<span class="hero-meta-chip">' + item + '</span>';
       }).join("");
 
       archiveGrid.innerHTML = buildArchiveItems(text).map(function(item) {
-        return `
-          <a class="archive-card" href="${item.href}">
-            <div class="archive-card-top">
-              <span class="archive-card-kicker rpd-kicker">${item.kicker}</span>
-              <span class="archive-card-icon rpd-icon-well" aria-hidden="true">${item.icon}</span>
-            </div>
-            <p class="archive-card-title">${item.title}</p>
-            <p class="archive-card-copy">${item.copy}</p>
-            <span class="archive-card-meta">${item.meta}</span>
-          </a>`;
+        return '<a class="archive-card" href="' + item.href + '">'
+          + '<div class="archive-card-top">'
+          + '<span class="archive-card-kicker rpd-kicker">' + item.kicker + '</span>'
+          + '<span class="archive-card-icon rpd-icon-well" aria-hidden="true">' + item.icon + '</span>'
+          + '</div>'
+          + '<p class="archive-card-title">' + item.title + '</p>'
+          + '<p class="archive-card-copy">' + item.copy + '</p>'
+          + '<span class="archive-card-meta">' + item.meta + '</span>'
+          + '</a>';
       }).join("");
 
       var activeWeek = CURRICULUM.find(function(week) { return week.status === "active"; });
       programStats.innerHTML = [
         { value: CURRICULUM.length, label: text.programStatWeeks },
         { value: countProgramArchiveCards(), label: text.programStatCards },
-        { value: activeWeek ? "Week " + String(activeWeek.week).padStart(2, "0") : "—", label: text.programStatActive }
+        { value: activeWeek ? "Week " + String(activeWeek.week).padStart(2, "0") : "\u2014", label: text.programStatActive }
       ].map(function(item) {
-        return `
-          <div class="program-stat">
-            <strong>${item.value}</strong>
-            <span>${item.label}</span>
-          </div>`;
+        return '<div class="program-stat"><strong>' + item.value + '</strong><span>' + item.label + '</span></div>';
       }).join("");
 
       grid.textContent = "";
@@ -483,8 +446,6 @@
 
         grid.appendChild(a);
       });
-
-      initIndexSidebar();
     }
 
     window.RPDWeekUI.init({ url: "data/week-ui.json?v=20260318a" }).finally(function() {

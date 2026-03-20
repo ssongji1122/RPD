@@ -3,90 +3,8 @@
    인덱스 페이지 전용 스타일
    ===================================================================== */
 
-/* ── Index-specific styles ── */
-.index-layout {
-  width: min(var(--max-width), calc(100% - 32px));
-  margin: 0 auto;
-  padding: 28px 0 72px;
-  display: grid;
-  grid-template-columns: 260px minmax(0, 1fr);
-  gap: 26px;
-  align-items: start;
-}
-.index-sidebar {
-  position: sticky;
-  top: 82px;
-  display: grid;
-  gap: 18px;
-  align-self: start;
-  padding: 18px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-xl);
-  background:
-    linear-gradient(180deg, rgba(10,132,255,.08), transparent 24%),
-    linear-gradient(180deg, var(--surface-tint), transparent 72%),
-    var(--surface-strong);
-  box-shadow:
-    0 24px 54px var(--glass-shadow),
-    inset 0 1px 0 var(--glass-tint-strong);
-  backdrop-filter: blur(18px);
-  overflow: hidden;
-  isolation: isolate;
-}
-.index-sidebar::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--key-glow), transparent);
-  pointer-events: none;
-}
-.index-sidebar-block {
-  display: grid;
-  gap: 8px;
-  position: relative;
-  z-index: 1;
-}
-.index-sidebar-block + .index-sidebar-block {
-  padding-top: 4px;
-  border-top: 1px solid var(--glass-tint-strong);
-}
-.index-sidebar-title {
-  font-size: .96rem;
-  font-weight: var(--fw-bold);
-  letter-spacing: -.02em;
-}
-.index-sidebar-meta {
-  color: var(--muted);
-  font-size: .78rem;
-  line-height: 1.6;
-}
-.index-sidebar-link {
-  display: block;
-  padding: 11px 13px;
-  border: 1px solid transparent;
-  border-radius: 16px;
-  color: var(--muted);
-  font-size: .83rem;
-  line-height: 1.55;
-  transition: color .14s ease, border-color .14s ease, background .14s ease, transform .14s ease;
-}
-.index-sidebar-link:hover {
-  color: var(--text);
-  border-color: var(--line);
-  background: var(--glass-tint);
-  transform: translateX(2px);
-}
-.index-sidebar-link.is-active {
-  color: var(--text);
-  border-color: var(--key-border);
-  background:
-    linear-gradient(135deg, rgba(10,132,255,.16), rgba(255,255,255,.02)),
-    var(--glass-tint);
-  box-shadow: inset 0 0 0 1px var(--key-glow-soft);
-}
-.index-main {
-  min-width: 0;
+/* ── Index content spacing (inside .main-inner) ── */
+.main-inner {
   display: grid;
   gap: 26px;
 }
@@ -594,16 +512,6 @@
   }
 }
 @media (max-width: 980px) {
-  .index-layout {
-    grid-template-columns: 1fr;
-    gap: 22px;
-  }
-  .index-sidebar {
-    position: static;
-    gap: 14px;
-    order: 2;
-  }
-  .index-main { order: 1; }
   .hero-card {
     grid-template-columns: 1fr;
   }
@@ -622,13 +530,9 @@
   }
 }
 @media (max-width: 720px) {
-  .index-layout { width: calc(100% - 20px); }
   .hero-card,
   .content-block {
     padding: 22px 20px;
-  }
-  .index-sidebar {
-    padding: 16px;
   }
   .hero-copy {
     max-width: none;
