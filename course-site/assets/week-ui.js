@@ -9,10 +9,17 @@
           program: { ko: "Robot Product Design", en: "Robot Product Design" },
           heroEyebrow: { ko: "Blender Archive · 인하대학교", en: "Blender Archive · Inha University" },
           summaryTitle: { ko: "이번 주", en: "This week" },
+          courseSnapshotTitle: { ko: "수업 스냅샷", en: "Course snapshot" },
+          courseSnapshotWeeks: { ko: "총 주차", en: "Weeks" },
+          courseSnapshotActive: { ko: "현재 주차", en: "Current week" },
           metricPractice: { ko: "실습", en: "practice" },
           metricShowMe: { ko: "Show Me", en: "Show Me" },
           metricTasks: { ko: "체크", en: "tasks" },
           metricRefs: { ko: "참고", en: "refs" }
+        },
+        courseHero: {
+          snapshotItems: ["weeks", "active"],
+          emphasis: "active"
         },
         weekCard: {
           metrics: ["practice", "showme", "tasks"],

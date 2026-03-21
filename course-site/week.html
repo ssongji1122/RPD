@@ -112,14 +112,14 @@
       --topic-desktop-columns: 2;
       --topic-mobile-columns: 1;
       display: grid;
-      gap: 10px;
-      padding: 14px 16px;
+      gap: 8px;
+      padding: 12px 14px;
     }
     .topic-list-head {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
+      gap: 6px;
     }
     .topic-list-title {
       font-size: .7rem;
@@ -132,14 +132,14 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-width: 48px;
-      padding: 4px 9px;
+      min-width: 42px;
+      padding: 3px 8px;
       border-radius: 999px;
       border: 1px solid var(--line);
       background: var(--modal-panel-soft-strong-bg);
       box-shadow: var(--modal-card-shadow);
       color: var(--muted-strong);
-      font-size: .74rem;
+      font-size: .72rem;
       font-weight: 620;
       letter-spacing: -.01em;
       font-variant-numeric: tabular-nums;
@@ -147,7 +147,7 @@
     }
     .topic-progress {
       position: relative;
-      height: 4px;
+      height: 3px;
       border-radius: 999px;
       overflow: hidden;
       background: rgba(255,255,255,.07);
@@ -162,7 +162,7 @@
     .topic-check-list {
       display: grid;
       grid-template-columns: repeat(var(--topic-desktop-columns), minmax(0, 1fr));
-      gap: 4px 14px;
+      gap: 2px 12px;
     }
     .topic-check-item {
       position: relative;
@@ -178,10 +178,10 @@
       display: flex;
       align-items: flex-start;
       gap: 8px;
-      padding: 4px 0;
+      padding: 2px 0;
       color: var(--muted-strong);
-      font-size: .8rem;
-      line-height: 1.42;
+      font-size: .79rem;
+      line-height: 1.36;
       cursor: pointer;
       transition: color .14s;
       user-select: none;
@@ -211,9 +211,9 @@
     .topic-check-more {
       display: inline-flex;
       align-items: center;
-      padding: 4px 0;
+      padding: 2px 0;
       color: var(--muted);
-      font-size: .78rem;
+      font-size: .74rem;
       line-height: 1.4;
     }
     .learning-panel {
@@ -532,28 +532,29 @@
     /* Responsive */
     /* ── Content layout ── */
     .content-layout {
-      width: min(calc(var(--max-width) + 120px), calc(100% - 32px));
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 250px minmax(0, 1fr);
-      gap: 36px;
       position: relative;
-      align-items: start;
+      --rpd-page-rail-width: 250px;
+      --rpd-page-gap: 36px;
+      --rpd-page-rail-active-color: var(--key-soft);
     }
 
     /* ── Sidebar ── */
     .sidebar {
-      position: sticky;
-      top: 76px;
       width: 100%;
-      height: calc(100vh - 88px);
+      max-height: calc(100vh - 92px);
+      padding-right: 18px;
+      border-right: 1px solid rgba(255,255,255,.08);
       background: none;
-      border-right: 1px solid var(--line);
+      border-radius: 0;
+      box-shadow: none;
       z-index: 20;
-      padding: 12px 18px 32px 0;
       overflow-y: auto;
       transform: none;
       transition: none;
+      isolation: auto;
+    }
+    .sidebar::before {
+      display: none;
     }
     .sidebar.is-open { transform: none; }
 
@@ -563,23 +564,47 @@
     }
     .sidebar-overlay.is-visible { display: block; }
 
-    .sidebar-nav { list-style: none; margin: 0; padding: 8px 0; }
+    .sidebar-nav {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 0;
+    }
     .sidebar-nav li a {
-      display: block; padding: 7px 0 7px 14px;
-      font-size: .84rem; color: var(--muted);
-      border-left: 2px solid transparent;
-      transition: color .14s, border-color .14s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 8px 4px;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      font-size: .84rem;
+      color: var(--muted);
+      box-shadow: none;
+      transition: color .14s, border-color .14s, background .14s;
     }
     .sidebar-nav li a:hover {
-      color: var(--text);
+      color: var(--muted-strong);
+      border-color: transparent;
+      background: transparent;
     }
     .sidebar-nav li.is-active a {
-      color: var(--text); border-left-color: var(--key-soft);
+      color: var(--rpd-page-rail-active-color);
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+      font-weight: 620;
     }
     .sidebar-nav .nav-section-label {
-      display: block; padding: 14px 0 4px 14px;
-      font-size: .72rem; color: var(--muted);
-      text-transform: uppercase; letter-spacing: .08em; font-weight: 600;
+      display: block;
+      padding: 18px 4px 6px;
+      font-size: .72rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      font-weight: 700;
     }
     .sidebar-nav .nav-section-label.nav-section-label-global {
       font-size: .68rem;
@@ -587,10 +612,14 @@
       letter-spacing: .12em;
     }
     .sidebar-nav li a.sidebar-link-global {
-      padding-top: 6px;
-      padding-bottom: 6px;
       font-size: .8rem;
       color: color-mix(in srgb, var(--muted-strong) 72%, var(--muted) 28%);
+    }
+    .sidebar-nav li a.sidebar-link-global::after {
+      content: "↗";
+      margin-left: auto;
+      color: var(--muted);
+      font-size: .76rem;
     }
     .sidebar-nav li a.sidebar-link-global:hover {
       color: var(--muted-strong);
@@ -1865,19 +1894,25 @@
         width: 80vw;
         max-width: 300px;
         height: 100vh;
-        background: var(--surface);
-        padding: 72px 0 24px;
-        border-right: 1px solid var(--line);
+        padding: 72px 16px 24px;
+        border: 1px solid var(--line);
+        border-right: none;
+        border-radius: 0 24px 24px 0;
+        background:
+          linear-gradient(180deg, rgba(10,132,255,.08), transparent 24%),
+          linear-gradient(180deg, var(--surface-tint), transparent 72%),
+          var(--surface-strong);
+        box-shadow: var(--modal-panel-shadow);
         transform: translateX(-100%);
         transition: transform .26s cubic-bezier(.4,0,.2,1);
         z-index: 50;
       }
       .sidebar.is-open { transform: translateX(0); }
       .sidebar-nav li a {
-        padding: 8px 20px;
+        padding: 10px 12px;
       }
       .sidebar-nav .nav-section-label {
-        padding: 14px 20px 4px;
+        padding: 14px 4px 4px;
       }
       .sidebar-toggle {
         display: flex;
@@ -2051,6 +2086,9 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="assets/surface.css?v=20260318a" />
+  <link rel="stylesheet" href="assets/meta.css?v=20260318a" />
+  <link rel="stylesheet" href="assets/chrome.css?v=20260318a" />
 </head>
 <body>
   <div class="page-shell" id="pageShell">
@@ -2075,7 +2113,7 @@
           </a>
         </div>
         <div class="topbar-right">
-          <div class="topbar-actions">
+          <div class="topbar-actions rpd-topbar-actions">
             <div id="langSwitcher"></div>
             <span class="student-badge" id="studentBadge" title="학생 변경" onclick="switchStudent()">👤 <span id="studentBadgeName"></span></span>
             <button class="theme-toggle" id="themeToggle" type="button" aria-label="테마 전환">
@@ -2096,12 +2134,12 @@
     </header>
 
     <!-- Page content = populated by JS -->
-    <div class="content-layout">
-      <nav class="sidebar" id="sidebar" aria-hidden="true">
+    <div class="content-layout rpd-page-layout">
+      <nav class="sidebar rpd-page-rail" id="sidebar" aria-hidden="true">
         <ul class="sidebar-nav" id="sidebarNav"></ul>
       </nav>
       <div class="sidebar-overlay" id="sidebarOverlay"></div>
-      <main class="main-content" id="pageContent"></main>
+      <main class="main-content rpd-page-main" id="pageContent"></main>
     </div>
 
     <footer class="page-footer">
@@ -2188,6 +2226,7 @@
 
   <script src="data/i18n-content.js?v=20260318e"></script>
   <script src="assets/i18n.js?v=20260318t"></script>
+  <script src="assets/site-shell.js?v=20260318a"></script>
   <script src="assets/week-ui.js?v=20260318a"></script>
   <script src="assets/showme/_registry.js?v=20260318f"></script>
   <script src="assets/showme/_catalog.js?v=20260318c"></script>
@@ -2228,7 +2267,7 @@
     }
 
     function withPresetHref(href) {
-      return window.RPDWeekUI ? window.RPDWeekUI.withPreset(href) : href;
+      return window.RPDAppShell ? window.RPDAppShell.withPreset(href) : href;
     }
 
     function getWeekPresetMetricLabel(key, text, preset, isKo) {
@@ -2282,7 +2321,7 @@
         if (!Object.prototype.hasOwnProperty.call(valueMap, key)) return "";
         var label = getWeekPresetMetricLabel(key, text, preset, isKo);
         if (!label) return "";
-        return '<span class="hero-meta-item"><strong>' + valueMap[key] + '</strong><span>' + label + '</span></span>';
+        return '<span class="hero-meta-item rpd-meta-chip"><strong>' + valueMap[key] + '</strong><span>' + label + '</span></span>';
       }).filter(Boolean);
     }
 
@@ -2953,16 +2992,16 @@
 
       document.getElementById("pageContent").innerHTML = `
         <section class="hero" id="hero-section">
-          <div class="hero-card">
+          <div class="hero-card rpd-panel rpd-panel--soft">
             <div class="hero-header">
-              <span class="hero-week-well">${String(w.week).padStart(2, "0")}</span>
+              <span class="hero-week-well rpd-icon-well">${String(w.week).padStart(2, "0")}</span>
               <div class="hero-copy">
                 <span class="hero-kicker">${heroKicker}</span>
                 <h1>Week ${String(w.week).padStart(2, "0")} · ${w.title}</h1>
                 ${heroSubtitle ? `<p>${heroSubtitle}</p>` : ""}
               </div>
             </div>
-            <div class="hero-meta">${heroMetaItems.join("")}</div>
+            <div class="hero-meta rpd-meta-row">${heroMetaItems.join("")}</div>
           </div>
         </section>
 
@@ -2971,7 +3010,7 @@
         <section class="content-block" id="practice">
           <div class="section-head">
             <h3>${text.sectionPractice}</h3>
-            <p>${text.sectionPracticeDesc}</p>
+            ${text.sectionPracticeDesc ? `<p>${text.sectionPracticeDesc}</p>` : ""}
           </div>
           <div class="lab">
             ${stepsHtml}
@@ -3123,6 +3162,8 @@
     function initProgress() {
       var text = getWeekText();
       var steps = Array.from(document.querySelectorAll(".lab-step"));
+      var progressCountEl = document.getElementById("progressCount");
+      var progressFillEl = document.getElementById("progressFill");
 
       function readState() {
         try { return JSON.parse(localStorage.getItem(storageKey) || "{}"); }
@@ -3154,8 +3195,19 @@
         }
       }
 
+      function updateOverallProgress() {
+        var allTasks = steps.reduce(function(list, step) {
+          return list.concat(getTasks(step));
+        }, []);
+        var checkedCount = allTasks.filter(function(task) { return task.checked; }).length;
+        var totalCount = allTasks.length;
+        if (progressCountEl) progressCountEl.textContent = checkedCount + " / " + totalCount;
+        if (progressFillEl) progressFillEl.style.width = totalCount ? Math.round(checkedCount / totalCount * 100) + "%" : "0%";
+      }
+
       function sync() {
         steps.forEach(updateStep);
+        updateOverallProgress();
         refreshWeekActionPanels();
       }
 
@@ -3785,11 +3837,14 @@
       }
 
       var globalMenuLabel = isKo ? "전체 메뉴" : "Site";
+      var publicLinks = window.RPDAppShell
+        ? window.RPDAppShell.getPublicLinks({ lang: isKo ? "ko" : "en" })
+        : null;
       var globalLinks = [
-        { href: withPresetHref("index.html"), label: isKo ? "홈" : "Home" },
-        { href: withPresetHref("inha.html?panel=weeks"), label: isKo ? "인하대 수업" : "Inha RPD" },
-        { href: withPresetHref("library.html"), label: text.footerLibrary },
-        { href: withPresetHref("shortcuts.html"), label: stripNavGlyph(text.shortcutsLink) },
+        { href: publicLinks ? publicLinks.home.href : withPresetHref("index.html"), label: publicLinks ? publicLinks.home.label : (isKo ? "홈" : "Home") },
+        { href: publicLinks ? publicLinks.collection.href : withPresetHref("inha.html?panel=weeks"), label: publicLinks ? publicLinks.collection.label : (isKo ? "인하대 수업" : "Inha RPD") },
+        { href: publicLinks ? publicLinks.library.href : withPresetHref("library.html"), label: text.footerLibrary },
+        { href: publicLinks ? publicLinks.shortcuts.href : withPresetHref("shortcuts.html"), label: stripNavGlyph(text.shortcutsLink) },
         { href: "https://www.notion.so/31e54d654971812e9c38f85124b45e3f", label: stripNavGlyph(text.aiRefsLink), external: true },
         { href: "https://www.notion.so/31e54d65497181c89e8bfa97bb5efaa7", label: stripNavGlyph(text.blenderRefsLink), external: true }
       ];
@@ -3815,23 +3870,23 @@
       });
       var showmeIds = Object.keys(showmeSet);
 
-      var navHtml = "<li><span class=\"nav-section-label nav-section-label-global\">" + globalMenuLabel + "</span></li>";
+      var navHtml = "<li><span class=\"nav-section-label nav-section-label-global rpd-rail-label\">" + globalMenuLabel + "</span></li>";
       navHtml += globalLinks.map(function(link, idx) {
-        return "<li" + (idx === globalLinks.length - 1 ? " class=\"sidebar-group-end\"" : "") + "><a class=\"sidebar-link-global\" href=\"" + link.href + "\"" +
+        return "<li" + (idx === globalLinks.length - 1 ? " class=\"sidebar-group-end\"" : "") + "><a class=\"sidebar-link-global rpd-rail-link rpd-rail-link--external\" href=\"" + link.href + "\"" +
           (link.external ? " target=\"_blank\" rel=\"noopener noreferrer\"" : "") +
           ">" + link.label + "</a></li>";
       }).join("");
 
       navHtml += sections.map(function(s) {
-        var g = s.group ? "<li><span class=\"nav-section-label\">" + s.group + "</span></li>" : "";
-        return g + "<li data-nav-id=\"" + s.id + "\"><a href=\"#" + s.id + "\">" + s.label + "</a></li>";
+        var g = s.group ? "<li><span class=\"nav-section-label rpd-rail-label\">" + s.group + "</span></li>" : "";
+        return g + "<li data-nav-id=\"" + s.id + "\"><a class=\"rpd-rail-link\" href=\"#" + s.id + "\">" + s.label + "</a></li>";
       }).join("");
 
       if (showmeIds.length > 0) {
-        navHtml += "<li><span class=\"nav-section-label\">" + text.sidebarShowMe + "</span></li>";
+        navHtml += "<li><span class=\"nav-section-label rpd-rail-label\">" + text.sidebarShowMe + "</span></li>";
         showmeIds.forEach(function(id) {
           var meta = getShowMeMeta(id);
-          navHtml += "<li><a href=\"#\" onclick=\"openShowMe('" + id + "');return false;\">" +
+          navHtml += "<li><a class=\"rpd-rail-link\" href=\"#\" onclick=\"openShowMe('" + id + "');return false;\">" +
             meta.icon + " " + meta.label + "</a></li>";
         });
       }
@@ -3887,17 +3942,7 @@
     });
 
     // ─── Theme toggle ─────────────────────────────────
-    document.getElementById("themeToggle").addEventListener("click", function() {
-      var current = document.documentElement.getAttribute("data-theme");
-      var next = current === "light" ? "" : "light";
-      if (next) {
-        document.documentElement.setAttribute("data-theme", next);
-        localStorage.setItem("rpd-theme", next);
-      } else {
-        document.documentElement.removeAttribute("data-theme");
-        localStorage.removeItem("rpd-theme");
-      }
-    });
+    window.RPDAppShell.bindThemeToggle(document.getElementById("themeToggle"));
   </script>
 </body>
 </html>

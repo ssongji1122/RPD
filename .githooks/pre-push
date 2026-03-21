@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+
+echo "[pre-push] Running public page smoke checks..."
+"${REPO_ROOT}/tools/run-public-page-checks.sh"

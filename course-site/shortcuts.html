@@ -41,17 +41,29 @@
     .shortcuts-brand .topbar-meta {
       color: var(--muted);
     }
-    .shortcuts-page .topbar .btn-primary {
-      border-color: rgba(var(--shortcuts-accent-rgb), .46);
-      background: rgba(255,255,255,.03);
-      color: #f7fbfc;
-      box-shadow:
-        inset 0 0 0 1px rgba(var(--shortcuts-accent-rgb), .12),
-        0 10px 20px rgba(0,0,0,.14);
+    .shortcuts-topbar-nav {
+      gap: 16px;
     }
-    .shortcuts-topbar-inner.rpd-topbar-3col {
-      grid-template-columns: auto minmax(0, 1fr) auto;
-      gap: 18px;
+    .shortcuts-topbar-nav .btn {
+      min-height: auto;
+      padding: 6px 0;
+      color: var(--muted);
+      background: transparent;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+    }
+    .shortcuts-topbar-nav .btn:hover {
+      color: var(--muted-strong);
+      background: transparent;
+      border-color: transparent;
+    }
+    .shortcuts-topbar-nav .btn.is-active {
+      color: var(--shortcuts-accent-soft);
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+      font-weight: 620;
     }
     .hero {
       padding: 24px 0 14px;
@@ -59,7 +71,7 @@
     }
     .hero-card {
       position: relative;
-      grid-template-columns: minmax(0, 1fr) minmax(210px, .56fr);
+      grid-template-columns: minmax(0, 1fr);
       align-items: start;
       width: 100%;
       border-radius: var(--shortcuts-shell-radius);
@@ -89,49 +101,49 @@
     .hero p {
       max-width: 54ch;
     }
-    .hero-meta-wrap {
-      background: var(--modal-panel-soft-bg);
-    }
-    .hero-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .shortcuts-page .topbar .btn-primary:hover {
-      border-color: rgba(var(--shortcuts-accent-rgb), .58);
-      background:
-        linear-gradient(180deg, rgba(var(--shortcuts-accent-rgb), .08), rgba(255,255,255,.02)),
-        rgba(255,255,255,.04);
+    .hero-meta-wrap { display: none; }
+    .shortcuts-topbar-nav .btn.is-active:hover {
+      color: var(--shortcuts-accent-soft);
+      background: transparent;
     }
 
-    /* Search bar */
+    .shortcuts-browser.rpd-page-layout {
+      box-sizing: border-box;
+      position: relative;
+      padding-top: 4px;
+      --rpd-page-rail-active-color: var(--shortcuts-accent-soft);
+    }
+    .shortcuts-main {
+      min-width: 0;
+      display: grid;
+      gap: 18px;
+    }
+
+    /* Search rail */
     .search-wrap {
-      position: sticky; top: 60px; z-index: 40;
-      padding: 10px 0 16px;
-      background: linear-gradient(180deg, rgba(10,10,10,.92), rgba(10,10,10,.72));
-      backdrop-filter: blur(18px);
+      box-sizing: border-box;
+      z-index: 12;
     }
     .search-inner {
-      width: min(var(--max-width), calc(100% - 32px));
-      margin: 0 auto;
+      width: 100%;
+      margin: 0;
       display: grid;
-      gap: 10px;
-      padding: 16px;
-      border-radius: var(--shortcuts-shell-radius);
-      border: 1px solid var(--line);
-      background: var(--shortcuts-panel-bg);
-      box-shadow: var(--modal-panel-shadow);
-      overflow: hidden;
-      isolation: isolate;
-      position: relative;
+      gap: 18px;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: none;
+      box-shadow: none;
+      overflow: visible;
+      isolation: auto;
+      position: static;
     }
     .search-inner::before {
-      content: "";
-      position: absolute;
-      inset: 0 0 auto;
-      height: 1px;
-      background: var(--shortcuts-top-line);
-      pointer-events: none;
+      display: none;
+    }
+    .search-rail-section {
+      display: grid;
+      gap: 10px;
     }
     .search-input {
       width: 100%; padding: 12px 18px 12px 44px;
@@ -151,35 +163,24 @@
     }
     .search-field { position: relative; }
     .search-meta-row {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px 16px;
-    }
-    .results-meta {
-      display: inline-flex;
-      align-items: center;
-      width: fit-content;
-      padding: 7px 12px;
-      border-radius: var(--shortcuts-chip-radius);
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.04);
-      font-size: .78rem;
-      color: var(--muted-strong);
+      display: grid;
+      gap: 12px;
     }
 
     /* Category filter chips */
     .filter-chips {
-      display: flex; flex-wrap: wrap; gap: 8px;
+      display: grid;
+      gap: 8px;
     }
     .filter-chip {
+      width: 100%;
       padding: 7px 12px;
       border-radius: var(--shortcuts-chip-radius);
       border: 1px solid var(--line);
       background: rgba(255,255,255,.03);
       color: var(--muted); font-size: .82rem; font-weight: 500;
       cursor: pointer;
+      text-align: left;
       transition: border-color .14s, color .14s, background .14s, transform .14s;
     }
     .filter-chip:hover {
@@ -197,25 +198,23 @@
 
     /* View toggle */
     .view-toggle {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 3px;
-      border-radius: var(--shortcuts-control-radius);
-      border: 1px solid var(--line);
-      background: var(--shortcuts-panel-strong-bg);
-      box-shadow: var(--modal-card-shadow);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-left: 0;
     }
     .view-btn {
-      min-height: calc(var(--pill-control-height) - 6px);
-      padding: 7px 14px;
-      border-radius: calc(var(--shortcuts-control-radius) - 4px);
-      border: 1px solid transparent;
-      background: transparent;
+      min-height: var(--pill-control-height);
+      padding: 8px 16px;
+      width: 100%;
+      border-radius: var(--shortcuts-control-radius);
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
       color: var(--muted);
       font-size: .82rem;
       font-weight: 600;
       cursor: pointer;
+      justify-content: center;
       transition: background .14s, border-color .14s, color .14s, transform .14s;
     }
     .view-btn:hover {
@@ -230,8 +229,14 @@
       color: #fff;
       box-shadow:
         inset 0 0 0 1px rgba(var(--shortcuts-accent-rgb), .12),
-        0 10px 22px rgba(0,0,0,.18);
+        0 8px 18px rgba(0,0,0,.14);
       transform: none;
+    }
+    .mode-toast {
+      display: none;
+    }
+    .mode-toast > .kbd-toast {
+      margin-bottom: 0;
     }
 
     /* Category groups */
@@ -272,13 +277,6 @@
       font-size: 1.1rem; font-weight: 620;
       color: var(--text); font-family: var(--font-display);
     }
-    .cat-group-count {
-      font-size: .76rem; color: var(--muted);
-      padding: 4px 10px; border-radius: var(--shortcuts-chip-radius);
-      background: rgba(255,255,255,.05);
-      border: 1px solid var(--line);
-    }
-
     /* Shortcut rows */
     .shortcut-row {
       display: flex; align-items: center; gap: 14px;
@@ -441,6 +439,17 @@
         grid-template-columns: 1fr;
         gap: 14px;
       }
+      .shortcuts-browser {
+        grid-template-columns: 1fr;
+        gap: 18px;
+        padding: 4px 16px 0;
+      }
+      .search-wrap {
+        position: relative;
+        top: auto;
+        padding: 0;
+        border-right: none;
+      }
       .shortcut-row { flex-wrap: wrap; gap: 8px; }
       .shortcut-row-keys { min-width: unset; }
       .kbd-svg-wrap { overflow-x: scroll; -webkit-overflow-scrolling: touch; cursor: grab; }
@@ -449,10 +458,7 @@
         align-items: start;
       }
       .view-toggle {
-        width: 100%;
-      }
-      .results-meta {
-        order: 2;
+        grid-template-columns: 1fr 1fr;
       }
     }
   </style>
@@ -473,11 +479,11 @@
             <div class="topbar-meta" id="brandMeta">Archive Support · Inha University</div>
           </div>
         </div>
-        <nav class="rpd-topbar-nav" aria-label="공개 페이지">
+        <nav class="rpd-topbar-nav shortcuts-topbar-nav" aria-label="공개 페이지">
           <a href="index.html" class="btn btn-ghost" id="topHomeLink">홈</a>
           <a href="inha.html" class="btn btn-ghost" id="topCollectionLink">인하대 수업</a>
           <a href="library.html" class="btn btn-ghost" id="topLibraryLink">카드 라이브러리</a>
-          <a href="shortcuts.html" class="btn btn-primary" id="topShortcutsLink">단축키 DB</a>
+          <a href="shortcuts.html" class="btn btn-ghost is-active" id="topShortcutsLink" aria-current="page">단축키 DB</a>
         </nav>
         <div class="topbar-actions rpd-topbar-actions rpd-topbar-utils">
           <div id="langSwitcher"></div>
@@ -504,33 +510,52 @@
       </div>
     </section>
 
-    <!-- Search + View Toggle -->
-    <div class="search-wrap">
-      <div class="search-inner rpd-glass-panel">
-        <div class="search-field">
-          <span class="search-icon" aria-hidden="true">&#x1F50D;</span>
-          <input type="text" class="search-input" id="searchInput"
-                 placeholder="단축키 또는 기능 검색... (예: Ctrl+R, Extrude, 이동)"
-                 autocomplete="off" aria-label="단축키 검색" />
-        </div>
-        <div class="search-meta-row">
-          <div class="results-meta" id="resultsMeta"></div>
-          <div class="view-toggle" id="viewToggle" role="group" aria-label="보기 방식">
-            <button class="view-btn is-active" id="viewListBtn" data-view="list" type="button" aria-pressed="true">목록</button>
-            <button class="view-btn" id="viewKeyboardBtn" data-view="kbd" type="button" aria-pressed="false">&#x2328; 키보드</button>
+    <section class="shortcuts-browser rpd-page-layout">
+      <aside class="search-wrap rpd-page-rail" aria-label="단축키 브라우저">
+        <div class="search-inner">
+          <div class="search-rail-section rpd-page-rail-section">
+            <div class="rpd-rail-label" id="shortcutsRailPagesLabel">공개 페이지</div>
+            <div class="rpd-rail-title" id="shortcutsRailPagesTitle">라이브러리 바로가기</div>
+            <div class="rpd-rail-meta" id="shortcutsRailPagesMeta">아카이브와 실제 수업 화면을 빠르게 오갑니다.</div>
+            <a class="rpd-rail-link" id="shortcutsRailHomeLink" href="index.html">홈</a>
+            <a class="rpd-rail-link" id="shortcutsRailCollectionLink" href="inha.html?panel=weeks">인하대 수업</a>
+            <a class="rpd-rail-link" id="shortcutsRailLibraryLink" href="library.html">카드 라이브러리</a>
+            <a class="rpd-rail-link is-active" id="shortcutsRailShortcutsLink" href="shortcuts.html" aria-current="page">단축키 DB</a>
           </div>
+          <div class="search-rail-section rpd-page-rail-section">
+            <div class="rpd-rail-label" id="shortcutsRailSearchLabel">검색</div>
+            <div class="search-field">
+              <span class="search-icon" aria-hidden="true">&#x1F50D;</span>
+              <input type="text" class="search-input" id="searchInput"
+                     placeholder="단축키 또는 기능 검색... (예: Ctrl+R, Extrude, 이동)"
+                     autocomplete="off" aria-label="단축키 검색" />
+            </div>
+          </div>
+          <div class="search-rail-section rpd-page-rail-section search-meta-row">
+            <div class="rpd-rail-label" id="shortcutsRailViewLabel">보기</div>
+            <div class="view-toggle" id="viewToggle" role="group" aria-label="보기 방식">
+              <button class="view-btn is-active" id="viewListBtn" data-view="list" type="button" aria-pressed="true">목록</button>
+              <button class="view-btn" id="viewKeyboardBtn" data-view="kbd" type="button" aria-pressed="false">&#x2328; 키보드</button>
+            </div>
+          </div>
+          <div class="search-rail-section rpd-page-rail-section">
+            <div class="rpd-rail-label" id="shortcutsRailFilterLabel">카테고리</div>
+            <div class="filter-chips" id="filterChips" role="group" aria-label="카테고리 필터"></div>
+          </div>
+          <div class="mode-toast" id="modeToast" aria-live="polite"></div>
         </div>
-        <div class="filter-chips" id="filterChips" role="group" aria-label="카테고리 필터"></div>
+      </aside>
+
+      <div class="shortcuts-main rpd-page-main">
+        <!-- Keyboard view (hidden by default) -->
+        <section class="content-block kbd-view-section" id="kbdView" style="display:none"></section>
+        <!-- Key detail panel (below keyboard) -->
+        <section class="content-block" id="kbdDetailSection" style="display:none"></section>
+
+        <!-- List view -->
+        <section class="content-block" id="shortcutsContent"></section>
       </div>
-    </div>
-
-    <!-- Keyboard view (hidden by default) -->
-    <section class="content-block kbd-view-section" id="kbdView" style="display:none"></section>
-    <!-- Key detail panel (below keyboard) -->
-    <section class="content-block" id="kbdDetailSection" style="display:none"></section>
-
-    <!-- List view -->
-    <section class="content-block" id="shortcutsContent"></section>
+    </section>
 
     <!-- Footer -->
     <footer class="page-footer">
@@ -776,7 +801,7 @@
         }
         return { id: id, score: score };
       }).filter(function(item) {
-        return item.score > 0;
+        return item.score >= 84;
       }).sort(function(a, b) {
         return b.score - a.score;
       }).slice(0, limit || 1).map(function(item) {
@@ -822,6 +847,7 @@
     var contentEl = document.getElementById("shortcutsContent");
     var kbdEl = document.getElementById("kbdView");
     var resultsMetaEl = document.getElementById("resultsMeta");
+    var modeToastEl = document.getElementById("modeToast");
     var heroMetaLabelEl = document.getElementById("heroMetaLabel");
     var heroMetaEl = document.getElementById("heroMeta");
     var activeFilter = "all";
@@ -834,7 +860,7 @@
     });
     function renderResultsMeta(count) {
       if (!resultsMetaEl) return;
-      resultsMetaEl.textContent = formatCount(count, "단축키", "shortcuts");
+      resultsMetaEl.textContent = "";
     }
 
     function renderStaticText() {
@@ -856,20 +882,28 @@
       document.getElementById("topLibraryLink").setAttribute("href", publicLinks ? publicLinks.library.href : withPresetHref("library.html"));
       document.getElementById("topShortcutsLink").textContent = publicLinks ? publicLinks.shortcuts.label : (isKo ? "단축키 DB" : "Shortcut DB");
       document.getElementById("topShortcutsLink").setAttribute("href", publicLinks ? publicLinks.shortcuts.href : withPresetHref("shortcuts.html"));
+      document.getElementById("shortcutsRailPagesLabel").textContent = isKo ? "공개 페이지" : "Public pages";
+      document.getElementById("shortcutsRailPagesTitle").textContent = isKo ? "라이브러리 바로가기" : "Browse pages";
+      document.getElementById("shortcutsRailPagesMeta").textContent = isKo
+        ? "아카이브와 실제 수업 화면을 빠르게 오갑니다."
+        : "Move quickly between the archive and the live course pages.";
+      document.getElementById("shortcutsRailHomeLink").textContent = publicLinks ? publicLinks.home.label : (isKo ? "홈" : "Home");
+      document.getElementById("shortcutsRailHomeLink").setAttribute("href", publicLinks ? publicLinks.home.href : withPresetHref("index.html"));
+      document.getElementById("shortcutsRailCollectionLink").textContent = publicLinks ? publicLinks.collection.label : (isKo ? "인하대 수업" : "Inha RPD");
+      document.getElementById("shortcutsRailCollectionLink").setAttribute("href", publicLinks ? publicLinks.collection.href : withPresetHref("inha.html?panel=weeks"));
+      document.getElementById("shortcutsRailLibraryLink").textContent = publicLinks ? publicLinks.library.label : (isKo ? "카드 라이브러리" : "Card Library");
+      document.getElementById("shortcutsRailLibraryLink").setAttribute("href", publicLinks ? publicLinks.library.href : withPresetHref("library.html"));
+      document.getElementById("shortcutsRailShortcutsLink").textContent = publicLinks ? publicLinks.shortcuts.label : (isKo ? "단축키 DB" : "Shortcut DB");
+      document.getElementById("shortcutsRailShortcutsLink").setAttribute("href", publicLinks ? publicLinks.shortcuts.href : withPresetHref("shortcuts.html"));
+      document.getElementById("shortcutsRailSearchLabel").textContent = isKo ? "검색" : "Search";
+      document.getElementById("shortcutsRailViewLabel").textContent = isKo ? "보기" : "View";
+      document.getElementById("shortcutsRailFilterLabel").textContent = isKo ? "카테고리" : "Categories";
       document.getElementById("themeToggle").setAttribute("aria-label", isKo ? "테마 전환" : "Toggle theme");
       document.getElementById("heroEyebrow").textContent = text.heroEyebrow;
       document.getElementById("heroTitle").textContent = text.heroTitle;
       document.getElementById("heroDescription").textContent = text.heroDescription;
-      if (heroMetaLabelEl) heroMetaLabelEl.textContent = isKo ? "빠른 보기" : "Quick view";
-      if (heroMetaEl) {
-        var relatedCardCount = fullDB.reduce(function(total, shortcut) {
-          return total + (Array.isArray(shortcut.relatedShowMeIds) ? shortcut.relatedShowMeIds.length : 0);
-        }, 0);
-        heroMetaEl.innerHTML = [
-          '<span class="rpd-meta-chip"><strong>' + fullDB.length + '</strong><span>' + (isKo ? '단축키' : 'shortcuts') + '</span></span>',
-          '<span class="rpd-meta-chip"><strong>' + relatedCardCount + '</strong><span>' + (isKo ? '연결 카드' : 'linked cards') + '</span></span>'
-        ].join("");
-      }
+      if (heroMetaLabelEl && heroMetaLabelEl.parentElement) heroMetaLabelEl.parentElement.style.display = "none";
+      if (heroMetaEl) heroMetaEl.textContent = "";
       document.getElementById("searchInput").setAttribute("placeholder", text.searchPlaceholder);
       document.getElementById("searchInput").setAttribute("aria-label", text.searchAria);
       document.getElementById("filterChips").setAttribute("aria-label", text.categoryFilterAria);
@@ -898,7 +932,7 @@
         var btn = document.createElement("button");
         btn.className = "filter-chip" + (activeFilter === cat ? " is-active" : "");
         btn.dataset.cat = cat;
-        btn.textContent = window.RPDI18n.getShortcutCategoryLabel(cat, SHORTCUT_CATEGORIES[cat].label) + " (" + catCounts[cat] + ")";
+        btn.textContent = window.RPDI18n.getShortcutCategoryLabel(cat, SHORTCUT_CATEGORIES[cat].label);
         chipContainer.appendChild(btn);
       });
 
@@ -1017,11 +1051,7 @@
         var label = document.createElement("span");
         label.className = "cat-group-label";
         label.textContent = window.RPDI18n.getShortcutCategoryLabel(cat, catInfo.label);
-        var count = document.createElement("span");
-        count.className = "cat-group-count";
-        count.textContent = window.RPDI18n.getLanguage() === "ko" ? items.length + "개" : String(items.length);
         header.appendChild(label);
-        header.appendChild(count);
         group.appendChild(header);
 
         items.forEach(function(shortcut) {
@@ -1133,12 +1163,12 @@
       var query = document.getElementById("searchInput").value.trim();
       var filtered = filterDB(fullDB, query, activeFilter);
       var kmap = buildKeyMap(filtered);
+      var activeKeyId = selectedKeyId && kmap[selectedKeyId] ? selectedKeyId : null;
 
       renderResultsMeta(filtered.length);
+      renderModeToast(activeKeyId, kmap);
 
       kbdEl.textContent = "";
-
-      kbdEl.appendChild(makeKeyboardToast(selectedKeyId && kmap[selectedKeyId] ? selectedKeyId : null, kmap));
 
       var svg = svgEl("svg", {
         viewBox: "0 0 764 258",
@@ -1293,6 +1323,18 @@
       return toast;
     }
 
+    function renderModeToast(keyId, kmap) {
+      if (!modeToastEl) return;
+      if (currentView !== "kbd") {
+        modeToastEl.style.display = "none";
+        modeToastEl.textContent = "";
+        return;
+      }
+      modeToastEl.style.display = "";
+      modeToastEl.textContent = "";
+      modeToastEl.appendChild(makeKeyboardToast(keyId, kmap || {}));
+    }
+
     function renderKeyDetail(keyId, kmap) {
       var detailHolder = document.getElementById("kbdDetailSection");
       if (!detailHolder) return;
@@ -1343,6 +1385,7 @@
       } else {
         kbdEl.style.display = "none";
         detailSection.style.display = "none";
+        renderModeToast(null, null);
         listEl.style.display = "";
         renderShortcuts();
       }

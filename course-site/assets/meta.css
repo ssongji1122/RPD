@@ -1,0 +1,126 @@
+/* =====================================================================
+   course-site/assets/meta.css
+   Shared capsule + meta primitives for the RPD public pages
+   ===================================================================== */
+
+:root {
+  --rpd-pill-radius: var(--pill-radius, 18px);
+  --rpd-pill-padding-y: var(--pill-padding-y, 8px);
+  --rpd-pill-padding-x: var(--pill-padding-x, 14px);
+}
+
+.rpd-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+}
+
+:is(
+  .rpd-stat-chip,
+  .rpd-meta-chip,
+  .rpd-status-pill,
+  .status-pill,
+  .version-badge,
+  .dirty-indicator,
+  .results-meta,
+  .lib-count,
+  .lib-search-mode,
+  .lib-week-chip,
+  .filter-chip,
+  .view-btn,
+  .stat-chip,
+  .hero-meta-chip,
+  .overview-card-meta,
+  .cw-active-label,
+  .week-badge,
+  .topic-chip,
+  .week-metric,
+  .go-arrow,
+  .student-badge
+) {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 34px;
+  padding: var(--rpd-pill-padding-y) var(--rpd-pill-padding-x);
+  border-radius: var(--rpd-pill-radius);
+  border: 1px solid var(--line);
+  background: var(--modal-panel-soft-strong-bg);
+  box-shadow: var(--modal-card-shadow);
+  color: var(--muted-strong);
+}
+
+.rpd-stat-chip,
+.stat-chip {
+  font-size: .78rem;
+  color: var(--muted);
+}
+
+.rpd-stat-chip strong,
+.rpd-meta-chip strong,
+.rpd-status-pill strong,
+.status-pill strong {
+  color: var(--text);
+  font-weight: 620;
+  letter-spacing: -.01em;
+}
+
+.rpd-meta-chip,
+.hero-meta-chip,
+.hero-meta-item.rpd-meta-chip {
+  font-size: .79rem;
+  line-height: 1.45;
+  color: var(--muted-strong);
+}
+
+.hero-meta-chip::before,
+.hero-meta-item.rpd-meta-chip::before {
+  content: none !important;
+}
+
+.rpd-status-pill,
+.status-pill {
+  min-height: 32px;
+  padding: 6px 11px;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.rpd-status-pill--complete,
+.status-pill.complete {
+  background: rgba(16,185,129,.08);
+  color: var(--success-soft);
+  border-color: rgba(16,185,129,.18);
+}
+
+.rpd-status-pill--active,
+.status-pill.active {
+  background: var(--modal-nav-active-bg);
+  color: var(--text);
+  border-color: rgba(96,165,250,.34);
+}
+
+.rpd-status-pill--locked,
+.status-pill.locked {
+  background: var(--modal-panel-soft-strong-bg);
+  color: var(--muted);
+  border-color: var(--line);
+}
+
+.version-badge {
+  color: var(--muted-strong);
+}
+
+.dirty-indicator {
+  background: rgba(245,158,11,.12);
+  border-color: rgba(245,158,11,.25);
+  color: #fbbf24;
+}
+
+.lib-search-mode {
+  border-color: rgba(96,165,250,.24);
+  background: var(--modal-nav-active-bg);
+  color: var(--text);
+}
