@@ -17,7 +17,7 @@
   grid-template-columns: minmax(0, 1.2fr) minmax(250px, .8fr);
   gap: 24px;
   width: 100%;
-  padding: 30px;
+  padding: 32px;
   border-radius: var(--radius-xl);
   border: 1px solid var(--line-strong);
   background:
@@ -59,18 +59,17 @@
 }
 .hero-copy {
   display: grid;
-  gap: 14px;
+  gap: 12px;
   max-width: none;
   align-content: start;
 }
 .hero h1 {
   margin: 0;
   font-family: var(--font-display);
-  max-width: 11ch;
-  font-size: clamp(2.18rem, 4vw, 3.42rem);
+  font-size: clamp(1.5rem, 3vw, 2rem);
   font-weight: var(--fw-bold);
-  letter-spacing: -.055em;
-  line-height: 1.02;
+  letter-spacing: -.03em;
+  line-height: 1.15;
   text-wrap: balance;
 }
 .hero p {
@@ -82,10 +81,10 @@
 }
 .hero-meta-wrap {
   display: grid;
-  gap: 14px;
+  gap: 12px;
   align-content: end;
   align-self: stretch;
-  padding: 18px;
+  padding: 16px;
   border-radius: var(--radius-xl);
   border: 1px solid var(--line);
   background:
@@ -98,8 +97,8 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 10px 12px;
-  margin-top: 6px;
+  gap: 8px 12px;
+  margin-top: 8px;
 }
 .hero-actions .btn-primary {
   box-shadow: 0 16px 32px rgba(10,132,255,.26);
@@ -516,7 +515,7 @@
     grid-template-columns: 1fr;
   }
   .hero h1 {
-    max-width: 12ch;
+    max-width: none;
   }
   .hero-meta-wrap {
     min-height: 0;
@@ -532,14 +531,13 @@
 @media (max-width: 720px) {
   .hero-card,
   .content-block {
-    padding: 22px 20px;
+    padding: 24px 16px;
   }
   .hero-copy {
     max-width: none;
   }
   .hero h1 {
-    max-width: 10ch;
-    font-size: clamp(1.94rem, 11vw, 2.7rem);
+    font-size: clamp(1.4rem, 5vw, 1.8rem);
   }
   .archive-grid {
     grid-template-columns: 1fr;

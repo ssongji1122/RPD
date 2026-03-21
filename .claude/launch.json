@@ -9,9 +9,9 @@
     },
     {
       "name": "course-site-static",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "8770", "--directory", "course-site"],
-      "port": 8770
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "course-site", "-l", "8771"],
+      "port": 8771
     }
   ]
 }
