@@ -54,6 +54,11 @@
     .week-card {
       border-radius: var(--course-card-radius);
     }
+    .topbar .btn-primary {
+      padding: 8px 16px;
+      border-color: var(--course-accent-strong);
+      background: var(--course-accent);
+    }
     .brand-lockup {
       max-width: 304px;
     }
@@ -66,19 +71,23 @@
     .topbar-meta {
       color: var(--muted);
     }
+    .inha-topbar-inner.rpd-topbar-3col {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      gap: 18px;
+    }
     .inha-topbar-nav {
       display: flex;
       align-items: center;
       justify-content: center;
       justify-self: center;
       flex-wrap: wrap;
-      gap: 16px;
+      gap: 8px;
       min-width: 0;
       width: max-content;
     }
     .inha-topbar-nav .btn {
-      min-height: auto;
-      padding: 6px 0;
+      min-height: var(--pill-control-height);
+      padding: 8px 15px;
       justify-content: center;
       font-size: .8rem;
       line-height: 1;
@@ -88,22 +97,6 @@
       border: 0;
       border-radius: 0;
       box-shadow: none;
-    }
-    .inha-topbar-nav .btn:hover {
-      color: var(--muted-strong);
-      background: transparent;
-      border-color: transparent;
-    }
-    .inha-topbar-nav .btn.is-active {
-      color: var(--course-accent-soft);
-      background: transparent;
-      border: 0;
-      box-shadow: none;
-      font-weight: 620;
-    }
-    .inha-topbar-nav .btn.is-active:hover {
-      color: var(--course-accent-soft);
-      background: transparent;
     }
     .inha-topbar-utils {
       gap: 8px;
@@ -130,8 +123,33 @@
       background: var(--course-accent-strong);
     }
     .course-layout {
+      width: min(var(--max-width), calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 72px;
+      display: grid;
+      gap: 18px;
+    }
+    .course-layout > section,
+    .course-layout > nav {
+      width: 100%;
+      max-width: 100%;
+      margin: 0;
+    }
+    .hero-card {
       position: relative;
-      --rpd-page-rail-active-color: var(--course-accent-soft);
+      grid-template-columns: minmax(0, 1fr) minmax(220px, 286px);
+      align-items: start;
+      width: 100%;
+      border: 1px solid var(--line-strong);
+      background:
+        radial-gradient(circle at top left, rgba(var(--course-accent-rgb), .14), transparent 34%),
+        linear-gradient(180deg, var(--surface-tint), transparent 72%),
+        var(--surface);
+      box-shadow:
+        0 24px 64px rgba(0,0,0,.2),
+        inset 0 1px 0 rgba(255,255,255,.05);
+      overflow: hidden;
+      isolation: isolate;
     }
     .course-main {
       min-width: 0;
@@ -173,11 +191,6 @@
       position: relative;
       z-index: 1;
       min-width: 0;
-    }
-    .hero-copy {
-      display: grid;
-      gap: 10px;
-      align-content: start;
     }
     .hero h1 {
       display: flex;
@@ -229,15 +242,10 @@
       color: var(--text);
     }
     .hero-meta-wrap {
-      display: grid;
-      gap: 12px;
-      align-content: start;
-      padding: 0 0 0 22px;
-      border: 0;
-      border-left: 1px solid var(--line);
-      border-radius: 0;
-      background: none;
-      box-shadow: none;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.04), transparent 78%),
+        rgba(255,255,255,.02);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
     }
     .hero-meta-label {
       font-size: .68rem;
@@ -248,26 +256,30 @@
     }
     .hero-meta {
       display: grid;
-      gap: 0;
+      gap: 8px;
     }
     .hero-snapshot-item {
       display: grid;
       gap: 4px;
-      padding: 10px 0;
-      border-top: 1px solid var(--line);
-      background: none;
-      box-shadow: none;
+      padding: 10px 12px;
+      border: 1px solid rgba(255,255,255,.06);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.03), transparent 72%),
+        rgba(255,255,255,.02);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
     }
-    .hero-snapshot-item:first-child {
-      padding-top: 0;
-      border-top: 0;
-    }
-    .hero-snapshot-item.is-emphasis .hero-snapshot-value {
-      color: var(--course-accent-soft);
+    .hero-snapshot-item.is-emphasis {
+      border-color: rgba(var(--course-accent-rgb), .3);
+      background:
+        linear-gradient(135deg, rgba(var(--course-accent-rgb), .16), rgba(255,255,255,.02)),
+        rgba(255,255,255,.03);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.05),
+        inset 0 0 0 1px rgba(var(--course-accent-rgb), .08);
     }
     .hero-snapshot-value {
       color: var(--text);
-      font-size: 1rem;
+      font-size: .98rem;
       font-weight: 640;
       letter-spacing: -.02em;
       line-height: 1.2;
@@ -276,6 +288,38 @@
       color: var(--muted);
       font-size: .72rem;
       line-height: 1.25;
+    }
+    .content-block {
+      position: relative;
+      padding: 24px var(--course-panel-pad-x);
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, var(--surface-tint), transparent 72%),
+        var(--surface);
+      box-shadow:
+        0 22px 54px rgba(0,0,0,.18),
+        inset 0 1px 0 rgba(255,255,255,.04);
+      overflow: hidden;
+      isolation: isolate;
+    }
+    .content-block::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(var(--course-accent-rgb), .34), transparent);
+      pointer-events: none;
+    }
+    .content-block.is-hidden {
+      display: none;
+    }
+    .overview-note {
+      margin: 0;
+      position: relative;
+      z-index: 1;
+      color: var(--muted-strong);
+      font-size: .94rem;
+      line-height: 1.74;
     }
     .section-intro {
       display: grid;
@@ -300,19 +344,20 @@
     .week-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
+      gap: 10px;
       position: relative;
       z-index: 1;
     }
     .week-card {
       position: relative;
       overflow: hidden;
-      min-height: 0;
+      min-height: 194px;
       border: 1px solid var(--line);
-      border-radius: 18px;
-      background: var(--modal-panel-soft-bg);
-      box-shadow: var(--modal-card-shadow);
-      padding: 16px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.03), transparent 62%),
+        rgba(255,255,255,.015);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+      padding: 15px 15px 13px;
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -339,6 +384,14 @@
       box-shadow: var(--modal-card-shadow);
     }
     .week-card.is-active {
+      grid-column: 1 / -1;
+      min-height: 0;
+      padding: 18px;
+      gap: 12px;
+      border-left: 1px solid rgba(var(--course-accent-rgb), .34);
+      background:
+        linear-gradient(135deg, rgba(var(--course-accent-rgb), .16), rgba(255,255,255,.03) 56%),
+        rgba(255,255,255,.03);
       border-color: rgba(var(--course-accent-rgb), .34);
       background:
         linear-gradient(135deg, rgba(var(--course-accent-rgb), .12), rgba(255,255,255,.03)),
@@ -409,8 +462,8 @@
     .topic-chip,
     .week-metric {
       padding: 5px 9px;
-      border: 1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.025);
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
       color: var(--muted-strong);
       font-size: .69rem;
       line-height: 1.2;
@@ -422,8 +475,8 @@
       justify-content: space-between;
       gap: 10px;
       margin-top: auto;
-      padding-top: 6px;
-      border-top: 1px solid rgba(255,255,255,.05);
+      padding-top: 4px;
+      border-top: 1px solid rgba(255,255,255,.04);
     }
     .week-metrics {
       display: flex;
@@ -436,11 +489,11 @@
       justify-content: center;
       width: 32px;
       height: 32px;
-      border: 1px solid rgba(255,255,255,.08);
-      background: rgba(255,255,255,.03);
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
       color: var(--muted-strong);
       font-size: .84rem;
-      transition: transform .16s ease, color .16s ease, border-color .16s ease;
+      transition: transform .16s ease;
     }
     .week-card:hover .go-arrow,
     .week-card.is-active .go-arrow {
@@ -496,8 +549,13 @@
       .inha-topbar-nav .btn {
         padding: 8px 12px;
       }
-      .course-main > section {
-        padding: 22px 0 24px;
+      .course-layout > section,
+      .course-layout > nav {
+        width: 100%;
+      }
+      .hero-card,
+      .content-block {
+        padding: 20px var(--course-panel-pad-x);
       }
       .hero h1 {
         font-size: clamp(1.08rem, 4.7vw, 1.34rem);
@@ -535,30 +593,9 @@
       </div>
     </header>
 
-    <div class="course-layout rpd-page-layout">
-      <aside class="course-rail rpd-page-rail" aria-label="수업 탐색 레일">
-        <div class="rpd-page-rail-section">
-          <div class="rpd-rail-label" id="sidebarPagesLabel">공개 페이지</div>
-          <div class="rpd-rail-title" id="sidebarPagesTitle">수업 바로가기</div>
-          <div class="rpd-rail-meta" id="sidebarPagesMeta">아카이브와 실제 수업 화면을 빠르게 오갑니다.</div>
-          <a class="rpd-rail-link" id="sidebarHomeLink" href="index.html">홈</a>
-          <a class="rpd-rail-link is-active" id="sidebarCollectionLink" href="inha.html" aria-current="page">인하대 수업</a>
-          <a class="rpd-rail-link" id="sidebarLibraryLink" href="library.html">라이브러리</a>
-          <a class="rpd-rail-link" id="sidebarShortcutsLink" href="shortcuts.html">단축키 DB</a>
-        </div>
-        <div class="rpd-page-rail-section">
-          <div class="rpd-rail-label" id="sidebarSnapshotLabel">Course snapshot</div>
-          <div class="rpd-rail-title" id="sidebarSnapshotTitle">현재 운영 상태</div>
-          <div class="course-sidebar-summary">
-            <div class="course-sidebar-summary-line" id="sidebarSummaryWeeks"></div>
-            <div class="course-sidebar-summary-line" id="sidebarSummaryCards"></div>
-            <div class="course-sidebar-summary-line" id="sidebarSummaryCurrent"></div>
-          </div>
-        </div>
-      </aside>
-
-      <main class="course-main rpd-page-main">
-        <section class="hero" id="heroSection">
+    <div class="course-layout">
+      <section class="hero" id="heroSection">
+        <div class="hero-card rpd-hero-card">
           <div class="hero-copy rpd-hero-copy">
             <div class="eyebrow" id="heroEyebrow">Inha University · Course Page</div>
             <h1 class="rpd-hero-title" id="heroTitle">인하대학교 · Robot Product Design</h1>
@@ -571,14 +608,13 @@
           </div>
         </section>
 
-        <section id="weeksPanel">
-          <div class="section-intro">
-            <div class="eyebrow" id="weekSectionEyebrow">Week Assemblies</div>
-            <h2 class="section-title" id="weekSectionTitle">주차별 수업</h2>
-          </div>
-          <div class="week-grid" id="weekGrid"></div>
-        </section>
-      </main>
+      <section class="content-block" id="weeksPanel">
+        <div class="section-intro">
+          <div class="eyebrow" id="weekSectionEyebrow">Week Assemblies</div>
+          <h2 class="section-title" id="weekSectionTitle">주차별 수업</h2>
+        </div>
+        <div class="week-grid" id="weekGrid"></div>
+      </section>
     </div>
 
     <footer class="page-footer">
