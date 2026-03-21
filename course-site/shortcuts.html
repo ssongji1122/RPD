@@ -7,520 +7,94 @@
   <meta name="description" content="Blender 단축키 전체 검색 — Robot Product Design" />
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
   <link rel="stylesheet" href="assets/tokens.css" />
+  <link rel="stylesheet" href="assets/components.css" />
+  <link rel="stylesheet" href="assets/layout.css" />
+  <link rel="stylesheet" href="assets/page-shortcuts.css" />
   <script>/* FOUC prevention */ (function(){var t=localStorage.getItem('rpd-theme');if(t)document.documentElement.setAttribute('data-theme',t);var l=localStorage.getItem('rpd-lang');if(l){document.documentElement.lang=l;document.documentElement.setAttribute('data-lang',l);}})()</script>
-  <style>
-    .shortcuts-page {
-      --shortcuts-shell-radius: 26px;
-      --shortcuts-card-radius: 20px;
-      --shortcuts-chip-radius: var(--pill-radius);
-      --shortcuts-control-radius: var(--pill-radius);
-      --shortcuts-accent: #2f7489;
-      --shortcuts-accent-strong: #255f70;
-      --shortcuts-accent-soft: #d3edf4;
-      --shortcuts-accent-rgb: 47, 116, 137;
-      --shortcuts-panel-bg: var(--modal-panel-bg);
-      --shortcuts-panel-soft-bg:
-        linear-gradient(180deg, rgba(255,255,255,.02), transparent 72%),
-        rgba(255,255,255,.014);
-      --shortcuts-panel-strong-bg:
-        linear-gradient(180deg, rgba(255,255,255,.034), transparent 72%),
-        rgba(255,255,255,.02);
-      --shortcuts-top-line: linear-gradient(90deg, transparent, rgba(var(--shortcuts-accent-rgb), .18), transparent);
-    }
-    .shortcuts-page .topbar .btn,
-    .shortcuts-page .theme-toggle,
-    .shortcuts-page #langSwitcher .lang-switcher {
-      border-radius: var(--shortcuts-control-radius);
-    }
-    .shortcuts-brand {
-      max-width: 316px;
-    }
-    .shortcuts-brand strong {
-      letter-spacing: -.02em;
-    }
-    .shortcuts-brand .topbar-meta {
-      color: var(--muted);
-    }
-    .shortcuts-topbar-nav {
-      gap: 16px;
-    }
-    .shortcuts-topbar-nav .btn {
-      min-height: auto;
-      padding: 6px 0;
-      color: var(--muted);
-      background: transparent;
-      border: 0;
-      border-radius: 0;
-      box-shadow: none;
-    }
-    .shortcuts-topbar-nav .btn:hover {
-      color: var(--muted-strong);
-      background: transparent;
-      border-color: transparent;
-    }
-    .shortcuts-topbar-nav .btn.is-active {
-      color: var(--shortcuts-accent-soft);
-      background: transparent;
-      border: 0;
-      box-shadow: none;
-      font-weight: 620;
-    }
-    .hero {
-      padding: 24px 0 14px;
-      text-align: left;
-    }
-    .hero-card {
-      position: relative;
-      grid-template-columns: minmax(0, 1fr);
-      align-items: start;
-      width: 100%;
-      border-radius: var(--shortcuts-shell-radius);
-      border: 1px solid var(--line);
-      background: var(--shortcuts-panel-bg);
-      box-shadow: var(--modal-panel-shadow);
-      overflow: hidden;
-      isolation: isolate;
-    }
-    .hero-card::before {
-      content: "";
-      position: absolute;
-      inset: 0 0 auto;
-      height: 1px;
-      background: var(--shortcuts-top-line);
-      pointer-events: none;
-    }
-    .hero-copy,
-    .hero-meta-wrap {
-      position: relative;
-      z-index: 1;
-    }
-    .hero h1 {
-      max-width: 14ch;
-      text-wrap: balance;
-    }
-    .hero p {
-      max-width: 54ch;
-    }
-    .hero-meta-wrap { display: none; }
-    .shortcuts-topbar-nav .btn.is-active:hover {
-      color: var(--shortcuts-accent-soft);
-      background: transparent;
-    }
-
-    .shortcuts-browser.rpd-page-layout {
-      box-sizing: border-box;
-      position: relative;
-      padding-top: 4px;
-      --rpd-page-rail-active-color: var(--shortcuts-accent-soft);
-    }
-    .shortcuts-main {
-      min-width: 0;
-      display: grid;
-      gap: 18px;
-    }
-
-    /* Search rail */
-    .search-wrap {
-      box-sizing: border-box;
-      z-index: 12;
-    }
-    .search-inner {
-      width: 100%;
-      margin: 0;
-      display: grid;
-      gap: 18px;
-      padding: 0;
-      border: 0;
-      border-radius: 0;
-      background: none;
-      box-shadow: none;
-      overflow: visible;
-      isolation: auto;
-      position: static;
-    }
-    .search-inner::before {
-      display: none;
-    }
-    .search-rail-section {
-      display: grid;
-      gap: 10px;
-    }
-    .search-input {
-      width: 100%; padding: 12px 18px 12px 44px;
-      border-radius: var(--shortcuts-card-radius);
-      border: 1px solid var(--line);
-      background: var(--shortcuts-panel-strong-bg);
-      box-shadow: var(--modal-card-shadow);
-      color: var(--text); font-family: var(--font-body); font-size: .94rem;
-      outline: none;
-      transition: border-color .18s, background .18s;
-    }
-    .search-input:focus { border-color: rgba(var(--shortcuts-accent-rgb), .42); background: rgba(255,255,255,.04); }
-    .search-input::placeholder { color: var(--muted); }
-    .search-icon {
-      position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
-      color: var(--muted); pointer-events: none; font-size: 1rem;
-    }
-    .search-field { position: relative; }
-    .search-meta-row {
-      display: grid;
-      gap: 12px;
-    }
-
-    /* Category filter chips */
-    .filter-chips {
-      display: grid;
-      gap: 8px;
-    }
-    .filter-chip {
-      width: 100%;
-      padding: 7px 12px;
-      border-radius: var(--shortcuts-chip-radius);
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      color: var(--muted); font-size: .82rem; font-weight: 500;
-      cursor: pointer;
-      text-align: left;
-      transition: border-color .14s, color .14s, background .14s, transform .14s;
-    }
-    .filter-chip:hover {
-      color: var(--text);
-      transform: translateY(-1px);
-    }
-    .filter-chip.is-active {
-      border-color: rgba(var(--shortcuts-accent-rgb), .32);
-      color: var(--text);
-      background:
-        linear-gradient(135deg, rgba(var(--shortcuts-accent-rgb), .07), rgba(255,255,255,.02)),
-        rgba(255,255,255,.03);
-      box-shadow: inset 0 0 0 1px rgba(var(--shortcuts-accent-rgb), .1);
-    }
-
-    /* View toggle */
-    .view-toggle {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-left: 0;
-    }
-    .view-btn {
-      min-height: var(--pill-control-height);
-      padding: 8px 16px;
-      width: 100%;
-      border-radius: var(--shortcuts-control-radius);
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      color: var(--muted);
-      font-size: .82rem;
-      font-weight: 600;
-      cursor: pointer;
-      justify-content: center;
-      transition: background .14s, border-color .14s, color .14s, transform .14s;
-    }
-    .view-btn:hover {
-      color: var(--text);
-      transform: translateY(-1px);
-    }
-    .view-btn.is-active {
-      background:
-        linear-gradient(135deg, rgba(var(--shortcuts-accent-rgb), .14), rgba(255,255,255,.04)),
-        rgba(255,255,255,.04);
-      border-color: rgba(var(--shortcuts-accent-rgb), .36);
-      color: #fff;
-      box-shadow:
-        inset 0 0 0 1px rgba(var(--shortcuts-accent-rgb), .12),
-        0 8px 18px rgba(0,0,0,.14);
-      transform: none;
-    }
-    .mode-toast {
-      display: none;
-    }
-    .mode-toast > .kbd-toast {
-      margin-bottom: 0;
-    }
-
-    /* Category groups */
-    .content-block {
-      position: relative;
-      padding: 24px;
-      border-radius: var(--shortcuts-shell-radius);
-      border: 1px solid var(--line);
-      background: var(--shortcuts-panel-bg);
-      box-shadow: var(--modal-panel-shadow);
-      overflow: hidden;
-      isolation: isolate;
-    }
-    .content-block::before {
-      content: "";
-      position: absolute;
-      inset: 0 0 auto;
-      height: 1px;
-      background: var(--shortcuts-top-line);
-      pointer-events: none;
-    }
-    .cat-group {
-      margin-bottom: 18px;
-      padding: 20px;
-      border-radius: var(--shortcuts-card-radius);
-      border: 1px solid var(--line);
-      background: var(--shortcuts-panel-soft-bg);
-      box-shadow: var(--modal-card-shadow);
-    }
-    .cat-group:last-child { margin-bottom: 0; }
-    .cat-group-header {
-      display: flex; align-items: center; gap: 10px;
-      margin-bottom: 14px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--line);
-    }
-    .cat-group-label {
-      font-size: 1.1rem; font-weight: 620;
-      color: var(--text); font-family: var(--font-display);
-    }
-    /* Shortcut rows */
-    .shortcut-row {
-      display: flex; align-items: center; gap: 14px;
-      flex-wrap: wrap;
-      padding: 14px 16px;
-      border: 1px solid var(--line);
-      border-radius: var(--shortcuts-card-radius);
-      background: rgba(255,255,255,.018);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
-      transition: transform .12s, border-color .12s, background .12s;
-      margin-top: 10px;
-    }
-    .shortcut-row:hover {
-      transform: translateY(-1px);
-      border-color: rgba(var(--shortcuts-accent-rgb), .3);
-      background: var(--modal-hover-bg);
-    }
-    .shortcut-row-keys { min-width: 160px; flex-shrink: 0; }
-    .shortcut-row-action {
-      flex: 1; color: rgba(245,245,247,.94); font-size: .9rem; line-height: 1.5;
-    }
-    /* Empty state */
-    .empty-state {
-      text-align: center; padding: 60px 20px;
-      color: var(--muted); font-size: .94rem;
-    }
-
-    /* ── Keyboard view ────────────────────────────── */
-    .page-shell { overflow: visible !important; }
-    .kbd-svg-wrap { overflow-x: auto; padding: 8px 0 16px; }
-
-    /* Key detail panel */
-    .kbd-detail-panel {
-      margin-top: 20px;
-      background: var(--modal-panel-soft-bg);
-      border: 1px solid var(--line);
-      border-radius: 22px;
-      box-shadow: var(--modal-card-shadow);
-      padding: 20px 24px;
-    }
-    .kbd-detail-title {
-      font-size: .9rem; font-weight: 620; color: var(--text);
-      margin-bottom: 14px;
-      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-    }
-    .kbd-detail-key-badge {
-      font-family: var(--font-mono, monospace);
-      background: rgba(var(--shortcuts-accent-rgb), .1);
-      border: 1px solid rgba(var(--shortcuts-accent-rgb), .24);
-      color: var(--shortcuts-accent-soft);
-      padding: 2px 10px; border-radius: 6px; font-size: .9rem;
-    }
-    .kbd-toast {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 12px;
-      align-items: start;
-      margin-bottom: 14px;
-      padding: 13px 14px;
-      border-radius: var(--shortcuts-card-radius);
-      border: 1px solid rgba(255,255,255,.08);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.03), transparent 72%),
-        rgba(255,255,255,.022);
-      box-shadow: var(--modal-card-shadow);
-    }
-    .kbd-toast.is-selected {
-      border-color: rgba(var(--shortcuts-accent-rgb), .24);
-      background:
-        linear-gradient(180deg, rgba(var(--shortcuts-accent-rgb), .07), transparent 76%),
-        rgba(255,255,255,.022);
-      box-shadow:
-        inset 0 0 0 1px rgba(var(--shortcuts-accent-rgb), .06),
-        var(--modal-card-shadow);
-    }
-    .kbd-toast-icon {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 32px;
-      height: 32px;
-      padding: 0 8px;
-      border-radius: 12px;
-      border: 1px solid rgba(var(--shortcuts-accent-rgb), .18);
-      background: rgba(var(--shortcuts-accent-rgb), .08);
-      color: var(--shortcuts-accent-soft);
-      font-size: .78rem;
-      font-weight: 620;
-      line-height: 1;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
-      white-space: nowrap;
-    }
-    .kbd-toast-copy {
-      display: grid;
-      gap: 3px;
-      min-width: 0;
-    }
-    .kbd-toast-title {
-      color: var(--text);
-      font-size: .84rem;
-      font-weight: 620;
-      line-height: 1.35;
-    }
-    .kbd-toast-body {
-      color: var(--muted-strong);
-      font-size: .78rem;
-      line-height: 1.55;
-    }
-
-    .shortcut-row-detail {
-      flex-basis: 100%;
-      font-size: .82rem; color: var(--muted);
-      line-height: 1.6;
-      padding: 6px 0 2px 0;
-    }
-    .shortcut-related {
-      display: flex;
-      flex-basis: 100%;
-      flex-wrap: wrap;
-      gap: 8px;
-      padding-top: 2px;
-    }
-    .shortcut-related-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 10px;
-      border-radius: var(--shortcuts-chip-radius);
-      border: 1px solid rgba(var(--shortcuts-accent-rgb), .22);
-      background:
-        linear-gradient(135deg, rgba(var(--shortcuts-accent-rgb), .06), rgba(255,255,255,.02)),
-        rgba(255,255,255,.03);
-      color: rgba(245,245,247,.96);
-      font-size: .76rem;
-      font-weight: 600;
-      line-height: 1.2;
-      text-decoration: none;
-      box-shadow: inset 0 0 0 1px rgba(var(--shortcuts-accent-rgb), .06);
-      transition: transform .14s, border-color .14s, background .14s;
-    }
-    .shortcut-related-link:hover {
-      transform: translateY(-1px);
-      border-color: rgba(var(--shortcuts-accent-rgb), .3);
-      background:
-        linear-gradient(135deg, rgba(var(--shortcuts-accent-rgb), .08), rgba(255,255,255,.02)),
-        rgba(34,47,55,.92);
-    }
-    .shortcut-related-icon {
-      font-size: .88rem;
-      line-height: 1;
-    }
-
-    @media (max-width: 720px) {
-      .hero-card,
-      .search-inner,
-      .content-block {
-        padding: 20px;
-      }
-      .hero-card {
-        grid-template-columns: 1fr;
-        gap: 14px;
-      }
-      .shortcuts-browser {
-        grid-template-columns: 1fr;
-        gap: 18px;
-        padding: 4px 16px 0;
-      }
-      .search-wrap {
-        position: relative;
-        top: auto;
-        padding: 0;
-        border-right: none;
-      }
-      .shortcut-row { flex-wrap: wrap; gap: 8px; }
-      .shortcut-row-keys { min-width: unset; }
-      .kbd-svg-wrap { overflow-x: scroll; -webkit-overflow-scrolling: touch; cursor: grab; }
-      .kbd-svg-wrap svg { min-width: 780px; }
-      .search-meta-row {
-        align-items: start;
-      }
-      .view-toggle {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
-  </style>
-  <link rel="stylesheet" href="assets/surface.css?v=20260318a" />
-  <link rel="stylesheet" href="assets/meta.css?v=20260318a" />
-  <link rel="stylesheet" href="assets/chrome.css?v=20260318a" />
 </head>
 <body>
-  <div class="page-shell shortcuts-page">
+  <a href="#main-content" class="skip-link">본문으로 건너뛰기</a>
+  <div class="app">
 
     <!-- Topbar -->
-    <header class="topbar">
-      <div class="topbar-inner shortcuts-topbar-inner rpd-topbar-3col">
-        <div class="brand shortcuts-brand rpd-brand-lockup">
-          <div class="brand-badge">S</div>
-          <div class="brand-copy">
-            <strong id="brandTitle">Blender Shortcuts DB</strong>
-            <div class="topbar-meta" id="brandMeta">Archive Support · Inha University</div>
-          </div>
-        </div>
-        <nav class="rpd-topbar-nav shortcuts-topbar-nav" aria-label="공개 페이지">
-          <a href="index.html" class="btn btn-ghost" id="topHomeLink">홈</a>
-          <a href="inha.html" class="btn btn-ghost" id="topCollectionLink">인하대 수업</a>
-          <a href="library.html" class="btn btn-ghost" id="topLibraryLink">카드 라이브러리</a>
-          <a href="shortcuts.html" class="btn btn-ghost is-active" id="topShortcutsLink" aria-current="page">단축키 DB</a>
-        </nav>
-        <div class="topbar-actions rpd-topbar-actions rpd-topbar-utils">
-          <div id="langSwitcher"></div>
-          <button class="theme-toggle" id="themeToggle" type="button" aria-label="테마 전환">
-            <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-            <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-          </button>
-        </div>
+    <header class="app-topbar">
+      <div class="app-topbar-left">
+        <div class="app-logo">BA</div>
+        <div class="app-title">Blender Archive <span>RPD</span></div>
+      </div>
+      <div class="app-topbar-right">
+        <div id="langSwitcher"></div>
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="테마 전환">
+          <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+          <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
       </div>
     </header>
 
-    <!-- Hero -->
-    <section class="hero">
-      <div class="hero-card rpd-hero-card">
-        <div class="hero-copy rpd-hero-copy">
-          <div class="eyebrow" id="heroEyebrow">Blender Shortcuts</div>
-          <h1 class="rpd-hero-title" id="heroTitle">단축키 DB</h1>
-          <p class="rpd-hero-description" id="heroDescription">수업에서 다루는 모든 Blender 단축키를 한 곳에서 검색하세요.</p>
-        </div>
-        <div class="hero-meta-wrap rpd-hero-meta-wrap">
-          <div class="hero-meta-label rpd-hero-meta-label" id="heroMetaLabel">Quick view</div>
-          <div class="hero-meta rpd-meta-row" id="heroMeta"></div>
-        </div>
+    <!-- Side Rail -->
+    <nav class="rail" id="sideRail" aria-label="메인 탐색">
+      <a href="index.html" class="rail-item" data-page="index.html">
+        <span class="rail-icon">&#9751;</span>
+        <span class="rail-text">홈</span>
+      </a>
+      <a href="#" class="rail-item" data-page="">
+        <span class="rail-icon">&#9776;</span>
+        <span class="rail-text">내 덱</span>
+      </a>
+      <div class="rail-sub" id="railDeckList">
+        <!-- JS로 채워짐 -->
       </div>
-    </section>
+      <a href="library.html" class="rail-item" data-page="library.html">
+        <span class="rail-icon">&#128269;</span>
+        <span class="rail-text">카드 찾기</span>
+      </a>
+      <a href="shortcuts.html" class="rail-item" data-page="shortcuts.html">
+        <span class="rail-icon">&#9000;</span>
+        <span class="rail-text">단축키</span>
+      </a>
+      <div class="rail-spacer"></div>
+      <a href="#" class="rail-item">
+        <span class="rail-icon">&#9881;</span>
+        <span class="rail-text">설정</span>
+      </a>
+      <button class="rail-toggle" id="railToggle">
+        <span class="rail-toggle-arrow">&#9654;</span>
+        <span class="rail-text">접기</span>
+      </button>
+    </nav>
 
-    <section class="shortcuts-browser rpd-page-layout">
-      <aside class="search-wrap rpd-page-rail" aria-label="단축키 브라우저">
-        <div class="search-inner">
-          <div class="search-rail-section rpd-page-rail-section">
-            <div class="rpd-rail-label" id="shortcutsRailPagesLabel">공개 페이지</div>
-            <div class="rpd-rail-title" id="shortcutsRailPagesTitle">라이브러리 바로가기</div>
-            <div class="rpd-rail-meta" id="shortcutsRailPagesMeta">아카이브와 실제 수업 화면을 빠르게 오갑니다.</div>
-            <a class="rpd-rail-link" id="shortcutsRailHomeLink" href="index.html">홈</a>
-            <a class="rpd-rail-link" id="shortcutsRailCollectionLink" href="inha.html?panel=weeks">인하대 수업</a>
-            <a class="rpd-rail-link" id="shortcutsRailLibraryLink" href="library.html">카드 라이브러리</a>
-            <a class="rpd-rail-link is-active" id="shortcutsRailShortcutsLink" href="shortcuts.html" aria-current="page">단축키 DB</a>
+    <!-- Main Content -->
+    <main class="main" id="main-content">
+      <div class="main-inner">
+
+        <!-- Hero -->
+        <section class="hero">
+          <div class="hero-card rpd-glass-panel">
+            <div class="eyebrow" id="heroEyebrow">Blender Shortcuts</div>
+            <h1 id="heroTitle">단축키 DB</h1>
+            <p id="heroDescription">수업에서 다루는 모든 Blender 단축키를 한 곳에서 검색하세요.</p>
+            <div class="hero-actions cta-group" id="heroActions"></div>
+            <div class="stats-bar" id="statsBar"></div>
+          </div>
+        </section>
+
+        <!-- Search + View Toggle -->
+        <div class="search-wrap">
+          <div class="search-inner rpd-glass-panel">
+            <div class="search-field">
+              <span class="search-icon" aria-hidden="true">&#x1F50D;</span>
+              <input type="text" class="search-input" id="searchInput"
+                     placeholder="단축키 또는 기능 검색... (예: Ctrl+R, Extrude, 이동)"
+                     autocomplete="off" aria-label="단축키 검색" />
+            </div>
+            <div class="search-meta-row">
+              <div class="results-meta" id="resultsMeta"></div>
+              <div class="view-toggle" id="viewToggle" role="group" aria-label="보기 방식">
+                <button class="view-btn is-active" id="viewListBtn" data-view="list">목록</button>
+                <button class="view-btn" id="viewKeyboardBtn" data-view="kbd">&#x2328; 키보드</button>
+              </div>
+            </div>
+            <div class="filter-chips" id="filterChips" role="group" aria-label="카테고리 필터"></div>
           </div>
           <div class="search-rail-section rpd-page-rail-section">
             <div class="rpd-rail-label" id="shortcutsRailSearchLabel">검색</div>
@@ -544,9 +118,7 @@
           </div>
           <div class="mode-toast" id="modeToast" aria-live="polite"></div>
         </div>
-      </aside>
 
-      <div class="shortcuts-main rpd-page-main">
         <!-- Keyboard view (hidden by default) -->
         <section class="content-block kbd-view-section" id="kbdView" style="display:none"></section>
         <!-- Key detail panel (below keyboard) -->
@@ -554,21 +126,24 @@
 
         <!-- List view -->
         <section class="content-block" id="shortcutsContent"></section>
+
+        <!-- Footer -->
+        <footer class="page-footer">
+          <div>Robot Product Design 2026 · <a href="index.html" id="footerBackLink" style="color:var(--key-soft)">&larr; 전체 목록</a></div>
+        </footer>
+
       </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="page-footer">
-      <div>Robot Product Design 2026 · <a href="index.html" id="footerBackLink" style="color:var(--key-soft)">&larr; 전체 목록</a></div>
-    </footer>
-
+    </main>
   </div>
 
   <script src="assets/i18n.js"></script>
   <script src="assets/site-shell.js?v=20260318a"></script>
   <script src="assets/showme/_registry.js?v=20260318f"></script>
   <script src="data/curriculum.js"></script>
+  <script src="assets/layout.js"></script>
   <script>
+    // curriculum.js CURRICULUM array is a static trusted source with no user input.
+    // All innerHTML assignments below use only static string literals and numeric counts — no user input.
     var SHORTCUT_CATEGORIES = {
       general: { label: "General", order: 0 },
       navigation: { label: "Navigation", order: 1 },
@@ -858,6 +433,24 @@
     fullDB.forEach(function(shortcut) {
       catCounts[shortcut.category] = (catCounts[shortcut.category] || 0) + 1;
     });
+    var weekSet = {};
+    fullDB.forEach(function(shortcut) {
+      (shortcut.weeks || []).forEach(function(week) {
+        weekSet[week] = true;
+      });
+    });
+    var weekCount = Object.keys(weekSet).length;
+
+    function buildHeroActions(text) {
+      var activeWeek = CURRICULUM.find(function(week) { return week.status === "active"; }) || CURRICULUM[0];
+      var weekHref = activeWeek ? ("week.html?week=" + activeWeek.week) : "index.html";
+      return [
+        '<button class="btn btn-primary" type="button" id="heroKeyboardCta">' + text.heroPrimaryCta + '</button>',
+        '<a class="btn btn-ghost" href="' + weekHref + '">' + text.heroSecondaryCta + '</a>',
+        '<a class="btn-link" href="library.html">' + text.heroTertiaryCta + ' <span aria-hidden="true">\u2192</span></a>'
+      ].join("");
+    }
+
     function renderResultsMeta(count) {
       if (!resultsMetaEl) return;
       resultsMetaEl.textContent = "";
@@ -872,33 +465,6 @@
       document.title = text.pageTitle;
       var meta = document.querySelector('meta[name="description"]');
       if (meta) meta.setAttribute("content", text.metaDescription);
-      document.getElementById("brandTitle").textContent = text.brandTitle;
-      document.getElementById("brandMeta").textContent = isKo ? "아카이브 지원 · 인하대학교" : "Archive Support · Inha University";
-      document.getElementById("topHomeLink").textContent = publicLinks ? publicLinks.home.label : (isKo ? "홈" : "Home");
-      document.getElementById("topHomeLink").setAttribute("href", publicLinks ? publicLinks.home.href : withPresetHref("index.html"));
-      document.getElementById("topCollectionLink").textContent = publicLinks ? publicLinks.collection.label : (isKo ? "인하대 수업" : "Inha RPD");
-      document.getElementById("topCollectionLink").setAttribute("href", publicLinks ? publicLinks.collection.href : withPresetHref("inha.html?panel=weeks"));
-      document.getElementById("topLibraryLink").textContent = publicLinks ? publicLinks.library.label : (isKo ? "카드 라이브러리" : "Card Library");
-      document.getElementById("topLibraryLink").setAttribute("href", publicLinks ? publicLinks.library.href : withPresetHref("library.html"));
-      document.getElementById("topShortcutsLink").textContent = publicLinks ? publicLinks.shortcuts.label : (isKo ? "단축키 DB" : "Shortcut DB");
-      document.getElementById("topShortcutsLink").setAttribute("href", publicLinks ? publicLinks.shortcuts.href : withPresetHref("shortcuts.html"));
-      document.getElementById("shortcutsRailPagesLabel").textContent = isKo ? "공개 페이지" : "Public pages";
-      document.getElementById("shortcutsRailPagesTitle").textContent = isKo ? "라이브러리 바로가기" : "Browse pages";
-      document.getElementById("shortcutsRailPagesMeta").textContent = isKo
-        ? "아카이브와 실제 수업 화면을 빠르게 오갑니다."
-        : "Move quickly between the archive and the live course pages.";
-      document.getElementById("shortcutsRailHomeLink").textContent = publicLinks ? publicLinks.home.label : (isKo ? "홈" : "Home");
-      document.getElementById("shortcutsRailHomeLink").setAttribute("href", publicLinks ? publicLinks.home.href : withPresetHref("index.html"));
-      document.getElementById("shortcutsRailCollectionLink").textContent = publicLinks ? publicLinks.collection.label : (isKo ? "인하대 수업" : "Inha RPD");
-      document.getElementById("shortcutsRailCollectionLink").setAttribute("href", publicLinks ? publicLinks.collection.href : withPresetHref("inha.html?panel=weeks"));
-      document.getElementById("shortcutsRailLibraryLink").textContent = publicLinks ? publicLinks.library.label : (isKo ? "카드 라이브러리" : "Card Library");
-      document.getElementById("shortcutsRailLibraryLink").setAttribute("href", publicLinks ? publicLinks.library.href : withPresetHref("library.html"));
-      document.getElementById("shortcutsRailShortcutsLink").textContent = publicLinks ? publicLinks.shortcuts.label : (isKo ? "단축키 DB" : "Shortcut DB");
-      document.getElementById("shortcutsRailShortcutsLink").setAttribute("href", publicLinks ? publicLinks.shortcuts.href : withPresetHref("shortcuts.html"));
-      document.getElementById("shortcutsRailSearchLabel").textContent = isKo ? "검색" : "Search";
-      document.getElementById("shortcutsRailViewLabel").textContent = isKo ? "보기" : "View";
-      document.getElementById("shortcutsRailFilterLabel").textContent = isKo ? "카테고리" : "Categories";
-      document.getElementById("themeToggle").setAttribute("aria-label", isKo ? "테마 전환" : "Toggle theme");
       document.getElementById("heroEyebrow").textContent = text.heroEyebrow;
       document.getElementById("heroTitle").textContent = text.heroTitle;
       document.getElementById("heroDescription").textContent = text.heroDescription;
@@ -911,7 +477,29 @@
       document.getElementById("viewListBtn").textContent = text.viewList;
       document.getElementById("viewKeyboardBtn").textContent = text.viewKeyboard;
       document.getElementById("footerBackLink").textContent = text.footerBack;
-      document.getElementById("footerBackLink").setAttribute("href", publicLinks ? publicLinks.home.href : withPresetHref("index.html"));
+
+      var themeBtn = document.getElementById("themeToggle");
+      if (themeBtn && text.themeToggleAria) themeBtn.setAttribute("aria-label", text.themeToggleAria);
+
+      statsEl.textContent = "";
+      [
+        formatCount(fullDB.length, "단축키", "shortcuts"),
+        formatCount(Object.keys(catCounts).length, "카테고리", "categories"),
+        formatCount(weekCount, "주차", "weeks")
+      ].forEach(function(label) {
+        var span = document.createElement("span");
+        span.className = "stat-chip";
+        span.textContent = label;
+        statsEl.appendChild(span);
+      });
+
+      var heroKeyboardCta = document.getElementById("heroKeyboardCta");
+      if (heroKeyboardCta) {
+        heroKeyboardCta.addEventListener("click", function() {
+          switchView("kbd");
+          document.getElementById("searchInput").focus({ preventScroll: true });
+        });
+      }
     }
 
     function renderChips() {
@@ -1412,7 +1000,19 @@
 
     window.RPDI18n.mountLanguageSwitcher(document.getElementById("langSwitcher"));
     window.RPDI18n.onLanguageChange(renderPage);
-    window.RPDAppShell.bindThemeToggle(document.getElementById("themeToggle"));
+
+    // Theme toggle
+    document.getElementById("themeToggle").addEventListener("click", function() {
+      var current = document.documentElement.getAttribute("data-theme");
+      var next = current === "light" ? "" : "light";
+      if (next) {
+        document.documentElement.setAttribute("data-theme", next);
+        localStorage.setItem("rpd-theme", next);
+      } else {
+        document.documentElement.removeAttribute("data-theme");
+        localStorage.removeItem("rpd-theme");
+      }
+    });
   </script>
 </body>
 </html>

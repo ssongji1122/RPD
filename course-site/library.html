@@ -3,407 +3,1376 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>도구 라이브러리 — RPD</title>
+  <title>Show Me 카드 라이브러리 — Blender Archive</title>
+  <meta name="description" content="Blender Archive 안의 Show Me 카드를 Blender 공식 문서 흐름에 맞춰 찾는 라이브러리" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
   <link rel="stylesheet" href="assets/tokens.css" />
-  <style>
-/* ── Layout ── */
-.lib-header {
-  position: sticky; top: 0; z-index: 10;
-  background: rgba(10,10,10,.85);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--line);
-  padding: 0 20px;
-}
-.lib-header-inner {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 18px 0;
-  display: flex; flex-direction: column; gap: 14px;
-}
-.lib-back {
-  color: var(--muted); font-size: .84rem;
-  transition: color .14s;
-}
-.lib-back:hover { color: var(--text); }
-.lib-title {
-  margin: 0; font-size: clamp(1.4rem, 3vw, 2rem);
-  font-family: var(--font-display); font-weight: 650;
-  letter-spacing: -.02em;
-}
-.lib-subtitle {
-  margin: 4px 0 0; color: var(--muted-strong); font-size: .9rem;
-}
-.lib-search-wrap {
-  display: flex; align-items: center; gap: 12px;
-}
-.lib-search {
-  flex: 1; padding: 10px 14px;
-  border-radius: 999px;
-  border: 1px solid var(--line-strong);
-  background: rgba(255,255,255,.05);
-  color: var(--text); font: inherit; font-size: .9rem;
-  outline: none; transition: border-color .14s;
-}
-.lib-search:focus { border-color: var(--key); }
-.lib-search::placeholder { color: var(--muted); }
-.lib-count {
-  font-size: .8rem; color: var(--muted); white-space: nowrap;
-}
-.lib-main {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 24px 20px 80px;
-}
-.lib-tabs {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 0 20px;
-  display: flex; gap: 0;
-  overflow-x: auto;
-  border-bottom: 1px solid var(--line);
-}
-.lib-tabs::-webkit-scrollbar { display: none; }
-.lib-tab {
-  padding: 12px 16px;
-  font-size: .84rem; font-weight: 500;
-  color: var(--muted); cursor: pointer;
-  border: none; border-bottom: 2px solid transparent;
-  white-space: nowrap;
-  transition: color .14s, border-color .14s;
-  background: none; font-family: inherit;
-}
-.lib-tab:hover { color: var(--muted-strong); }
-.lib-tab.is-active {
-  color: var(--key-soft);
-  border-bottom-color: var(--key);
-}
-.lib-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 12px;
-  margin-top: 20px;
-}
-.lib-card {
-  display: flex; flex-direction: column; align-items: center;
-  gap: 8px; padding: 18px 12px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--line);
-  background: var(--surface);
-  cursor: pointer;
-  transition: border-color .14s, background .14s;
-  text-align: center;
-}
-.lib-card:hover {
-  border-color: var(--key);
-  background: rgba(10,132,255,.06);
-}
-.lib-card-icon { font-size: 2rem; line-height: 1; }
-.lib-card-label {
-  font-size: .84rem; font-weight: 500; color: var(--text); line-height: 1.4;
-}
-.lib-card-id {
-  font-size: .72rem; color: var(--muted);
-}
-.lib-empty {
-  grid-column: 1 / -1;
-  padding: 60px 0; text-align: center; color: var(--muted);
-  font-size: .9rem;
-}
-.showme-overlay {
-  display: none; position: fixed; inset: 0;
-  z-index: 100;
-  background: rgba(0,0,0,.72);
-  backdrop-filter: blur(8px);
-  justify-content: center; align-items: center;
-  padding: 20px;
-}
-.showme-overlay.is-open { display: flex; }
-.showme-modal {
-  width: min(720px, 100%);
-  height: min(85vh, 640px);
-  border-radius: var(--radius-lg);
-  border: 1px solid rgba(255,255,255,.12);
-  background: var(--surface);
-  box-shadow: 0 24px 80px rgba(0,0,0,.6);
-  display: flex; flex-direction: column;
-  overflow: hidden;
-  animation: showme-in .22s ease;
-}
-@keyframes showme-in {
-  from { opacity: 0; transform: scale(.97) translateY(8px); }
-  to   { opacity: 1; transform: scale(1) translateY(0); }
-}
-.showme-modal-header {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 14px 18px;
-  border-bottom: 1px solid var(--line);
-  flex-shrink: 0;
-}
-.showme-modal-title { font-size: .9rem; font-weight: 600; color: var(--text); }
-.showme-close {
-  display: grid; place-items: center;
-  width: 32px; height: 32px; border-radius: 8px;
-  border: 1px solid var(--line);
-  background: rgba(255,255,255,.04);
-  color: var(--muted-strong); cursor: pointer;
-  transition: background .14s, color .14s;
-}
-.showme-close:hover { background: rgba(255,255,255,.09); color: var(--text); }
-.showme-iframe { flex: 1; width: 100%; border: none; background: var(--bg); }
-@media (max-width: 720px) {
-  .showme-overlay { padding: 0; }
-  .showme-modal { width: 100%; height: 100%; border-radius: 0; border: none; }
-}
-@media (max-width: 600px) {
-  .lib-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
-  .lib-card { padding: 14px 8px; }
-  .lib-card-icon { font-size: 1.6rem; }
-  .lib-card-label { font-size: .78rem; }
-  .lib-card-id { display: none; }
-  .lib-main { padding: 16px 12px 60px; }
-}
-  </style>
+  <link rel="stylesheet" href="assets/components.css" />
+  <link rel="stylesheet" href="assets/layout.css" />
+  <link rel="stylesheet" href="assets/page-library.css" />
+  <script>/* FOUC prevention */ (function(){var t=localStorage.getItem('rpd-theme');if(t)document.documentElement.setAttribute('data-theme',t);var l=localStorage.getItem('rpd-lang');if(l){document.documentElement.lang=l;document.documentElement.setAttribute('data-lang',l);}})()</script>
 </head>
 <body>
-  <div class="page-shell">
-    <header class="lib-header">
-      <div class="lib-header-inner">
-        <a href="index.html" class="lib-back">← 홈</a>
-        <div>
-          <h1 class="lib-title">도구 라이브러리</h1>
-          <p class="lib-subtitle">Blender 도구·모디파이어 개념 카드 모음</p>
+  <a href="#libMain" class="skip-link" id="skipLink">본문으로 건너뛰기</a>
+  <div class="app">
+
+    <!-- Topbar -->
+    <header class="app-topbar">
+      <div class="app-topbar-left">
+        <div class="app-logo">BA</div>
+        <div class="app-title">Blender Archive <span>RPD</span></div>
+      </div>
+      <input class="app-search" type="search" placeholder="카드 검색... (Extrude, Boolean, UV...)" />
+      <div class="app-topbar-right">
+        <div id="langSwitcher"></div>
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="테마 전환">
+          <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+          <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Side Rail -->
+    <nav class="rail" id="sideRail" aria-label="메인 탐색">
+      <a href="index.html" class="rail-item" data-page="index.html">
+        <span class="rail-icon">&#9751;</span>
+        <span class="rail-text">홈</span>
+      </a>
+      <a href="#" class="rail-item" data-page="">
+        <span class="rail-icon">&#9776;</span>
+        <span class="rail-text">내 덱</span>
+      </a>
+      <div class="rail-sub" id="railDeckList">
+        <!-- JS로 채워짐 -->
+      </div>
+      <a href="library.html" class="rail-item" data-page="library.html">
+        <span class="rail-icon">&#128269;</span>
+        <span class="rail-text">카드 찾기</span>
+      </a>
+      <a href="shortcuts.html" class="rail-item" data-page="shortcuts.html">
+        <span class="rail-icon">&#9000;</span>
+        <span class="rail-text">단축키</span>
+      </a>
+      <div class="rail-spacer"></div>
+      <a href="#" class="rail-item">
+        <span class="rail-icon">&#9881;</span>
+        <span class="rail-text">설정</span>
+      </a>
+      <button class="rail-toggle" id="railToggle">
+        <span class="rail-toggle-arrow">&#9654;</span>
+        <span class="rail-text">접기</span>
+      </button>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+      <div class="main-inner">
+        <!-- Page header -->
+        <div class="page-header">
+          <h1 id="libTitle">Show Me 카드 라이브러리</h1>
+          <p id="libSubtitle">Blender 공식 문서처럼 큰 흐름으로 먼저 보고, 필요하면 검색과 ABC로 바로 좁혀보세요</p>
         </div>
+        <!-- Search bar -->
         <div class="lib-search-wrap">
           <input
             class="lib-search"
             id="libSearch"
             type="search"
+            aria-label="도구 검색"
             placeholder="예: Array, Mirror, UV..."
             autocomplete="off"
           />
-          <span class="lib-count" id="libCount"></span>
+          <span class="lib-count" id="libCount" role="status" aria-live="polite"></span>
+        </div>
+        <!-- Week filter -->
+        <nav class="lib-week-filter" id="libWeekFilter" aria-label="주차 필터"></nav>
+        <!-- Content shell -->
+        <div class="lib-shell">
+          <aside class="lib-nav-shell">
+            <div class="lib-nav-inner">
+              <div class="lib-nav-row">
+                <span class="lib-nav-label" id="libTocLabel">목차</span>
+                <nav class="lib-nav-scroller" id="libToc" aria-label="라이브러리 목차"></nav>
+              </div>
+              <div class="lib-nav-row">
+                <span class="lib-nav-label" id="libAlphaLabel">ABC</span>
+                <nav class="lib-nav-scroller" id="libAlphabet" aria-label="ABC 필터"></nav>
+              </div>
+            </div>
+          </aside>
+          <div class="lib-main" id="libMain"></div>
         </div>
       </div>
-    </header>
-    <nav class="lib-tabs" id="libTabs" role="tablist"></nav>
-    <main class="lib-main" id="libMain"></main>
+    </main>
 
     <!-- Show Me Modal -->
     <div class="showme-overlay" id="showmeOverlay" aria-hidden="true">
-      <div class="showme-modal">
+      <div class="showme-modal" role="dialog" aria-modal="true" aria-labelledby="showmeTitle">
         <div class="showme-modal-header">
-          <span class="showme-modal-title" id="showmeTitle"></span>
-          <button class="showme-close" id="showmeClose" aria-label="닫기" type="button">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-            </svg>
-          </button>
+          <div class="showme-modal-header-copy">
+            <div class="showme-modal-card-icon" id="showmeTitleIcon" aria-hidden="true"></div>
+            <div class="showme-modal-title-block">
+              <span class="showme-modal-title" id="showmeTitle"></span>
+              <span class="showme-modal-title-meta" id="showmeTitleMeta"></span>
+            </div>
+          </div>
+          <div class="showme-header-actions">
+            <button class="showme-browse-toggle" id="showmeBrowseToggle" aria-label="Show Me 탐색 전환" type="button" aria-pressed="false">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <rect x="1.5" y="2" width="4" height="12" rx="1.2" stroke="currentColor" stroke-width="1.4"/>
+                <path d="M8.5 4H14M8.5 8H14M8.5 12H12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <button class="showme-close" id="showmeClose" aria-label="닫기" type="button">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
         </div>
-        <iframe class="showme-iframe" id="showmeIframe"
-                sandbox="allow-scripts allow-same-origin"
-                title="Show Me Widget"></iframe>
+        <div class="showme-modal-body">
+          <aside class="showme-browser" id="showmeBrowser" aria-hidden="true">
+            <div class="showme-browser-header">
+              <input class="showme-browser-search" id="showmeBrowserSearch" type="search" autocomplete="off" aria-label="Show Me 카드 검색" placeholder="연관 카드나 키워드 검색" />
+              <div class="showme-browser-actions">
+                <button class="btn-link showme-browser-reset" id="showmeBrowserReset" type="button">현재 카드 기준으로 보기</button>
+                <button class="btn-link showme-browser-library-link" id="showmeBrowserLibraryLink" type="button">라이브러리 위치 보기</button>
+              </div>
+              <p class="showme-browser-hint" id="showmeBrowserHint">현재 카드와 연관 카드, 또는 검색 결과를 빠르게 탐색합니다.</p>
+            </div>
+            <div class="showme-browser-content" id="showmeBrowserContent"></div>
+          </aside>
+          <div class="showme-browser-backdrop" id="showmeBrowserBackdrop"></div>
+          <div class="showme-viewer">
+            <iframe class="showme-iframe" id="showmeIframe"
+                    sandbox="allow-scripts allow-same-origin"
+                    title="Show Me Widget"></iframe>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-  <script src="assets/showme/_registry.js"></script>
-  <script>
-// 카테고리 매핑 — ID → 카테고리명
-const CATEGORY_MAP = {
-  "viewport-navigation": "Edit Mode",
-  "transform-grs":       "Edit Mode",
-  "edit-mode":           "Edit Mode",
-  "edit-mode-tools":     "Edit Mode",
-  "extrude":             "Edit Mode",
-  "loop-cut":            "Edit Mode",
-  "inset":               "Edit Mode",
-  "bevel-tool":          "Edit Mode",
-
-  "array-modifier":          "Generate Modifiers",
-  "bevel-modifier":          "Generate Modifiers",
-  "boolean-modifier":        "Generate Modifiers",
-  "build-modifier":          "Generate Modifiers",
-  "curve-to-tube":           "Generate Modifiers",
-  "decimate-modifier":       "Generate Modifiers",
-  "edge-split-modifier":     "Generate Modifiers",
-  "mask-modifier":           "Generate Modifiers",
-  "mirror-modifier":         "Generate Modifiers",
-  "multiresolution-modifier":"Generate Modifiers",
-  "remesh-modifier":         "Generate Modifiers",
-  "scatter-on-surface":      "Generate Modifiers",
-  "screw-modifier":          "Generate Modifiers",
-  "skin-modifier":           "Generate Modifiers",
-  "solidify-modifier":       "Generate Modifiers",
-  "subdivision-surface":     "Generate Modifiers",
-  "triangulate-modifier":    "Generate Modifiers",
-  "volume-to-mesh":          "Generate Modifiers",
-  "weld-modifier":           "Generate Modifiers",
-  "wireframe-modifier":      "Generate Modifiers",
-
-  "weighted-normal":    "Normals",
-
-  "transform-apply":        "기타",
-  "simple-deform":          "기타",
-  "bevel-tool-vs-modifier": "기타",
-  "join-separate":          "기타",
-  "origin-vs-3dcursor":     "기타",
-
-  "sculpt-basics":      "Sculpting",
-
-  "material-basics":    "Material",
-  "principled-bsdf":    "Material",
-  "shader-editor":      "Material",
-
-  "uv-unwrapping":      "UV",
-  "uv-editor":          "UV",
-
-  "light-types":        "Lighting",
-  "hdri-lighting":      "Lighting",
-  "three-point-light":  "Lighting",
-
-  "keyframe-basics":    "Animation",
-  "graph-editor":       "Animation",
-
-  "armature-basics":    "Rigging",
-  "weight-paint":       "Rigging",
-
-  "render-settings":    "Rendering",
-  "compositing-basics": "Rendering",
+  <script src="assets/layout.js"></script>
+  <script src="data/i18n-content.js?v=20260318e"></script>
+  <script src="assets/i18n.js?v=20260318t"></script>
+  <script src="assets/showme/_registry.js?v=20260318f"></script>
+  <script src="assets/showme/_catalog.js?v=20260318c"></script>
+  <script src="assets/showme/_supplements.js?v=20260318c"></script>
+  <script src="assets/showme/_helpers.js?v=20260318ai"></script>
+<script>
+var activeLetter = "all";
+var activeWeek = "all";
+var showMeLastTrigger = null;
+var activeShowMeWidgetId = null;
+var showMeBrowserOpen = window.innerWidth >= 1100;
+var showMeBrowserQuery = "";
+var lastSectionTargetId = "";
+var params = new URLSearchParams(location.search);
+var requestedShowMeId = params.get("showme") || "";
+var pendingShowMeFromUrl = !!requestedShowMeId;
+var FALLBACK_LIBRARY_TEXT = {
+  pageTitle: "Show Me 카드 라이브러리 - Blender Archive",
+  metaDescription: "Blender Archive 안의 Show Me 카드를 Blender 공식 문서 흐름에 맞춰 찾는 라이브러리",
+  backHome: "← Blender Archive",
+  title: "Show Me 카드 라이브러리",
+  subtitle: "Blender 공식 문서처럼 큰 흐름으로 먼저 보고, 필요하면 검색과 ABC로 바로 좁혀보세요",
+  searchAria: "도구 검색",
+  searchPlaceholder: "예: Array, Mirror, UV...",
+  tocAria: "라이브러리 목차",
+  alphabetFilterAria: "ABC 필터",
+  contentsLabel: "목차",
+  alphabetLabel: "ABC",
+  allLetters: "전체",
+  sectionGettingStartedTitle: "시작 준비",
+  sectionGettingStartedCopy: "환경 설정과 레퍼런스 준비처럼 Blender에 들어가기 전에 먼저 잡아야 하는 시작 단계를 모았습니다.",
+  sectionUserInterfaceTitle: "기초 조작과 작업 흐름",
+  sectionUserInterfaceCopy: "화면 조작, 축 기준, Pivot, 스냅처럼 Blender 인터페이스를 읽는 법과 기본 조작 감각을 먼저 정리합니다.",
+  sectionModelingTitle: "모델링",
+  sectionModelingCopy: "형태를 만들고 다듬는 핵심 구간입니다. Edit Mode 도구, Modifier, 정리용 개념을 한 흐름으로 묶었습니다.",
+  sectionSculptingPaintingTitle: "스컬프팅 · 페인팅",
+  sectionSculptingPaintingCopy: "브러시 기반으로 형태를 밀고 다듬는 흐름을 따로 모았습니다.",
+  sectionMaterialsUvTitle: "셰이딩 · 재질 · UV",
+  sectionMaterialsUvCopy: "재질 표현과 UV 준비를 함께 보게 해 Shader와 Texture 흐름을 한 번에 찾도록 구성했습니다.",
+  sectionRenderingTitle: "렌더링",
+  sectionRenderingCopy: "조명 세팅부터 렌더 엔진, 컴포지팅까지 최종 출력 단계에서 필요한 카드를 모았습니다.",
+  sectionAnimationRiggingTitle: "애니메이션 · 리깅",
+  sectionAnimationRiggingCopy: "키프레임, 그래프 편집, Armature, Weight Paint처럼 움직임과 캐릭터 제어에 필요한 주제를 묶었습니다.",
+  modalCloseAria: "닫기",
+  showmeFrameTitle: "Show Me Widget",
+  emptyResults: "검색 결과가 없습니다"
 };
+var I18N = (function() {
+  if (window.RPDI18n) return window.RPDI18n;
+  return {
+    getStrings: function() { return FALLBACK_LIBRARY_TEXT; },
+    getShowMeLabel: function(id, meta) { return meta && meta.label ? meta.label : id; },
+    getLanguage: function() {
+      var lang = (document.documentElement && document.documentElement.lang) || "ko";
+      return /^en/i.test(lang) ? "en" : "ko";
+    },
+    getLibraryCategoryLabel: function(value) { return value; },
+    mountLanguageSwitcher: function() {},
+    onLanguageChange: function() {},
+    localizeShowMeIframe: function() {}
+  };
+})();
 
-const CATEGORY_ORDER = [
-  "전체", "Edit Mode", "Generate Modifiers", "Normals",
-  "Sculpting", "Material", "UV", "Lighting",
-  "Animation", "Rigging", "Rendering", "기타"
-];
+function getText() {
+  return I18N.getStrings("library");
+}
 
-function buildTabs() {
-  var tabsEl = document.getElementById("libTabs");
-  CATEGORY_ORDER.forEach(function(cat, i) {
-    var btn = document.createElement("button");
-    btn.className = "lib-tab" + (i === 0 ? " is-active" : "");
-    btn.textContent = cat;
-    btn.dataset.cat = cat;
-    btn.setAttribute("role", "tab");
-    btn.addEventListener("click", function() {
-      document.querySelectorAll(".lib-tab").forEach(function(t) {
-        t.classList.remove("is-active");
-      });
-      btn.classList.add("is-active");
-      if (typeof filterCards === "function") filterCards();
-    });
-    tabsEl.appendChild(btn);
+function getShowMeModalText() {
+  var isKo = I18N.getLanguage() === "ko";
+  var weekText = window.RPDI18n && typeof window.RPDI18n.getStrings === "function"
+    ? window.RPDI18n.getStrings("week")
+    : {};
+  return Object.assign({}, weekText, {
+    modalBrowseToggleAria: weekText.modalBrowseToggleAria || (isKo ? "Show Me 탐색 전환" : "Toggle Show Me browser"),
+    modalBrowseSearchAria: isKo ? "현재 카드와 연관 카드 검색" : "Search current and related cards",
+    modalBrowseSearchPlaceholder: isKo ? "연관 카드나 키워드 검색" : "Search this card or related keywords",
+    modalBrowseContextHint: isKo
+      ? "현재 카드, 연관 카드, 또는 검색 결과를 빠르게 탐색합니다."
+      : "Quickly browse the current card, related cards, or search results.",
+    modalBrowseCurrent: isKo ? "현재 카드" : "Current card",
+    modalBrowseRelated: weekText.modalBrowseRelated || (isKo ? "연관 카드" : "Related cards"),
+    modalBrowseResults: weekText.modalBrowseResults || (isKo ? "검색 결과" : "Search results"),
+    modalBrowseEmpty: weekText.modalBrowseEmpty || (isKo ? "조건에 맞는 카드가 없습니다." : "No cards match this view."),
+    modalBrowseResetCta: isKo ? "현재 카드 기준으로 보기" : "Back to current card",
+    modalBrowseLibraryLink: isKo ? "라이브러리 위치 보기" : "Locate in library",
+    modalBrowserViewing: weekText.modalBrowserViewing || (isKo ? "보고 있는 카드" : "Viewing"),
+    modalCloseAria: weekText.modalCloseAria || (isKo ? "닫기" : "Close"),
+    showmeFrameTitle: weekText.showmeFrameTitle || (isKo ? "Show Me 위젯" : "Show Me widget"),
+    modalCurrentCardFallbackMeta: isKo
+      ? "현재 카드를 기준으로 연관 카드를 바로 이어서 둘러볼 수 있어요."
+      : "Use this card as the current reference while exploring related cards."
   });
 }
-buildTabs();
 
-// 카드 빌드
-function buildCards() {
-  var main = document.getElementById("libMain");
+function getLocalizedMeta(id) {
+  var meta = getShowMeEntry(id);
+  return {
+    raw: meta,
+    icon: meta.icon,
+    label: I18N.getShowMeLabel(id, meta)
+  };
+}
+
+function getLibrarySections() {
+  var text = getText();
+  var textMap = {
+    "getting-started": {
+      title: text.sectionGettingStartedTitle,
+      copy: text.sectionGettingStartedCopy
+    },
+    "user-interface": {
+      title: text.sectionUserInterfaceTitle,
+      copy: text.sectionUserInterfaceCopy
+    },
+    "modeling": {
+      title: text.sectionModelingTitle,
+      copy: text.sectionModelingCopy
+    },
+    "sculpting-painting": {
+      title: text.sectionSculptingPaintingTitle,
+      copy: text.sectionSculptingPaintingCopy
+    },
+    "materials-uv": {
+      title: text.sectionMaterialsUvTitle,
+      copy: text.sectionMaterialsUvCopy
+    },
+    "rendering": {
+      title: text.sectionRenderingTitle,
+      copy: text.sectionRenderingCopy
+    },
+    "animation-rigging": {
+      title: text.sectionAnimationRiggingTitle,
+      copy: text.sectionAnimationRiggingCopy
+    }
+  };
+
+  var order = typeof getShowMeManualSectionOrder === "function"
+    ? getShowMeManualSectionOrder()
+    : ["getting-started", "user-interface", "modeling", "sculpting-painting", "materials-uv", "rendering", "animation-rigging"];
+
+  return order.map(function(id) {
+    return Object.assign({ id: id }, textMap[id] || { title: id, copy: "" });
+  });
+}
+
+function getSearchQuery() {
+  return document.getElementById("libSearch").value.toLowerCase().trim();
+}
+
+function getCanonicalLabel(id) {
+  return (SHOWME_REGISTRY[id] && SHOWME_REGISTRY[id].label) || id;
+}
+
+function getAlphaLabel(id) {
+  return String(id || "").replace(/[-_]+/g, " ").trim();
+}
+
+function getWeekValue(meta) {
+  return meta && typeof meta.week === "number" ? meta.week : 0;
+}
+
+function getSectionIdForCard(id, category) {
+  if (typeof getShowMeManualSectionId === "function") {
+    return getShowMeManualSectionId(id);
+  }
+
+  if (category === "Sculpting") return "sculpting-painting";
+  if (category === "Material" || category === "UV") return "materials-uv";
+  if (category === "Lighting" || category === "Rendering") return "rendering";
+  if (category === "Animation" || category === "Rigging") return "animation-rigging";
+  if (category === "Generate Modifiers" || category === "Normals") return "modeling";
+  if (category === "Edit Mode") return "user-interface";
+  return "getting-started";
+}
+
+function getWeekLabel(week) {
+  var isKo = I18N.getLanguage() === "ko";
+  if (week === 0) return isKo ? "공통" : "Core";
+  return "Week " + week;
+}
+
+function getLetterKey(label) {
+  var upper = (label || "").trim().toUpperCase();
+  var first = upper.charAt(0);
+  if (/^[A-Z0-9]$/.test(first)) return first;
+  return "#";
+}
+
+function buildCardData(id) {
+  var localized = getLocalizedMeta(id);
+  var meta = localized.raw;
+  var localizeShowMeUiText = window.RPDI18n && window.RPDI18n.translateShowMeUiText
+    ? window.RPDI18n.translateShowMeUiText
+    : function(value) { return value; };
+  var keywords = Array.isArray(meta.keywords) ? meta.keywords : [];
+  var prerequisites = Array.isArray(meta.prerequisites) ? meta.prerequisites : [];
+  var toolName = localizeShowMeUiText(meta.toolName || "", id);
+  var categoryLabel = meta.category ? I18N.getLibraryCategoryLabel(meta.category) : "";
+  var stageLabelText = localizeShowMeUiText(meta.stageLabel || "", id);
+  var confusionLabelText = localizeShowMeUiText(meta.confusionLabel || "", id);
+  var audienceNeedText = localizeShowMeUiText(meta.audienceNeed || "", id);
+  return {
+    id: id,
+    localizedLabel: localized.label,
+    canonicalLabel: getCanonicalLabel(id),
+    alphaLabel: getAlphaLabel(id),
+    alphaKey: getLetterKey(getAlphaLabel(id)),
+    week: getWeekValue(meta),
+    sectionId: getSectionIdForCard(id, meta.category || "기타"),
+    category: meta.category || "",
+    stageLabel: meta.stageLabel || "",
+    toolName: toolName,
+    categoryLabel: categoryLabel,
+    stageLabelText: stageLabelText,
+    confusionLabelText: confusionLabelText,
+    audienceNeedText: audienceNeedText,
+    keywords: keywords,
+    prerequisites: prerequisites,
+    manualSection: typeof getShowMeManualSectionId === "function" ? getShowMeManualSectionId(id) : "",
+    meta: meta,
+    searchText: [
+      localized.label,
+      getCanonicalLabel(id),
+      getAlphaLabel(id),
+      meta.label,
+      id,
+      toolName,
+      categoryLabel,
+      stageLabelText,
+      confusionLabelText,
+      audienceNeedText,
+      meta.category,
+      meta.stageLabel,
+      meta.confusionLabel,
+      meta.audienceNeed,
+      keywords.join(" "),
+      prerequisites.join(" ")
+    ].join(" ").toLowerCase()
+  };
+}
+
+function sortCards(a, b) {
+  var primary = a.alphaLabel.localeCompare(b.alphaLabel, "en", { sensitivity: "base" });
+  if (primary !== 0) return primary;
+  return a.localizedLabel.localeCompare(b.localizedLabel, I18N.getLanguage(), { sensitivity: "base" });
+}
+
+function getAllCards() {
+  return Object.keys(SHOWME_REGISTRY).map(buildCardData).sort(sortCards);
+}
+
+function matchesQuery(card, query) {
+  return !query || card.searchText.indexOf(query) !== -1;
+}
+
+function matchesLetter(card) {
+  return activeLetter === "all" || card.alphaKey === activeLetter;
+}
+
+function matchesWeek(card) {
+  return activeWeek === "all" || card.week === activeWeek;
+}
+
+function getAvailableLetters(cards, query) {
+  var seen = {};
+  cards.forEach(function(card) {
+    if (!matchesQuery(card, query)) return;
+    seen[card.alphaKey] = true;
+  });
+
+  return Object.keys(seen).sort(function(a, b) {
+    if (a === "#") return 1;
+    if (b === "#") return -1;
+    return a.localeCompare(b, "en");
+  });
+}
+
+function getAvailableWeeks(cards, query) {
+  var seen = {};
+  cards.forEach(function(card) {
+    if (!matchesQuery(card, query) || !matchesLetter(card)) return;
+    seen[card.week] = true;
+  });
+  return Object.keys(seen).map(function(value) {
+    return Number(value);
+  }).sort(function(a, b) {
+    if (a === 0) return 1;
+    if (b === 0) return -1;
+    return a - b;
+  });
+}
+
+function ensureActiveLetter(cards, query) {
+  var available = getAvailableLetters(cards, query);
+  if (activeLetter !== "all" && available.indexOf(activeLetter) === -1) {
+    activeLetter = "all";
+  }
+  return available;
+}
+
+function ensureActiveWeek(cards, query) {
+  var available = getAvailableWeeks(cards, query);
+  if (activeWeek !== "all" && available.indexOf(activeWeek) === -1) {
+    activeWeek = "all";
+  }
+  return available;
+}
+
+function getVisibleCards(cards, query) {
+  return cards.filter(function(card) {
+    return matchesQuery(card, query) && matchesLetter(card) && matchesWeek(card);
+  });
+}
+
+function prioritizeActiveCardList(cards) {
+  if (!activeShowMeWidgetId) return cards.slice();
+  var activeCards = [];
+  var otherCards = [];
+  cards.forEach(function(card) {
+    if (card.id === activeShowMeWidgetId) activeCards.push(card);
+    else otherCards.push(card);
+  });
+  return activeCards.concat(otherCards);
+}
+
+function prioritizeActiveSectionList(sections, visibleCards) {
+  if (!activeShowMeWidgetId) return sections.slice();
+  var activeSectionId = "";
+  visibleCards.some(function(card) {
+    if (card.id !== activeShowMeWidgetId) return false;
+    activeSectionId = card.sectionId;
+    return true;
+  });
+  if (!activeSectionId) return sections.slice();
+
+  var activeSections = [];
+  var otherSections = [];
+  sections.forEach(function(section) {
+    if (section.id === activeSectionId) activeSections.push(section);
+    else otherSections.push(section);
+  });
+  return activeSections.concat(otherSections);
+}
+
+function prioritizeActiveCategoryList(categories, sectionCards) {
+  if (!activeShowMeWidgetId) return categories.slice();
+  var activeCategory = "";
+  sectionCards.some(function(card) {
+    if (card.id !== activeShowMeWidgetId) return false;
+    activeCategory = card.meta.category || "기타";
+    return true;
+  });
+  if (!activeCategory) return categories.slice();
+
+  var activeCategories = [];
+  var otherCategories = [];
+  categories.forEach(function(category) {
+    if (category === activeCategory) activeCategories.push(category);
+    else otherCategories.push(category);
+  });
+  return activeCategories.concat(otherCategories);
+}
+
+function getLibraryFocusText() {
+  var isKo = I18N.getLanguage() === "ko";
+  return {
+    eyebrow: isKo ? "현재 기준" : "Now Viewing",
+    title: isKo ? "선택 카드와 연관 카드" : "Current + related cards",
+    copy: isKo
+      ? "지금 보고 있는 카드와 연관도가 높은 카드를 먼저 이어서 보여줍니다."
+      : "This keeps the current card followed by the most related cards."
+  };
+}
+
+function getLibraryReasonText() {
+  var isKo = I18N.getLanguage() === "ko";
+  return {
+    current: isKo ? "현재 보고 있는 카드" : "Current card",
+    sameCategory: isKo ? "같은 카테고리" : "Same category",
+    sameManualSection: isKo ? "같은 문서 흐름" : "Same manual flow",
+    sameStage: isKo ? "같은 작업 단계" : "Same workflow stage",
+    sharedTerms: isKo ? "공통 키워드" : "Shared keywords"
+  };
+}
+
+function buildLibraryReasonTokens(reasonText, relation) {
+  var tokens = [];
+  if (relation.sharesCategory) tokens.push({ kind: "category", label: reasonText.sameCategory });
+  if (relation.sharesManualSection) tokens.push({ kind: "manual", label: reasonText.sameManualSection });
+  if (relation.sharesStage) tokens.push({ kind: "stage", label: reasonText.sameStage });
+  if (relation.sharedTermScore > 0) tokens.push({ kind: "shared", label: reasonText.sharedTerms });
+  return tokens.slice(0, 2);
+}
+
+function getSharedLibraryTermScore(baseCard, candidateCard) {
+  var score = 0;
+  var baseTerms = {};
+
+  []
+    .concat(baseCard.keywords || [])
+    .concat(baseCard.prerequisites || [])
+    .concat((baseCard.canonicalLabel || "").split(/[\s/,-]+/))
+    .forEach(function(term) {
+      var normalized = String(term || "").trim().toLowerCase();
+      if (normalized.length >= 3) baseTerms[normalized] = true;
+    });
+
+  []
+    .concat(candidateCard.keywords || [])
+    .concat(candidateCard.prerequisites || [])
+    .concat((candidateCard.canonicalLabel || "").split(/[\s/,-]+/))
+    .forEach(function(term) {
+      var normalized = String(term || "").trim().toLowerCase();
+      if (baseTerms[normalized]) score += 1;
+    });
+
+  return score;
+}
+
+function getTunedLibraryRelationScore(current, card) {
+  var sharesCategory = card.category && current.category && card.category === current.category;
+  var sharesManualSection = card.manualSection && current.manualSection && card.manualSection === current.manualSection;
+  var sharesStage = card.stageLabel && current.stageLabel && card.stageLabel === current.stageLabel;
+  var sharedTermScore = Math.min(getSharedLibraryTermScore(current, card), 3);
+  var score = 0;
+
+  if (sharesCategory) score += 7;
+  if (sharesManualSection) score += 4;
+  if (sharesStage) score += 2;
+  if (sharesCategory && sharesManualSection) score += 2;
+  if (sharesManualSection && sharesStage) score += 1;
+  score += sharedTermScore;
+
+  return {
+    score: score,
+    sharesCategory: sharesCategory,
+    sharesManualSection: sharesManualSection,
+    sharesStage: sharesStage,
+    sharedTermScore: sharedTermScore
+  };
+}
+
+function getRelatedLibraryCards(cards, widgetId, limit) {
+  var current = null;
+  var reasonText = getLibraryReasonText();
+  cards.some(function(card) {
+    if (card.id !== widgetId) return false;
+    current = card;
+    return true;
+  });
+  if (!current) return [];
+
+  return cards
+    .filter(function(card) {
+      return card.id !== widgetId;
+    })
+    .map(function(card) {
+      var relation = getTunedLibraryRelationScore(current, card);
+      var reasonTokens = buildLibraryReasonTokens(reasonText, relation);
+      return {
+        card: card,
+        score: relation.score,
+        reason: reasonTokens.map(function(token) { return token.label; }).join(" · "),
+        reasonTokens: reasonTokens
+      };
+    })
+    .filter(function(item) { return item.score > 0; })
+    .sort(function(a, b) {
+      if (b.score !== a.score) return b.score - a.score;
+      return a.card.localizedLabel.localeCompare(b.card.localizedLabel, I18N.getLanguage(), { sensitivity: "base" });
+    })
+    .slice(0, limit || 6);
+}
+
+function getLibraryFocusSection(visibleCards) {
+  if (!activeShowMeWidgetId) return null;
+  var reasonText = getLibraryReasonText();
+
+  var currentCard = null;
+  visibleCards.some(function(card) {
+    if (card.id !== activeShowMeWidgetId) return false;
+    currentCard = card;
+    return true;
+  });
+  if (!currentCard) return null;
+
+  var entries = [{ card: currentCard, reason: reasonText.current, reasonTokens: [{ kind: "current", label: reasonText.current }] }].concat(
+    getRelatedLibraryCards(visibleCards, activeShowMeWidgetId, 6)
+  );
+  var cardSet = {};
+  entries.forEach(function(entry) {
+    cardSet[entry.card.id] = true;
+  });
+
+  return {
+    id: "focus-cards",
+    cardSet: cardSet,
+    entries: entries,
+    text: getLibraryFocusText()
+  };
+}
+
+function renderLibraryFocusSection(main, focusSection) {
+  if (!focusSection || !focusSection.entries.length) return;
+
+  var sectionEl = document.createElement("section");
+  sectionEl.className = "lib-section lib-section--focus";
+  sectionEl.id = "section-" + focusSection.id;
+
+  var head = document.createElement("header");
+  head.className = "lib-section-head";
+
+  var eyebrow = document.createElement("div");
+  eyebrow.className = "lib-section-eyebrow";
+  eyebrow.textContent = focusSection.text.eyebrow;
+  head.appendChild(eyebrow);
+
+  var titleRow = document.createElement("div");
+  titleRow.className = "lib-section-title-row";
+
+  var title = document.createElement("h2");
+  title.className = "lib-section-title";
+  title.textContent = focusSection.text.title;
+  titleRow.appendChild(title);
+
+  var count = document.createElement("span");
+  count.className = "lib-section-count";
+  count.textContent = focusSection.entries.length;
+  titleRow.appendChild(count);
+  head.appendChild(titleRow);
+
+  var copy = document.createElement("p");
+  copy.className = "lib-section-copy";
+  copy.textContent = focusSection.text.copy;
+  head.appendChild(copy);
+
+  sectionEl.appendChild(head);
+
+  var body = document.createElement("div");
+  body.className = "lib-section-body";
+
   var grid = document.createElement("div");
   grid.className = "lib-grid";
-  grid.id = "libGrid";
-  main.appendChild(grid);
-
-  Object.keys(SHOWME_REGISTRY).forEach(function(id) {
-    var meta = SHOWME_REGISTRY[id];
-    var card = document.createElement("div");
-    card.className = "lib-card";
-    card.dataset.id = id;
-    card.dataset.cat = CATEGORY_MAP[id] || "기타";
-
-    var icon = document.createElement("span");
-    icon.className = "lib-card-icon";
-    icon.textContent = meta.icon;
-
-    var label = document.createElement("span");
-    label.className = "lib-card-label";
-    label.textContent = meta.label;
-
-    var idEl = document.createElement("span");
-    idEl.className = "lib-card-id";
-    idEl.textContent = id;
-
-    card.appendChild(icon);
-    card.appendChild(label);
-    card.appendChild(idEl);
-    card.addEventListener("click", function() { openShowMe(id); });
-    grid.appendChild(card);
+  focusSection.entries.forEach(function(entry) {
+    grid.appendChild(createCardButton(entry.card, { reason: entry.reason, reasonTokens: entry.reasonTokens }));
   });
 
-  updateCount();
+  body.appendChild(grid);
+  sectionEl.appendChild(body);
+  main.appendChild(sectionEl);
 }
 
-// 필터
-function filterCards() {
-  var query = document.getElementById("libSearch").value.toLowerCase().trim();
-  var activeCat = document.querySelector(".lib-tab.is-active").dataset.cat;
-  var cards = document.querySelectorAll(".lib-card");
-  var visible = 0;
+function scrollToLibraryFocusContext(behavior) {
+  if (!activeShowMeWidgetId) return;
+  var focusSection = document.getElementById("section-focus-cards");
+  if (!focusSection) return;
+  focusSection.classList.remove("is-focus-highlight");
+  void focusSection.offsetWidth;
+  focusSection.classList.add("is-focus-highlight");
+  focusSection.scrollIntoView({ behavior: behavior || "smooth", block: "start" });
+  window.clearTimeout(focusSection.__flashTimer);
+  focusSection.__flashTimer = window.setTimeout(function() {
+    focusSection.classList.remove("is-focus-highlight");
+  }, 1600);
+}
 
-  cards.forEach(function(card) {
-    var id    = card.dataset.id;
-    var meta  = SHOWME_REGISTRY[id];
-    var cat   = card.dataset.cat;
+function getShowMeKickerText(card) {
+  if (!card) return "";
+  return card.toolName || card.categoryLabel || card.category || "";
+}
 
-    var matchCat   = activeCat === "전체" || cat === activeCat;
-    var matchQuery = !query
-      || meta.label.toLowerCase().includes(query)
-      || id.toLowerCase().includes(query);
+function getShowMeMetaLine(card) {
+  return [card.toolName, card.categoryLabel, card.stageLabelText].filter(Boolean).join(" · ");
+}
 
-    card.style.display = (matchCat && matchQuery) ? "" : "none";
-    if (matchCat && matchQuery) visible++;
-  });
+function createShowMeBrowserItem(entry) {
+  var text = getShowMeModalText();
+  var card = entry.card || entry;
+  var reason = entry.reason || "";
+  var reasonTokens = Array.isArray(entry.reasonTokens) ? entry.reasonTokens : [];
+  var isActive = card.id === activeShowMeWidgetId;
+  var button = document.createElement("button");
+  button.type = "button";
+  button.className = "showme-browser-item" + (isActive ? " is-active" : "");
+  button.setAttribute("aria-current", isActive ? "true" : "false");
 
-  updateCount(visible);
+  var icon = document.createElement("span");
+  icon.className = "showme-browser-item-icon";
+  icon.textContent = card.icon || (card.meta && card.meta.icon) || "📖";
+  button.appendChild(icon);
 
-  var grid = document.getElementById("libGrid");
-  var empty = grid.querySelector(".lib-empty");
-  if (visible === 0) {
-    if (!empty) {
-      var el = document.createElement("p");
-      el.className = "lib-empty";
-      el.textContent = "검색 결과가 없습니다";
-      grid.appendChild(el);
-    }
+  var copy = document.createElement("span");
+  copy.className = "showme-browser-item-copy";
+
+  var kickerRow = document.createElement("span");
+  kickerRow.className = "showme-browser-item-kicker-row";
+  var hasKickerRow = false;
+
+  if (reasonTokens.length) {
+    reasonTokens.forEach(function(token) {
+      var reasonLabel = document.createElement("span");
+      reasonLabel.className = "showme-browser-item-kicker" + (token.kind ? " is-" + token.kind : "");
+      reasonLabel.textContent = token.label;
+      kickerRow.appendChild(reasonLabel);
+    });
+    hasKickerRow = true;
+  } else if (reason) {
+    var reasonLabel = document.createElement("span");
+    reasonLabel.className = "showme-browser-item-kicker";
+    reasonLabel.textContent = reason;
+    kickerRow.appendChild(reasonLabel);
+    hasKickerRow = true;
   } else {
-    if (empty) empty.remove();
+    var kickerText = getShowMeKickerText(card);
+    if (kickerText) {
+      var kicker = document.createElement("span");
+      kicker.className = "showme-browser-item-kicker";
+      kicker.textContent = kickerText;
+      kickerRow.appendChild(kicker);
+      hasKickerRow = true;
+    }
+  }
+
+  if (isActive) {
+    var state = document.createElement("span");
+    state.className = "showme-browser-item-state";
+    state.textContent = text.modalBrowserViewing;
+    kickerRow.appendChild(state);
+    hasKickerRow = true;
+  }
+
+  if (hasKickerRow) copy.appendChild(kickerRow);
+
+  var label = document.createElement("span");
+  label.className = "showme-browser-item-label";
+  label.textContent = card.localizedLabel;
+  copy.appendChild(label);
+
+  var meta = document.createElement("span");
+  meta.className = "showme-browser-item-meta";
+  meta.textContent = getShowMeMetaLine(card) || getWeekLabel(card.week);
+  copy.appendChild(meta);
+
+  button.appendChild(copy);
+  button.addEventListener("click", function() {
+    openShowMe(card.id);
+  });
+  return button;
+}
+
+function appendShowMeBrowserSection(container, title, entries) {
+  if (!entries || !entries.length) return false;
+
+  var section = document.createElement("section");
+  section.className = "showme-browser-section";
+
+  var head = document.createElement("div");
+  head.className = "showme-browser-section-head";
+
+  var heading = document.createElement("div");
+  heading.className = "showme-browser-section-title";
+  heading.textContent = title;
+  head.appendChild(heading);
+
+  var count = document.createElement("span");
+  count.className = "showme-browser-section-count";
+  count.textContent = entries.length;
+  head.appendChild(count);
+  section.appendChild(head);
+
+  var list = document.createElement("div");
+  list.className = "showme-browser-list";
+  entries.forEach(function(entry) {
+    list.appendChild(createShowMeBrowserItem(entry));
+  });
+  section.appendChild(list);
+  container.appendChild(section);
+  return true;
+}
+
+function setShowMeBrowserOpen(nextOpen) {
+  var modal = document.querySelector(".showme-modal");
+  var browser = document.getElementById("showmeBrowser");
+  var toggle = document.getElementById("showmeBrowseToggle");
+  if (!modal || !browser || !toggle) return;
+  showMeBrowserOpen = Boolean(nextOpen);
+  modal.classList.toggle("is-browser-open", showMeBrowserOpen);
+  browser.setAttribute("aria-hidden", showMeBrowserOpen ? "false" : "true");
+  toggle.classList.toggle("is-active", showMeBrowserOpen);
+  toggle.setAttribute("aria-pressed", showMeBrowserOpen ? "true" : "false");
+}
+
+function renderShowMeBrowser() {
+  var text = getShowMeModalText();
+  var container = document.getElementById("showmeBrowserContent");
+  var locateButton = document.getElementById("showmeBrowserLibraryLink");
+  if (!container || !locateButton) return;
+
+  locateButton.textContent = text.modalBrowseLibraryLink;
+  container.textContent = "";
+
+  var allCards = getAllCards();
+  var query = String(showMeBrowserQuery || "").trim().toLowerCase();
+
+  if (query) {
+    var results = prioritizeActiveCardList(allCards.filter(function(card) {
+      return card.searchText.indexOf(query) !== -1;
+    })).slice(0, 24).map(function(card) {
+      return { card: card, reason: "", reasonTokens: [] };
+    });
+
+    if (!appendShowMeBrowserSection(container, text.modalBrowseResults, results)) {
+      var empty = document.createElement("div");
+      empty.className = "showme-browser-empty";
+      empty.textContent = text.modalBrowseEmpty;
+      container.appendChild(empty);
+    }
+    return;
+  }
+
+  var currentEntry = null;
+  allCards.some(function(card) {
+    if (card.id !== activeShowMeWidgetId) return false;
+    currentEntry = {
+      card: card,
+      reason: getLibraryReasonText().current,
+      reasonTokens: [{ kind: "current", label: getLibraryReasonText().current }]
+    };
+    return true;
+  });
+  var relatedEntries = activeShowMeWidgetId ? getRelatedLibraryCards(allCards, activeShowMeWidgetId, 8) : [];
+  var hasContent = false;
+  if (currentEntry) hasContent = appendShowMeBrowserSection(container, text.modalBrowseCurrent, [currentEntry]) || hasContent;
+  hasContent = appendShowMeBrowserSection(container, text.modalBrowseRelated, relatedEntries) || hasContent;
+
+  if (!hasContent) {
+    var fallback = document.createElement("div");
+    fallback.className = "showme-browser-empty";
+    fallback.textContent = text.modalBrowseEmpty;
+    container.appendChild(fallback);
+  }
+
+  var activeItem = container.querySelector(".showme-browser-item.is-active");
+  if (activeItem) {
+    window.requestAnimationFrame(function() {
+      activeItem.scrollIntoView({ block: "nearest", inline: "nearest" });
+    });
   }
 }
 
-function updateCount(n) {
-  var total = Object.keys(SHOWME_REGISTRY).length;
-  var shown = (n === undefined) ? total : n;
-  document.getElementById("libCount").textContent =
-    shown === total ? total + "개 도구" : shown + " / " + total + "개";
+function locateCurrentShowMeCard() {
+  var widgetId = activeShowMeWidgetId;
+  if (!widgetId) return;
+  closeShowMe();
+  window.requestAnimationFrame(function() {
+    var target = document.querySelector('.lib-card[data-showme-id="' + widgetId + '"]');
+    if (!target) return;
+    target.scrollIntoView({ behavior: "smooth", block: "center" });
+    target.focus({ preventScroll: true });
+  });
 }
 
-document.getElementById("libSearch").addEventListener("input", filterCards);
+function countCardsForSection(cards, section) {
+  return cards.filter(function(card) { return card.sectionId === section.id; }).length;
+}
 
-buildCards();
+function getSectionCategories(sectionCards) {
+  return getShowMeCategoryOrder().filter(function(category) {
+    if (category === "전체") return false;
+    return sectionCards.some(function(card) {
+      return (card.meta.category || "기타") === category;
+    });
+  });
+}
+
+function createCardButton(card, options) {
+  options = options || {};
+  var btn = document.createElement("button");
+  var isActive = card.id === activeShowMeWidgetId;
+  btn.className = "lib-card" + (isActive ? " is-active" : "");
+  btn.setAttribute("type", "button");
+  btn.setAttribute("data-showme-id", card.id);
+  btn.setAttribute("aria-label", card.localizedLabel);
+  btn.setAttribute("aria-current", isActive ? "true" : "false");
+  btn.title = getShowMeTooltipText(card.id);
+
+  var copy = document.createElement("span");
+  copy.className = "lib-card-copy";
+
+  var label = document.createElement("span");
+  label.className = "lib-card-label";
+  label.textContent = card.localizedLabel;
+  copy.appendChild(label);
+
+  var reasonTokens = Array.isArray(options.reasonTokens) ? options.reasonTokens : [];
+  if (!reasonTokens.length && options.reason) {
+    reasonTokens = [{ kind: "", label: options.reason }];
+  }
+
+  if (reasonTokens.length) {
+    var reasons = document.createElement("span");
+    reasons.className = "lib-card-reasons";
+    reasonTokens.forEach(function(token) {
+      var reason = document.createElement("span");
+      reason.className = "lib-card-reason" + (token.kind ? " is-" + token.kind : "");
+      reason.textContent = token.label;
+      reasons.appendChild(reason);
+    });
+    copy.appendChild(reasons);
+  }
+
+  btn.appendChild(copy);
+
+  var week = document.createElement("span");
+  week.className = "lib-card-week";
+  week.textContent = getWeekLabel(card.week);
+  btn.appendChild(week);
+  btn.addEventListener("click", function() { openShowMe(card.id); });
+  return btn;
+}
+
+function renderToc(cards) {
+  var text = getText();
+  var toc = document.getElementById("libToc");
+  var query = getSearchQuery();
+  var visibleCards = getVisibleCards(cards, query);
+  var focusSection = getLibraryFocusSection(visibleCards);
+  var remainingCards = focusSection
+    ? visibleCards.filter(function(card) { return !focusSection.cardSet[card.id]; })
+    : visibleCards;
+  var orderedSections = prioritizeActiveSectionList(getLibrarySections(), remainingCards);
+
+  toc.textContent = "";
+  document.getElementById("libTocLabel").textContent = text.contentsLabel;
+
+  if (focusSection) {
+    var focusBtn = document.createElement("button");
+    focusBtn.className = "lib-chip" + (lastSectionTargetId === focusSection.id ? " is-active" : "");
+    focusBtn.type = "button";
+    focusBtn.innerHTML = "<span>" + focusSection.text.title + "</span><strong>" + focusSection.entries.length + "</strong>";
+    focusBtn.addEventListener("click", function() {
+      var target = document.getElementById("section-" + focusSection.id);
+      if (!target) return;
+      lastSectionTargetId = focusSection.id;
+      renderToc(cards);
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    toc.appendChild(focusBtn);
+  }
+
+  orderedSections.forEach(function(section) {
+    var count = countCardsForSection(remainingCards, section);
+    if (!count) return;
+
+    var btn = document.createElement("button");
+    btn.className = "lib-chip" + (lastSectionTargetId === section.id ? " is-active" : "");
+    btn.type = "button";
+    btn.innerHTML = "<span>" + section.title + "</span><strong>" + count + "</strong>";
+    btn.addEventListener("click", function() {
+      var target = document.getElementById("section-" + section.id);
+      if (!target) return;
+      lastSectionTargetId = section.id;
+      renderToc(cards);
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    toc.appendChild(btn);
+  });
+}
+
+function renderAlphabet(cards, availableLetters) {
+  var text = getText();
+  var nav = document.getElementById("libAlphabet");
+  nav.textContent = "";
+  document.getElementById("libAlphaLabel").textContent = text.alphabetLabel;
+
+  var allBtn = document.createElement("button");
+  allBtn.type = "button";
+  allBtn.className = "lib-chip" + (activeLetter === "all" ? " is-active" : "");
+  allBtn.textContent = text.allLetters;
+  allBtn.setAttribute("aria-pressed", activeLetter === "all" ? "true" : "false");
+  allBtn.addEventListener("click", function() {
+    activeLetter = "all";
+    renderLibrary();
+  });
+  nav.appendChild(allBtn);
+
+  availableLetters.forEach(function(letter) {
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "lib-chip" + (activeLetter === letter ? " is-active" : "");
+    btn.textContent = letter;
+    btn.setAttribute("aria-pressed", activeLetter === letter ? "true" : "false");
+    btn.addEventListener("click", function() {
+      activeLetter = letter;
+      renderLibrary();
+    });
+    nav.appendChild(btn);
+  });
+}
+
+function renderWeekFilter(cards, availableWeeks) {
+  var nav = document.getElementById("libWeekFilter");
+  var isKo = I18N.getLanguage() === "ko";
+  if (!nav) return;
+
+  nav.textContent = "";
+  nav.setAttribute("aria-label", isKo ? "주차 필터" : "Week filter");
+
+  var allBtn = document.createElement("button");
+  allBtn.type = "button";
+  allBtn.className = "lib-week-chip" + (activeWeek === "all" ? " is-active" : "");
+  allBtn.textContent = isKo ? "전체" : "All";
+  allBtn.addEventListener("click", function() {
+    activeWeek = "all";
+    lastSectionTargetId = "";
+    renderLibrary();
+  });
+  nav.appendChild(allBtn);
+
+  availableWeeks.forEach(function(week) {
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "lib-week-chip" + (activeWeek === week ? " is-active" : "");
+    btn.textContent = getWeekLabel(week);
+    btn.addEventListener("click", function() {
+      activeWeek = week;
+      lastSectionTargetId = "";
+      renderLibrary();
+    });
+    nav.appendChild(btn);
+  });
+}
+
+function renderSections(cards) {
+  var main = document.getElementById("libMain");
+  var query = getSearchQuery();
+  var visibleCards = getVisibleCards(cards, query);
+  var text = getText();
+  var sectionNumber = 0;
+  var focusSection = getLibraryFocusSection(visibleCards);
+  var remainingCards = focusSection
+    ? visibleCards.filter(function(card) { return !focusSection.cardSet[card.id]; })
+    : visibleCards;
+  var orderedSections = prioritizeActiveSectionList(getLibrarySections(), remainingCards);
+
+  main.textContent = "";
+  updateCount(visibleCards.length);
+
+  if (!visibleCards.length) {
+    var empty = document.createElement("p");
+    empty.className = "lib-empty";
+    empty.textContent = text.emptyResults;
+    main.appendChild(empty);
+    return;
+  }
+
+  renderLibraryFocusSection(main, focusSection);
+
+  orderedSections.forEach(function(section) {
+    var sectionCards = prioritizeActiveCardList(remainingCards.filter(function(card) {
+      return card.sectionId === section.id;
+    }));
+    if (!sectionCards.length) return;
+    sectionNumber += 1;
+
+    var sectionEl = document.createElement("section");
+    sectionEl.className = "lib-section";
+    sectionEl.id = "section-" + section.id;
+
+    var head = document.createElement("header");
+    head.className = "lib-section-head";
+
+    var eyebrow = document.createElement("div");
+    eyebrow.className = "lib-section-eyebrow";
+    eyebrow.textContent = String(sectionNumber).padStart(2, "0");
+    head.appendChild(eyebrow);
+
+    var titleRow = document.createElement("div");
+    titleRow.className = "lib-section-title-row";
+
+    var title = document.createElement("h2");
+    title.className = "lib-section-title";
+    title.textContent = section.title;
+    titleRow.appendChild(title);
+
+    var count = document.createElement("span");
+    count.className = "lib-section-count";
+    count.textContent = sectionCards.length;
+    titleRow.appendChild(count);
+    head.appendChild(titleRow);
+
+    var copy = document.createElement("p");
+    copy.className = "lib-section-copy";
+    copy.textContent = section.copy;
+    head.appendChild(copy);
+
+    sectionEl.appendChild(head);
+
+    var body = document.createElement("div");
+    body.className = "lib-section-body";
+
+    prioritizeActiveCategoryList(getSectionCategories(sectionCards), sectionCards).forEach(function(category) {
+      var groupCards = prioritizeActiveCardList(sectionCards.filter(function(card) {
+        return (card.meta.category || "기타") === category;
+      }));
+      if (!groupCards.length) return;
+
+      var subgroup = document.createElement("div");
+      subgroup.className = "lib-subsection";
+
+      var subgroupHead = document.createElement("div");
+      subgroupHead.className = "lib-subsection-head";
+
+      var subgroupTitle = document.createElement("h3");
+      subgroupTitle.className = "lib-subsection-title";
+      subgroupTitle.textContent = I18N.getLibraryCategoryLabel(category);
+      subgroupHead.appendChild(subgroupTitle);
+
+      var subgroupMeta = document.createElement("span");
+      subgroupMeta.className = "lib-subsection-meta";
+      subgroupMeta.textContent = groupCards.length;
+      subgroupHead.appendChild(subgroupMeta);
+      subgroup.appendChild(subgroupHead);
+
+      var grid = document.createElement("div");
+      grid.className = "lib-grid";
+      groupCards.forEach(function(card) {
+        grid.appendChild(createCardButton(card));
+      });
+      subgroup.appendChild(grid);
+
+      body.appendChild(subgroup);
+    });
+
+    sectionEl.appendChild(body);
+    main.appendChild(sectionEl);
+  });
+}
+
+function updateCount(count) {
+  var total = Object.keys(SHOWME_REGISTRY).length;
+  var shown = count === undefined ? total : count;
+  var lang = I18N.getLanguage();
+  document.getElementById("libCount").textContent = shown === total
+    ? (lang === "ko" ? total + "개 도구" : total + " tools")
+    : (lang === "ko" ? shown + " / " + total + "개" : shown + " / " + total);
+}
+
+function renderLibrary() {
+  var cards = getAllCards();
+  var query = getSearchQuery();
+  var availableLetters = ensureActiveLetter(cards, query);
+  var availableWeeks = ensureActiveWeek(cards, query);
+  renderWeekFilter(cards, availableWeeks);
+  renderAlphabet(cards, availableLetters);
+  renderSections(cards);
+  renderToc(cards);
+}
+
+function renderPage() {
+  var text = getText();
+  var modalText = getShowMeModalText();
+  document.title = text.pageTitle;
+  var meta = document.querySelector('meta[name="description"]');
+  if (meta) meta.setAttribute("content", text.metaDescription);
+  document.getElementById("libTitle").textContent = text.title;
+  document.getElementById("libSubtitle").textContent = text.subtitle;
+  document.getElementById("libSearch").setAttribute("aria-label", text.searchAria);
+  document.getElementById("libSearch").setAttribute("placeholder", text.searchPlaceholder);
+  document.getElementById("libToc").setAttribute("aria-label", text.tocAria);
+  document.getElementById("libAlphabet").setAttribute("aria-label", text.alphabetFilterAria);
+  document.getElementById("showmeBrowseToggle").setAttribute("aria-label", modalText.modalBrowseToggleAria);
+  document.getElementById("showmeClose").setAttribute("aria-label", modalText.modalCloseAria || text.modalCloseAria);
+  document.getElementById("showmeIframe").setAttribute("title", modalText.showmeFrameTitle || text.showmeFrameTitle);
+  document.getElementById("showmeBrowserSearch").setAttribute("aria-label", modalText.modalBrowseSearchAria);
+  document.getElementById("showmeBrowserSearch").setAttribute("placeholder", modalText.modalBrowseSearchPlaceholder);
+  document.getElementById("showmeBrowserReset").textContent = modalText.modalBrowseResetCta;
+  document.getElementById("showmeBrowserLibraryLink").textContent = modalText.modalBrowseLibraryLink;
+  document.getElementById("showmeBrowserHint").textContent = modalText.modalBrowseContextHint;
+  renderLibrary();
+  maybeOpenRequestedShowMe();
+}
+
+document.getElementById("libSearch").addEventListener("input", function() {
+  lastSectionTargetId = "";
+  renderLibrary();
+});
 
 function openShowMe(widgetId) {
-  var meta = SHOWME_REGISTRY[widgetId] || { label: widgetId, icon: "📖" };
-  document.getElementById("showmeTitle").textContent = meta.icon + " " + meta.label;
-  document.getElementById("showmeIframe").src =
-    "assets/showme/" + widgetId + ".html?wid=" + widgetId;
   var overlay = document.getElementById("showmeOverlay");
+  var iframe = document.getElementById("showmeIframe");
+  var title = document.getElementById("showmeTitle");
+  var titleIcon = document.getElementById("showmeTitleIcon");
+  var titleMeta = document.getElementById("showmeTitleMeta");
+  var closeBtn = document.getElementById("showmeClose");
+  var text = getShowMeModalText();
+  var meta = buildCardData(widgetId);
+  var cacheBust = String(Date.now());
+  var active = document.activeElement;
+  var wasOpen = overlay.classList.contains("is-open");
+  showMeLastTrigger = active && active !== document.body ? active : null;
+  if (!wasOpen) showMeBrowserQuery = "";
+  activeShowMeWidgetId = widgetId;
+  syncShowMeQuery(widgetId);
+  renderLibrary();
+  scrollToLibraryFocusContext(pendingShowMeFromUrl ? "auto" : "smooth");
+  showMeLastTrigger = document.querySelector('.lib-card[data-showme-id="' + widgetId + '"]') || showMeLastTrigger;
+  title.textContent = meta.localizedLabel;
+  titleMeta.textContent = getShowMeMetaLine(meta) || text.modalCurrentCardFallbackMeta;
+  titleIcon.textContent = meta.icon || (meta.meta && meta.meta.icon) || "📖";
+  renderShowMeBrowser();
+  setShowMeBrowserOpen(showMeBrowserOpen);
+  iframe.onload = function() {
+    normalizeShowMeLayout(this);
+    injectShowMeSupplement(this, widgetId);
+    I18N.localizeShowMeIframe(this, widgetId);
+  };
+  iframe.src = "assets/showme/" + widgetId + ".html?wid=" + encodeURIComponent(widgetId) + "&v=" + cacheBust;
   overlay.classList.add("is-open");
   overlay.setAttribute("aria-hidden", "false");
+  if (wasOpen && window.innerWidth < 980) {
+    setShowMeBrowserOpen(false);
+  }
+  document.body.style.overflow = "hidden";
+  if (!wasOpen) {
+    setTimeout(function() {
+      closeBtn.focus({ preventScroll: true });
+    }, 50);
+  }
 }
 
 function closeShowMe() {
   var overlay = document.getElementById("showmeOverlay");
+  var iframe = document.getElementById("showmeIframe");
+  var lastWidgetId = activeShowMeWidgetId;
+  if (!overlay.classList.contains("is-open")) return;
   overlay.classList.remove("is-open");
   overlay.setAttribute("aria-hidden", "true");
-  document.getElementById("showmeIframe").src = "";
+  iframe.onload = null;
+  iframe.src = "about:blank";
+  syncShowMeQuery("");
+  document.body.style.overflow = "";
+  renderLibrary();
+  scrollToLibraryFocusContext("smooth");
+  var focusTarget = showMeLastTrigger;
+  if ((!focusTarget || !document.contains(focusTarget)) && lastWidgetId) {
+    focusTarget = document.querySelector('.lib-card[data-showme-id="' + lastWidgetId + '"]');
+  }
+  if (focusTarget && document.contains(focusTarget)) {
+    focusTarget.focus({ preventScroll: true });
+  }
+  showMeLastTrigger = null;
+}
+
+function refreshOpenShowMe() {
+  var overlay = document.getElementById("showmeOverlay");
+  if (!overlay.classList.contains("is-open") || !activeShowMeWidgetId) return;
+  openShowMe(activeShowMeWidgetId);
+}
+
+function syncShowMeQuery(widgetId) {
+  if (!window.history || typeof window.history.replaceState !== "function") return;
+  var url = new URL(window.location.href);
+  if (widgetId) url.searchParams.set("showme", widgetId);
+  else url.searchParams.delete("showme");
+  window.history.replaceState({}, "", url.pathname + url.search + url.hash);
+}
+
+function maybeOpenRequestedShowMe() {
+  if (!pendingShowMeFromUrl || !requestedShowMeId) return;
+  pendingShowMeFromUrl = false;
+  if (!SHOWME_REGISTRY[requestedShowMeId]) return;
+  setTimeout(function() {
+    openShowMe(requestedShowMeId);
+  }, 0);
 }
 
 document.getElementById("showmeClose").addEventListener("click", closeShowMe);
+document.getElementById("showmeBrowseToggle").addEventListener("click", function() {
+  setShowMeBrowserOpen(!showMeBrowserOpen);
+  if (showMeBrowserOpen) {
+    var searchInput = document.getElementById("showmeBrowserSearch");
+    if (searchInput) searchInput.focus({ preventScroll: true });
+  }
+});
+document.getElementById("showmeBrowserBackdrop").addEventListener("click", function() {
+  setShowMeBrowserOpen(false);
+});
+document.getElementById("showmeBrowserSearch").addEventListener("input", function(e) {
+  showMeBrowserQuery = e.target.value || "";
+  renderShowMeBrowser();
+  if (e.target.value && !showMeBrowserOpen) setShowMeBrowserOpen(true);
+});
+document.getElementById("showmeBrowserReset").addEventListener("click", function() {
+  var search = document.getElementById("showmeBrowserSearch");
+  showMeBrowserQuery = "";
+  if (search) search.value = "";
+  renderShowMeBrowser();
+});
+document.getElementById("showmeBrowserLibraryLink").addEventListener("click", locateCurrentShowMeCard);
 document.getElementById("showmeOverlay").addEventListener("click", function(e) {
   if (e.target === this) closeShowMe();
 });
 document.addEventListener("keydown", function(e) {
   if (e.key === "Escape") closeShowMe();
+});
+window.addEventListener("resize", function() {
+  if (!document.getElementById("showmeOverlay").classList.contains("is-open")) return;
+  if (window.innerWidth >= 1100 && !showMeBrowserQuery) {
+    setShowMeBrowserOpen(true);
+  } else if (window.innerWidth < 980 && showMeBrowserOpen && !showMeBrowserQuery) {
+    setShowMeBrowserOpen(false);
+  }
+});
+
+I18N.mountLanguageSwitcher(document.getElementById("langSwitcher"));
+I18N.onLanguageChange(function() {
+  renderPage();
+  refreshOpenShowMe();
 });
   </script>
 </body>

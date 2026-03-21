@@ -1,6 +1,6 @@
 ---
 description: "인지부하 기반 UI 단순화와 페이지 리디자인. 예: /design-agent audit library, /design-agent simplify library, /design-agent apply week"
-allowed-tools: Read, Write, Edit, Glob, Grep, Bash(node:*), Bash(ls:*), Bash(wc:*), Bash(curl:*), Agent
+allowed-tools: Read, Write, Edit, Glob, Grep, Bash(node:*), Bash(ls:*), Bash(wc:*), Bash(curl:*), Bash(npx:*), Agent
 ---
 
 ## Context
@@ -9,6 +9,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash(node:*), Bash(ls:*), Bash(wc:
 - 주요 페이지: !`ls course-site/*.html 2>/dev/null | xargs -I{} basename {} | tr '\n' ' '`
 - ShowMe 카드 수: !`ls course-site/assets/showme/*.html 2>/dev/null | grep -v _template | wc -l | tr -d ' '`개
 - 스타일 가이드: !`ls docs/COURSE_SITE_STYLE_GUIDE_2026-03-13.md docs/COGNITIVE_UI_GUIDE_2026-03-18.md 2>/dev/null | tr '\n' ' '`
+- 디자인 시스템: !`ls docs/DESIGN_SYSTEM.md 2>/dev/null`
 
 ## Task
 
@@ -96,6 +97,54 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash(node:*), Bash(ls:*), Bash(wc:
 - 상세 정보는 모달 안 ShowMe 카드에서만 제공
 - 카드 정렬은 스캔하기 쉬운 단순 패턴 우선
 
+### `pre-check "변경 설명"` — 변경 영향 분석
+
+수정을 시작하기 전에 변경이 디자인 시스템 규칙을 위반하는지, 연쇄 수정이 필요한지 미리 분석한다.
+
+흐름:
+1. 변경 설명 파싱 → 영향받는 CSS/HTML 파일 식별
+2. `docs/DESIGN_SYSTEM.md` 규칙 대조
+3. 영향받는 다른 페이지 목록 생성
+4. 결과 출력:
+   - 위반 없음 → "✅ 진행하세요"
+   - 위반 있음 → "⚠️ [규칙 번호] 위반. 연쇄 수정 필요: [파일 목록]"
+
+체크 대상:
+- 스페이싱 스케일 준수 여부
+- border-radius / font-weight 스케일 준수 여부
+- 컬러 규칙 준수 여부 (키컬러 사용 범위)
+- 컴포넌트 카탈로그 준수 여부
+- 금지 규칙 위반 여부
+
+### `post-verify` — 전체 페이지 스크린샷 비교
+
+수정 후 모든 퍼블릭 페이지를 스크린샷으로 확인하여 시각적 회귀를 감지한다.
+
+흐름:
+1. `preview_start` → 모든 퍼블릭 페이지 순회 (index, deck, library, shortcuts)
+2. 각 페이지 desktop(1440) + mobile(375) 스크린샷 촬영
+3. `docs/DESIGN_SYSTEM.md` 체크리스트 대조:
+   - 스페이싱 스케일 준수?
+   - 컬러 규칙 준수?
+   - 카드 정보 밀도 1축?
+   - 터치 타겟 44px?
+   - focus-visible 있음?
+4. 위반 리포트 출력
+
+### `system-check` — DESIGN_SYSTEM.md vs 코드 불일치 감지
+
+디자인 시스템 문서와 실제 코드 사이의 불일치를 찾아낸다.
+
+흐름:
+1. `docs/DESIGN_SYSTEM.md` 파싱 → 규칙 목록 추출
+2. `tokens.css` + `components.css` + `page-*.css` 스캔
+3. 불일치 리포트 출력:
+   - 문서에 없는 토큰이 코드에 있음
+   - 코드에서 금지 값 사용 (스케일 외 스페이싱, weight, radius)
+   - 컴포넌트 카탈로그에 없는 패턴 사용
+   - 인라인 스타일 사용
+   - 하드코딩 rgba 사용
+
 ---
 
 ## 연구 기반 판단 규칙
@@ -149,6 +198,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash(node:*), Bash(ls:*), Bash(wc:
 
 | 파일 | 역할 |
 |------|------|
+| `docs/DESIGN_SYSTEM.md` | 디자인 시스템 규칙 (스페이싱, 컬러, 컴포넌트 카탈로그) |
 | `docs/COGNITIVE_UI_GUIDE_2026-03-18.md` | 인지부하 기반 설계 근거 |
 | `docs/COURSE_SITE_STYLE_GUIDE_2026-03-13.md` | RPD 시각 언어 기준 |
 | `.claude/skills/rpd-site-improve/SKILL.md` | 사이트 수정 제약 |
