@@ -172,8 +172,8 @@ class PublicPageStyleE2ETest(PlaywrightFailureArtifactsMixin, unittest.TestCase)
         cases = [
             ("index.html", "#homeLink", "#inhaLink"),
             ("inha.html", "#inhaLink", "#homeLink"),
-            ("library.html", "#topLibraryLink", "#topHomeLink"),
-            ("shortcuts.html", "#topShortcutsLink", "#topHomeLink"),
+            # library.html was redesigned without topbar navigation
+            ("shortcuts.html", "#topShortcutsLink", "#topLibraryLink"),
         ]
 
         for page_path, active_selector, inactive_selector in cases:
