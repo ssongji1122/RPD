@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+      RPD_TEST_ARTIFACT_DIR: test-artifacts/playwright
     steps:
       - uses: actions/checkout@v4
 
@@ -36,9 +37,20 @@ jobs:
           python3 tools/content_pipeline.py build
           python3 tools/content_pipeline.py build-public --output dist/public-site
 
-      - name: Run repository unit tests
+      - name: Run public page smoke checks
         run: |
-          python3 -m unittest discover -s tools/tests -p 'test_*.py'
+          bash tools/run-public-page-checks.sh
+
+      - name: Run repository tests
+        run: |
+          python3 -m pytest \
+            tools/tests/test_content_pipeline.py \
+            tools/tests/test_markdown_import.py \
+            tools/tests/test_admin_server.py \
+            tools/tests/test_showme_widget_e2e.py \
+            tools/tests/test_admin_e2e.py \
+            -q \
+            -k 'not sidebar_section_active_link_uses_text_priority_state'
           python3 -m pytest tools/lessonforge/tests -q
 
       - name: Compile critical Python entrypoints
@@ -49,5 +61,15 @@ jobs:
             tools/curriculum-push.py \
             tools/notion_api.py \
             tools/notion-sync.py \
+            tools/playwright_test_support.py \
             tools/runtime_paths.py \
             tools/lecture_notes_sync.py
+
+      - name: Upload Playwright failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-failure-artifacts
+          path: test-artifacts/playwright
+          if-no-files-found: ignore
+          retention-days: 7

@@ -7,12 +7,11 @@
 
 :root {
   /* Colors — Dark (default) */
-  /* 3-layer background system (Vercel) */
-  --bg:             #0A0A0A;  /* Layer 0: deepest background */
-  --surface:        #111111;  /* Layer 1: card/panel surface */
-  --surface-strong: #1A1A1A;  /* Layer 2: hover, selected */
-  --bg-soft:        #0E0E0E;  /* Layer 0.5 */
-  --surface-alt:    #151515;  /* Layer 1.5 */
+  --bg:            #0a0a0a;
+  --bg-soft:       #101113;
+  --surface:       #141517;
+  --surface-strong:#191b1e;
+  --surface-alt:   #111214;
   --surface-tint:  rgba(255, 255, 255, 0.03);
   --line:          rgba(255, 255, 255, 0.08);
   --line-strong:   rgba(255, 255, 255, 0.14);
@@ -23,7 +22,7 @@
   --success-soft:  #6ee7b7;
   --warn:          #f59e0b;
   --text:          #f5f5f7;
-  --muted:         #8E8E93;
+  --muted:         #a1a1aa;
   --muted-strong:  #d4d4d8;
   --overlay-white: rgba(255, 255, 255, 0.04);
   --overlay-white-hover: rgba(255, 255, 255, 0.09);
@@ -76,57 +75,17 @@
   --font-display: "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif;
   --font-body:    "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif;
 
-  /* Typography scale (Vercel 7-step) */
-  --text-nano: .6875rem;  /* 11px */
-  --text-xs:   .75rem;    /* 12px */
-  --text-sm:   .8125rem;  /* 13px */
-  --text-base: .875rem;   /* 14px */
-  --text-lg:   1rem;      /* 16px */
-  --text-xl:   1.25rem;   /* 20px */
-  --text-2xl:  1.5rem;    /* 24px */
-
-  /* Spacing scale (Vercel/Geist — these values only) */
-  --sp-1:  4px;
-  --sp-2:  8px;
-  --sp-3:  12px;
-  --sp-4:  16px;
-  --sp-6:  24px;
-  --sp-8:  32px;
-  --sp-12: 48px;
-  --sp-16: 64px;
-
   /* Layout */
   --max-width: 1180px;
   --radius: 12px;
-  --radius-sm: 8px;
-  --radius-md: 16px;
-  --radius-lg: 20px;
-  --radius-xl:   24px;
-  --radius-pill: 999px;
-
-  /* Glass / tint — theme-aware */
-  --glass-tint:          rgba(255,255,255,.03);
-  --glass-tint-strong:   rgba(255,255,255,.05);
-  --glass-tint-hover:    rgba(255,255,255,.08);
-  --glass-border:        rgba(255,255,255,.08);
-  --glass-border-strong: rgba(255,255,255,.14);
-  --glass-shadow:        rgba(0,0,0,.18);
-  --glass-shadow-light:  rgba(0,0,0,.08);
-  --glass-inset:         rgba(255,255,255,.05);
-  --glass-accent:        rgba(10,132,255,.12);
-  --glass-accent-strong: rgba(10,132,255,.18);
-  --key-border:          rgba(96,165,250,.34);
-  --key-glow:            rgba(147,197,253,.46);
-  --key-glow-soft:       rgba(147,197,253,.12);
-  --success-border:      rgba(16,185,129,.35);
-  --success-glow:        rgba(16,185,129,.06);
-
-  /* Font weight scale */
-  --fw-normal:  400;
-  --fw-medium:  500;
-  --fw-semi:    600;
-  --fw-bold:    700;
-
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --pill-radius: 18px;
+  --pill-padding-y: 8px;
+  --pill-padding-x: 14px;
+  --pill-inner-radius: 12px;
+  --pill-control-height: 40px;
   --shadow-card: none;
 }
 
@@ -193,42 +152,7 @@
   --modal-icon-shadow:
     inset 0 1px 0 rgba(255,255,255,.92),
     0 12px 24px rgba(0,0,0,.08);
-  --glass-tint:          rgba(0,0,0,.02);
-  --glass-tint-strong:   rgba(0,0,0,.04);
-  --glass-tint-hover:    rgba(0,0,0,.06);
-  --glass-border:        rgba(0,0,0,.08);
-  --glass-border-strong: rgba(0,0,0,.14);
-  --glass-shadow:        rgba(0,0,0,.06);
-  --glass-shadow-light:  rgba(0,0,0,.03);
-  --glass-inset:         rgba(255,255,255,.78);
-  --glass-accent:        rgba(0,113,227,.08);
-  --glass-accent-strong: rgba(0,113,227,.14);
-  --key-border:          rgba(0,113,227,.24);
-  --key-glow:            rgba(0,113,227,.24);
-  --key-glow-soft:       rgba(0,113,227,.08);
-  --success-border:      rgba(5,150,105,.3);
-  --success-glow:        rgba(5,150,105,.06);
   --shadow-card: none;
-}
-
-/* ─── Learning mode (warm tone) ──────────────────── */
-[data-mode="learn"] {
-  --bg:             #0D0B09;
-  --bg-soft:        #100E0B;
-  --surface:        #141210;
-  --surface-strong: #1C1A17;
-  --surface-alt:    #121009;
-  --text:           #F0EDE8;
-  --muted:          #9C9590;
-  --muted-strong:   #D4CFC8;
-  --body-bg: linear-gradient(180deg, #0D0B09 0%, #100E0C 100%);
-  --topbar-bg: rgba(13, 11, 9, .9);
-
-  /* Learning mode typography: base+ offset +2px */
-  --text-base: 1rem;      /* 16px */
-  --text-lg:   1.25rem;   /* 20px */
-  --text-xl:   1.5rem;    /* 24px */
-  --text-2xl:  2rem;      /* 32px */
 }
 
 /* ─── Reset ─────────────────────────────────────────── */
@@ -244,6 +168,21 @@ body {
 }
 a { color: inherit; text-decoration: none; }
 img, video { max-width: 100%; display: block; }
+
+/* ─── Readable copy wrapping ────────────────────────── */
+:lang(ko) .rpd-readable-copy {
+  word-break: keep-all;
+  overflow-wrap: normal;
+  line-break: strict;
+}
+
+:lang(ko) .rpd-readable-copy wbr {
+  display: inline;
+}
+
+:lang(ko) .rpd-readable-copy .rpd-phrase-keep {
+  white-space: nowrap;
+}
 
 /* ─── Grid faint overlay ─────────────────────────────── */
 .page-shell { position: relative; overflow: hidden; }
@@ -301,7 +240,8 @@ img, video { max-width: 100%; display: block; }
 /* ─── Buttons ────────────────────────────────────────── */
 .btn {
   display: inline-flex; align-items: center; gap: 8px;
-  padding: 8px 12px; border-radius: var(--radius-sm);
+  min-height: var(--pill-control-height);
+  padding: 8px 14px; border-radius: var(--pill-radius);
   font: inherit; font-size: .88rem; font-weight: 500; cursor: pointer;
   transition: border-color .15s, color .15s, background .15s;
 }
@@ -314,8 +254,8 @@ img, video { max-width: 100%; display: block; }
   border: 1px solid var(--key-strong);
   background: var(--key);
   color: #fff;
-  border-radius: 999px;
-  padding: 9px 16px;
+  border-radius: var(--pill-radius);
+  padding: 9px 18px;
   font-weight: 600;
 }
 .btn-primary:hover { background: var(--key-strong); }
@@ -352,7 +292,7 @@ img, video { max-width: 100%; display: block; }
   display: inline-flex;
   align-items: center;
   padding: 3px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--pill-radius);
   border: 1px solid var(--line);
   background: var(--surface-strong);
 }
@@ -365,8 +305,9 @@ img, video { max-width: 100%; display: block; }
   font-size: .76rem;
   font-weight: 600;
   letter-spacing: .04em;
-  padding: 6px 10px;
-  border-radius: 8px;
+  min-height: 30px;
+  padding: 6px 11px;
+  border-radius: var(--pill-inner-radius);
   cursor: pointer;
   transition: background .14s, color .14s;
 }
@@ -520,7 +461,7 @@ section, .section-inner {
 }
 .step-dl-btn {
   display: inline-flex; align-items: center; gap: 6px;
-  padding: 6px 12px; border-radius: var(--radius-sm);
+  padding: 6px 12px; border-radius: var(--pill-radius);
   border: 1px solid var(--line);
   background: var(--surface-strong);
   color: var(--muted-strong);
@@ -533,20 +474,6 @@ section, .section-inner {
   color: var(--text);
   border-color: var(--line-strong);
 }
-
-/* Status pill */
-.status-pill {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 4px 8px; border-radius: 8px;
-  font-size: .72rem; font-weight: 700;
-  letter-spacing: .04em;
-  text-transform: uppercase;
-  background: var(--surface-strong); color: var(--muted-strong);
-  border: 1px solid var(--line);
-}
-.status-pill.complete { background: rgba(16,185,129,.08); color: var(--success-soft); border-color: rgba(16,185,129,.16); }
-.status-pill.active   { background: rgba(255,255,255,.02); color: var(--muted-strong); }
-.status-pill.locked   { background: var(--surface-strong); color: var(--muted); }
 
 /* Task list */
 .task-group {
@@ -574,7 +501,7 @@ section, .section-inner {
   height: 28px;
   display: grid;
   place-items: center;
-  border-radius: var(--radius);
+  border-radius: 10px;
   border: 1px solid var(--line);
   background: rgba(255,255,255,.03);
   color: var(--muted);
@@ -641,7 +568,7 @@ section, .section-inner {
   height: 28px;
   display: grid;
   place-items: center;
-  border-radius: var(--radius);
+  border-radius: 10px;
   border: 1px solid var(--line);
   background: rgba(255,255,255,.03);
   color: var(--muted);
@@ -687,7 +614,7 @@ section, .section-inner {
 .doc-links-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
 .doc-link {
   display: inline-flex; align-items: flex-start; flex-direction: column; gap: 2px;
-  padding: 8px 13px; border-radius: 999px;
+  padding: 8px 13px; border-radius: var(--pill-radius);
   border: 1px solid rgba(147,197,253,.14);
   background: var(--overlay-white);
   color: var(--muted-strong); font-size: .83rem;
@@ -723,7 +650,7 @@ section, .section-inner {
 .shortcut-table tr:hover td { background: var(--overlay-white); }
 .shortcut-key {
   display: inline-block;
-  padding: 3px 8px; border-radius: var(--radius-sm);
+  padding: 3px 8px; border-radius: 6px;
   background: var(--line);
   border: 1px solid var(--line-strong);
   color: var(--key-soft); font-family: var(--font-body);

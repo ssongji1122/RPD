@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 import unittest
 from pathlib import Path
 
@@ -12,6 +13,13 @@ except ImportError:  # pragma: no cover - optional local dependency
 
 
 ROOT = Path(__file__).resolve().parents[2]
+TOOLS_DIR = ROOT / "tools"
+
+if str(TOOLS_DIR) not in sys.path:
+    sys.path.insert(0, str(TOOLS_DIR))
+
+from playwright_test_support import PlaywrightFailureArtifactsMixin
+
 BEVEL_TOOL_URL = (ROOT / "course-site" / "assets" / "showme" / "bevel-tool.html").as_uri()
 BEVEL_MODIFIER_URL = (ROOT / "course-site" / "assets" / "showme" / "bevel-modifier.html").as_uri()
 BOX_ROUNDING_URL = (ROOT / "course-site" / "assets" / "showme" / "box-rounding.html").as_uri()
@@ -19,7 +27,7 @@ TRANSFORM_APPLY_URL = (ROOT / "course-site" / "assets" / "showme" / "transform-a
 SOLIDIFY_MODIFIER_URL = (ROOT / "course-site" / "assets" / "showme" / "solidify-modifier.html").as_uri()
 
 
-class ShowMeBevelToolE2ETest(unittest.TestCase):
+class ShowMeBevelToolE2ETest(PlaywrightFailureArtifactsMixin, unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         if sync_playwright is None:
@@ -42,6 +50,8 @@ class ShowMeBevelToolE2ETest(unittest.TestCase):
             cls.playwright.stop()
 
     def setUp(self) -> None:
+        self._artifact_suffix = ""
+        self._playwright_artifacts_captured = False
         self.context = self.browser.new_context(
             viewport={"width": 1500, "height": 1100},
             color_scheme="dark",
@@ -50,6 +60,8 @@ class ShowMeBevelToolE2ETest(unittest.TestCase):
         self.page = self.context.new_page()
 
     def tearDown(self) -> None:
+        if self._test_failed() and not self._playwright_artifacts_captured:
+            self._capture_playwright_artifacts(self.page, suffix=self._artifact_suffix)
         self.context.close()
 
     def _open_visual_panel(self, url: str) -> None:

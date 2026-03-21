@@ -21,36 +21,65 @@
       backdrop-filter: blur(18px);
     }
     .admin-topbar-inner {
-      display: flex; align-items: center; justify-content: space-between;
+      display: grid;
+      grid-template-columns: auto minmax(180px, 240px) minmax(0, 1fr);
+      align-items: center;
       gap: 14px;
     }
     .admin-topbar-primary {
-      display: flex; align-items: center; gap: 12px; min-width: 0;
+      display: flex; align-items: center; gap: 14px; min-width: 0;
     }
     .admin-brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .admin-brand-link {
+      text-decoration: none;
+      color: inherit;
+    }
+    .admin-brand-link:hover strong {
+      color: var(--key-soft);
+    }
     .admin-brand-badge {
       width: 36px; height: 36px; display: grid; place-items: center;
       border-radius: var(--radius-sm);
-      background: linear-gradient(180deg, rgba(10,132,255,.2), rgba(10,132,255,.07));
-      border: 1px solid rgba(255,255,255,.1);
+      background: var(--modal-icon-bg);
+      border: 1px solid rgba(96,165,250,.2);
+      box-shadow: var(--modal-icon-shadow);
       color: var(--key-soft); font-weight: 700; font-size: .85rem;
     }
     .admin-brand strong { font-size: .92rem; color: var(--text); }
     .admin-brand span { color: var(--muted); font-size: .78rem; margin: 2px 0 0; display: block; }
 
-    .topbar-actions { display: flex; align-items: center; gap: 10px; }
-    .dirty-indicator {
+    .admin-topbar-context {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-width: 0;
+    }
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      justify-self: end;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-width: 0;
+    }
+    .topbar-actions .btn,
+    .topbar-actions .version-badge,
+    .topbar-actions .dirty-indicator {
+      min-height: 36px;
+    }
+    .topbar-actions .dirty-indicator {
       display: none; align-items: center; gap: 6px;
       padding: 5px 12px; border-radius: 999px;
       background: rgba(245,158,11,.12); border: 1px solid rgba(245,158,11,.25);
       color: #fbbf24; font-size: .78rem; font-weight: 600;
     }
-    .dirty-indicator.visible { display: inline-flex; }
+    .topbar-actions .dirty-indicator.visible { display: inline-flex; }
     .version-badge {
       display: inline-flex; align-items: center; gap: 6px;
-      padding: 5px 12px; border-radius: 999px;
+      padding: 5px 10px; border-radius: var(--pill-radius);
       background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08);
-      color: var(--muted-strong); font-size: .76rem; font-weight: 600;
+      color: var(--muted-strong); font-size: .74rem; font-weight: 600;
     }
     .modal-log {
       font-size: .85rem; line-height: 1.8; max-height: 320px;
@@ -74,72 +103,80 @@
 
     /* ── Layout body ──────────────────────────────────── */
     .admin-body {
-      width: min(calc(var(--max-width) + 120px), calc(100% - 32px));
-      margin: 0 auto;
-      padding: 28px 0 72px;
-      display: grid;
-      grid-template-columns: 250px minmax(0, 1fr);
-      gap: 36px;
-      align-items: start;
+      position: relative;
+      --rpd-page-gap: 28px;
+      --rpd-page-rail-active-color: var(--key-soft);
     }
 
     /* ── Sidebar ──────────────────────────────────────── */
     .sidebar {
       width: 100%;
       overflow-y: auto; overflow-x: hidden;
-      position: sticky;
-      top: 76px;
-      height: calc(100vh - 88px);
+      max-height: calc(100vh - 92px);
       align-self: start;
-      padding: 12px 18px 32px 0;
+      padding-right: 18px;
       background: none;
-      border-right: 1px solid var(--line);
+      border: 0;
+      border-right: 1px solid rgba(255,255,255,.08);
       box-shadow: none;
       border-radius: 0;
+      isolation: auto;
     }
     .sidebar::before {
       display: none;
     }
     .sidebar-block {
       display: grid;
-      gap: 4px;
+      gap: 8px;
     }
     .sidebar-block + .sidebar-block {
-      margin-top: 14px;
-      padding-top: 0;
-      border-top: none;
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255,255,255,.06);
     }
     .sidebar-title {
-      padding-left: 14px;
+      padding-left: 4px;
       font-size: .9rem;
       font-weight: 620;
       letter-spacing: -.02em;
     }
     .sidebar-meta {
-      padding-left: 14px;
+      padding-left: 4px;
       color: var(--muted);
       font-size: .76rem;
       line-height: 1.6;
     }
     .sidebar-link {
-      display: block;
-      padding: 7px 0 7px 14px;
-      border-left: 2px solid transparent;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 4px;
+      border: 0;
+      border-radius: 0;
       color: var(--muted);
       font-size: .84rem;
       line-height: 1.45;
-      transition: color .14s ease, border-color .14s ease;
+      background: transparent;
+      box-shadow: none;
+      transition: color .14s ease, border-color .14s ease, background .14s ease;
     }
-    .sidebar-link:hover {
-      color: var(--text);
+    .sidebar-link:hover,
+    .sidebar .sidebar-link.rpd-rail-link:hover {
+      color: var(--muted-strong);
+      background: transparent;
+      border-color: transparent;
     }
-    .sidebar-link.is-active {
-      color: var(--text);
-      border-left-color: var(--key-soft);
+    .sidebar-link.is-active,
+    .sidebar .sidebar-link.rpd-rail-link.is-active {
+      color: var(--rpd-page-rail-active-color);
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+      font-weight: 620;
     }
     .sidebar-label {
       display: block;
-      padding: 18px 0 6px 14px;
+      padding: 14px 4px 4px;
       font-size: .7rem;
       font-weight: 700;
       color: var(--muted);
@@ -153,17 +190,27 @@
     }
     .sidebar-item {
       display: flex; align-items: center; gap: 10px;
-      padding: 7px 0 7px 14px; cursor: pointer;
-      border-left: 2px solid transparent;
-      transition: color .12s, border-color .12s;
-      font-size: .84rem; color: var(--muted);
+      padding: 8px 4px;
+      cursor: pointer;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      transition: color .12s ease;
+      font-size: .84rem;
+      color: var(--muted);
     }
     .sidebar-item:hover {
-      color: var(--text);
+      color: var(--muted-strong);
+      background: transparent;
+      border-color: transparent;
+      transform: none;
     }
     .sidebar-item.active {
-      border-left-color: var(--key-soft);
-      color: var(--text);
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+      color: var(--rpd-page-rail-active-color);
+      font-weight: 620;
     }
     .sidebar-dot {
       width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
@@ -179,10 +226,14 @@
       flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
     .sidebar-link-global {
-      padding-top: 6px;
-      padding-bottom: 6px;
       font-size: .8rem;
-      color: color-mix(in srgb, var(--muted-strong) 72%, var(--muted) 28%);
+      color: color-mix(in srgb, var(--muted-strong) 78%, var(--muted) 22%);
+    }
+    .sidebar-link-global::after {
+      content: "↗";
+      margin-left: 6px;
+      color: var(--muted);
+      font-size: .76rem;
     }
     .sidebar-link-global:hover {
       color: var(--muted-strong);
@@ -215,19 +266,14 @@
     .admin-hero-card {
       position: relative;
       display: grid;
-      grid-template-columns: minmax(0, 1.18fr) minmax(250px, .82fr);
-      gap: 24px;
+      grid-template-columns: minmax(0, 1fr) minmax(220px, .72fr);
+      gap: 18px;
       width: 100%;
-      padding: 30px;
-      border-radius: 28px;
+      padding: 24px;
+      border-radius: 26px;
       border: 1px solid var(--line-strong);
-      background:
-        radial-gradient(circle at top left, rgba(10,132,255,.18), transparent 34%),
-        linear-gradient(180deg, var(--surface-tint), transparent 72%),
-        var(--surface);
-      box-shadow:
-        0 28px 80px rgba(0,0,0,.22),
-        inset 0 1px 0 rgba(255,255,255,.05);
+      background: var(--modal-panel-bg);
+      box-shadow: var(--modal-panel-shadow);
       overflow: hidden;
       isolation: isolate;
     }
@@ -239,18 +285,6 @@
       background: linear-gradient(90deg, transparent, rgba(147,197,253,.56), transparent);
       pointer-events: none;
     }
-    .admin-hero-card::after {
-      content: "";
-      position: absolute;
-      right: -12%;
-      bottom: -38%;
-      width: 54%;
-      aspect-ratio: 1;
-      border-radius: 999px;
-      background: radial-gradient(circle, rgba(10,132,255,.16), transparent 68%);
-      opacity: .82;
-      pointer-events: none;
-    }
     .admin-hero-copy,
     .admin-hero-meta-wrap {
       position: relative;
@@ -258,25 +292,25 @@
     }
     .admin-hero-copy {
       display: grid;
-      gap: 14px;
+      gap: 10px;
       align-content: start;
     }
     .admin-hero h1 {
       margin: 0;
       font-family: var(--font-display);
-      max-width: 12ch;
-      font-size: clamp(2.1rem, 3.7vw, 3.18rem);
+      max-width: 16ch;
+      font-size: clamp(1.26rem, 1.8vw, 1.72rem);
       font-weight: 650;
-      letter-spacing: -.05em;
-      line-height: 1.04;
+      letter-spacing: -.04em;
+      line-height: 1.1;
       text-wrap: balance;
     }
     .admin-hero p {
-      max-width: 54ch;
+      max-width: 48ch;
       margin: 0;
       color: var(--muted-strong);
-      font-size: .98rem;
-      line-height: 1.76;
+      font-size: .92rem;
+      line-height: 1.66;
     }
     .admin-hero-actions {
       display: flex;
@@ -294,17 +328,15 @@
     }
     .admin-hero-meta-wrap {
       display: grid;
-      gap: 14px;
-      align-content: end;
-      align-self: stretch;
-      padding: 18px;
-      border-radius: 20px;
+      gap: 10px;
+      align-content: start;
+      align-self: start;
+      padding: 14px 15px;
+      border-radius: 18px;
       border: 1px solid var(--line);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.04), transparent 78%),
-        rgba(255,255,255,.02);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
-      min-height: 100%;
+      background: var(--modal-panel-soft-bg);
+      box-shadow: var(--modal-card-shadow);
+      min-height: auto;
     }
     .hero-meta-label {
       font-size: .72rem;
@@ -343,15 +375,11 @@
 
     .admin-workspace-panel {
       position: relative;
-      padding: 28px;
+      padding: 22px;
       border-radius: 26px;
       border: 1px solid var(--line);
-      background:
-        linear-gradient(180deg, var(--surface-tint), transparent 72%),
-        var(--surface);
-      box-shadow:
-        0 22px 54px rgba(0,0,0,.18),
-        inset 0 1px 0 rgba(255,255,255,.04);
+      background: var(--modal-panel-bg);
+      box-shadow: var(--modal-panel-shadow);
       overflow: hidden;
       isolation: isolate;
     }
@@ -365,8 +393,8 @@
     }
     .admin-section-intro {
       display: grid;
-      gap: 10px;
-      margin-bottom: 22px;
+      gap: 8px;
+      margin-bottom: 18px;
       position: relative;
       z-index: 1;
     }
@@ -381,9 +409,9 @@
     .admin-section-copy {
       margin: 0;
       color: var(--muted);
-      font-size: .92rem;
-      line-height: 1.72;
-      max-width: 64ch;
+      font-size: .88rem;
+      line-height: 1.62;
+      max-width: 56ch;
     }
 
     /* ── Form fields ──────────────────────────────────── */
@@ -489,6 +517,33 @@
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 12px;
+    }
+    .ui-preset-disclosure {
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 16px;
+      background: rgba(255,255,255,.02);
+      padding: 0 12px 12px;
+    }
+    .ui-preset-disclosure summary {
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 0 10px;
+      color: var(--muted-strong);
+      font-size: .82rem;
+      font-weight: 600;
+    }
+    .ui-preset-disclosure summary::-webkit-details-marker {
+      display: none;
+    }
+    .ui-preset-disclosure-copy {
+      margin: -2px 0 12px;
+      color: var(--muted);
+      font-size: .8rem;
+      line-height: 1.6;
     }
     .ui-preset-toggle {
       display: flex;
@@ -747,18 +802,29 @@
 
     /* ── Responsive ────────────────────────────────────── */
     @media (max-width: 1100px) {
+      .admin-topbar-inner {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .admin-topbar-context {
+        order: 3;
+      }
+      .topbar-actions {
+        justify-self: stretch;
+        justify-content: flex-start;
+      }
       .admin-body {
         grid-template-columns: 1fr;
       }
       .sidebar {
         position: relative;
         top: 0;
-        height: auto;
+        max-height: none;
         width: 100%;
         order: 2;
-        padding: 0 0 18px;
+        padding: 0;
         border-right: none;
-        border-bottom: 1px solid var(--line);
+        border-bottom: none;
       }
       .editor-pane { order: 1; }
       .admin-hero-card {
@@ -779,13 +845,18 @@
         z-index: 50; width: 280px;
         height: auto;
         margin: 0;
-        border-radius: 0;
+        border-radius: 0 24px 24px 0;
         transform: translateX(-100%);
         transition: transform .22s ease;
         order: initial;
-        background: var(--surface);
-        border-right: 1px solid var(--line);
-        padding: 16px 20px 32px 0;
+        background:
+          linear-gradient(180deg, rgba(10,132,255,.08), transparent 24%),
+          linear-gradient(180deg, var(--surface-tint), transparent 72%),
+          var(--surface-strong);
+        border: 1px solid var(--line);
+        border-right: none;
+        box-shadow: var(--modal-panel-shadow);
+        padding: 16px;
       }
       .sidebar.open { transform: translateX(0); }
       .sidebar-overlay {
@@ -798,6 +869,12 @@
         padding: 22px 18px;
         border-radius: 22px;
       }
+      .admin-topbar-primary {
+        gap: 10px;
+      }
+      .admin-state-grid {
+        grid-template-columns: 1fr;
+      }
       .field-row { flex-direction: column; gap: 0; }
       .ui-preset-grid { grid-template-columns: 1fr; }
       .table-editor-row .field-input.short { max-width: none; flex: 1; }
@@ -809,6 +886,133 @@
     .empty-state {
       display: grid; place-items: center; min-height: 300px;
       color: var(--muted); font-size: .94rem; text-align: center;
+    }
+    .admin-state-shell {
+      display: grid;
+      gap: 22px;
+    }
+    .admin-state-panel {
+      display: grid;
+      gap: 18px;
+    }
+    .admin-state-actions {
+      align-items: stretch;
+    }
+    .admin-state-actions .btn {
+      justify-content: center;
+    }
+    .admin-state-meta {
+      display: grid;
+      gap: 10px;
+    }
+    .admin-state-meta .rpd-meta-chip {
+      justify-content: flex-start;
+      width: 100%;
+      min-height: 0;
+      padding: 10px 12px;
+      font-size: .8rem;
+    }
+    .admin-state-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .admin-state-link {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 18px;
+      color: inherit;
+      text-decoration: none;
+      transition: border-color .14s ease, background .14s ease, transform .14s ease, box-shadow .14s ease;
+    }
+    .admin-state-link:hover {
+      border-color: rgba(96,165,250,.24);
+      background: var(--modal-hover-bg);
+      box-shadow: var(--modal-hover-shadow);
+      transform: translateY(-1px);
+    }
+    .admin-state-link-copy {
+      display: grid;
+      gap: 4px;
+      min-width: 0;
+    }
+    .admin-state-link-label {
+      font-size: .92rem;
+      font-weight: 620;
+      letter-spacing: -.02em;
+      color: var(--text);
+    }
+    .admin-state-link-meta {
+      color: var(--muted);
+      font-size: .78rem;
+      line-height: 1.55;
+    }
+    .admin-state-link-arrow {
+      color: var(--muted);
+      font-size: .9rem;
+    }
+    .admin-state-steps {
+      display: grid;
+      gap: 12px;
+    }
+    .admin-state-step {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 12px;
+      padding: 16px 18px;
+    }
+    .admin-state-step-index {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      border: 1px solid rgba(96,165,250,.22);
+      background: var(--modal-icon-bg);
+      box-shadow: var(--modal-icon-shadow);
+      color: var(--key-soft);
+      font-size: .78rem;
+      font-weight: 700;
+    }
+    .admin-state-step-copy {
+      display: grid;
+      gap: 5px;
+      min-width: 0;
+    }
+    .admin-state-step-copy strong {
+      font-size: .9rem;
+      font-weight: 620;
+      letter-spacing: -.02em;
+      color: var(--text);
+    }
+    .admin-state-step-copy p {
+      margin: 0;
+      color: var(--muted);
+      font-size: .84rem;
+      line-height: 1.6;
+    }
+    .admin-state-code {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      min-width: 0;
+      padding: 7px 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(96,165,250,.18);
+      background: rgba(255,255,255,.03);
+      color: var(--muted-strong);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: .77rem;
+      line-height: 1.5;
+      word-break: break-all;
+    }
+    .admin-state-note {
+      margin: 0;
+      color: var(--muted);
+      font-size: .82rem;
+      line-height: 1.62;
     }
 
     /* ── Notion sync ─────────────────────────────────── */
@@ -871,9 +1075,9 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      padding: 2px 0 10px;
-      margin-bottom: 14px;
-      border-bottom: 1px solid rgba(255,255,255,.06);
+      padding: 0 0 8px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid rgba(255,255,255,.04);
     }
     .admin-ctrl-badge {
       position: relative;
@@ -1223,33 +1427,39 @@
     }
     .preview-section:first-of-type { border-top: none; }
   </style>
+  <link rel="stylesheet" href="assets/surface.css?v=20260318a" />
+  <link rel="stylesheet" href="assets/meta.css?v=20260318a" />
+  <link rel="stylesheet" href="assets/chrome.css?v=20260318a" />
 </head>
 <body>
   <div class="page-shell admin-shell">
     <!-- Topbar -->
     <header class="topbar admin-topbar">
-      <div class="topbar-inner admin-topbar-inner">
+      <div class="topbar-inner admin-topbar-inner rpd-topbar-3col">
         <div class="admin-topbar-primary">
           <button class="hamburger" id="hamburgerBtn" type="button" aria-label="메뉴 열기">&#9776;</button>
-          <div class="admin-brand">
+          <a class="admin-brand admin-brand-link" id="adminBrandLink" href="index.html" aria-label="홈으로 이동">
             <div class="admin-brand-badge">R</div>
             <div>
               <strong>RPD Admin</strong>
               <span>커리큘럼 관리</span>
             </div>
-          </div>
-          <select class="field-select" id="weekSelectTopbar" style="width:160px;font-size:.84rem;padding:6px 30px 6px 10px;display:none" title="주차 선택"></select>
+          </a>
         </div>
-        <div class="topbar-actions">
+        <div class="admin-topbar-context rpd-topbar-context">
+          <select class="field-select" id="weekSelectTopbar" style="width:100%;max-width:240px;font-size:.84rem;padding:6px 30px 6px 10px;display:none" title="주차 선택"></select>
+        </div>
+        <div class="topbar-actions rpd-topbar-actions">
           <div class="version-badge" id="versionBadge">버전 —</div>
           <div class="dirty-indicator" id="dirtyIndicator">
             <span>&#9679;</span> 저장되지 않은 변경
           </div>
+          <a class="btn btn-ghost" id="topbarHomeLink" href="index.html">홈 &#8599;</a>
           <div class="notion-sync-group" id="notionGroup" style="display:none">
             <button class="btn btn-ghost" id="notionPushAllBtn" type="button" title="canonical curriculum → Notion 전체 push">&#128640; Notion Push</button>
           </div>
           <button class="btn btn-ghost" id="diffBtn" type="button">변경 미리보기</button>
-          <button class="btn btn-ghost" id="previewBtn" type="button">미리보기 &#8599;</button>
+          <button class="btn btn-ghost" id="previewBtn" type="button">주차 보기 &#8599;</button>
           <button class="btn btn-ghost" id="logoutBtn" type="button">로그아웃</button>
           <button class="btn btn-primary" id="saveBtn" type="button">&#128190; 저장</button>
         </div>
@@ -1260,33 +1470,34 @@
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <!-- Body -->
-    <div class="admin-body">
+    <div class="admin-body rpd-page-layout">
       <!-- Sidebar -->
-      <nav class="sidebar" id="sidebar" aria-label="관리 탐색">
+      <nav class="sidebar rpd-page-rail" id="sidebar" aria-label="관리 탐색">
         <div class="sidebar-block">
-          <strong class="sidebar-title" id="sidebarTitle">RPD Admin</strong>
-          <span class="sidebar-meta" id="sidebarMeta">커리큘럼 구조를 웹페이지 흐름 그대로 편집합니다.</span>
+          <strong class="sidebar-title rpd-rail-title" id="sidebarTitle">RPD Admin</strong>
+          <span class="sidebar-meta rpd-rail-meta" id="sidebarMeta">커리큘럼 구조를 웹페이지 흐름 그대로 편집합니다.</span>
         </div>
         <div class="sidebar-block">
-          <span class="sidebar-label sidebar-label-global">페이지</span>
-          <a class="sidebar-link sidebar-link-global" href="index.html">홈</a>
-          <a class="sidebar-link sidebar-link-global" href="library.html">카드 라이브러리</a>
-          <a class="sidebar-link sidebar-link-global" href="shortcuts.html">단축키 DB</a>
+          <span class="sidebar-label sidebar-label-global rpd-rail-label">공개 페이지</span>
+          <a class="sidebar-link sidebar-link-global rpd-rail-link rpd-rail-link--external" id="sidebarHomeLink" href="index.html">홈으로 가기</a>
+          <a class="sidebar-link sidebar-link-global rpd-rail-link rpd-rail-link--external" id="sidebarCourseLink" href="inha.html?panel=weeks">인하대 수업</a>
+          <a class="sidebar-link sidebar-link-global rpd-rail-link rpd-rail-link--external" id="sidebarLibraryLink" href="library.html">카드 라이브러리</a>
+          <a class="sidebar-link sidebar-link-global rpd-rail-link rpd-rail-link--external" id="sidebarShortcutsLink" href="shortcuts.html">단축키 DB</a>
         </div>
         <div class="sidebar-block">
-          <span class="sidebar-label">현재 주차</span>
-          <a class="sidebar-link is-active" href="#editorPreview" data-nav-target="editorPreview">개요</a>
-          <a class="sidebar-link" href="#topicsSection" data-nav-target="topicsSection">이번 주</a>
-          <a class="sidebar-link" href="#practiceSection" data-nav-target="practiceSection">실습</a>
-          <a class="sidebar-link" href="#shortcutsSection" data-nav-target="shortcutsSection">참고 자료</a>
-          <a class="sidebar-link" href="#assignmentSection" data-nav-target="assignmentSection">과제</a>
+          <span class="sidebar-label rpd-rail-label">현재 주차</span>
+          <a class="sidebar-link rpd-rail-link is-active" href="#editorPreview" data-nav-target="editorPreview">개요</a>
+          <a class="sidebar-link rpd-rail-link" href="#topicsSection" data-nav-target="topicsSection">이번 주</a>
+          <a class="sidebar-link rpd-rail-link" href="#practiceSection" data-nav-target="practiceSection">실습</a>
+          <a class="sidebar-link rpd-rail-link" href="#shortcutsSection" data-nav-target="shortcutsSection">참고 자료</a>
+          <a class="sidebar-link rpd-rail-link" href="#assignmentSection" data-nav-target="assignmentSection">과제</a>
         </div>
-        <div class="sidebar-label">주차 목록</div>
+        <div class="sidebar-label rpd-rail-label">주차 목록</div>
         <div id="sidebarList"></div>
       </nav>
 
       <!-- Editor -->
-      <main class="editor-pane" id="editorPane">
+      <main class="editor-pane rpd-page-main" id="editorPane">
         <div class="editor-inner" id="editorInner">
           <div class="empty-state">불러오는 중...</div>
         </div>
@@ -1328,6 +1539,7 @@
 
   <!-- Sync review overlay removed: save flow simplified (Notion is source of truth) -->
 
+  <script src="assets/site-shell.js?v=20260318a"></script>
   <script>
   // ════════════════════════════════════════════════════════
   //  RPD Admin — Curriculum Editor
@@ -1357,6 +1569,8 @@
     var saveBtn        = document.getElementById("saveBtn");
     var diffBtn        = document.getElementById("diffBtn");
     var previewBtn     = document.getElementById("previewBtn");
+    var topbarHomeLink = document.getElementById("topbarHomeLink");
+    var adminBrandLink = document.getElementById("adminBrandLink");
     var logoutBtn      = document.getElementById("logoutBtn");
     var toastContainer = document.getElementById("toastContainer");
     var authOverlay    = document.getElementById("authOverlay");
@@ -1386,6 +1600,10 @@
     var sidebarMeta      = document.getElementById("sidebarMeta");
     var workspaceTitle   = document.getElementById("workspaceTitle");
     var workspaceDescription = document.getElementById("workspaceDescription");
+    var sidebarHomeLink = document.getElementById("sidebarHomeLink");
+    var sidebarCourseLink = document.getElementById("sidebarCourseLink");
+    var sidebarLibraryLink = document.getElementById("sidebarLibraryLink");
+    var sidebarShortcutsLink = document.getElementById("sidebarShortcutsLink");
 
     // ─── Helpers ─────────────────────────────────────────
 
@@ -1403,6 +1621,128 @@
 
     function formatWeekLabel(week) {
       return week ? "Week " + String(week.week).padStart(2, "0") : "—";
+    }
+
+    function buildAdminStateView(options) {
+      var metaItems = (options.meta || []).map(function(item) {
+        return '<span class="rpd-meta-chip"><strong>' + esc(item.value) + '</strong><span>' + esc(item.label) + '</span></span>';
+      }).join("");
+
+      var actions = (options.actions || []).map(function(action) {
+        if (action.type === "button") {
+          return '<button class="btn ' + esc(action.className || "btn-ghost") + '" type="button" ' +
+            (action.dataAction ? 'data-admin-action="' + esc(action.dataAction) + '"' : "") + '>' +
+            esc(action.label) + '</button>';
+        }
+        return '<a class="btn ' + esc(action.className || "btn-ghost") + '" href="' + esc(action.href || "#") + '">' +
+          esc(action.label) + '</a>';
+      }).join("");
+
+      var steps = (options.steps || []).map(function(step, index) {
+        return [
+          '<div class="admin-state-step rpd-surface-item">',
+          '<span class="admin-state-step-index">', esc(String(index + 1)), '</span>',
+          '<div class="admin-state-step-copy">',
+          '<strong>', esc(step.title), '</strong>',
+          '<p>', esc(step.body), '</p>',
+          step.code ? '<code class="admin-state-code">' + esc(step.code) + '</code>' : "",
+          '</div>',
+          '</div>'
+        ].join("");
+      }).join("");
+
+      var links = (options.links || []).map(function(link) {
+        return [
+          '<a class="admin-state-link rpd-surface-item" href="', esc(link.href), '">',
+          '<span class="rpd-icon-well" style="width:38px;height:38px">', esc(link.icon || "R"), '</span>',
+          '<span class="admin-state-link-copy">',
+          '<span class="admin-state-link-label">', esc(link.label), '</span>',
+          '<span class="admin-state-link-meta">', esc(link.meta), '</span>',
+          '</span>',
+          '<span class="admin-state-link-arrow">&#8599;</span>',
+          '</a>'
+        ].join("");
+      }).join("");
+
+      return [
+        '<div class="admin-state-shell">',
+        '<section class="admin-hero">',
+        '<div class="admin-hero-card">',
+        '<div class="admin-hero-copy">',
+        '<span class="hero-meta-label">', esc(options.eyebrow || "Admin workspace"), '</span>',
+        '<h1>', esc(options.title), '</h1>',
+        '<p>', esc(options.description), '</p>',
+        actions ? '<div class="admin-hero-actions admin-state-actions">' + actions + '</div>' : "",
+        '</div>',
+        '<div class="admin-hero-meta-wrap">',
+        '<div class="hero-meta-label">Current mode</div>',
+        '<div class="admin-state-meta admin-hero-meta">', metaItems, '</div>',
+        '</div>',
+        '</div>',
+        '</section>',
+        '<section class="admin-workspace-panel admin-state-panel">',
+        '<div class="admin-section-intro">',
+        '<h2 class="admin-section-title">', esc(options.panelTitle), '</h2>',
+        '<p class="admin-section-copy">', esc(options.panelDescription), '</p>',
+        '</div>',
+        steps ? '<div class="admin-state-steps">' + steps + '</div>' : "",
+        links ? '<div class="admin-state-grid">' + links + '</div>' : "",
+        options.note ? '<p class="admin-state-note">' + esc(options.note) + '</p>' : "",
+        '</section>',
+        '</div>'
+      ].join("");
+    }
+
+    function renderAdminStateView(options) {
+      editorInner.innerHTML = buildAdminStateView(options);
+
+      editorInner.querySelectorAll("[data-admin-action]").forEach(function(button) {
+        button.addEventListener("click", function() {
+          var action = button.getAttribute("data-admin-action");
+          if (action === "retry") {
+            loadCurriculum();
+          } else if (action === "auth") {
+            showAuth();
+          }
+        });
+      });
+    }
+
+    function renderAdminServerFallback(error) {
+      renderAdminStateView({
+        eyebrow: "Admin fallback",
+        title: "관리 서버에 연결할 수 없습니다",
+        description: "정적 파일만으로는 편집용 curriculum API가 없어 화면이 비어 보일 수 있습니다. 서버를 실행한 뒤 다시 시도하거나, 아래 공개 페이지로 이동해 현재 톤을 계속 확인하세요.",
+        actions: [
+          { type: "button", className: "btn-primary", dataAction: "retry", label: "다시 시도" },
+          { type: "link", className: "btn-ghost", href: "index.html", label: "홈 보기 ↗" }
+        ],
+        meta: [
+          { value: "API unavailable", label: "연결 상태" },
+          { value: "Static preview", label: "현재 모드" },
+          { value: error && error.message ? error.message : "unknown", label: "응답" }
+        ],
+        panelTitle: "다음 단계",
+        panelDescription: "편집 화면과 공개 페이지가 같은 제품군으로 보이도록, 관리 모드도 실제 웹페이지 흐름을 그대로 따라갑니다.",
+        steps: [
+          {
+            title: "관리 서버 실행",
+            body: "저장, diff, Notion push 같은 편집 기능은 admin server가 응답할 때만 활성화됩니다.",
+            code: "python3 tools/admin-server.py --host 127.0.0.1 --port 4180"
+          },
+          {
+            title: "실행 후 다시 연결",
+            body: "서버가 켜지면 이 화면에서 다시 시도를 눌러 같은 레이아웃 안에서 편집 상태를 바로 불러옵니다."
+          }
+        ],
+        links: [
+          { href: "index.html", icon: "H", label: "홈 허브", meta: "아카이브와 실제 수업 페이지 흐름 확인" },
+          { href: "inha.html?panel=weeks", icon: "C", label: "인하대 수업", meta: "공개 주차 카드와 curriculum 결과 확인" },
+          { href: "library.html", icon: "L", label: "카드 라이브러리", meta: "Show Me 카드 브라우저 톤 확인" },
+          { href: "shortcuts.html", icon: "K", label: "단축키 DB", meta: "검색 rail과 리스트 카드 밀도 확인" }
+        ],
+        note: "정상 서버에서는 로그인 후 preview hero, 단계 카드, 참고 자료, 과제 카드가 이 영역에 그대로 나타납니다."
+      });
     }
 
     function renderAdminChrome() {
@@ -1544,6 +1884,28 @@
       renderAdminChrome();
     }
 
+    function withPresetHref(path) {
+      var preset = weekUiConfig && weekUiConfig.defaultPreset ? weekUiConfig.defaultPreset : "";
+      return window.RPDAppShell ? window.RPDAppShell.withPreset(path, preset) : path;
+    }
+
+    function syncPublicPageLinks() {
+      var preset = weekUiConfig && weekUiConfig.defaultPreset ? weekUiConfig.defaultPreset : "";
+      var publicLinks = window.RPDAppShell
+        ? window.RPDAppShell.getPublicLinks({ lang: "ko", presetName: preset })
+        : null;
+      var homeHref = publicLinks ? publicLinks.home.href : withPresetHref("index.html");
+      var courseHref = publicLinks ? publicLinks.collection.href : withPresetHref("inha.html?panel=weeks");
+      var libraryHref = publicLinks ? publicLinks.library.href : withPresetHref("library.html");
+      var shortcutsHref = publicLinks ? publicLinks.shortcuts.href : withPresetHref("shortcuts.html");
+      if (topbarHomeLink) topbarHomeLink.setAttribute("href", homeHref);
+      if (adminBrandLink) adminBrandLink.setAttribute("href", homeHref);
+      if (sidebarHomeLink) sidebarHomeLink.setAttribute("href", homeHref);
+      if (sidebarCourseLink) sidebarCourseLink.setAttribute("href", courseHref);
+      if (sidebarLibraryLink) sidebarLibraryLink.setAttribute("href", libraryHref);
+      if (sidebarShortcutsLink) sidebarShortcutsLink.setAttribute("href", shortcutsHref);
+    }
+
     function deepClone(value) {
       return JSON.parse(JSON.stringify(value));
     }
@@ -1619,6 +1981,21 @@
       return JSON.stringify(weekUiConfig || {}, null, 2);
     }
 
+    function updateWeekUiPanelMeta() {
+      var targetInfo = getWeekUiPresetTarget();
+      var presetName = document.getElementById("uiPresetName");
+      var presetVersion = document.getElementById("uiPresetVersion");
+      var presetCount = document.getElementById("uiPresetCount");
+      var summaryText = document.getElementById("uiPresetSummary");
+      var jsonView = document.getElementById("uiPresetJson");
+
+      if (presetName) presetName.textContent = targetInfo.name;
+      if (presetVersion) presetVersion.textContent = weekUiVersion || "—";
+      if (presetCount) presetCount.textContent = String(Object.keys((weekUiConfig && weekUiConfig.presets) || {}).length);
+      if (summaryText) summaryText.textContent = buildWeekUiSummary(targetInfo);
+      if (jsonView) jsonView.value = buildWeekUiJson();
+    }
+
     function loadWeekUiIntoPanel() {
       var targetInfo = getWeekUiPresetTarget();
       var preset = targetInfo.resolved || {};
@@ -1637,12 +2014,6 @@
       var summarySource = document.getElementById("uiSummarySource");
       var summaryMax = document.getElementById("uiSummaryMax");
       var summaryProgress = document.getElementById("uiSummaryProgress");
-      var presetName = document.getElementById("uiPresetName");
-      var presetVersion = document.getElementById("uiPresetVersion");
-      var presetCount = document.getElementById("uiPresetCount");
-      var summaryText = document.getElementById("uiPresetSummary");
-      var jsonView = document.getElementById("uiPresetJson");
-
       if (schoolKo) schoolKo.value = (labels.school && labels.school.ko) || "";
       if (schoolEn) schoolEn.value = (labels.school && labels.school.en) || "";
       if (programKo) programKo.value = (labels.program && labels.program.ko) || "";
@@ -1653,11 +2024,7 @@
       if (summarySource) summarySource.value = weekSummary.itemSource || "topics";
       if (summaryMax) summaryMax.value = String(weekSummary.maxItems || 8);
       if (summaryProgress) summaryProgress.checked = weekSummary.showProgress !== false;
-      if (presetName) presetName.textContent = targetInfo.name;
-      if (presetVersion) presetVersion.textContent = weekUiVersion || "—";
-      if (presetCount) presetCount.textContent = String(Object.keys((weekUiConfig && weekUiConfig.presets) || {}).length);
-      if (summaryText) summaryText.textContent = buildWeekUiSummary(targetInfo);
-      if (jsonView) jsonView.value = buildWeekUiJson();
+      updateWeekUiPanelMeta();
     }
 
     function renderDiffOverlay(diff) {
@@ -1748,25 +2115,32 @@
 
       parts.push(
         '<div class="preview-section" id="uiPresetSection">',
-        '<div class="section-head"><h3>UI preset</h3><p>홈과 주차 상세가 함께 읽는 공통 표현 규칙입니다. modal 톤은 CSS에 두고, 여기서는 정보 구조와 표시 밀도만 조정합니다.</p></div>',
-        '<div class="ui-preset-panel">',
+        '<div class="section-head"><h3>UI preset</h3><p>홈과 주차가 함께 읽는 공통 표시 규칙입니다. 구조와 타이포는 공통으로 유지하고, accent 색만 페이지별로 둡니다.</p></div>',
+        '<div class="ui-preset-panel rpd-panel rpd-panel--soft">',
         '<div class="ui-preset-head">',
         '<div class="ui-preset-copy">',
         '<div class="card-chip">Global UI</div>',
         '<strong>Shared preset for index + week</strong>',
-        '<p>기본 preset 하나를 운영용으로 관리하고, 주차 콘텐츠와는 분리해서 저장합니다.</p>',
+        '<p>헤더, hero, 좌측 rail, control geometry는 shared system을 따르고, 색 포인트만 페이지 성격에 맞게 유지합니다.</p>',
         '</div>',
         '<div class="ui-preset-stat-row">',
-        '<span class="ui-preset-stat"><strong id="uiPresetName">—</strong><span>default preset</span></span>',
-        '<span class="ui-preset-stat"><strong id="uiPresetCount">0</strong><span>presets</span></span>',
-        '<span class="ui-preset-stat"><strong id="uiPresetVersion">—</strong><span>version</span></span>',
+        '<span class="ui-preset-stat rpd-stat-chip"><strong id="uiPresetName">—</strong><span>default preset</span></span>',
+        '<span class="ui-preset-stat rpd-stat-chip"><strong id="uiPresetCount">0</strong><span>presets</span></span>',
+        '<span class="ui-preset-stat rpd-stat-chip"><strong id="uiPresetVersion">—</strong><span>version</span></span>',
         '</div>',
         '</div>',
+        '<p class="ui-preset-summary" id="uiPresetSummary"></p>',
+        '<details class="ui-preset-disclosure">',
+        '<summary>Labels</summary>',
+        '<p class="ui-preset-disclosure-copy">학교명과 프로그램명처럼 자주 바뀌지 않는 라벨만 접어둡니다.</p>',
         '<div class="ui-preset-grid">',
         '<div class="field-group" style="margin-bottom:0"><label class="field-label" for="uiSchoolKo">학교명 (KO)</label><input class="field-input" id="uiSchoolKo" data-ui-field="school-ko" placeholder="인하대학교" /></div>',
         '<div class="field-group" style="margin-bottom:0"><label class="field-label" for="uiSchoolEn">School (EN)</label><input class="field-input" id="uiSchoolEn" data-ui-field="school-en" placeholder="Inha University" /></div>',
         '<div class="field-group" style="margin-bottom:0"><label class="field-label" for="uiProgramKo">프로그램명 (KO)</label><input class="field-input" id="uiProgramKo" data-ui-field="program-ko" placeholder="Robot Product Design" /></div>',
         '<div class="field-group" style="margin-bottom:0"><label class="field-label" for="uiProgramEn">Program (EN)</label><input class="field-input" id="uiProgramEn" data-ui-field="program-en" placeholder="Robot Product Design" /></div>',
+        '</div>',
+        '</details>',
+        '<div class="ui-preset-grid">',
         '<div class="field-group" style="margin-bottom:0"><label class="field-label" for="uiPreviewSource">주차 카드 preview source</label><select class="field-select" id="uiPreviewSource" data-ui-field="preview-source"><option value="topics">topics</option><option value="steps">steps</option></select></div>',
         '<div class="field-group" style="margin-bottom:0"><label class="field-label" for="uiMetricsOrder">주차 카드 metrics order</label><input class="field-input" id="uiMetricsOrder" data-ui-field="metrics-order" placeholder="practice, showme, tasks" /></div>',
         '<div class="field-group" style="margin-bottom:0"><label class="field-label" for="uiSubtitleMode">hero subtitle mode</label><select class="field-select" id="uiSubtitleMode" data-ui-field="subtitle-mode"><option value="subtitle">subtitle</option><option value="topics">topics</option></select></div>',
@@ -1774,8 +2148,7 @@
         '<div class="field-group" style="margin-bottom:0"><label class="field-label" for="uiSummaryMax">summary max items</label><input class="field-input" id="uiSummaryMax" data-ui-field="summary-max" type="number" min="1" max="24" /></div>',
         '<label class="ui-preset-toggle"><input type="checkbox" id="uiSummaryProgress" data-ui-field="summary-progress" /> summary progress 표시</label>',
         '</div>',
-        '<p class="ui-preset-summary" id="uiPresetSummary"></p>',
-        '<p class="ui-preset-note">주요 semantic controls만 노출합니다. radius, blur, border alpha 같은 modal 디자인 토큰은 여기서 수정하지 않습니다.</p>',
+        '<p class="ui-preset-note">공개 페이지 규칙은 하나로 유지합니다. 구조와 타이포 스케일은 공통으로 맞추고, accent 색만 페이지별로 둡니다. radius, blur, border alpha 같은 modal 디자인 토큰은 여기서 수정하지 않습니다.</p>',
         '<div class="cta-group"><button class="btn btn-ghost" type="button" data-ui-reset>기본값으로 되돌리기</button></div>',
         '<details class="ui-preset-json-wrap"><summary>JSON 보기</summary><textarea class="field-textarea ui-preset-json" id="uiPresetJson" readonly></textarea></details>',
         '</div>',
@@ -1787,7 +2160,7 @@
         '<section class="preview-hero" id="editorPreview">',
         '<div class="hero-card">',
         '<div class="hero-header">',
-        '<span class="hero-week-well">', esc(String(w.week).padStart(2,"0")), '</span>',
+        '<span class="hero-week-well rpd-icon-well">', esc(String(w.week).padStart(2,"0")), '</span>',
         '<div class="hero-copy">',
         '<span class="hero-kicker">RPD Week Editor</span>'
       );
@@ -2104,7 +2477,7 @@
         var dotClass = w.status === "done" ? "done" : w.status === "active" ? "active" : "upcoming";
         var activeClass = i === selectedIdx ? " active" : "";
         parts.push(
-          '<div class="sidebar-item', activeClass, '" data-idx="', i, '">',
+          '<div class="sidebar-item rpd-rail-item', activeClass, '" data-idx="', i, '">',
           '<span class="sidebar-dot ', dotClass, '"></span>',
           '<span class="sidebar-week-num">', String(w.week).padStart(2, "0"), '</span>',
           '<span class="sidebar-week-title">', esc(w.title), '</span>',
@@ -2181,6 +2554,7 @@
     function parseWeekUiResponse(result) {
       weekUiConfig = result && result.data ? result.data : result;
       weekUiVersion = result && result.version ? result.version : "";
+      syncPublicPageLinks();
     }
 
     async function loadWeekUi() {
@@ -2209,11 +2583,12 @@
         selectWeek(0);
         await checkNotionStatus();
       } catch (e) {
-        editorInner.textContent = "";
-        var msg = document.createElement("div");
-        msg.className = "empty-state";
-        msg.textContent = "서버 연결 실패. API 서버가 실행 중인지 확인하세요.";
-        editorInner.appendChild(msg);
+        curriculum = [];
+        sidebarList.innerHTML = "";
+        weekSelectTopbar.innerHTML = "";
+        weekSelectTopbar.style.display = "none";
+        renderAdminServerFallback(e);
+        renderAdminChrome();
         if (sidebarMeta) sidebarMeta.textContent = "API 연결이 필요합니다.";
       }
     }
@@ -2320,11 +2695,26 @@
     function renderEditor() {
       var w = curriculum[selectedIdx];
       if (!w) {
-        editorInner.textContent = "";
-        var msg = document.createElement("div");
-        msg.className = "empty-state";
-        msg.textContent = "주차를 선택하세요.";
-        editorInner.appendChild(msg);
+        renderAdminStateView({
+          eyebrow: "Editor state",
+          title: "편집할 주차를 선택하세요",
+          description: "좌측 주차 목록에서 원하는 week를 고르면, 아래 편집 영역이 공개 수업 페이지 흐름 그대로 채워집니다.",
+          actions: [
+            { type: "button", className: "btn-primary", dataAction: "retry", label: "주차 다시 불러오기" },
+            { type: "link", className: "btn-ghost", href: "inha.html?panel=weeks", label: "수업 페이지 보기 ↗" }
+          ],
+          meta: [
+            { value: "No week", label: "선택 상태" },
+            { value: "Sidebar", label: "다음 위치" },
+            { value: "Preview ready", label: "작업 영역" }
+          ],
+          panelTitle: "작업 흐름",
+          panelDescription: "관리 모드도 별도 콘솔이 아니라 실제 공개 페이지 구조를 유지한 편집 레이어로 동작합니다.",
+          steps: [
+            { title: "왼쪽에서 주차 선택", body: "원하는 주차를 고르면 hero, 실습, 참고 자료, 과제 섹션이 순서대로 열립니다." },
+            { title: "필드 수정 후 저장", body: "제목, 카드, 링크, UI preset이 모두 같은 화면 안에서 바로 이어집니다." }
+          ]
+        });
         return;
       }
       // Safe: buildEditorHTML uses esc() on every dynamic value
@@ -2353,7 +2743,7 @@
           setWeekUiValue(["weekSummary", "maxItems"], Math.max(1, parseInt(el.value || "1", 10) || 1));
         }
         markWeekUiDirty();
-        loadWeekUiIntoPanel();
+        updateWeekUiPanelMeta();
         return;
       }
 
@@ -2460,7 +2850,7 @@
         if (el.dataset.uiField === "summary-source") setWeekUiValue(["weekSummary", "itemSource"], el.value);
         if (el.dataset.uiField === "summary-progress") setWeekUiValue(["weekSummary", "showProgress"], !!el.checked);
         markWeekUiDirty();
-        loadWeekUiIntoPanel();
+        updateWeekUiPanelMeta();
         return;
       }
 
@@ -2782,7 +3172,26 @@
       notionConfigured = false;
       notionGroup.style.display = "none";
       setCurrentVersion("");
-      editorInner.innerHTML = '<div class="empty-state">로그아웃되었습니다.</div>';
+      renderAdminStateView({
+        eyebrow: "Session closed",
+        title: "로그아웃되었습니다",
+        description: "관리 세션을 닫았습니다. 다시 인증하면 현재 톤과 동일한 편집 화면으로 돌아옵니다.",
+        actions: [
+          { type: "button", className: "btn-primary", dataAction: "auth", label: "다시 인증" },
+          { type: "link", className: "btn-ghost", href: "index.html", label: "홈 보기 ↗" }
+        ],
+        meta: [
+          { value: "Logged out", label: "세션 상태" },
+          { value: "Read-only", label: "현재 모드" },
+          { value: "Auth required", label: "다음 단계" }
+        ],
+        panelTitle: "다음에 할 일",
+        panelDescription: "재인증 후에는 주차 미리보기, diff, 저장, Notion push까지 같은 workspace 안에서 이어서 사용할 수 있습니다.",
+        steps: [
+          { title: "관리자 인증", body: "비밀번호를 다시 입력하면 주차 데이터와 UI preset을 함께 불러옵니다." },
+          { title: "편집 계속하기", body: "로그인 후에는 좌측 rail과 preview 카드가 다시 활성화됩니다." }
+        ]
+      });
       sidebarList.innerHTML = "";
       weekSelectTopbar.innerHTML = "";
       weekSelectTopbar.style.display = "none";

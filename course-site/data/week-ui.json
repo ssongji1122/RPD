@@ -20,6 +20,18 @@
           "ko": "이번 주",
           "en": "This week"
         },
+        "courseSnapshotTitle": {
+          "ko": "수업 스냅샷",
+          "en": "Course snapshot"
+        },
+        "courseSnapshotWeeks": {
+          "ko": "총 주차",
+          "en": "Weeks"
+        },
+        "courseSnapshotActive": {
+          "ko": "현재 주차",
+          "en": "Current week"
+        },
         "metricPractice": {
           "ko": "실습",
           "en": "practice"
@@ -36,6 +48,13 @@
           "ko": "참고",
           "en": "refs"
         }
+      },
+      "courseHero": {
+        "snapshotItems": [
+          "weeks",
+          "active"
+        ],
+        "emphasis": "active"
       },
       "weekCard": {
         "metrics": [
@@ -61,7 +80,7 @@
       "weekSummary": {
         "showProgress": true,
         "itemSource": "topics",
-        "maxItems": 8,
+        "maxItems": 6,
         "desktopColumns": 2,
         "mobileColumns": 1
       }
