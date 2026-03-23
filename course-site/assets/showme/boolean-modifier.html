@@ -190,6 +190,73 @@ body {
 }
 .tip-box strong { color: var(--key-soft); }
 
+/* ── Cause-Effect ── */
+.cause-effect {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 16px 0;
+}
+.ce-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0;
+}
+.ce-cause, .ce-result {
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-size: .84rem;
+  line-height: 1.6;
+}
+.ce-cause {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--muted-strong);
+  text-align: right;
+}
+.ce-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  color: var(--muted);
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+.ce-result {
+  border: 1px solid var(--line);
+  color: var(--text);
+  font-weight: 500;
+}
+.ce-result.result-warn {
+  background: rgba(239,68,68,.08);
+  border-color: rgba(239,68,68,.25);
+  color: #fca5a5;
+}
+.ce-result.result-success {
+  background: rgba(16,185,129,.08);
+  border-color: rgba(16,185,129,.25);
+  color: var(--success-soft);
+}
+.ce-label {
+  font-size: .72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin-bottom: 4px;
+  display: block;
+}
+.ce-cause .ce-label { color: var(--muted); }
+.ce-result.result-warn .ce-label { color: rgba(239,68,68,.5); }
+.ce-result.result-success .ce-label { color: rgba(16,185,129,.5); }
+
+.section-divider {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 18px 0;
+}
+
 /* ── Combo Section ── */
 .combo-section {
   margin-top: 18px;
@@ -366,6 +433,9 @@ body {
   .tabs { padding: 0 8px; }
   .tab { padding: 10px 12px; font-size: .8rem; }
   .panel { padding: 16px 12px; }
+  .ce-row { grid-template-columns: 1fr; gap: 4px; }
+  .ce-cause { text-align: left; }
+  .ce-arrow { transform: rotate(90deg); padding: 4px 0; }
 }
 </style>
 </head>
@@ -516,16 +586,49 @@ body {
     <strong>팁:</strong> Boolean 후 토폴로지가 지저분할 수 있습니다. 중요한 모델이라면 Remesh나 수동 리토폴로지로 정리하세요. Exact Solver를 사용하면 더 깨끗한 결과를 얻을 수 있습니다.
   </div>
 
+  <hr class="section-divider">
+
+  <div class="cause-effect">
+    <div class="ce-row">
+      <div class="ce-cause"><span class="ce-label">원인</span>Scale 미적용 상태에서 Boolean Difference</div>
+      <div class="ce-arrow">→</div>
+      <div class="ce-result result-warn"><span class="ce-label">결과</span>비대칭 구멍 — 커터와 대상의 Scale이 달라 의도한 형태가 안 됨</div>
+    </div>
+    <div class="ce-row">
+      <div class="ce-cause"><span class="ce-label">원인</span>커터 오브젝트를 Apply 전에 삭제</div>
+      <div class="ce-arrow">→</div>
+      <div class="ce-result result-warn"><span class="ce-label">결과</span>Boolean Modifier가 참조를 잃어 무효화 — 원래 형태로 복귀</div>
+    </div>
+    <div class="ce-row">
+      <div class="ce-cause"><span class="ce-label">원인</span>Overlap Threshold 미조정 (면이 정확히 겹칠 때)</div>
+      <div class="ce-arrow">→</div>
+      <div class="ce-result result-warn"><span class="ce-label">결과</span>면 깜빡임(Z-fighting) 또는 Boolean 실패</div>
+    </div>
+    <div class="ce-row">
+      <div class="ce-cause"><span class="ce-label">원인</span>Apply Scale 후 Exact Solver로 Boolean 적용</div>
+      <div class="ce-arrow">→</div>
+      <div class="ce-result result-success"><span class="ce-label">결과</span>깨끗한 Boolean 결과 — 토폴로지도 예측 가능</div>
+    </div>
+  </div>
+
   <div class="combo-section">
-    <h4>자주 쓰는 조합</h4>
+    <h4>흔한 실수 & 해결법</h4>
     <div class="combo-grid">
       <div class="combo-card">
-        <div class="combo-name">Boolean + Array</div>
-        <div class="combo-desc">반복 구멍 패턴을 만들 때 유용합니다. 환기구처럼 일정 간격으로 동일한 구멍을 뚫을 수 있습니다.</div>
+        <div class="combo-name">커터를 삭제해서 Boolean이 풀림</div>
+        <div class="combo-desc">커터는 <span class="kbd">H</span>로 숨기세요. Modifier Apply 후에야 삭제 가능합니다.</div>
       </div>
       <div class="combo-card">
-        <div class="combo-name">Boolean + Solidify</div>
-        <div class="combo-desc">두께가 있는 구멍을 만들 때 사용합니다. Solidify로 두께를 주고 Boolean으로 구멍을 뚫습니다.</div>
+        <div class="combo-name">Boolean 후 안쪽 면이 까맣게 보임</div>
+        <div class="combo-desc">Normal이 뒤집힘. Edit Mode → <span class="kbd">Shift</span>+<span class="kbd">N</span> (Recalculate Outside).</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">복잡한 형태에서 Boolean 실패</div>
+        <div class="combo-desc">Fast Solver 대신 Exact Solver를 사용하세요. 느리지만 정확합니다.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Boolean 후 토폴로지가 지저분함</div>
+        <div class="combo-desc">Apply 후 Edit Mode에서 불필요한 면 정리. LoopTools나 Grid Fill 활용.</div>
       </div>
     </div>
   </div>
