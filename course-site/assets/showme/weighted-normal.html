@@ -362,6 +362,9 @@ body {
   .tabs { padding: 0 8px; }
   .tab { padding: 10px 12px; font-size: .8rem; }
   .panel { padding: 16px 12px; }
+  .ce-row { grid-template-columns: 1fr; gap: 4px; }
+  .ce-cause { text-align: left; }
+  .ce-arrow { transform: rotate(90deg); padding: 4px 0; }
 }
 /* ── Scenario Nav ── */
 .scenario-nav {
@@ -400,19 +403,74 @@ body {
 }
 .ba-panel canvas { display: block; width: 100%; }
 /* ── Cause-Effect ── */
-.cause-effect { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
-.ce-row {
-  display: flex; align-items: center; gap: 8px;
-  padding: 8px 12px; border-radius: var(--radius-sm);
-  background: var(--surface); border: 1px solid var(--line);
-  font-size: .84rem;
+.cause-effect {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 16px 0;
 }
-.ce-cause { color: var(--muted-strong); flex: 1; }
-.ce-arrow { color: var(--muted); flex-shrink: 0; }
-.ce-result { flex: 1.2; font-weight: 500; }
+.ce-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0;
+}
+.ce-cause, .ce-result {
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-size: .84rem;
+  line-height: 1.6;
+}
+.ce-cause {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--muted-strong);
+  text-align: right;
+}
+.ce-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  color: var(--muted);
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+.ce-result {
+  border: 1px solid var(--line);
+  color: var(--text);
+  font-weight: 500;
+}
+.ce-result.result-warn {
+  background: rgba(239,68,68,.08);
+  border-color: rgba(239,68,68,.25);
+  color: #fca5a5;
+}
+.ce-result.result-success {
+  background: rgba(16,185,129,.08);
+  border-color: rgba(16,185,129,.25);
+  color: var(--success-soft);
+}
+.ce-label {
+  font-size: .72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin-bottom: 4px;
+  display: block;
+}
+.ce-cause .ce-label { color: var(--muted); }
+.ce-result.result-warn .ce-label { color: rgba(239,68,68,.5); }
+.ce-result.result-success .ce-label { color: rgba(16,185,129,.5); }
 .result-a { color: var(--key-soft); }
 .result-b { color: var(--success-soft); }
 .result-c { color: #fbbf24; }
+
+.section-divider {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 18px 0;
+}
 </style>
 </head>
 <body>
@@ -436,6 +494,12 @@ body {
       <h3><span class="badge badge-green">Why</span> 왜 필요한가?</h3>
       <p>Shade Smooth만 쓰면 작은 면과 큰 면의 Normal이 동일하게 섞여서 큰 면에 울퉁불퉁한 음영이 생깁니다. Weighted Normal로 큰 면에 우선권을 주면 평평한 면이 깔끔해집니다.</p>
     </div>
+    <div class="concept-card accent-b">
+      <h4>Auto Smooth와의 관계</h4>
+      <p>Shade Smooth는 모든 면을 부드럽게 만들지만, <strong>Auto Smooth</strong>는 각도 기준으로 날카로운 엣지를 보존해요.</p>
+      <p>Weighted Normal은 여기서 한 단계 더 나아가서, <strong>면 크기(Face Area)</strong> 기반으로 Normal을 재계산해요. 큰 면이 주변 작은 면의 음영 방향을 이끌어서 하드서페이스에 적합한 깨끗한 음영을 만들어요.</p>
+      <p><strong>적용 순서:</strong> Shade Smooth → Auto Smooth 활성화 → Weighted Normal Modifier 추가</p>
+    </div>
   </div>
 
   <div class="analogy">큰 거울은 빛을 균일하게 반사하고, 작은 거울 조각은 빛을 산란시켜요. Weighted Normal은 큰 거울이 이기게 해요</div>
@@ -443,16 +507,13 @@ body {
   <div class="shortcut-list">
     <h4>적용 방법</h4>
     <div class="shortcut-row">
-      <span class="shortcut-keys"><span class="kbd">Right-click</span></span>
-      <span>Shade Smooth 적용</span>
+      <span class="kbd">Right-click</span> <span class="shortcut-desc">→ Shade Smooth (Object Mode에서 오브젝트 우클릭)</span>
     </div>
     <div class="shortcut-row">
-      <span class="shortcut-keys"><span class="kbd">Properties</span> &rarr; <span class="kbd">Normals</span></span>
-      <span>Auto Smooth 설정 (Object Data Properties에서)</span>
+      <span class="shortcut-desc">Properties → Object Data → Normals → Auto Smooth 활성화</span>
     </div>
     <div class="shortcut-row">
-      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">1~5</span></span>
-      <span>Weighted Normal은 Modifier 탭에서 Add Modifier로 추가</span>
+      <span class="shortcut-desc">Properties → Modifier → Add Modifier → Weighted Normal</span>
     </div>
   </div>
 
@@ -520,16 +581,49 @@ body {
     </div>
   </div>
 
+  <hr class="section-divider">
+
+  <div class="cause-effect">
+    <div class="ce-row">
+      <div class="ce-cause"><span class="ce-label">원인</span>Shade Smooth만 적용, WN 없음</div>
+      <div class="ce-arrow">→</div>
+      <div class="ce-result result-warn"><span class="ce-label">결과</span>평면에 울퉁불퉁한 음영 왜곡 발생</div>
+    </div>
+    <div class="ce-row">
+      <div class="ce-cause"><span class="ce-label">원인</span>WN이 Bevel 위에 위치 (스택 순서 오류)</div>
+      <div class="ce-arrow">→</div>
+      <div class="ce-result result-warn"><span class="ce-label">결과</span>Bevel이 만든 면에 WN 효과가 적용되지 않음</div>
+    </div>
+    <div class="ce-row">
+      <div class="ce-cause"><span class="ce-label">원인</span>Shade Flat 상태에서 WN 추가</div>
+      <div class="ce-arrow">→</div>
+      <div class="ce-result result-warn"><span class="ce-label">결과</span>WN은 Smooth 기반이라 Flat에서는 효과 없음</div>
+    </div>
+    <div class="ce-row">
+      <div class="ce-cause"><span class="ce-label">원인</span>Bevel 아래에 WN + Face Influence 활성화</div>
+      <div class="ce-arrow">→</div>
+      <div class="ce-result result-success"><span class="ce-label">결과</span>Bevel 면까지 깨끗한 음영 — 하드서페이스 마무리 완성</div>
+    </div>
+  </div>
+
   <div class="combo-section">
-    <h4>자주 쓰는 조합</h4>
+    <h4>흔한 실수 & 해결법</h4>
     <div class="combo-grid">
       <div class="combo-card">
-        <div class="combo-name">Bevel Modifier + Weighted Normal</div>
-        <div class="combo-desc">하드서피스 마무리 정석. Bevel로 모서리를 깎고 Weighted Normal로 셰이딩을 정리합니다.</div>
+        <div class="combo-name">Modifier 스택 순서가 잘못됨</div>
+        <div class="combo-desc">Weighted Normal은 반드시 Bevel 아래에 놓으세요. 가장 마지막 Modifier여야 합니다.</div>
       </div>
       <div class="combo-card">
-        <div class="combo-name">Auto Smooth + Weighted Normal</div>
-        <div class="combo-desc">날카로운 모서리는 유지하면서 평평한 면의 셰이딩을 깨끗하게 만듭니다.</div>
+        <div class="combo-name">Shade Smooth를 빼먹음</div>
+        <div class="combo-desc">WN은 Smooth Shading 기반이에요. Object Mode에서 Right-click → Shade Smooth 필수.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Auto Smooth 미활성화</div>
+        <div class="combo-desc">Properties → Object Data → Normals에서 Auto Smooth를 켜야 WN이 제대로 작동합니다.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Bevel 조합 시 Face Influence 미사용</div>
+        <div class="combo-desc">WN Modifier에서 Face Influence 체크를 켜면 Bevel 면까지 깨끗한 음영이 적용됩니다.</div>
       </div>
     </div>
   </div>
