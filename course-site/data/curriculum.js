@@ -1127,194 +1127,342 @@ const CURRICULUM = [
   {
     "week": 4,
     "status": "upcoming",
-    "title": "기초 모델링 2 — 디테일 & 정리",
-    "subtitle": "Bevel · Weighted Normal · Apply",
+    "title": "기초 모델링 2 — 로봇 조립",
+    "subtitle": "몸통 · 관절 · 팔다리 · Bevel · 파츠 정리",
     "duration": "~3시간",
     "topics": [
-      "Inset / Boolean 디테일",
+      "Cube → Subdivision으로 몸통 만들기",
+      "UV Sphere로 관절 구체 배치",
+      "Extrude + Mirror로 팔/다리 제작",
+      "Duplicate · Array로 손/발 디테일",
       "Bevel Tool vs Bevel Modifier",
-      "Weighted Normal",
-      "Join / Separate",
-      "Apply Transform vs Modifier Apply"
+      "Join / Separate / Apply로 파츠 정리"
     ],
     "steps": [
       {
-        "title": "Transform 정리와 파츠 관리",
-        "copy": "디테일을 넣기 전에 Scale과 파츠 구성을 먼저 정리해요. 수치가 꼬여 있거나 파츠가 뒤섞여 있으면 그다음 작업이 계속 불편해져요.",
+        "title": "몸통 만들기",
+        "copy": "3주차에 만든 머리 아래에 몸통을 붙여요. Cube에 Subdivision을 걸면 둥근 로봇 몸통이 되고, Inset으로 가슴판 영역을 구분하면 나중에 색을 나눌 때도 편해요.",
         "goal": [
-          "Transform을 정리한다",
-          "파츠를 분리하거나 합쳐 관리한다"
+          "Cube → Subdivision으로 둥근 몸통을 만든다",
+          "Inset으로 가슴판 영역을 구분한다"
         ],
         "done": [
-          "Scale이 안정적으로 정리됐다",
-          "움직일 파츠와 고정 파츠를 구분할 수 있다"
+          "머리 아래에 둥근 몸통이 배치됐다",
+          "가슴판 영역이 Inset으로 나뉘어 있다"
         ],
         "tasks": [
           {
             "id": "w4-t1",
-            "label": "N 패널에서 Scale 값 확인",
-            "detail": "1,1,1이 아니면 먼저 정리"
+            "label": "Cube 추가 후 S로 몸통 비율 잡기",
+            "detail": "머리보다 살짝 작거나 비슷한 폭"
           },
           {
             "id": "w4-t2",
-            "label": "Ctrl+A로 All Transforms 적용",
-            "detail": "Modifier 전에 수치 정리"
+            "label": "Subdivision Surface Modifier 추가",
+            "detail": "Level 2로 둥근 형태 확인"
           },
           {
             "id": "w4-t3",
-            "label": "P로 움직일 파츠 분리하기",
-            "detail": "안테나, 헤드셋, 손 파츠 등"
+            "label": "Edit Mode에서 Inset으로 가슴판 영역 만들기",
+            "detail": "앞면 선택 → I → 안쪽 면 생성"
           },
           {
             "id": "w4-t4",
-            "label": "Ctrl+J로 함께 갈 파츠 묶기",
-            "detail": "고정 파츠끼리 정리"
+            "label": "Extrude로 가슴판을 살짝 돌출시키기",
+            "detail": "로봇 외장 느낌 추가"
           }
         ],
         "image": "assets/images/week04/transform-apply.png",
-        "showme": "transform-apply"
-      },
-      {
-        "title": "얼굴과 패널 디테일",
-        "copy": "큰 덩어리가 잡힌 상태에서 눈, 패널, 관절 라인을 추가하는 단계예요. Inset과 Boolean을 같이 쓰면 디테일을 빠르게 만들 수 있어요.",
-        "goal": [
-          "Inset과 Boolean으로 디테일을 추가한다"
-        ],
-        "done": [
-          "얼굴이나 가슴판에 디테일이 생겼다",
-          "구멍이나 홈이 한 곳 이상 만들어졌다"
-        ],
-        "tasks": [
-          {
-            "id": "w4-t5",
-            "label": "Inset으로 안쪽 영역 만들기",
-            "detail": "눈, 버튼, 패널 라인 시작점"
-          },
-          {
-            "id": "w4-t6",
-            "label": "Extrude로 살짝 들어가거나 나오게 만들기",
-            "detail": "작은 깊이 차이 주기"
-          },
-          {
-            "id": "w4-t7",
-            "label": "Boolean Difference로 홈 또는 소켓 만들기",
-            "detail": "커터가 실제로 겹치는지 확인"
-          }
-        ],
-        "image": "assets/images/week04/inset-panel-detail.png",
-        "showme": "boolean-modifier"
-      },
-      {
-        "title": "Bevel 두 가지 비교",
-        "copy": "같은 '모서리 정리'라도 손으로 직접 깎는 방법과 Modifier로 전체를 정리하는 방법은 다르게 느껴져요. 둘 다 직접 비교해보는 게 가장 빠릅니다.",
-        "goal": [
-          "Ctrl+B와 Bevel Modifier를 구분해 쓴다"
-        ],
-        "done": [
-          "부분 수정과 전체 정리의 차이를 알게 됐다",
-          "모서리 느낌을 더 의도적으로 조절할 수 있다"
-        ],
-        "tasks": [
-          {
-            "id": "w4-t8",
-            "label": "특정 모서리에 Ctrl+B 써보기",
-            "detail": "부분 디테일 직접 다듬기"
-          },
-          {
-            "id": "w4-t9",
-            "label": "다른 파츠에는 Bevel Modifier 넣기",
-            "detail": "Width와 Segments 비교"
-          },
-          {
-            "id": "w4-t10",
-            "label": "두 방식의 결과를 나란히 비교하기",
-            "detail": "부분 수정 vs 전체 정리"
-          }
-        ],
-        "image": "assets/images/week04/bevel-modifier.png",
-        "showme": "bevel-modifier"
-      },
-      {
-        "title": "Weighted Normal과 음영 정리",
-        "copy": "형태는 괜찮은데 표면이 울퉁불퉁해 보일 때가 있어요. 이럴 때 음영을 정리해주는 흐름을 익혀두면 결과물이 훨씬 단정해져요.",
-        "goal": [
-          "Weighted Normal의 역할을 이해한다"
-        ],
-        "done": [
-          "평평한 외장 면이 더 깔끔하게 보인다",
-          "언제 넣는지 설명할 수 있다"
-        ],
-        "tasks": [
-          {
-            "id": "w4-t11",
-            "label": "Shade Smooth 적용하기",
-            "detail": "음영 비교 준비"
-          },
-          {
-            "id": "w4-t12",
-            "label": "Bevel Modifier 아래에 Weighted Normal 추가",
-            "detail": "순서 포함해서 확인"
-          },
-          {
-            "id": "w4-t13",
-            "label": "전후 화면 비교하기",
-            "detail": "가슴판, 팔 외장, 다리 파츠에서 확인"
-          }
-        ],
-        "image": "assets/images/week04/weighted-normal.png",
-        "showme": "weighted-normal",
+        "showme": "subdivision-surface",
         "widgets": [
           {
             "type": "showme",
-            "id": "edge-split-modifier"
+            "id": "inset"
           }
         ]
       },
       {
-        "title": "Apply 시점과 최종 점검",
-        "copy": "정리 단계에서 가장 많이 헷갈리는 건 '언제 확정하느냐'예요. 수정 가능성을 남길지, 지금 확정할지를 의식적으로 나눠보면 훨씬 안정적으로 작업할 수 있어요.",
+        "title": "3D Cursor로 위치 잡기",
+        "copy": "Blender에서 오브젝트를 정확한 위치에 만들려면 3D Cursor를 먼저 옮겨야 해요. 3D Cursor가 있는 곳에 새 오브젝트가 생기거든요. 관절을 붙이고 싶은 위치에 Cursor를 먼저 놓는 연습을 해봐요.",
         "goal": [
-          "Apply Transform과 Modifier Apply를 구분한다"
+          "3D Cursor를 원하는 위치로 옮긴다",
+          "Cursor 위치에 오브젝트를 생성한다"
         ],
         "done": [
-          "언제 Ctrl+A를 쓰는지 안다",
-          "Modifier Apply는 마지막에만 하는 흐름을 이해한다"
+          "Shift+Right Click으로 Cursor를 이동할 수 있다",
+          "Shift+S 메뉴에서 Cursor 정렬 옵션을 써봤다"
         ],
         "tasks": [
           {
+            "id": "w4-t5",
+            "label": "Shift+Right Click으로 3D Cursor 이동 연습",
+            "detail": "뷰포트에서 클릭한 곳으로 주황색 십자가 이동"
+          },
+          {
+            "id": "w4-t6",
+            "label": "Shift+S → Cursor to Selected로 정확한 위치로",
+            "detail": "오브젝트나 Vertex를 선택한 후 실행하면 거기로 Cursor 이동"
+          },
+          {
+            "id": "w4-t7",
+            "label": "Shift+S → Cursor to World Origin으로 원점 복귀",
+            "detail": "Cursor를 0,0,0 위치로 되돌리기"
+          },
+          {
+            "id": "w4-t8",
+            "label": "3D Cursor 위치에 UV Sphere 추가해보기",
+            "detail": "Shift+A → Mesh → UV Sphere — Cursor가 있는 곳에 생성됨"
+          }
+        ],
+        "image": "assets/images/week04/inset-panel-detail.png",
+        "showme": "origin-vs-3dcursor"
+      },
+      {
+        "title": "Origin 이동과 Snap 배치",
+        "copy": "Origin은 오브젝트의 기준점이에요. 회전하면 Origin을 중심으로 돌고, 좌표도 Origin 위치를 표시해요. Origin 위치를 바꾸면 회전/스케일의 축이 바뀌어요. Snap은 오브젝트를 다른 오브젝트의 꼭짓점·면·모서리에 정확히 붙이는 기능이에요.",
+        "goal": [
+          "Origin을 원하는 위치로 옮긴다",
+          "Snap으로 오브젝트를 정확히 붙인다"
+        ],
+        "done": [
+          "Origin을 3D Cursor 위치로 옮겨봤다",
+          "Snap으로 Vertex에 붙여봤다"
+        ],
+        "tasks": [
+          {
+            "id": "w4-t9",
+            "label": "Right Click → Set Origin → Origin to 3D Cursor",
+            "detail": "미리 3D Cursor를 원하는 위치에 놓고 실행"
+          },
+          {
+            "id": "w4-t10",
+            "label": "Right Click → Set Origin → Origin to Geometry",
+            "detail": "Origin을 오브젝트 중심으로 되돌리기"
+          },
+          {
+            "id": "w4-t11",
+            "label": "상단 Snap 자석 아이콘 켜기 (또는 단축키)",
+            "detail": "Snap To: Vertex로 설정하면 꼭짓점에 딱 붙음"
+          },
+          {
+            "id": "w4-t12",
+            "label": "G로 이동할 때 Ctrl 눌러 Snap 이동 연습",
+            "detail": "몸통 표면 꼭짓점에 관절이 딱 붙는 느낌 확인"
+          }
+        ],
+        "image": "assets/images/week04/inset-panel-detail.png",
+        "showme": "snap",
+        "widgets": [
+          {
+            "type": "showme",
+            "id": "pivot-point"
+          }
+        ]
+      },
+      {
+        "title": "관절 구체 배치 실습",
+        "copy": "이제 배운 3D Cursor, Origin, Snap을 조합해서 로봇의 어깨·팔꿈치·무릎·발목에 관절 구체를 실제로 배치해요. 하나 만들고 복제해서 각 위치에 놓으면 돼요.",
+        "goal": [
+          "UV Sphere로 관절 구체를 만든다",
+          "3D Cursor + Snap으로 정확한 위치에 배치한다"
+        ],
+        "done": [
+          "어깨, 팔꿈치, 무릎, 발목에 관절이 배치됐다",
+          "각 관절이 파츠와 자연스럽게 연결돼 보인다"
+        ],
+        "tasks": [
+          {
+            "id": "w4-t13",
+            "label": "어깨 위치에 3D Cursor 놓고 UV Sphere 생성",
+            "detail": "Shift+Right Click으로 어깨 위치 → Shift+A → UV Sphere (Segments 16)"
+          },
+          {
             "id": "w4-t14",
-            "label": "Modifier Stack 순서 다시 보기",
-            "detail": "수정 가능 상태 유지"
+            "label": "S로 관절 크기 조절, R로 회전 조정",
+            "detail": "관절이 파츠에 살짝 파묻히는 정도가 자연스러움"
           },
           {
             "id": "w4-t15",
-            "label": "정말 확정할 파츠만 따로 저장 후 Apply 시험",
-            "detail": "Apply 전후 수정 차이 느끼기"
+            "label": "Shift+D로 복제 → 팔꿈치 위치에 Snap 배치",
+            "detail": "복제 후 G → Ctrl 누른 채 이동하면 Snap"
           },
           {
             "id": "w4-t16",
-            "label": "Transform 또는 Modifier 화면 포함해 스크린샷 저장",
-            "detail": "작업 흐름 증거 남기기"
+            "label": "같은 방식으로 무릎, 발목 관절도 배치",
+            "detail": "총 6~8개 관절 구체 (좌우 대칭)"
+          }
+        ],
+        "image": "assets/images/week04/inset-panel-detail.png",
+        "showme": "origin-vs-3dcursor"
+      },
+      {
+        "title": "팔과 다리 제작",
+        "copy": "관절 사이를 채울 팔과 다리를 만들어요. Cube나 Cylinder를 늘려서 상완/하완, 허벅지/종아리를 만들고, Mirror Modifier로 반대편도 한 번에 처리해요.",
+        "goal": [
+          "Extrude로 팔/다리 형태를 만든다",
+          "Mirror Modifier로 좌우 대칭을 처리한다"
+        ],
+        "done": [
+          "상완과 하완이 관절 사이에 들어갔다",
+          "Mirror로 반대편이 자동 생성됐다"
+        ],
+        "tasks": [
+          {
+            "id": "w4-t17",
+            "label": "Cube 추가 → S로 팔 하나 비율 잡기",
+            "detail": "관절 구체 사이에 맞는 길이로"
+          },
+          {
+            "id": "w4-t18",
+            "label": "Edit Mode에서 Loop Cut으로 팔꿈치 분절 추가",
+            "detail": "상완/하완 느낌을 구분"
+          },
+          {
+            "id": "w4-t19",
+            "label": "Mirror Modifier로 반대편 팔 생성",
+            "detail": "Origin이 몸통 중심에 있는지 확인"
+          },
+          {
+            "id": "w4-t20",
+            "label": "같은 방식으로 다리 파츠 제작",
+            "detail": "허벅지/종아리를 관절 구체 사이에 배치"
+          }
+        ],
+        "image": "assets/images/week04/bevel-modifier.png",
+        "showme": "extrude",
+        "widgets": [
+          {
+            "type": "showme",
+            "id": "mirror-modifier"
+          }
+        ]
+      },
+      {
+        "title": "손과 발 디테일",
+        "copy": "손가락은 작은 Cube를 복제해서 3~4개 나란히 배치하면 돼요. 발은 Cube를 Extrude해서 부츠 형태로 잡아요. 반복 파츠에는 Array Modifier를 써볼 수도 있어요.",
+        "goal": [
+          "작은 파츠 복제로 손가락을 만든다",
+          "Extrude로 발 형태를 잡는다"
+        ],
+        "done": [
+          "손에 3~4개 손가락 파츠가 달렸다",
+          "발이 바닥에 안정적으로 서는 형태다"
+        ],
+        "tasks": [
+          {
+            "id": "w4-t21",
+            "label": "Cube를 아주 작게 만들어 손가락 하나 제작",
+            "detail": "손바닥에서 약간 튀어나오는 크기"
+          },
+          {
+            "id": "w4-t22",
+            "label": "Shift+D로 3~4개 복제해 나란히 배치",
+            "detail": "또는 Array Modifier Count 3~4로 시도"
+          },
+          {
+            "id": "w4-t23",
+            "label": "발 파츠: Cube → Extrude로 부츠 형태 잡기",
+            "detail": "밑면이 평평해야 바닥에 안정적으로 서요"
           }
         ],
         "image": "assets/images/week04/array-modifier.png",
+        "showme": "array-modifier"
+      },
+      {
+        "title": "Bevel로 모서리 마감",
+        "copy": "파츠를 다 만들었으면 모서리를 정리해서 완성도를 높여요. 얼굴 화면 테두리나 몸통 이음새에 Bevel을 넣으면 금속 느낌이 살아나요. 직접 깎는 Ctrl+B와 전체 적용 Modifier를 비교해보세요.",
+        "goal": [
+          "Ctrl+B와 Bevel Modifier를 구분해 쓴다"
+        ],
+        "done": [
+          "화면 테두리에 Bevel이 들어갔다",
+          "부분 수정과 전체 정리 차이를 알게 됐다"
+        ],
+        "tasks": [
+          {
+            "id": "w4-t24",
+            "label": "얼굴 화면 테두리 모서리에 Ctrl+B",
+            "detail": "Scroll로 Segment 수 조절"
+          },
+          {
+            "id": "w4-t25",
+            "label": "몸통 파츠에 Bevel Modifier 적용",
+            "detail": "Width를 아주 작게 시작 (0.01~0.02)"
+          },
+          {
+            "id": "w4-t26",
+            "label": "두 방식의 결과를 나란히 비교하기",
+            "detail": "부분 수정 vs 전체 정리, 어떤 게 편한지 느끼기"
+          }
+        ],
+        "image": "assets/images/week04/weighted-normal.png",
+        "showme": "bevel-tool-vs-modifier",
+        "widgets": [
+          {
+            "type": "showme",
+            "id": "bevel-modifier"
+          }
+        ]
+      },
+      {
+        "title": "파츠 정리 & Apply",
+        "copy": "모든 파츠가 만들어졌으면 구조를 정리해요. 움직여야 할 파츠(팔, 다리, 머리)는 따로 두고, 고정 파츠끼리는 Join으로 합쳐요. Transform을 Apply해서 수치를 깔끔하게 만들면 완성이에요.",
+        "goal": [
+          "Join / Separate로 파츠를 정리한다",
+          "Apply Transform으로 수치를 확정한다"
+        ],
+        "done": [
+          "Outliner에서 파츠 구조가 깔끔하게 정리됐다",
+          "Scale이 전부 1,1,1로 맞춰졌다"
+        ],
+        "tasks": [
+          {
+            "id": "w4-t27",
+            "label": "Outliner에서 파츠 이름 정리하기",
+            "detail": "Head, Body, Arm_L, Leg_R 등 알아보기 쉽게"
+          },
+          {
+            "id": "w4-t28",
+            "label": "고정 파츠끼리 Ctrl+J로 합치기",
+            "detail": "몸통+가슴판 등 항상 같이 움직일 것들"
+          },
+          {
+            "id": "w4-t29",
+            "label": "Ctrl+A → All Transforms 적용",
+            "detail": "모든 파츠의 Scale을 1,1,1로 정리"
+          },
+          {
+            "id": "w4-t30",
+            "label": "최종 형태 스크린샷 저장",
+            "detail": "정면/측면 뷰로 완성 상태 기록"
+          }
+        ],
+        "image": "assets/images/week04/transform-apply.png",
         "showme": "join-separate",
         "widgets": [
           {
             "type": "showme",
-            "id": "triangulate-modifier"
-          },
-          {
-            "type": "showme",
-            "id": "weld-modifier"
+            "id": "transform-apply"
           }
         ]
       }
     ],
     "shortcuts": [
       {
-        "keys": "I",
-        "action": "Inset (면 안쪽에 디테일 시작점 만들기)"
+        "keys": "Shift + A",
+        "action": "Add (Cube, UV Sphere 등 오브젝트 추가)"
+      },
+      {
+        "keys": "Shift + Right Click",
+        "action": "3D Cursor 이동 (클릭한 위치로)"
+      },
+      {
+        "keys": "Shift + S",
+        "action": "Snap 메뉴 (Cursor to Selected 등)"
+      },
+      {
+        "keys": "Shift + D",
+        "action": "Duplicate (선택 오브젝트 복제)"
       },
       {
         "keys": "Ctrl + B",
@@ -1322,7 +1470,7 @@ const CURRICULUM = [
       },
       {
         "keys": "Ctrl + A",
-        "action": "Apply All Transforms (Modifier 전 수치 정리)"
+        "action": "Apply All Transforms (Scale 수치 정리)"
       },
       {
         "keys": "P",
@@ -1335,38 +1483,40 @@ const CURRICULUM = [
     ],
     "explore": [
       {
-        "title": "얼굴 패널 디테일",
-        "hint": "Inset → Extrude 또는 Boolean으로 눈/패널 라인 만들기"
+        "title": "몸통 디테일 추가",
+        "hint": "가슴판에 Inset → Extrude로 버튼이나 패널 라인 만들어보기"
       },
       {
-        "title": "관절 음영 정리",
-        "hint": "Bevel Modifier → Weighted Normal로 팔/다리 파츠 음영 비교"
+        "title": "관절 변형",
+        "hint": "UV Sphere 대신 Cylinder를 써서 다른 스타일의 관절 시도"
       },
       {
-        "title": "파츠 관리 정리",
-        "hint": "헤드셋, 안테나, 손 파츠를 분리/합치며 구조 정리"
+        "title": "Array로 반복 파츠",
+        "hint": "손가락을 Array Modifier로 만들어보고 수동 복제와 비교"
       },
       {
-        "title": "Apply 타이밍 비교",
-        "hint": "같은 파일을 복제해 Apply 전과 후의 수정 난이도 비교"
+        "title": "Bevel 세기 실험",
+        "hint": "Width와 Segments를 바꿔가며 날카로운/부드러운 모서리 비교"
       }
     ],
     "assignment": {
-      "title": "로봇 디테일 정리",
-      "description": "Week 03 기본형에 디테일과 음영 정리를 더한 결과물을 제출하세요.",
+      "title": "로봇 몸체 완성",
+      "description": "Week 03 머리/얼굴/안테나에 몸통, 팔다리, 손발을 붙여 로봇 전신을 완성하세요.",
       "checklist": [
-        "디테일 1곳 이상 추가",
-        "Bevel 계열 1회 이상 사용",
-        "Weighted Normal 확인",
-        "Modifier Stack 또는 Transform 확인 스크린샷"
+        "몸통 + 관절 구체 배치 완료",
+        "팔/다리 파츠 좌우 대칭 제작",
+        "손 또는 발 디테일 1곳 이상",
+        "Bevel 1회 이상 사용",
+        "파츠 정리 + Apply Transform 완료 스크린샷"
       ]
     },
     "mistakes": [
-      "Bevel이 너무 큼 → Width를 아주 작게 시작",
-      "Weighted Normal 차이가 안 보임 → Bevel과 Shade Smooth 전후 비교",
-      "Boolean이 지저분함 → 커터가 실제로 겹치는지 다시 확인",
-      "Modifier를 너무 일찍 Apply함 → 마지막에만 확정",
-      "파츠 관리가 헷갈림 → 움직일 파츠는 분리, 고정 파츠는 정리해서 묶기"
+      "Subdivision이 너무 높음 → Level 2면 충분, 높이면 컴퓨터가 느려짐",
+      "관절 구체가 파츠와 겹침 → 살짝 파묻히는 정도가 자연스러움",
+      "Mirror가 안 되는 방향 → Origin이 몸통 중심에 있는지 확인",
+      "Bevel이 너무 큼 → Width를 0.01부터 아주 작게 시작",
+      "Apply 전에 Mirror가 풀림 → Mirror Modifier는 마지막에 Apply",
+      "파츠 이름을 안 정리함 → Outliner에서 바로 알아볼 수 있게 이름 붙이기"
     ],
     "videos": [
       {
@@ -1376,6 +1526,10 @@ const CURRICULUM = [
     ],
     "docs": [
       {
+        "title": "Subdivision Surface",
+        "url": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/subdivision_surface.html"
+      },
+      {
         "title": "Bevel Tool",
         "url": "https://docs.blender.org/manual/en/latest/modeling/meshes/tools/bevel.html"
       },
@@ -1384,15 +1538,15 @@ const CURRICULUM = [
         "url": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/bevel.html"
       },
       {
-        "title": "Weighted Normal",
-        "url": "https://docs.blender.org/manual/en/latest/modeling/modifiers/modify/weighted_normal.html"
+        "title": "Mirror Modifier",
+        "url": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html"
       },
       {
-        "title": "Boolean",
-        "url": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/booleans.html"
+        "title": "Array Modifier",
+        "url": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/array.html"
       }
     ],
-    "summary": "지난 주 배운 흐름을 바탕으로 디테일 추가와 음영 정리를 더 안정적으로 반복합니다."
+    "summary": "3주차 머리를 바탕으로 몸통·관절·팔다리·손발을 조립해 로봇 전신을 완성합니다."
   },
   {
     "week": 5,
