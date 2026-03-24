@@ -999,6 +999,9 @@ document.querySelectorAll(".scenario-btn").forEach(function(btn) {
 
 function initVisual() { switchScenario(currentScene); }
 
+// ── 페이지 로드 시 canvas 미리 렌더링 (개념 이해 요약에 복제되기 전에) ──
+initVisual();
+
 // ── Quiz Engine ────────────────────────────────
 function initQuiz(questions) {
   var container = document.getElementById("quizArea");
