@@ -295,6 +295,27 @@ body {
     </div>
   </div>
 
+  <details class="concept-more">
+    <summary>💡 Cylinder + Subdivision이 찌글찌글해지는 이유와 해결법</summary>
+    <div style="margin-top:10px">
+      <p style="font-size:.84rem;color:var(--muted-strong);margin:0 0 12px">Cylinder의 윗면/아랫면은 <strong>N-gon</strong>(꼭짓점 32개짜리 다각형 1개)이에요. Subdivision Surface는 <strong>Quad(4각형)</strong>에 최적화되어 있어서, N-gon을 만나면 면 분할이 예측 불가능 → 찌글찌글 현상이 발생합니다.</p>
+      <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin:12px 0">
+        <div style="border-radius:12px;overflow:hidden;border:1px solid var(--line)">
+          <div style="text-align:center;font-size:11px;color:#ef4444;padding:4px;background:rgba(239,68,68,.1)">❌ N-gon + Subdivision</div>
+          <canvas id="ngon-before" width="200" height="140"></canvas>
+        </div>
+        <div style="font-size:24px;color:var(--muted)">→</div>
+        <div style="border-radius:12px;overflow:hidden;border:1px solid var(--line)">
+          <div style="text-align:center;font-size:11px;color:#10b981;padding:4px;background:rgba(16,185,129,.1)">✅ Inset 후 Subdivision</div>
+          <canvas id="ngon-after" width="200" height="140"></canvas>
+        </div>
+      </div>
+      <div style="font-size:.82rem;color:var(--muted-strong);padding:10px 14px;border-radius:10px;background:var(--surface);border:1px solid var(--line)">
+        <strong>해결:</strong> Edit Mode → 윗면/아랫면 Face 선택 → <span class="kbd">I</span>(Inset) → 안쪽으로 줄이기 → 그다음 Subdivision 적용. Inset이 N-gon 주변에 Quad 링을 만들어서 깔끔해져요.
+      </div>
+    </div>
+  </details>
+
   <div class="doc-ref">
     <a href="https://docs.blender.org/manual/en/latest/modeling/meshes/tools/inset_faces.html" target="_blank" rel="noopener">
       📖 Blender 공식 문서 — Inset Faces
@@ -325,6 +346,7 @@ body {
     <button class="scenario-btn active" data-scene="normal" onclick="switchScenarioInset('normal')">일반 Inset (I)</button>
     <button class="scenario-btn" data-scene="individual" onclick="switchScenarioInset('individual')">Individual (I→I)</button>
     <button class="scenario-btn" data-scene="depth" onclick="switchScenarioInset('depth')">Inset + Depth</button>
+    <button class="scenario-btn" data-scene="cylinder" onclick="switchScenarioInset('cylinder')">Cylinder 뚜껑 (N-gon 해결)</button>
   </div>
   <div id="scene-desc-inset" style="font-size:.84rem;color:var(--muted-strong);margin-bottom:10px;padding:10px 14px;border-radius:12px;background:var(--surface);border:1px solid var(--line);">시나리오를 선택하세요.</div>
   <div class="before-after">
@@ -508,6 +530,75 @@ body {
         drawLabel(ctx, '각 면 개별 Inset', w/2, h - 12, '#a5b4fc');
       }
     },
+    cylinder: {
+      desc: 'Cylinder의 윗면/아랫면은 N-gon(다각형 1개)이라 Subdivision이 찌글찌글해져요. Inset을 넣으면 Quad 링이 생겨서 깔끔해집니다.',
+      ce: [
+        { cause: 'Cylinder 뚜껑 = N-gon (32각형)', result: 'Subdivision이 면을 불규칙하게 분할 → 찌글찌글', cls: 'result-c' },
+        { cause: '뚜껑 선택 → I (Inset)', result: 'N-gon 주변에 Quad 링 생성 → Subdivision 깔끔', cls: 'result-a' }
+      ],
+      before: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        var cx = w/2, cy = h/2, r = 52, sides = 16;
+        // N-gon 뚜껑
+        ctx.strokeStyle = '#64748b'; ctx.lineWidth = 1.5;
+        polygon(ctx, cx, cy, r, sides);
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(239,68,68,0.1)';
+        polygon(ctx, cx, cy, r, sides);
+        ctx.fill();
+        // 찌글찌글 표현 - 불규칙한 내부 분할선
+        ctx.strokeStyle = 'rgba(239,68,68,0.35)'; ctx.lineWidth = 1;
+        for (var i = 0; i < sides; i++) {
+          var angle = (Math.PI * 2 / sides) * i - Math.PI / 2;
+          var ex = cx + r * Math.cos(angle), ey = cy + r * Math.sin(angle);
+          ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(ex, ey); ctx.stroke();
+        }
+        // 중심에 물결 (찌글 표현)
+        ctx.strokeStyle = 'rgba(239,68,68,0.6)'; ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        for (var j = -20; j <= 20; j += 2) {
+          var yy = cy + j;
+          var xx = cx + Math.sin(j * 0.8) * 5;
+          if (j === -20) ctx.moveTo(xx, yy); else ctx.lineTo(xx, yy);
+        }
+        ctx.stroke();
+        drawLabel(ctx, 'N-gon + Subdiv = 찌글찌글 ❌', w/2, h - 10, '#fca5a5');
+      },
+      after: function(ctx, w, h) {
+        drawBg(ctx, w, h);
+        var cx = w/2, cy = h/2, r = 52, ri = 32, sides = 16;
+        // 외곽
+        ctx.strokeStyle = '#64748b'; ctx.lineWidth = 1.5;
+        polygon(ctx, cx, cy, r, sides);
+        ctx.stroke();
+        // Inset으로 생긴 내부 원 (Quad 링)
+        ctx.strokeStyle = '#10b981'; ctx.lineWidth = 2;
+        polygon(ctx, cx, cy, ri, sides);
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(16,185,129,0.15)';
+        polygon(ctx, cx, cy, ri, sides);
+        ctx.fill();
+        // Quad 연결선 (외곽 → 내곽)
+        ctx.strokeStyle = 'rgba(16,185,129,0.3)'; ctx.lineWidth = 1;
+        for (var i = 0; i < sides; i++) {
+          var angle = (Math.PI * 2 / sides) * i - Math.PI / 2;
+          var x1 = cx + r * Math.cos(angle), y1 = cy + r * Math.sin(angle);
+          var x2 = cx + ri * Math.cos(angle), y2 = cy + ri * Math.sin(angle);
+          ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+        }
+        // "Quad" 라벨
+        var labelAngle = (Math.PI * 2 / sides) * 2 - Math.PI / 2;
+        var lx = cx + (r + ri) / 2 * Math.cos(labelAngle);
+        var ly = cy + (r + ri) / 2 * Math.sin(labelAngle);
+        ctx.save();
+        ctx.font = 'bold 9px sans-serif';
+        ctx.fillStyle = '#6ee7b7';
+        ctx.textAlign = 'center';
+        ctx.fillText('Quad', lx + 12, ly);
+        ctx.restore();
+        drawLabel(ctx, 'Inset 후 Subdiv = 깔끔 ✅', w/2, h - 10, '#6ee7b7');
+      }
+    },
     depth: {
       desc: 'Inset 중 Ctrl을 누르면 Depth가 조절됩니다. 들어간 깊이(Z축)를 동시에 적용해요.',
       ce: [
@@ -589,7 +680,62 @@ body {
 
   document.addEventListener('DOMContentLoaded', function() {
     switchScenarioInset(currentScene);
+    // ── N-gon 시각화 (탭1 개념이해) ──
+    drawNgonGuide();
   });
+
+  function drawNgonGuide() {
+    var cvB = document.getElementById('ngon-before');
+    var cvA = document.getElementById('ngon-after');
+    if (!cvB || !cvA) return;
+    var ctxB = cvB.getContext('2d'), ctxA = cvA.getContext('2d');
+    var w = cvB.width, h = cvB.height;
+    var cx = w/2, cy = h/2 + 5, r = 48, sides = 16;
+
+    // BEFORE: N-gon + 찌글찌글
+    ctxB.fillStyle = BG; ctxB.fillRect(0, 0, w, h);
+    ctxB.strokeStyle = '#64748b'; ctxB.lineWidth = 1.5;
+    polygon(ctxB, cx, cy, r, sides); ctxB.stroke();
+    ctxB.fillStyle = 'rgba(239,68,68,0.08)';
+    polygon(ctxB, cx, cy, r, sides); ctxB.fill();
+    // 삼각 팬 (N-gon 내부 분할)
+    ctxB.strokeStyle = 'rgba(239,68,68,0.3)'; ctxB.lineWidth = 0.8;
+    for (var i = 0; i < sides; i++) {
+      var angle = (Math.PI * 2 / sides) * i - Math.PI / 2;
+      ctxB.beginPath();
+      ctxB.moveTo(cx, cy);
+      ctxB.lineTo(cx + r * Math.cos(angle), cy + r * Math.sin(angle));
+      ctxB.stroke();
+    }
+    // 물결 (찌글 표현)
+    ctxB.strokeStyle = 'rgba(239,68,68,0.6)'; ctxB.lineWidth = 1.5;
+    ctxB.beginPath();
+    for (var j = -15; j <= 15; j += 1.5) {
+      var yy = cy + j, xx = cx + Math.sin(j * 0.9) * 4;
+      if (j === -15) ctxB.moveTo(xx, yy); else ctxB.lineTo(xx, yy);
+    }
+    ctxB.stroke();
+    drawLabel(ctxB, 'N-gon → 찌글 ❌', cx, h - 6, '#fca5a5');
+
+    // AFTER: Inset 적용 → Quad 링
+    var ri = 28;
+    ctxA.fillStyle = BG; ctxA.fillRect(0, 0, w, h);
+    ctxA.strokeStyle = '#64748b'; ctxA.lineWidth = 1.5;
+    polygon(ctxA, cx, cy, r, sides); ctxA.stroke();
+    ctxA.strokeStyle = '#10b981'; ctxA.lineWidth = 2;
+    polygon(ctxA, cx, cy, ri, sides); ctxA.stroke();
+    ctxA.fillStyle = 'rgba(16,185,129,0.12)';
+    polygon(ctxA, cx, cy, ri, sides); ctxA.fill();
+    ctxA.strokeStyle = 'rgba(16,185,129,0.25)'; ctxA.lineWidth = 0.8;
+    for (var k = 0; k < sides; k++) {
+      var a2 = (Math.PI * 2 / sides) * k - Math.PI / 2;
+      ctxA.beginPath();
+      ctxA.moveTo(cx + r * Math.cos(a2), cy + r * Math.sin(a2));
+      ctxA.lineTo(cx + ri * Math.cos(a2), cy + ri * Math.sin(a2));
+      ctxA.stroke();
+    }
+    drawLabel(ctxA, 'Inset → 깔끔 ✅', cx, h - 6, '#6ee7b7');
+  }
 })();
 
 // ── Tab Switching ──────────────────────────────
