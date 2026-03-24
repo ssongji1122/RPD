@@ -663,7 +663,7 @@
   },
   {
     "week": 4,
-    "title": "기초 모델링 2 - 하드서피스 디테일 & 정리",
+    "title": "기초 모델링 2 — 로봇 조립",
     "subtitle": "Bevel · Weighted Normal · Apply",
     "duration": "~3시간",
     "topics": [
@@ -803,12 +803,28 @@
     ],
     "shortcuts": [
       {
-        "keys": "I",
-        "action": "Inset Faces (면 안쪽 디테일)"
+        "keys": "Shift + A",
+        "action": "Add (Cube, UV Sphere 등)"
+      },
+      {
+        "keys": "Shift + D",
+        "action": "Duplicate (복제)"
+      },
+      {
+        "keys": "Shift + S",
+        "action": "Snap 메뉴 (Cursor to Selected 등)"
+      },
+      {
+        "keys": "Ctrl + G이동",
+        "action": "Snap 이동 (자석 켜진 상태)"
       },
       {
         "keys": "Ctrl + B",
         "action": "Bevel (모서리 직접 다듬기)"
+      },
+      {
+        "keys": "Ctrl + R",
+        "action": "Loop Cut (분절 추가)"
       },
       {
         "keys": "P",
@@ -828,7 +844,7 @@
       },
       {
         "keys": "H",
-        "action": "선택 오브젝트 숨기기 (Boolean 커터)"
+        "action": "선택 오브젝트 숨기기"
       },
       {
         "keys": "Alt + H",
