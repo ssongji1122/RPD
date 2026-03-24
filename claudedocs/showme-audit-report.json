@@ -1,0 +1,140 @@
+{
+  "audit_date": "2026-03-24T14:35:12.899098+00:00",
+  "total_cards": 5,
+  "summary": {
+    "pass": 3,
+    "warn": 2,
+    "fail": 0
+  },
+  "cards": [
+    {
+      "id": "blender-preferences",
+      "status": "pass",
+      "checks": {
+        "A1_page_load": "pass",
+        "A2_demo_canvas": "skip",
+        "A3_before_after": "skip",
+        "A4_scenario_change": "pass",
+        "B1_four_tabs": "pass",
+        "B2_panel_content": "pass",
+        "B3_kbd_shortcuts": "pass",
+        "B4_external_links": "pass",
+        "C1_tab_switching": "pass",
+        "C2_quiz_feedback": "pass",
+        "C3_slider_response": "skip",
+        "C4_console_errors": "pass",
+        "D1_css_variables": "pass",
+        "D2_screenshots": "skip",
+        "D3_overflow": "pass"
+      },
+      "errors": [],
+      "label": "Preferences 설정",
+      "week": 2,
+      "icon": "⚙️"
+    },
+    {
+      "id": "extrude",
+      "status": "pass",
+      "checks": {
+        "A1_page_load": "pass",
+        "A2_demo_canvas": "pass",
+        "A3_before_after": "pass",
+        "A4_scenario_change": "pass",
+        "B1_four_tabs": "pass",
+        "B2_panel_content": "pass",
+        "B3_kbd_shortcuts": "pass",
+        "B4_external_links": "pass",
+        "C1_tab_switching": "pass",
+        "C2_quiz_feedback": "pass",
+        "C3_slider_response": "skip",
+        "C4_console_errors": "pass",
+        "D1_css_variables": "pass",
+        "D2_screenshots": "skip",
+        "D3_overflow": "pass"
+      },
+      "errors": [],
+      "label": "Extrude 작동 원리",
+      "week": 3,
+      "icon": "📐"
+    },
+    {
+      "id": "inset",
+      "status": "pass",
+      "checks": {
+        "A1_page_load": "pass",
+        "A2_demo_canvas": "pass",
+        "A3_before_after": "pass",
+        "A4_scenario_change": "pass",
+        "B1_four_tabs": "pass",
+        "B2_panel_content": "pass",
+        "B3_kbd_shortcuts": "pass",
+        "B4_external_links": "pass",
+        "C1_tab_switching": "pass",
+        "C2_quiz_feedback": "pass",
+        "C3_slider_response": "skip",
+        "C4_console_errors": "pass",
+        "D1_css_variables": "pass",
+        "D2_screenshots": "skip",
+        "D3_overflow": "pass"
+      },
+      "errors": [],
+      "label": "Inset 작동 원리",
+      "week": 3,
+      "icon": "⬜"
+    },
+    {
+      "id": "bevel-tool",
+      "status": "warn",
+      "checks": {
+        "A1_page_load": "pass",
+        "A2_demo_canvas": "pass",
+        "A3_before_after": "skip",
+        "A4_scenario_change": "warn",
+        "B1_four_tabs": "pass",
+        "B2_panel_content": "pass",
+        "B3_kbd_shortcuts": "pass",
+        "B4_external_links": "pass",
+        "C1_tab_switching": "pass",
+        "C2_quiz_feedback": "pass",
+        "C3_slider_response": "pass",
+        "C4_console_errors": "pass",
+        "D1_css_variables": "pass",
+        "D2_screenshots": "skip",
+        "D3_overflow": "pass"
+      },
+      "errors": [
+        "[warn] A4: Scenario 'Segments 조절' did not change any canvas"
+      ],
+      "label": "Bevel Tool 이해",
+      "week": 3,
+      "icon": "🔧"
+    },
+    {
+      "id": "decimate-modifier",
+      "status": "warn",
+      "checks": {
+        "A1_page_load": "pass",
+        "A2_demo_canvas": "warn",
+        "A3_before_after": "pass",
+        "A4_scenario_change": "pass",
+        "B1_four_tabs": "pass",
+        "B2_panel_content": "pass",
+        "B3_kbd_shortcuts": "info",
+        "B4_external_links": "pass",
+        "C1_tab_switching": "pass",
+        "C2_quiz_feedback": "pass",
+        "C3_slider_response": "skip",
+        "C4_console_errors": "pass",
+        "D1_css_variables": "pass",
+        "D2_screenshots": "skip",
+        "D3_overflow": "pass"
+      },
+      "errors": [
+        "[warn] A2: demoCanvas exists but appears empty"
+      ],
+      "label": "Decimate 이해",
+      "week": 4,
+      "icon": "📉"
+    }
+  ]
+}
