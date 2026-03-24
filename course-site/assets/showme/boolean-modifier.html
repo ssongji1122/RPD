@@ -502,61 +502,84 @@ body {
 
 <!-- TAB 2: interaction -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <div style="display:grid;grid-template-columns:minmax(220px,260px) 1fr;gap:14px;align-items:start">
+  <!-- Mode Toggle Buttons -->
+  <div style="display:flex;gap:0;margin-bottom:14px;border-radius:14px;overflow:hidden;border:1px solid var(--line-strong);width:fit-content">
+    <button class="bool-mode-btn is-active" data-mode="difference" style="padding:10px 20px;border:none;background:rgba(239,68,68,.15);color:#fca5a5;font:inherit;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px">
+      <span style="font-size:1.1em">✂️</span> Difference
+    </button>
+    <button class="bool-mode-btn" data-mode="union" style="padding:10px 20px;border:none;border-left:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted);font:inherit;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px">
+      <span style="font-size:1.1em">🔗</span> Union
+    </button>
+    <button class="bool-mode-btn" data-mode="intersect" style="padding:10px 20px;border:none;border-left:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted);font:inherit;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px">
+      <span style="font-size:1.1em">🔀</span> Intersect
+    </button>
+  </div>
+
+  <!-- Canvas + Side Controls -->
+  <div style="display:grid;grid-template-columns:1fr minmax(200px,240px);gap:14px;align-items:start">
+    <div>
+      <div class="demo-wrap" style="position:relative">
+        <canvas id="demoCanvas" width="680" height="360" style="cursor:grab"></canvas>
+        <div id="dragHint" style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);padding:6px 14px;border-radius:999px;background:rgba(0,0,0,.7);color:var(--muted-strong);font-size:.75rem;pointer-events:none;transition:opacity .4s;display:flex;align-items:center;gap:6px">
+          <span style="font-size:1em">👆</span> 도형을 드래그해서 움직여보세요
+        </div>
+      </div>
+      <!-- Mode Description -->
+      <div id="modeDescription" style="margin-top:10px;padding:12px 16px;border-radius:14px;border:1px solid var(--line);background:var(--surface);font-size:.84rem;line-height:1.6;color:var(--muted-strong)">
+        <strong style="color:#fca5a5">Difference (차):</strong> Base에서 Cutter 모양만큼 잘라냅니다. 구멍, 홈, 소켓을 만들 때 가장 많이 씁니다.
+      </div>
+    </div>
+
     <aside style="border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:14px">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px">
-        <div style="font-size:.9rem;font-weight:700;color:var(--text)">Boolean Modifier</div>
+        <div style="font-size:.9rem;font-weight:700;color:var(--text)">컨트롤</div>
         <span style="padding:4px 8px;border-radius:999px;background:rgba(10,132,255,.14);color:var(--key-soft);font-size:.72rem;font-weight:600">Exact</span>
       </div>
-      <p style="margin:0 0 14px;font-size:.78rem;color:var(--muted)">Operation과 Operand 크기만 보면 됩니다.</p>
 
       <div style="margin-bottom:12px">
         <label for="boolOperation" style="display:block;font-size:.82rem;font-weight:600;color:var(--muted-strong);margin-bottom:6px">Operation</label>
         <select id="boolOperation" style="width:100%;border-radius:10px;border:1px solid var(--line-strong);background:rgba(255,255,255,.04);color:var(--text);padding:9px 10px;font:inherit;font-size:.82rem">
-          <option value="union">Union</option>
           <option value="difference">Difference</option>
+          <option value="union">Union</option>
           <option value="intersect">Intersect</option>
         </select>
       </div>
 
       <div style="margin-bottom:12px">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px">
-          <label for="boolRadiusRange" style="font-size:.82rem;font-weight:600;color:var(--muted-strong)">Operand Radius</label>
+          <label for="boolRadiusRange" style="font-size:.82rem;font-weight:600;color:var(--muted-strong)">Cutter 크기</label>
           <span id="boolRadiusLabel" style="font-size:.76rem;color:var(--key-soft)">70</span>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 72px;gap:8px;align-items:center">
-          <input type="range" id="boolRadiusRange" min="40" max="100" step="1" value="70" style="width:100%;accent-color:var(--key)">
-          <input type="number" id="boolRadiusNumber" min="40" max="100" step="1" value="70" inputmode="numeric" style="width:100%;border-radius:10px;border:1px solid var(--line-strong);background:rgba(255,255,255,.04);color:var(--text);padding:7px 10px;font:inherit;font-size:.82rem">
+        <div style="display:grid;grid-template-columns:1fr 64px;gap:8px;align-items:center">
+          <input type="range" id="boolRadiusRange" min="30" max="120" step="1" value="70" style="width:100%;accent-color:var(--key)">
+          <input type="number" id="boolRadiusNumber" min="30" max="120" step="1" value="70" inputmode="numeric" style="width:100%;border-radius:10px;border:1px solid var(--line-strong);background:rgba(255,255,255,.04);color:var(--text);padding:7px 10px;font:inherit;font-size:.82rem">
         </div>
       </div>
 
       <label for="boolHideOperand" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);font-size:.82rem;color:var(--muted-strong);margin-bottom:12px">
-        <span>Hide Operand Overlay</span>
+        <span>커터 외곽선 숨기기</span>
         <input type="checkbox" id="boolHideOperand" style="width:18px;height:18px;accent-color:var(--key)">
       </label>
 
-      <button class="demo-btn" id="boolResetBtn" style="width:100%">기본값으로 되돌리기</button>
-      <div style="display:grid;grid-template-columns:1fr;gap:8px;margin-top:12px" aria-live="polite">
+      <button class="demo-btn" id="boolResetBtn" style="width:100%">위치 초기화</button>
+
+      <!-- Live Status -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px" aria-live="polite">
         <div style="border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:10px 12px">
           <span style="display:block;margin-bottom:4px;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">Operation</span>
-          <strong id="boolOperationStatus" style="font-size:.85rem;color:var(--muted-strong)">Union</strong>
+          <strong id="boolOperationStatus" style="font-size:.85rem;color:var(--muted-strong)">Difference</strong>
         </div>
         <div style="border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:10px 12px">
-          <span style="display:block;margin-bottom:4px;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">Operand</span>
+          <span style="display:block;margin-bottom:4px;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">Cutter</span>
           <strong id="boolRadiusStatus" style="font-size:.85rem;color:var(--muted-strong)">70</strong>
         </div>
-        <div style="border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:10px 12px">
-          <span style="display:block;margin-bottom:4px;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">Overlay</span>
-          <strong id="boolOverlayStatus" style="font-size:.85rem;color:var(--muted-strong)">Visible</strong>
-        </div>
       </div>
+      <div style="border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:10px 12px;margin-top:8px">
+        <span style="display:block;margin-bottom:4px;font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em">겹침 상태</span>
+        <strong id="boolOverlapStatus" style="font-size:.85rem;color:var(--success)">겹침 O</strong>
+      </div>
+      <div id="boolOverlayStatus" style="display:none"></div>
     </aside>
-
-    <div>
-      <div class="demo-wrap">
-        <canvas id="demoCanvas" width="680" height="300"></canvas>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -830,23 +853,41 @@ function buildBoolCE(ces) {
 }
 
 var boolState = {
-  mode: "union",
+  mode: "difference",
   radius: 70,
   hideOperand: false
+};
+
+var modeDescriptions = {
+  difference: "Difference (\uCC28): Base\uC5D0\uC11C Cutter \uBAA8\uC591\uB9CC\uD07C \uC798\uB77C\uB0C5\uB2C8\uB2E4. \uAD6C\uBA4D, \uD648, \uC18C\uCF13\uC744 \uB9CC\uB4E4 \uB54C \uAC00\uC7A5 \uB9CE\uC774 \uC4F1\uB2C8\uB2E4.",
+  union: "Union (\uD569): \uB450 \uC624\uBE0C\uC81D\uD2B8\uB97C \uD558\uB098\uB85C \uD569\uCE69\uB2C8\uB2E4. \uBCF5\uC7A1\uD55C \uD30C\uCE20\uB97C \uD569\uCE60 \uB54C \uC4F1\uB2C8\uB2E4.",
+  intersect: "Intersect (\uAD50): \uACA9\uCE58\uB294 \uBD80\uBD84\uB9CC \uB0A8\uAE30\uACE0 \uB098\uBA38\uC9C0\uB97C \uC81C\uAC70\uD569\uB2C8\uB2E4. \uAD50\uCC28 \uD615\uD0DC\uB97C \uCD94\uCD9C\uD560 \uB54C \uC4F1\uB2C8\uB2E4."
 };
 
 function updateBoolStatus() {
   var radiusLabel = document.getElementById("boolRadiusLabel");
   var operationStatus = document.getElementById("boolOperationStatus");
   var radiusStatus = document.getElementById("boolRadiusStatus");
-  var overlayStatus = document.getElementById("boolOverlayStatus");
   if (radiusLabel) radiusLabel.textContent = String(boolState.radius);
   if (operationStatus) {
     operationStatus.textContent = boolState.mode === "union" ? "Union" :
       boolState.mode === "difference" ? "Difference" : "Intersect";
   }
   if (radiusStatus) radiusStatus.textContent = String(boolState.radius);
-  if (overlayStatus) overlayStatus.textContent = boolState.hideOperand ? "Hidden" : "Visible";
+  // Mode description update (safe textContent)
+  var descEl = document.getElementById("modeDescription");
+  if (descEl) {
+    descEl.textContent = modeDescriptions[boolState.mode] || modeDescriptions.difference;
+  }
+  // Mode toggle buttons sync
+  document.querySelectorAll(".bool-mode-btn").forEach(function(btn) {
+    var m = btn.getAttribute("data-mode");
+    var isActive = m === boolState.mode;
+    btn.classList.toggle("is-active", isActive);
+    var colors = { difference: ["rgba(239,68,68,.15)","#fca5a5"], union: ["rgba(59,130,246,.15)","#93c5fd"], intersect: ["rgba(16,185,129,.15)","#6ee7b7"] };
+    btn.style.background = isActive ? (colors[m]||colors.difference)[0] : "rgba(255,255,255,.03)";
+    btn.style.color = isActive ? (colors[m]||colors.difference)[1] : "var(--muted)";
+  });
 }
 
 function drawRoleDiagram() {
@@ -968,223 +1009,234 @@ function drawRoleDiagram() {
   });
 }
 
-// ── Canvas Boolean Demo ───────────────────────
+// ── Canvas Boolean Demo (Draggable) ───────────────────────
 (function() {
   var canvas = document.getElementById("demoCanvas");
   var ctx = canvas.getContext("2d");
-  var currentMode = boolState.mode; // union, difference, intersect
-  var operandRadius = boolState.radius;
+  var W = canvas.width, H = canvas.height;
+  var dpr = window.devicePixelRatio || 1;
+  // HiDPI setup
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + "px";
+  canvas.style.height = H + "px";
+  ctx.scale(dpr, dpr);
+
+  var currentMode = boolState.mode;
   var hideOperand = boolState.hideOperand;
-  var animProgress = 1; // 0..1 for transition animation
-  var animTarget = 1;
-  var animFrame = null;
+  var dragHintShown = true;
 
-  // Shape definitions (centered in canvas)
-  var cx = canvas.width / 2;
-  var cy = canvas.height / 2;
+  // Defaults for reset
+  var defaultA = { x: W * 0.4, y: H * 0.5, w: 180, h: 140 };
+  var defaultB = { x: W * 0.55, y: H * 0.48, r: boolState.radius };
 
-  // Shape A: rounded rectangle (blue) — left-center
-  var shapeA = { x: cx - 50, y: cy, w: 160, h: 120 };
-  // Shape B: circle (green) — right-center, overlapping
-  var shapeB = { x: cx + 60, y: cy, r: operandRadius };
+  // Shape A: rounded rectangle (blue)
+  var shapeA = { x: defaultA.x, y: defaultA.y, w: defaultA.w, h: defaultA.h };
+  // Shape B: circle (green/red cutter)
+  var shapeB = { x: defaultB.x, y: defaultB.y, r: defaultB.r };
 
-  // Color palette
-  var colorA = { fill: "rgba(10,132,255,.3)", stroke: "rgba(10,132,255,.7)", label: "#8ec5ff" };
-  var colorB = { fill: "rgba(16,185,129,.3)", stroke: "rgba(16,185,129,.7)", label: "#6ee7b7" };
-  var colorResult = { fill: "rgba(255,255,255,.18)", stroke: "rgba(255,255,255,.6)" };
+  // Drag state
+  var dragging = null; // "A" or "B"
+  var dragOff = { x: 0, y: 0 };
+
+  // Colors
+  var colorA = { fill: "rgba(59,130,246,.25)", stroke: "rgba(59,130,246,.7)", label: "#93c5fd" };
+  var colorB = { fill: "rgba(239,68,68,.2)", stroke: "rgba(239,68,68,.6)", label: "#fca5a5" };
+  var colorResult = {
+    difference: { fill: "rgba(239,68,68,.22)", stroke: "rgba(252,165,165,.7)" },
+    union: { fill: "rgba(59,130,246,.22)", stroke: "rgba(147,197,253,.7)" },
+    intersect: { fill: "rgba(16,185,129,.25)", stroke: "rgba(110,231,183,.7)" }
+  };
 
   function drawGrid() {
-    var w = canvas.width, h = canvas.height;
-    ctx.fillStyle = "#17181a";
-    ctx.fillRect(0, 0, w, h);
-
-    ctx.strokeStyle = "rgba(255,255,255,.04)";
+    ctx.fillStyle = "#111214";
+    ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = "rgba(255,255,255,.035)";
     ctx.lineWidth = 1;
-    var step = 40;
-    for (var gx = step; gx < w; gx += step) {
-      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
-    }
-    for (var gy = step; gy < h; gy += step) {
-      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
-    }
+    for (var gx = 40; gx < W; gx += 40) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke(); }
+    for (var gy = 40; gy < H; gy += 40) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke(); }
   }
 
-  function rectPath(shape) {
-    var rx = 12; // rounded corners
-    var x = shape.x - shape.w / 2;
-    var y = shape.y - shape.h / 2;
-    var w = shape.w;
-    var h = shape.h;
+  function rectPath(s) {
+    var rx = 14, x = s.x - s.w/2, y = s.y - s.h/2;
     ctx.beginPath();
-    ctx.moveTo(x + rx, y);
-    ctx.lineTo(x + w - rx, y);
-    ctx.quadraticCurveTo(x + w, y, x + w, y + rx);
-    ctx.lineTo(x + w, y + h - rx);
-    ctx.quadraticCurveTo(x + w, y + h, x + w - rx, y + h);
-    ctx.lineTo(x + rx, y + h);
-    ctx.quadraticCurveTo(x, y + h, x, y + h - rx);
-    ctx.lineTo(x, y + rx);
-    ctx.quadraticCurveTo(x, y, x + rx, y);
+    ctx.moveTo(x+rx, y);
+    ctx.lineTo(x+s.w-rx, y); ctx.quadraticCurveTo(x+s.w, y, x+s.w, y+rx);
+    ctx.lineTo(x+s.w, y+s.h-rx); ctx.quadraticCurveTo(x+s.w, y+s.h, x+s.w-rx, y+s.h);
+    ctx.lineTo(x+rx, y+s.h); ctx.quadraticCurveTo(x, y+s.h, x, y+s.h-rx);
+    ctx.lineTo(x, y+rx); ctx.quadraticCurveTo(x, y, x+rx, y);
     ctx.closePath();
   }
 
-  function circlePath(shape) {
-    ctx.beginPath();
-    ctx.arc(shape.x, shape.y, shape.r, 0, Math.PI * 2);
-    ctx.closePath();
+  function circlePath(s) {
+    ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2); ctx.closePath();
   }
 
-  function drawShapeA(alpha) {
-    rectPath(shapeA);
-    ctx.fillStyle = colorA.fill.replace(/[\d.]+\)$/, (0.3 * alpha) + ")");
-    ctx.fill();
-    ctx.strokeStyle = colorA.stroke.replace(/[\d.]+\)$/, (0.7 * alpha) + ")");
-    ctx.lineWidth = 2;
-    ctx.stroke();
+  // Check if shapes overlap
+  function shapesOverlap() {
+    var cl = shapeB.x - shapeB.r, cr = shapeB.x + shapeB.r;
+    var ct = shapeB.y - shapeB.r, cb = shapeB.y + shapeB.r;
+    var rl = shapeA.x - shapeA.w/2, rr = shapeA.x + shapeA.w/2;
+    var rt = shapeA.y - shapeA.h/2, rb = shapeA.y + shapeA.h/2;
+    if (cr < rl || cl > rr || cb < rt || ct > rb) return false;
+    // Rough overlap check (bounding box)
+    return true;
   }
 
-  function drawShapeB(alpha) {
-    circlePath(shapeB);
-    ctx.fillStyle = colorB.fill.replace(/[\d.]+\)$/, (0.3 * alpha) + ")");
+  function drawShapeOutline(shape, color, alpha, isDragging) {
+    if (shape.w) { rectPath(shape); } else { circlePath(shape); }
+    ctx.fillStyle = color.fill.replace(/[\d.]+\)$/, (0.25 * alpha) + ")");
     ctx.fill();
-    ctx.strokeStyle = colorB.stroke.replace(/[\d.]+\)$/, (0.7 * alpha) + ")");
-    ctx.lineWidth = 2;
+    if (isDragging) {
+      ctx.shadowColor = color.stroke; ctx.shadowBlur = 18;
+    }
+    ctx.strokeStyle = color.stroke.replace(/[\d.]+\)$/, (0.7 * alpha) + ")");
+    ctx.lineWidth = isDragging ? 3 : 2;
+    ctx.setLineDash(isDragging ? [] : [6,4]);
     ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.shadowBlur = 0;
   }
 
   function drawResult() {
+    var cr = colorResult[currentMode] || colorResult.difference;
+    var overlap = shapesOverlap();
     ctx.save();
-
     if (currentMode === "union") {
-      // Draw both shapes merged with result color
-      rectPath(shapeA);
-      ctx.fillStyle = colorResult.fill;
-      ctx.fill();
-      circlePath(shapeB);
-      ctx.fillStyle = colorResult.fill;
-      ctx.fill();
-      // Outline both
-      rectPath(shapeA);
-      ctx.strokeStyle = colorResult.stroke;
-      ctx.lineWidth = 2.5;
-      ctx.stroke();
-      circlePath(shapeB);
-      ctx.stroke();
-      // Erase inner overlap line by filling overlap area
-      ctx.save();
-      rectPath(shapeA);
-      ctx.clip();
-      circlePath(shapeB);
-      ctx.fillStyle = colorResult.fill;
-      ctx.fill();
-      ctx.restore();
-
+      rectPath(shapeA); ctx.fillStyle = cr.fill; ctx.fill();
+      circlePath(shapeB); ctx.fillStyle = cr.fill; ctx.fill();
+      rectPath(shapeA); ctx.strokeStyle = cr.stroke; ctx.lineWidth = 2.5; ctx.stroke();
+      circlePath(shapeB); ctx.stroke();
+      if (overlap) {
+        ctx.save(); rectPath(shapeA); ctx.clip();
+        circlePath(shapeB); ctx.fillStyle = cr.fill; ctx.fill(); ctx.restore();
+      }
     } else if (currentMode === "difference") {
-      // Rectangle with circle-shaped hole
-      ctx.save();
-      rectPath(shapeA);
-      ctx.clip();
-      // Fill entire clipped area
-      ctx.fillStyle = colorResult.fill;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      // Cut out circle using composite
-      ctx.globalCompositeOperation = "destination-out";
-      circlePath(shapeB);
-      ctx.fillStyle = "rgba(0,0,0,1)";
-      ctx.fill();
-      ctx.restore();
-      // Draw outline of result
-      ctx.save();
-      rectPath(shapeA);
-      ctx.strokeStyle = colorResult.stroke;
-      ctx.lineWidth = 2.5;
-      ctx.stroke();
-      // Draw inner arc (the hole edge)
-      ctx.beginPath();
-      // Only the portion of circle inside rect
-      ctx.arc(shapeB.x, shapeB.y, shapeB.r, 0, Math.PI * 2);
-      ctx.strokeStyle = colorResult.stroke;
-      ctx.lineWidth = 2.5;
-      ctx.stroke();
-      ctx.restore();
-
+      if (overlap) {
+        ctx.save(); rectPath(shapeA); ctx.clip();
+        ctx.fillStyle = cr.fill; ctx.fillRect(0,0,W,H);
+        ctx.globalCompositeOperation = "destination-out";
+        circlePath(shapeB); ctx.fillStyle = "rgba(0,0,0,1)"; ctx.fill();
+        ctx.restore();
+        rectPath(shapeA); ctx.strokeStyle = cr.stroke; ctx.lineWidth = 2.5; ctx.stroke();
+        ctx.beginPath(); ctx.arc(shapeB.x, shapeB.y, shapeB.r, 0, Math.PI*2);
+        ctx.strokeStyle = cr.stroke; ctx.lineWidth = 2.5; ctx.stroke();
+      } else {
+        rectPath(shapeA); ctx.fillStyle = cr.fill; ctx.fill();
+        ctx.strokeStyle = cr.stroke; ctx.lineWidth = 2.5; ctx.stroke();
+      }
     } else if (currentMode === "intersect") {
-      // Only the overlap region
-      ctx.save();
-      rectPath(shapeA);
-      ctx.clip();
-      circlePath(shapeB);
-      ctx.fillStyle = colorResult.fill;
-      ctx.fill();
-      ctx.strokeStyle = colorResult.stroke;
-      ctx.lineWidth = 2.5;
-      ctx.stroke();
-      ctx.restore();
+      if (overlap) {
+        ctx.save(); rectPath(shapeA); ctx.clip();
+        circlePath(shapeB); ctx.fillStyle = cr.fill; ctx.fill();
+        ctx.strokeStyle = cr.stroke; ctx.lineWidth = 2.5; ctx.stroke();
+        ctx.restore();
+      }
     }
-
     ctx.restore();
   }
 
   function drawLabels() {
-    var w = canvas.width, h = canvas.height;
-    ctx.font = "bold 12px sans-serif";
+    ctx.font = "bold 12px 'Noto Sans KR', sans-serif";
     ctx.textAlign = "center";
-
-    // Shape labels
+    // Shape A label
     ctx.fillStyle = colorA.label;
-    ctx.fillText("Shape A (Rectangle)", shapeA.x, shapeA.y - shapeA.h / 2 - 12);
+    ctx.fillText("Base (A)", shapeA.x, shapeA.y - shapeA.h/2 - 10);
+    // Shape B label
     if (!hideOperand) {
       ctx.fillStyle = colorB.label;
-      ctx.fillText("Shape B (Circle)", shapeB.x, shapeB.y - shapeB.r - 12);
+      ctx.fillText("Cutter (B)", shapeB.x, shapeB.y - shapeB.r - 10);
     }
-
-    // Mode label
-    var modeText = "";
-    if (currentMode === "union") modeText = "Union (합): 두 오브젝트를 하나로";
-    else if (currentMode === "difference") modeText = "Difference (차): A에서 B를 잘라냄";
-    else if (currentMode === "intersect") modeText = "Intersect (교): 겹치는 부분만";
-
-    ctx.fillStyle = "rgba(255,255,255,.7)";
-    ctx.font = "bold 13px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText(modeText, cx, h - 16);
+    // Overlap indicator
+    var overlap = shapesOverlap();
+    var overlapEl = document.getElementById("boolOverlapStatus");
+    if (overlapEl) {
+      overlapEl.textContent = overlap ? "\uACA9\uCE68 O" : "\uACA9\uCE68 X \u2014 \uB3C4\uD615\uC744 \uACA9\uCCD0\uBCF4\uC138\uC694";
+      overlapEl.style.color = overlap ? "var(--success)" : "var(--warn)";
+    }
+    if (!overlap) {
+      ctx.fillStyle = "rgba(245,158,11,.6)";
+      ctx.font = "bold 12px 'Noto Sans KR', sans-serif";
+      ctx.fillText("\u26A0\uFE0F \uB450 \uB3C4\uD615\uC744 \uACA9\uCCD0\uC57C Boolean\uC774 \uC791\uB3D9\uD574\uC694!", W/2, H - 14);
+    }
   }
 
   function draw() {
     drawGrid();
-
-    // Ghost shapes (dimmed original shapes)
-    var ghostAlpha = 0.35;
-    drawShapeA(ghostAlpha);
-    if (!hideOperand) drawShapeB(ghostAlpha);
-
-    // Draw Boolean result
+    // Ghost outlines
+    drawShapeOutline(shapeA, colorA, 0.5, dragging === "A");
+    if (!hideOperand) drawShapeOutline(shapeB, colorB, 0.5, dragging === "B");
+    // Boolean result
     drawResult();
-
     // Labels
     drawLabels();
   }
 
-  function animateTo(mode) {
-    currentMode = mode;
-    animProgress = 0;
-    animTarget = 1;
-
-    if (animFrame) cancelAnimationFrame(animFrame);
-
-    function step() {
-      animProgress += 0.06;
-      if (animProgress >= 1) {
-        animProgress = 1;
-        draw();
-        return;
-      }
-      draw();
-      animFrame = requestAnimationFrame(step);
-    }
-    animFrame = requestAnimationFrame(step);
+  // ── Drag Handling ──
+  function getCanvasPos(e) {
+    var rect = canvas.getBoundingClientRect();
+    var scaleX = W / rect.width, scaleY = H / rect.height;
+    var clientX, clientY;
+    if (e.touches) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; }
+    else { clientX = e.clientX; clientY = e.clientY; }
+    return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY };
   }
 
+  function hitTest(pos) {
+    // Check B (circle) first — smaller, on top
+    var dx = pos.x - shapeB.x, dy = pos.y - shapeB.y;
+    if (dx*dx + dy*dy <= shapeB.r * shapeB.r) return "B";
+    // Check A (rect)
+    if (pos.x >= shapeA.x - shapeA.w/2 && pos.x <= shapeA.x + shapeA.w/2 &&
+        pos.y >= shapeA.y - shapeA.h/2 && pos.y <= shapeA.y + shapeA.h/2) return "A";
+    return null;
+  }
+
+  function onDown(e) {
+    var pos = getCanvasPos(e);
+    var hit = hitTest(pos);
+    if (!hit) return;
+    dragging = hit;
+    var shape = hit === "A" ? shapeA : shapeB;
+    dragOff.x = pos.x - shape.x;
+    dragOff.y = pos.y - shape.y;
+    canvas.style.cursor = "grabbing";
+    // Hide drag hint after first drag
+    if (dragHintShown) {
+      dragHintShown = false;
+      var hint = document.getElementById("dragHint");
+      if (hint) hint.style.opacity = "0";
+    }
+    e.preventDefault();
+  }
+
+  function onMove(e) {
+    if (!dragging) {
+      var pos = getCanvasPos(e);
+      canvas.style.cursor = hitTest(pos) ? "grab" : "default";
+      return;
+    }
+    var pos = getCanvasPos(e);
+    var shape = dragging === "A" ? shapeA : shapeB;
+    shape.x = Math.max(20, Math.min(W - 20, pos.x - dragOff.x));
+    shape.y = Math.max(20, Math.min(H - 20, pos.y - dragOff.y));
+    draw();
+    e.preventDefault();
+  }
+
+  function onUp() {
+    if (dragging) { dragging = null; canvas.style.cursor = "grab"; draw(); }
+  }
+
+  canvas.addEventListener("mousedown", onDown);
+  canvas.addEventListener("mousemove", onMove);
+  canvas.addEventListener("mouseup", onUp);
+  canvas.addEventListener("mouseleave", onUp);
+  canvas.addEventListener("touchstart", onDown, { passive: false });
+  canvas.addEventListener("touchmove", onMove, { passive: false });
+  canvas.addEventListener("touchend", onUp);
+
+  // ── Controls sync ──
   function syncBooleanControls() {
     var opSelect = document.getElementById("boolOperation");
     var radiusRange = document.getElementById("boolRadiusRange");
@@ -1194,36 +1246,39 @@ function drawRoleDiagram() {
     if (radiusRange) radiusRange.value = String(boolState.radius);
     if (radiusNumber) radiusNumber.value = String(boolState.radius);
     if (hideCheckbox) hideCheckbox.checked = boolState.hideOperand;
-
     currentMode = boolState.mode;
-    operandRadius = boolState.radius;
     hideOperand = boolState.hideOperand;
-    shapeB.r = operandRadius;
+    shapeB.r = boolState.radius;
     updateBoolStatus();
     draw();
   }
 
-  function setRadius(value) {
-    boolState.radius = Math.max(40, Math.min(100, parseInt(value, 10) || 70));
+  function setRadius(v) {
+    boolState.radius = Math.max(30, Math.min(120, parseInt(v,10) || 70));
     syncBooleanControls();
   }
 
   document.getElementById("boolOperation").addEventListener("change", function() {
-    boolState.mode = this.value;
-    syncBooleanControls();
-    animateTo(boolState.mode);
+    boolState.mode = this.value; syncBooleanControls();
   });
   document.getElementById("boolRadiusRange").addEventListener("input", function() { setRadius(this.value); });
   document.getElementById("boolRadiusNumber").addEventListener("input", function() { setRadius(this.value); });
   document.getElementById("boolHideOperand").addEventListener("change", function() {
-    boolState.hideOperand = this.checked;
-    syncBooleanControls();
+    boolState.hideOperand = this.checked; syncBooleanControls();
   });
   document.getElementById("boolResetBtn").addEventListener("click", function() {
-    boolState.mode = "union";
-    boolState.radius = 70;
-    boolState.hideOperand = false;
+    boolState.mode = "difference"; boolState.radius = 70; boolState.hideOperand = false;
+    shapeA.x = defaultA.x; shapeA.y = defaultA.y; shapeA.w = defaultA.w; shapeA.h = defaultA.h;
+    shapeB.x = defaultB.x; shapeB.y = defaultB.y;
     syncBooleanControls();
+  });
+
+  // Mode toggle buttons
+  document.querySelectorAll(".bool-mode-btn").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      boolState.mode = this.getAttribute("data-mode");
+      syncBooleanControls();
+    });
   });
 
   syncBooleanControls();
