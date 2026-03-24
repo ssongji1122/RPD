@@ -10,7 +10,7 @@
 }
 .page-header h1 {
   margin: 0;
-  font-size: clamp(1.34rem, 2.4vw, 1.94rem);
+  font-size: var(--type-hero);
   font-family: var(--font-display);
   font-weight: var(--fw-semi);
   letter-spacing: -.032em;
@@ -264,7 +264,7 @@
 }
 .lib-section-title {
   margin: 0;
-  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  font-size: var(--type-section);
   font-weight: var(--fw-bold);
   letter-spacing: -.02em;
 }

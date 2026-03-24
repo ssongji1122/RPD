@@ -17,7 +17,7 @@
 }
 .hero h1 {
   margin: 0; font-family: var(--font-display);
-  font-size: clamp(2rem, 4vw, 3rem);
+  font-size: var(--type-hero);
   font-weight: var(--fw-bold); letter-spacing: -.05em; line-height: 1.04;
 }
 .hero p {
@@ -241,7 +241,7 @@
   background: rgba(10,132,255,.15);
   border: 1px solid rgba(10,132,255,.35);
   color: var(--key-soft);
-  padding: 2px 10px; border-radius: 6px; font-size: .9rem;
+  padding: 2px 10px; border-radius: var(--radius-sm); font-size: .9rem;
 }
 
 .shortcut-row-detail {
