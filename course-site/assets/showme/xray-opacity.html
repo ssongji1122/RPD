@@ -23,9 +23,19 @@
   --success-soft:  #6ee7b7;
   --warn:          #f59e0b;
   --danger:        #ef4444;
+  --danger-soft:   #fca5a5;
+  --warn-soft:     #fbbf24;
+  --warn-medium:   #fcd34d;
+  --accent-soft:   #FFB347;
+  --secondary-soft:#a5b4fc;
+  --secondary-mid: #c4b5fd;
   --text:          #f5f5f7;
   --muted:         #a1a1aa;
   --muted-strong:  #d4d4d8;
+  --muted-mid:     #94a3b8;
+  --muted-soft:    #cbd5e1;
+  --muted-dim:     #64748b;
+  --info-soft:     #67e8f9;
   --radius-sm:     12px;
   --radius-md:     18px;
   --radius-lg:     24px;
@@ -107,8 +117,8 @@ body {
 }
 .badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
 .badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
-.badge-amber { background: rgba(245,158,11,.15);  color: #fbbf24; }
-.badge-red   { background: rgba(239,68,68,.15);   color: #fca5a5; }
+.badge-amber { background: rgba(245,158,11,.15);  color: var(--warn-soft); }
+.badge-red   { background: rgba(239,68,68,.15);   color: var(--danger-soft); }
 
 /* ── Keyboard Shortcut ── */
 .kbd {
@@ -228,9 +238,9 @@ body {
   padding: 14px 16px;
   margin-top: 14px;
   font-size: .86rem;
-  color: #fbbf24;
+  color: var(--warn-soft);
 }
-.warn-box strong { color: #fbbf24; }
+.warn-box strong { color: var(--warn-soft); }
 
 /* ── Combo Section ── */
 .combo-section {
@@ -298,7 +308,7 @@ body {
   background: rgba(245,158,11,.06);
   border: 1px solid rgba(245,158,11,.15);
   font-size: .82rem;
-  color: #fbbf24;
+  color: var(--warn-soft);
   font-style: italic;
 }
 
@@ -363,7 +373,7 @@ body {
 .quiz-option.wrong {
   background: rgba(239,68,68,.1);
   border-color: rgba(239,68,68,.3);
-  color: #fca5a5;
+  color: var(--danger-soft);
 }
 .quiz-option:disabled { cursor: default; opacity: .85; }
 .quiz-feedback {
@@ -374,7 +384,7 @@ body {
 }
 .quiz-feedback.show { display: block; }
 .quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
-.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: #fca5a5; }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: var(--danger-soft); }
 
 .quiz-score {
   text-align: center; padding: 20px;
@@ -469,7 +479,7 @@ body {
 .ce-result { flex: 1.2; font-weight: 500; }
 .result-a { color: var(--key-soft); }
 .result-b { color: var(--success-soft); }
-.result-c { color: #fbbf24; }
+.result-c { color: var(--warn-soft); }
 </style>
 </head>
 <body>
