@@ -52,3 +52,12 @@
     }
   }
 })();
+
+// Mobile rail toggle
+window.toggleMobileRail = function () {
+  var rail = document.querySelector('.rail');
+  var overlay = document.getElementById('railOverlay');
+  if (!rail) return;
+  var isOpen = rail.classList.toggle('is-mobile-open');
+  if (overlay) overlay.classList.toggle('is-active', isOpen);
+};
