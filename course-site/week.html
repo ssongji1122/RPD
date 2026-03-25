@@ -2110,15 +2110,36 @@
 <body data-tab="class">
   <div class="page-shell" id="pageShell">
 
-    <!-- Topbar — tabs + theme only -->
+    <!-- Topbar — centered tabs + theme toggle -->
     <header class="topbar">
-      <div class="topbar-inner">
+      <div class="topbar-inner" style="justify-content: center; position: relative;">
+        <!-- Hidden from view but accessible to JS -->
+        <div class="brand-left" style="display:none;">
+          <button class="sidebar-toggle" id="sidebarToggle" aria-label="목차 열기" type="button"></button>
+          <a class="brand" id="brandLink" href="index.html" style="text-decoration:none;color:inherit;">
+            <div class="brand-badge" id="brandBadge">—</div>
+            <div class="brand-copy">
+              <strong id="brandTitle"></strong>
+              <span id="brandMeta"></span>
+            </div>
+          </a>
+        </div>
         <div class="app-tabs">
           <a href="/index.html" class="app-tab" data-tab-target="archive">Archive</a>
           <a href="/inha.html" class="app-tab" data-tab-target="class">Class</a>
           <a href="/studio.html" class="app-tab" data-tab-target="studio">My Studio</a>
         </div>
-        <div class="topbar-right">
+        <div class="topbar-right" style="position: absolute; right: 0;">
+          <div class="topbar-actions rpd-topbar-actions" style="display:none;">
+            <div id="langSwitcher"></div>
+            <span class="student-badge" id="studentBadge"><span id="studentBadgeName"></span></span>
+          </div>
+          <div class="progress-widget" style="display:none;">
+            <div class="progress-label" id="progressLabel"></div>
+            <div class="progress-track" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
+            <div class="progress-count" id="progressCount"></div>
+            <button class="btn btn-ghost" id="resetBtn" type="button"></button>
+          </div>
           <button class="theme-toggle" id="themeToggle" type="button" aria-label="테마 전환">
             <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
             <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
@@ -2126,19 +2147,6 @@
         </div>
       </div>
     </header>
-    <!-- Hidden elements kept for JS compatibility -->
-    <div hidden>
-      <div id="langSwitcher"></div>
-      <span id="studentBadge"><span id="studentBadgeName"></span></span>
-      <div id="brandBadge"></div>
-      <strong id="brandTitle"></strong>
-      <span id="brandMeta"></span>
-      <div id="progressLabel"></div>
-      <div id="progressFill"></div>
-      <div id="progressCount"></div>
-      <button id="resetBtn" type="button"></button>
-      <button id="sidebarToggle" type="button"></button>
-    </div>
 
     <!-- Page content = populated by JS -->
     <div class="content-layout rpd-page-layout">
