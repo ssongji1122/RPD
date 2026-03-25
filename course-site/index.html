@@ -12,15 +12,21 @@
   <link rel="stylesheet" href="assets/page-index.css" />
   <script>/* FOUC prevention */ (function(){var t=localStorage.getItem('rpd-theme');if(t)document.documentElement.setAttribute('data-theme',t);var l=localStorage.getItem('rpd-lang');if(l){document.documentElement.lang=l;document.documentElement.setAttribute('data-lang',l);}})()</script>
 </head>
-<body>
+<body data-tab="archive">
   <a href="#main-content" class="skip-link">본문으로 건너뛰기</a>
   <div class="app">
 
     <!-- Topbar -->
     <header class="app-topbar">
       <div class="app-topbar-left">
+        <button class="app-hamburger" onclick="toggleMobileRail()" aria-label="메뉴">☰</button>
         <div class="app-logo">BA</div>
         <div class="app-title">Blender Archive <span>RPD</span></div>
+        <div class="app-tabs">
+          <a href="/index.html" class="app-tab" data-tab-target="archive">Archive</a>
+          <a href="/inha.html" class="app-tab" data-tab-target="class">Class</a>
+          <a href="/studio.html" class="app-tab" data-tab-target="studio">My Studio</a>
+        </div>
       </div>
       <input class="app-search" type="search" placeholder="카드 검색... (Extrude, Boolean, UV...)" />
       <div class="app-topbar-right">
@@ -54,10 +60,20 @@
         <span class="rail-text">단축키</span>
       </a>
       <div class="rail-spacer"></div>
-      <a href="#" class="rail-item">
-        <span class="rail-icon">&#9881;</span>
-        <span class="rail-text">설정</span>
-      </a>
+      <div class="rail-user" id="userProfile" onclick="toggleUserMenu()">
+        <div class="rail-user-avatar" id="userAvatar">👤</div>
+        <div class="rail-user-info">
+          <div class="rail-user-name" id="userName">게스트</div>
+          <div class="rail-user-role" id="userRole">로그인하세요</div>
+        </div>
+        <div class="rail-user-menu" id="userMenu">
+          <a href="/studio.html#settings" class="rail-user-menu-item">⚙ 설정</a>
+          <a href="/studio.html#progress" class="rail-user-menu-item">📊 내 진도</a>
+          <div class="rail-user-menu-divider"></div>
+          <a href="/admin.html" class="rail-user-menu-item" data-admin>🔧 관리자 패널</a>
+          <button class="rail-user-menu-item" onclick="changeUserName()">✏️ 이름 변경</button>
+        </div>
+      </div>
       <button class="rail-toggle" id="railToggle">
         <span class="rail-toggle-arrow">&#9654;</span>
         <span class="rail-text">접기</span>
@@ -119,8 +135,11 @@
         </footer>
       </div>
     </main>
+    <div class="rail-overlay" id="railOverlay" onclick="toggleMobileRail()"></div>
   </div>
 
+  <script src="assets/tab-system.js"></script>
+  <script src="assets/user-profile.js"></script>
   <script src="data/i18n-content.js?v=20260318e"></script>
   <script src="assets/i18n.js?v=20260318d"></script>
   <script src="assets/site-shell.js?v=20260318a"></script>

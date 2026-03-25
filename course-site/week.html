@@ -2091,13 +2091,14 @@
   <link rel="stylesheet" href="assets/meta.css?v=20260318a" />
   <link rel="stylesheet" href="assets/chrome.css?v=20260318a" />
 </head>
-<body>
+<body data-tab="class">
   <div class="page-shell" id="pageShell">
 
     <!-- Topbar (populated by JS) -->
     <header class="topbar">
       <div class="topbar-inner">
         <div class="brand-left">
+          <button class="app-hamburger" onclick="toggleMobileRail()" aria-label="메뉴">☰</button>
           <button class="sidebar-toggle" id="sidebarToggle" aria-label="목차 열기" type="button">
             <svg width="18" height="14" viewBox="0 0 18 14" fill="none" xmlns="http://www.w3.org/2000/svg">
               <rect y="0"  width="18" height="1.6" rx="0.8" fill="currentColor"/>
@@ -2112,6 +2113,11 @@
               <span id="brandMeta">Robot Product Design · 2026</span>
             </div>
           </a>
+        </div>
+        <div class="app-tabs">
+          <a href="/index.html" class="app-tab" data-tab-target="archive">Archive</a>
+          <a href="/inha.html" class="app-tab" data-tab-target="class">Class</a>
+          <a href="/studio.html" class="app-tab" data-tab-target="studio">My Studio</a>
         </div>
         <div class="topbar-right">
           <div class="topbar-actions rpd-topbar-actions">
@@ -2223,8 +2229,11 @@
         <button class="guest-btn" id="guestBrowseBtn" type="button" onclick="loginAsGuest()">바로 둘러보기</button>
       </div>
     </div>
+    <div class="rail-overlay" id="railOverlay" onclick="toggleMobileRail()"></div>
   </div>
 
+  <script src="assets/tab-system.js"></script>
+  <script src="assets/user-profile.js"></script>
   <script src="data/i18n-content.js?v=20260318e"></script>
   <script src="assets/i18n.js?v=20260318t"></script>
   <script src="assets/site-shell.js?v=20260318a"></script>
