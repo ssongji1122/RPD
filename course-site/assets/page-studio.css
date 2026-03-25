@@ -1,0 +1,73 @@
+/* course-site/assets/page-studio.css
+   My Studio page styles */
+
+.studio-header {
+  margin-bottom: 32px;
+}
+.studio-title {
+  font-size: var(--type-hero);
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  letter-spacing: -.03em;
+  margin: 0;
+}
+.studio-desc {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: .92rem;
+  line-height: 1.6;
+}
+
+.studio-section {
+  margin-bottom: 48px;
+}
+.studio-section-title {
+  font-size: var(--type-section);
+  font-weight: var(--fw-semi);
+  letter-spacing: -.02em;
+  margin: 0 0 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+/* Empty state */
+.studio-empty-state {
+  display: grid;
+  place-items: center;
+  gap: 8px;
+  padding: 48px 24px;
+  text-align: center;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.studio-empty-icon {
+  font-size: 2rem;
+  opacity: .6;
+}
+.studio-empty-text {
+  margin: 0;
+  color: var(--muted-strong);
+  font-size: .92rem;
+  font-weight: var(--fw-medium);
+}
+.studio-empty-hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: .82rem;
+}
+.studio-create-btn {
+  margin-top: 12px;
+}
+
+/* Placeholder sections */
+.studio-progress-placeholder,
+.studio-settings-placeholder {
+  padding: 32px 24px;
+  text-align: center;
+  color: var(--muted);
+  font-size: .88rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
