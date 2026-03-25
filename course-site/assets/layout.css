@@ -147,8 +147,14 @@
 }
 .rail-item .rail-icon {
   width: 20px;
-  text-align: center;
+  height: 20px;
+  display: grid;
+  place-items: center;
   flex-shrink: 0;
+}
+.rail-item .rail-icon svg {
+  width: 18px;
+  height: 18px;
 }
 .rail-item .rail-text {
   font-size: .82rem;
@@ -290,6 +296,10 @@
   font-size: .72rem;
   color: var(--key-soft);
   flex-shrink: 0;
+}
+.rail-user-avatar svg {
+  width: 16px;
+  height: 16px;
 }
 .rail-user-info {
   min-width: 0;
