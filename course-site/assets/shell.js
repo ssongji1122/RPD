@@ -30,26 +30,22 @@
     return node;
   }
 
-  // --- Topbar ---
-  var topbar = el('header', { className: 'app-topbar' }, [
-    el('div', { className: 'app-topbar-left' }, [
-      el('button', { className: 'app-hamburger', onclick: 'toggleMobileRail()', 'aria-label': '메뉴', textContent: '☰' }),
-      el('a', { className: 'app-logo', href: '/index.html', textContent: 'BA' }),
-      el('span', { className: 'app-title' }, [
-        document.createTextNode('Blender Archive '),
-        el('span', { textContent: 'RPD' })
-      ]),
-      el('div', { className: 'app-tabs' }, [
-        el('a', { className: 'app-tab', href: '/index.html', 'data-tab-target': 'archive', textContent: 'Archive' }),
-        el('a', { className: 'app-tab', href: '/inha.html', 'data-tab-target': 'class', textContent: 'Class' }),
-        el('a', { className: 'app-tab', href: '/studio.html', 'data-tab-target': 'studio', textContent: 'My Studio' })
-      ])
-    ]),
-    el('div', { className: 'app-topbar-right' }, [
-      el('input', { className: 'app-search', type: 'search', placeholder: '검색...' }),
-      el('button', { className: 'theme-toggle', onclick: 'toggleTheme()', 'aria-label': '테마 전환', textContent: '🌙' })
-    ])
-  ]);
+  // --- Topbar — centered tabs + theme toggle ---
+  var topbar = el('header', { className: 'app-topbar' });
+  topbar.style.justifyContent = 'center';
+  topbar.style.position = 'relative';
+
+  topbar.appendChild(el('div', { className: 'app-tabs' }, [
+    el('a', { className: 'app-tab', href: '/index.html', 'data-tab-target': 'archive', textContent: 'Archive' }),
+    el('a', { className: 'app-tab', href: '/inha.html', 'data-tab-target': 'class', textContent: 'Class' }),
+    el('a', { className: 'app-tab', href: '/studio.html', 'data-tab-target': 'studio', textContent: 'My Studio' })
+  ]));
+
+  var topbarRight = el('div', { className: 'app-topbar-right' });
+  topbarRight.style.position = 'absolute';
+  topbarRight.style.right = '20px';
+  topbarRight.appendChild(el('button', { className: 'theme-toggle', onclick: 'toggleTheme()', 'aria-label': '테마 전환', textContent: '🌙' }));
+  topbar.appendChild(topbarRight);
 
   // --- Rail content per tab ---
   function createRailItems(tab) {
