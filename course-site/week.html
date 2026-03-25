@@ -10,6 +10,22 @@
   <link rel="stylesheet" href="assets/components.css" />
   <script>/* FOUC prevention */ (function(){var t=localStorage.getItem('rpd-theme');if(t)document.documentElement.setAttribute('data-theme',t);var l=localStorage.getItem('rpd-lang');if(l){document.documentElement.lang=l;document.documentElement.setAttribute('data-lang',l);}})()</script>
   <style>
+    /* ── Tab bar (shared with layout.css) ── */
+    .app-tabs {
+      display: flex; align-items: center; gap: 2px;
+      background: var(--surface); border: 1px solid var(--line);
+      border-radius: var(--radius); padding: 3px;
+    }
+    .app-tab {
+      padding: 6px 16px; border-radius: calc(var(--radius) - 2px);
+      border: none; background: transparent; color: var(--muted);
+      font: inherit; font-size: .82rem; font-weight: var(--fw-medium);
+      cursor: pointer; transition: color .14s, background .14s;
+      text-decoration: none; white-space: nowrap;
+    }
+    .app-tab:hover { color: var(--text); background: var(--overlay-white-hover); }
+    .app-tab.is-active { color: var(--text); background: var(--overlay-white); box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+
     /* ── Week-page specific styles ── */
     #pageContent > .content-block {
       padding: 0;
@@ -642,14 +658,16 @@
     .sidebar-toggle:hover { background: var(--overlay-white-hover); color: var(--text); }
 
     .brand-left { display: flex; align-items: center; gap: 10px; }
+    .topbar-inner {
+      justify-content: center;
+      position: relative;
+    }
     .topbar-right {
       display: flex;
       align-items: center;
-      justify-content: flex-end;
       gap: 12px;
-      flex: 1;
-      min-width: 0;
-      margin-left: auto;
+      position: absolute;
+      right: 0;
     }
     .topbar-right .topbar-actions {
       justify-content: flex-end;
@@ -2091,45 +2109,43 @@
   <link rel="stylesheet" href="assets/meta.css?v=20260318a" />
   <link rel="stylesheet" href="assets/chrome.css?v=20260318a" />
 </head>
-<body>
+<body data-tab="class">
   <div class="page-shell" id="pageShell">
 
-    <!-- Topbar (populated by JS) -->
+    <!-- Topbar — centered tabs + theme toggle -->
     <header class="topbar">
       <div class="topbar-inner">
-        <div class="brand-left">
-          <button class="sidebar-toggle" id="sidebarToggle" aria-label="목차 열기" type="button">
-            <svg width="18" height="14" viewBox="0 0 18 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect y="0"  width="18" height="1.6" rx="0.8" fill="currentColor"/>
-              <rect y="6"  width="12" height="1.6" rx="0.8" fill="currentColor"/>
-              <rect y="12" width="18" height="1.6" rx="0.8" fill="currentColor"/>
-            </svg>
-          </button>
+        <!-- Hidden from view but accessible to JS -->
+        <div class="brand-left" style="display:none;">
+          <button class="sidebar-toggle" id="sidebarToggle" aria-label="목차 열기" type="button"></button>
           <a class="brand" id="brandLink" href="index.html" style="text-decoration:none;color:inherit;">
             <div class="brand-badge" id="brandBadge">—</div>
             <div class="brand-copy">
-              <strong id="brandTitle">불러오는 중...</strong>
-              <span id="brandMeta">Robot Product Design · 2026</span>
+              <strong id="brandTitle"></strong>
+              <span id="brandMeta"></span>
             </div>
           </a>
         </div>
+        <div class="app-tabs">
+          <a href="/index.html" class="app-tab" data-tab-target="archive">Archive</a>
+          <a href="/inha.html" class="app-tab" data-tab-target="class">Class</a>
+          <a href="/studio.html" class="app-tab" data-tab-target="studio">My Studio</a>
+        </div>
         <div class="topbar-right">
-          <div class="topbar-actions rpd-topbar-actions">
+          <div class="topbar-actions rpd-topbar-actions" style="display:none;">
             <div id="langSwitcher"></div>
-            <span class="student-badge" id="studentBadge" title="학생 변경" onclick="switchStudent()">👤 <span id="studentBadgeName"></span></span>
-            <button class="theme-toggle" id="themeToggle" type="button" aria-label="테마 전환">
-              <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-              <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-            </button>
+            <span class="student-badge" id="studentBadge"><span id="studentBadgeName"></span></span>
           </div>
-          <div class="progress-widget">
-            <div class="progress-label" id="progressLabel">진도</div>
-            <div class="progress-track" aria-hidden="true">
-              <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <div class="progress-count" id="progressCount">0 / 0</div>
-            <button class="btn btn-ghost" id="resetBtn" type="button">초기화</button>
+          <div class="progress-widget" style="display:none;">
+            <div class="progress-label" id="progressLabel"></div>
+            <div class="progress-track" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
+            <div class="progress-count" id="progressCount"></div>
+            <button class="btn btn-ghost" id="resetBtn" type="button"></button>
           </div>
+          <button class="theme-toggle" id="themeToggle" type="button" aria-label="테마 전환">
+            <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+            <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          </button>
         </div>
       </div>
     </header>
@@ -2223,8 +2239,11 @@
         <button class="guest-btn" id="guestBrowseBtn" type="button" onclick="loginAsGuest()">바로 둘러보기</button>
       </div>
     </div>
+    <div class="rail-overlay" id="railOverlay" onclick="toggleMobileRail()"></div>
   </div>
 
+  <script src="assets/tab-system.js"></script>
+  <script src="assets/user-profile.js"></script>
   <script src="data/i18n-content.js?v=20260318e"></script>
   <script src="assets/i18n.js?v=20260318t"></script>
   <script src="assets/site-shell.js?v=20260318a"></script>
