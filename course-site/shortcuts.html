@@ -419,6 +419,7 @@
     var modeToastEl = document.getElementById("modeToast");
     var heroMetaLabelEl = document.getElementById("heroMetaLabel");
     var heroMetaEl = document.getElementById("heroMeta");
+    var statsEl = document.getElementById("statsBar");
     var activeFilter = "all";
     var currentView = "list";
     var selectedKeyId = null;
@@ -994,6 +995,7 @@
 
     window.RPDI18n.mountLanguageSwitcher(document.getElementById("langSwitcher"));
     window.RPDI18n.onLanguageChange(renderPage);
+    renderPage();
 
     // Theme toggle
     document.getElementById("themeToggle").addEventListener("click", function() {
