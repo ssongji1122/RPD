@@ -250,6 +250,20 @@
   transform: rotate(180deg);
 }
 
+/* ── Rail context sections ── */
+.rail-context[hidden] { display: none !important; }
+.rail-context {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.rail-context .rail-sub {
+  max-height: none;
+}
+.rail:not(.is-expanded) .rail-context .rail-sub {
+  max-height: 0;
+}
+
 /* ── Main content area ── */
 .main {
   grid-row: 2;
