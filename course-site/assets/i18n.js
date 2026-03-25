@@ -35,7 +35,7 @@
         heroMetaActivePrefix: "현재 조합",
         heroMetaActiveFallback: "활성 주차 준비 중",
         heroPrimaryCta: "현재 주차로 이동",
-        heroSecondaryCta: "카드 라이브러리 열기",
+        heroSecondaryCta: "라이브러리 열기",
         heroTertiaryCta: "단축키 DB 보기",
         archiveSectionEyebrow: "Archive Layers",
         archiveSectionTitle: "아카이브는 공통 빌딩블록만 모아둡니다",
