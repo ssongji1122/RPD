@@ -658,14 +658,16 @@
     .sidebar-toggle:hover { background: var(--overlay-white-hover); color: var(--text); }
 
     .brand-left { display: flex; align-items: center; gap: 10px; }
+    .topbar-inner {
+      justify-content: center;
+      position: relative;
+    }
     .topbar-right {
       display: flex;
       align-items: center;
-      justify-content: flex-end;
       gap: 12px;
-      flex: 1;
-      min-width: 0;
-      margin-left: auto;
+      position: absolute;
+      right: 0;
     }
     .topbar-right .topbar-actions {
       justify-content: flex-end;
@@ -2112,7 +2114,7 @@
 
     <!-- Topbar — centered tabs + theme toggle -->
     <header class="topbar">
-      <div class="topbar-inner" style="justify-content: center; position: relative;">
+      <div class="topbar-inner">
         <!-- Hidden from view but accessible to JS -->
         <div class="brand-left" style="display:none;">
           <button class="sidebar-toggle" id="sidebarToggle" aria-label="목차 열기" type="button"></button>
@@ -2129,7 +2131,7 @@
           <a href="/inha.html" class="app-tab" data-tab-target="class">Class</a>
           <a href="/studio.html" class="app-tab" data-tab-target="studio">My Studio</a>
         </div>
-        <div class="topbar-right" style="position: absolute; right: 0;">
+        <div class="topbar-right">
           <div class="topbar-actions rpd-topbar-actions" style="display:none;">
             <div id="langSwitcher"></div>
             <span class="student-badge" id="studentBadge"><span id="studentBadgeName"></span></span>

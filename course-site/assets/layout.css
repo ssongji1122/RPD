@@ -17,9 +17,10 @@
   grid-column: 1 / -1;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  position: relative;
   gap: 16px;
-  padding: 10px 20px 10px 0;
+  padding: 10px 20px;
   border-bottom: 1px solid var(--line);
   background: var(--bg);
   position: sticky;
@@ -69,6 +70,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  position: absolute;
+  right: 20px;
 }
 
 /* ── Tab bar (inside topbar) ── */
