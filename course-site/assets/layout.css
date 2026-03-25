@@ -264,6 +264,99 @@
   max-height: 0;
 }
 
+/* ── User profile (bottom of rail) ── */
+.rail-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--line);
+  cursor: pointer;
+  transition: background .14s;
+  border-radius: var(--radius-sm);
+  position: relative;
+  flex-shrink: 0;
+}
+.rail-user:hover {
+  background: var(--overlay-white-hover);
+}
+.rail-user-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-pill);
+  background: var(--glass-accent);
+  display: grid;
+  place-items: center;
+  font-size: .72rem;
+  color: var(--key-soft);
+  flex-shrink: 0;
+}
+.rail-user-info {
+  min-width: 0;
+  opacity: 0;
+  transition: opacity .15s;
+}
+.rail.is-expanded .rail-user-info {
+  opacity: 1;
+}
+.rail-user-name {
+  font-size: .82rem;
+  font-weight: var(--fw-semi);
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rail-user-role {
+  font-size: .68rem;
+  color: var(--muted);
+}
+
+/* User dropdown menu */
+.rail-user-menu {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  margin-bottom: 6px;
+  background: var(--surface-strong);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  padding: 4px;
+  display: none;
+  z-index: 60;
+  min-width: 180px;
+  box-shadow: 0 -8px 24px rgba(0,0,0,.18);
+}
+.rail-user-menu.is-open { display: block; }
+.rail-user-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: calc(var(--radius) - 2px);
+  color: var(--muted-strong);
+  font-size: .8rem;
+  cursor: pointer;
+  transition: background .14s, color .14s;
+  text-decoration: none;
+  border: none;
+  background: none;
+  width: 100%;
+  font: inherit;
+}
+.rail-user-menu-item:hover {
+  color: var(--text);
+  background: var(--overlay-white-hover);
+}
+.rail-user-menu-divider {
+  height: 1px;
+  background: var(--line);
+  margin: 4px 0;
+}
+.rail-user-menu-item[data-admin] { display: none; }
+body[data-role="admin"] .rail-user-menu-item[data-admin] { display: flex; }
+
 /* ── Main content area ── */
 .main {
   grid-row: 2;
