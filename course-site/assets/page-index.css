@@ -538,6 +538,19 @@
   .hero h1 {
     font-size: var(--type-hero);
   }
+  .hero-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .hero-actions .btn {
+    justify-content: center;
+    text-align: center;
+  }
+  .hero-actions .btn-link {
+    grid-column: 1 / -1;
+    justify-content: center;
+  }
   .archive-grid {
     grid-template-columns: 1fr;
   }
