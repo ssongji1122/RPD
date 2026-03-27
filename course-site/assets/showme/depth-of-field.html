@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — Depth of Field 이해</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --danger-soft:   #fca5a5;
+  --warn-soft:     #fbbf24;
+  --warn-medium:   #fcd34d;
+  --accent-soft:   #FFB347;
+  --secondary-soft:#a5b4fc;
+  --secondary-mid: #c4b5fd;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --muted-mid:     #94a3b8;
+  --muted-soft:    #cbd5e1;
+  --muted-dim:     #64748b;
+  --info-soft:     #67e8f9;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 0; font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+.tabs { display: flex; gap: 0; border-bottom: 1px solid var(--line); padding: 0 16px; background: var(--bg-soft); overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { padding: 12px 16px; font-size: .84rem; font-weight: 500; color: var(--muted); cursor: pointer; border: none; border-bottom: 2px solid transparent; white-space: nowrap; transition: color .14s, border-color .14s; background: none; font-family: inherit; }
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active { color: var(--key-soft); border-bottom-color: var(--key); }
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+.concept-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.concept-card { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); padding: 18px; }
+.concept-card h3 { margin: 0 0 8px; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+.concept-card p { margin: 0; color: var(--muted-strong); font-size: .88rem; line-height: 1.7; }
+.concept-card ul { margin: 8px 0 0; padding-left: 16px; color: var(--muted-strong); font-size: .85rem; line-height: 1.8; }
+.badge { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: .72rem; font-weight: 600; }
+.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: var(--warn-soft); }
+.kbd { display: inline-block; padding: 3px 8px; border-radius: 6px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); color: var(--key-soft); font-size: .82rem; font-weight: 600; font-family: var(--font); }
+.demo-wrap { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); overflow: hidden; margin: 14px 0; }
+.demo-wrap canvas { display: block; width: 100%; }
+.modifier-panel { padding: 12px 16px; border-top: 1px solid var(--line); display: grid; gap: 10px; }
+.param-row { display: grid; grid-template-columns: 120px 1fr 54px; align-items: center; gap: 10px; font-size: .84rem; color: var(--muted-strong); }
+.param-row input[type=range] { width: 100%; accent-color: var(--key); }
+.param-row input[type=number] { width: 54px; padding: 3px 6px; border-radius: 6px; border: 1px solid var(--line-strong); background: rgba(255,255,255,.06); color: var(--text); font: inherit; font-size: .82rem; text-align: center; }
+.demo-hint { font-size: .78rem; color: var(--muted); text-align: center; padding: 6px 12px; }
+.usage-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.usage-card { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); padding: 16px; }
+.usage-card h4 { margin: 0 0 8px; font-size: .92rem; color: var(--key-soft); }
+.usage-card ul { margin: 0; padding-left: 16px; color: var(--muted-strong); font-size: .85rem; line-height: 1.8; }
+.tip-box { border-radius: var(--radius-md); border: 1px solid rgba(10,132,255,.2); background: rgba(10,132,255,.06); padding: 14px 16px; margin-top: 14px; font-size: .86rem; color: var(--muted-strong); }
+.tip-box strong { color: var(--key-soft); }
+.combo-section { margin-top: 18px; }
+.combo-section h4 { margin: 0 0 10px; font-size: .92rem; color: var(--text); }
+.combo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.combo-card { border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--surface); padding: 12px 14px; }
+.combo-card .combo-name { font-size: .86rem; font-weight: 600; color: var(--key-soft); margin-bottom: 4px; }
+.combo-card .combo-desc { font-size: .8rem; color: var(--muted); line-height: 1.5; }
+.shortcut-list { margin-top: 16px; padding: 14px 16px; border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); }
+.shortcut-list h4 { margin: 0 0 10px; font-size: .9rem; color: var(--text); }
+.shortcut-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-size: .84rem; color: var(--muted-strong); }
+.shortcut-row + .shortcut-row { border-top: 1px solid var(--line); }
+.shortcut-keys { flex-shrink: 0; }
+.analogy { margin-top: 8px; padding: 10px 14px; border-radius: var(--radius-sm); background: rgba(245,158,11,.06); border: 1px solid rgba(245,158,11,.15); font-size: .82rem; color: var(--warn-soft); font-style: italic; }
+.quiz-progress { font-size: .78rem; color: var(--muted); margin-bottom: 12px; }
+.quiz-question { margin-bottom: 20px; padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); }
+.quiz-question h4 { margin: 0 0 12px; font-size: .94rem; }
+.quiz-option { display: block; width: 100%; padding: 10px 14px; margin-bottom: 6px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: rgba(255,255,255,.025); color: var(--text); font: inherit; font-size: .86rem; cursor: pointer; text-align: left; transition: background .14s, border-color .14s; }
+.quiz-option:hover { background: rgba(255,255,255,.06); border-color: var(--line-strong); }
+.quiz-option.correct { background: rgba(16,185,129,.12); border-color: rgba(16,185,129,.4); color: var(--success-soft); }
+.quiz-option.wrong { background: rgba(239,68,68,.1); border-color: rgba(239,68,68,.3); color: var(--danger-soft); }
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback { margin-top: 8px; padding: 10px 14px; border-radius: var(--radius-sm); font-size: .84rem; display: none; }
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: var(--danger-soft); }
+.quiz-score { text-align: center; padding: 20px; font-size: 1.1rem; font-weight: 600; }
+.quiz-score-pass   { color: var(--success-soft); }
+.quiz-score-fail   { color: var(--danger-soft); }
+.quiz-score-detail { color: var(--muted); font-weight: 400; font-size: .8rem; display: block; margin-top: 4px; }
+.quiz-retry { display: block; margin: 12px auto; padding: 10px 24px; border-radius: 999px; border: 1px solid var(--key); background: rgba(10,132,255,.12); color: var(--key-soft); font: inherit; font-size: .88rem; cursor: pointer; transition: background .14s; }
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+.doc-ref { margin-top: 16px; padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid rgba(10,132,255,.15); background: rgba(10,132,255,.04); display: flex; align-items: center; gap: 8px; }
+.doc-ref a { color: var(--key-soft); font-size: .84rem; text-decoration: none; line-height: 1.5; }
+.doc-ref a:hover { text-decoration: underline; }
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Tab Bar ── -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" role="tab" aria-selected="true"  data-tab="concept">개념 이해</button>
+  <button class="tab"           role="tab" aria-selected="false" data-tab="interact">인터랙션</button>
+  <button class="tab"           role="tab" aria-selected="false" data-tab="when">언제 쓰나요?</button>
+  <button class="tab"           role="tab" aria-selected="false" data-tab="quiz">퀴즈</button>
+</nav>
+
+<!-- ════════════════════════════════════════════
+     TAB 1 — 개념 이해
+     ════════════════════════════════════════════ -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+
+  <div class="concept-grid">
+
+    <div class="concept-card">
+      <h3><span>🎥</span> Depth of Field란?</h3>
+      <p>카메라의 초점이 맞는 거리 범위입니다. 이 범위 안에 있는 피사체는 선명하게, 범위 밖은 흐릿하게(보케) 렌더됩니다.</p>
+      <div class="analogy">DSLR 카메라의 조리개 설정과 동일한 원리입니다. f-Stop = 조리개 크기, Focus Distance = AF 초점거리.</div>
+    </div>
+
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">Focus Distance</span></h3>
+      <p>카메라에서 초점이 맞는 거리(m 단위)입니다. 이 거리에 있는 피사체만 완전히 선명하게 렌더됩니다.</p>
+      <ul>
+        <li>숫자가 클수록 먼 곳에 초점</li>
+        <li>숫자 직접 입력 또는 슬라이더로 조정</li>
+        <li>Focus Object를 지정해 동적 추적도 가능</li>
+      </ul>
+    </div>
+
+    <div class="concept-card">
+      <h3><span class="badge badge-amber">f-Stop (조리개)</span></h3>
+      <p>낮을수록 초점 범위가 좁아집니다(심도가 얕아집니다). 강한 아웃포커싱 효과를 줍니다.</p>
+      <ul>
+        <li><strong>f/1.4</strong> — 배경 거의 다 흐림 (인물/제품 촬영)</li>
+        <li><strong>f/8</strong> — 어느 정도 심도 있음 (풍경 사진)</li>
+        <li><strong>f/22</strong> — 전체가 대부분 선명</li>
+      </ul>
+    </div>
+
+    <div class="concept-card">
+      <h3><span class="badge badge-green">Blades (보케 모양)</span></h3>
+      <p>보케의 형태를 결정합니다. 실제 카메라 조리개 날 수를 시뮬레이션합니다.</p>
+      <ul>
+        <li><strong>0</strong> — 원형 보케</li>
+        <li><strong>6</strong> — 육각형 보케</li>
+        <li><strong>8</strong> — 팔각형 보케</li>
+      </ul>
+    </div>
+
+    <div class="concept-card">
+      <h3>렌더 엔진별 차이</h3>
+      <p><strong style="color:var(--key-soft)">Cycles</strong> — 물리 기반 DOF. 사실적이지만 f-Stop이 낮으면 노이즈 증가 → 샘플 수를 늘려야 합니다.</p>
+      <p style="margin-top:8px"><strong style="color:var(--secondary-mid)">EEVEE</strong> — 후처리(Post Processing) 방식. 빠르지만 픽셀리(pixelated)할 수 있음 → DOF 샘플 수 증가로 해결.</p>
+    </div>
+
+    <div class="concept-card">
+      <h3>활성화 방법</h3>
+      <div class="shortcut-row" style="border:none; padding:4px 0;">
+        <span class="shortcut-keys"><span class="kbd">Properties</span></span>
+        <span>녹색 카메라 아이콘 패널 열기</span>
+      </div>
+      <div class="shortcut-row" style="border-top:1px solid var(--line); padding:4px 0; margin-top:4px;">
+        <span class="shortcut-keys"><span class="kbd">Depth of Field</span></span>
+        <span>체크박스로 활성화</span>
+      </div>
+      <div class="shortcut-row" style="border-top:1px solid var(--line); padding:4px 0; margin-top:4px;">
+        <span class="shortcut-keys"><span class="kbd">Focus Distance</span></span>
+        <span>초점 거리 입력 (m)</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="doc-ref">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--key-soft);flex-shrink:0"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+    <a href="https://docs.blender.org/manual/en/latest/render/cameras.html#depth-of-field" target="_blank" rel="noopener">
+      Blender 공식 문서 — Depth of Field
+    </a>
+  </div>
+
+</section>
+
+<!-- ════════════════════════════════════════════
+     TAB 2 — 인터랙션 (Canvas)
+     ════════════════════════════════════════════ -->
+<section class="panel" id="panel-interact" role="tabpanel">
+
+  <div class="demo-wrap">
+    <canvas id="dofCanvas" width="600" height="280"></canvas>
+    <div class="modifier-panel">
+      <div class="param-row">
+        <label for="sliderFocus">Focus Distance</label>
+        <input type="range" id="sliderFocus" min="1" max="15" step="0.1" value="5">
+        <input type="number" id="numFocus" min="1" max="15" step="0.1" value="5">
+      </div>
+      <div class="param-row">
+        <label for="sliderFStop">f-Stop</label>
+        <input type="range" id="sliderFStop" min="1.4" max="22" step="0.1" value="2.8">
+        <input type="number" id="numFStop" min="1.4" max="22" step="0.1" value="2.8">
+      </div>
+    </div>
+    <div class="demo-hint">슬라이더를 움직여 초점 거리와 f-Stop에 따른 심도 변화를 확인하세요.</div>
+  </div>
+
+</section>
+
+<!-- ════════════════════════════════════════════
+     TAB 3 — 언제 쓰나요?
+     ════════════════════════════════════════════ -->
+<section class="panel" id="panel-when" role="tabpanel">
+
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>제품 / 인물 촬영 연출</h4>
+      <ul>
+        <li>주인공 오브젝트만 선명하게</li>
+        <li>배경을 보케로 흐릿하게 처리</li>
+        <li>낮은 f-Stop(f/1.4~f/2.8) 사용</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>시네마틱 장면 연출</h4>
+      <ul>
+        <li>영화 같은 피사계 심도 표현</li>
+        <li>카메라 이동에 따른 Focus Pull 애니메이션</li>
+        <li>Cycles 렌더로 사실적인 보케</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>배경 강조 분리</h4>
+      <ul>
+        <li>복잡한 배경에서 주요 오브젝트 돋보이게</li>
+        <li>스토리 포인트를 시선으로 유도</li>
+        <li>조명과 함께 사용 시 효과 극대화</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>주의사항 / 흔한 실수</h4>
+      <ul>
+        <li>EEVEE 픽셀리 → DOF 샘플 수 증가</li>
+        <li>Focus Distance 미확인으로 엉뚱한 초점</li>
+        <li>Cycles f-Stop 낮음 → 샘플 수 늘려야</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="combo-section">
+    <h4>함께 쓰면 좋은 설정</h4>
+    <div class="combo-grid">
+      <div class="combo-card">
+        <div class="combo-name">Focus Object</div>
+        <div class="combo-desc">특정 오브젝트를 지정해 자동으로 초점 추적. 애니메이션에 유용.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Camera &gt; Lens</div>
+        <div class="combo-desc">Focal Length(mm)를 높이면 압축 효과와 함께 DOF가 더 강조됨.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Compositor &gt; Defocus</div>
+        <div class="combo-desc">후처리 단계에서 DOF를 더 세밀하게 제어할 수 있음.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">EEVEE — Post Processing</div>
+        <div class="combo-desc">Render Properties &gt; Post Processing에서 DOF 샘플 수 조정.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>팁:</strong> 애니메이션에서 Focus Distance를 키프레임으로 등록하면, 피사체가 이동할 때 초점이 따라가는 Focus Pull 효과를 연출할 수 있습니다.
+  </div>
+
+  <div class="doc-ref">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--key-soft);flex-shrink:0"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+    <a href="https://docs.blender.org/manual/en/latest/render/cameras.html#depth-of-field" target="_blank" rel="noopener">
+      Blender 공식 문서 — Depth of Field
+    </a>
+  </div>
+
+</section>
+
+<!-- ════════════════════════════════════════════
+     TAB 4 — 퀴즈
+     ════════════════════════════════════════════ -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizContainer"></div>
+</section>
+
+<script>
+/* ── Tab switching ── */
+document.querySelectorAll('.tab').forEach(function(tab) {
+  tab.addEventListener('click', function() { switchTab(tab.dataset.tab); });
+  tab.addEventListener('touchend', function(e) { e.preventDefault(); switchTab(tab.dataset.tab); });
+});
+
+function switchTab(id) {
+  document.querySelectorAll('.tab').forEach(function(t) {
+    t.classList.toggle('is-active', t.dataset.tab === id);
+    t.setAttribute('aria-selected', String(t.dataset.tab === id));
+  });
+  document.querySelectorAll('.panel').forEach(function(p) {
+    p.classList.toggle('is-active', p.id === 'panel-' + id);
+  });
+  if (id === 'interact') initCanvas();
+}
+
+/* ══════════════════════════════════════════════
+   CANVAS — Depth of Field Visualizer
+   ══════════════════════════════════════════════ */
+var canvasInited = false;
+
+function initCanvas() {
+  if (canvasInited) return;
+  canvasInited = true;
+
+  var canvas = document.getElementById('dofCanvas');
+  var ctx    = canvas.getContext('2d');
+
+  var sliderFocus = document.getElementById('sliderFocus');
+  var numFocus    = document.getElementById('numFocus');
+  var sliderFStop = document.getElementById('sliderFStop');
+  var numFStop    = document.getElementById('numFStop');
+
+  function bindPair(slider, num) {
+    slider.addEventListener('input', function() { num.value = slider.value; });
+    num.addEventListener('input', function() {
+      var v = Math.min(Math.max(parseFloat(num.value) || parseFloat(num.min), parseFloat(num.min)), parseFloat(num.max));
+      slider.value = v;
+      num.value    = v;
+    });
+    slider.addEventListener('touchend', function(e) { e.stopPropagation(); });
+  }
+  bindPair(sliderFocus, numFocus);
+  bindPair(sliderFStop, numFStop);
+
+  var SCENE_LEFT  = 60;
+  var SCENE_RIGHT = 560;
+  var CANVAS_W    = 600;
+  var CANVAS_H    = 280;
+  var HORIZON_Y   = 160;
+
+  function distToX(m) {
+    return SCENE_LEFT + ((m - 1) / (15 - 1)) * (SCENE_RIGHT - SCENE_LEFT);
+  }
+
+  var objects = [
+    { dist: 2,  label: '2m',  color: '#4da6ff', shape: 'box',      name: '파란 박스'    },
+    { dist: 5,  label: '5m',  color: '#ff9a3c', shape: 'sphere',   name: '주황 구'      },
+    { dist: 10, label: '10m', color: '#50e07a', shape: 'cylinder', name: '초록 원기둥'  }
+  ];
+
+  function dofRange(focusDist, fStop) {
+    var k    = focusDist * 0.35;
+    var half = k / fStop;
+    return { near: focusDist - half, far: focusDist + half };
+  }
+
+  function blurAmount(objDist, near, far) {
+    if (objDist >= near && objDist <= far) return 0;
+    var delta = objDist < near ? near - objDist : objDist - far;
+    var range = (far - near) / 2 || 0.5;
+    return Math.min(delta / range, 1);
+  }
+
+  function drawFrame() {
+    var focusDist = parseFloat(sliderFocus.value);
+    var fStop     = parseFloat(sliderFStop.value);
+    var dof       = dofRange(focusDist, fStop);
+
+    ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
+
+    // Background
+    var bg = ctx.createLinearGradient(0, 0, 0, CANVAS_H);
+    bg.addColorStop(0, '#0d1117');
+    bg.addColorStop(1, '#1a1c22');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+
+    // Ground line
+    ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(SCENE_LEFT, HORIZON_Y);
+    ctx.lineTo(SCENE_RIGHT + 20, HORIZON_Y);
+    ctx.stroke();
+
+    // DOF zone band
+    var nearX = Math.max(distToX(dof.near), SCENE_LEFT);
+    var farX  = Math.min(distToX(dof.far),  SCENE_RIGHT);
+    if (farX > nearX) {
+      var bandGrad = ctx.createLinearGradient(nearX, 0, farX, 0);
+      bandGrad.addColorStop(0,   'rgba(10,132,255,0)');
+      bandGrad.addColorStop(0.2, 'rgba(10,132,255,0.07)');
+      bandGrad.addColorStop(0.8, 'rgba(10,132,255,0.07)');
+      bandGrad.addColorStop(1,   'rgba(10,132,255,0)');
+      ctx.fillStyle = bandGrad;
+      ctx.fillRect(nearX, 20, farX - nearX, CANVAS_H - 40);
+    }
+
+    // Focus plane marker
+    var focusX = distToX(focusDist);
+    ctx.save();
+    ctx.strokeStyle = 'rgba(255,60,60,0.85)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 4]);
+    ctx.beginPath();
+    ctx.moveTo(focusX, 18);
+    ctx.lineTo(focusX, CANVAS_H - 18);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+
+    ctx.fillStyle = 'rgba(255,80,80,0.9)';
+    ctx.font = 'bold 11px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('FOCUS', focusX, 14);
+
+    // Camera icon
+    ctx.save();
+    ctx.translate(18, HORIZON_Y - 14);
+    ctx.fillStyle = '#8ec5ff';
+    ctx.fillRect(0, 4, 22, 16);
+    ctx.fillStyle = '#6aa8f0';
+    ctx.beginPath();
+    ctx.arc(22, 12, 7, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#0a0a0a';
+    ctx.beginPath();
+    ctx.arc(22, 12, 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#7ab8e8';
+    ctx.fillRect(6, 0, 10, 5);
+    ctx.restore();
+
+    // Distance ruler ticks
+    ctx.fillStyle = 'rgba(255,255,255,0.25)';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'center';
+    [2, 5, 10].forEach(function(m) {
+      var x = distToX(m);
+      ctx.beginPath();
+      ctx.moveTo(x, HORIZON_Y);
+      ctx.lineTo(x, HORIZON_Y + 8);
+      ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    });
+
+    // Draw objects
+    objects.forEach(function(obj) {
+      var x    = distToX(obj.dist);
+      var blur = blurAmount(obj.dist, dof.near, dof.far);
+      var alpha = 1 - blur * 0.72;
+      var scale = 1 - blur * 0.15;
+
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.translate(x, HORIZON_Y);
+      ctx.scale(scale, scale);
+
+      var passes = blur > 0.05 ? Math.round(blur * 6) + 1 : 1;
+      var spread = blur * 14;
+
+      for (var i = 0; i < passes; i++) {
+        var ox = passes > 1 ? (Math.random() - 0.5) * spread       : 0;
+        var oy = passes > 1 ? (Math.random() - 0.5) * spread * 0.4 : 0;
+        ctx.globalAlpha = alpha / passes;
+
+        if (obj.shape === 'box') {
+          ctx.fillStyle = obj.color;
+          ctx.beginPath();
+          ctx.roundRect(ox - 18, oy - 44, 36, 44, 4);
+          ctx.fill();
+        } else if (obj.shape === 'sphere') {
+          ctx.fillStyle = obj.color;
+          ctx.beginPath();
+          ctx.arc(ox, oy - 22, 22, 0, Math.PI * 2);
+          ctx.fill();
+        } else if (obj.shape === 'cylinder') {
+          ctx.fillStyle = obj.color;
+          ctx.fillRect(ox - 12, oy - 50, 24, 50);
+          ctx.beginPath();
+          ctx.ellipse(ox, oy - 50, 12, 5, 0, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+
+      // Object label
+      ctx.save();
+      ctx.globalAlpha = Math.max(0.4, 1 - blur * 0.6);
+      ctx.fillStyle = obj.color;
+      ctx.font = 'bold 11px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(obj.label, x, HORIZON_Y + 20);
+      ctx.fillText(obj.name,  x, HORIZON_Y + 33);
+      ctx.restore();
+    });
+
+    // HUD
+    ctx.fillStyle = 'rgba(255,255,255,0.7)';
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('Focus: ' + focusDist.toFixed(1) + 'm  |  f/' + fStop.toFixed(1), SCENE_LEFT, CANVAS_H - 10);
+
+    ctx.fillStyle = 'rgba(10,132,255,0.8)';
+    ctx.textAlign = 'right';
+    ctx.fillText('심도 범위: ' + dof.near.toFixed(1) + 'm ~ ' + dof.far.toFixed(1) + 'm', SCENE_RIGHT, CANVAS_H - 10);
+
+    requestAnimationFrame(drawFrame);
+  }
+
+  requestAnimationFrame(drawFrame);
+}
+
+/* ══════════════════════════════════════════════
+   QUIZ
+   ══════════════════════════════════════════════ */
+var questions = [
+  {
+    q: 'f-Stop 값이 낮을수록 아웃포커싱(배경 흐림) 효과는 어떻게 되나요?',
+    options: ['약해진다 (심도가 깊어짐)', '강해진다 (심도가 얕아짐)', '변화 없다', '배경이 더 선명해진다'],
+    answer: 1,
+    feedback: 'f-Stop이 낮을수록 조리개가 더 열려 초점 범위가 좁아집니다 → 강한 아웃포커싱 효과가 납니다.'
+  },
+  {
+    q: '보케 모양을 육각형으로 만들려면 Blades를 몇으로 설정해야 하나요?',
+    options: ['0', '4', '6', '8'],
+    answer: 2,
+    feedback: 'Blades = 6이면 육각형 보케가 생성됩니다. 0은 원형, 8은 팔각형입니다.'
+  },
+  {
+    q: 'Depth of Field의 Focus Distance는 무엇을 나타내나요?',
+    options: [
+      '카메라 렌즈의 Focal Length(mm)',
+      '카메라에서 초점이 맞는 거리 (미터)',
+      '렌더링 샘플 수',
+      '보케의 최대 반경'
+    ],
+    answer: 1,
+    feedback: 'Focus Distance는 카메라 위치에서 초점이 맞는 거리를 미터(m) 단위로 지정합니다.'
+  },
+  {
+    q: 'EEVEE에서 DOF가 픽셀리(pixelated)하게 나올 때 해결 방법은?',
+    options: [
+      'Cycles로 렌더 엔진을 바꾼다',
+      'Post Processing 섹션에서 DOF 샘플 수를 늘린다',
+      'Blades 값을 0으로 설정한다',
+      'Focus Distance를 최대값으로 올린다'
+    ],
+    answer: 1,
+    feedback: 'EEVEE는 후처리 방식이므로 Render Properties > Post Processing에서 DOF 샘플 수를 늘리면 품질이 개선됩니다.'
+  }
+];
+
+function initQuiz(qs) {
+  var container = document.getElementById('quizContainer');
+  var answered  = 0;
+  var score     = 0;
+  var total     = qs.length;
+
+  // Clear container using safe DOM method
+  while (container.firstChild) {
+    container.removeChild(container.firstChild);
+  }
+
+  var progressEl = document.createElement('p');
+  progressEl.className = 'quiz-progress';
+  progressEl.textContent = '총 ' + total + '문항 · 75% 이상 정답 시 통과';
+  container.appendChild(progressEl);
+
+  qs.forEach(function(item, qi) {
+    var block = document.createElement('div');
+    block.className = 'quiz-question';
+
+    var heading = document.createElement('h4');
+    heading.textContent = 'Q' + (qi + 1) + '. ' + item.q;
+    block.appendChild(heading);
+
+    item.options.forEach(function(opt, oi) {
+      var btn = document.createElement('button');
+      btn.className = 'quiz-option';
+      btn.textContent = opt;
+      btn.addEventListener('click',    function() { selectAnswer(btn, oi, item, block); });
+      btn.addEventListener('touchend', function(e) { e.preventDefault(); selectAnswer(btn, oi, item, block); });
+      block.appendChild(btn);
+    });
+
+    var fb = document.createElement('div');
+    fb.className = 'quiz-feedback';
+    block.appendChild(fb);
+    container.appendChild(block);
+  });
+
+  function selectAnswer(btn, chosen, item, block) {
+    var opts = block.querySelectorAll('.quiz-option');
+    if (opts[0].disabled) return;
+
+    opts.forEach(function(b) { b.disabled = true; });
+    var correct = (chosen === item.answer);
+    if (correct) score++;
+    answered++;
+
+    btn.classList.add(correct ? 'correct' : 'wrong');
+    opts[item.answer].classList.add('correct');
+
+    var fb = block.querySelector('.quiz-feedback');
+    fb.textContent = (correct ? '정답입니다! ' : '오답입니다. ') + item.feedback;
+    fb.className   = 'quiz-feedback show ' + (correct ? 'correct-fb' : 'wrong-fb');
+
+    if (answered === total) showResult();
+  }
+
+  function showResult() {
+    var pass = score >= Math.ceil(total * 0.75);
+
+    var scoreEl = document.createElement('div');
+    scoreEl.className = 'quiz-score';
+
+    var scoreSpan = document.createElement('span');
+    scoreSpan.className = pass ? 'quiz-score-pass' : 'quiz-score-fail';
+    scoreSpan.textContent = pass
+      ? '통과! ' + score + '/' + total + ' 정답'
+      : '미통과 ' + score + '/' + total + ' 정답';
+    scoreEl.appendChild(scoreSpan);
+
+    var detail = document.createElement('small');
+    detail.className = 'quiz-score-detail';
+    detail.textContent = pass ? '잘 이해하고 있어요.' : '75% 이상 맞춰야 통과해요.';
+    scoreEl.appendChild(detail);
+
+    container.appendChild(scoreEl);
+
+    var retryBtn = document.createElement('button');
+    retryBtn.className = 'quiz-retry';
+    retryBtn.textContent = '다시 풀기';
+    retryBtn.addEventListener('click',    function() { initQuiz(qs); });
+    retryBtn.addEventListener('touchend', function(e) { e.preventDefault(); initQuiz(qs); });
+    container.appendChild(retryBtn);
+
+    window.parent.postMessage({
+      type:     'showme-quiz-complete',
+      widgetId: new URLSearchParams(location.search).get('wid'),
+      score:    score,
+      total:    total,
+      pass:     pass
+    }, '*');
+  }
+}
+
+initQuiz(questions);
+</script>
+</body>
+</html>

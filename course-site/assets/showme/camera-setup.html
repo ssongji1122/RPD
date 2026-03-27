@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — 카메라 세팅 이해</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --danger-soft:   #fca5a5;
+  --warn-soft:     #fbbf24;
+  --warn-medium:   #fcd34d;
+  --accent-soft:   #FFB347;
+  --secondary-soft:#a5b4fc;
+  --secondary-mid: #c4b5fd;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --muted-mid:     #94a3b8;
+  --muted-soft:    #cbd5e1;
+  --muted-dim:     #64748b;
+  --info-soft:     #67e8f9;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 0; font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+.tabs { display: flex; gap: 0; border-bottom: 1px solid var(--line); padding: 0 16px; background: var(--bg-soft); overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { padding: 12px 16px; font-size: .84rem; font-weight: 500; color: var(--muted); cursor: pointer; border: none; border-bottom: 2px solid transparent; white-space: nowrap; transition: color .14s, border-color .14s; background: none; font-family: inherit; }
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active { color: var(--key-soft); border-bottom-color: var(--key); }
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+.concept-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.concept-card { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); padding: 18px; }
+.concept-card h3 { margin: 0 0 8px; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+.concept-card p { margin: 0; color: var(--muted-strong); font-size: .88rem; line-height: 1.7; }
+.concept-card ul { margin: 8px 0 0; padding-left: 16px; color: var(--muted-strong); font-size: .85rem; line-height: 1.8; }
+.badge { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: .72rem; font-weight: 600; }
+.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: var(--warn-soft); }
+.kbd { display: inline-block; padding: 3px 8px; border-radius: 6px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); color: var(--key-soft); font-size: .82rem; font-weight: 600; font-family: var(--font); }
+.demo-wrap { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); overflow: hidden; margin: 14px 0; }
+.demo-wrap canvas { display: block; width: 100%; }
+.modifier-panel { padding: 12px 16px; border-top: 1px solid var(--line); display: grid; gap: 10px; }
+.param-row { display: grid; grid-template-columns: 120px 1fr 48px; align-items: center; gap: 10px; font-size: .84rem; color: var(--muted-strong); }
+.param-row input[type=range] { width: 100%; accent-color: var(--key); }
+.param-row input[type=number] { width: 48px; padding: 3px 6px; border-radius: 6px; border: 1px solid var(--line-strong); background: rgba(255,255,255,.06); color: var(--text); font: inherit; font-size: .82rem; text-align: center; }
+.demo-controls { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--line); flex-wrap: wrap; }
+.demo-hint { font-size: .78rem; color: var(--muted); text-align: center; padding: 6px 0 0; }
+.demo-btn { padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line-strong); background: rgba(255,255,255,.04); color: var(--muted-strong); font: inherit; font-size: .82rem; cursor: pointer; transition: background .14s, color .14s; }
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active { background: rgba(10,132,255,.14); color: var(--key-soft); border-color: rgba(10,132,255,.3); }
+.usage-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.usage-card { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); padding: 16px; }
+.usage-card h4 { margin: 0 0 8px; font-size: .92rem; color: var(--key-soft); }
+.usage-card ul { margin: 0; padding-left: 16px; color: var(--muted-strong); font-size: .85rem; line-height: 1.8; }
+.tip-box { border-radius: var(--radius-md); border: 1px solid rgba(10,132,255,.2); background: rgba(10,132,255,.06); padding: 14px 16px; margin-top: 14px; font-size: .86rem; color: var(--muted-strong); }
+.tip-box strong { color: var(--key-soft); }
+.combo-section { margin-top: 18px; }
+.combo-section h4 { margin: 0 0 10px; font-size: .92rem; color: var(--text); }
+.combo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.combo-card { border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--surface); padding: 12px 14px; }
+.combo-card .combo-name { font-size: .86rem; font-weight: 600; color: var(--key-soft); margin-bottom: 4px; }
+.combo-card .combo-desc { font-size: .8rem; color: var(--muted); line-height: 1.5; }
+.shortcut-list { margin-top: 16px; padding: 14px 16px; border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); }
+.shortcut-list h4 { margin: 0 0 10px; font-size: .9rem; color: var(--text); }
+.shortcut-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-size: .84rem; color: var(--muted-strong); }
+.shortcut-row + .shortcut-row { border-top: 1px solid var(--line); }
+.shortcut-keys { flex-shrink: 0; }
+.analogy { margin-top: 8px; padding: 10px 14px; border-radius: var(--radius-sm); background: rgba(245,158,11,.06); border: 1px solid rgba(245,158,11,.15); font-size: .82rem; color: var(--warn-soft); font-style: italic; }
+.quiz-progress { font-size: .78rem; color: var(--muted); margin-bottom: 12px; }
+.quiz-question { margin-bottom: 20px; padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); }
+.quiz-question h4 { margin: 0 0 12px; font-size: .94rem; }
+.quiz-option { display: block; width: 100%; padding: 10px 14px; margin-bottom: 6px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: rgba(255,255,255,.025); color: var(--text); font: inherit; font-size: .86rem; cursor: pointer; text-align: left; transition: background .14s, border-color .14s; }
+.quiz-option:hover { background: rgba(255,255,255,.06); border-color: var(--line-strong); }
+.quiz-option.correct { background: rgba(16,185,129,.12); border-color: rgba(16,185,129,.4); color: var(--success-soft); }
+.quiz-option.wrong { background: rgba(239,68,68,.1); border-color: rgba(239,68,68,.3); color: var(--danger-soft); }
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback { margin-top: 8px; padding: 10px 14px; border-radius: var(--radius-sm); font-size: .84rem; display: none; }
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: var(--danger-soft); }
+.quiz-score { text-align: center; padding: 20px; font-size: 1.1rem; font-weight: 600; }
+.quiz-retry { display: block; margin: 12px auto; padding: 10px 24px; border-radius: 999px; border: 1px solid var(--key); background: rgba(10,132,255,.12); color: var(--key-soft); font: inherit; font-size: .88rem; cursor: pointer; transition: background .14s; }
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+.doc-ref { margin-top: 16px; padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid rgba(10,132,255,.15); background: rgba(10,132,255,.04); display: flex; align-items: center; gap: 8px; }
+.doc-ref a { color: var(--key-soft); font-size: .84rem; text-decoration: none; line-height: 1.5; }
+.doc-ref a:hover { text-decoration: underline; }
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Tab Bar -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
+  <button class="tab" data-tab="interaction" role="tab" aria-selected="false" aria-controls="panel-interaction">인터랙션</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+</nav>
+
+<!-- TAB 1: 개념 이해 -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">렌즈</span> Focal Length (초점 거리)</h3>
+      <p>렌즈의 초점 거리(mm)로 화각을 결정합니다. 낮을수록 광각(더 넓은 시야), 높을수록 망원(좁고 압축된 원근). 기본값은 50mm입니다.</p>
+      <ul>
+        <li><strong>24mm 이하</strong>: 광각 — 공간감, 왜곡 효과</li>
+        <li><strong>50mm</strong>: 표준 — 눈에 자연스러운 원근</li>
+        <li><strong>85~200mm</strong>: 망원 — 배경 압축, 인물 촬영</li>
+      </ul>
+      <div class="analogy">DSLR에서 광각 렌즈와 망원 렌즈를 교환하는 것과 완전히 같은 원리예요</div>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-amber">심도</span> Depth of Field (DOF)</h3>
+      <p>피사계 심도. Focus Distance와 f-Stop으로 조절합니다. f-Stop 값이 낮을수록 아웃포커싱이 강하게 적용됩니다.</p>
+      <ul>
+        <li><strong>f/1.4~2.8</strong>: 얕은 심도 — 배경 강한 흐림</li>
+        <li><strong>f/5.6~8</strong>: 중간 심도 — 자연스러운 흐림</li>
+        <li><strong>f/11~22</strong>: 깊은 심도 — 전체 선명</li>
+      </ul>
+      <div class="analogy">카메라 조리개(f-Stop)를 열수록 배경이 흐려지는 효과와 동일해요</div>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-green">센서</span> Sensor Size</h3>
+      <p>카메라 센서 크기. Full Frame(36mm)이 기준. 센서가 클수록 얕은 심도와 넓은 화각을 얻을 수 있습니다.</p>
+      <p style="margin-top:8px">Properties &rarr; Camera (카메라 아이콘) &rarr; Lens 탭에서 조정합니다.</p>
+      <div class="analogy">같은 렌즈라도 풀프레임 카메라에서 더 넓게 찍히는 것과 같아요</div>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">뷰</span> Camera View</h3>
+      <p>Numpad 0으로 카메라 뷰로 진입하면 실제 렌더링될 프레임을 미리 볼 수 있습니다. 테두리 안이 렌더 영역입니다.</p>
+      <ul>
+        <li><strong>Numpad 0</strong>: 카메라 뷰 진입/나가기</li>
+        <li><strong>Ctrl+Alt+Numpad 0</strong>: 현재 시점을 카메라로 설정</li>
+        <li><strong>G+Z+Z</strong>: 카메라 뷰에서 앞뒤 이동 (dolly)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="shortcut-list">
+    <h4>주요 단축키</h4>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Numpad 0</span></span>
+      <span>카메라 뷰 진입 / 나가기</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">Alt</span> + <span class="kbd">Numpad 0</span></span>
+      <span>현재 시점을 카메라로 설정</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">G</span> + <span class="kbd">Z</span> + <span class="kbd">Z</span></span>
+      <span>카메라 뷰에서 앞뒤 이동 (dolly)</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">N</span></span>
+      <span>속성 패널 (카메라 뷰에서 Lock Camera to View)</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">B</span></span>
+      <span>카메라 렌더 경계 설정</span>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/render/cameras.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Cameras
+    </a>
+  </div>
+</section>
+
+<!-- TAB 2: 인터랙션 -->
+<section class="panel" id="panel-interaction" role="tabpanel">
+  <div class="demo-wrap">
+    <canvas id="cameraCanvas" width="600" height="220"></canvas>
+    <div class="modifier-panel">
+      <div class="param-row">
+        <label for="focalSlider">Focal Length</label>
+        <input type="range" id="focalSlider" min="10" max="200" value="50" step="1">
+        <input type="number" id="focalNum" min="10" max="200" value="50">
+      </div>
+      <div class="param-row">
+        <label for="fstopSlider">f-Stop</label>
+        <input type="range" id="fstopSlider" min="10" max="220" value="56" step="1">
+        <input type="number" id="fstopNum" min="1" max="22" value="5.6" step="0.1">
+      </div>
+    </div>
+    <div class="demo-hint">슬라이더를 드래그해서 초점 거리와 조리개 값을 바꿔 보세요</div>
+  </div>
+</section>
+
+<!-- TAB 3: 언제 쓰나요? -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>카메라 세팅이 필요한 때</h4>
+      <ul>
+        <li>렌더링 시점을 결정할 때 (항상 필요)</li>
+        <li>광각으로 공간감 표현 (건축, 인테리어)</li>
+        <li>망원으로 배경 압축 효과 (인물, 제품)</li>
+        <li>배경 아웃포커싱(심도) 효과 추가</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>자주 하는 실수</h4>
+      <ul>
+        <li>카메라 뷰(Numpad 0) 없이 렌더해서 예상치 못한 화각</li>
+        <li>f-Stop을 너무 낮게 설정해서 전체가 흐려짐</li>
+        <li>Ctrl+Alt+Numpad 0을 몰라서 수동으로 카메라 위치 조정</li>
+        <li>Sensor Size를 바꾸지 않아 화각이 틀어짐</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>팁:</strong> 카메라를 원하는 시점으로 이동시키기 어려울 때는 뷰포트에서 원하는 각도를 잡은 다음 <span class="kbd">Ctrl</span>+<span class="kbd">Alt</span>+<span class="kbd">Numpad 0</span>을 누르면 현재 뷰를 바로 카메라 시점으로 설정할 수 있어요. N 패널 &rarr; View &rarr; Lock Camera to View를 체크하면 카메라 뷰에서 자유롭게 이동하며 구도를 잡을 수도 있습니다.
+  </div>
+
+  <div class="combo-section">
+    <h4>Focal Length 범위별 용도</h4>
+    <div class="combo-grid">
+      <div class="combo-card">
+        <div class="combo-name">10~24mm (초광각)</div>
+        <div class="combo-desc">건축 외관, 광활한 환경, 왜곡 효과. 공간을 과장되게 넓어 보이게 합니다.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">35~50mm (표준)</div>
+        <div class="combo-desc">사람 눈에 가장 자연스러운 원근감. 일반적인 장면과 제품 렌더링에 적합합니다.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">85~135mm (단렌즈)</div>
+        <div class="combo-desc">인물 촬영에 이상적. 배경 압축 효과와 얕은 심도 연출이 자연스럽습니다.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">200mm+ (망원)</div>
+        <div class="combo-desc">강한 배경 압축. 원거리 피사체 강조, 원근 왜곡 최소화에 사용합니다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/render/cameras.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Cameras
+    </a>
+  </div>
+</section>
+
+<!-- TAB 4: 퀴즈 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+// ── Tab Switching ──────────────────────────────
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(t) {
+      t.classList.remove("is-active");
+      t.setAttribute("aria-selected", "false");
+    });
+    document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("is-active"); });
+    tab.classList.add("is-active");
+    tab.setAttribute("aria-selected", "true");
+    document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+    if (tab.dataset.tab === "interaction") startAnimation();
+  });
+});
+
+// ── Quiz Engine ────────────────────────────────
+function initQuiz(questions) {
+  var container = document.getElementById("quizArea");
+  var score = 0, answered = 0;
+  var scoreDiv = null;
+
+  var progress = document.createElement("div");
+  progress.className = "quiz-progress";
+  progress.textContent = "\uBB38\uC81C 0 / " + questions.length + " \u00b7 \uC810\uC218 0\uC810";
+  container.appendChild(progress);
+
+  questions.forEach(function(q, qi) {
+    var div = document.createElement("div");
+    div.className = "quiz-question";
+
+    var heading = document.createElement("h4");
+    heading.textContent = "Q" + (qi + 1) + ". " + q.question;
+    div.appendChild(heading);
+
+    var fb = document.createElement("div");
+    fb.className = "quiz-feedback";
+
+    q.options.forEach(function(opt, oi) {
+      var btn = document.createElement("button");
+      btn.className = "quiz-option";
+      btn.textContent = opt;
+      btn.addEventListener("click", function() {
+        if (btn.disabled) return;
+        div.querySelectorAll(".quiz-option").forEach(function(b) { b.disabled = true; });
+        answered++;
+        if (oi === q.answer) {
+          btn.classList.add("correct");
+          fb.className = "quiz-feedback show correct-fb";
+          fb.textContent = "\u2705 " + q.explanation;
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
+          fb.className = "quiz-feedback show wrong-fb";
+          fb.textContent = "\u274c " + q.explanation;
+
+          var retryBtn = document.createElement("button");
+          retryBtn.className = "quiz-retry";
+          retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
+          retryBtn.textContent = "\uB2E4\uC2DC \uD480\uAE30";
+          retryBtn.addEventListener("click", function() {
+            answered--;
+            div.querySelectorAll(".quiz-option").forEach(function(b) {
+              b.disabled = false;
+              b.classList.remove("wrong", "correct");
+            });
+            fb.className = "quiz-feedback";
+            fb.textContent = "";
+            retryBtn.remove();
+            if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+            progress.textContent = "\uBB38\uC81C " + answered + " / " + questions.length + " \u00b7 \uC810\uC218 " + score + "\uC810";
+          });
+          fb.appendChild(retryBtn);
+        }
+        progress.textContent = "\uBB38\uC81C " + answered + " / " + questions.length + " \u00b7 \uC810\uC218 " + score + "\uC810";
+        if (answered === questions.length) showScore();
+      });
+      div.appendChild(btn);
+    });
+
+    div.appendChild(fb);
+    container.appendChild(div);
+  });
+
+  function showScore() {
+    if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+
+    scoreDiv = document.createElement("div");
+    scoreDiv.className = "quiz-score";
+
+    var emoji = document.createElement("div");
+    emoji.style.cssText = "font-size:36px;margin-bottom:8px";
+    emoji.textContent = score === questions.length ? "\ud83c\udf89" : score >= Math.ceil(questions.length * 0.75) ? "\ud83d\udc4d" : "\ud83d\udcda";
+    scoreDiv.appendChild(emoji);
+
+    var result = document.createElement("div");
+    result.style.cssText = "font-size:18px;font-weight:500;margin-bottom:6px";
+    result.textContent = score + " / " + questions.length + " \uC815\uB2F5";
+    scoreDiv.appendChild(result);
+
+    var msg = document.createElement("div");
+    msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
+    msg.textContent = score === questions.length ? "\uC644\uBCBD\uD569\uB2C8\uB2E4!" : "\uC870\uAE08 \uB354 \uC5F0\uC2B5\uD558\uBA74 \uC644\uBCBD\uD574\uC9C8 \uAC70\uC608\uC694!";
+    scoreDiv.appendChild(msg);
+
+    var saveBtn = document.createElement("button");
+    saveBtn.className = "quiz-retry";
+    saveBtn.style.cssText = "background:rgba(10,132,255,.18);border-color:var(--key);margin-bottom:8px";
+    saveBtn.textContent = "\uAE30\uB85D \uC800\uC7A5\uD558\uAE30";
+    saveBtn.addEventListener("click", function() {
+      try {
+        var wid = new URLSearchParams(location.search).get("wid")
+               || location.pathname.split("/").pop().replace(".html", "");
+        window.parent.postMessage({
+          type: "showme-quiz-complete",
+          widgetId: wid,
+          score: score,
+          total: questions.length,
+          pass: score >= Math.ceil(questions.length * 0.75)
+        }, "*");
+      } catch(e) {}
+      saveBtn.textContent = "\uC800\uC7A5 \uC644\uB8CC!";
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = ".5";
+    });
+    scoreDiv.appendChild(saveBtn);
+
+    var retry = document.createElement("button");
+    retry.className = "quiz-retry";
+    retry.textContent = "\uCC98\uC74C\uBD80\uD130 \uB2E4\uC2DC";
+    retry.addEventListener("click", function() { location.reload(); });
+    scoreDiv.appendChild(retry);
+
+    container.appendChild(scoreDiv);
+  }
+}
+
+// ── Camera Visualization ───────────────────────
+(function() {
+  var canvas = document.getElementById("cameraCanvas");
+  var ctx = canvas.getContext("2d");
+  var W = 600, H = 220;
+  var focalLength = 50;
+  var fstopVal = 5.6;
+  var rafId = null;
+  var animRunning = false;
+
+  var focalSlider = document.getElementById("focalSlider");
+  var focalNum    = document.getElementById("focalNum");
+  var fstopSlider = document.getElementById("fstopSlider");
+  var fstopNum    = document.getElementById("fstopNum");
+
+  // fstop slider 10..220 maps to 1.4..22
+  function sliderToFstop(v) { return +(1.4 + (v - 10) / (220 - 10) * (22 - 1.4)).toFixed(1); }
+  function fstopToSlider(f) { return Math.round(10 + (f - 1.4) / (22 - 1.4) * (220 - 10)); }
+
+  function syncFocalUI(val) {
+    focalLength = Math.max(10, Math.min(200, val));
+    focalSlider.value = focalLength;
+    focalNum.value = focalLength;
+  }
+  function syncFstopUI(val) {
+    fstopVal = Math.max(1.4, Math.min(22, +val));
+    fstopSlider.value = fstopToSlider(fstopVal);
+    fstopNum.value = fstopVal;
+  }
+
+  focalSlider.addEventListener("input", function() { syncFocalUI(+focalSlider.value); });
+  focalNum.addEventListener("change", function() { syncFocalUI(+focalNum.value); });
+  fstopSlider.addEventListener("input", function() { syncFstopUI(sliderToFstop(+fstopSlider.value)); });
+  fstopNum.addEventListener("change", function() { syncFstopUI(+fstopNum.value); });
+
+  // Touch support
+  focalSlider.addEventListener("touchend", function(e) { e.preventDefault(); syncFocalUI(+focalSlider.value); }, { passive: false });
+  fstopSlider.addEventListener("touchend", function(e) { e.preventDefault(); syncFstopUI(sliderToFstop(+fstopSlider.value)); }, { passive: false });
+
+  function fovFromFocal(mm) {
+    // horizontal FOV approximation using 36mm sensor width
+    return 2 * Math.atan(18 / mm);
+  }
+
+  function dofBlur(fstop) {
+    // 0 (sharp) .. 1 (very blurry); fstop 1.4 => ~1, fstop 22 => ~0
+    return Math.max(0, Math.min(1, (22 - fstop) / (22 - 1.4)));
+  }
+
+  function drawFrame() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Background
+    ctx.fillStyle = "#0d0f12";
+    ctx.fillRect(0, 0, W, H);
+
+    // Divider
+    ctx.strokeStyle = "rgba(255,255,255,.08)";
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(W / 2, 0); ctx.lineTo(W / 2, H); ctx.stroke();
+
+    // ── LEFT: 3D Scene view ──────────────────────
+    var lW = W / 2;
+
+    // Scene label
+    ctx.fillStyle = "rgba(161,161,170,.55)";
+    ctx.font = "10px sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("3D Scene", 10, 16);
+
+    // Subject: simple box centered left side
+    var subjX = lW * 0.72, subjY = H / 2 + 10;
+    var subjW = 36, subjH = 42;
+
+    // FOV cone from camera to subject
+    var camX = 40, camY = H / 2;
+    var fov = fovFromFocal(focalLength);
+    // cone half-angle scaled to canvas
+    var coneDist = subjX - camX - subjW / 2;
+    var halfSpread = Math.tan(fov / 2) * coneDist;
+    halfSpread = Math.max(10, Math.min(H / 2 - 4, halfSpread));
+
+    // FOV fill
+    ctx.beginPath();
+    ctx.moveTo(camX + 16, camY);
+    ctx.lineTo(subjX - subjW / 2, camY - halfSpread);
+    ctx.lineTo(subjX - subjW / 2, camY + halfSpread);
+    ctx.closePath();
+    ctx.fillStyle = "rgba(10,132,255,.09)";
+    ctx.fill();
+
+    // FOV outline lines
+    ctx.strokeStyle = "rgba(10,132,255,.4)";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(camX + 16, camY);
+    ctx.lineTo(subjX - subjW / 2, camY - halfSpread);
+    ctx.moveTo(camX + 16, camY);
+    ctx.lineTo(subjX - subjW / 2, camY + halfSpread);
+    ctx.stroke();
+
+    // Camera body (pyramid shape)
+    ctx.fillStyle = "#334155";
+    ctx.strokeStyle = "#8ec5ff";
+    ctx.lineWidth = 1.5;
+    // body rect
+    ctx.beginPath();
+    ctx.roundRect(camX - 14, camY - 10, 28, 20, 3);
+    ctx.fill(); ctx.stroke();
+    // lens circle
+    ctx.beginPath(); ctx.arc(camX + 10, camY, 7, 0, Math.PI * 2);
+    ctx.fillStyle = "#0a0a0a"; ctx.fill();
+    ctx.strokeStyle = "#8ec5ff"; ctx.lineWidth = 1.5; ctx.stroke();
+    // lens inner
+    ctx.beginPath(); ctx.arc(camX + 10, camY, 4, 0, Math.PI * 2);
+    ctx.fillStyle = "#1e3a5f"; ctx.fill();
+
+    // Camera label
+    ctx.fillStyle = "#8ec5ff";
+    ctx.font = "bold 10px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Camera", camX, camY + 24);
+
+    // Subject box
+    var grd = ctx.createLinearGradient(subjX - subjW / 2, subjY - subjH / 2, subjX + subjW / 2, subjY + subjH / 2);
+    grd.addColorStop(0, "#4f6272");
+    grd.addColorStop(1, "#2a3545");
+    ctx.beginPath();
+    ctx.roundRect(subjX - subjW / 2, subjY - subjH / 2, subjW, subjH, 4);
+    ctx.fillStyle = grd; ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,.18)"; ctx.lineWidth = 1; ctx.stroke();
+
+    // Subject label
+    ctx.fillStyle = "rgba(212,212,216,.6)";
+    ctx.font = "10px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Subject", subjX, subjY + subjH / 2 + 14);
+
+    // Focal length annotation
+    ctx.fillStyle = "#fbbf24";
+    ctx.font = "bold 11px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(focalLength + "mm", camX, camY - 18);
+
+    var fovDeg = Math.round(fov * 180 / Math.PI);
+    ctx.fillStyle = "rgba(142,197,255,.7)";
+    ctx.font = "9px sans-serif";
+    ctx.fillText("FOV " + fovDeg + "\u00b0", camX, camY - 7);
+
+    // ── RIGHT: Camera Preview ────────────────────
+    var rX = W / 2 + 8, rY = 8, rW = W / 2 - 16, rH = H - 16;
+
+    // Preview frame background
+    ctx.fillStyle = "#0a0f18";
+    ctx.beginPath();
+    ctx.roundRect(rX, rY, rW, rH, 6);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,.14)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Preview label
+    ctx.fillStyle = "rgba(161,161,170,.55)";
+    ctx.font = "10px sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("Camera Preview", rX + 8, rY + 15);
+
+    // Subject as seen in preview — size determined by focal length
+    // longer focal = bigger / more zoomed in
+    var zoomFactor = focalLength / 50;
+    var previewSubjW = Math.round(Math.max(20, Math.min(rW * 0.55, 40 * zoomFactor)));
+    var previewSubjH = Math.round(previewSubjW * 1.15);
+    var pCx = rX + rW / 2, pCy = rY + rH / 2 + 6;
+
+    // DOF blur simulation using shadow/opacity trick
+    var blur = dofBlur(fstopVal);
+    var blurRadius = Math.round(blur * 14);
+
+    // Background gradient (blurred when fstop is low)
+    var bgGrd = ctx.createLinearGradient(rX, rY + 20, rX, rY + rH);
+    bgGrd.addColorStop(0, "rgba(15,30,50,1)");
+    bgGrd.addColorStop(1, "rgba(5,10,18,1)");
+    ctx.fillStyle = bgGrd;
+    ctx.beginPath();
+    ctx.roundRect(rX + 1, rY + 18, rW - 2, rH - 19, [0, 0, 5, 5]);
+    ctx.fill();
+
+    // Background "bokeh" circles if heavy blur
+    if (blur > 0.3) {
+      var alpha = (blur - 0.3) / 0.7 * 0.45;
+      var bokehColors = ["rgba(10,132,255,", "rgba(245,158,11,", "rgba(16,185,129,"];
+      var bPositions = [
+        { x: rX + rW * 0.18, y: rY + rH * 0.35 },
+        { x: rX + rW * 0.8, y: rY + rH * 0.25 },
+        { x: rX + rW * 0.65, y: rY + rH * 0.7 },
+        { x: rX + rW * 0.25, y: rY + rH * 0.72 }
+      ];
+      var br = 8 + blur * 20;
+      bPositions.forEach(function(bp, bi) {
+        ctx.beginPath();
+        ctx.arc(bp.x, bp.y, br, 0, Math.PI * 2);
+        ctx.fillStyle = bokehColors[bi % bokehColors.length] + alpha + ")";
+        ctx.fill();
+      });
+    }
+
+    // Subject in preview
+    var sGrd = ctx.createLinearGradient(pCx - previewSubjW / 2, pCy - previewSubjH / 2, pCx + previewSubjW / 2, pCy + previewSubjH / 2);
+    sGrd.addColorStop(0, "#6b8fa8");
+    sGrd.addColorStop(1, "#3a5068");
+
+    // apply blur via shadow when DOF is shallow
+    if (blurRadius > 0) {
+      ctx.save();
+      ctx.shadowColor = "rgba(0,0,0,.6)";
+      ctx.shadowBlur = 0;
+    }
+
+    ctx.beginPath();
+    ctx.roundRect(pCx - previewSubjW / 2, pCy - previewSubjH / 2, previewSubjW, previewSubjH, 4);
+    ctx.fillStyle = sGrd; ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,.25)"; ctx.lineWidth = 1; ctx.stroke();
+
+    if (blurRadius > 0) ctx.restore();
+
+    // Simulate subject focus indicator (focus cross)
+    ctx.strokeStyle = "rgba(142,197,255,.4)";
+    ctx.lineWidth = 1;
+    var cLen = 8;
+    // top-left corner
+    ctx.beginPath();
+    ctx.moveTo(pCx - previewSubjW / 2, pCy - previewSubjH / 2 + cLen);
+    ctx.lineTo(pCx - previewSubjW / 2, pCy - previewSubjH / 2);
+    ctx.lineTo(pCx - previewSubjW / 2 + cLen, pCy - previewSubjH / 2);
+    ctx.stroke();
+    // bottom-right corner
+    ctx.beginPath();
+    ctx.moveTo(pCx + previewSubjW / 2 - cLen, pCy + previewSubjH / 2);
+    ctx.lineTo(pCx + previewSubjW / 2, pCy + previewSubjH / 2);
+    ctx.lineTo(pCx + previewSubjW / 2, pCy + previewSubjH / 2 - cLen);
+    ctx.stroke();
+
+    // Background blur indicator strip
+    if (blur > 0.1) {
+      ctx.save();
+      ctx.globalAlpha = blur * 0.5;
+      ctx.fillStyle = "rgba(10,20,35,.7)";
+      // blurred bg bands
+      for (var bi2 = 0; bi2 < 3; bi2++) {
+        var bw = (blur * blurRadius * 2) | 0;
+        var bh2 = 4 + ((bi2 * 3) | 0);
+        ctx.fillRect(rX + 4 + bi2 * (rW * 0.28), rY + rH * 0.62, rW * 0.22, bh2);
+      }
+      ctx.restore();
+    }
+
+    // Preview info overlay
+    ctx.fillStyle = "rgba(251,191,36,.85)";
+    ctx.font = "bold 10px sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText(focalLength + "mm", rX + 8, rY + rH - 22);
+
+    var fstopLabel = "f/" + fstopVal.toFixed(1);
+    ctx.fillStyle = blur > 0.5 ? "rgba(252,165,165,.85)" : "rgba(110,231,183,.85)";
+    ctx.fillText(fstopLabel, rX + 8, rY + rH - 9);
+
+    // DOF description
+    var dofDesc = blur > 0.6 ? "\uc5B4\uc6c5\ud3ec\ucee4\uc2f1 \uac15\ud568" : blur > 0.3 ? "\uc99d\uac04 \uc2ec\ub3c4" : "\uc804\uccb4 \uc120\uba85";
+    ctx.fillStyle = "rgba(161,161,170,.7)";
+    ctx.font = "9px sans-serif";
+    ctx.textAlign = "right";
+    ctx.fillText(dofDesc, rX + rW - 8, rY + rH - 9);
+
+    // Wide vs telephoto label
+    var lensType;
+    if (focalLength <= 24) lensType = "\uad11\uac01";
+    else if (focalLength <= 60) lensType = "\ud45c\uc900";
+    else if (focalLength <= 135) lensType = "\ub2e8\ub80c\uc988";
+    else lensType = "\ub9dd\uc6d0";
+    ctx.fillStyle = "rgba(142,197,255,.75)";
+    ctx.font = "9px sans-serif";
+    ctx.textAlign = "right";
+    ctx.fillText(lensType, rX + rW - 8, rY + rH - 22);
+  }
+
+  function loop() {
+    drawFrame();
+    rafId = requestAnimationFrame(loop);
+  }
+
+  function startAnimation() {
+    if (!animRunning) {
+      animRunning = true;
+      loop();
+    }
+  }
+
+  // Auto-start if interaction tab is visible on load
+  // (tabs default to concept, so start only when switching)
+  // But draw once on init for initial render
+  drawFrame();
+})();
+
+// ── Quiz Data ──────────────────────────────────
+initQuiz([
+  {
+    question: "\uCD08\uC810 \uAC70\uB9AC(Focal Length)\uAC00 \uB099\uC744\uC218\uB85D \ud654\uAC01\uc740?",
+    options: [
+      "\ub110\uc5b4\uc9d1\ub2c8\ub2e4 (\uAD11\uAC01)",
+      "\uc880\uc544\uc9d1\ub2c8\ub2e4 (\ub9dd\uc6d0)",
+      "\ubcc0\ud558\uc9c0 \uc54a\uc2b5\ub2c8\ub2e4",
+      "\uc2ec\ub3c4\uc5d0\ub9cc \uc601\ud5a5\uc744 \uc90d\ub2c8\ub2e4"
+    ],
+    answer: 0,
+    explanation: "\uCD08\uC810 \uAC70\uB9AC\uAC00 \uB099\uC744\uC218\uB85D(24mm \uC774\ud558) \ud654\uAC01\uc774 \ub113\uc5b4\uc9d1\ub2c8\ub2e4. \uc774\ub97c \uAD11\uAC01\ub80c\uc988\ub77c\uace0 \ud569\ub2c8\ub2e4. \ub192\uc744\uc218\ub85d(200mm) \ud654\uAC01\uc774 \uc88c\uc544\uc9c0\ub294 \ub9dd\uc6d0\ub80c\uc988\uc785\ub2c8\ub2e4."
+  },
+  {
+    question: "\ud604\uc7ac \uc2dc\uc810\uc744 \uce74\uba54\ub77c \ubdf0\ub85c \uc124\uc815\ud558\ub294 \ub2e8\ucd95\ud0a4\ub294?",
+    options: [
+      "Numpad 0",
+      "Ctrl + B",
+      "Ctrl + Alt + Numpad 0",
+      "G + Z + Z"
+    ],
+    answer: 2,
+    explanation: "Ctrl+Alt+Numpad 0\uc744 \ub204\ub974\uba74 \ud604\uc7ac \ubdf0\ud3ec\ud2b8 \uc2dc\uc810\uc774 \uce74\uba54\ub77c \uc704\uce58\uc640 \ubc29\ud5a5\uc73c\ub85c \uc124\uc815\ub429\ub2c8\ub2e4. \uc218\ub3d9\uc73c\ub85c \uce74\uba54\ub77c\ub97c \uc6c0\uc9c1\uc774\uc9c0 \uc54a\uc544\ub3c4 \ub418\uc5b4 \ub9e4\uc6b0 \ud3b8\ub9ac\ud569\ub2c8\ub2e4."
+  },
+  {
+    question: "f-Stop \uAC12\uc774 \ub099\uc744\uc218\ub85d \uc2ec\ub3c4(DOF)\ub294?",
+    options: [
+      "\uAE0A\uc544\uc9d1\ub2c8\ub2e4 (\uc804\uccb4 \uc120\uba85)",
+      "\uc5C8\uc544\uc9d1\ub2c8\ub2e4 (\uc544\uc6c3\ud3ec\ucee4\uc2f1 \uac15\ud574\uc9d1)",
+      "\ubcc0\ud558\uc9c0 \uc54a\uc2b5\ub2c8\ub2e4",
+      "\uCD08\uC810 \uAC70\uB9AC\uc5d0 \ub530\ub77c \ub2ec\ub77c\uc9d1\ub2c8\ub2e4"
+    ],
+    answer: 1,
+    explanation: "f-Stop \uac12\uc774 \ub099\uc744\uc218\ub85d(f/1.4 \ub4f1) \uc870\ub9ac\uac1c\uac00 \ub110\uc5b4\uc838 \uc2ec\ub3c4\uac00 \uc5c8\uc544\uc9d1\ub2c8\ub2e4. \ubc30\uacbd \uc544\uc6c3\ud3ec\ucee4\uc2f1\uc774 \uac15\ud558\uac8c \ub3d9\uc791\ud569\ub2c8\ub2e4. f/22\ub294 \uc870\ub9ac\uac1c\uac00 \uac70\uc758 \ub2eb\ud5c8 \uc804\uccb4\uac00 \uc120\uba85\ud558\uac8c \ucc0d\ud789\ub2c8\ub2e4."
+  },
+  {
+    question: "\uce74\uba54\ub77c \ubdf0\uc5d0\uc11c \uc55e\ub4a4\ub85c \uc774\ub3d9(dolly)\ud558\ub824\uba74?",
+    options: [
+      "G + Z",
+      "G + Z + Z",
+      "R + Y",
+      "S + Z"
+    ],
+    answer: 1,
+    explanation: "\uce74\uba54\ub77c \ubdf0(Numpad 0) \uc5d0\uc11c G\ub97c \ub204\ub978 \ud6c4 Z\ub97c \ub450 \ubc88 \ub204\ub974\uba74 \uce74\uba54\ub77c\uac00 \uc790\uc2e0\uc758 \ub85c\ucec8(\ub85c\ucec8 Z\ucd95) \ubc29\ud5a5\uc73c\ub85c\ub9cc \uc774\ub3d9\ud569\ub2c8\ub2e4. \uc9c4\uc9dc \ube60\ub974\uac8c \ub3cc\ub9ac \uc774\ub3d9\ud560 \uc218 \uc788\ub294 \ud53c\ucca3\ud558\ub294 \uc218\uc785\ub2c8\ub2e4."
+  }
+]);
+</script>
+</body>
+</html>

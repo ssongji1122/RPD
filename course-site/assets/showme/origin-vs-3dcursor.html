@@ -309,6 +309,25 @@ body {
 }
 .quiz-retry:hover { background: rgba(10,132,255,.22); }
 
+/* ── Official Doc Reference ── */
+.doc-ref {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(10,132,255,.15);
+  background: rgba(10,132,255,.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-ref a {
+  color: var(--key-soft);
+  font-size: .84rem;
+  text-decoration: none;
+  line-height: 1.5;
+}
+.doc-ref a:hover { text-decoration: underline; }
+
 /* ── Responsive ── */
 @media (max-width: 600px) {
   .concept-grid, .usage-grid { grid-template-columns: 1fr; }
@@ -360,6 +379,11 @@ body {
         <li><span class="kbd">Alt</span>+<span class="kbd">G</span> on cursor — 원점 리셋</li>
       </ul>
     </div>
+  </div>
+  <div class="doc-ref">
+    📖 <a href="https://docs.blender.org/manual/en/latest/scene_layout/object/origin.html" target="_blank" rel="noopener noreferrer">Blender 공식 문서 — Object Origin</a>
+    &nbsp;·&nbsp;
+    <a href="https://docs.blender.org/manual/en/latest/editors/3dview/3d_cursor.html" target="_blank" rel="noopener noreferrer">3D Cursor</a>
   </div>
 </section>
 
@@ -417,6 +441,11 @@ body {
     </div>
   </div>
   <div class="tip-box" id="tipBox"></div>
+  <div class="doc-ref">
+    📖 <a href="https://docs.blender.org/manual/en/latest/scene_layout/object/origin.html" target="_blank" rel="noopener noreferrer">Blender 공식 문서 — Object Origin</a>
+    &nbsp;·&nbsp;
+    <a href="https://docs.blender.org/manual/en/latest/editors/3dview/3d_cursor.html" target="_blank" rel="noopener noreferrer">3D Cursor</a>
+  </div>
 </section>
 
 <!-- TAB 4: 퀴즈 -->
