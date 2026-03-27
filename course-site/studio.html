@@ -25,7 +25,11 @@
         <section class="studio-section" id="my-decks">
           <h2 class="studio-section-title">내 덱</h2>
           <div class="studio-empty-state">
-            <div class="studio-empty-icon">📦</div>
+            <div class="studio-empty-icon" aria-hidden="true">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".4">
+                <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>
+              </svg>
+            </div>
             <p class="studio-empty-text">아직 만든 덱이 없어요.</p>
             <p class="studio-empty-hint">프리셋 덱을 복제하거나 새로 만들어 보세요.</p>
             <button class="btn btn-primary studio-create-btn">+ 첫 번째 덱 만들기</button>
