@@ -1287,32 +1287,32 @@ function maybeOpenRequestedShowMe() {
   }, 0);
 }
 
-document.getElementById("showmeClose").addEventListener("click", closeShowMe);
-document.getElementById("showmeBrowseToggle").addEventListener("click", function() {
+// Show Me modal event listeners (null-guarded for server compatibility)
+function bindClick(id, fn) { var el = document.getElementById(id); if (el) el.addEventListener("click", fn); }
+function bindInput(id, fn) { var el = document.getElementById(id); if (el) el.addEventListener("input", fn); }
+
+bindClick("showmeClose", closeShowMe);
+bindClick("showmeBrowseToggle", function() {
   setShowMeBrowserOpen(!showMeBrowserOpen);
   if (showMeBrowserOpen) {
     var searchInput = document.getElementById("showmeBrowserSearch");
     if (searchInput) searchInput.focus({ preventScroll: true });
   }
 });
-document.getElementById("showmeBrowserBackdrop").addEventListener("click", function() {
-  setShowMeBrowserOpen(false);
-});
-document.getElementById("showmeBrowserSearch").addEventListener("input", function(e) {
+bindClick("showmeBrowserBackdrop", function() { setShowMeBrowserOpen(false); });
+bindInput("showmeBrowserSearch", function(e) {
   showMeBrowserQuery = e.target.value || "";
   renderShowMeBrowser();
   if (e.target.value && !showMeBrowserOpen) setShowMeBrowserOpen(true);
 });
-document.getElementById("showmeBrowserReset").addEventListener("click", function() {
+bindClick("showmeBrowserReset", function() {
   var search = document.getElementById("showmeBrowserSearch");
   showMeBrowserQuery = "";
   if (search) search.value = "";
   renderShowMeBrowser();
 });
-document.getElementById("showmeBrowserLibraryLink").addEventListener("click", locateCurrentShowMeCard);
-document.getElementById("showmeOverlay").addEventListener("click", function(e) {
-  if (e.target === this) closeShowMe();
-});
+bindClick("showmeBrowserLibraryLink", locateCurrentShowMeCard);
+bindClick("showmeOverlay", function(e) { if (e.target === this) closeShowMe(); });
 document.addEventListener("keydown", function(e) {
   if (e.key === "Escape") closeShowMe();
 });
