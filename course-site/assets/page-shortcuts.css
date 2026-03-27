@@ -95,25 +95,7 @@
 .filter-chips {
   display: flex; flex-wrap: wrap; gap: 8px;
 }
-.filter-chip {
-  padding: 7px 12px;
-  border-radius: var(--radius-pill);
-  border: 1px solid var(--line);
-  background: var(--glass-tint);
-  color: var(--muted); font-size: .82rem; font-weight: var(--fw-medium);
-  cursor: pointer;
-  transition: border-color .14s, color .14s, background .14s, transform .14s;
-}
-.filter-chip:hover {
-  color: var(--text);
-  transform: translateY(-1px);
-}
-.filter-chip.is-active {
-  border-color: var(--key-border);
-  color: var(--text);
-  background: var(--modal-nav-active-bg);
-  box-shadow: inset 0 0 0 1px rgba(147,197,253,.1);
-}
+/* .filter-chip → now uses .rpd-filter-chip from components.css */
 
 /* View toggle */
 .view-toggle {

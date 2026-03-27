@@ -505,7 +505,7 @@
       chipContainer.textContent = "";
 
       var allBtn = document.createElement("button");
-      allBtn.className = "filter-chip" + (activeFilter === "all" ? " is-active" : "");
+      allBtn.className = "rpd-filter-chip" + (activeFilter === "all" ? " is-active" : "");
       allBtn.dataset.cat = "all";
       allBtn.textContent = getText().allFilter;
       chipContainer.appendChild(allBtn);
@@ -513,7 +513,7 @@
       sorted.forEach(function(cat) {
         if (!catCounts[cat]) return;
         var btn = document.createElement("button");
-        btn.className = "filter-chip" + (activeFilter === cat ? " is-active" : "");
+        btn.className = "rpd-filter-chip" + (activeFilter === cat ? " is-active" : "");
         btn.dataset.cat = cat;
         btn.textContent = window.RPDI18n.getShortcutCategoryLabel(cat, SHORTCUT_CATEGORIES[cat].label);
         chipContainer.appendChild(btn);
