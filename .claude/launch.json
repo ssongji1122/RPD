@@ -5,13 +5,16 @@
       "name": "course-site",
       "runtimeExecutable": "python3",
       "runtimeArgs": ["tools/admin-server.py"],
-      "port": 8766
+      "port": 8766,
+      "env": {
+        "ADMIN_KEY": "5059"
+      }
     },
     {
       "name": "course-site-static",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["serve", "course-site", "-l", "8771"],
-      "port": 8771
+      "runtimeArgs": ["serve", "course-site", "-l", "8772"],
+      "port": 8772
     }
   ]
 }

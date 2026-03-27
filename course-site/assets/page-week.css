@@ -1889,6 +1889,15 @@
     }
     .guest-btn:hover { color: var(--text); border-color: var(--line-strong); }
     @media (max-width: 980px) {
+      /* tokens.css .topbar-inner { flex-direction: column } override */
+      .topbar-inner {
+        flex-direction: row;
+        align-items: center;
+      }
+      .topbar-right {
+        top: 50%;
+        transform: translateY(-50%);
+      }
       .content-layout {
         width: calc(100% - 20px);
         grid-template-columns: 1fr;

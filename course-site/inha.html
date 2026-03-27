@@ -380,40 +380,37 @@
       var meta = document.querySelector('meta[name="description"]');
       if (meta) meta.setAttribute("content", isKo ? "인하대학교 RPD 실제 수업 페이지" : "Inha University RPD course page");
 
-      document.getElementById("topbarTitle").textContent = text.topbarTitle;
-      document.getElementById("topbarMeta").textContent = text.topbarMeta;
-      document.getElementById("homeLink").textContent = publicLinks ? publicLinks.home.label : (isKo ? "홈" : "Home");
-      document.getElementById("homeLink").setAttribute("href", publicLinks ? publicLinks.home.href : withPresetHref("index.html"));
-      document.getElementById("inhaLink").textContent = publicLinks ? publicLinks.collection.label : (isKo ? "인하대 수업" : "Inha RPD");
-      document.getElementById("inhaLink").setAttribute("href", publicLinks ? publicLinks.collection.href : withPresetHref("inha.html"));
-      document.getElementById("libraryLink").textContent = publicLinks ? publicLinks.library.label : (isKo ? "카드 라이브러리" : "Card Library");
-      document.getElementById("libraryLink").setAttribute("href", publicLinks ? publicLinks.library.href : withPresetHref("library.html"));
-      document.getElementById("shortcutsLink").textContent = publicLinks ? publicLinks.shortcuts.label : (isKo ? "단축키 DB" : "Shortcut DB");
-      document.getElementById("shortcutsLink").setAttribute("href", publicLinks ? publicLinks.shortcuts.href : withPresetHref("shortcuts.html"));
-      document.getElementById("sidebarPagesLabel").textContent = isKo ? "공개 페이지" : "Public pages";
-      document.getElementById("sidebarPagesTitle").textContent = isKo ? "수업 바로가기" : "Course pages";
-      document.getElementById("sidebarPagesMeta").textContent = isKo
-        ? "아카이브와 실제 수업 화면을 빠르게 오갑니다."
-        : "Move quickly between the archive and the live course pages.";
-      document.getElementById("sidebarHomeLink").textContent = publicLinks ? publicLinks.home.label : (isKo ? "홈" : "Home");
-      document.getElementById("sidebarHomeLink").setAttribute("href", publicLinks ? publicLinks.home.href : withPresetHref("index.html"));
-      document.getElementById("sidebarCollectionLink").textContent = publicLinks ? publicLinks.collection.label : (isKo ? "인하대 수업" : "Inha RPD");
-      document.getElementById("sidebarCollectionLink").setAttribute("href", publicLinks ? publicLinks.collection.href : withPresetHref("inha.html"));
-      document.getElementById("sidebarLibraryLink").textContent = publicLinks ? publicLinks.library.label : (isKo ? "카드 라이브러리" : "Card Library");
-      document.getElementById("sidebarLibraryLink").setAttribute("href", publicLinks ? publicLinks.library.href : withPresetHref("library.html"));
-      document.getElementById("sidebarShortcutsLink").textContent = publicLinks ? publicLinks.shortcuts.label : (isKo ? "단축키 DB" : "Shortcut DB");
-      document.getElementById("sidebarShortcutsLink").setAttribute("href", publicLinks ? publicLinks.shortcuts.href : withPresetHref("shortcuts.html"));
-      document.getElementById("sidebarSnapshotLabel").textContent = isKo ? "운영 스냅샷" : "Course snapshot";
-      document.getElementById("sidebarSnapshotTitle").textContent = isKo ? "현재 운영 상태" : "Current course state";
-      document.getElementById("sidebarSummaryWeeks").textContent = isKo
-        ? (CURRICULUM.length + "주 커리큘럼")
-        : (CURRICULUM.length + "-week curriculum");
-      document.getElementById("sidebarSummaryCards").textContent = isKo
-        ? (countProgramArchiveCards() + "개 아카이브 카드")
-        : (countProgramArchiveCards() + " archive cards");
-      document.getElementById("sidebarSummaryCurrent").textContent = activeWeek
+      function _s(id, val) { var el = document.getElementById(id); if (el) el.textContent = val; }
+      function _a(id, attr, val) { var el = document.getElementById(id); if (el) el.setAttribute(attr, val); }
+
+      _s("topbarTitle", text.topbarTitle);
+      _s("topbarMeta", text.topbarMeta);
+      _s("homeLink", publicLinks ? publicLinks.home.label : (isKo ? "홈" : "Home"));
+      _a("homeLink", "href", publicLinks ? publicLinks.home.href : withPresetHref("index.html"));
+      _s("inhaLink", publicLinks ? publicLinks.collection.label : (isKo ? "인하대 수업" : "Inha RPD"));
+      _a("inhaLink", "href", publicLinks ? publicLinks.collection.href : withPresetHref("inha.html"));
+      _s("libraryLink", publicLinks ? publicLinks.library.label : (isKo ? "카드 라이브러리" : "Card Library"));
+      _a("libraryLink", "href", publicLinks ? publicLinks.library.href : withPresetHref("library.html"));
+      _s("shortcutsLink", publicLinks ? publicLinks.shortcuts.label : (isKo ? "단축키 DB" : "Shortcut DB"));
+      _a("shortcutsLink", "href", publicLinks ? publicLinks.shortcuts.href : withPresetHref("shortcuts.html"));
+      _s("sidebarPagesLabel", isKo ? "공개 페이지" : "Public pages");
+      _s("sidebarPagesTitle", isKo ? "수업 바로가기" : "Course pages");
+      _s("sidebarPagesMeta", isKo ? "아카이브와 실제 수업 화면을 빠르게 오갑니다." : "Move quickly between the archive and the live course pages.");
+      _s("sidebarHomeLink", publicLinks ? publicLinks.home.label : (isKo ? "홈" : "Home"));
+      _a("sidebarHomeLink", "href", publicLinks ? publicLinks.home.href : withPresetHref("index.html"));
+      _s("sidebarCollectionLink", publicLinks ? publicLinks.collection.label : (isKo ? "인하대 수업" : "Inha RPD"));
+      _a("sidebarCollectionLink", "href", publicLinks ? publicLinks.collection.href : withPresetHref("inha.html"));
+      _s("sidebarLibraryLink", publicLinks ? publicLinks.library.label : (isKo ? "카드 라이브러리" : "Card Library"));
+      _a("sidebarLibraryLink", "href", publicLinks ? publicLinks.library.href : withPresetHref("library.html"));
+      _s("sidebarShortcutsLink", publicLinks ? publicLinks.shortcuts.label : (isKo ? "단축키 DB" : "Shortcut DB"));
+      _a("sidebarShortcutsLink", "href", publicLinks ? publicLinks.shortcuts.href : withPresetHref("shortcuts.html"));
+      _s("sidebarSnapshotLabel", isKo ? "운영 스냅샷" : "Course snapshot");
+      _s("sidebarSnapshotTitle", isKo ? "현재 운영 상태" : "Current course state");
+      _s("sidebarSummaryWeeks", isKo ? (CURRICULUM.length + "주 커리큘럼") : (CURRICULUM.length + "-week curriculum"));
+      _s("sidebarSummaryCards", isKo ? (countProgramArchiveCards() + "개 아카이브 카드") : (countProgramArchiveCards() + " archive cards"));
+      _s("sidebarSummaryCurrent", activeWeek
         ? (isKo ? ("현재 Week " + String(activeWeek.week).padStart(2, "0") + " 운영") : ("Running Week " + String(activeWeek.week).padStart(2, "0")))
-        : (isKo ? "현재 운영 주차 없음" : "No active week");
+        : (isKo ? "현재 운영 주차 없음" : "No active week"));
       document.getElementById("themeToggle").setAttribute("aria-label", text.themeToggleAria);
 
       document.getElementById("heroEyebrow").textContent = isKo ? "실제 수업 페이지" : "Built course page";
