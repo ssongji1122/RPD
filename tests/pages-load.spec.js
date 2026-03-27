@@ -15,7 +15,6 @@ const PAGES = [
 const KNOWN_ERRORS = [
   'getComputedStyle',  // library.html sidebar observer
   'sidebarToggle',     // index.html legacy reference
-  'addEventListener',  // library.html:1290 null reference
 ];
 
 for (const pg of PAGES) {
