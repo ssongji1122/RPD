@@ -1461,3 +1461,78 @@
       border-top: 1px solid rgba(255,255,255,.06);
     }
     .preview-section:first-of-type { border-top: none; }
+}
+
+/* --- Admin Tab Bar --- */
+.admin-tab-bar {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-bottom: 1px solid var(--clr-border, #e2e8f0);
+  background: var(--surface-1, #fff);
+}
+.tab-btn {
+  padding: var(--space-2) var(--space-4);
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: var(--fs-body);
+  color: var(--clr-muted, #718096);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+.tab-btn.is-active {
+  color: var(--clr-accent, #3b82f6);
+  border-bottom-color: var(--clr-accent, #3b82f6);
+  font-weight: 600;
+}
+
+/* --- Grading Heatmap --- */
+.grading-controls {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  margin-bottom: var(--space-4);
+}
+.grading-summary {
+  margin-bottom: var(--space-4);
+}
+.grading-stat {
+  font-size: var(--fs-body);
+}
+.grading-error {
+  color: var(--clr-danger, #e53e3e);
+}
+.grading-heatmap-wrap,
+.grading-grades-wrap {
+  overflow-x: auto;
+}
+.grading-heatmap,
+.grading-grades {
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+  width: 100%;
+}
+.grading-heatmap th,
+.grading-heatmap td,
+.grading-grades th,
+.grading-grades td {
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--clr-border, #e2e8f0);
+  text-align: center;
+  white-space: nowrap;
+}
+.heatmap-student {
+  text-align: left !important;
+  min-width: 100px;
+}
+.heatmap-week {
+  min-width: 36px;
+}
+.hm-yes { background: #c6f6d5; }
+.hm-no  { background: #fed7d7; }
+.hm-na  { background: #edf2f7; }
+
+#panel-grading {
+  padding: var(--space-6) var(--space-6);
+}
