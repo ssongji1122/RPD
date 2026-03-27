@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html lang="ko" data-theme="dark">
+<html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>My Studio — Blender Archive</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script>document.documentElement.dataset.theme=localStorage.getItem('rpd-theme')||'dark'</script>
   <link rel="stylesheet" href="assets/tokens.css">
   <link rel="stylesheet" href="assets/components.css">
   <link rel="stylesheet" href="assets/layout.css">
@@ -13,20 +12,21 @@
   <link rel="stylesheet" href="assets/page-studio.css">
 </head>
 <body data-tab="studio">
+  <a href="#my-decks" class="skip-link">본문으로 건너뛰기</a>
   <div class="app" data-shell>
     <main class="main">
       <div class="main-inner">
         <div class="studio-header">
           <h1 class="studio-title">My Studio</h1>
-          <p class="studio-desc">카드와 단축키를 조합해 나만의 학습 덱을 만드세요.</p>
+          <p class="studio-desc">내가 보고 싶은 카드만 모아서 나만의 덱을 만들어 보세요.</p>
         </div>
 
         <section class="studio-section" id="my-decks">
           <h2 class="studio-section-title">내 덱</h2>
           <div class="studio-empty-state">
             <div class="studio-empty-icon">📦</div>
-            <p class="studio-empty-text">아직 만든 덱이 없습니다.</p>
-            <p class="studio-empty-hint">프리셋 덱을 복제하거나 새 덱을 만들어 보세요.</p>
+            <p class="studio-empty-text">아직 만든 덱이 없어요.</p>
+            <p class="studio-empty-hint">프리셋 덱을 복제하거나 새로 만들어 보세요.</p>
             <button class="btn btn-primary studio-create-btn">+ 첫 번째 덱 만들기</button>
           </div>
         </section>
@@ -34,14 +34,14 @@
         <section class="studio-section" id="progress">
           <h2 class="studio-section-title">진도 현황</h2>
           <div class="studio-progress-placeholder">
-            <p>로그인하면 진도를 확인할 수 있습니다.</p>
+            <p>로그인하면 진도를 확인할 수 있어요.</p>
           </div>
         </section>
 
         <section class="studio-section" id="settings">
           <h2 class="studio-section-title">설정</h2>
           <div class="studio-settings-placeholder">
-            <p>테마, 언어, 알림 설정을 관리합니다.</p>
+            <p>테마, 언어, 알림을 설정할 수 있어요.</p>
           </div>
         </section>
       </div>

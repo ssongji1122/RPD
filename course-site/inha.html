@@ -38,14 +38,15 @@
           <div class="hero-copy rpd-hero-copy">
             <div class="eyebrow" id="heroEyebrow">Inha University · Course Page</div>
             <h1 class="rpd-hero-title" id="heroTitle">인하대학교 · Robot Product Design</h1>
-            <p class="rpd-readable-copy rpd-hero-description" id="heroDescription">아카이브의 카드와 단축키를 조합해서 만든 실제 수업 페이지입니다. 필요한 주차만 바로 열어볼 수 있습니다.</p>
+            <p class="rpd-readable-copy rpd-hero-description" id="heroDescription">매주 수업에서 쓸 자료를 한 페이지로 정리해뒀어요. 필요한 주차만 바로 열어볼 수 있어요.</p>
             <div class="hero-actions cta-group" id="heroActions"></div>
           </div>
           <div class="hero-meta-wrap rpd-hero-meta-wrap">
             <div class="hero-meta-label rpd-hero-meta-label" id="heroMetaLabel">Course snapshot</div>
             <div class="hero-meta" id="heroMeta"></div>
           </div>
-        </section>
+        </div>
+      </section>
 
       <section class="content-block" id="weeksPanel">
         <div class="section-intro">
@@ -415,7 +416,7 @@
       document.getElementById("heroEyebrow").textContent = isKo ? "실제 수업 페이지" : "Built course page";
       renderHeroTitle(text);
       document.getElementById("heroDescription").innerHTML = isKo
-        ? "인하대학교 Robot Product Design 수업 페이지입니다.<wbr> <span class=\"rpd-phrase-keep\">필요한 주차만</span> 바로 열어볼 수 있습니다."
+        ? "매주 수업에서 쓸 자료를 한 페이지로 정리해뒀어요.<wbr> <span class=\"rpd-phrase-keep\">필요한 주차만</span> 바로 열어볼 수 있어요."
         : "This is the Inha University Robot Product Design course page.<wbr> Open only the weeks you need.";
       document.getElementById("heroMetaLabel").textContent = localizeUiLabel((preset.labels || {}).courseSnapshotTitle, isKo ? "수업 스냅샷" : "Course snapshot");
       document.getElementById("heroActions").innerHTML = buildHeroActions(text);
