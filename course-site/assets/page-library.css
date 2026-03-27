@@ -75,8 +75,12 @@
   padding: 14px 0 0;
   display: flex;
   gap: 8px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
 }
+.lib-week-filter::-webkit-scrollbar { display: none; }
 .lib-week-chip {
   padding: 7px 12px;
   border-radius: 999px;
@@ -87,6 +91,7 @@
   font-family: inherit;
   cursor: pointer;
   white-space: nowrap;
+  flex-shrink: 0;
   transition: border-color .14s, color .14s, background .14s, transform .14s;
 }
 .lib-week-chip:hover { color: var(--muted-strong); border-color: var(--line-strong); transform: translateY(-1px); }
@@ -781,8 +786,9 @@
     grid-template-columns: 1fr;
     gap: 18px;
   }
+  /* 목차+ABC 사이드바는 모바일에서 숨김 — 검색+주차 필터로 충분 */
   .lib-nav-shell {
-    top: 94px;
+    display: none;
   }
   .lib-nav-scroller {
     display: flex;
