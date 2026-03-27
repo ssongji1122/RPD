@@ -61,7 +61,7 @@
   font-size: var(--rpd-brand-title-size);
   line-height: 1.08;
   letter-spacing: -.02em;
-  font-weight: 650;
+  font-weight: var(--fw-bold);
 }
 
 .rpd-brand-lockup .brand-copy span,
@@ -89,7 +89,7 @@
   margin: 0;
   font-family: var(--font-display);
   font-size: var(--rpd-hero-title-size);
-  font-weight: 650;
+  font-weight: var(--fw-bold);
   letter-spacing: var(--rpd-hero-title-tracking);
   line-height: var(--rpd-hero-title-line-height);
   word-break: keep-all;
@@ -115,14 +115,14 @@
   align-self: start;
   padding: var(--rpd-hero-meta-padding-y) var(--rpd-hero-meta-padding-x);
   border: 1px solid var(--line);
-  border-radius: 18px;
+  border-radius: var(--radius-md);
   background: var(--modal-panel-soft-bg);
   box-shadow: var(--modal-card-shadow);
 }
 
 .rpd-hero-meta-label {
   font-size: .75rem;
-  font-weight: 700;
+  font-weight: var(--fw-bold);
   letter-spacing: .12em;
   text-transform: uppercase;
   color: var(--muted);
@@ -290,7 +290,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 14px;
+  border-radius: var(--radius);
   line-height: 1;
 }
 
@@ -374,7 +374,7 @@
   display: block;
   padding: 0 4px 4px;
   font-size: .7rem;
-  font-weight: 700;
+  font-weight: var(--fw-bold);
   color: var(--muted);
   letter-spacing: .1em;
   text-transform: uppercase;
@@ -384,7 +384,7 @@
 .rpd-rail-title {
   padding-left: 4px;
   font-size: .96rem;
-  font-weight: 650;
+  font-weight: var(--fw-bold);
   letter-spacing: -.02em;
 }
 
@@ -410,7 +410,7 @@
   width: 100%;
   padding: 10px 12px;
   border: 1px solid transparent;
-  border-radius: 16px;
+  border-radius: var(--radius-md);
   background: transparent;
   color: var(--muted);
   font-size: .84rem;
@@ -447,7 +447,7 @@
   background: transparent;
   box-shadow: none;
   color: var(--rpd-page-rail-active-color);
-  font-weight: 620;
+  font-weight: var(--fw-semi);
 }
 
 .rpd-page-rail .rpd-rail-link,
@@ -526,6 +526,6 @@
 @media (max-width: 720px) {
   .rpd-sidecard {
     padding: 16px;
-    border-radius: 22px;
+    border-radius: var(--radius-xl);
   }
 }

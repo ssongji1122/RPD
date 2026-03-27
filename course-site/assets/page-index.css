@@ -144,7 +144,7 @@
 /* content-block: extends .rpd-glass-surface via HTML class */
 .content-block {
   padding: 28px;
-  border-radius: 26px;
+  border-radius: var(--radius-2xl);
 }
 
 .section-intro {
@@ -311,7 +311,7 @@
   position: relative;
   overflow: hidden;
   min-height: 228px;
-  border-radius: 22px;
+  border-radius: var(--radius-xl);
   border: 1px solid var(--line);
   background:
     linear-gradient(180deg, var(--glass-tint), transparent 62%),

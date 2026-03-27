@@ -1,5 +1,5 @@
 /* course-site/assets/shell.js
-   Shared topbar + rail injection for new pages (data-shell only) */
+   Shared topbar + rail injection for pages that use data-shell only */
 (function () {
   'use strict';
   var app = document.querySelector('.app[data-shell]');
@@ -53,8 +53,6 @@
 
   // --- Topbar — centered tabs + theme toggle ---
   var topbar = el('header', { className: 'app-topbar' });
-  topbar.style.justifyContent = 'center';
-  topbar.style.position = 'relative';
 
   topbar.appendChild(el('div', { className: 'app-tabs' }, [
     el('a', { className: 'app-tab', href: '/index.html', 'data-tab-target': 'archive', textContent: 'Archive' }),
@@ -63,9 +61,10 @@
   ]));
 
   var topbarRight = el('div', { className: 'app-topbar-right' });
-  topbarRight.style.position = 'absolute';
-  topbarRight.style.right = '20px';
-  topbarRight.appendChild(el('button', { className: 'theme-toggle', onclick: 'toggleTheme()', 'aria-label': '테마 전환', textContent: '🌙' }));
+  var themeBtn = el('button', { className: 'theme-toggle', id: 'themeToggle', type: 'button', 'aria-label': '테마 전환' });
+  themeBtn.appendChild(svgIcon('<svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>'));
+  themeBtn.appendChild(svgIcon('<svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>'));
+  topbarRight.appendChild(themeBtn);
   topbar.appendChild(topbarRight);
 
   // --- Rail content per tab ---
@@ -74,17 +73,18 @@
 
     var items = {
       archive: [
-        { href: '/index.html', svg: ICONS.home, text: '홈' },
-        { href: '/library.html', svg: ICONS.search, text: '카드 찾기' },
-        { href: '/shortcuts.html', svg: ICONS.keyboard, text: '단축키' }
+        { href: '/index.html', svg: ICONS.home, text: '홈', page: 'index.html' },
+        { href: '#', svg: ICONS.layers, text: '내 덱', page: '' },
+        { href: '/library.html', svg: ICONS.search, text: '카드 찾기', page: 'library.html' },
+        { href: '/shortcuts.html', svg: ICONS.keyboard, text: '단축키', page: 'shortcuts.html' }
       ],
       class: [
-        { href: '/inha.html', svg: ICONS.graduationCap, text: '수업 개요' }
+        { href: '/inha.html', svg: ICONS.graduationCap, text: '수업 개요', page: 'inha.html' }
       ],
       studio: [
-        { href: '/studio.html', svg: ICONS.package, text: '내 덱' },
-        { href: '/studio.html#progress', svg: ICONS.barChart, text: '진도' },
-        { href: '/studio.html#settings', svg: ICONS.settings, text: '설정' }
+        { href: '/studio.html', svg: ICONS.package, text: '내 덱', page: 'studio.html' },
+        { href: '/studio.html#progress', svg: ICONS.barChart, text: '진도', page: '' },
+        { href: '/studio.html#settings', svg: ICONS.settings, text: '설정', page: '' }
       ]
     };
 
@@ -93,11 +93,17 @@
       var iconSpan = el('span', { className: 'rail-icon' });
       iconSpan.appendChild(svgIcon(item.svg));
       container.appendChild(
-        el('a', { className: 'rail-item', href: item.href }, [
+        el('a', { className: 'rail-item', href: item.href, 'data-page': item.page !== undefined ? item.page : '' }, [
           iconSpan,
           el('span', { className: 'rail-text', textContent: item.text })
         ])
       );
+
+      // Add deck sublist placeholder after 내 덱 in archive tab
+      if (tab === 'archive' && item.text === '내 덱') {
+        var deckList = el('div', { className: 'rail-sub', id: 'railDeckList' });
+        container.appendChild(deckList);
+      }
     });
 
     // Add week sub-items for class tab
@@ -150,7 +156,7 @@
 
   // Toggle button
   rail.appendChild(
-    el('button', { className: 'rail-toggle', onclick: 'toggleRail()' }, [
+    el('button', { className: 'rail-toggle', id: 'railToggle' }, [
       el('span', { className: 'rail-toggle-arrow', textContent: '▶' }),
       el('span', { className: 'rail-text', textContent: '접기' })
     ])
@@ -161,16 +167,16 @@
   // Clear app but keep main
   while (app.firstChild) app.removeChild(app.firstChild);
   app.appendChild(topbar);
+
+  // Hidden langSwitcher container
+  var langWrap = el('div', { hidden: '' });
+  langWrap.appendChild(el('div', { id: 'langSwitcher' }));
+  app.appendChild(langWrap);
+
   app.appendChild(rail);
   if (main) app.appendChild(main);
 
   // Mobile overlay
   var overlay = el('div', { className: 'rail-overlay', id: 'railOverlay', onclick: 'toggleMobileRail()' });
   document.body.appendChild(overlay);
-
-  // Rail toggle function
-  window.toggleRail = function () {
-    var r = document.getElementById('sideRail');
-    if (r) r.classList.toggle('is-expanded');
-  };
 })();
