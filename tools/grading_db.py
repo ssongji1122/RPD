@@ -1,23 +1,18 @@
 """
-Grading DB Helpers
+Grading DB helpers
 ==================
-Stdlib-only module that wraps the Notion API for grading operations.
-All grading scripts import from here.
+Stdlib-only module for managing assignment submission tracking
+and grade databases via the Notion API.
 
-Usage::
-
+Usage:
     from grading_db import (
         load_student_roster,
         parse_student_weeks,
         detect_submission,
         create_submissions_db,
         create_grades_db,
-        add_submission_row,
-        add_grade_row,
         query_submissions,
-        query_grades,
         update_submission_checkbox,
-        update_grade_submissions_count,
     )
 """
 from __future__ import annotations
@@ -25,181 +20,130 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
-from typing import Dict, List, Optional
 
+from notion_api import (
+    NOTION_MAPPING,
+    extract_text,
+    get_notion_token,
+    notion_request,
+    _get_page_blocks,
+)
 from runtime_paths import ROOT
-from notion_api import NOTION_MAPPING, extract_text, get_notion_token, notion_request, _get_page_blocks
 
 # ---------------------------------------------------------------------------
-# Constants
+# Known placeholders that indicate "not submitted"
 # ---------------------------------------------------------------------------
+PLACEHOLDERS = {
+    "여기에 과제를 업로드하세요",
+    "여기에 중간 프로젝트를 업로드하세요",
+    "여기에 최종 프로젝트를 업로드하세요",
+}
 
-#: Korean placeholder strings that indicate an empty (not submitted) week.
-PLACEHOLDERS: frozenset[str] = frozenset(
-    {
-        "여기에 과제를 업로드하세요",
-        "여기에 중간 프로젝트를 업로드하세요",
-        "여기에 최종 프로젝트를 업로드하세요",
-    }
-)
-
-#: All week numbers as zero-padded strings ("01" … "15").
-WEEKS: list[str] = [str(n).zfill(2) for n in range(1, 16)]
-
-#: Path to the JSON file that persists created Notion DB IDs across runs.
-GRADING_IDS_PATH: Path = ROOT / "tools" / "grading-db-ids.json"
-
-#: Block types that always count as a submission (media / embed).
-_MEDIA_TYPES: frozenset[str] = frozenset(
-    {"image", "file", "video", "embed", "pdf", "column_list"}
-)
-
+WEEKS = [f"{i:02d}" for i in range(1, 16)]
 
 # ---------------------------------------------------------------------------
-# Grading DB ID persistence
+# DB ID persistence — stored alongside notion-mapping.json
 # ---------------------------------------------------------------------------
+GRADING_IDS_PATH = ROOT / "tools" / "grading-db-ids.json"
+
 
 def _load_grading_ids() -> dict:
-    """Load persisted Notion DB IDs from ``tools/grading-db-ids.json``."""
-    if not GRADING_IDS_PATH.exists():
-        return {}
-    with open(GRADING_IDS_PATH, encoding="utf-8") as f:
-        return json.load(f)
+    if GRADING_IDS_PATH.exists():
+        with open(GRADING_IDS_PATH, encoding="utf-8") as f:
+            return json.load(f)
+    return {}
 
 
 def _save_grading_ids(data: dict) -> None:
-    """Write Notion DB IDs to ``tools/grading-db-ids.json``."""
-    GRADING_IDS_PATH.parent.mkdir(parents=True, exist_ok=True)
     with open(GRADING_IDS_PATH, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+        json.dump(data, f, indent=2, ensure_ascii=False)
 
 
 # ---------------------------------------------------------------------------
 # Student roster
 # ---------------------------------------------------------------------------
+def load_student_roster(class_num: str | None = None) -> list[dict]:
+    """Load student roster from notion-mapping.json.
 
-def load_student_roster(class_num: Optional[str] = None) -> list[dict]:
-    """Load students from ``notion-mapping.json`` under the ``classes`` key.
-
-    Parameters
-    ----------
-    class_num : str | None
-        When provided, only students from that class are returned.
-
-    Returns
-    -------
-    list[dict]
-        Each element has keys: ``name``, ``student_id``, ``page_id``,
-        ``class_num``, ``class_title``.
+    Returns list of dicts: {name, student_id, page_id, class_num, class_title}
     """
     if not NOTION_MAPPING.exists():
         return []
-
     with open(NOTION_MAPPING, encoding="utf-8") as f:
         data = json.load(f)
 
-    classes: dict = data.get("classes", {})
+    classes = data.get("classes", {})
     roster: list[dict] = []
-
-    for cnum, cinfo in classes.items():
-        if class_num is not None and cnum != str(class_num):
+    for cn, cdata in classes.items():
+        if class_num and cn != class_num:
             continue
-        class_title: str = cinfo.get("title", "")
-        for student in cinfo.get("students", []):
-            roster.append(
-                {
-                    "name": student.get("name", ""),
-                    "student_id": student.get("student_id", ""),
-                    "page_id": student.get("page_id", ""),
-                    "class_num": cnum,
-                    "class_title": class_title,
-                }
-            )
-
+        for s in cdata.get("students", []):
+            roster.append({
+                "name": s["name"],
+                "student_id": s["student_id"],
+                "page_id": s["page_id"],
+                "class_num": cn,
+                "class_title": cdata.get("title", ""),
+            })
     return roster
 
 
 # ---------------------------------------------------------------------------
-# Week block parsing
+# Student page parsing
 # ---------------------------------------------------------------------------
-
 def parse_student_weeks(blocks: list[dict]) -> dict[str, list[dict]]:
-    """Parse Notion page blocks into per-week sections.
+    """Parse a student page's blocks into week-keyed sections.
 
-    Looks for ``heading_3`` blocks whose text matches ``Week \\d+``.  All
-    subsequent blocks up to the next such heading are grouped under that
-    week number (zero-padded to 2 digits).
-
-    Parameters
-    ----------
-    blocks : list[dict]
-        Flat list of Notion block objects (top-level).
-
-    Returns
-    -------
-    dict[str, list[dict]]
-        Mapping of week number string (``"01"``, ``"02"``, …) to a list of
-        the blocks that belong to that week.
+    Returns dict mapping week number (e.g. "01") to list of content blocks
+    under that heading.
     """
-    result: dict[str, list[dict]] = {}
-    current_week: Optional[str] = None
-    week_pattern = re.compile(r"Week\s+(\d+)", re.IGNORECASE)
+    weeks: dict[str, list[dict]] = {}
+    current_week: str | None = None
 
     for block in blocks:
         btype = block.get("type", "")
 
         if btype == "heading_3":
-            heading_text = extract_text(block["heading_3"].get("rich_text", []))
-            m = week_pattern.search(heading_text)
+            text = extract_text(block["heading_3"].get("rich_text", []))
+            m = re.match(r"(?:⭐\s*)?Week\s*(\d+)", text)
             if m:
-                current_week = str(int(m.group(1))).zfill(2)
-                result.setdefault(current_week, [])
-                continue  # heading itself is not added to week blocks
+                current_week = m.group(1).zfill(2)
+                weeks[current_week] = []
+                continue
 
         if current_week is not None:
-            result[current_week].append(block)
+            weeks.setdefault(current_week, []).append(block)
 
-    return result
+    return weeks
 
 
 # ---------------------------------------------------------------------------
 # Submission detection
 # ---------------------------------------------------------------------------
-
 def detect_submission(blocks: list[dict]) -> bool:
-    """Determine whether a list of blocks constitutes a real submission.
+    """Determine if a list of blocks constitutes a submission.
 
-    Returns ``True`` when:
-
-    * Any block has a media type (image / file / video / embed / pdf /
-      column_list), **or**
-    * Any paragraph / heading block contains non-empty, non-placeholder text.
-
-    Parameters
-    ----------
-    blocks : list[dict]
-        Notion block objects for a single week section.
-
-    Returns
-    -------
-    bool
+    Returns True if there is at least one meaningful content block
+    (image, file, embed, or non-placeholder text).
     """
     for block in blocks:
         btype = block.get("type", "")
 
-        # Media blocks always count as submission
-        if btype in _MEDIA_TYPES:
+        # Image or file = definitely submitted
+        if btype in ("image", "file", "video", "embed", "pdf"):
             return True
 
-        # Text blocks: extract plain text and check content
-        block_data = block.get(btype, {})
-        rich_text = block_data.get("rich_text", [])
-        if not rich_text:
-            continue
-
-        text = extract_text(rich_text).strip()
-        if text and text not in PLACEHOLDERS:
+        # Column blocks may contain images
+        if btype in ("column_list", "column"):
             return True
+
+        # Text blocks — check if it's a placeholder
+        if btype in ("paragraph", "quote", "callout", "bulleted_list_item", "numbered_list_item"):
+            text_key = btype
+            rich_text = block.get(text_key, {}).get("rich_text", [])
+            text = extract_text(rich_text).strip()
+            if text and text not in PLACEHOLDERS:
+                return True
 
     return False
 
@@ -207,256 +151,167 @@ def detect_submission(blocks: list[dict]) -> bool:
 # ---------------------------------------------------------------------------
 # Notion DB creation
 # ---------------------------------------------------------------------------
+def create_submissions_db(
+    parent_page_id: str, token: str | None = None
+) -> str:
+    """Create the 과제 제출 현황 database under the given parent page.
 
-def create_submissions_db(parent_page_id: str, token: Optional[str] = None) -> dict:
-    """Create a Notion database for tracking assignment submissions.
-
-    Schema
-    ------
-    - Name (title) — student name
-    - student_id (rich_text)
-    - class_num (select)
-    - week (select)
-    - submitted (checkbox)
-    - page_id (rich_text)
-
-    Parameters
-    ----------
-    parent_page_id : str
-        Notion page that will contain this database.
-    token : str | None
-        Notion integration token.
-
-    Returns
-    -------
-    dict
-        Raw Notion API response for the created database.
+    Returns the database ID.
     """
-    token = token or get_notion_token()
     body = {
         "parent": {"type": "page_id", "page_id": parent_page_id},
-        "title": [{"type": "text", "text": {"content": "과제 제출 현황"}}],
+        "title": [{"type": "text", "text": {"content": "📊 과제 제출 현황"}}],
         "properties": {
-            "Name": {"title": {}},
-            "student_id": {"rich_text": {}},
-            "class_num": {
+            "학생명": {"title": {}},
+            "학번": {"rich_text": {}},
+            "분반": {
                 "select": {
                     "options": [
-                        {"name": "1", "color": "blue"},
-                        {"name": "2", "color": "green"},
+                        {"name": "1반", "color": "blue"},
+                        {"name": "2반", "color": "green"},
                     ]
                 }
             },
-            "week": {
-                "select": {
-                    "options": [{"name": w} for w in WEEKS]
-                }
-            },
-            "submitted": {"checkbox": {}},
-            "page_id": {"rich_text": {}},
-        },
-    }
-    return notion_request("POST", "/databases", body, token=token)
-
-
-def create_grades_db(parent_page_id: str, token: Optional[str] = None) -> dict:
-    """Create a Notion database for tracking grades per student.
-
-    Schema
-    ------
-    - Name (title) — student name
-    - student_id (rich_text)
-    - class_num (select)
-    - submissions_count (number)
-    - total_weeks (number)
-    - page_id (rich_text)
-
-    Parameters
-    ----------
-    parent_page_id : str
-        Notion page that will contain this database.
-    token : str | None
-        Notion integration token.
-
-    Returns
-    -------
-    dict
-        Raw Notion API response for the created database.
-    """
-    token = token or get_notion_token()
-    body = {
-        "parent": {"type": "page_id", "page_id": parent_page_id},
-        "title": [{"type": "text", "text": {"content": "학생별 성적 현황"}}],
-        "properties": {
-            "Name": {"title": {}},
-            "student_id": {"rich_text": {}},
-            "class_num": {
+            "주차": {
                 "select": {
                     "options": [
-                        {"name": "1", "color": "blue"},
-                        {"name": "2", "color": "green"},
+                        {"name": f"Week {w}"} for w in WEEKS
                     ]
                 }
             },
-            "submissions_count": {"number": {"format": "number"}},
-            "total_weeks": {"number": {"format": "number"}},
-            "page_id": {"rich_text": {}},
+            "제출": {"checkbox": {}},
+            "학생페이지": {"url": {}},
         },
     }
-    return notion_request("POST", "/databases", body, token=token)
+    result = notion_request("POST", "/databases", body, token=token)
+    db_id = result["id"]
+
+    ids = _load_grading_ids()
+    ids["submissions_db_id"] = db_id
+    _save_grading_ids(ids)
+
+    return db_id
+
+
+def create_grades_db(
+    parent_page_id: str, token: str | None = None
+) -> str:
+    """Create the 학기 성적 종합 database under the given parent page.
+
+    Returns the database ID.
+    """
+    body = {
+        "parent": {"type": "page_id", "page_id": parent_page_id},
+        "title": [{"type": "text", "text": {"content": "📈 학기 성적 종합"}}],
+        "properties": {
+            "학생명": {"title": {}},
+            "학번": {"rich_text": {}},
+            "분반": {
+                "select": {
+                    "options": [
+                        {"name": "1반", "color": "blue"},
+                        {"name": "2반", "color": "green"},
+                    ]
+                }
+            },
+            "출석": {"number": {"format": "number"}},
+            "과제제출수": {"number": {"format": "number"}},
+            "중간고사": {"number": {"format": "number"}},
+            "기말고사": {"number": {"format": "number"}},
+            "학생페이지": {"url": {}},
+        },
+    }
+    result = notion_request("POST", "/databases", body, token=token)
+    db_id = result["id"]
+
+    ids = _load_grading_ids()
+    ids["grades_db_id"] = db_id
+    _save_grading_ids(ids)
+
+    return db_id
 
 
 # ---------------------------------------------------------------------------
-# Row operations
+# Notion DB row operations
 # ---------------------------------------------------------------------------
-
 def add_submission_row(
     db_id: str,
-    name: str,
-    student_id: str,
-    class_num: str,
+    student: dict,
     week: str,
-    submitted: bool,
-    page_id: str,
-    token: Optional[str] = None,
-) -> dict:
-    """Add a row to the submissions database.
-
-    Parameters
-    ----------
-    db_id : str
-        Notion database ID.
-    name : str
-        Student full name.
-    student_id : str
-        Student ID number string.
-    class_num : str
-        Class number string ("1", "2", …).
-    week : str
-        Zero-padded week number ("01" … "15").
-    submitted : bool
-        Whether the student submitted for this week.
-    page_id : str
-        Notion page ID of the student page (for reference).
-    token : str | None
-        Notion integration token.
-
-    Returns
-    -------
-    dict
-        Raw Notion API response.
-    """
-    token = token or get_notion_token()
+    submitted: bool = False,
+    token: str | None = None,
+) -> str:
+    """Add a single submission row to the DB. Returns the page ID."""
+    class_label = f"{student['class_num']}반"
+    page_url = f"https://www.notion.so/{student['page_id'].replace('-', '')}"
     body = {
         "parent": {"database_id": db_id},
         "properties": {
-            "Name": {"title": [{"type": "text", "text": {"content": name}}]},
-            "student_id": {"rich_text": [{"type": "text", "text": {"content": student_id}}]},
-            "class_num": {"select": {"name": class_num}},
-            "week": {"select": {"name": week}},
-            "submitted": {"checkbox": submitted},
-            "page_id": {"rich_text": [{"type": "text", "text": {"content": page_id}}]},
+            "학생명": {"title": [{"text": {"content": f"{student['name']} ({student['student_id']})"}}]},
+            "학번": {"rich_text": [{"text": {"content": student["student_id"]}}]},
+            "분반": {"select": {"name": class_label}},
+            "주차": {"select": {"name": f"Week {week}"}},
+            "제출": {"checkbox": submitted},
+            "학생페이지": {"url": page_url},
         },
     }
-    return notion_request("POST", "/pages", body, token=token)
+    result = notion_request("POST", "/pages", body, token=token)
+    return result["id"]
 
 
 def add_grade_row(
-    db_id: str,
-    name: str,
-    student_id: str,
-    class_num: str,
-    submissions_count: int,
-    total_weeks: int,
-    page_id: str,
-    token: Optional[str] = None,
-) -> dict:
-    """Add a row to the grades database.
-
-    Parameters
-    ----------
-    db_id : str
-        Notion database ID.
-    name : str
-        Student full name.
-    student_id : str
-        Student ID number string.
-    class_num : str
-        Class number string.
-    submissions_count : int
-        Number of weeks the student submitted work.
-    total_weeks : int
-        Total number of weeks in the course.
-    page_id : str
-        Notion page ID of the student page.
-    token : str | None
-        Notion integration token.
-
-    Returns
-    -------
-    dict
-        Raw Notion API response.
-    """
-    token = token or get_notion_token()
+    db_id: str, student: dict, token: str | None = None
+) -> str:
+    """Add a student row to the grades DB. Returns the page ID."""
+    class_label = f"{student['class_num']}반"
+    page_url = f"https://www.notion.so/{student['page_id'].replace('-', '')}"
     body = {
         "parent": {"database_id": db_id},
         "properties": {
-            "Name": {"title": [{"type": "text", "text": {"content": name}}]},
-            "student_id": {"rich_text": [{"type": "text", "text": {"content": student_id}}]},
-            "class_num": {"select": {"name": class_num}},
-            "submissions_count": {"number": submissions_count},
-            "total_weeks": {"number": total_weeks},
-            "page_id": {"rich_text": [{"type": "text", "text": {"content": page_id}}]},
+            "학생명": {"title": [{"text": {"content": f"{student['name']} ({student['student_id']})"}}]},
+            "학번": {"rich_text": [{"text": {"content": student["student_id"]}}]},
+            "분반": {"select": {"name": class_label}},
+            "출석": {"number": 0},
+            "과제제출수": {"number": 0},
+            "중간고사": {"number": 0},
+            "기말고사": {"number": 0},
+            "학생페이지": {"url": page_url},
         },
     }
-    return notion_request("POST", "/pages", body, token=token)
+    result = notion_request("POST", "/pages", body, token=token)
+    return result["id"]
 
 
 # ---------------------------------------------------------------------------
 # Query helpers
 # ---------------------------------------------------------------------------
-
 def query_submissions(
-    db_id: str,
-    class_num: Optional[str] = None,
-    week: Optional[str] = None,
-    token: Optional[str] = None,
+    db_id: str | None = None,
+    class_num: str | None = None,
+    week: str | None = None,
+    token: str | None = None,
 ) -> list[dict]:
-    """Query the submissions database with optional filters.
+    """Query the submissions DB with optional filters.
 
-    Parameters
-    ----------
-    db_id : str
-        Submissions database ID.
-    class_num : str | None
-        Filter to a specific class number.
-    week : str | None
-        Filter to a specific week (zero-padded, e.g. ``"03"``).
-    token : str | None
-        Notion integration token.
-
-    Returns
-    -------
-    list[dict]
-        List of Notion page objects matching the filter.
+    Returns list of dicts: {student_name, student_id, class_num, week, submitted, notion_page_id}
     """
-    token = token or get_notion_token()
-    filters: list[dict] = []
+    if db_id is None:
+        ids = _load_grading_ids()
+        db_id = ids.get("submissions_db_id")
+        if not db_id:
+            raise RuntimeError("Submissions DB not initialized. Run init_grading_db.py first.")
 
-    if class_num is not None:
-        filters.append(
-            {
-                "property": "class_num",
-                "select": {"equals": class_num},
-            }
-        )
-    if week is not None:
-        filters.append(
-            {
-                "property": "week",
-                "select": {"equals": week},
-            }
-        )
+    filters = []
+    if class_num:
+        filters.append({
+            "property": "분반",
+            "select": {"equals": f"{class_num}반"},
+        })
+    if week:
+        filters.append({
+            "property": "주차",
+            "select": {"equals": f"Week {week}"},
+        })
 
     body: dict = {}
     if len(filters) == 1:
@@ -464,125 +319,96 @@ def query_submissions(
     elif len(filters) > 1:
         body["filter"] = {"and": filters}
 
-    results: list[dict] = []
-    has_more = True
-    cursor: Optional[str] = None
-
-    while has_more:
+    all_results: list[dict] = []
+    cursor = None
+    while True:
         if cursor:
             body["start_cursor"] = cursor
-        resp = notion_request("POST", f"/databases/{db_id}/query", body, token=token)
-        results.extend(resp.get("results", []))
-        has_more = resp.get("has_more", False)
-        cursor = resp.get("next_cursor")
+        result = notion_request("POST", f"/databases/{db_id}/query", body, token=token)
+        for page in result.get("results", []):
+            props = page.get("properties", {})
+            title_rt = props.get("학생명", {}).get("title", [])
+            student_name = extract_text(title_rt)
+            student_id_rt = props.get("학번", {}).get("rich_text", [])
+            student_id = extract_text(student_id_rt)
+            class_sel = props.get("분반", {}).get("select", {})
+            week_sel = props.get("주차", {}).get("select", {})
+            submitted = props.get("제출", {}).get("checkbox", False)
+            all_results.append({
+                "notion_page_id": page["id"],
+                "student_name": student_name,
+                "student_id": student_id,
+                "class_num": class_sel.get("name", ""),
+                "week": week_sel.get("name", ""),
+                "submitted": submitted,
+            })
+        if not result.get("has_more"):
+            break
+        cursor = result.get("next_cursor")
 
-    return results
+    return all_results
+
+
+def update_submission_checkbox(
+    page_id: str, submitted: bool, token: str | None = None
+) -> None:
+    """Update the 제출 checkbox on a submission row."""
+    notion_request("PATCH", f"/pages/{page_id}", {
+        "properties": {"제출": {"checkbox": submitted}},
+    }, token=token)
 
 
 def query_grades(
-    db_id: str,
-    class_num: Optional[str] = None,
-    token: Optional[str] = None,
+    db_id: str | None = None,
+    class_num: str | None = None,
+    token: str | None = None,
 ) -> list[dict]:
-    """Query the grades database with an optional class filter.
+    """Query the grades DB. Returns list of grade dicts."""
+    if db_id is None:
+        ids = _load_grading_ids()
+        db_id = ids.get("grades_db_id")
+        if not db_id:
+            raise RuntimeError("Grades DB not initialized. Run init_grading_db.py first.")
 
-    Parameters
-    ----------
-    db_id : str
-        Grades database ID.
-    class_num : str | None
-        Filter to a specific class number.
-    token : str | None
-        Notion integration token.
-
-    Returns
-    -------
-    list[dict]
-        List of Notion page objects.
-    """
-    token = token or get_notion_token()
     body: dict = {}
-
-    if class_num is not None:
+    if class_num:
         body["filter"] = {
-            "property": "class_num",
-            "select": {"equals": class_num},
+            "property": "분반",
+            "select": {"equals": f"{class_num}반"},
         }
 
-    results: list[dict] = []
-    has_more = True
-    cursor: Optional[str] = None
-
-    while has_more:
+    all_results: list[dict] = []
+    cursor = None
+    while True:
         if cursor:
             body["start_cursor"] = cursor
-        resp = notion_request("POST", f"/databases/{db_id}/query", body, token=token)
-        results.extend(resp.get("results", []))
-        has_more = resp.get("has_more", False)
-        cursor = resp.get("next_cursor")
+        result = notion_request("POST", f"/databases/{db_id}/query", body, token=token)
+        for page in result.get("results", []):
+            props = page.get("properties", {})
+            title_rt = props.get("학생명", {}).get("title", [])
+            student_id_rt = props.get("학번", {}).get("rich_text", [])
+            class_sel = props.get("분반", {}).get("select", {})
+            all_results.append({
+                "notion_page_id": page["id"],
+                "student_name": extract_text(title_rt),
+                "student_id": extract_text(student_id_rt),
+                "class_num": class_sel.get("name", ""),
+                "attendance": props.get("출석", {}).get("number", 0),
+                "submissions": props.get("과제제출수", {}).get("number", 0),
+                "midterm": props.get("중간고사", {}).get("number", 0),
+                "final": props.get("기말고사", {}).get("number", 0),
+            })
+        if not result.get("has_more"):
+            break
+        cursor = result.get("next_cursor")
 
-    return results
-
-
-# ---------------------------------------------------------------------------
-# Update helpers
-# ---------------------------------------------------------------------------
-
-def update_submission_checkbox(
-    page_id: str,
-    submitted: bool,
-    token: Optional[str] = None,
-) -> dict:
-    """Update the ``submitted`` checkbox on a submissions DB row.
-
-    Parameters
-    ----------
-    page_id : str
-        Notion page ID of the submission row.
-    submitted : bool
-        New checkbox value.
-    token : str | None
-        Notion integration token.
-
-    Returns
-    -------
-    dict
-        Raw Notion API response.
-    """
-    token = token or get_notion_token()
-    body = {
-        "properties": {
-            "submitted": {"checkbox": submitted},
-        }
-    }
-    return notion_request("PATCH", f"/pages/{page_id}", body, token=token)
+    return all_results
 
 
 def update_grade_submissions_count(
-    page_id: str,
-    count: int,
-    token: Optional[str] = None,
-) -> dict:
-    """Update the ``submissions_count`` number on a grades DB row.
-
-    Parameters
-    ----------
-    page_id : str
-        Notion page ID of the grade row.
-    count : int
-        New submissions count value.
-    token : str | None
-        Notion integration token.
-
-    Returns
-    -------
-    dict
-        Raw Notion API response.
-    """
-    token = token or get_notion_token()
-    body = {
-        "properties": {
-            "submissions_count": {"number": count},
-        }
-    }
-    return notion_request("PATCH", f"/pages/{page_id}", body, token=token)
+    page_id: str, count: int, token: str | None = None
+) -> None:
+    """Update 과제제출수 on a grade row."""
+    notion_request("PATCH", f"/pages/{page_id}", {
+        "properties": {"과제제출수": {"number": count}},
+    }, token=token)

@@ -30,7 +30,7 @@ import sys
 import time
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
-from urllib.parse import unquote, urlparse
+from urllib.parse import unquote, urlparse, parse_qs
 
 from content_pipeline import (
     compute_curriculum_diff,
@@ -43,6 +43,11 @@ from notion_api import (
     load_notion_mapping,
     sync_week_to_notion,
     week_to_notion_blocks,
+)
+from grading_db import (
+    query_submissions,
+    query_grades,
+    _load_grading_ids,
 )
 from runtime_paths import (
     AUDIT_LOG_PATH,
@@ -622,6 +627,32 @@ class AdminHandler(BaseHTTPRequestHandler):
                 "weeks_mapped": len(mapping),
                 "mock": MOCK_NOTION_SYNC,
             })
+            return
+
+        # --- Grading API ---
+        if path == "/api/submissions":
+            if not self._check_auth():
+                return
+            params = dict(parse_qs(urlparse(self.path).query))
+            class_num = params.get("class", [None])[0]
+            week = params.get("week", [None])[0]
+            try:
+                data = query_submissions(class_num=class_num, week=week)
+                self._send_json(data)
+            except RuntimeError as e:
+                self._send_error_json(500, str(e))
+            return
+
+        if path == "/api/grades":
+            if not self._check_auth():
+                return
+            params = dict(parse_qs(urlparse(self.path).query))
+            class_num = params.get("class", [None])[0]
+            try:
+                data = query_grades(class_num=class_num)
+                self._send_json(data)
+            except RuntimeError as e:
+                self._send_error_json(500, str(e))
             return
 
         # Static files
