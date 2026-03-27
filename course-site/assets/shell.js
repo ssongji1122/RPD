@@ -60,6 +60,19 @@
     el('a', { className: 'app-tab', href: '/studio.html', 'data-tab-target': 'studio', textContent: 'My Studio' })
   ]));
 
+  // --- Search ---
+  var searchWrap = el('div', { className: 'app-topbar-search' });
+  var searchInput = el('input', {
+    type: 'search', className: 'app-search', id: 'topbarSearch',
+    autocomplete: 'off', 'aria-label': '검색'
+  });
+  var searchDropdown = el('div', {
+    className: 'topbar-search-dropdown', id: 'topbarSearchDropdown', hidden: ''
+  });
+  searchWrap.appendChild(searchInput);
+  searchWrap.appendChild(searchDropdown);
+  topbar.appendChild(searchWrap);
+
   var topbarRight = el('div', { className: 'app-topbar-right' });
   var themeBtn = el('button', { className: 'theme-toggle', id: 'themeToggle', type: 'button', 'aria-label': '테마 전환' });
   themeBtn.appendChild(svgIcon('<svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>'));
