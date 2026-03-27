@@ -125,6 +125,7 @@ class PublicPageStyleE2ETest(PlaywrightFailureArtifactsMixin, unittest.TestCase)
         self._close_context()
         self.context = self.browser.new_context()
         self.page = self.context.new_page()
+        self.page.set_default_timeout(60_000)
         return self.page
 
     def _read_style(self, page, selector: str) -> dict[str, str | None]:

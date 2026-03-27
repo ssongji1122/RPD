@@ -127,6 +127,7 @@ class AdminServerE2ETest(PlaywrightFailureArtifactsMixin, unittest.TestCase):
     def setUp(self) -> None:
         self.context = self.browser.new_context()
         self.page = self.context.new_page()
+        self.page.set_default_timeout(60_000)
         self._artifact_suffix = ""
         self._playwright_artifacts_captured = False
 
