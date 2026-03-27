@@ -1,20 +1,16 @@
 #!/usr/bin/env python3
 """
-init_grading_db.py — CLI to create and populate Notion grading databases
-=========================================================================
-Creates the submissions DB (375 rows: 25 students × 15 weeks) and
-grades DB (25 rows) under a given Notion parent page.
+Initialize Grading Databases
+=============================
+Creates the 과제 제출 현황 and 학기 성적 종합 databases on Notion
+and populates them with student rows.
 
-Usage::
+Usage:
+    NOTION_TOKEN=... python tools/init_grading_db.py
 
-    python tools/init_grading_db.py                          # live run
-    python tools/init_grading_db.py --dry-run                # preview only
-    python tools/init_grading_db.py --parent-page-id <id>    # custom parent
-
-Exit codes:
-    0: success
-    1: error (missing token, API failure, etc.)
-    2: aborted by user
+Options:
+    --parent-page-id ID   Override the parent page (default: 03 학생 개인 페이지 운영)
+    --dry-run             Show what would be created without calling the API
 """
 from __future__ import annotations
 
@@ -36,210 +32,78 @@ from grading_db import (
 )
 from notion_api import get_notion_token
 
-# ---------------------------------------------------------------------------
-# Constants
-# ---------------------------------------------------------------------------
-
-DEFAULT_PARENT_PAGE_ID = "31c54d6549718107a864f0dc8d16c45c"
-
-#: Rate-limit: sleep this many seconds every RATE_BATCH rows.
-RATE_SLEEP = 0.5
-RATE_BATCH = 25
-
-
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
-
-
-def _print_dry_run_summary(students: list[dict]) -> None:
-    n = len(students)
-    n_weeks = len(WEEKS)
-    submission_rows = n * n_weeks
-    grade_rows = n
-
-    print("=== DRY RUN — no API calls will be made ===")
-    print(f"  Students loaded   : {n}")
-    print(f"  Weeks             : {n_weeks}  ({WEEKS[0]} – {WEEKS[-1]})")
-    print(f"  Submission rows   : {submission_rows}  ({n} × {n_weeks})")
-    print(f"  Grade rows        : {grade_rows}")
-    print()
-    print("  Would create:")
-    print("    DB 1 → '과제 제출 현황' (submissions)")
-    print(f"         → populate {submission_rows} rows")
-    print("    DB 2 → '학생별 성적 현황' (grades)")
-    print(f"         → populate {grade_rows} rows")
-    print()
-    print("Run without --dry-run to execute.")
-
-
-def _confirm_reinit() -> bool:
-    """Ask user whether to re-initialize already-existing databases."""
-    print("WARNING: grading-db-ids.json already exists — databases may have been created before.")
-    answer = input("Re-initialize (create fresh DBs and discard existing IDs)? [y/N] ").strip().lower()
-    return answer in ("y", "yes")
-
-
-def _populate_submissions(db_id: str, students: list[dict], token: str) -> int:
-    """Add one row per (student, week) to the submissions DB.
-
-    Returns the total number of rows created.
-    """
-    total = 0
-    for student in students:
-        for week in WEEKS:
-            add_submission_row(
-                db_id=db_id,
-                name=student["name"],
-                student_id=student["student_id"],
-                class_num=student["class_num"],
-                week=week,
-                submitted=False,
-                page_id=student["page_id"],
-                token=token,
-            )
-            total += 1
-            if total % RATE_BATCH == 0:
-                time.sleep(RATE_SLEEP)
-                print(f"  ... {total} rows created", end="\r", flush=True)
-
-    print()  # newline after \r progress
-    return total
-
-
-def _populate_grades(db_id: str, students: list[dict], token: str) -> int:
-    """Add one row per student to the grades DB.
-
-    Returns the total number of rows created.
-    """
-    total = 0
-    for student in students:
-        add_grade_row(
-            db_id=db_id,
-            name=student["name"],
-            student_id=student["student_id"],
-            class_num=student["class_num"],
-            submissions_count=0,
-            total_weeks=len(WEEKS),
-            page_id=student["page_id"],
-            token=token,
-        )
-        total += 1
-        if total % RATE_BATCH == 0:
-            time.sleep(RATE_SLEEP)
-
-    return total
-
-
-# ---------------------------------------------------------------------------
-# Main
-# ---------------------------------------------------------------------------
+# Parent page: 03 학생 개인 페이지 운영
+DEFAULT_PARENT = "31c54d6549718107a864f0dc8d16c45c"
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(
-        description="Create and populate Notion grading databases.",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-    )
-    parser.add_argument(
-        "--parent-page-id",
-        default=DEFAULT_PARENT_PAGE_ID,
-        metavar="PAGE_ID",
-        help=f"Notion page that will contain both DBs (default: {DEFAULT_PARENT_PAGE_ID})",
-    )
-    parser.add_argument(
-        "--dry-run",
-        action="store_true",
-        help="Preview what would be created without making any API calls.",
-    )
+    parser = argparse.ArgumentParser(description="Initialize grading databases")
+    parser.add_argument("--parent-page-id", default=DEFAULT_PARENT)
+    parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
-    # ------------------------------------------------------------------
-    # 1. Load student roster
-    # ------------------------------------------------------------------
-    students = load_student_roster()
-    if not students:
-        print("Error: No students found in notion-mapping.json.", file=sys.stderr)
+    token = get_notion_token()
+    if not token and not args.dry_run:
+        print("ERROR: NOTION_TOKEN not set", file=sys.stderr)
         return 1
 
-    # ------------------------------------------------------------------
-    # 2. Dry-run: just print and exit
-    # ------------------------------------------------------------------
+    roster = load_student_roster()
+    if not roster:
+        print("ERROR: No students found in notion-mapping.json", file=sys.stderr)
+        return 1
+
+    print(f"Found {len(roster)} students across {len(set(s['class_num'] for s in roster))} classes")
+
     if args.dry_run:
-        _print_dry_run_summary(students)
+        print(f"\n[DRY RUN] Would create:")
+        print(f"  - 과제 제출 현황 DB: {len(roster)} students x {len(WEEKS)} weeks = {len(roster) * len(WEEKS)} rows")
+        print(f"  - 학기 성적 종합 DB: {len(roster)} rows")
         return 0
 
-    # ------------------------------------------------------------------
-    # 3. Token check (live run only)
-    # ------------------------------------------------------------------
-    token = get_notion_token()
-    if not token:
-        print("Error: NOTION_TOKEN environment variable not set.", file=sys.stderr)
-        return 1
-
-    # ------------------------------------------------------------------
-    # 4. Check if already initialized
-    # ------------------------------------------------------------------
-    existing_ids = _load_grading_ids()
-    if existing_ids:
-        if not _confirm_reinit():
+    # Check if already initialized
+    ids = _load_grading_ids()
+    if ids.get("submissions_db_id") or ids.get("grades_db_id"):
+        print("WARNING: Databases already initialized!")
+        print(f"  submissions_db_id: {ids.get('submissions_db_id', 'N/A')}")
+        print(f"  grades_db_id: {ids.get('grades_db_id', 'N/A')}")
+        answer = input("Re-initialize? This will create NEW databases (old ones remain). [y/N] ")
+        if answer.lower() != "y":
             print("Aborted.")
-            return 2
+            return 0
 
-    # ------------------------------------------------------------------
-    # 5. Create submissions DB and populate
-    # ------------------------------------------------------------------
-    print(f"Creating submissions DB under parent page {args.parent_page_id!r} …")
-    try:
-        subs_resp = create_submissions_db(parent_page_id=args.parent_page_id, token=token)
-    except Exception as exc:
-        print(f"Error creating submissions DB: {exc}", file=sys.stderr)
-        return 1
+    # 1. Create submissions DB
+    print("\nCreating submissions database...")
+    sub_db_id = create_submissions_db(args.parent_page_id, token=token)
+    print(f"  Created: {sub_db_id}")
 
-    subs_db_id: str = subs_resp["id"]
-    print(f"  submissions DB id: {subs_db_id}")
+    # 2. Populate submission rows
+    total = len(roster) * len(WEEKS)
+    count = 0
+    for student in roster:
+        for week in WEEKS:
+            add_submission_row(sub_db_id, student, week, submitted=False, token=token)
+            count += 1
+            if count % 25 == 0:
+                print(f"  Submissions: {count}/{total} rows created...")
+                time.sleep(0.5)  # Notion API rate limit
+    print(f"  Done: {count} submission rows created")
 
-    print(f"Populating {len(students) * len(WEEKS)} submission rows …")
-    try:
-        subs_total = _populate_submissions(subs_db_id, students, token)
-    except Exception as exc:
-        print(f"Error populating submissions DB: {exc}", file=sys.stderr)
-        return 1
+    # 3. Create grades DB
+    print("\nCreating grades database...")
+    grades_db_id = create_grades_db(args.parent_page_id, token=token)
+    print(f"  Created: {grades_db_id}")
 
-    print(f"  {subs_total} submission rows created.")
+    # 4. Populate grade rows
+    for i, student in enumerate(roster):
+        add_grade_row(grades_db_id, student, token=token)
+        if (i + 1) % 10 == 0:
+            time.sleep(0.3)
+    print(f"  Done: {len(roster)} grade rows created")
 
-    # ------------------------------------------------------------------
-    # 6. Create grades DB and populate
-    # ------------------------------------------------------------------
-    print(f"Creating grades DB under parent page {args.parent_page_id!r} …")
-    try:
-        grades_resp = create_grades_db(parent_page_id=args.parent_page_id, token=token)
-    except Exception as exc:
-        print(f"Error creating grades DB: {exc}", file=sys.stderr)
-        return 1
-
-    grades_db_id: str = grades_resp["id"]
-    print(f"  grades DB id: {grades_db_id}")
-
-    print(f"Populating {len(students)} grade rows …")
-    try:
-        grades_total = _populate_grades(grades_db_id, students, token)
-    except Exception as exc:
-        print(f"Error populating grades DB: {exc}", file=sys.stderr)
-        return 1
-
-    print(f"  {grades_total} grade rows created.")
-
-    # ------------------------------------------------------------------
-    # 7. Summary
-    # ------------------------------------------------------------------
-    print()
-    print("=== Initialization complete ===")
-    print(f"  submissions DB : {subs_db_id}  ({subs_total} rows)")
-    print(f"  grades DB      : {grades_db_id}  ({grades_total} rows)")
-    print()
-    print("IDs are saved in tools/grading-db-ids.json for subsequent scripts.")
-
+    print(f"\nInitialization complete!")
+    print(f"  Submissions DB: {sub_db_id}")
+    print(f"  Grades DB: {grades_db_id}")
+    print(f"  IDs saved to: tools/grading-db-ids.json")
     return 0
 
 
