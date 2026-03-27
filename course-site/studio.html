@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="assets/layout.css">
   <link rel="stylesheet" href="assets/chrome.css">
   <link rel="stylesheet" href="assets/page-studio.css">
+  <script>/* FOUC prevention */ (function(){var t=localStorage.getItem('rpd-theme');if(t)document.documentElement.setAttribute('data-theme',t);var l=localStorage.getItem('rpd-lang');if(l){document.documentElement.lang=l;document.documentElement.setAttribute('data-lang',l);}})()</script>
 </head>
 <body data-tab="studio">
   <a href="#my-decks" class="skip-link">본문으로 건너뛰기</a>
@@ -51,5 +52,10 @@
   <script src="assets/shell.js"></script>
   <script src="assets/tab-system.js"></script>
   <script src="assets/user-profile.js"></script>
+  <script src="assets/site-shell.js"></script>
+  <script src="assets/layout.js"></script>
+  <script>
+    window.RPDAppShell.bindThemeToggle(document.getElementById("themeToggle"));
+  </script>
 </body>
 </html>

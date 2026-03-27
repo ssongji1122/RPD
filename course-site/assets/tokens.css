@@ -3,7 +3,7 @@
    공통 디자인 토큰 — 모든 페이지가 이 파일 하나를 공유
    ===================================================================== */
 
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap");
+/* Noto Sans KR is loaded via <link> in each HTML <head> for non-blocking fetch */
 
 :root {
   /* Colors — Dark (default) */
@@ -87,7 +87,10 @@
   --radius-md: 16px;
   --radius-lg: 20px;
   --radius-xl:   24px;
+  --radius-2xl:  26px;
   --radius-pill: 999px;
+  --pill-radius: 18px;        /* pill-like rounded rect (lang-switcher, download btn) */
+  --pill-inner-radius: 12px;  /* inner button radius within pill containers */
 
   /* Spacing scale */
   --sp-1:  4px;
@@ -528,7 +531,7 @@ section, .section-inner {
 /* Status pill */
 .status-pill {
   display: inline-flex; align-items: center; gap: 8px;
-  padding: 4px 8px; border-radius: 8px;
+  padding: 4px 8px; border-radius: var(--radius-sm);
   font-size: .72rem; font-weight: var(--fw-bold);
   letter-spacing: .04em;
   text-transform: uppercase;

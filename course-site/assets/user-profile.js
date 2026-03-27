@@ -66,13 +66,5 @@
     }
   });
 
-  // Admin role from URL param: ?role=admin
-  var params = new URLSearchParams(location.search);
-  if (params.get('role') === 'admin') {
-    var user = getUser();
-    user.role = 'admin';
-    saveUser(user);
-  }
-
   render();
 })();

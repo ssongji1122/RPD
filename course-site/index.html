@@ -6,6 +6,8 @@
   <title>Blender Archive — RPD</title>
   <meta name="description" content="Blender Archive와 인하대학교 RPD 수업 조합 허브" />
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="assets/tokens.css" />
   <link rel="stylesheet" href="assets/components.css" />
   <link rel="stylesheet" href="assets/layout.css" />
@@ -14,66 +16,7 @@
 </head>
 <body data-tab="archive">
   <a href="#main-content" class="skip-link">본문으로 건너뛰기</a>
-  <div class="app">
-
-    <!-- Topbar — centered tabs + theme toggle -->
-    <header class="app-topbar">
-      <div class="app-tabs">
-        <a href="/index.html" class="app-tab" data-tab-target="archive">Archive</a>
-        <a href="/inha.html" class="app-tab" data-tab-target="class">Class</a>
-        <a href="/studio.html" class="app-tab" data-tab-target="studio">My Studio</a>
-      </div>
-      <div class="app-topbar-right">
-        <button class="theme-toggle" id="themeToggle" type="button" aria-label="테마 전환">
-          <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-          <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-        </button>
-      </div>
-    </header>
-    <div hidden><div id="langSwitcher"></div></div>
-
-    <!-- Side Rail -->
-    <nav class="rail" id="sideRail" aria-label="메인 탐색">
-      <a href="index.html" class="rail-item" data-page="index.html">
-        <span class="rail-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></span>
-        <span class="rail-text">홈</span>
-      </a>
-      <a href="#" class="rail-item" data-page="">
-        <span class="rail-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m2 12 8.58 3.91a2 2 0 0 0 1.66 0L21 12"/><path d="m2 17 8.58 3.91a2 2 0 0 0 1.66 0L21 17"/></svg></span>
-        <span class="rail-text">내 덱</span>
-      </a>
-      <div class="rail-sub" id="railDeckList">
-        <!-- JS로 채워짐 -->
-      </div>
-      <a href="library.html" class="rail-item" data-page="library.html">
-        <span class="rail-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span>
-        <span class="rail-text">카드 찾기</span>
-      </a>
-      <a href="shortcuts.html" class="rail-item" data-page="shortcuts.html">
-        <span class="rail-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 8h.01"/><path d="M12 12h.01"/><path d="M14 8h.01"/><path d="M16 12h.01"/><path d="M18 8h.01"/><path d="M6 8h.01"/><path d="M7 16h10"/><path d="M8 12h.01"/><rect width="20" height="16" x="2" y="4" rx="2"/></svg></span>
-        <span class="rail-text">단축키</span>
-      </a>
-      <div class="rail-spacer"></div>
-      <div class="rail-user" id="userProfile" onclick="toggleUserMenu()">
-        <div class="rail-user-avatar" id="userAvatar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-        <div class="rail-user-info">
-          <div class="rail-user-name" id="userName">게스트</div>
-          <div class="rail-user-role" id="userRole">로그인하세요</div>
-        </div>
-        <div class="rail-user-menu" id="userMenu">
-          <a href="/studio.html#settings" class="rail-user-menu-item">⚙ 설정</a>
-          <a href="/studio.html#progress" class="rail-user-menu-item">📊 내 진도</a>
-          <div class="rail-user-menu-divider"></div>
-          <a href="/admin.html" class="rail-user-menu-item" data-admin>🔧 관리자 패널</a>
-          <button class="rail-user-menu-item" onclick="changeUserName()">✏️ 이름 변경</button>
-        </div>
-      </div>
-      <button class="rail-toggle" id="railToggle">
-        <span class="rail-toggle-arrow">&#9654;</span>
-        <span class="rail-text">접기</span>
-      </button>
-    </nav>
-
+  <div class="app" data-shell>
     <!-- Main Content -->
     <main class="main" id="main-content">
       <div class="main-inner">
@@ -129,9 +72,9 @@
         </footer>
       </div>
     </main>
-    <div class="rail-overlay" id="railOverlay" onclick="toggleMobileRail()"></div>
   </div>
 
+  <script src="assets/shell.js"></script>
   <script src="assets/tab-system.js"></script>
   <script src="assets/user-profile.js"></script>
   <script src="data/i18n-content.js?v=20260318e"></script>

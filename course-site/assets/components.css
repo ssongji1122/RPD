@@ -25,7 +25,7 @@
 /* ─── Glass card (패널 안의 자식 카드) ─── */
 .rpd-glass-card {
   position: relative;
-  border-radius: 16px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--line);
   background: var(--modal-panel-soft-bg);
   box-shadow: var(--modal-card-shadow);
@@ -79,7 +79,7 @@
   width: 44px;
   height: 44px;
   flex-shrink: 0;
-  border-radius: 14px;
+  border-radius: var(--radius);
   border: 1px solid rgba(122,162,247,.2);
   background: var(--modal-icon-bg);
   box-shadow: var(--modal-icon-shadow);
@@ -144,7 +144,7 @@
 .rpd-search-input {
   width: 100%;
   padding: 12px 14px;
-  border-radius: 16px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--line);
   background: var(--modal-panel-soft-strong-bg);
   box-shadow: var(--modal-card-shadow);
