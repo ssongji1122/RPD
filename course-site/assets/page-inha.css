@@ -577,6 +577,14 @@
       .content-block {
         padding: 20px var(--course-panel-pad-x);
       }
+      .hero-card {
+        grid-template-columns: 1fr;
+      }
+      .hero-meta-wrap {
+        border-left: none;
+        border-top: 1px solid var(--line);
+        padding: 16px 0 0;
+      }
       .hero h1 {
         font-size: var(--type-section);
       }
