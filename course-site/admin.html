@@ -8,52 +8,48 @@
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
   <link rel="stylesheet" href="assets/tokens.css" />
   <link rel="stylesheet" href="assets/components.css" />
+  <link rel="stylesheet" href="assets/layout.css" />
   <link rel="stylesheet" href="assets/page-admin.css" />
   <link rel="stylesheet" href="assets/surface.css?v=20260318a" />
   <link rel="stylesheet" href="assets/meta.css?v=20260318a" />
   <link rel="stylesheet" href="assets/chrome.css?v=20260318a" />
 </head>
-<body>
+<body data-tab="admin">
   <a href="#editorPane" class="skip-link">본문으로 건너뛰기</a>
-  <div class="page-shell admin-shell">
+  <div class="app">
     <!-- Topbar -->
-    <header class="topbar admin-topbar">
-      <div class="topbar-inner admin-topbar-inner rpd-topbar-3col">
-        <div class="admin-topbar-primary">
-          <button class="hamburger" id="hamburgerBtn" type="button" aria-label="메뉴 열기">&#9776;</button>
-          <a class="admin-brand admin-brand-link" id="adminBrandLink" href="index.html" aria-label="홈으로 이동">
-            <div class="admin-brand-badge">R</div>
-            <div>
-              <strong>RPD Admin</strong>
-              <span>커리큘럼 관리</span>
-            </div>
-          </a>
+    <header class="app-topbar">
+      <div class="app-tabs">
+        <a href="/index.html" class="app-tab" data-tab-target="archive">Archive</a>
+        <a href="/inha.html" class="app-tab" data-tab-target="class">Class</a>
+        <a href="/studio.html" class="app-tab" data-tab-target="studio">My Studio</a>
+      </div>
+      <div class="app-topbar-right" style="gap: 8px; display: flex; align-items: center;">
+        <div class="version-badge" id="versionBadge">버전 —</div>
+        <div class="dirty-indicator" id="dirtyIndicator">
+          <span>&#9679;</span> 저장되지 않은 변경
         </div>
-        <div class="admin-topbar-context rpd-topbar-context">
-          <select class="field-select" id="weekSelectTopbar" style="width:100%;max-width:240px;font-size:.84rem;padding:6px 30px 6px 10px;display:none" title="주차 선택"></select>
-        </div>
-        <div class="topbar-actions rpd-topbar-actions">
-          <div class="version-badge" id="versionBadge">버전 —</div>
-          <div class="dirty-indicator" id="dirtyIndicator">
-            <span>&#9679;</span> 저장되지 않은 변경
-          </div>
-          <a class="btn btn-ghost" id="topbarHomeLink" href="index.html">홈 &#8599;</a>
-          <div class="notion-sync-group" id="notionGroup" style="display:none">
-            <button class="btn btn-ghost" id="notionPushAllBtn" type="button" title="canonical curriculum → Notion 전체 push">&#128640; Notion Push</button>
-          </div>
-          <button class="btn btn-ghost" id="diffBtn" type="button">변경 미리보기</button>
-          <button class="btn btn-ghost" id="previewBtn" type="button">주차 보기 &#8599;</button>
-          <button class="btn btn-ghost" id="logoutBtn" type="button">로그아웃</button>
-          <button class="btn btn-primary" id="saveBtn" type="button">&#128190; 저장</button>
-        </div>
+        <button class="btn btn-ghost" id="diffBtn" type="button">변경 미리보기</button>
+        <button class="btn btn-ghost" id="previewBtn" type="button">주차 보기 ↗</button>
+        <button class="btn btn-primary" id="saveBtn" type="button">💾 저장</button>
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="테마 전환">
+          <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        </button>
       </div>
     </header>
+    <select class="field-select" id="weekSelectTopbar" style="display:none" title="주차 선택"></select>
+    <div style="display:none">
+      <button id="logoutBtn"></button>
+      <button id="notionPushAllBtn"></button>
+      <div id="notionGroup"></div>
+      <button id="hamburgerBtn"></button>
+    </div>
 
     <!-- Sidebar overlay (mobile) -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <!-- Body -->
-    <div class="admin-body rpd-page-layout">
+    <div class="admin-body rpd-page-layout" style="display:grid; grid-template-columns: 220px 1fr;">
       <!-- Sidebar -->
       <nav class="sidebar rpd-page-rail" id="sidebar" aria-label="관리 탐색">
         <div class="sidebar-block">
