@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — Sculpt 브러시 심화</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --danger-soft:   #fca5a5;
+  --warn-soft:     #fbbf24;
+  --warn-medium:   #fcd34d;
+  --accent-soft:   #FFB347;
+  --secondary-soft:#a5b4fc;
+  --secondary-mid: #c4b5fd;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --muted-mid:     #94a3b8;
+  --muted-soft:    #cbd5e1;
+  --muted-dim:     #64748b;
+  --info-soft:     #67e8f9;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Tab Navigation ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+
+/* ── Tab Panels ── */
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+
+/* ── Concept Cards ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card h3 {
+  margin: 0 0 8px; font-size: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.concept-card p {
+  margin: 0; color: var(--muted-strong);
+  font-size: .88rem; line-height: 1.7;
+}
+.concept-card ul {
+  margin: 8px 0 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
+}
+
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: .72rem; font-weight: 600;
+}
+.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: var(--warn-soft); }
+
+/* ── Keyboard Shortcut ── */
+.kbd {
+  display: inline-block;
+  padding: 3px 8px; border-radius: 6px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  color: var(--key-soft);
+  font-size: .82rem; font-weight: 600;
+  font-family: var(--font);
+}
+
+/* ── Canvas / Demo ── */
+.demo-wrap {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+  margin: 14px 0;
+}
+.demo-wrap canvas {
+  display: block; width: 100%;
+}
+.demo-controls {
+  display: flex; gap: 8px; padding: 12px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.demo-hint {
+  font-size: .78rem; color: var(--muted);
+  text-align: center; padding: 6px 0 0;
+}
+.demo-btn {
+  padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .82rem;
+  cursor: pointer;
+  transition: background .14s, color .14s;
+}
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active {
+  background: rgba(10,132,255,.14);
+  color: var(--key-soft);
+  border-color: rgba(10,132,255,.3);
+}
+
+/* ── Usage Grid ── */
+.usage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.usage-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 16px;
+}
+.usage-card h4 {
+  margin: 0 0 8px; font-size: .92rem;
+  color: var(--key-soft);
+}
+.usage-card ul {
+  margin: 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem;
+  line-height: 1.8;
+}
+
+/* ── Tip Box ── */
+.tip-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(10,132,255,.2);
+  background: rgba(10,132,255,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+}
+.tip-box strong { color: var(--key-soft); }
+
+/* ── Combo Section ── */
+.combo-section {
+  margin-top: 18px;
+}
+.combo-section h4 {
+  margin: 0 0 10px;
+  font-size: .92rem;
+  color: var(--text);
+}
+.combo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.combo-card {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 12px 14px;
+}
+.combo-card .combo-name {
+  font-size: .86rem;
+  font-weight: 600;
+  color: var(--key-soft);
+  margin-bottom: 4px;
+}
+.combo-card .combo-desc {
+  font-size: .8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ── Shortcut Reference ── */
+.shortcut-list {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.shortcut-list h4 {
+  margin: 0 0 10px;
+  font-size: .9rem;
+  color: var(--text);
+}
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: .84rem;
+  color: var(--muted-strong);
+}
+.shortcut-row + .shortcut-row {
+  border-top: 1px solid var(--line);
+}
+.shortcut-keys {
+  flex-shrink: 0;
+}
+.analogy {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(245,158,11,.06);
+  border: 1px solid rgba(245,158,11,.15);
+  font-size: .82rem;
+  color: var(--warn-soft);
+  font-style: italic;
+}
+
+/* ── Quiz ── */
+.quiz-progress {
+  font-size: .78rem; color: var(--muted);
+  margin-bottom: 12px;
+}
+.quiz-question {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.quiz-question h4 {
+  margin: 0 0 12px; font-size: .94rem;
+}
+.quiz-option {
+  display: block; width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.025);
+  color: var(--text);
+  font: inherit; font-size: .86rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background .14s, border-color .14s;
+}
+.quiz-option:hover {
+  background: rgba(255,255,255,.06);
+  border-color: var(--line-strong);
+}
+.quiz-option.correct {
+  background: rgba(16,185,129,.12);
+  border-color: rgba(16,185,129,.4);
+  color: var(--success-soft);
+}
+.quiz-option.wrong {
+  background: rgba(239,68,68,.1);
+  border-color: rgba(239,68,68,.3);
+  color: var(--danger-soft);
+}
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback {
+  margin-top: 8px; padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: .84rem;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: var(--danger-soft); }
+
+.quiz-score {
+  text-align: center; padding: 20px;
+  font-size: 1.1rem; font-weight: 600;
+}
+.quiz-retry {
+  display: block; margin: 12px auto;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--key);
+  background: rgba(10,132,255,.12);
+  color: var(--key-soft);
+  font: inherit; font-size: .88rem;
+  cursor: pointer;
+  transition: background .14s;
+}
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+
+/* ── Official Doc Reference ── */
+.doc-ref {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(10,132,255,.15);
+  background: rgba(10,132,255,.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-ref a {
+  color: var(--key-soft);
+  font-size: .84rem;
+  text-decoration: none;
+  line-height: 1.5;
+}
+.doc-ref a:hover { text-decoration: underline; }
+
+.scenario-nav { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+.scenario-btn { padding:6px 14px; border-radius:20px; border:1px solid rgba(255,255,255,.15); background:transparent; color:var(--muted-soft); cursor:pointer; font-size:13px; transition:all .2s; font-family:inherit; }
+.scenario-btn.active { background:rgba(99,102,241,.25); border-color:rgba(99,102,241,.5); color:var(--secondary-soft); }
+.before-after { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:12px 0; }
+.ba-panel { border-radius:12px; overflow:hidden; background:var(--surface); }
+.ba-panel canvas { width:100%; display:block; }
+.ba-label { text-align:center; font-size:11px; color:var(--muted-mid); padding:4px; background:rgba(0,0,0,.2); }
+.cause-effect { display:flex; flex-direction:column; gap:8px; margin:12px 0; }
+.ce-row { display:flex; align-items:center; gap:8px; }
+.ce-cause { background:rgba(99,102,241,.12); border:1px solid rgba(99,102,241,.25); border-radius:8px; padding:6px 12px; font-size:13px; flex:1; color:var(--muted-strong); }
+.ce-arrow { color:var(--muted-dim); font-size:16px; }
+.ce-result { border-radius:8px; padding:6px 12px; font-size:13px; flex:1.5; }
+.result-a { background:rgba(16,185,129,.1); border:1px solid rgba(16,185,129,.25); color:var(--success-soft); }
+.result-b { background:rgba(245,158,11,.1); border:1px solid rgba(245,158,11,.25); color:var(--warn-medium); }
+.result-c { background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.25); color:var(--danger-soft); }
+.scene-desc { font-size:.84rem; color:var(--muted-strong); margin-bottom:10px; padding:10px 14px; border-radius:var(--radius-sm); background:var(--surface); border:1px solid var(--line); line-height:1.7; }
+
+/* ── Sandbox ── */
+.sandbox-toolbar { display:flex; gap:6px; padding:12px; flex-wrap:wrap; align-items:center; border-bottom:1px solid var(--line); background:var(--bg-soft); }
+.brush-btn { padding:6px 12px; border-radius:999px; border:1px solid var(--line-strong); background:rgba(255,255,255,.04); color:var(--muted-strong); font:inherit; font-size:.78rem; cursor:pointer; transition:background .14s,color .14s; }
+.brush-btn:hover { background:rgba(255,255,255,.09); color:var(--text); }
+.brush-btn.is-active { background:rgba(10,132,255,.14); color:var(--key-soft); border-color:rgba(10,132,255,.3); }
+.sandbox-canvas-wrap { position:relative; border-radius:var(--radius-md); border:1px solid var(--line); background:var(--surface); overflow:hidden; margin:14px 0; }
+.sandbox-canvas-wrap canvas { display:block; width:100%; cursor:crosshair; }
+.sandbox-info { display:flex; justify-content:space-between; padding:8px 12px; font-size:.78rem; color:var(--muted); border-top:1px solid var(--line); }
+.sandbox-reset { padding:6px 16px; border-radius:999px; border:1px solid var(--line-strong); background:rgba(255,255,255,.04); color:var(--muted-strong); font:inherit; font-size:.8rem; cursor:pointer; }
+.sandbox-reset:hover { background:rgba(255,255,255,.09); }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+  .before-after { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Tab Bar -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">브러시 도감</button>
+  <button class="tab" data-tab="sandbox" role="tab" aria-selected="false" aria-controls="panel-sandbox">직접 해보기</button>
+  <button class="tab" data-tab="compare" role="tab" aria-selected="false" aria-controls="panel-compare">비교</button>
+  <button class="tab" data-tab="recipe" role="tab" aria-selected="false" aria-controls="panel-recipe">레시피</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+</nav>
+
+<!-- TAB 1: 브러시 도감 -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <div class="concept-grid">
+
+    <div class="concept-card">
+      <h3>Draw <span class="badge badge-blue">기본</span></h3>
+      <p>크레파스로 칠하듯이 표면을 올려요. <span class="kbd">X</span>로 빠른 선택, <span class="kbd">Ctrl</span> 누르면 파내기.</p>
+      <div class="analogy">크레파스로 종이 위를 칠하는 것처럼 — 누르는 만큼 솟아오르는 기본 브러시예요</div>
+    </div>
+
+    <div class="concept-card">
+      <h3>Clay Strips <span class="badge badge-green">덧붙이기</span></h3>
+      <p>찰흙 띠를 붙이듯이 넓은 면에 층층이 쌓아요.</p>
+      <div class="analogy">납작하게 민 찰흙 띠를 표면에 하나씩 붙이는 느낌이에요</div>
+    </div>
+
+    <div class="concept-card">
+      <h3>Clay <span class="badge badge-green">밀어붙이기</span></h3>
+      <p>손바닥으로 찰흙을 누르듯이 밀면서 쌓아요. Draw보다 평탄한 결과.</p>
+      <div class="analogy">손바닥으로 찰흙을 꾹 누르는 것 — Draw보다 면이 고르게 쌓여요</div>
+    </div>
+
+    <div class="concept-card">
+      <h3>Inflate <span class="badge badge-amber">부풀리기</span></h3>
+      <p>풍선처럼 바깥으로 부풀려요. 볼이나 근육 강조.</p>
+      <div class="analogy">표면 아래에서 공기를 불어넣는 것처럼 — 균일하게 부풀어 오르는 느낌이에요</div>
+    </div>
+
+    <div class="concept-card">
+      <h3>Crease <span class="badge badge-amber">홈 파기</span></h3>
+      <p>송곳으로 긋듯이 깊고 날카로운 주름. <span class="kbd">Shift</span>+<span class="kbd">C</span>로 빠른 선택.</p>
+      <div class="analogy">손톱으로 찰흙 표면을 꾹 긁듯이 — 날카롭고 깊은 선이 생겨요</div>
+    </div>
+
+    <div class="concept-card">
+      <h3>Grab <span class="badge badge-blue">잡아 당기기</span></h3>
+      <p>찰흙을 잡고 끌어당겨요. <span class="kbd">G</span>로 빠른 선택.</p>
+      <div class="analogy">반죽을 엄지와 검지로 잡고 당기는 것처럼 — 형태 전체를 크게 변형해요</div>
+    </div>
+
+    <div class="concept-card">
+      <h3>Snake Hook <span class="badge badge-amber">끌어내기</span></h3>
+      <p>찰흙 끝을 잡고 길게 늘여요. <span class="kbd">K</span>로 빠른 선택.</p>
+      <div class="analogy">뱀처럼 늘어나는 느낌 — 뿔이나 촉수를 뽑아낼 때 써요</div>
+    </div>
+
+    <div class="concept-card">
+      <h3>Smooth <span class="badge badge-blue">정리</span></h3>
+      <p>손가락으로 쓸듯이 정리. <span class="kbd">Shift</span> 누르고 있으면 임시 Smooth.</p>
+      <div class="analogy">손가락으로 표면을 부드럽게 문지르는 것처럼 — 울퉁불퉁한 부분을 다듬어요</div>
+    </div>
+
+  </div>
+
+  <div class="shortcut-list">
+    <h4>브러시 공통 단축키</h4>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">F</span></span>
+      <span>브러시 크기 조절</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Shift</span> + <span class="kbd">F</span></span>
+      <span>브러시 강도 조절</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span></span>
+      <span>브러시 반전 (올리기 ↔ 파내기)</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Shift</span></span>
+      <span>임시 Smooth 브러시로 전환</span>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/tools/index.html" target="_blank" rel="noopener">
+      Blender 공식 문서 — Sculpt Brush 전체 목록
+    </a>
+  </div>
+</section>
+
+<!-- TAB 2: 직접 해보기 -->
+<section class="panel" id="panel-sandbox" role="tabpanel">
+  <div class="sandbox-toolbar" id="sandboxToolbar">
+    <button class="brush-btn is-active" data-brush="draw">Draw</button>
+    <button class="brush-btn" data-brush="clay">Clay Strips</button>
+    <button class="brush-btn" data-brush="inflate">Inflate</button>
+    <button class="brush-btn" data-brush="crease">Crease</button>
+    <button class="brush-btn" data-brush="grab">Grab</button>
+    <button class="brush-btn" data-brush="snakehook">Snake Hook</button>
+    <button class="brush-btn" data-brush="smooth">Smooth</button>
+    <button class="sandbox-reset" id="sandboxReset">초기화</button>
+  </div>
+  <div class="sandbox-canvas-wrap">
+    <canvas id="sandboxCanvas" width="400" height="400"></canvas>
+    <div class="sandbox-info">
+      <span id="sandboxBrushDesc">Draw — 표면을 올려요. Ctrl 누르면 파내기.</span>
+      <span id="sandboxHint">드래그로 조각 · Ctrl=반전 · Shift=Smooth</span>
+    </div>
+  </div>
+  <div class="tip-box">
+    <strong>팁:</strong> 이 샌드박스는 2D 높이맵으로 Sculpt 브러시의 느낌을 시뮬레이션합니다. 각 브러시를 눌러 특성 차이를 직접 비교해보세요.
+  </div>
+</section>
+
+<!-- TAB 3: 비교 -->
+<section class="panel" id="panel-compare" role="tabpanel">
+  <div class="scenario-nav" id="visualScenarioNav">
+    <button class="scenario-btn active" data-scene="claystrips">Clay Strips</button>
+    <button class="scenario-btn" data-scene="inflate">Inflate</button>
+    <button class="scenario-btn" data-scene="crease">Crease</button>
+    <button class="scenario-btn" data-scene="snakehook">Snake Hook</button>
+  </div>
+  <div class="scene-desc" id="visual-scene-desc">Clay Strips 브러시는 찰흙 띠를 층층이 붙이듯 넓은 면에 볼륨을 쌓아 올립니다.</div>
+  <div class="before-after">
+    <div class="ba-panel">
+      <canvas id="visual-canvas-before" width="280" height="160"></canvas>
+      <div class="ba-label">적용 전</div>
+    </div>
+    <div class="ba-panel">
+      <canvas id="visual-canvas-after" width="280" height="160"></canvas>
+      <div class="ba-label">적용 후</div>
+    </div>
+  </div>
+  <div class="cause-effect" id="visual-cause-effect"></div>
+</section>
+
+<!-- TAB 4: 레시피 -->
+<section class="panel" id="panel-recipe" role="tabpanel">
+
+  <div class="combo-section">
+    <h4>얼굴 만들기</h4>
+    <div class="combo-grid">
+      <div class="combo-card">
+        <div class="combo-name">1. Grab</div>
+        <div class="combo-desc">전체 실루엣을 잡아요. 코, 광대뼈, 턱 라인을 큰 덩어리로 먼저 잡아당깁니다.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">2. Clay Strips</div>
+        <div class="combo-desc">볼과 이마에 볼륨을 층층이 쌓아요. 자연스러운 살집 표현에 최적입니다.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">3. Crease</div>
+        <div class="combo-desc">눈 라인, 입술 경계, 콧방울 주름처럼 날카로운 경계를 새겨요.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">4. Smooth</div>
+        <div class="combo-desc">마무리로 울퉁불퉁한 부분을 정리해요. Shift 누르고 빠르게 다듬습니다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="combo-section">
+    <h4>근육/관절 표현</h4>
+    <div class="combo-grid">
+      <div class="combo-card">
+        <div class="combo-name">1. Inflate</div>
+        <div class="combo-desc">근육 덩어리가 될 부분을 풍선처럼 부풀려요. 이두근, 허벅지 등에 씁니다.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">2. Crease</div>
+        <div class="combo-desc">근육 사이 경계선과 관절 주름을 새겨요. 힘줄 라인 표현에도 효과적입니다.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">3. Clay</div>
+        <div class="combo-desc">근육 위에 미세한 볼륨을 더 쌓아요. 평탄하게 쌓이므로 고른 볼륨 추가에 적합합니다.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">4. Smooth</div>
+        <div class="combo-desc">전체를 부드럽게 다듬어 자연스러운 근육 표면을 완성합니다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="combo-section">
+    <h4>뿔/촉수 만들기</h4>
+    <div class="combo-grid">
+      <div class="combo-card">
+        <div class="combo-name">1. Snake Hook</div>
+        <div class="combo-desc">표면에서 끌어내어 뿔이나 촉수의 기본 형태를 뽑아냅니다. K로 빠르게 선택하세요.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">2. Draw</div>
+        <div class="combo-desc">뿔 표면에 디테일과 굴곡을 추가해요. 울퉁불퉁한 질감을 만들 때 씁니다.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">3. Crease</div>
+        <div class="combo-desc">뿔 가장자리에 날카로운 엣지와 세로 홈을 새겨 뿔다운 질감을 만들어요.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">4. Smooth</div>
+        <div class="combo-desc">마무리로 전체를 정리해요. 너무 많이 쓰면 형태가 무뎌지므로 살짝만 씁니다.</div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- TAB 5: 퀴즈 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+// ── Tab Switching ──────────────────────────────
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(t) {
+      t.classList.remove("is-active");
+      t.setAttribute("aria-selected", "false");
+    });
+    document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("is-active"); });
+    tab.classList.add("is-active");
+    tab.setAttribute("aria-selected", "true");
+    document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+  });
+});
+
+// ── Quiz Engine (Safe DOM methods) ────────────
+function initQuiz(questions) {
+  var container = document.getElementById("quizArea");
+  var score = 0, answered = 0;
+  var scoreDiv = null;
+
+  var progress = document.createElement("div");
+  progress.className = "quiz-progress";
+  progress.textContent = "\uBB38\uC81C 0 / " + questions.length + " \u00b7 \uC810\uC218 0\uC810";
+  container.appendChild(progress);
+
+  questions.forEach(function(q, qi) {
+    var div = document.createElement("div");
+    div.className = "quiz-question";
+
+    var heading = document.createElement("h4");
+    heading.textContent = "Q" + (qi + 1) + ". " + q.question;
+    div.appendChild(heading);
+
+    var fb = document.createElement("div");
+    fb.className = "quiz-feedback";
+
+    q.options.forEach(function(opt, oi) {
+      var btn = document.createElement("button");
+      btn.className = "quiz-option";
+      btn.textContent = opt;
+      btn.addEventListener("click", function() {
+        if (btn.disabled) return;
+        div.querySelectorAll(".quiz-option").forEach(function(b) { b.disabled = true; });
+        answered++;
+        if (oi === q.answer) {
+          btn.classList.add("correct");
+          fb.className = "quiz-feedback show correct-fb";
+          fb.textContent = "\u2705 " + q.explanation;
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
+          fb.className = "quiz-feedback show wrong-fb";
+          fb.textContent = "\u274c " + q.explanation;
+
+          var retryBtn = document.createElement("button");
+          retryBtn.className = "quiz-retry";
+          retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
+          retryBtn.textContent = "\uB2E4\uC2DC \uD480\uAE30";
+          retryBtn.addEventListener("click", function() {
+            answered--;
+            div.querySelectorAll(".quiz-option").forEach(function(b) {
+              b.disabled = false;
+              b.classList.remove("wrong", "correct");
+            });
+            fb.className = "quiz-feedback";
+            fb.textContent = "";
+            retryBtn.remove();
+            if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+            progress.textContent = "\uBB38\uC81C " + answered + " / " + questions.length + " \u00b7 \uC810\uC218 " + score + "\uC810";
+          });
+          fb.appendChild(retryBtn);
+        }
+        progress.textContent = "\uBB38\uC81C " + answered + " / " + questions.length + " \u00b7 \uC810\uC218 " + score + "\uC810";
+        if (answered === questions.length) showScore();
+      });
+      div.appendChild(btn);
+    });
+
+    div.appendChild(fb);
+    container.appendChild(div);
+  });
+
+  function showScore() {
+    if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+
+    scoreDiv = document.createElement("div");
+    scoreDiv.className = "quiz-score";
+
+    var emoji = document.createElement("div");
+    emoji.style.cssText = "font-size:36px;margin-bottom:8px";
+    emoji.textContent = score === questions.length ? "\ud83c\udf89" : score >= Math.ceil(questions.length / 2) ? "\ud83d\udc4d" : "\ud83d\udcda";
+    scoreDiv.appendChild(emoji);
+
+    var result = document.createElement("div");
+    result.style.cssText = "font-size:18px;font-weight:500;margin-bottom:6px";
+    result.textContent = score + " / " + questions.length + " \uC815\uB2F5";
+    scoreDiv.appendChild(result);
+
+    var msg = document.createElement("div");
+    msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
+    msg.textContent = score === questions.length ? "\uC644\uBCBD\uD569\uB2C8\uB2E4!" : "\uC870\uAE08 \uB354 \uC5F0\uC2B5\uD558\uBA74 \uC644\uBCBD\uD574\uC9C8 \uAC70\uC608\uC694!";
+    scoreDiv.appendChild(msg);
+
+    var saveBtn = document.createElement("button");
+    saveBtn.className = "quiz-retry";
+    saveBtn.style.cssText = "background:rgba(10,132,255,.18);border-color:var(--key);margin-bottom:8px";
+    saveBtn.textContent = "\uAE30\uB85D \uC800\uC7A5\uD558\uAE30";
+    saveBtn.addEventListener("click", function() {
+      try {
+        var wid = new URLSearchParams(location.search).get("wid")
+               || location.pathname.split("/").pop().replace(".html", "");
+        window.parent.postMessage({
+          type: "showme-quiz-complete",
+          widgetId: wid,
+          score: score,
+          total: questions.length,
+          pass: score >= Math.ceil(questions.length * 0.75)
+        }, "*");
+      } catch(e) {}
+      saveBtn.textContent = "\uC800\uC7A5 \uC644\uB8CC!";
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = ".5";
+    });
+    scoreDiv.appendChild(saveBtn);
+
+    var retry = document.createElement("button");
+    retry.className = "quiz-retry";
+    retry.textContent = "\uCC98\uC74C\uBD80\uD130 \uB2E4\uC2DC";
+    retry.addEventListener("click", function() { location.reload(); });
+    scoreDiv.appendChild(retry);
+
+    container.appendChild(scoreDiv);
+  }
+}
+
+// ── Sandbox (2D Heightmap Sculpt) ─────────────
+(function() {
+  var GRID = 100;
+  var heightmap = [];
+  var canvas = document.getElementById("sandboxCanvas");
+  var ctx = canvas.getContext("2d");
+  var isDown = false;
+  var lastX = -1, lastY = -1;
+  var currentBrush = "draw";
+  var ctrlDown = false, shiftDown = false;
+
+  var brushDescriptions = {
+    draw: "Draw \u2014 \ud45c\uba74\uc744 \uc62c\ub824\uc694. Ctrl \ub204\ub974\uba74 \ud30c\ub0b4\uae30.",
+    clay: "Clay Strips \u2014 \ub113\uc740 \uba74\uc5d0 \uce35\uce35\uc774 \uc313\uc544\uc694.",
+    inflate: "Inflate \u2014 \ud48d\uc120\ucc98\ub7fc \ubc14\uae54\uc73c\ub85c \ubd80\ud480\ub824\uc694.",
+    crease: "Crease \u2014 \ub0a0\uce74\ub86d\uace0 \uae0a\uc740 \ud654\uc7a5\uc744 \ud30c\uc694.",
+    grab: "Grab \u2014 \ud45c\uba74\uc744 \uc7a1\uace0 \ub04c\uc5b4\ub2f9\uae30\uc694.",
+    snakehook: "Snake Hook \u2014 \ub053\uc744 \uc7a1\uace0 \uae38\uac8c \ub298\uc5ec\uc694.",
+    smooth: "Smooth \u2014 \uc6b8\ud29c\ubd88\ud29c\ud55c \ubd80\ubd84\uc744 \uc815\ub9ac\ud574\uc694."
+  };
+
+  function initHeightmap() {
+    heightmap = [];
+    var cx = GRID / 2, cy = GRID / 2, r = GRID * 0.35;
+    for (var y = 0; y < GRID; y++) {
+      heightmap[y] = [];
+      for (var x = 0; x < GRID; x++) {
+        var dx = x - cx, dy = y - cy;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        var v = Math.max(0, 1 - dist / r);
+        heightmap[y][x] = v * v * 0.6;
+      }
+    }
+  }
+
+  function heightToColor(h) {
+    h = Math.max(0, Math.min(1, h));
+    if (h < 0.3) {
+      var t = h / 0.3;
+      var r2 = Math.round(10 + t * (30 - 10));
+      var g2 = Math.round(30 + t * (60 - 30));
+      var b2 = Math.round(60 + t * (100 - 60));
+      return "rgb(" + r2 + "," + g2 + "," + b2 + ")";
+    } else if (h < 0.6) {
+      var t2 = (h - 0.3) / 0.3;
+      var r3 = Math.round(30 + t2 * (80 - 30));
+      var g3 = Math.round(60 + t2 * (120 - 60));
+      var b3 = Math.round(100 + t2 * (160 - 100));
+      return "rgb(" + r3 + "," + g3 + "," + b3 + ")";
+    } else {
+      var t3 = (h - 0.6) / 0.4;
+      var r4 = Math.round(80 + t3 * (200 - 80));
+      var g4 = Math.round(120 + t3 * (210 - 120));
+      var b4 = Math.round(160 + t3 * (220 - 160));
+      return "rgb(" + r4 + "," + g4 + "," + b4 + ")";
+    }
+  }
+
+  function renderHeightmap() {
+    var w = canvas.width, h = canvas.height;
+    var cellW = w / GRID, cellH = h / GRID;
+    for (var y = 0; y < GRID; y++) {
+      for (var x = 0; x < GRID; x++) {
+        ctx.fillStyle = heightToColor(heightmap[y][x]);
+        ctx.fillRect(Math.round(x * cellW), Math.round(y * cellH), Math.ceil(cellW), Math.ceil(cellH));
+      }
+    }
+  }
+
+  function falloff(dist, radius) {
+    var t = Math.max(0, 1 - dist / radius);
+    return t * t;
+  }
+
+  function applyBrush(gx, gy, dgx, dgy) {
+    var brush = (shiftDown) ? "smooth" : currentBrush;
+    var radius = 10;
+    var strength = 0.04;
+    var invert = ctrlDown ? -1 : 1;
+
+    for (var y = 0; y < GRID; y++) {
+      for (var x = 0; x < GRID; x++) {
+        var dx = x - gx, dy = y - gy;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist > radius) continue;
+        var fo = falloff(dist, radius);
+
+        if (brush === "draw") {
+          heightmap[y][x] += invert * strength * fo;
+        } else if (brush === "clay") {
+          var target = 0.55;
+          var diff = target - heightmap[y][x];
+          heightmap[y][x] += invert * diff * strength * fo * 0.5;
+        } else if (brush === "inflate") {
+          heightmap[y][x] += invert * strength * fo * fo;
+        } else if (brush === "crease") {
+          var fo3 = fo * fo * fo;
+          heightmap[y][x] -= invert * strength * fo3 * 2;
+        } else if (brush === "grab") {
+          heightmap[y][x] += invert * (dgx + dgy) * 0.003 * fo;
+        } else if (brush === "snakehook") {
+          var tipFo = Math.max(0, 1 - dist / (radius * 0.5));
+          tipFo = tipFo * tipFo;
+          heightmap[y][x] += invert * (dgx + dgy) * 0.004 * tipFo;
+        } else if (brush === "smooth") {
+          var sum = 0, count = 0;
+          var nx, ny;
+          for (var ky = -2; ky <= 2; ky++) {
+            for (var kx = -2; kx <= 2; kx++) {
+              nx = x + kx; ny = y + ky;
+              if (nx >= 0 && nx < GRID && ny >= 0 && ny < GRID) {
+                sum += heightmap[ny][nx];
+                count++;
+              }
+            }
+          }
+          var avg = sum / count;
+          heightmap[y][x] += (avg - heightmap[y][x]) * fo * 0.5;
+        }
+
+        heightmap[y][x] = Math.max(0, Math.min(1, heightmap[y][x]));
+      }
+    }
+    renderHeightmap();
+  }
+
+  function canvasToGrid(clientX, clientY) {
+    var rect = canvas.getBoundingClientRect();
+    var px = (clientX - rect.left) * (canvas.width / rect.width);
+    var py = (clientY - rect.top) * (canvas.height / rect.height);
+    return {
+      x: (px / canvas.width) * GRID,
+      y: (py / canvas.height) * GRID
+    };
+  }
+
+  canvas.addEventListener("mousedown", function(e) {
+    isDown = true;
+    var g = canvasToGrid(e.clientX, e.clientY);
+    lastX = g.x; lastY = g.y;
+    applyBrush(g.x, g.y, 0, 0);
+  });
+
+  canvas.addEventListener("mousemove", function(e) {
+    if (!isDown) return;
+    var g = canvasToGrid(e.clientX, e.clientY);
+    var dgx = g.x - lastX, dgy = g.y - lastY;
+    applyBrush(g.x, g.y, dgx, dgy);
+    lastX = g.x; lastY = g.y;
+  });
+
+  canvas.addEventListener("mouseup", function() { isDown = false; });
+  canvas.addEventListener("mouseleave", function() { isDown = false; });
+
+  canvas.addEventListener("touchstart", function(e) {
+    e.preventDefault();
+    var t = e.touches[0];
+    var me = new MouseEvent("mousedown", { clientX: t.clientX, clientY: t.clientY });
+    canvas.dispatchEvent(me);
+  }, { passive: false });
+
+  canvas.addEventListener("touchmove", function(e) {
+    e.preventDefault();
+    var t = e.touches[0];
+    var me = new MouseEvent("mousemove", { clientX: t.clientX, clientY: t.clientY });
+    canvas.dispatchEvent(me);
+  }, { passive: false });
+
+  canvas.addEventListener("touchend", function(e) {
+    e.preventDefault();
+    canvas.dispatchEvent(new MouseEvent("mouseup", {}));
+  }, { passive: false });
+
+  document.addEventListener("keydown", function(e) {
+    if (e.key === "Control") ctrlDown = true;
+    if (e.key === "Shift") shiftDown = true;
+  });
+
+  document.addEventListener("keyup", function(e) {
+    if (e.key === "Control") ctrlDown = false;
+    if (e.key === "Shift") shiftDown = false;
+  });
+
+  document.querySelectorAll(".brush-btn").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      document.querySelectorAll(".brush-btn").forEach(function(b) { b.classList.remove("is-active"); });
+      btn.classList.add("is-active");
+      currentBrush = btn.dataset.brush;
+      document.getElementById("sandboxBrushDesc").textContent = brushDescriptions[currentBrush] || "";
+    });
+  });
+
+  document.getElementById("sandboxReset").addEventListener("click", function() {
+    initHeightmap();
+    renderHeightmap();
+  });
+
+  initHeightmap();
+  renderHeightmap();
+})();
+
+// ── Visual Comparison Scenarios ────────────
+(function() {
+  function drawBg(ctx, w, h) { ctx.fillStyle = "#1e293b"; ctx.fillRect(0, 0, w, h); }
+
+  function drawSphere(ctx, cx, cy, r, color) {
+    var grad = ctx.createRadialGradient(cx - r * 0.3, cy - r * 0.3, r * 0.1, cx, cy, r);
+    grad.addColorStop(0, "#e2e8f0");
+    grad.addColorStop(0.4, color);
+    grad.addColorStop(1, "#0f172a");
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fillStyle = grad;
+    ctx.fill();
+  }
+
+  function drawBaseSphere(ctx, w, h) {
+    drawBg(ctx, w, h);
+    var cx = w / 2, cy = h / 2;
+    drawSphere(ctx, cx, cy, 55, "#475569");
+    ctx.strokeStyle = "rgba(148,163,184,.15)";
+    ctx.lineWidth = 0.5;
+    for (var i = 0; i < 8; i++) {
+      var a = (i / 8) * Math.PI * 2;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + Math.cos(a) * 55, cy + Math.sin(a) * 55);
+      ctx.stroke();
+    }
+    ctx.strokeStyle = "rgba(148,163,184,.1)";
+    for (var rv = 18; rv <= 55; rv += 18) {
+      ctx.beginPath();
+      ctx.arc(cx, cy, rv, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    ctx.fillStyle = "#94a3b8";
+    ctx.font = "bold 10px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("\uae30\ubcf8 \uad6c (Sphere)", cx, 14);
+  }
+
+  function drawClayStripsAfter(ctx, w, h) {
+    drawBg(ctx, w, h);
+    var cx = w / 2, cy = h / 2;
+    drawSphere(ctx, cx, cy, 52, "#475569");
+    var strips = [-20, -8, 4, 16];
+    strips.forEach(function(yOff, idx) {
+      var alpha = 0.5 - idx * 0.08;
+      ctx.save();
+      ctx.beginPath();
+      ctx.ellipse(cx, cy + yOff, 44 - idx * 2, 9, 0, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(148,163,184," + alpha + ")";
+      ctx.fill();
+      ctx.restore();
+    });
+    ctx.strokeStyle = "rgba(110,231,183,.7)";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(cx + 12, cy - 10, 18, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.fillStyle = "#6ee7b7";
+    ctx.font = "bold 10px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Clay Strips \ub85c \uce35 \uc313\uc74c", cx, 14);
+  }
+
+  function drawInflateAfter(ctx, w, h) {
+    drawBg(ctx, w, h);
+    var cx = w / 2, cy = h / 2;
+    drawSphere(ctx, cx, cy, 66, "#5a7a9e");
+    ctx.strokeStyle = "rgba(251,191,36,.7)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 66, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.strokeStyle = "rgba(251,191,36,.35)";
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.arc(cx, cy, 52, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = "#fbbf24";
+    ctx.font = "bold 10px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Inflate \ub85c \ubd80\ud480\ub824\uc9d0", cx, 14);
+  }
+
+  function drawCreaseAfter(ctx, w, h) {
+    drawBg(ctx, w, h);
+    var cx = w / 2, cy = h / 2;
+    drawSphere(ctx, cx, cy, 52, "#475569");
+    ctx.strokeStyle = "rgba(239,68,68,.8)";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(cx - 25, cy - 38);
+    ctx.quadraticCurveTo(cx + 8, cy, cx - 18, cy + 38);
+    ctx.stroke();
+    ctx.strokeStyle = "rgba(239,68,68,.5)";
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.moveTo(cx + 18, cy - 32);
+    ctx.quadraticCurveTo(cx - 10, cy + 5, cx + 22, cy + 36);
+    ctx.stroke();
+    ctx.fillStyle = "#fca5a5";
+    ctx.font = "bold 10px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Crease \ub85c \uae0a\uc740 \ud654\uc7a5", cx, 14);
+  }
+
+  function drawSnakeHookAfter(ctx, w, h) {
+    drawBg(ctx, w, h);
+    var cx = w / 2, cy = h / 2;
+    drawSphere(ctx, cx, cy, 48, "#475569");
+    ctx.strokeStyle = "rgba(196,181,253,.7)";
+    ctx.lineWidth = 12;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(cx + 20, cy - 20);
+    ctx.quadraticCurveTo(cx + 45, cy - 40, cx + 50, cy - 65);
+    ctx.stroke();
+    ctx.lineWidth = 8;
+    ctx.beginPath();
+    ctx.moveTo(cx + 20, cy - 20);
+    ctx.quadraticCurveTo(cx + 45, cy - 40, cx + 50, cy - 65);
+    ctx.strokeStyle = "rgba(165,180,252,.9)";
+    ctx.stroke();
+    ctx.fillStyle = "#a5b4fc";
+    ctx.font = "bold 10px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Snake Hook \ub85c \ub4cc \ube51\uc74c", cx, 14);
+  }
+
+  var visualScenarios = {
+    claystrips: {
+      desc: "Clay Strips \ube0c\ub7ec\uc2dc\ub294 \ucc3a\ud761 \ub744\ub97c \uce35\uce35\uc774 \ubd99\uc774\ub4ef \ub113\uc740 \uba74\uc5d0 \ubcfc\ub968\uc744 \uc313\uc544 \uc62c\ub9bd\ub2c8\ub2e4.",
+      ce: [
+        { cause: "Clay Strips \ub4dc\ub798\uadf8", result: "\ud3c9\ud3c9\ud55c \uad6c\uc1a1 \uce35 \uc0dd\uc131", resultClass: "result-a" },
+        { cause: "\ubc18\ubcf5 \ub808\uc774\uc5b4\ub9c1", result: "\uc790\uc5f0\uc2a4\ub7ec\uc6b4 \uace0\uae30 \uc9c8\uac10 \ud45c\ud604", resultClass: "result-a" },
+        { cause: "Ctrl + Clay Strips", result: "\ubc18\ub300 \ubc29\ud5a5\uc73c\ub85c \ud30c\ub0b4\uc5b4 \uacf0", resultClass: "result-b" }
+      ],
+      before: drawBaseSphere,
+      after: drawClayStripsAfter
+    },
+    inflate: {
+      desc: "Inflate \ube0c\ub7ec\uc2dc\ub294 \ud45c\uba74 \ubc95\uc120 \ubc29\ud5a5\uc73c\ub85c \uade0\uc77c\ud558\uac8c \ubd80\ud480\ub824 \ubcfc\ub978 \uc6a8\uc9c1\uc784\uc774\ub098 \uadfc\uc721 \uac15\uc870\uc5d0 \uc8fc\ub85c \uc4d0\uc785\ub2c8\ub2e4.",
+      ce: [
+        { cause: "Inflate \ub4dc\ub798\uadf8", result: "\ud45c\uba74\uc774 \ub9e5\uc9c1\ud558\uac8c \ubd80\ud480\ub77c\uc624\ub984", resultClass: "result-a" },
+        { cause: "\uc88c/\uc6b0 \ud3c8\uc5d0 \uc801\uc6a9", result: "\ud48d\uc120\ucc98\ub7fc \ud39c \ubcfc \ud45c\ud604", resultClass: "result-a" },
+        { cause: "Ctrl + Inflate", result: "\ub0b4\uce21\uc73c\ub85c \uc218\ucca9\ub418\ub294 \ud6a8\uacfc", resultClass: "result-b" }
+      ],
+      before: drawBaseSphere,
+      after: drawInflateAfter
+    },
+    crease: {
+      desc: "Crease \ube0c\ub7ec\uc2dc\ub294 \ud45c\uba74\uc5d0 \uae0a\uace0 \ub0a0\uce74\ub85c\uc6b4 \uc8fc\ub984\uacfc \ud654\uc7a5\uc744 \ub9cc\ub4ed\ub2c8\ub2e4. \ub208 \ub77c\uc778, \uc785\uc220 \uacbd\uacc4, \ud611\uacf1 \ud45c\ud604\uc5d0 \ud65c\uc6a9\ud569\ub2c8\ub2e4.",
+      ce: [
+        { cause: "Crease \ub4dc\ub798\uadf8", result: "\ub0a0\uce74\ub86d\uace0 \uae0a\uc740 \ud654\uc7a5 \uc0dd\uc131", resultClass: "result-a" },
+        { cause: "Ctrl + Crease", result: "\ubc18\ub300 \ubc29\ud5a5 (\ud654\uc7a5 \ub300\uc2e0 \ub9c8\ub8e8\ub9ac)", resultClass: "result-b" },
+        { cause: "\ub208 \ub77c\uc778\uc5d0 \uc801\uc6a9", result: "\uae30\uacc4\uc801\uc778 \ub208 \uc8fc\ub984 \ud45c\ud604", resultClass: "result-a" }
+      ],
+      before: drawBaseSphere,
+      after: drawCreaseAfter
+    },
+    snakehook: {
+      desc: "Snake Hook \ube0c\ub7ec\uc2dc\ub294 \ud45c\uba74 \ub05d\uc744 \uc7a1\uace0 \uae38\uac8c \ub298\uc5ec \ub4f1, \ubfd4, \ucd09\uc218 \uac19\uc740 \ub3cc\ucd9c\ubd80\ub97c \ub9cc\ub4e4 \ub54c \uc0ac\uc6a9\ud569\ub2c8\ub2e4.",
+      ce: [
+        { cause: "Snake Hook \ub4dc\ub798\uadf8", result: "\ud45c\uba74\uc5d0\uc11c \ub3cc\ucd9c\ubd80 \uc0dd\uc131", resultClass: "result-a" },
+        { cause: "\ube60\ub974\uac8c \ub4dc\ub798\uadf8", result: "\uae30\ub2e4\ub9ac\uace0 \ub150\uce20\ud55c \ud615\ud0dc", resultClass: "result-b" },
+        { cause: "\ucc9c\ucc9c\ud788 \ud68c\uc804\ud558\uba74\uc11c", result: "\uad6c\ubd80\ub7ec\uc9c4 \ubd80\ub4dc\ub7ec\uc6b4 \ub4cc", resultClass: "result-a" }
+      ],
+      before: drawBaseSphere,
+      after: drawSnakeHookAfter
+    }
+  };
+
+  function switchVisualScenario(key) {
+    document.querySelectorAll("#visualScenarioNav .scenario-btn").forEach(function(b) {
+      b.classList.toggle("active", b.dataset.scene === key);
+    });
+    var s = visualScenarios[key];
+    document.getElementById("visual-scene-desc").textContent = s.desc;
+    buildVisualCauseEffect(s.ce);
+    renderVisualBAPanels(s);
+  }
+
+  function buildVisualCauseEffect(ces) {
+    var el = document.getElementById("visual-cause-effect");
+    while (el.firstChild) el.removeChild(el.firstChild);
+    ces.forEach(function(c) {
+      var row = document.createElement("div"); row.className = "ce-row";
+      var cause = document.createElement("div"); cause.className = "ce-cause"; cause.textContent = c.cause;
+      var arrow = document.createElement("div"); arrow.className = "ce-arrow"; arrow.textContent = "\u2192";
+      var result = document.createElement("div"); result.className = "ce-result " + c.resultClass; result.textContent = c.result;
+      row.appendChild(cause); row.appendChild(arrow); row.appendChild(result);
+      el.appendChild(row);
+    });
+  }
+
+  function renderVisualBAPanels(s) {
+    var bc = document.getElementById("visual-canvas-before");
+    var ac = document.getElementById("visual-canvas-after");
+    var bx = bc.getContext("2d"), ax = ac.getContext("2d");
+    bc.width = bc.offsetWidth || 280; bc.height = 160;
+    ac.width = ac.offsetWidth || 280; ac.height = 160;
+    bx.clearRect(0, 0, bc.width, bc.height);
+    ax.clearRect(0, 0, ac.width, ac.height);
+    if (s.before) s.before(bx, bc.width, bc.height);
+    if (s.after) s.after(ax, ac.width, ac.height);
+  }
+
+  document.querySelectorAll("#visualScenarioNav .scenario-btn").forEach(function(btn) {
+    btn.addEventListener("click", function() { switchVisualScenario(btn.dataset.scene); });
+  });
+
+  document.querySelectorAll(".tab").forEach(function(tab) {
+    tab.addEventListener("click", function() {
+      if (tab.dataset.tab === "visual") {
+        setTimeout(function() { switchVisualScenario("claystrips"); }, 50);
+      }
+    });
+  });
+
+  switchVisualScenario("claystrips");
+})();
+
+// ── Quiz Data ─────────────────────────────────
+initQuiz([
+  {
+    question: "\ub113\uc740 \uba74\uc5d0 \ucc3a\ud761\uc744 \uce35\uce35\uc774 \uc313\ub294 \ub290\ub08c\uc758 \ube0c\ub7ec\uc2dc\ub294?",
+    options: [
+      "Inflate",
+      "Clay Strips",
+      "Snake Hook",
+      "Grab"
+    ],
+    answer: 1,
+    explanation: "Clay Strips\ub294 \ucc3a\ud761 \ub744\ub97c \ubd99\uc774\ub4ef \ub113\uc740 \uba74\uc5d0 \ubd80\ub4dc\ub7ec\uc6b4 \ubcfc\ub968\uc744 \uce35\uce35\uc774 \uc313\uc544\uc62c\ub9bd\ub2c8\ub2e4."
+  },
+  {
+    question: "\uad00\uc808\uc774\ub098 \ub208 \ub77c\uc778\ucc98\ub7fc \ub0a0\uce74\ub86d\uace0 \uae0a\uc740 \ud654\uc7a5\uc744 \ud30c\ub294 \ube0c\ub7ec\uc2dc\ub294?",
+    options: [
+      "Draw",
+      "Clay",
+      "Crease",
+      "Smooth"
+    ],
+    answer: 2,
+    explanation: "Crease\ub294 \uc1a1\uacf3\uc73c\ub85c \uae8b\ub4ef\uc774 \ub0a0\uce74\ub86d\uace0 \uae0a\uc740 \ud654\uc7a5\uc744 \ub9cc\ub4e4\uc5b4\uc918\uc11c \uc8fc\ub984\uc774\ub098 \uc5e3\uc9c0 \ud45c\ud604\uc5d0 \ud65c\uc6a9\ud569\ub2c8\ub2e4."
+  },
+  {
+    question: "\ub4d1\uc774\ub098 \ucd09\uc218\ucc98\ub7fc \ub05d\uc744 \uc7a1\uace0 \uae38\uac8c \ub298\uc774\ub294 \ube0c\ub7ec\uc2dc\ub294?",
+    options: [
+      "Snake Hook",
+      "Grab",
+      "Clay Strips",
+      "Inflate"
+    ],
+    answer: 0,
+    explanation: "Snake Hook\uc740 \ud45c\uba74 \ub05d\uc744 \uc7a1\uace0 \uae38\uac8c \ub298\uc5ec\uc11c \ub4f1, \ub4dd, \ucd09\uc218 \uac19\uc740 \ub3cc\ucd9c\ubd80\ub97c \ub9cc\ub4e4 \ub54c \uc4d0\uc785\ub2c8\ub2e4."
+  },
+  {
+    question: "Sculpt \uc911 \uc5b4\ub5a4 \ube0c\ub7ec\uc2dc\ub97c \uc4f0\ub4e0 Shift\ub97c \ub204\ub974\uba74?",
+    options: [
+      "\ube0c\ub7ec\uc2dc\uac00 \ucde8\uc18c\ub41c\ub2e4",
+      "\ud06c\uae30\uac00 2\ubc30\uac00 \ub41c\ub2e4",
+      "\uc784\uc2dc Smooth\ub85c \uc804\ud658\ub41c\ub2e4",
+      "Ctrl \ubc18\uc804 \ud6a8\uacfc\uac00 \uc801\uc6a9\ub41c\ub2e4"
+    ],
+    answer: 2,
+    explanation: "Shift\ub97c \uae30\ub2e4\ub9ac\uba74 \uc5b4\ub5a4 \ube0c\ub7ec\uc2dc\ub3c4 \uc77c\uc2dc\uc801\uc73c\ub85c Smooth\ub85c \uc804\ud658\ub429\ub2c8\ub2e4. \uacb8\uc5d0 \ub450\uace0 \ube60\ub974\uac8c \ub2e4\ub4ec\uc744 \ub54c \ub9e4\uc6b0 \uc720\uc6a9\ud569\ub2c8\ub2e4."
+  },
+  {
+    question: "\ubcfc\uc774\ub098 \uadfc\uc721\uc744 \ud48d\uc120\ucc98\ub7fc \ubd80\ud480\ub9ac\ub294 \ube0c\ub7ec\uc2dc\ub294?",
+    options: [
+      "Draw",
+      "Clay",
+      "Inflate",
+      "Crease"
+    ],
+    answer: 2,
+    explanation: "Inflate\ub294 \ud45c\uba74 \ubc95\uc120 \ubc29\ud5a5\uc73c\ub85c \uade0\uc77c\ud558\uac8c \ubd80\ud480\ub824\uc11c \ubcfc\ub098 \uadfc\uc721\uc744 \uac15\uc870\ud560 \ub54c \uc0ac\uc6a9\ud569\ub2c8\ub2e4."
+  },
+  {
+    question: "\uc5bc\uad74 \uc870\uac01 \uc21c\uc11c\ub85c \uac00\uc7a5 \uc801\uc808\ud55c \uac83\uc740?",
+    options: [
+      "Grab \u2192 Clay Strips \u2192 Crease \u2192 Smooth",
+      "Crease \u2192 Inflate \u2192 Grab \u2192 Clay",
+      "Smooth \u2192 Draw \u2192 Clay Strips \u2192 Crease",
+      "Inflate \u2192 Snake Hook \u2192 Smooth \u2192 Grab"
+    ],
+    answer: 0,
+    explanation: "Grab\uc73c\ub85c \ud070 \uc2e4\ub8e8\uc5e3\uc744 \uc7a1\uace0, Clay Strips\ub85c \ubcfc\ub968\uc744 \uc313\uace0, Crease\ub85c \ub0a0\uce74\ub85c\uc6b4 \uacbd\uacc4\ub97c \ub123\uace0, Smooth\ub85c \ub9c8\ubb34\ub9ac\ud558\ub294 \ud750\ub984\uc774 \uac00\uc7a5 \ud6a8\uc728\uc801\uc785\ub2c8\ub2e4."
+  }
+]);
+</script>
+
+<script src="./_helpers.js?v=20260318ai"></script>
+<script>
+window.addEventListener("load", function() {
+  if (window.normalizeStandaloneShowMeLayout) {
+    window.normalizeStandaloneShowMeLayout(document);
+  }
+});
+</script>
+</body>
+</html>
