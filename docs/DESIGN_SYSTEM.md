@@ -1,7 +1,7 @@
 # RPD Design System
 
 > Source of Truth — 모든 CSS 코드는 이 문서의 스케일과 규칙을 따른다.
-> 마지막 업데이트: 2026-03-20
+> 마지막 업데이트: 2026-03-27
 
 ---
 
@@ -122,3 +122,160 @@
 5. border-radius 스케일 외의 값 사용 금지
 6. 인라인 `<style>` 사용 금지 (외부 CSS 파일만)
 7. 하드코딩 rgba 사용 금지 (토큰 사용)
+8. 이모지 아이콘 사용 금지 (Lucide SVG만)
+9. 신규 페이지에 `chrome.css` 사용 금지 (레거시 — week.html/inha.html 전용)
+
+---
+
+## 9. CSS 파일 구조
+
+| 파일 | 역할 | 모든 페이지 |
+|------|------|-------------|
+| `tokens.css` | 디자인 토큰 (색상, 타이포, 간격, radius) | ✅ 필수 |
+| `components.css` | 공유 컴포넌트 (.rpd-* 클래스) | ✅ 필수 |
+| `layout.css` | 앱 셸 (topbar, rail, main 레이아웃) | ✅ 필수 |
+| `page-*.css` | 페이지별 전용 스타일 | 해당 페이지만 |
+| `chrome.css` | 레거시 — week.html, inha.html 전용 | 신규 사용 금지 |
+
+**페이지별 CSS 매핑:**
+
+| 페이지 | CSS 파일 |
+|--------|---------|
+| index.html | page-index.css |
+| library.html | page-library.css |
+| shortcuts.html | page-shortcuts.css |
+| inha.html | page-inha.css |
+| week.html | page-week.css |
+| studio.html | page-studio.css |
+| admin.html | page-admin.css |
+
+---
+
+## 10. 앱 셸 레이아웃
+
+```
+┌─────────────────────────────────┐
+│  app-topbar (56px 고정)          │
+│  [햄버거] [로고] [탭바] [테마]    │
+├────────┬────────────────────────┤
+│ rail   │  main                  │
+│ 56px   │  (flex: 1, 스크롤)     │
+│ →220px │                        │
+│ (hover)│                        │
+└────────┴────────────────────────┘
+```
+
+- **`app-topbar`**: 탭바 가운데 정렬, topbar-left / topbar-right 양끝
+- **`rail`**: 56px 기본 → hover 220px. 하단에 유저 프로필 (`rail-user`)
+- **`main`**: overflow-y: auto, max-width: var(--max-width), padding: 24px
+
+**주의:**
+- `admin.html`에 `.rail` 클래스 추가 금지 → layout.css 충돌로 사이드바 화면 밖으로 밀림
+- `week.html` sidebar에 `.rpd-page-rail` 클래스 추가 금지 → chrome.css의 `position:static`이 `position:fixed`를 덮어씀 (모바일 콘텐츠 844px 아래로 밀림)
+
+---
+
+## 11. 탭 시스템
+
+3탭 구조 — topbar 가운데 `.app-tabs`에 위치:
+
+| 탭 | 페이지 | `data-tab` |
+|----|--------|-----------|
+| Archive | index.html | `archive` |
+| Class | inha.html | `class` |
+| My Studio | studio.html | `studio` |
+
+- 활성 탭: `.app-tab.is-active`
+- `<body data-tab="studio">` 로 현재 탭 표시
+- JS: `tab-system.js` 에서 URL 기반 자동 활성화
+
+---
+
+## 12. 아이콘 시스템
+
+**Lucide Icons SVG** (stroke, no fill) 사용. 이모지 사용 금지.
+
+```html
+<!-- 표준 패턴 -->
+<svg width="18" height="18" viewBox="0 0 24 24"
+     fill="none" stroke="currentColor"
+     stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+     aria-hidden="true">
+  ...
+</svg>
+```
+
+- `aria-hidden="true"` 필수 (텍스트와 함께 사용 시)
+- `stroke="currentColor"` → CSS `color` 로 색상 제어
+- 기본 크기: 18px (레일), 16px (버튼), 13-14px (인라인)
+
+---
+
+## 13. 유저 프로필
+
+Claude Code 스타일 좌하단 고정. `rail-user` → `rail-user-btn` → `rail-user-menu`.
+
+- 이름/역할 localStorage 저장 (`rpd-user-name`, `rpd-user-role`)
+- `admin-only` 클래스: admin 유저만 메뉴 항목 표시 (JS 제어)
+- 구현: `user-profile.js`
+
+---
+
+## 14. 덱 시스템 컴포넌트 (My Studio)
+
+**파일 구조:**
+- `deck-store.js` — localStorage CRUD + 프리셋 생성
+- `deck-ui.js` — 렌더링 + 모달 + 카드 피커
+- `page-studio.css` — 전용 스타일
+
+**주요 클래스:**
+
+| 클래스 | 역할 |
+|--------|------|
+| `.deck-grid` | auto-fill, minmax(240px, 1fr) |
+| `.deck-card` | 덱 카드 (기본) |
+| `.deck-card.is-preset` | 프리셋 덱 (파란색 강조) |
+| `.deck-btn` | 덱 카드 내 작은 버튼 |
+| `.deck-modal-overlay` | 모달 오버레이 (fixed, backdrop-blur) |
+| `.card-picker-list` | 카드 선택 리스트 (flex-column, max-height: 240px) |
+
+**중요 버그 패턴:**
+- `.deck-field input:not([type="checkbox"])` — checkbox에 `width:100%` 적용 방지 필수
+
+**데이터 구조:**
+```js
+{
+  id: 'deck-xxx',       // 자동 생성
+  preset: false,         // true = 읽기 전용 프리셋
+  name: '덱 이름',
+  description: '',
+  items: [{ type: 'card', id: 'slug' }],
+  createdAt: ISO,
+  updatedAt: ISO
+}
+```
+
+---
+
+## 15. 접근성
+
+- **focus-visible**: `tokens.css` 전역 — `outline: 2px solid var(--key-soft)`
+- **skip-link**: 모든 페이지 `<a href="#main" class="skip-link">본문으로 건너뛰기</a>`
+- **터치 타겟**: 최소 44×44px (버튼, 링크)
+- **최소 폰트**: 12px (`.82rem` 이하 금지)
+- **한국어 line-height**: 본문 1.7, UI 레이블 1.4
+
+---
+
+## 16. 한국어 텍스트 스타일
+
+토스(Toss) 스타일 해요체 사용:
+
+| 금지 | 사용 |
+|------|------|
+| ~합니다 / ~입니다 | ~해요 / ~있어요 |
+| ~하십시오 | ~해 주세요 |
+| ~하였습니다 | ~했어요 |
+| ~할 수 있습니다 | ~할 수 있어요 |
+
+빈 상태 메시지: `아직 X가 없어요. Y를 해 보세요.`
