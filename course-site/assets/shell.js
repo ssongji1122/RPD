@@ -158,11 +158,12 @@
       el('div', { className: 'rail-user-role', id: 'userRole', textContent: '로그인하세요' })
     ]),
     el('div', { className: 'rail-user-menu', id: 'userMenu' }, [
-      el('a', { className: 'rail-user-menu-item', href: '/studio.html#settings', textContent: '⚙ 설정' }),
-      el('a', { className: 'rail-user-menu-item', href: '/studio.html#progress', textContent: '📊 내 진도' }),
+      el('button', { className: 'rail-user-menu-item', id: 'authLoginBtn', onclick: 'RPDAuth && RPDAuth.signInWithGoogle()', textContent: '🔑 Google로 로그인' }),
+      el('button', { className: 'rail-user-menu-item', id: 'authLogoutBtn', hidden: '', onclick: 'RPDAuth && RPDAuth.signOut()', textContent: '로그아웃' }),
       el('div', { className: 'rail-user-menu-divider' }),
-      el('a', { className: 'rail-user-menu-item', href: '/admin.html', 'data-admin': '', textContent: '🔧 관리자 패널' }),
-      el('button', { className: 'rail-user-menu-item', onclick: 'changeUserName()', textContent: '✏️ 이름 변경' })
+      el('button', { className: 'rail-user-menu-item', onclick: 'changeUserName()', textContent: '✏️ 이름 변경' }),
+      el('div', { className: 'rail-user-menu-divider' }),
+      el('a', { className: 'rail-user-menu-item admin-only', href: '/admin.html', hidden: '', textContent: '🔧 관리자 패널' })
     ])
   ]);
   rail.appendChild(userProfile);
