@@ -115,7 +115,7 @@
   align-self: start;
   padding: var(--rpd-hero-meta-padding-y) var(--rpd-hero-meta-padding-x);
   border: 1px solid var(--line);
-  border-radius: 18px;
+  border-radius: var(--radius-md);
   background: var(--modal-panel-soft-bg);
   box-shadow: var(--modal-card-shadow);
 }
@@ -290,7 +290,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 14px;
+  border-radius: var(--radius);
   line-height: 1;
 }
 
@@ -410,7 +410,7 @@
   width: 100%;
   padding: 10px 12px;
   border: 1px solid transparent;
-  border-radius: 16px;
+  border-radius: var(--radius-md);
   background: transparent;
   color: var(--muted);
   font-size: .84rem;
@@ -526,6 +526,6 @@
 @media (max-width: 720px) {
   .rpd-sidecard {
     padding: 16px;
-    border-radius: 22px;
+    border-radius: var(--radius-xl);
   }
 }

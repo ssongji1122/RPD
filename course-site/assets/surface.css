@@ -5,7 +5,7 @@
 
 .rpd-panel {
   position: relative;
-  border-radius: 26px;
+  border-radius: var(--radius-2xl);
   border: 1px solid var(--line);
   background:
     linear-gradient(180deg, var(--surface-tint), transparent 72%),
@@ -40,7 +40,7 @@
 .rpd-icon-well {
   display: grid;
   place-items: center;
-  border-radius: 14px;
+  border-radius: var(--radius);
   border: 1px solid rgba(122,162,247,.16);
   background:
     linear-gradient(145deg, rgba(10,132,255,.14), rgba(255,255,255,.03)),
