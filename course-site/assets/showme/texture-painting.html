@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — Texture Painting 기초</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --danger-soft:   #fca5a5;
+  --warn-soft:     #fbbf24;
+  --warn-medium:   #fcd34d;
+  --accent-soft:   #FFB347;
+  --secondary-soft:#a5b4fc;
+  --secondary-mid: #c4b5fd;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --muted-mid:     #94a3b8;
+  --muted-soft:    #cbd5e1;
+  --muted-dim:     #64748b;
+  --info-soft:     #67e8f9;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 0; font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+.tabs { display: flex; gap: 0; border-bottom: 1px solid var(--line); padding: 0 16px; background: var(--bg-soft); overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { padding: 12px 16px; font-size: .84rem; font-weight: 500; color: var(--muted); cursor: pointer; border: none; border-bottom: 2px solid transparent; white-space: nowrap; transition: color .14s, border-color .14s; background: none; font-family: inherit; }
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active { color: var(--key-soft); border-bottom-color: var(--key); }
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+.concept-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.concept-card { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); padding: 18px; }
+.concept-card h3 { margin: 0 0 8px; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+.concept-card p { margin: 0; color: var(--muted-strong); font-size: .88rem; line-height: 1.7; }
+.concept-card ul { margin: 8px 0 0; padding-left: 16px; color: var(--muted-strong); font-size: .85rem; line-height: 1.8; }
+.badge { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: .72rem; font-weight: 600; }
+.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: var(--warn-soft); }
+.kbd { display: inline-block; padding: 3px 8px; border-radius: 6px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); color: var(--key-soft); font-size: .82rem; font-weight: 600; font-family: var(--font); }
+.demo-wrap { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); overflow: hidden; margin: 14px 0; }
+.demo-wrap canvas { display: block; width: 100%; }
+.demo-controls { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--line); flex-wrap: wrap; }
+.demo-hint { font-size: .78rem; color: var(--muted); text-align: center; padding: 6px 0 0; }
+.demo-btn { padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line-strong); background: rgba(255,255,255,.04); color: var(--muted-strong); font: inherit; font-size: .82rem; cursor: pointer; transition: background .14s, color .14s; }
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active { background: rgba(10,132,255,.14); color: var(--key-soft); border-color: rgba(10,132,255,.3); }
+.usage-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.usage-card { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); padding: 16px; }
+.usage-card h4 { margin: 0 0 8px; font-size: .92rem; color: var(--key-soft); }
+.usage-card ul { margin: 0; padding-left: 16px; color: var(--muted-strong); font-size: .85rem; line-height: 1.8; }
+.tip-box { border-radius: var(--radius-md); border: 1px solid rgba(10,132,255,.2); background: rgba(10,132,255,.06); padding: 14px 16px; margin-top: 14px; font-size: .86rem; color: var(--muted-strong); }
+.tip-box strong { color: var(--key-soft); }
+.combo-section { margin-top: 18px; }
+.combo-section h4 { margin: 0 0 10px; font-size: .92rem; color: var(--text); }
+.combo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.combo-card { border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--surface); padding: 12px 14px; }
+.combo-card .combo-name { font-size: .86rem; font-weight: 600; color: var(--key-soft); margin-bottom: 4px; }
+.combo-card .combo-desc { font-size: .8rem; color: var(--muted); line-height: 1.5; }
+.shortcut-list { margin-top: 16px; padding: 14px 16px; border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); }
+.shortcut-list h4 { margin: 0 0 10px; font-size: .9rem; color: var(--text); }
+.shortcut-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-size: .84rem; color: var(--muted-strong); }
+.shortcut-row + .shortcut-row { border-top: 1px solid var(--line); }
+.shortcut-keys { flex-shrink: 0; }
+.analogy { margin-top: 8px; padding: 10px 14px; border-radius: var(--radius-sm); background: rgba(245,158,11,.06); border: 1px solid rgba(245,158,11,.15); font-size: .82rem; color: var(--warn-soft); font-style: italic; }
+.quiz-progress { font-size: .78rem; color: var(--muted); margin-bottom: 12px; }
+.quiz-question { margin-bottom: 20px; padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); }
+.quiz-question h4 { margin: 0 0 12px; font-size: .94rem; }
+.quiz-option { display: block; width: 100%; padding: 10px 14px; margin-bottom: 6px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: rgba(255,255,255,.025); color: var(--text); font: inherit; font-size: .86rem; cursor: pointer; text-align: left; transition: background .14s, border-color .14s; }
+.quiz-option:hover { background: rgba(255,255,255,.06); border-color: var(--line-strong); }
+.quiz-option.correct { background: rgba(16,185,129,.12); border-color: rgba(16,185,129,.4); color: var(--success-soft); }
+.quiz-option.wrong { background: rgba(239,68,68,.1); border-color: rgba(239,68,68,.3); color: var(--danger-soft); }
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback { margin-top: 8px; padding: 10px 14px; border-radius: var(--radius-sm); font-size: .84rem; display: none; }
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: var(--danger-soft); }
+.quiz-score { text-align: center; padding: 20px; font-size: 1.1rem; font-weight: 600; }
+.quiz-retry { display: block; margin: 12px auto; padding: 10px 24px; border-radius: 999px; border: 1px solid var(--key); background: rgba(10,132,255,.12); color: var(--key-soft); font: inherit; font-size: .88rem; cursor: pointer; transition: background .14s; }
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+.doc-ref { margin-top: 16px; padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid rgba(10,132,255,.15); background: rgba(10,132,255,.04); display: flex; align-items: center; gap: 8px; }
+.doc-ref a { color: var(--key-soft); font-size: .84rem; text-decoration: none; line-height: 1.5; }
+.doc-ref a:hover { text-decoration: underline; }
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Tab Bar ── -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" role="tab" aria-selected="true"  data-tab="concept">개념 이해</button>
+  <button class="tab"           role="tab" aria-selected="false" data-tab="interact">인터랙션</button>
+  <button class="tab"           role="tab" aria-selected="false" data-tab="when">언제 쓰나요?</button>
+  <button class="tab"           role="tab" aria-selected="false" data-tab="quiz">퀴즈</button>
+</nav>
+
+<!-- ══════════════════════════════════════════════════
+     TAB 1 — 개념 이해
+     ══════════════════════════════════════════════════ -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+
+  <div class="concept-grid">
+
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">핵심 원리</span></h3>
+      <p>Texture Paint 모드는 3D 오브젝트 표면에 <strong>직접 붓질</strong>하는 모드입니다. 브러시로 칠하면 오브젝트에 연결된 UV 텍스처 이미지가 실시간으로 업데이트됩니다.</p>
+      <div class="analogy">3D 오브젝트가 종이처럼 UV로 펼쳐져 있는데, 그 위에 수채화처럼 직접 그림을 그리는 것</div>
+    </div>
+
+    <div class="concept-card">
+      <h3><span class="badge badge-green">두 가지 뷰</span></h3>
+      <p>Texture Paint 모드에서는 두 곳에서 동시에 작업할 수 있습니다:</p>
+      <ul>
+        <li><strong>3D 뷰포트</strong> — 오브젝트 표면에 직접 칠하기</li>
+        <li><strong>UV Editor</strong> — 펼쳐진 2D 이미지 위에 칠하기</li>
+      </ul>
+      <p style="margin-top:8px; font-size:.83rem; color:var(--success-soft);">두 뷰에서 칠한 내용은 <strong>실시간으로 동기화</strong>됩니다.</p>
+    </div>
+
+    <div class="concept-card">
+      <h3><span class="badge badge-amber">브러시 설정</span></h3>
+      <ul>
+        <li><kbd class="kbd">F</kbd> — 브러시 반경 조절 (드래그)</li>
+        <li><kbd class="kbd">Shift+F</kbd> — 브러시 강도 조절</li>
+        <li><kbd class="kbd">X</kbd> — 전경색 / 배경색 교체</li>
+        <li><kbd class="kbd">S</kbd> — Stencil 모드 토글</li>
+        <li><kbd class="kbd">Ctrl+클릭</kbd> — 색상 피커 (스포이드)</li>
+      </ul>
+    </div>
+
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">Blend Mode</span></h3>
+      <p>칠하는 방식(합성 모드)을 선택할 수 있습니다:</p>
+      <ul>
+        <li><strong>Mix</strong> — 기본 혼합</li>
+        <li><strong>Add / Subtract</strong> — 밝게 / 어둡게</li>
+        <li><strong>Multiply</strong> — 곱하기 합성</li>
+        <li><strong>Lighten / Darken</strong> — 밝은 / 어두운 값 유지</li>
+      </ul>
+    </div>
+
+    <div class="concept-card">
+      <h3><span class="badge badge-green">Stencil 모드</span></h3>
+      <p>이미지를 마스크로 사용해 반복되는 패턴을 오브젝트 표면에 찍어낼 수 있습니다. 문양이나 데칼 효과에 유용합니다.</p>
+    </div>
+
+    <div class="concept-card">
+      <h3><span class="badge badge-amber">준비 사항</span></h3>
+      <p>Texture Paint 모드를 사용하기 전에 반드시 준비해야 할 것:</p>
+      <ul>
+        <li>UV 언래핑 완료</li>
+        <li>이미지 텍스처 노드 생성 (Shader Editor에서)</li>
+        <li>저장: <strong>Image &gt; Save As</strong> 또는 .blend에 Pack</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="shortcut-list">
+    <h4>단축키 요약</h4>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><kbd class="kbd">F</kbd></span>
+      <span>브러시 반경 조절 — 누른 채 좌우 드래그</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><kbd class="kbd">Shift</kbd> + <kbd class="kbd">F</kbd></span>
+      <span>브러시 강도(Strength) 조절</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><kbd class="kbd">X</kbd></span>
+      <span>전경색 / 배경색 교체</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><kbd class="kbd">S</kbd></span>
+      <span>Stencil 모드 토글</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><kbd class="kbd">Ctrl</kbd> + 클릭</span>
+      <span>색상 피커 — 오브젝트 표면의 색상 샘플링</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><kbd class="kbd">Numpad 0</kbd></span>
+      <span>카메라 뷰 전환</span>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--key-soft);flex-shrink:0"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+    <a href="https://docs.blender.org/manual/en/latest/sculpt_paint/texture_paint/index.html" target="_blank" rel="noopener">공식 문서 — Blender Manual: Texture Paint</a>
+  </div>
+
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     TAB 2 — 인터랙션 (Canvas Demo)
+     ══════════════════════════════════════════════════ -->
+<section class="panel" id="panel-interact" role="tabpanel">
+
+  <div class="demo-wrap">
+    <canvas id="paintCanvas" width="600" height="300"></canvas>
+  </div>
+
+  <div class="demo-controls">
+    <button class="demo-btn is-active" data-color="#e05c5c">빨강</button>
+    <button class="demo-btn"           data-color="#5c9ee0">파랑</button>
+    <button class="demo-btn"           data-color="#5ce07a">초록</button>
+    <button class="demo-btn"           data-color="#e0c45c">노랑</button>
+    <button class="demo-btn"           data-color="#e8e8e8">흰색</button>
+    <button class="demo-btn"           id="btnClear"        style="margin-left:auto;">지우기</button>
+  </div>
+  <p class="demo-hint">3D 구체 위를 클릭하거나 드래그해서 페인팅하세요 — UV 맵에도 동시에 반영됩니다</p>
+
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     TAB 3 — 언제 쓰나요?
+     ══════════════════════════════════════════════════ -->
+<section class="panel" id="panel-when" role="tabpanel">
+
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>이럴 때 사용하세요</h4>
+      <ul>
+        <li>오브젝트에 독특한 텍스처·색상 패턴을 <strong>직접 그릴 때</strong></li>
+        <li>UV 맵이 복잡해서 2D 편집이 어려울 때 3D에서 직접 칠하기</li>
+        <li>캐릭터 피부, 낡은 벽, 나무 결 등 <strong>유기적인 디테일</strong> 추가</li>
+        <li>데칼·스탬프 이미지를 표면에 찍어낼 때</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>흔한 실수</h4>
+      <ul>
+        <li>이미지 텍스처를 먼저 만들지 않고 칠하려 해서 오류 발생</li>
+        <li>UV 언래핑 없이 칠해서 패턴이 찌그러짐</li>
+        <li>칠한 후 <strong>Image &gt; Save As</strong>를 하지 않아 재시작 후 사라짐</li>
+        <li>Blend Mode를 Mix로 두지 않고 칠해서 예상치 못한 결과</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="combo-section">
+    <h4>작업 흐름 (Workflow)</h4>
+    <div class="combo-grid">
+      <div class="combo-card">
+        <div class="combo-name">1단계 — UV 언래핑</div>
+        <div class="combo-desc">Edit Mode에서 UV 언래핑 완료. Smart UV Project 또는 수동 Seam 방식</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">2단계 — 이미지 생성</div>
+        <div class="combo-desc">Shader Editor에서 Image Texture 노드 추가 후 New Image 생성</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">3단계 — 페인팅</div>
+        <div class="combo-desc">Texture Paint 모드 진입 후 브러시로 칠하기. F로 크기, Shift+F로 강도 조절</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">4단계 — 저장</div>
+        <div class="combo-desc">Image &gt; Save As 로 외부 저장 또는 Image &gt; Pack Into .blend</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>팁:</strong> 3D 뷰포트에서 칠한 결과를 바로 보면서 UV Editor를 함께 열면 작업 효율이 크게 올라갑니다. <strong>Area를 분리</strong>해서 두 뷰를 나란히 두세요.
+  </div>
+
+  <div class="doc-ref">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--key-soft);flex-shrink:0"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+    <a href="https://docs.blender.org/manual/en/latest/sculpt_paint/texture_paint/index.html" target="_blank" rel="noopener">공식 문서 — Blender Manual: Texture Paint</a>
+  </div>
+
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     TAB 4 — 퀴즈
+     ══════════════════════════════════════════════════ -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizContainer"></div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     Scripts
+     ══════════════════════════════════════════════════ -->
+<script>
+/* ── Tab switching ── */
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(t) {
+      t.classList.remove("is-active");
+      t.setAttribute("aria-selected", "false");
+    });
+    document.querySelectorAll(".panel").forEach(function(p) {
+      p.classList.remove("is-active");
+    });
+    tab.classList.add("is-active");
+    tab.setAttribute("aria-selected", "true");
+    var id = "panel-" + tab.dataset.tab;
+    document.getElementById(id).classList.add("is-active");
+    if (tab.dataset.tab === "interact") initCanvas();
+  });
+  tab.addEventListener("touchend", function(e) { e.preventDefault(); tab.click(); });
+});
+
+/* ══════════════════════════════════════════════════
+   Canvas — Texture Paint Simulation
+   Left 60%: 3D sphere  |  Right 40%: UV map (flat square)
+   ══════════════════════════════════════════════════ */
+var canvasReady = false;
+var animFrameId = null;
+var strokes = [];
+var uvStrokes = [];
+var brushColor = "#e05c5c";
+var isPainting = false;
+var needsRedraw = true;
+
+function initCanvas() {
+  if (canvasReady) return;
+  canvasReady = true;
+
+  var canvas = document.getElementById("paintCanvas");
+  var ctx = canvas.getContext("2d");
+  var W = 600, H = 300;
+
+  var spCx = W * 0.30, spCy = H * 0.50, spR = Math.min(W * 0.22, H * 0.38);
+  var uvX = W * 0.63, uvY = H * 0.08, uvW = W * 0.32, uvH = H * 0.75;
+
+  function sphereToUV(cx, cy) {
+    var nx = (cx - spCx) / spR;
+    var ny = (cy - spCy) / spR;
+    if (nx * nx + ny * ny > 1) return null;
+    var u = nx * 0.5 + 0.5;
+    var v = ny * 0.5 + 0.5;
+    return { x: uvX + u * uvW, y: uvY + v * uvH };
+  }
+
+  function isOnSphere(cx, cy) {
+    return (cx - spCx) * (cx - spCx) + (cy - spCy) * (cy - spCy) <= spR * spR;
+  }
+
+  function drawScene() {
+    ctx.clearRect(0, 0, W, H);
+
+    ctx.fillStyle = "#17181a";
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.strokeStyle = "rgba(255,255,255,.08)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(W * 0.60, 0);
+    ctx.lineTo(W * 0.60, H);
+    ctx.stroke();
+
+    ctx.fillStyle = "rgba(161,161,170,.55)";
+    ctx.font = "500 11px -apple-system, sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("3D Viewport", 10, 18);
+
+    var grad = ctx.createRadialGradient(spCx - spR * 0.3, spCy - spR * 0.3, spR * 0.05, spCx, spCy, spR);
+    grad.addColorStop(0, "#2c2f35");
+    grad.addColorStop(1, "#0f1012");
+    ctx.beginPath();
+    ctx.arc(spCx, spCy, spR, 0, Math.PI * 2);
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    ctx.strokeStyle = "rgba(255,255,255,.07)";
+    ctx.lineWidth = 0.8;
+    for (var i = 1; i < 4; i++) {
+      var frac = i / 4;
+      var ry = (frac * 2 - 1) * spR;
+      var rx = Math.sqrt(spR * spR - ry * ry);
+      ctx.beginPath();
+      ctx.ellipse(spCx, spCy + ry, rx, rx * 0.3, 0, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    for (var j = 0; j < 6; j++) {
+      var angle = (j / 6) * Math.PI;
+      ctx.beginPath();
+      ctx.ellipse(spCx, spCy, spR * Math.abs(Math.cos(angle * 2 - Math.PI / 2)), spR, angle, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    strokes.forEach(function(s) {
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = s.color + "cc";
+      ctx.fill();
+    });
+
+    ctx.beginPath();
+    ctx.arc(spCx, spCy, spR, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(255,255,255,.18)";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    var hl = ctx.createRadialGradient(spCx - spR * 0.35, spCy - spR * 0.35, 0, spCx - spR * 0.25, spCy - spR * 0.25, spR * 0.45);
+    hl.addColorStop(0, "rgba(255,255,255,.18)");
+    hl.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.beginPath();
+    ctx.arc(spCx, spCy, spR, 0, Math.PI * 2);
+    ctx.fillStyle = hl;
+    ctx.fill();
+
+    ctx.fillStyle = "#111214";
+    ctx.strokeStyle = "rgba(255,255,255,.12)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.roundRect(uvX, uvY, uvW, uvH, 6);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = "rgba(161,161,170,.55)";
+    ctx.font = "500 11px -apple-system, sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("UV Map", W * 0.63 + 4, H * 0.08 - 4);
+
+    ctx.strokeStyle = "rgba(255,255,255,.06)";
+    ctx.lineWidth = 0.6;
+    for (var r = 1; r < 4; r++) {
+      var py = uvY + (r / 4) * uvH;
+      ctx.beginPath(); ctx.moveTo(uvX, py); ctx.lineTo(uvX + uvW, py); ctx.stroke();
+    }
+    for (var c = 1; c < 4; c++) {
+      var px = uvX + (c / 4) * uvW;
+      ctx.beginPath(); ctx.moveTo(px, uvY); ctx.lineTo(px, uvY + uvH); ctx.stroke();
+    }
+
+    ctx.strokeStyle = "rgba(142,197,255,.15)";
+    ctx.lineWidth = 0.8;
+    for (var mr = 0; mr <= 3; mr++) {
+      for (var mc = 0; mc < 3; mc++) {
+        ctx.beginPath();
+        ctx.moveTo(uvX + (mc / 3) * uvW, uvY + (mr / 3) * uvH);
+        ctx.lineTo(uvX + ((mc + 1) / 3) * uvW, uvY + (mr / 3) * uvH);
+        ctx.stroke();
+      }
+    }
+    for (var mc2 = 0; mc2 <= 3; mc2++) {
+      for (var mr2 = 0; mr2 < 3; mr2++) {
+        ctx.beginPath();
+        ctx.moveTo(uvX + (mc2 / 3) * uvW, uvY + (mr2 / 3) * uvH);
+        ctx.lineTo(uvX + (mc2 / 3) * uvW, uvY + ((mr2 + 1) / 3) * uvH);
+        ctx.stroke();
+      }
+    }
+
+    uvStrokes.forEach(function(s) {
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = s.color + "cc";
+      ctx.fill();
+    });
+
+    var swColors = ["#e05c5c", "#5c9ee0", "#5ce07a", "#e0c45c", "#e8e8e8", "#b05ce0", "#e08c5c"];
+    var stripY = H - 26;
+    ctx.fillStyle = "rgba(0,0,0,.4)";
+    ctx.fillRect(0, H - 34, W * 0.58, 34);
+    swColors.forEach(function(col, idx) {
+      var sx = 12 + idx * 26;
+      ctx.beginPath();
+      ctx.arc(sx + 9, stripY + 9, 8, 0, Math.PI * 2);
+      ctx.fillStyle = col;
+      ctx.fill();
+      if (col === brushColor) {
+        ctx.strokeStyle = "#fff";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+    });
+    ctx.fillStyle = "rgba(161,161,170,.6)";
+    ctx.font = "10px -apple-system, sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("브러시 색상", 200, stripY + 13);
+
+    needsRedraw = false;
+  }
+
+  function loop() {
+    if (needsRedraw) drawScene();
+    animFrameId = requestAnimationFrame(loop);
+  }
+
+  drawScene();
+  loop();
+
+  document.querySelectorAll(".demo-btn[data-color]").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      document.querySelectorAll(".demo-btn[data-color]").forEach(function(b) {
+        b.classList.remove("is-active");
+      });
+      btn.classList.add("is-active");
+      brushColor = btn.dataset.color;
+      needsRedraw = true;
+    });
+    btn.addEventListener("touchend", function(e) { e.preventDefault(); btn.click(); });
+  });
+
+  document.getElementById("btnClear").addEventListener("click", function() {
+    strokes = []; uvStrokes = []; needsRedraw = true;
+  });
+  document.getElementById("btnClear").addEventListener("touchend", function(e) {
+    e.preventDefault();
+    document.getElementById("btnClear").click();
+  });
+
+  function getCanvasXY(e) {
+    var rect = canvas.getBoundingClientRect();
+    var scaleX = W / rect.width;
+    var scaleY = H / rect.height;
+    var clientX, clientY;
+    if (e.touches && e.touches.length > 0) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else if (e.changedTouches && e.changedTouches.length > 0) {
+      clientX = e.changedTouches[0].clientX;
+      clientY = e.changedTouches[0].clientY;
+    } else {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    }
+    return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY };
+  }
+
+  function paint(e) {
+    var pos = getCanvasXY(e);
+    var x = pos.x, y = pos.y;
+    if (isOnSphere(x, y)) {
+      strokes.push({ x: x, y: y, r: 9, color: brushColor });
+      var uv = sphereToUV(x, y);
+      if (uv) uvStrokes.push({ x: uv.x, y: uv.y, r: 6, color: brushColor });
+      needsRedraw = true;
+    }
+    var swColors2 = ["#e05c5c", "#5c9ee0", "#5ce07a", "#e0c45c", "#e8e8e8", "#b05ce0", "#e08c5c"];
+    var stripY2 = H - 26;
+    swColors2.forEach(function(col, idx) {
+      var sx = 12 + idx * 26 + 9;
+      var sy = stripY2 + 9;
+      if ((x - sx) * (x - sx) + (y - sy) * (y - sy) <= 64) {
+        brushColor = col;
+        document.querySelectorAll(".demo-btn[data-color]").forEach(function(b) {
+          b.classList.toggle("is-active", b.dataset.color === col);
+        });
+        needsRedraw = true;
+      }
+    });
+  }
+
+  canvas.addEventListener("mousedown",  function(e) { isPainting = true; paint(e); });
+  canvas.addEventListener("mousemove",  function(e) { if (isPainting) paint(e); });
+  canvas.addEventListener("mouseup",    function() { isPainting = false; });
+  canvas.addEventListener("mouseleave", function() { isPainting = false; });
+
+  canvas.addEventListener("touchstart", function(e) { e.preventDefault(); isPainting = true; paint(e); }, { passive: false });
+  canvas.addEventListener("touchmove",  function(e) { e.preventDefault(); if (isPainting) paint(e); }, { passive: false });
+  canvas.addEventListener("touchend",   function(e) { e.preventDefault(); isPainting = false; }, { passive: false });
+}
+
+/* ══════════════════════════════════════════════════
+   Quiz
+   ══════════════════════════════════════════════════ */
+var questions = [
+  {
+    q: "Texture Paint 모드를 사용하려면 먼저 무엇이 준비되어 있어야 하나요?",
+    opts: [
+      "Subdivision Surface 모디파이어가 적용된 메쉬",
+      "UV 언래핑된 메쉬와 이미지 텍스처",
+      "Armature가 연결된 오브젝트",
+      "Bevel이 적용된 모서리"
+    ],
+    answer: 1,
+    fb: "Texture Paint는 UV 좌표와 이미지 텍스처가 있어야 브러시 데이터를 기록할 곳이 생깁니다."
+  },
+  {
+    q: "Texture Paint 모드에서 브러시 반경을 조절하는 단축키는?",
+    opts: ["B", "F", "R", "S"],
+    answer: 1,
+    fb: "F 키를 누른 채 마우스를 좌우로 드래그하면 브러시 반경이 실시간으로 변합니다."
+  },
+  {
+    q: "3D 뷰포트에서 칠한 내용이 UV Editor에도 반영되나요?",
+    opts: [
+      "아니요, 별도로 Bake를 해야 UV Editor에 나타납니다",
+      "네, 실시간으로 동기화됩니다",
+      "아니요, 두 뷰는 서로 독립적입니다",
+      "UV Editor에서만 먼저 칠한 뒤 3D에 적용해야 합니다"
+    ],
+    answer: 1,
+    fb: "Texture Paint 모드에서는 3D 뷰포트와 UV Editor가 같은 이미지 데이터를 공유하므로 양쪽이 실시간으로 동기화됩니다."
+  },
+  {
+    q: "Texture Paint 작업 후 이미지가 재시작 시 사라지지 않으려면?",
+    opts: [
+      "Ctrl+Z 로 되돌리기를 사용한다",
+      "Scene Properties에서 저장 옵션을 켠다",
+      "Image > Save As 또는 Pack Into .blend 로 저장한다",
+      "렌더링을 한 번 실행하면 자동 저장된다"
+    ],
+    answer: 2,
+    fb: "칠한 이미지는 메모리에만 존재합니다. Image > Save As 로 외부 파일에 저장하거나 Pack Into .blend 로 .blend 파일 안에 포함시켜야 합니다."
+  }
+];
+
+function initQuiz(qs) {
+  var container = document.getElementById("quizContainer");
+  var answered = new Array(qs.length).fill(false);
+  var scores = new Array(qs.length).fill(0);
+
+  function render() {
+    while (container.firstChild) container.removeChild(container.firstChild);
+
+    var prog = document.createElement("p");
+    prog.className = "quiz-progress";
+    var done = answered.filter(Boolean).length;
+    prog.textContent = done + " / " + qs.length + " 문항 완료";
+    container.appendChild(prog);
+
+    qs.forEach(function(q, qi) {
+      var block = document.createElement("div");
+      block.className = "quiz-question";
+
+      var title = document.createElement("h4");
+      title.textContent = "Q" + (qi + 1) + ". " + q.q;
+      block.appendChild(title);
+
+      q.opts.forEach(function(opt, oi) {
+        var btn = document.createElement("button");
+        btn.className = "quiz-option";
+        btn.textContent = opt;
+        if (answered[qi]) {
+          btn.disabled = true;
+          if (oi === q.answer) {
+            btn.classList.add("correct");
+          } else if (scores[qi] === 0) {
+            /* mark wrong only if this was the chosen one — tracked via data attr */
+            if (btn.dataset.chosen === "true") btn.classList.add("wrong");
+          }
+        }
+        btn.addEventListener("click", function() {
+          if (answered[qi]) return;
+          answered[qi] = true;
+          scores[qi] = oi === q.answer ? 1 : 0;
+          btn.dataset.chosen = "true";
+          render();
+          if (answered.every(Boolean)) showScore();
+        });
+        block.appendChild(btn);
+      });
+
+      var fb = document.createElement("div");
+      fb.className = "quiz-feedback" + (answered[qi] ? (" show " + (scores[qi] ? "correct-fb" : "wrong-fb")) : "");
+      if (answered[qi]) {
+        fb.textContent = (scores[qi] ? "정답입니다! " : "틀렸습니다. ") + q.fb;
+      }
+      block.appendChild(fb);
+
+      container.appendChild(block);
+    });
+  }
+
+  function showScore() {
+    var score = scores.reduce(function(a, b) { return a + b; }, 0);
+    var pass = score >= Math.ceil(qs.length * 0.75);
+
+    var scoreDiv = document.createElement("div");
+    scoreDiv.className = "quiz-score";
+    scoreDiv.style.color = pass ? "var(--success-soft)" : "var(--danger-soft)";
+    scoreDiv.textContent = score + " / " + qs.length + " — " + (pass ? "통과했어요!" : "다시 도전해보세요");
+    container.appendChild(scoreDiv);
+
+    var retry = document.createElement("button");
+    retry.className = "quiz-retry";
+    retry.textContent = "다시 풀기";
+    retry.addEventListener("click", function() {
+      answered = new Array(qs.length).fill(false);
+      scores = new Array(qs.length).fill(0);
+      render();
+    });
+    retry.addEventListener("touchend", function(e) { e.preventDefault(); retry.click(); });
+    container.appendChild(retry);
+
+    window.parent.postMessage({
+      type: "showme-quiz-complete",
+      widgetId: new URLSearchParams(location.search).get("wid"),
+      score: score,
+      total: qs.length,
+      pass: pass
+    }, "*");
+  }
+
+  render();
+}
+
+initQuiz(questions);
+</script>
+</body>
+</html>

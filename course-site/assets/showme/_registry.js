@@ -71,19 +71,26 @@ const SHOWME_REGISTRY = {
   // ── Week 7: UV ──
   "uv-unwrapping":          { label: "UV Unwrapping 이해",      icon: "📐", week: 7 },
   "uv-editor":              { label: "UV Editor 조작",          icon: "🗺️", week: 7 },
+  "texture-painting":       { label: "Texture Painting 기초",   icon: "🖌️", week: 7 },
 
   // ── Week 9: Lighting ──
   "light-types":            { label: "4가지 Light 종류",         icon: "💡", week: 9 },
   "hdri-lighting":          { label: "HDRI 환경 조명",           icon: "🌅", week: 9 },
   "three-point-light":      { label: "3점 조명법",               icon: "🎬", week: 9 },
+  "camera-setup":           { label: "카메라 세팅 이해",           icon: "📷", week: 9 },
+  "depth-of-field":         { label: "Depth of Field 이해",       icon: "🎥", week: 9 },
 
   // ── Week 10: Animation ──
   "keyframe-basics":        { label: "키프레임 기초",            icon: "⏱️", week: 10 },
   "graph-editor":           { label: "Graph Editor 이해",       icon: "📈", week: 10 },
+  "dope-sheet":             { label: "Dope Sheet 이해",         icon: "🎞️", week: 10 },
 
   // ── Week 11: Rigging ──
   "armature-basics":        { label: "Armature 이해",           icon: "🦴", week: 11 },
   "weight-paint":           { label: "Weight Paint 이해",       icon: "🖌️", week: 11 },
+
+  // ── Week 12: NLA ──
+  "nla-editor":             { label: "NLA Editor 이해",         icon: "🎬", week: 12 },
 
   // ── Week 13: Rendering ──
   "render-settings":        { label: "Cycles vs EEVEE",         icon: "🖥️", week: 13 },

@@ -1579,7 +1579,8 @@ const CURRICULUM = [
           {
             "id": "w5-t1",
             "label": "Meshy 또는 Tripo에서 프롬프트 입력 후 생성",
-            "detail": "구체적인 형용사를 넣을수록 결과가 좋아요"
+            "detail": "구체적인 형용사를 넣을수록 결과가 좋아요",
+            "url": "https://www.meshy.ai/"
           },
           {
             "id": "w5-t2",
@@ -2257,7 +2258,8 @@ const CURRICULUM = [
             "detail": "브러시 색과 크기 바꿔가며 실험"
           }
         ],
-        "image": "assets/images/week07/texture-paint.png"
+        "image": "assets/images/week07/texture-paint.png",
+        "showme": "texture-painting"
       }
     ],
     "shortcuts": [
@@ -2562,7 +2564,8 @@ const CURRICULUM = [
             "detail": "35mm(넓은) vs 85mm(망원) 차이"
           }
         ],
-        "image": "assets/images/week09/camera-setup.png"
+        "image": "assets/images/week09/camera-setup.png",
+        "showme": ["camera-setup", "depth-of-field"]
       },
       {
         "title": "분위기 연출 실험",
@@ -2776,7 +2779,8 @@ const CURRICULUM = [
             "detail": "반복 동작 만들기에 유용"
           }
         ],
-        "image": "assets/images/week10/dope-sheet.png"
+        "image": "assets/images/week10/dope-sheet.png",
+        "showme": "dope-sheet"
       },
       {
         "title": "Graph Editor 커브",
@@ -3240,12 +3244,14 @@ const CURRICULUM = [
           {
             "id": "w12-t7",
             "label": "Mixamo Animations 탭에서 걷기/달리기/춤 골라보기",
-            "detail": "미리보기로 확인 후 다운로드"
+            "detail": "미리보기로 확인 후 다운로드",
+            "url": "https://www.mixamo.com/#/?page=1&type=Animation"
           },
           {
             "id": "w12-t8",
             "label": "FBX로 다운로드 (With Skin 옵션)",
-            "detail": "Keyframe Reduction: None 추천"
+            "detail": "Keyframe Reduction: None 추천",
+            "url": "https://www.mixamo.com/"
           },
           {
             "id": "w12-t9",
@@ -3281,7 +3287,8 @@ const CURRICULUM = [
             "detail": "Action을 NLA 스트립으로 Push Down"
           }
         ],
-        "image": "assets/images/week12/nla-editor.png"
+        "image": "assets/images/week12/nla-editor.png",
+        "showme": "nla-editor"
       }
     ],
     "shortcuts": [
