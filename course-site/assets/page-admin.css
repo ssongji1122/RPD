@@ -1,3 +1,48 @@
+    /* ── Admin shell overrides for unified tab system ── */
+    body[data-tab="admin"] .app {
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: auto minmax(0, 1fr);
+      min-height: 100vh;
+    }
+    body[data-tab="admin"] .app-topbar {
+      grid-column: 1 / -1;
+    }
+    body[data-tab="admin"] .app-topbar {
+      justify-content: space-between;
+    }
+    body[data-tab="admin"] .app-topbar .app-tabs {
+      flex-shrink: 0;
+    }
+    body[data-tab="admin"] .app-topbar-right {
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    body[data-tab="admin"] .app-topbar-right .version-badge {
+      display: none;
+    }
+    body[data-tab="admin"] .app-topbar-right .dirty-indicator {
+      display: none;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      background: rgba(245, 158, 11, .12);
+      color: #fbbf24;
+      font-size: .72rem;
+      font-weight: var(--fw-semi);
+      white-space: nowrap;
+    }
+    body[data-tab="admin"] .app-topbar-right .dirty-indicator.visible {
+      display: inline-flex;
+    }
+    body[data-tab="admin"] .admin-body {
+      grid-row: 2;
+      width: 100%;
+      max-width: 100%;
+      padding: 0 24px 72px;
+    }
+
     /* ── Admin layout ─────────────────────────────────── */
     body { overflow-x: hidden; }
 
