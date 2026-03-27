@@ -31,7 +31,8 @@ const CURRICULUM = [
           {
             "id": "w1-t1",
             "label": "blender.org 에서 다운로드 완료",
-            "detail": "최신 LTS 버전 권장"
+            "detail": "최신 LTS 버전 권장",
+            "url": "https://www.blender.org/download/"
           },
           {
             "id": "w1-t2",
@@ -2482,7 +2483,8 @@ const CURRICULUM = [
           {
             "id": "w9-t5",
             "label": "Poly Haven에서 HDRI 파일 다운로드",
-            "detail": "polyhaven.com → HDRIs"
+            "detail": "polyhaven.com → HDRIs",
+            "url": "https://polyhaven.com/hdris"
           },
           {
             "id": "w9-t6",
@@ -3209,7 +3211,8 @@ const CURRICULUM = [
           {
             "id": "w12-t4",
             "label": "Mixamo.com 접속 후 FBX 파일 업로드",
-            "detail": "Adobe 계정 필요 (무료)"
+            "detail": "Adobe 계정 필요 (무료)",
+            "url": "https://www.mixamo.com/"
           },
           {
             "id": "w12-t5",
