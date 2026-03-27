@@ -170,27 +170,28 @@ class PublicPageStyleE2ETest(PlaywrightFailureArtifactsMixin, unittest.TestCase)
 
     def test_public_topbar_active_tab_uses_text_priority_state(self) -> None:
         cases = [
-            ("index.html", "#homeLink", "#inhaLink"),
-            ("inha.html", "#inhaLink", "#homeLink"),
-            # library.html was redesigned without topbar navigation
-            ("shortcuts.html", "#topShortcutsLink", "#topLibraryLink"),
+            ("index.html", "archive"),
+            ("inha.html", "class"),
+            ("shortcuts.html", "archive"),
         ]
 
-        for page_path, active_selector, inactive_selector in cases:
+        for page_path, active_tab in cases:
             with self.subTest(page=page_path):
                 self._artifact_suffix = page_path.replace(".html", "")
                 page = self._new_page()
                 try:
                     page.goto(f"{self.base_url}/{page_path}", wait_until="load")
+                    active_selector = f".app-tab.is-active[data-tab-target='{active_tab}']"
+                    inactive_selector = ".app-tab:not(.is-active)"
                     active_style = self._read_style(page, active_selector)
                     inactive_style = self._read_style(page, inactive_selector)
-                    self._assert_text_priority_active(active_style, inactive_style)
+                    self._assert_text_priority_active(active_style, inactive_style, expect_aria_current=False)
                 except Exception:
                     self._capture_playwright_artifacts(page, suffix=self._artifact_suffix)
                     self._playwright_artifacts_captured = True
                     raise
 
-    def test_index_primary_cta_uses_outline_capsule(self) -> None:
+    def test_index_primary_cta_uses_filled_capsule(self) -> None:
         self._artifact_suffix = "index-cta"
         page = self._new_page()
         page.goto(f"{self.base_url}/index.html", wait_until="load")
@@ -199,12 +200,9 @@ class PublicPageStyleE2ETest(PlaywrightFailureArtifactsMixin, unittest.TestCase)
         class_name = primary_cta.get_attribute("class") or ""
         style = self._read_style(page, "#heroActions a")
 
-        self.assertIn("btn-accent-outline", class_name)
-        self.assertNotIn("btn-primary", class_name)
-        self.assertEqual(style["backgroundImage"], "none")
-        self.assertIn(style["backgroundColor"], {"rgba(0, 0, 0, 0)", "transparent"})
+        self.assertIn("btn-primary", class_name)
+        self.assertNotIn(style["backgroundColor"], {"rgba(0, 0, 0, 0)", "transparent"})
         self.assertNotEqual(style["borderTopWidth"], "0px")
-        self.assertNotEqual(style["borderTopColor"], "rgba(0, 0, 0, 0)")
 
     def test_week_sidebar_active_link_uses_text_priority_state(self) -> None:
         self._artifact_suffix = "week-sidebar"
