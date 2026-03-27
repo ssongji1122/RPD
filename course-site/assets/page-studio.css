@@ -2,8 +2,14 @@
    My Studio page styles */
 
 .studio-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
   margin-bottom: 32px;
+  flex-wrap: wrap;
 }
+.studio-header-text { min-width: 0; }
 .studio-title {
   font-size: var(--type-hero);
   font-family: var(--font-display);
@@ -21,16 +27,28 @@
 .studio-section {
   margin-bottom: 48px;
 }
+.studio-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
 .studio-section-title {
   font-size: var(--type-section);
   font-weight: var(--fw-semi);
   letter-spacing: -.02em;
-  margin: 0 0 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--line);
+  margin: 0;
+}
+.studio-section-count {
+  font-size: .78rem;
+  color: var(--muted);
+  font-weight: var(--fw-medium);
 }
 
-/* Empty state */
+/* ── Empty state ──────────────────────────────────────── */
 .studio-empty-state {
   display: grid;
   place-items: center;
@@ -40,10 +58,6 @@
   border: 1px dashed var(--line);
   border-radius: var(--radius);
   background: var(--surface);
-}
-.studio-empty-icon {
-  font-size: 2rem;
-  opacity: .6;
 }
 .studio-empty-text {
   margin: 0;
@@ -60,14 +74,371 @@
   margin-top: 12px;
 }
 
-/* Placeholder sections */
-.studio-progress-placeholder,
-.studio-settings-placeholder {
-  padding: 32px 24px;
-  text-align: center;
+/* ── Deck grid ────────────────────────────────────────── */
+.deck-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+/* ── Deck card ────────────────────────────────────────── */
+.deck-card {
+  position: relative;
+  display: grid;
+  gap: 10px;
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  cursor: default;
+  transition: border-color .14s ease, background .14s ease;
+}
+.deck-card:hover {
+  border-color: var(--line-strong);
+  background: var(--surface-strong);
+}
+.deck-card.is-preset {
+  border-color: rgba(var(--key-rgb, 10,132,255), .2);
+  background: rgba(var(--key-rgb, 10,132,255), .04);
+}
+.deck-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+.deck-card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: .7rem;
+  font-weight: var(--fw-semi);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+.deck-card-badge.badge-preset {
+  background: rgba(var(--key-rgb, 10,132,255), .12);
+  color: var(--key-soft);
+}
+.deck-card-badge.badge-done {
+  background: rgba(16,185,129,.12);
+  color: rgb(52,199,89);
+}
+.deck-card-badge.badge-active {
+  background: rgba(255,159,10,.12);
+  color: rgb(255,159,10);
+}
+.deck-card-name {
+  font-size: .95rem;
+  font-weight: var(--fw-semi);
+  letter-spacing: -.015em;
+  margin: 0;
+  line-height: 1.3;
+}
+.deck-card-desc {
+  font-size: .8rem;
   color: var(--muted);
-  font-size: .88rem;
+  margin: 0;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.deck-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.deck-card-count {
+  font-size: .76rem;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.deck-card-count svg { opacity: .55; }
+.deck-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+.deck-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted-strong);
+  font: inherit;
+  font-size: .76rem;
+  font-weight: var(--fw-medium);
+  cursor: pointer;
+  transition: background .12s ease, border-color .12s ease, color .12s ease;
+  white-space: nowrap;
+}
+.deck-btn:hover {
+  background: var(--overlay-white);
+  border-color: var(--line-strong);
+  color: var(--text);
+}
+.deck-btn.deck-btn-danger:hover {
+  background: rgba(255,59,48,.1);
+  border-color: rgba(255,59,48,.3);
+  color: rgb(255,59,48);
+}
+.deck-btn-spacer { flex: 1; }
+
+/* ── Add new deck card (+ button) ────────────────────── */
+.deck-card-new {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 130px;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-lg);
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: .84rem;
+  cursor: pointer;
+  transition: border-color .14s ease, color .14s ease, background .14s ease;
+}
+.deck-card-new:hover {
+  border-color: var(--key);
+  color: var(--key-soft);
+  background: rgba(var(--key-rgb, 10,132,255), .04);
+}
+.deck-card-new svg { opacity: .5; transition: opacity .14s ease; }
+.deck-card-new:hover svg { opacity: .9; }
+
+/* ── Preset accordion ─────────────────────────────────── */
+.preset-accordion {
   border: 1px solid var(--line);
   border-radius: var(--radius);
+  overflow: hidden;
+}
+.preset-accordion summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  list-style: none;
+  font-size: .84rem;
+  font-weight: var(--fw-semi);
+  color: var(--muted-strong);
   background: var(--surface);
+  user-select: none;
+}
+.preset-accordion summary::-webkit-details-marker { display: none; }
+.preset-accordion summary::after {
+  content: "⌄";
+  color: var(--muted);
+  font-size: .9rem;
+  transition: transform .16s ease;
+}
+.preset-accordion[open] summary::after { transform: rotate(180deg); }
+.preset-accordion-body {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  padding: 12px 16px 16px;
+  border-top: 1px solid var(--line);
+  background: var(--bg);
+}
+
+/* ── Modal overlay ────────────────────────────────────── */
+.deck-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.54);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(2px);
+}
+.deck-modal-overlay[hidden] { display: none; }
+.deck-modal {
+  width: 100%;
+  max-width: 520px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--line-strong);
+  background: var(--modal-panel-bg, var(--surface-strong));
+  box-shadow: 0 32px 80px rgba(0,0,0,.4);
+  overflow: hidden;
+}
+.deck-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
+.deck-modal-title {
+  font-size: 1rem;
+  font-weight: var(--fw-semi);
+  letter-spacing: -.02em;
+  margin: 0;
+}
+.deck-modal-close {
+  display: grid;
+  place-items: center;
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background .12s ease, color .12s ease;
+}
+.deck-modal-close:hover { background: var(--overlay-white); color: var(--text); }
+.deck-modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: grid;
+  gap: 16px;
+}
+.deck-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--line);
+  flex-shrink: 0;
+}
+
+/* Form fields inside modal */
+.deck-field { display: grid; gap: 6px; }
+.deck-field label {
+  font-size: .78rem;
+  font-weight: var(--fw-semi);
+  color: var(--muted-strong);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.deck-field input:not([type="checkbox"]),
+.deck-field textarea {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: .88rem;
+  resize: vertical;
+  transition: border-color .12s ease;
+  box-sizing: border-box;
+}
+.deck-field input:not([type="checkbox"]):focus,
+.deck-field textarea:focus {
+  outline: none;
+  border-color: var(--key);
+}
+
+/* ── Card picker inside modal ─────────────────────────── */
+.card-picker-wrap { display: grid; gap: 8px; }
+.card-picker-search {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: .84rem;
+  box-sizing: border-box;
+}
+.card-picker-search:focus { outline: none; border-color: var(--key); }
+.card-picker-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 240px;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 6px;
+  background: var(--surface);
+}
+.card-picker-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: .82rem;
+  transition: background .1s ease;
+}
+.card-picker-item:hover { background: var(--overlay-white); }
+.card-picker-item input[type="checkbox"] { flex-shrink: 0; accent-color: var(--key); }
+.card-picker-item-name { flex: 1; min-width: 0; }
+.card-picker-item-cat {
+  font-size: .7rem;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.card-picker-empty {
+  padding: 16px;
+  text-align: center;
+  color: var(--muted);
+  font-size: .82rem;
+}
+
+/* Selected items count chip */
+.card-picker-chips {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  min-height: 24px;
+}
+.card-picker-chip-count {
+  font-size: .76rem;
+  color: var(--muted);
+  padding: 2px 8px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.card-picker-chip-count.has-items {
+  background: rgba(var(--key-rgb, 10,132,255), .1);
+  border-color: rgba(var(--key-rgb, 10,132,255), .25);
+  color: var(--key-soft);
+}
+
+/* ── Mobile ───────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .deck-grid {
+    grid-template-columns: 1fr;
+  }
+  .preset-accordion-body {
+    grid-template-columns: 1fr;
+  }
+  .deck-modal { max-height: 90vh; }
 }
