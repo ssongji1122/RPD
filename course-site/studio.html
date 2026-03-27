@@ -8,58 +8,152 @@
   <link rel="stylesheet" href="assets/tokens.css">
   <link rel="stylesheet" href="assets/components.css">
   <link rel="stylesheet" href="assets/layout.css">
-  <link rel="stylesheet" href="assets/chrome.css">
   <link rel="stylesheet" href="assets/page-studio.css">
   <script>/* FOUC prevention */ (function(){var t=localStorage.getItem('rpd-theme');if(t)document.documentElement.setAttribute('data-theme',t);var l=localStorage.getItem('rpd-lang');if(l){document.documentElement.lang=l;document.documentElement.setAttribute('data-lang',l);}})()</script>
 </head>
 <body data-tab="studio">
   <a href="#my-decks" class="skip-link">본문으로 건너뛰기</a>
   <div class="app" data-shell>
-    <main class="main">
+
+    <!-- Topbar (shared shell) -->
+    <header class="app-topbar" id="appTopbar">
+      <div class="app-topbar-left">
+        <button class="app-hamburger" id="appHamburger" aria-label="메뉴 열기" type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <a href="index.html" class="app-logo" aria-label="홈으로">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        </a>
+        <span class="app-title">Blender Archive</span>
+      </div>
+      <nav class="app-tabs" role="navigation" aria-label="주 탐색">
+        <a href="index.html" class="app-tab" data-tab-target="archive">Archive</a>
+        <a href="inha.html" class="app-tab" data-tab-target="class">Class</a>
+        <a href="studio.html" class="app-tab is-active" data-tab-target="studio">My Studio</a>
+      </nav>
+      <div class="app-topbar-right">
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="테마 전환">
+          <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Sidebar rail -->
+    <nav class="rail" id="appRail" aria-label="사이드 탐색">
+      <div class="rail-items">
+        <a href="studio.html" class="rail-item is-active" aria-label="My Studio">
+          <svg class="rail-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+          <span class="rail-text">내 덱</span>
+        </a>
+        <a href="library.html" class="rail-item" aria-label="카드 라이브러리">
+          <svg class="rail-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+          <span class="rail-text">카드 찾기</span>
+        </a>
+      </div>
+      <!-- User profile -->
+      <div class="rail-user" id="railUser">
+        <button class="rail-user-btn" onclick="toggleUserMenu()" type="button" aria-label="프로필 메뉴" aria-expanded="false" aria-haspopup="true">
+          <span class="rail-user-avatar" id="userAvatar" aria-hidden="true">👤</span>
+          <div class="rail-user-info">
+            <span class="rail-user-name" id="userName">게스트</span>
+            <span class="rail-user-role" id="userRole">학생</span>
+          </div>
+        </button>
+        <div class="rail-user-menu" id="userMenu" role="menu" aria-label="프로필 메뉴">
+          <button class="rail-user-menu-item" onclick="changeUserName()" role="menuitem" type="button">이름 변경</button>
+          <div class="rail-user-menu-sep" role="separator"></div>
+          <a href="admin.html" class="rail-user-menu-item admin-only" role="menuitem">관리자 패널</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main content -->
+    <main class="main" id="my-decks">
       <div class="main-inner">
+
         <div class="studio-header">
-          <h1 class="studio-title">My Studio</h1>
-          <p class="studio-desc">내가 보고 싶은 카드만 모아서 나만의 덱을 만들어 보세요.</p>
+          <div class="studio-header-text">
+            <h1 class="studio-title">My Studio</h1>
+            <p class="studio-desc">내가 보고 싶은 카드만 모아서 나만의 덱을 만들어요.</p>
+          </div>
         </div>
 
-        <section class="studio-section" id="my-decks">
-          <h2 class="studio-section-title">내 덱</h2>
-          <div class="studio-empty-state">
-            <div class="studio-empty-icon" aria-hidden="true">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".4">
-                <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>
-              </svg>
+        <!-- My decks -->
+        <section class="studio-section">
+          <div class="studio-section-head">
+            <h2 class="studio-section-title">내 덱</h2>
+            <span class="studio-section-count" id="deckCount"></span>
+          </div>
+          <div id="deckGrid" class="deck-grid">
+            <!-- rendered by deck-ui.js -->
+          </div>
+        </section>
+
+        <!-- Preset decks -->
+        <section class="studio-section">
+          <div class="studio-section-head">
+            <h2 class="studio-section-title">프리셋 덱</h2>
+            <span class="studio-section-count">15주 커리큘럼 · 읽기 전용</span>
+          </div>
+          <details class="preset-accordion" id="presetAccordion">
+            <summary>주차별 프리셋 보기</summary>
+            <div class="preset-accordion-body" id="presetGrid">
+              <!-- rendered by deck-ui.js -->
             </div>
-            <p class="studio-empty-text">아직 만든 덱이 없어요.</p>
-            <p class="studio-empty-hint">프리셋 덱을 복제하거나 새로 만들어 보세요.</p>
-            <button class="btn btn-primary studio-create-btn">+ 첫 번째 덱 만들기</button>
-          </div>
+          </details>
         </section>
 
-        <section class="studio-section" id="progress">
-          <h2 class="studio-section-title">진도 현황</h2>
-          <div class="studio-progress-placeholder">
-            <p>로그인하면 진도를 확인할 수 있어요.</p>
-          </div>
-        </section>
-
-        <section class="studio-section" id="settings">
-          <h2 class="studio-section-title">설정</h2>
-          <div class="studio-settings-placeholder">
-            <p>테마, 언어, 알림을 설정할 수 있어요.</p>
-          </div>
-        </section>
       </div>
     </main>
   </div>
 
+  <!-- Deck edit/create modal -->
+  <div class="deck-modal-overlay" id="deckModalOverlay" hidden role="dialog" aria-modal="true" aria-labelledby="deckModalTitle">
+    <div class="deck-modal">
+      <div class="deck-modal-head">
+        <h2 class="deck-modal-title" id="deckModalTitle">새 덱 만들기</h2>
+        <button class="deck-modal-close" id="deckModalClose" type="button" aria-label="닫기">✕</button>
+      </div>
+      <div class="deck-modal-body">
+        <div class="deck-field">
+          <label for="deckNameInput">덱 이름</label>
+          <input type="text" id="deckNameInput" placeholder="예: Week 3 핵심 카드" maxlength="60" autocomplete="off">
+        </div>
+        <div class="deck-field">
+          <label for="deckDescInput">설명 (선택)</label>
+          <textarea id="deckDescInput" rows="2" placeholder="어떤 카드를 모은 덱인지 간단히 적어요." maxlength="200"></textarea>
+        </div>
+        <div class="deck-field card-picker-wrap">
+          <label>카드 선택</label>
+          <div class="card-picker-chips">
+            <span class="card-picker-chip-count" id="pickerChipCount">0개 선택됨</span>
+          </div>
+          <input type="search" class="card-picker-search" id="cardPickerSearch" placeholder="카드 이름 검색..." autocomplete="off">
+          <div class="card-picker-list" id="cardPickerList" role="listbox" aria-multiselectable="true">
+            <!-- populated by deck-ui.js -->
+          </div>
+        </div>
+      </div>
+      <div class="deck-modal-footer">
+        <button class="btn btn-ghost" id="deckModalCancel" type="button">취소</button>
+        <button class="btn btn-primary" id="deckModalSave" type="button">저장</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="assets/showme/_catalog.js"></script>
+  <script src="data/curriculum.js"></script>
   <script src="assets/shell.js"></script>
   <script src="assets/tab-system.js"></script>
   <script src="assets/user-profile.js"></script>
   <script src="assets/site-shell.js"></script>
   <script src="assets/layout.js"></script>
+  <script src="assets/deck-store.js"></script>
+  <script src="assets/deck-ui.js"></script>
   <script>
-    window.RPDAppShell.bindThemeToggle(document.getElementById("themeToggle"));
+    window.RPDAppShell && window.RPDAppShell.bindThemeToggle(document.getElementById("themeToggle"));
   </script>
 </body>
 </html>

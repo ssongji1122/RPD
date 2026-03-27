@@ -1556,82 +1556,14 @@ const CURRICULUM = [
     "subtitle": "AI 툴 활용 · Sculpt Mode 기초 · 메쉬 정리",
     "duration": "~3시간",
     "topics": [
-      "AI 3D 생성 툴 (Meshy/Tripo)",
-      "AI 메쉬 Import 및 정리",
       "Sculpt Mode 기초 브러시",
-      "Sculpt 브러시 심화 (Clay/Crease/Inflate)",
-      "Remesh와 Dyntopo",
-      "AI + Sculpt 하이브리드 워크플로우"
+      "Sculpt 브러시 심화 (Clay/Crease/Inflate/Snake Hook)",
+      "Remesh·Decimate·메쉬 정리 애드온",
+      "무드보드 → AI 프롬프트 설계",
+      "AI 3D 생성 (Meshy/Tripo)",
+      "AI 메쉬 Import 및 실전 정리"
     ],
     "steps": [
-      {
-        "title": "AI 3D 생성 체험",
-        "copy": "텍스트 몇 글자 입력하면 3D 메쉬가 뚝딱 나와요. AI가 초벌을 해주면 우리는 거기서 다듬기만 하면 돼요. 점토 조각으로 치면 AI가 큰 덩어리를 잡아준 셈이에요.",
-        "goal": [
-          "AI 생성 워크플로우를 이해한다",
-          "프롬프트 작성 요령을 안다"
-        ],
-        "done": [
-          "AI 생성 메쉬를 Blender에서 열었다",
-          "최소 2가지 프롬프트로 결과를 비교했다"
-        ],
-        "tasks": [
-          {
-            "id": "w5-t1",
-            "label": "Meshy 또는 Tripo에서 프롬프트 입력 후 생성",
-            "detail": "구체적인 형용사를 넣을수록 결과가 좋아요",
-            "url": "https://www.meshy.ai/"
-          },
-          {
-            "id": "w5-t2",
-            "label": "다른 프롬프트로 한 번 더 생성해서 비교",
-            "detail": "같은 주제라도 문장에 따라 결과가 달라요"
-          },
-          {
-            "id": "w5-t3",
-            "label": ".glb 파일 Blender에서 Import",
-            "detail": "File → Import → glTF (.glb/.gltf)"
-          }
-        ],
-        "image": "assets/images/week05/ai-3d-generation.png"
-      },
-      {
-        "title": "AI 메쉬 정리",
-        "copy": "AI가 만든 메쉬는 대부분 폴리곤이 지나치게 많아요. 마치 해상도가 너무 높은 사진처럼요. Decimate로 적당히 줄여야 이후 작업이 편해져요.",
-        "goal": [
-          "AI 메쉬의 폴리곤 문제를 이해한다",
-          "Decimate로 메쉬를 정리한다"
-        ],
-        "done": [
-          "폴리곤 수가 절반 이하로 줄었다",
-          "형태가 크게 무너지지 않았다"
-        ],
-        "tasks": [
-          {
-            "id": "w5-t4",
-            "label": "Viewport Overlay에서 폴리곤 수 확인",
-            "detail": "Statistics 켜기"
-          },
-          {
-            "id": "w5-t5",
-            "label": "Decimate Modifier 추가 후 Ratio 조절",
-            "detail": "0.3~0.5 정도에서 형태 유지되는 지점 찾기"
-          },
-          {
-            "id": "w5-t6",
-            "label": "Ctrl+A로 Scale 정리 후 원점 확인",
-            "detail": "Import 메쉬는 크기가 제각각이에요"
-          }
-        ],
-        "image": "assets/images/week05/mesh-cleanup.png",
-        "showme": "decimate-modifier",
-        "widgets": [
-          {
-            "type": "showme",
-            "id": "mask-modifier"
-          }
-        ]
-      },
       {
         "title": "Sculpt Mode 기초",
         "copy": "브러시로 메쉬를 직접 주무르는 모드예요. 마우스로 칠하듯이 형태를 만들어요. 점토 조각과 가장 비슷한 방식이에요.",
@@ -1696,20 +1628,28 @@ const CURRICULUM = [
             "id": "w5-t14",
             "label": "Inflate로 볼록하게 부풀려보기",
             "detail": "볼이나 근육 강조에 유용"
+          },
+          {
+            "id": "w5-t-snake",
+            "label": "Snake Hook으로 뿔이나 촉수 끌어내기",
+            "detail": "끝점이 따라오며 길게 늘어나요"
           }
         ],
-        "image": "assets/images/week05/sculpt-brushes.png"
+        "image": "assets/images/week05/sculpt-brushes.png",
+        "showme": "sculpt-brushes"
       },
       {
-        "title": "Remesh와 마무리",
-        "copy": "Sculpt를 하다 보면 메쉬가 늘어나서 찌그러지는 곳이 생겨요. Remesh는 메쉬를 다시 고르게 나눠주는 리셋 버튼 같은 거예요.",
+        "title": "Remesh + Decimate + 메쉬 정리",
+        "copy": "Sculpt를 하다 보면 메쉬가 늘어나서 찌그러지는 곳이 생겨요. Remesh로 고르게 나누고, Decimate로 줄이고, Mesh Cleaner로 정리해요. 이 도구들은 나중에 AI 메쉬 정리에도 그대로 쓸 거예요.",
         "goal": [
           "Remesh의 역할을 이해한다",
-          "AI 초안 + Sculpt 마무리 흐름을 완성한다"
+          "Decimate로 폴리곤을 줄인다",
+          "Mesh Cleaner 2 애드온을 설치하고 사용한다"
         ],
         "done": [
           "Remesh 후 메쉬가 고르게 정리됐다",
-          "AI + Sculpt 결과물 스크린샷을 저장했다"
+          "Decimate로 폴리곤 수가 절반 이하로 줄었다",
+          "Mesh Cleaner로 중복 버텍스가 제거됐다"
         ],
         "tasks": [
           {
@@ -1723,17 +1663,127 @@ const CURRICULUM = [
             "detail": "메쉬가 고르게 나뉘었는지 확인"
           },
           {
-            "id": "w5-t17",
-            "label": "최종 형태 Object Mode에서 확인 후 스크린샷",
-            "detail": ""
+            "id": "w5-t4",
+            "label": "Viewport Overlay에서 폴리곤 수 확인",
+            "detail": "Statistics 켜기"
+          },
+          {
+            "id": "w5-t5",
+            "label": "Decimate Modifier 추가 후 Ratio 조절",
+            "detail": "0.3~0.5 정도에서 형태 유지되는 지점 찾기"
+          },
+          {
+            "id": "w5-t-mc",
+            "label": "Mesh Cleaner 2 애드온 설치 및 실행",
+            "detail": "Preferences → Add-ons에서 설치 후 one-click 정리",
+            "url": "https://decoded.gumroad.com/l/meshcleaner"
+          },
+          {
+            "id": "w5-t-qr",
+            "label": "QRemeshify로 쿼드 리메시 체험",
+            "detail": "트라이앵글 → 쿼드 변환, 선택적 사용",
+            "url": "https://ksami.gumroad.com/l/QRemeshify"
           }
         ],
         "image": "assets/images/week05/remesh.png",
-        "showme": "remesh-modifier",
+        "showme": ["remesh-modifier", "decimate-modifier"],
         "widgets": [
+          { "type": "showme", "id": "mask-modifier" },
+          { "type": "showme", "id": "multiresolution-modifier" }
+        ]
+      },
+      {
+        "title": "무드보드 → AI 프롬프트 설계",
+        "copy": "1주차에 만든 무드보드, 기억하죠? 오늘 그걸 3D로 만들기 시작해요. AI한테 잘 설명하려면 이미지 느낌을 단어로 번역하는 과정이 필요해요.",
+        "goal": [
+          "무드보드 이미지를 텍스트 키워드로 변환할 수 있다",
+          "AI 3D 생성용 프롬프트를 작성할 수 있다"
+        ],
+        "done": [
+          "프롬프트 초안이 노션에 기록되었다",
+          "최소 2가지 프롬프트 변형을 준비했다"
+        ],
+        "tasks": [
           {
-            "type": "showme",
-            "id": "multiresolution-modifier"
+            "id": "w5-t-mood1",
+            "label": "Notion에서 내 무드보드 열기",
+            "detail": "1주차에 저장한 Mixboard 링크와 이미지 확인"
+          },
+          {
+            "id": "w5-t-mood2",
+            "label": "핵심 키워드 5개 이내로 추출",
+            "detail": "형태 1~2개, 스타일 1개, 재질감 1~2개"
+          },
+          {
+            "id": "w5-t-mood3",
+            "label": "Meshy용 프롬프트 초안 작성",
+            "detail": "[형태] + [스타일] + [재질감] + 3D model 패턴으로"
+          }
+        ],
+        "showme": "ai-prompt-design"
+      },
+      {
+        "title": "본인 프로젝트 AI 러프 생성",
+        "copy": "내 아이디어의 초벌을 AI가 잡아줘요. 완벽하지 않아도 괜찮아요 — 오늘은 방향을 확인하는 게 목적이에요.",
+        "goal": [
+          "AI 생성 워크플로우를 이해한다",
+          "프롬프트 작성 요령을 안다"
+        ],
+        "done": [
+          "AI 생성 메쉬를 Blender에서 열었다",
+          "최소 2가지 프롬프트로 결과를 비교했다"
+        ],
+        "tasks": [
+          {
+            "id": "w5-t1",
+            "label": "Meshy에서 내 프롬프트로 생성",
+            "detail": "구체적인 형용사를 넣을수록 결과가 좋아요",
+            "url": "https://www.meshy.ai/"
+          },
+          {
+            "id": "w5-t2",
+            "label": "키워드 하나 바꿔서 재생성 — 어느 쪽이 내 의도에 더 가까운지 선택",
+            "detail": "같은 주제라도 문장에 따라 결과가 달라요"
+          },
+          {
+            "id": "w5-t3",
+            "label": ".glb 파일 Blender에서 Import",
+            "detail": "File → Import → glTF (.glb/.gltf)"
+          }
+        ],
+        "image": "assets/images/week05/ai-3d-generation.png",
+        "showme": "ai-3d-generation"
+      },
+      {
+        "title": "AI 메쉬 정리 실전",
+        "copy": "Step 3에서 배운 Mesh Cleaner와 Decimate를 AI가 만든 내 메쉬에 직접 써봐요. Import한 그대로는 폴리곤이 너무 많아서 이후 작업이 힘들어요.",
+        "goal": [
+          "AI 메쉬의 폴리곤 문제를 직접 해결한다"
+        ],
+        "done": [
+          "AI 생성 메쉬의 폴리곤이 원본 대비 절반 이하로 줄었다",
+          "형태가 크게 무너지지 않았다"
+        ],
+        "tasks": [
+          {
+            "id": "w5-t-clean1",
+            "label": "Import한 AI 메쉬에 Mesh Cleaner 실행",
+            "detail": "중복 버텍스, 빈 구멍, 뒤집힌 노멀 한번에 정리"
+          },
+          {
+            "id": "w5-t-clean2",
+            "label": "Decimate로 폴리곤 줄이기",
+            "detail": "Ratio 0.3~0.5, 형태 유지되는 지점 찾기"
+          },
+          {
+            "id": "w5-t6",
+            "label": "Ctrl+A로 Scale 정리 후 원점 확인",
+            "detail": "Import 메쉬는 크기가 제각각이에요"
+          },
+          {
+            "id": "w5-t-clean3",
+            "label": "최종 형태 Object Mode에서 확인 후 스크린샷",
+            "detail": "정리 전후를 비교할 수 있게 저장"
           }
         ]
       }
@@ -1791,13 +1841,14 @@ const CURRICULUM = [
       }
     ],
     "assignment": {
-      "title": "AI + 수동 하이브리드 오브젝트",
-      "description": "AI 생성 메쉬를 Sculpt로 다듬은 결과물을 제출해요. 원본과 수정 후를 비교할 수 있어야 해요.",
+      "title": "내 프로젝트 첫 3D 러프",
+      "description": "1주차 무드보드를 바탕으로 AI 러프를 뽑고, 메쉬를 정리한 결과물을 제출해요. 완성도보다 방향이 맞는지가 중요해요.",
       "checklist": [
-        "AI 생성 원본과 Sculpt 수정 후 비교 이미지",
-        "AI 생성 → Sculpt 수정 흔적 있는 .blend",
-        "사용한 브러시 3가지 이상 적기",
-        "완성 렌더 이미지 2장 이상"
+        "내 무드보드에서 추출한 프롬프트 키워드 (텍스트)",
+        "AI 생성 원본 스크린샷",
+        "메쉬 정리 후 스크린샷",
+        "한 문장: '나는 앞으로 ___을 만들 예정이에요'",
+        "완성 렌더 이미지 1장 이상"
       ]
     },
     "mistakes": [
@@ -1805,7 +1856,9 @@ const CURRICULUM = [
       "Sculpt가 먹히지 않음 → 폴리곤이 너무 적으면 Remesh로 늘리기",
       "브러시가 반대로 작동함 → Ctrl을 누르고 있으면 반전이에요. 떼세요",
       "형태가 너무 울퉁불퉁 → Smooth 브러시로 정리, 또는 Strength 낮추기",
-      "Import 메쉬가 너무 작거나 큼 → S로 크기 맞추고 Ctrl+A로 Scale 적용"
+      "Import 메쉬가 너무 작거나 큼 → S로 크기 맞추고 Ctrl+A로 Scale 적용",
+      "프롬프트가 너무 짧음 → 형태+스타일+재질 키워드를 넣어야 원하는 결과가 나와요",
+      "AI 메쉬를 정리 없이 바로 작업 → Mesh Cleaner 먼저 돌리고 시작하기"
     ],
     "videos": [
       {
@@ -1829,6 +1882,14 @@ const CURRICULUM = [
       {
         "title": "Decimate Modifier",
         "url": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/decimate.html"
+      },
+      {
+        "title": "Mesh Cleaner 2",
+        "url": "https://decoded.gumroad.com/l/meshcleaner"
+      },
+      {
+        "title": "QRemeshify",
+        "url": "https://ksami.gumroad.com/l/QRemeshify"
       }
     ],
     "summary": "AI 기반 3D 생성 툴을 경험하고, Sculpt Mode로 유기적인 형태를 만들어요."
