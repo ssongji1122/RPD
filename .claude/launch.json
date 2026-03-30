@@ -12,8 +12,8 @@
     },
     {
       "name": "course-site-static",
-      "runtimeExecutable": "npx",
-      "runtimeArgs": ["serve", "course-site", "-l", "8772"],
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8772", "-d", "course-site"],
       "port": 8772
     }
   ]
