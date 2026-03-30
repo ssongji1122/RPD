@@ -1617,22 +1617,22 @@ const CURRICULUM = [
           {
             "id": "w5-t12",
             "label": "Clay Strips로 점토 덧붙이듯 형태 쌓기",
-            "detail": "넓은 면 위에 층층이 쌓기"
+            "detail": "넓은 면 위에 층층이 쌓기 — 큰 볼륨을 올려야 할 때"
           },
           {
             "id": "w5-t13",
             "label": "Crease로 홈이나 주름 선 파기",
-            "detail": "관절, 눈, 입 라인에 활용"
+            "detail": "관절, 눈, 입 라인에 활용 — 선이 파여야 할 때"
           },
           {
             "id": "w5-t14",
             "label": "Inflate로 볼록하게 부풀려보기",
-            "detail": "볼이나 근육 강조에 유용"
+            "detail": "볼이나 근육 강조에 유용 — 표면 전체를 부풀려야 할 때"
           },
           {
             "id": "w5-t-snake",
             "label": "Snake Hook으로 뿔이나 촉수 끌어내기",
-            "detail": "끝점이 따라오며 길게 늘어나요"
+            "detail": "끝점이 따라오며 길게 늘어나요 — 뿔·안테나·꼬리를 끄집어낼 때"
           }
         ],
         "image": "assets/images/week05/sculpt-brushes.png",
