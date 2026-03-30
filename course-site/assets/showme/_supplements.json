@@ -827,5 +827,41 @@
       }
     ],
     "targets": ["ai-prompt-design"]
+  },
+  "ai-3d-generation": {
+    "title": "AI가 만든 3D, 그냥 써도 될까요?",
+    "analogy": {
+      "emoji": "🤝",
+      "headline": "AI는 조수예요. 70% 방향만 잡아줘요",
+      "body": "AI 3D 생성 결과를 완성품으로 기대하면 실망해요. AI는 대략적인 형태를 빠르게 잡아주는 조수예요. 나머지 30%는 Blender에서 내가 다듬는 거예요. 오늘 목표는 '방향이 맞는지 확인'이지 '완성'이 아니에요."
+    },
+    "before_after": {
+      "before": "AI 결과를 그대로 제출하면 토폴로지 문제, 디테일 부족, 의도와 다른 형태가 그대로 남는다.",
+      "after": "AI 러프를 Sculpt나 Edit Mode로 다듬으면 작업 시간이 크게 줄면서도 완성도 높은 결과물이 나온다."
+    },
+    "confusion": [
+      {
+        "symptom": "AI가 만든 게 내 의도와 너무 달라요.",
+        "reason": "프롬프트 키워드 하나가 AI 해석에 크게 영향을 줘요.",
+        "fix": "키워드 하나씩 바꿔가며 2~3개 결과를 비교하세요. 가장 가까운 걸 선택하고 Blender에서 수정하면 돼요."
+      },
+      {
+        "symptom": "Import한 메쉬 폴리곤이 너무 많아서 느려요.",
+        "reason": "AI 도구는 기본으로 고해상도 메쉬를 생성해요.",
+        "fix": "Decimate Modifier로 Ratio 0.3~0.5 적용하세요. 형태가 유지되는 최저 수치를 찾아요."
+      }
+    ],
+    "takeaway": "AI 결과는 시작점이에요. 완벽하지 않아도 괜찮아요 — 방향이 맞는지 확인하고, 나머지는 Blender에서 다듬어요.",
+    "officialVideos": [
+      {
+        "url": "https://docs.meshy.ai/",
+        "label": "Meshy AI — 공식 문서"
+      },
+      {
+        "url": "https://platform.tripo3d.ai/",
+        "label": "Tripo AI — 공식 사이트"
+      }
+    ],
+    "targets": ["ai-3d-generation"]
   }
 }
