@@ -470,7 +470,7 @@ const CURRICULUM = [
   },
   {
     "week": 3,
-    "status": "active",
+    "status": "done",
     "title": "기초 모델링 1 — Edit + Modifier",
     "subtitle": "기본형 · 대칭 · 곡면 · 반복",
     "duration": "~3시간",
@@ -1127,7 +1127,7 @@ const CURRICULUM = [
   },
   {
     "week": 4,
-    "status": "upcoming",
+    "status": "done",
     "title": "기초 모델링 2 — 로봇 조립",
     "subtitle": "몸통 · 관절 · 팔다리 · Bevel · 파츠 정리",
     "duration": "~3시간",
@@ -1551,7 +1551,7 @@ const CURRICULUM = [
   },
   {
     "week": 5,
-    "status": "upcoming",
+    "status": "active",
     "title": "AI 3D 생성 + Sculpting",
     "subtitle": "AI 툴 활용 · Sculpt Mode 기초 · 메쉬 정리",
     "duration": "~3시간",
