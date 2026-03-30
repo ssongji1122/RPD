@@ -1694,7 +1694,7 @@ const CURRICULUM = [
       },
       {
         "title": "무드보드 → AI 프롬프트 설계",
-        "copy": "1주차에 만든 무드보드, 기억하죠? 오늘 그걸 3D로 만들기 시작해요. AI한테 잘 설명하려면 이미지 느낌을 단어로 번역하는 과정이 필요해요.",
+        "copy": "1주차에 만든 무드보드, 기억하죠? 오늘 그걸 3D로 만들기 시작해요. AI한테 잘 설명하려면 이미지 느낌을 단어로 번역하는 과정이 필요해요. 프롬프트는 짧을수록 AI가 멋대로 해석해요. 형태·스타일·재질감을 구체적으로 써야 원하는 결과가 나와요.",
         "goal": [
           "무드보드 이미지를 텍스트 키워드로 변환할 수 있다",
           "AI 3D 생성용 프롬프트를 작성할 수 있다"
@@ -1718,6 +1718,10 @@ const CURRICULUM = [
             "id": "w5-t-mood3",
             "label": "Meshy용 프롬프트 초안 작성",
             "detail": "[형태] + [스타일] + [재질감] + 3D model 패턴으로"
+          },{
+            "id": "w5-t-prompt-compare",
+            "label": "나쁜 예 → 좋은 예 직접 고쳐보기",
+            "detail": "나쁜 예: 'cute robot' → 좋은 예: 'small companion robot, spherical head, stubby arms, matte plastic finish, 3D model' — 공식: [형태]+[스타일]+[재질감]+3D model"
           }
         ],
         "showme": "ai-prompt-design"
@@ -1783,7 +1787,7 @@ const CURRICULUM = [
           {
             "id": "w5-t-clean3",
             "label": "최종 형태 Object Mode에서 확인 후 스크린샷",
-            "detail": "정리 전후를 비교할 수 있게 저장"
+            "detail": "Numpad 1(앞면 고정) + Material Preview 모드에서 Before/After 동일 앵글로 촬영. 스크린샷: Ctrl+F3. After도 반드시 Numpad 1로 — 앵글 바꾸면 비교 안 돼요"
           }
         ]
       }
@@ -1820,6 +1824,14 @@ const CURRICULUM = [
       {
         "keys": "X",
         "action": "Draw 브러시 빠른 선택"
+      },
+      {
+        "keys": "Numpad 1",
+        "action": "앞면 뷰 고정 (Before/After 촬영 기준)"
+      },
+      {
+        "keys": "Ctrl + F3",
+        "action": "뷰포트 스크린샷 저장"
       }
     ],
     "explore": [
@@ -1848,7 +1860,8 @@ const CURRICULUM = [
         "AI 생성 원본 스크린샷",
         "메쉬 정리 후 스크린샷",
         "한 문장: '나는 앞으로 ___을 만들 예정이에요'",
-        "완성 렌더 이미지 1장 이상"
+        "완성 렌더 이미지 1장 이상",
+        "완성 .blend 파일 저장 완료 — Week 6 Material 실습에서 이 파일을 씁니다"
       ]
     },
     "mistakes": [
