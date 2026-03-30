@@ -1,0 +1,140 @@
+name: Weekly Advance — 매주 화요일 주차 업데이트
+
+on:
+  schedule:
+    # 매주 화요일 01:00 UTC = KST 10:00
+    - cron: '0 1 * * 2'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: '변경 없이 현재 상태만 확인 (dry run)'
+        required: false
+        default: 'false'
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  advance-week:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Advance active week
+        id: advance
+        env:
+          DRY_RUN: ${{ inputs.dry_run || 'false' }}
+        run: |
+          python3 - <<'EOF'
+          import json, sys, os
+
+          # 1. site-data.json 에서 현재 active 주차 탐색
+          with open('weeks/site-data.json') as f:
+              site_data = json.load(f)
+
+          current_week = None
+          for item in site_data:
+              if item.get('status') == 'active':
+                  current_week = item['week']
+                  break
+
+          if current_week is None:
+              print("ERROR: active 주차를 찾을 수 없습니다.")
+              sys.exit(1)
+
+          next_week = current_week + 1
+          print(f"현재 주차: {current_week} → 다음 주차: {next_week}")
+
+          # 최종 주차 도달 시 스킵
+          if current_week >= 15:
+              print("15주차가 마지막입니다. 업데이트를 건너뜁니다.")
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                  f.write("skipped=true\n")
+                  f.write("next_week=15\n")
+              sys.exit(0)
+
+          # dry run
+          dry_run = os.environ.get('DRY_RUN', 'false').lower() == 'true'
+          if dry_run:
+              print(f"[DRY RUN] Week {current_week} → done, Week {next_week} → active")
+              with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                  f.write("skipped=true\n")
+                  f.write(f"next_week={next_week}\n")
+              sys.exit(0)
+
+          # 2. site-data.json 수정
+          for item in site_data:
+              if item['week'] == current_week:
+                  item['status'] = 'done'
+              elif item['week'] == next_week:
+                  item['status'] = 'active'
+          with open('weeks/site-data.json', 'w') as f:
+              json.dump(site_data, f, ensure_ascii=False, indent=2)
+          print("✅ site-data.json 업데이트 완료")
+
+          # 3. curriculum.json 수정
+          with open('course-site/data/curriculum.json') as f:
+              curriculum = json.load(f)
+          for item in curriculum:
+              if item['week'] == current_week:
+                  item['status'] = 'done'
+              elif item['week'] == next_week:
+                  item['status'] = 'active'
+          with open('course-site/data/curriculum.json', 'w') as f:
+              json.dump(curriculum, f, ensure_ascii=False, indent=2)
+          print("✅ curriculum.json 업데이트 완료")
+
+          # 4. curriculum.js 수정 (텍스트 치환)
+          with open('course-site/data/curriculum.js') as f:
+              js_content = f.read()
+          js_content = js_content.replace(
+              f'"week": {current_week},\n    "status": "active"',
+              f'"week": {current_week},\n    "status": "done"',
+              1
+          )
+          js_content = js_content.replace(
+              f'"week": {next_week},\n    "status": "upcoming"',
+              f'"week": {next_week},\n    "status": "active"',
+              1
+          )
+          with open('course-site/data/curriculum.js', 'w') as f:
+              f.write(js_content)
+          print("✅ curriculum.js 업데이트 완료")
+
+          # 5. overrides.json 수정
+          with open('course-site/data/overrides.json') as f:
+              overrides = json.load(f)
+          overrides['weeks'][str(current_week)]['status'] = 'done'
+          overrides['weeks'][str(next_week)]['status'] = 'active'
+          with open('course-site/data/overrides.json', 'w') as f:
+              json.dump(overrides, f, ensure_ascii=False, indent=2)
+          print("✅ overrides.json 업데이트 완료")
+
+          # GITHUB_OUTPUT 에 다음 주차 기록
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"next_week={next_week}\n")
+              f.write("skipped=false\n")
+
+          print(f"\n🎉 Week {current_week} → done / Week {next_week} → active")
+          EOF
+
+      - name: Commit and push
+        if: steps.advance.outputs.skipped != 'true'
+        env:
+          NEXT_WEEK: ${{ steps.advance.outputs.next_week }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add \
+            weeks/site-data.json \
+            course-site/data/curriculum.json \
+            course-site/data/curriculum.js \
+            course-site/data/overrides.json
+          git commit -m "chore(curriculum): advance active week to Week ${NEXT_WEEK}"
+          git push origin main
