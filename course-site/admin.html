@@ -38,18 +38,16 @@
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
           저장
         </button>
+        <div id="notionGroup" style="display:none"></div>
+        <button class="btn btn-ghost" id="notionPushAllBtn" type="button" style="display:none">🚀 전체 Push</button>
+        <button class="btn btn-ghost" id="logoutBtn" type="button" style="display:none">로그아웃</button>
         <button class="theme-toggle" id="themeToggle" type="button" aria-label="테마 전환">
           <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
         </button>
+        <button class="btn btn-ghost" id="hamburgerBtn" type="button" style="display:none" aria-label="메뉴">☰</button>
       </div>
     </header>
     <select class="field-select" id="weekSelectTopbar" style="display:none" title="주차 선택"></select>
-    <div style="display:none">
-      <button id="logoutBtn"></button>
-      <button id="notionPushAllBtn"></button>
-      <div id="notionGroup"></div>
-      <button id="hamburgerBtn"></button>
-    </div>
 
     <!-- Sidebar overlay (mobile) -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -1134,6 +1132,8 @@
         }
         if (!res.ok) throw new Error("HTTP " + res.status);
         authOverlay.style.display = "none";
+        logoutBtn.style.display = "";
+        notionPushAllBtn.style.display = "";
         await loadCurriculum();
       } catch (e) {
         authError.textContent = "서버 연결 실패: " + e.message;
@@ -1794,6 +1794,8 @@
       clearDirty();
       notionConfigured = false;
       notionGroup.style.display = "none";
+      logoutBtn.style.display = "none";
+      notionPushAllBtn.style.display = "none";
       setCurrentVersion("");
       renderAdminStateView({
         eyebrow: "Session closed",
