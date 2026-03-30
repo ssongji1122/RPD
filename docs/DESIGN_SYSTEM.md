@@ -110,6 +110,11 @@
 | Icon Well | `.rpd-icon-well` | 44px 아이콘 박스 |
 | Kicker | `.rpd-kicker` | 대문자 아이브로우 텍스트 |
 | Search Input | `.rpd-search-input` | 검색 인풋 |
+| Hero Mesh | `.hero-mesh` | animated gradient 배경 (히어로) |
+| Journey Phase | `.journey-phase` | Phase 그룹 컨테이너 |
+| Journey Card | `.journey-week-card` | compact 주차 카드 |
+| Progress Track | `.journey-progress-track` | 진행률 바 (4px, green fill) |
+| Quick Link | `.archive-quick-link` | pill 형태 아카이브 바로가기 |
 
 ---
 
