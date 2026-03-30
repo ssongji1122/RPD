@@ -62,6 +62,9 @@ const SHOWME_REGISTRY = {
 
   // ── Week 5: Sculpting ──
   "sculpt-basics":          { label: "Sculpt Mode 기초",        icon: "🎨", week: 5 },
+  "sculpt-brushes":         { label: "Sculpt 브러시 선택 기준",  icon: "🖌️", week: 5 },
+  "ai-prompt-design":       { label: "AI 프롬프트 설계법",       icon: "✍️", week: 5 },
+  "ai-3d-generation":       { label: "AI 3D 생성 워크플로우",    icon: "🤖", week: 5 },
 
   // ── Week 6: Material & Shader ──
   "material-basics":        { label: "Material 시스템 기초",     icon: "🎨", week: 6 },
