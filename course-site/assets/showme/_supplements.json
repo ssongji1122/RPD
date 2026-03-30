@@ -800,5 +800,32 @@
       }
     ],
     "targets": ["sculpt-brushes"]
+  },
+  "ai-prompt-design": {
+    "title": "AI한테 어떻게 설명해야 원하는 게 나올까요?",
+    "analogy": {
+      "emoji": "📦",
+      "headline": "배달 주소처럼 구체적으로 말해야 해요",
+      "body": "'서울 어딘가'라고 하면 못 찾아요. 동·건물명·층수까지 말해야 찾아가죠. AI 프롬프트도 같아요. '로봇'은 너무 막연하고, '동글한 머리, 짧은 팔, 매트한 플라스틱 재질의 소형 동반자 로봇'이라고 해야 내 의도에 가깝게 나와요."
+    },
+    "before_after": {
+      "before": "'cute robot'으로 생성하면 AI가 마음대로 해석해서 전혀 다른 스타일이 나온다.",
+      "after": "'small companion robot, spherical head, stubby arms, matte plastic finish, 3D model'로 생성하면 형태와 재질감이 훨씬 의도에 가깝게 나온다."
+    },
+    "confusion": [
+      {
+        "symptom": "프롬프트를 길게 썼는데도 결과가 이상해요.",
+        "reason": "'귀여운', '멋진' 같은 추상적인 형용사만 넣었기 때문이에요.",
+        "fix": "추상 형용사 대신 형태를 묘사하는 구체적 명사를 쓰세요. 'cute' 대신 'spherical head, round body'처럼요."
+      }
+    ],
+    "takeaway": "공식: [형태 1~2개] + [스타일 1개] + [재질감 1~2개] + '3D model'. 이 순서로 쓰면 대부분 의도에 가깝게 나와요.",
+    "officialVideos": [
+      {
+        "url": "https://docs.meshy.ai/",
+        "label": "Meshy AI — 공식 문서 (프롬프트 가이드 포함)"
+      }
+    ],
+    "targets": ["ai-prompt-design"]
   }
 }
