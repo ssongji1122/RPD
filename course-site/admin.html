@@ -1204,6 +1204,8 @@
         await loadWeekUi();
         renderSidebar();
         selectWeek(0);
+        logoutBtn.style.display = "";
+        notionPushAllBtn.style.display = "";
         await checkNotionStatus();
       } catch (e) {
         curriculum = [];
