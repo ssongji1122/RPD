@@ -746,5 +746,32 @@
     ],
     "takeaway": "Scatter는 Geometry Nodes 기반 분산 배치 도구예요. Distribute + Instance on Points 조합이 기본이에요.",
     "targets": ["scatter-on-surface"]
+  },
+  "sculpt-basics": {
+    "title": "Sculpt Mode, 어렵게 생각 말아요",
+    "analogy": {
+      "emoji": "🏺",
+      "headline": "디지털 점토 조각이에요",
+      "body": "Sculpt Mode는 마우스로 디지털 점토를 주무르는 거예요. 버텍스 좌표를 계산하는 게 아니라, 브러시로 밀고 당기고 부드럽게 만들면 돼요. 조각가가 점토 덩어리를 손으로 다듬는 느낌과 완전히 같아요."
+    },
+    "before_after": {
+      "before": "Edit Mode로만 유기적인 형태를 만들려면 버텍스 하나하나를 G키로 이동시켜야 해서 자연스러운 곡면이 나오지 않는다.",
+      "after": "Sculpt Mode에서 Grab 브러시 하나로 형태를 잡아당기면 자연스러운 곡면이 즉시 만들어진다."
+    },
+    "confusion": [
+      {
+        "symptom": "브러시로 칠해도 메쉬가 움직이지 않아요.",
+        "reason": "폴리곤 수가 너무 적으면 브러시 효과가 눈에 보이지 않아요.",
+        "fix": "Sculpt Mode 상단 Remesh 버튼(Ctrl+R)으로 폴리곤을 늘린 다음 다시 시도하세요."
+      }
+    ],
+    "takeaway": "Sculpt는 계산이 아니라 감각이에요. 일단 브러시로 밀고 당겨보면서 형태를 잡는 거예요.",
+    "officialVideos": [
+      {
+        "url": "https://studio.blender.org/training/sculpting-in-blender/introduction/",
+        "label": "Blender Studio — Introduction to Sculpting"
+      }
+    ],
+    "targets": ["sculpt-basics"]
   }
 }
