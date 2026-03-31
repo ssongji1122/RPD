@@ -50,37 +50,12 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash(python3:*), Bash(node:*), Bas
 Week N을 curriculum.js에 템플릿으로 추가합니다.
 
 **절차:**
-1. curriculum.js를 읽고 Week N이 이미 존재하는지 확인
-2. 이미 있으면 경고 후 중단
-3. 없으면 아래 템플릿을 적절한 위치에 삽입:
-
-```javascript
-{
-  "week": N,
-  "status": "upcoming",
-  "title": "",
-  "subtitle": "",
-  "summary": "",
-  "duration": "~3시간",
-  "topics": [],
-  "steps": [
-    {
-      "title": "",
-      "copy": "",
-      "goal": [],
-      "done": [],
-      "tasks": [
-        { "id": "wN-t1", "label": "", "detail": "" }
-      ]
-    }
-  ],
-  "shortcuts": [],
-  "references": []
-}
-```
-
-4. `course-site/assets/images/week{NN:02d}/` 디렉토리 생성
-5. 삽입 완료 후 `validate` 모드 자동 실행
+1. `tools/notion-mapping.json`에서 Week N의 Notion 페이지 ID 확인
+2. 페이지 ID가 있으면 → Notion MCP로 해당 페이지에 템플릿 블록 추가
+3. 페이지 ID가 없으면 → 경고 출력 ("Notion에 Week N 페이지를 먼저 만들고 notion-mapping.json에 ID를 추가하세요")
+4. `course-site/data/overrides.json`에 Week N 엔트리 추가 (status: "upcoming")
+5. `course-site/assets/images/week{NN:02d}/` 디렉토리 생성
+6. `/curriculum sync` 자동 실행
 
 ---
 
@@ -95,20 +70,25 @@ Week N을 curriculum.js에 템플릿으로 추가합니다.
 
 **절차:**
 1. 범위 파싱 (단일 숫자 또는 N-M 범위)
-2. curriculum.js에서 해당 주차의 `"status"` 값 변경
-3. 변경 전후 diff 출력
-4. 한 번에 하나만 `active` 상태여야 함 — 여러 주차가 active면 경고
+2. `course-site/data/overrides.json`에서 해당 주차의 `"status"` 값 변경
+3. curriculum.json 재생성 (merge)
+4. 변경 전후 diff 출력
+5. 한 번에 하나만 `active` 상태여야 함 — 여러 주차가 active면 경고
 
 ---
 
-#### `sync` — 강의노트 동기화
+#### `sync` — Notion 동기화 + 검증
 
-curriculum.js → weeks/weekNN-*/lecture-note.md 동기화를 실행합니다.
+Notion에서 최신 콘텐츠를 가져와 curriculum.json을 재생성하고 검증합니다.
 
 **절차:**
-1. `python3 tools/sync_course_content.py` 실행
-2. 출력 결과 리포트
-3. 동기화된 파일 수와 경로 표시
+1. `python3 tools/notion-sync.py --fetch-only` 실행 — Notion snapshot 갱신
+2. curriculum-notion.json + overrides.json → curriculum.json 자동 merge 확인
+3. `/rpd-check` 스킬 호출 — Phase 1 데이터 검증
+4. 변경된 주차 요약 출력
+
+**환경 요구사항:**
+- `NOTION_TOKEN` 환경변수 필수 (없으면 안내 메시지 출력)
 
 ---
 
@@ -121,7 +101,7 @@ curriculum.js → weeks/weekNN-*/lecture-note.md 동기화를 실행합니다.
 2. curriculum.js의 해당 주차 steps 확인
 3. 파일명↔step title 매칭 시도 (유사도 기반)
 4. 매칭 결과를 표로 제시
-5. 사용자 확인 후 curriculum.js의 `image` 필드 업데이트
+5. 사용자 확인 후 `course-site/data/overrides.json`의 해당 주차 steps에 `image` 필드 추가/업데이트
 
 ---
 
@@ -149,9 +129,13 @@ curriculum.js → weeks/weekNN-*/lecture-note.md 동기화를 실행합니다.
 
 | 파일 | 역할 |
 |------|------|
-| `course-site/data/curriculum.js` | 커리큘럼 마스터 데이터 (JS wrapped JSON) |
-| `tools/admin-server.py` | read_curriculum() / write_curriculum() 함수 |
-| `tools/sync_course_content.py` | curriculum → lecture-note.md 동기화 |
+| `course-site/data/curriculum.json` | 최종 merge 결과 (GENERATED — 직접 수정 금지) |
+| `course-site/data/curriculum-notion.json` | Notion snapshot (GENERATED — 직접 수정 금지) |
+| `course-site/data/curriculum.js` | curriculum.json wrapper (GENERATED) |
+| `course-site/data/overrides.json` | 코드 에셋 필드 (image, showme, status, videos, done) |
+| `tools/notion-sync.py` | Notion fetch + merge 스크립트 |
+| `tools/notion_api.py` | Notion API 공유 모듈 |
+| `tools/notion-mapping.json` | week → Notion page ID 매핑 |
 | `course-site/assets/images/weekNN/` | 주차별 이미지 디렉토리 |
 | `course-site/assets/showme/` | Show Me 카드 HTML 파일들 |
 | `course-site/assets/showme/_registry.js` | Show Me 위젯 레지스트리 |
@@ -176,4 +160,7 @@ echo "[$(date '+%Y-%m-%d %H:%M')] mode=$MODE result=$RESULT target=$TARGET" >> .
 ## Gotchas ⚠️
 > Claude가 이 스킬을 쓸 때 실수했던 것들. 새 함정 발견 시 여기에 추가.
 
-1. (아직 없음 — 사용하면서 추가)
+1. curriculum.json, curriculum-notion.json, curriculum.js는 generated file — 직접 수정 금지
+2. 콘텐츠(title/copy/tasks) 수정은 반드시 Notion MCP 경로로
+3. 에셋(image/showme/status/done) 수정은 overrides.json만
+4. sync 실행 시 NOTION_TOKEN 환경변수 필요
