@@ -27,6 +27,38 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash(python3 -m http.server:*), Ba
 
 ---
 
+### 카드 단위(granularity) 결정 가이드
+
+**원칙: 1 카드 = 1 학습 단위 (atomic learning unit)**
+
+카드를 새로 만들기 전에 반드시 아래 기준으로 **개별 카드 vs 기존 카드에 포함**을 판단한다.
+
+#### 개별 카드로 만들어야 하는 경우
+- **Modifier** (Mirror, Array, Decimate 등): 각각 독립적인 파라미터 체계가 있어 5분+ 학습 필요
+- **독립 Mode/Editor** (Sculpt Mode, UV Editor 등): 고유 인터페이스와 워크플로우 보유
+- **복잡한 개념** (Origin vs 3D Cursor, Proportional Editing 등): 혼동 빈도가 높아 별도 설명 필요
+
+#### 기존 카드에 묶어야 하는 경우 (개별 카드 X)
+- **같은 모드의 도구 패밀리**: Sculpt 브러시(Draw, Grab, Smooth, Clay Strips 등)는 **비교/선택 맥락**에서 의미가 있으므로 `sculpt-basics`, `sculpt-brushes`처럼 묶는다
+- **단독으로 5분 분량이 안 되는 도구**: 개별 브러시 하나만으로 1100줄 카드를 채우기 어려움
+- **이미 포함된 경우**: `edit-mode-tools`가 Extrude/Loop Cut/Inset/Bevel을 묶은 것처럼, 도구 패밀리 카드가 이미 존재하면 거기에 섹션으로 추가
+
+#### 노션과의 역할 분담
+- **ShowMe 카드**: 보편적/재사용 가능한 도구 레퍼런스 (여러 주차에서 참조)
+- **노션 주차 페이지**: 해당 주차 맥락에 맞는 상세 설명 + 카드 링크 + 스크린샷 + YouTube
+- 애드온(QRemeshify, Instant Meshes 등)은 카드가 아닌 **노션에서만 상세 설명** (Blender 내장이 아니므로 카드 부적합)
+
+#### 판단 플로우
+```
+새 도구 설명 필요?
+  ├─ Modifier/Mode/복잡 개념? → 개별 카드 생성
+  ├─ 기존 도구 패밀리에 속함? → 기존 카드에 섹션 추가
+  ├─ 외부 애드온? → 노션에서만 설명 (카드 X)
+  └─ 단독 5분 분량 안됨? → 기존 카드에 포함 or 노션만
+```
+
+---
+
 ### 새 카드 생성 표준 절차
 
 #### Step 1: 리서치 브리프 확인
