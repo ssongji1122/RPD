@@ -71,6 +71,21 @@ description: "주차 검수", "품질 검토", "week review" 요청 시 호출. 
 5. 체크리스트 6-7 (교육학, 교차참조) 점검
 6. 발견된 문제를 리스트로 정리 후 수정
 
+## 수정 반영 규칙
+
+리뷰에서 발견된 문제를 수정할 때:
+
+| 문제 유형 | 수정 위치 |
+|-----------|----------|
+| copy 톤/표현 수정 | Notion MCP → notion-sync.py --fetch-only |
+| task label 수정 | Notion MCP → notion-sync.py --fetch-only |
+| 이미지 누락/연결 | overrides.json |
+| showme 연결 | overrides.json |
+| done 체크리스트 수정 | overrides.json |
+
+**주의**: curriculum.json/js를 직접 수정하지 않는다.
+
+
 ## 참고 문서
 - `course-site/CONTENT_GUIDE.md` (섹션 6: 검증 체크리스트)
 - `docs/COURSE_SITE_STYLE_GUIDE_2026-03-13.md`
