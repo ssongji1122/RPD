@@ -75,6 +75,9 @@ const SHOWME_CATALOG = {
     "poly-circle": "modeling",
     "box-rounding": "modeling",
     "sculpt-basics": "sculpting-painting",
+    "sculpt-brushes": "sculpting-painting",
+    "ai-prompt-design": "sculpting-painting",
+    "ai-3d-generation": "sculpting-painting",
     "material-basics": "materials-uv",
     "principled-bsdf": "materials-uv",
     "shader-editor": "materials-uv",
@@ -135,6 +138,9 @@ const SHOWME_CATALOG = {
     "bevel-tool-vs-modifier": "기타",
     "join-separate": "기타",
     "sculpt-basics": "Sculpting",
+    "sculpt-brushes": "Sculpting",
+    "ai-prompt-design": "기타",
+    "ai-3d-generation": "기타",
     "material-basics": "Material",
     "principled-bsdf": "Material",
     "shader-editor": "Material",
@@ -863,6 +869,46 @@ const SHOWME_CATALOG = {
         "voxel remesh"
       ],
       "audienceNeed": "브러시로 만지는 감각이 아직 낯설고 어디서부터 시작해야 할지 막막할 때"
+    },
+    "sculpt-brushes": {
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Sculpting Brushes",
+          "url": "https://studio.blender.org/training/sculpting-in-blender/brushes/"
+        }
+      ],
+      "keywords": [
+        "clay strips",
+        "crease",
+        "inflate",
+        "snake hook",
+        "brush comparison"
+      ],
+      "prerequisites": [
+        "sculpt-basics"
+      ],
+      "audienceNeed": "기본 3개는 써봤는데 다른 브러시들은 뭐가 다른 건지 감이 안 올 때"
+    },
+    "ai-prompt-design": {
+      "keywords": [
+        "prompt",
+        "AI",
+        "keyword",
+        "moodboard",
+        "text to 3d"
+      ],
+      "audienceNeed": "AI한테 뭘 어떻게 써야 내가 원하는 모양이 나오는지 모르겠을 때"
+    },
+    "ai-3d-generation": {
+      "keywords": [
+        "meshy",
+        "tripo",
+        "AI 3D",
+        "glb",
+        "import",
+        "mesh cleaner"
+      ],
+      "audienceNeed": "Meshy/Tripo에서 만들고 Blender로 가져오는 흐름이 안 잡힐 때"
     },
     "array-modifier": {
       "officialVideos": [
