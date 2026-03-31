@@ -1558,10 +1558,12 @@ const CURRICULUM = [
     "topics": [
       "Sculpt Mode 기초 브러시",
       "Sculpt 브러시 심화 (Clay/Crease/Inflate/Snake Hook)",
+      "Addon/Extension 설치 및 활성화",
+      "LoopTools · Bool Tool 내장 애드온 활용",
+      "BlenderKit 에셋 검색 및 활용",
       "Remesh·Decimate·메쉬 정리 애드온",
       "무드보드 → AI 프롬프트 설계",
-      "AI 3D 생성 (Meshy/Tripo)",
-      "AI 메쉬 Import 및 실전 정리"
+      "AI 3D 생성 (Meshy/Tripo/Hyper3D)"
     ],
     "steps": [
       {
@@ -1637,6 +1639,130 @@ const CURRICULUM = [
         ],
         "image": "assets/images/week05/sculpt-brushes.png",
         "showme": "sculpt-brushes"
+      },
+      {
+        "title": "Addon/Extension 설치 및 활성화",
+        "copy": "Blender는 플러그인으로 기능을 확장할 수 있어요. 내장 애드온은 켜기만 하면 되고, 외부 애드온은 .zip 파일을 설치하거나 Extension 스토어에서 원클릭 설치해요.",
+        "goal": [
+          "내장 애드온 활성화 방법을 안다",
+          "외부 .zip 애드온 설치 방법을 안다",
+          "Extension 스토어 사용법을 안다"
+        ],
+        "done": [
+          "LoopTools와 Bool Tool이 활성화되었다",
+          "외부 애드온 설치 과정을 이해했다"
+        ],
+        "tasks": [
+          {
+            "id": "w5-t-addon1",
+            "label": "Edit → Preferences → Add-ons 탭 열기",
+            "detail": "모든 플러그인 관리의 시작점이에요"
+          },
+          {
+            "id": "w5-t-addon2",
+            "label": "검색창에 'Loop' 입력 → LoopTools 체크박스 ON",
+            "detail": "내장 애드온은 이미 설치되어 있어요. 켜기만 하면 돼요"
+          },
+          {
+            "id": "w5-t-addon3",
+            "label": "검색창에 'Bool' 입력 → Bool Tool 체크박스 ON",
+            "detail": "같은 방법으로 내장 애드온 활성화"
+          },
+          {
+            "id": "w5-t-addon4",
+            "label": "Get Extensions 탭에서 외부 애드온 검색 체험",
+            "detail": "Blender 4.2+ 부터 원클릭 설치 가능. extensions.blender.org 에 등록된 애드온만"
+          },
+          {
+            "id": "w5-t-addon5",
+            "label": ".zip 파일 수동 설치 방법 확인",
+            "detail": "Add-ons → 우측 상단 드롭다운 → Install from Disk → .zip 선택"
+          }
+        ]
+      },
+      {
+        "title": "LoopTools · Bool Tool 활용",
+        "copy": "LoopTools는 메쉬 정리의 스위스 칼이에요. 삐뚤어진 꼭짓점을 원으로 만들고, 간격을 맞추고, 엣지를 연결해요. Bool Tool은 오브젝트끼리 파내기·합치기를 빠르게 해줘요.",
+        "goal": [
+          "LoopTools의 Circle, Relax, Space, Bridge를 쓴다",
+          "Bool Tool로 Difference, Union을 실행한다"
+        ],
+        "done": [
+          "Circle로 꼭짓점을 원형으로 정렬했다",
+          "Bool Tool로 두 오브젝트를 파내기 또는 합쳤다"
+        ],
+        "tasks": [
+          {
+            "id": "w5-t-lt1",
+            "label": "Edit Mode → 버텍스 선택 → 우클릭 → LoopTools → Circle",
+            "detail": "삐뚤어진 구멍을 완벽한 원으로 정렬해요"
+          },
+          {
+            "id": "w5-t-lt2",
+            "label": "LoopTools → Relax로 울퉁불퉁한 버텍스 정리",
+            "detail": "형태를 유지하면서 간격을 부드럽게 정리해요"
+          },
+          {
+            "id": "w5-t-lt3",
+            "label": "LoopTools → Space로 버텍스 등간격 배치",
+            "detail": "선택한 버텍스를 고르게 분포시켜요"
+          },
+          {
+            "id": "w5-t-lt4",
+            "label": "LoopTools → Bridge로 두 엣지 루프 연결",
+            "detail": "떨어진 두 구멍을 면으로 이어줘요"
+          },
+          {
+            "id": "w5-t-bt1",
+            "label": "Object Mode → 두 오브젝트 선택 → Ctrl+Shift+B → Difference",
+            "detail": "활성 오브젝트로 다른 오브젝트를 파내요"
+          },
+          {
+            "id": "w5-t-bt2",
+            "label": "Bool Tool → Union으로 두 오브젝트 합치기",
+            "detail": "겹치는 부분을 합쳐서 하나로 만들어요"
+          }
+        ]
+      },
+      {
+        "title": "BlenderKit 에셋 라이브러리",
+        "copy": "BlenderKit은 3D 에셋 백화점이에요. 모델, 재질, HDRI를 검색해서 드래그만 하면 바로 씬에 들어와요. 무료 에셋만 10,000개 이상이에요.",
+        "goal": [
+          "BlenderKit 설치 및 로그인 방법을 안다",
+          "에셋을 검색하고 씬에 추가할 수 있다"
+        ],
+        "done": [
+          "BlenderKit이 설치되고 패널이 보인다",
+          "무료 에셋 1개 이상을 씬에 추가했다"
+        ],
+        "tasks": [
+          {
+            "id": "w5-t-bk1",
+            "label": "blenderkit.com에서 .zip 다운로드",
+            "detail": "Download BlenderKit 버튼 클릭",
+            "url": "https://www.blenderkit.com/get-blenderkit/"
+          },
+          {
+            "id": "w5-t-bk2",
+            "label": "Preferences → Add-ons → Install from Disk → .zip 설치",
+            "detail": "설치 후 체크박스 ON으로 활성화"
+          },
+          {
+            "id": "w5-t-bk3",
+            "label": "뷰포트 상단 BlenderKit 검색창에서 에셋 검색",
+            "detail": "키워드 입력 → 결과 클릭 → 씬에 드래그&드롭"
+          },
+          {
+            "id": "w5-t-bk4",
+            "label": "모델 카테고리에서 무료 에셋 1개 추가해보기",
+            "detail": "로그인 없이도 무료 에셋 사용 가능"
+          },
+          {
+            "id": "w5-t-bk5",
+            "label": "Material 카테고리에서 재질 1개 적용해보기",
+            "detail": "오브젝트 선택 후 재질 클릭하면 바로 적용돼요"
+          }
+        ]
       },
       {
         "title": "Remesh + Decimate + 메쉬 정리",
@@ -1826,6 +1952,14 @@ const CURRICULUM = [
         "action": "Draw 브러시 빠른 선택"
       },
       {
+        "keys": "우클릭 → LoopTools",
+        "action": "LoopTools 메뉴 (Edit Mode)"
+      },
+      {
+        "keys": "Ctrl + Shift + B",
+        "action": "Bool Tool 빠른 실행 (Object Mode)"
+      },
+      {
         "keys": "Numpad 1",
         "action": "앞면 뷰 고정 (Before/After 촬영 기준)"
       },
@@ -1871,7 +2005,10 @@ const CURRICULUM = [
       "형태가 너무 울퉁불퉁 → Smooth 브러시로 정리, 또는 Strength 낮추기",
       "Import 메쉬가 너무 작거나 큼 → S로 크기 맞추고 Ctrl+A로 Scale 적용",
       "프롬프트가 너무 짧음 → 형태+스타일+재질 키워드를 넣어야 원하는 결과가 나와요",
-      "AI 메쉬를 정리 없이 바로 작업 → Mesh Cleaner 먼저 돌리고 시작하기"
+      "AI 메쉬를 정리 없이 바로 작업 → Mesh Cleaner 먼저 돌리고 시작하기",
+      "LoopTools 메뉴가 안 보임 → Preferences에서 애드온 활성화 확인. Edit Mode에서 우클릭해야 나와요",
+      "Bool Tool이 작동 안 함 → 두 오브젝트가 겹쳐 있어야 해요. Object Mode에서 실행",
+      "BlenderKit 패널이 안 보임 → 설치 후 활성화 체크 확인. 뷰포트 상단 검색바 확인"
     ],
     "videos": [
       {
@@ -1903,9 +2040,25 @@ const CURRICULUM = [
       {
         "title": "QRemeshify",
         "url": "https://ksami.gumroad.com/l/QRemeshify"
+      },
+      {
+        "title": "LoopTools",
+        "url": "https://extensions.blender.org/add-ons/looptools/"
+      },
+      {
+        "title": "Bool Tool",
+        "url": "https://extensions.blender.org/add-ons/bool-tool/"
+      },
+      {
+        "title": "BlenderKit",
+        "url": "https://www.blenderkit.com/get-blenderkit/"
+      },
+      {
+        "title": "Dyntopo",
+        "url": "https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/tool_settings/dyntopo.html"
       }
     ],
-    "summary": "AI 기반 3D 생성 툴을 경험하고, Sculpt Mode로 유기적인 형태를 만들어요."
+    "summary": "Sculpt Mode로 유기적 형태를 만들고, 내장 애드온(LoopTools/Bool Tool)과 BlenderKit을 활용하고, AI 3D 생성 툴을 경험해요."
   },
   {
     "week": 6,
