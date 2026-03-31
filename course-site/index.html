@@ -21,9 +21,10 @@
     <!-- Main Content -->
     <main class="main" id="main-content">
       <div class="main-inner">
-        <!-- Hero -->
+        <!-- SECTION 1: Hero -->
         <section class="hero" id="heroSection">
           <div class="hero-card">
+            <div class="hero-mesh" aria-hidden="true"></div>
             <div class="hero-copy">
               <div class="eyebrow" id="heroEyebrow">Blender Archive</div>
               <h1 id="heroTitle">블렌더 아카이브</h1>
@@ -37,39 +38,36 @@
           </div>
         </section>
 
-        <section class="content-block rpd-glass-surface" id="archiveSection">
-          <div class="section-intro">
-            <div class="eyebrow" id="archiveSectionEyebrow">Archive Layers</div>
-            <h2 class="section-title" id="archiveSectionTitle">수업 자료가 이렇게 나뉘어 있어요</h2>
-            <p class="section-copy rpd-readable-copy" id="archiveSectionDescription">도구 설명과 단축키는 따로 정리해두고, 각 주차 수업에서 필요한 것만 가져다 써요.</p>
-          </div>
-          <div class="archive-grid" id="archiveGrid"></div>
-        </section>
+        <!-- SECTION 2: Featured Active Week ("NOW") -->
+        <section class="week-featured" id="weekFeatured" aria-label="현재 진행 주차"></section>
 
+        <!-- SECTION 3: Phase Journey Timeline -->
         <section class="content-block rpd-glass-surface" id="programSection">
           <div class="program-shell" id="programCollection">
             <div class="program-head">
-              <div class="eyebrow" id="programEyebrow">Course Collection</div>
+              <div class="eyebrow" id="programEyebrow">Custom Course Collection</div>
               <h2 class="program-title" id="programTitle">인하대학교 · Robot Product Design</h2>
               <p class="program-copy" id="programDescription">15주 RPD 수업은 Blender Archive의 카드 조합으로 보이는 인하대학교 맞춤 페이지예요.</p>
               <div class="program-stats" id="programStats"></div>
             </div>
 
-            <div class="section-intro week-section-intro">
+            <div class="section-intro">
               <div class="eyebrow" id="weekSectionEyebrow">Week Assemblies</div>
               <h3 class="section-title" id="weekSectionTitle">주차별 수업 구성</h3>
               <p class="section-copy" id="weekSectionDescription">매주 배울 실습, 참고 영상, 단축키를 한 페이지에 모아뒀어요.</p>
             </div>
 
-            <div class="week-grid" id="weekGrid">
-              <!-- JS로 채워짐 -->
-            </div>
+            <!-- Phase groups rendered by JS -->
+            <div class="journey-phases" id="journeyPhases"></div>
           </div>
         </section>
 
+        <!-- SECTION 4: Archive Quick Links -->
+        <nav class="archive-quick-links" id="archiveQuickLinks" aria-label="아카이브 바로가기"></nav>
+
         <!-- Footer -->
         <footer class="page-footer">
-          <div id="footerLabel">Robot Product Design 2026</div>
+          <div id="footerLabel">Blender Archive · RPD 2026</div>
         </footer>
       </div>
     </main>
@@ -79,7 +77,7 @@
   <script src="assets/tab-system.js"></script>
   <script src="assets/user-profile.js"></script>
   <script src="data/i18n-content.js?v=20260318e"></script>
-  <script src="assets/i18n.js?v=20260318d"></script>
+  <script src="assets/i18n.js?v=20260330a"></script>
   <script src="assets/site-shell.js?v=20260318a"></script>
   <script src="assets/week-ui.js?v=20260318a"></script>
   <script src="assets/showme/_registry.js?v=20260318f"></script>
@@ -88,7 +86,22 @@
   <script src="assets/layout.js"></script>
   <script src="assets/topbar-search.js"></script>
   <script>
-    // curriculum.js CURRICULUM array is a static trusted source with no user input.
+    /**
+     * Index page rendering — Immersive Journey redesign
+     *
+     * Data sources are static trusted arrays (CURRICULUM, SHOWME_REGISTRY)
+     * with no user input. All rendered content comes from i18n strings or
+     * these static sources, so innerHTML usage here is safe from XSS.
+     */
+    var PHASES = [
+      { id: "basics", weeks: [1,2,3] },
+      { id: "modeling", weeks: [4,5] },
+      { id: "shading", weeks: [6,7] },
+      { id: "midterm", weeks: [8] },
+      { id: "animation", weeks: [9,10,11,12] },
+      { id: "final", weeks: [13,14,15] }
+    ];
+
     function getPageStrings() {
       return window.RPDI18n.getStrings("index");
     }
@@ -170,13 +183,6 @@
       return                           ["badge-upcoming", text.badgeUpcoming];
     }
 
-    function getCardClass(w) {
-      if (isExamWeek(w))        return "is-exam";
-      if (w.status === "done")    return "is-done";
-      if (w.status === "active")  return "is-active";
-      return "";
-    }
-
     function collectArchiveCardIds(week) {
       var ids = {};
       (week.steps || []).forEach(function(step) {
@@ -229,66 +235,304 @@
       ];
     }
 
-    function buildArchiveItems(text) {
-      var libraryCount = typeof SHOWME_REGISTRY !== "undefined" ? Object.keys(SHOWME_REGISTRY).length : 0;
-      return [
-        {
-          href: withPresetHref("library.html"),
-          icon: "\u25eb",
-          kicker: text.archiveCardLibraryKicker,
-          title: text.archiveCardLibraryTitle,
-          copy: text.archiveCardLibraryCopy,
-          meta: libraryCount + " " + text.archiveCardLibraryMeta
-        },
-        {
-          href: withPresetHref("shortcuts.html"),
-          icon: "\u2328",
-          kicker: text.archiveCardShortcutKicker,
-          title: text.archiveCardShortcutTitle,
-          copy: text.archiveCardShortcutCopy,
-          meta: sumAllShortcuts() + " " + text.archiveCardShortcutMeta
-        },
-        {
-          href: "#programCollection",
-          icon: "\u25cc",
-          kicker: text.archiveCardAssemblyKicker,
-          title: text.archiveCardAssemblyTitle,
-          copy: text.archiveCardAssemblyCopy,
-          meta: CURRICULUM.length + " " + text.archiveCardAssemblyMeta
-        }
-      ];
-    }
-
     function buildHeroActions(text) {
       var activeWeek = CURRICULUM.find(function(week) { return week.status === "active"; }) || CURRICULUM[0];
       var activeHref = activeWeek ? withPresetHref("week.html?week=" + activeWeek.week) : "#programSection";
-      return [
-        '<a class="btn btn-primary" href="' + activeHref + '">' + text.heroPrimaryCta + '</a>',
-        '<a class="btn btn-ghost" href="' + withPresetHref("library.html") + '">' + text.heroSecondaryCta + '</a>',
-        '<a class="btn-link" href="' + withPresetHref("shortcuts.html") + '">' + text.heroTertiaryCta + ' <span aria-hidden="true">\u2192</span></a>'
-      ].join("");
+      return '<a class="btn btn-primary" href="' + activeHref + '">' + text.heroPrimaryCta + '</a>'
+        + '<a class="btn btn-ghost" href="' + withPresetHref("library.html") + '">' + text.heroSecondaryCta + '</a>';
     }
 
-    var grid = document.getElementById("weekGrid");
-    var archiveGrid = document.getElementById("archiveGrid");
-    var programStats = document.getElementById("programStats");
+    function getPhaseLabel(phaseId, text) {
+      var map = {
+        basics: text.phaseBasics || "\uae30\ucd08",
+        modeling: text.phaseModeling || "\ubaa8\ub378\ub9c1",
+        shading: text.phaseShading || "\uc170\uc774\ub529",
+        midterm: text.phaseMidterm || "\uc911\uac04\ud3c9\uac00",
+        animation: text.phaseAnimation || "\uc560\ub2c8\uba54\uc774\uc158",
+        final: text.phaseFinal || "\ub9c8\ubb34\ub9ac"
+      };
+      return map[phaseId] || phaseId;
+    }
+
+    // Lucide SVG icons (stroke, no fill)
+    var LUCIDE_ICONS = {
+      layers: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></svg>',
+      keyboard: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="M6 8h.001"/><path d="M10 8h.001"/><path d="M14 8h.001"/><path d="M18 8h.001"/><path d="M8 12h.001"/><path d="M12 12h.001"/><path d="M16 12h.001"/><path d="M7 16h10"/></svg>',
+      target: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
+      checkCircle: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>'
+    };
+
+    // All rendered content below comes from static trusted sources
+    // (CURRICULUM array, SHOWME_REGISTRY, i18n strings) — no user input.
+
+    function buildArchiveQuickLinks(text) {
+      var libraryCount = typeof SHOWME_REGISTRY !== "undefined" ? Object.keys(SHOWME_REGISTRY).length : 0;
+      var items = [
+        { href: withPresetHref("library.html"), icon: LUCIDE_ICONS.layers, label: text.archiveCardLibraryTitle, count: libraryCount + " " + text.archiveCardLibraryMeta },
+        { href: withPresetHref("shortcuts.html"), icon: LUCIDE_ICONS.keyboard, label: text.archiveCardShortcutTitle, count: sumAllShortcuts() + " " + text.archiveCardShortcutMeta },
+        { href: "#programCollection", icon: LUCIDE_ICONS.target, label: text.archiveCardAssemblyTitle, count: CURRICULUM.length + " " + text.archiveCardAssemblyMeta }
+      ];
+      return items.map(function(item) {
+        return '<a class="archive-quick-link" href="' + item.href + '">'
+          + item.icon
+          + '<span>' + item.label + '</span>'
+          + '<span class="quick-link-count">' + item.count + '</span>'
+          + '</a>';
+      }).join("");
+    }
+
+    function renderFeaturedWeek(text, preset) {
+      var el = document.getElementById("weekFeatured");
+      var activeWeek = CURRICULUM.find(function(w) { return w.status === "active"; });
+
+      if (!activeWeek) {
+        el.textContent = "";
+        var empty = document.createElement("div");
+        empty.className = "week-featured-empty";
+        empty.textContent = text.featuredEmpty || "\uc9c4\ud589 \uc911\uc778 \uc8fc\ucc28\uac00 \uc5c6\uc5b4\uc694";
+        el.appendChild(empty);
+        return;
+      }
+
+      var localized = window.RPDI18n.localizeWeekData(activeWeek);
+      var previewItems = getWeekCardPreviewItems(localized, preset);
+      var weekCardPreset = preset.weekCard || {};
+      var maxChips = weekCardPreset.activePreviewMaxItems || 5;
+      var pageUrl = withPresetHref("week.html?week=" + activeWeek.week);
+
+      // Build with DOM methods for safety
+      el.textContent = "";
+      var inner = document.createElement("div");
+      inner.className = "week-featured-inner";
+
+      var lbl = document.createElement("div");
+      lbl.className = "cw-active-label";
+      lbl.textContent = text.activeLabel;
+      inner.appendChild(lbl);
+
+      var header = document.createElement("div");
+      header.className = "week-featured-header";
+      var num = document.createElement("span");
+      num.className = "week-num";
+      num.textContent = "Week " + String(activeWeek.week).padStart(2, "0");
+      header.appendChild(num);
+      inner.appendChild(header);
+
+      var title = document.createElement("p");
+      title.className = "week-title";
+      title.textContent = localized.title;
+      inner.appendChild(title);
+
+      var sub = document.createElement("p");
+      sub.className = "week-subtitle";
+      sub.textContent = localized.subtitle;
+      inner.appendChild(sub);
+
+      var topics = document.createElement("div");
+      topics.className = "week-topics";
+      previewItems.slice(0, maxChips).forEach(function(t) {
+        var chip = document.createElement("span");
+        chip.className = "topic-chip";
+        chip.textContent = t;
+        topics.appendChild(chip);
+      });
+      if (previewItems.length > maxChips) {
+        var more = document.createElement("span");
+        more.className = "topic-chip";
+        more.textContent = "+" + (previewItems.length - maxChips);
+        topics.appendChild(more);
+      }
+      inner.appendChild(topics);
+
+      var footer = document.createElement("div");
+      footer.className = "week-footer";
+      var metrics = document.createElement("div");
+      metrics.className = "week-metrics";
+      buildWeekCardMetrics(activeWeek, text, preset).forEach(function(label) {
+        var m = document.createElement("span");
+        m.className = "week-metric";
+        m.textContent = label;
+        metrics.appendChild(m);
+      });
+      var arrow = document.createElement("a");
+      arrow.className = "go-arrow";
+      arrow.href = pageUrl;
+      arrow.setAttribute("aria-label", "Week " + activeWeek.week + " \uc5f4\uae30");
+      arrow.textContent = "\u2192";
+      footer.appendChild(metrics);
+      footer.appendChild(arrow);
+      inner.appendChild(footer);
+
+      el.appendChild(inner);
+    }
+
+    function renderJourneyPhases(text, preset) {
+      var container = document.getElementById("journeyPhases");
+      container.textContent = "";
+      var activeWeekNum = null;
+      var activeWeek = CURRICULUM.find(function(w) { return w.status === "active"; });
+      if (activeWeek) activeWeekNum = activeWeek.week;
+
+      PHASES.forEach(function(phase) {
+        var phaseWeeks = phase.weeks.map(function(num) {
+          return CURRICULUM.find(function(w) { return w.week === num; });
+        }).filter(Boolean);
+
+        var displayWeeks = phaseWeeks.filter(function(w) {
+          return w.week !== activeWeekNum;
+        });
+
+        var doneCount = phaseWeeks.filter(function(w) { return w.status === "done"; }).length;
+        var totalCount = phaseWeeks.length;
+        var progressPercent = totalCount > 0 ? Math.round((doneCount / totalCount) * 100) : 0;
+
+        var phaseEl = document.createElement("div");
+        phaseEl.className = "journey-phase";
+
+        // Header
+        var headerEl = document.createElement("div");
+        headerEl.className = "journey-phase-header";
+        var labelEl = document.createElement("span");
+        labelEl.className = "journey-phase-label";
+        labelEl.textContent = getPhaseLabel(phase.id, text);
+        var progressText = document.createElement("span");
+        progressText.className = "journey-phase-progress";
+        progressText.textContent = doneCount + "/" + totalCount;
+        headerEl.appendChild(labelEl);
+        headerEl.appendChild(progressText);
+        phaseEl.appendChild(headerEl);
+
+        // Progress bar
+        var track = document.createElement("div");
+        track.className = "journey-progress-track";
+        track.setAttribute("role", "progressbar");
+        track.setAttribute("aria-valuenow", String(doneCount));
+        track.setAttribute("aria-valuemin", "0");
+        track.setAttribute("aria-valuemax", String(totalCount));
+        track.setAttribute("aria-label", getPhaseLabel(phase.id, text) + " \uc9c4\ud589\ub960");
+        var fill = document.createElement("div");
+        fill.className = "journey-progress-fill";
+        fill.style.width = progressPercent + "%";
+        track.appendChild(fill);
+        phaseEl.appendChild(track);
+
+        // Cards
+        if (displayWeeks.length > 0) {
+          var gridEl = document.createElement("div");
+          gridEl.className = "journey-phase-grid";
+
+          displayWeeks.forEach(function(w) {
+            var localized = window.RPDI18n.localizeWeekData(w);
+            var badgeInfo = getBadge(w);
+            var isUpcoming = w.status !== "done" && w.status !== "active" && !isExamWeek(w);
+            var pageUrl = withPresetHref("week.html?week=" + w.week);
+
+            var card = document.createElement(isUpcoming ? "div" : "a");
+            card.className = "journey-week-card";
+            if (w.status === "done") card.className += " is-done";
+            else if (isExamWeek(w)) card.className += " is-exam";
+            else if (isUpcoming) card.className += " is-upcoming";
+            if (!isUpcoming) card.href = pageUrl;
+
+            var cardHeader = document.createElement("div");
+            cardHeader.className = "journey-card-header";
+            var cardNum = document.createElement("span");
+            cardNum.className = "journey-card-num";
+            cardNum.textContent = "Week " + String(w.week).padStart(2, "0");
+            cardHeader.appendChild(cardNum);
+
+            if (w.status === "done") {
+              var checkEl = document.createElement("span");
+              checkEl.className = "journey-card-done-icon";
+              // Static SVG from trusted constant — safe to set
+              checkEl.insertAdjacentHTML("afterbegin", LUCIDE_ICONS.checkCircle);
+              cardHeader.appendChild(checkEl);
+            } else {
+              var badgeEl = document.createElement("span");
+              badgeEl.className = "journey-card-badge " + badgeInfo[0];
+              badgeEl.textContent = badgeInfo[1];
+              cardHeader.appendChild(badgeEl);
+            }
+            card.appendChild(cardHeader);
+
+            var cardTitle = document.createElement("p");
+            cardTitle.className = "journey-card-title";
+            cardTitle.textContent = localized.title;
+            card.appendChild(cardTitle);
+
+            var cardMetrics = buildWeekCardMetrics(w, text, preset);
+            if (cardMetrics.length) {
+              var metricsEl = document.createElement("div");
+              metricsEl.className = "journey-card-metrics";
+              cardMetrics.forEach(function(label) {
+                var m = document.createElement("span");
+                m.className = "journey-card-metric";
+                m.textContent = label;
+                metricsEl.appendChild(m);
+              });
+              card.appendChild(metricsEl);
+            }
+
+            gridEl.appendChild(card);
+          });
+
+          phaseEl.appendChild(gridEl);
+        }
+
+        container.appendChild(phaseEl);
+      });
+    }
 
     function renderPage() {
       var text = getPageStrings();
       var preset = getUiPreset();
       var labels = preset.labels || {};
+
+      // Meta
       document.title = text.pageTitle;
       var meta = document.querySelector('meta[name="description"]');
       if (meta) meta.setAttribute("content", text.metaDescription);
-      document.getElementById("themeToggle").setAttribute("aria-label", text.themeToggleAria);
+
+      // Theme toggle
+      var themeToggle = document.getElementById("themeToggle");
+      if (themeToggle) themeToggle.setAttribute("aria-label", text.themeToggleAria);
+
+      // Hero
       document.getElementById("heroEyebrow").textContent = localizeUiLabel(labels.heroEyebrow, text.heroEyebrow);
       document.getElementById("heroTitle").textContent = text.heroTitle;
       document.getElementById("heroDescription").textContent = text.heroDescription;
       document.getElementById("heroMetaLabel").textContent = text.heroMetaLabel;
-      document.getElementById("heroActions").innerHTML = buildHeroActions(text);
-      document.getElementById("archiveSectionEyebrow").textContent = text.archiveSectionEyebrow;
-      document.getElementById("archiveSectionTitle").textContent = text.archiveSectionTitle;
-      document.getElementById("archiveSectionDescription").textContent = text.archiveSectionDescription;
+
+      // Hero actions (static trusted strings only)
+      var actionsEl = document.getElementById("heroActions");
+      actionsEl.textContent = "";
+      var activeWeekForCta = CURRICULUM.find(function(week) { return week.status === "active"; }) || CURRICULUM[0];
+      var activeHref = activeWeekForCta ? withPresetHref("week.html?week=" + activeWeekForCta.week) : "#programSection";
+      var primaryBtn = document.createElement("a");
+      primaryBtn.className = "btn btn-primary";
+      primaryBtn.href = activeHref;
+      primaryBtn.textContent = text.heroPrimaryCta;
+      var ghostBtn = document.createElement("a");
+      ghostBtn.className = "btn btn-ghost";
+      ghostBtn.href = withPresetHref("library.html");
+      ghostBtn.textContent = text.heroSecondaryCta;
+      actionsEl.appendChild(primaryBtn);
+      actionsEl.appendChild(ghostBtn);
+
+      // Hero meta chips
+      var heroMetaEl = document.getElementById("heroMeta");
+      heroMetaEl.textContent = "";
+      buildHeroMeta(text).forEach(function(item) {
+        var chip = document.createElement("span");
+        chip.className = "hero-meta-chip";
+        chip.textContent = item;
+        heroMetaEl.appendChild(chip);
+      });
+
+      // Featured active week
+      renderFeaturedWeek(text, preset);
+
+      // Program section
       document.getElementById("programEyebrow").textContent = text.programEyebrow;
       document.getElementById("programTitle").textContent = getPresetProgramTitle(text);
       document.getElementById("programDescription").textContent = text.programDescription;
@@ -297,115 +541,53 @@
       document.getElementById("weekSectionDescription").textContent = text.weekSectionDescription;
       document.getElementById("footerLabel").textContent = text.footerLabel;
 
-      document.getElementById("heroMeta").innerHTML = buildHeroMeta(text).map(function(item) {
-        return '<span class="hero-meta-chip">' + item + '</span>';
-      }).join("");
-
-      archiveGrid.innerHTML = buildArchiveItems(text).map(function(item) {
-        return '<a class="archive-card" href="' + item.href + '">'
-          + '<div class="archive-card-top">'
-          + '<span class="archive-card-kicker rpd-kicker">' + item.kicker + '</span>'
-          + '<span class="archive-card-icon rpd-icon-well" aria-hidden="true">' + item.icon + '</span>'
-          + '</div>'
-          + '<p class="archive-card-title">' + item.title + '</p>'
-          + '<p class="archive-card-copy">' + item.copy + '</p>'
-          + '<span class="archive-card-meta">' + item.meta + '</span>'
-          + '</a>';
-      }).join("");
-
-      var activeWeek = CURRICULUM.find(function(week) { return week.status === "active"; });
-      programStats.innerHTML = [
+      // Program stats (inline pills)
+      var statsEl = document.getElementById("programStats");
+      statsEl.textContent = "";
+      var activeWeek = CURRICULUM.find(function(w) { return w.status === "active"; });
+      [
         { value: CURRICULUM.length, label: text.programStatWeeks },
         { value: countProgramArchiveCards(), label: text.programStatCards },
         { value: activeWeek ? "Week " + String(activeWeek.week).padStart(2, "0") : "\u2014", label: text.programStatActive }
-      ].map(function(item) {
-        return '<div class="program-stat"><strong>' + item.value + '</strong><span>' + item.label + '</span></div>';
-      }).join("");
+      ].forEach(function(item) {
+        var stat = document.createElement("div");
+        stat.className = "program-stat";
+        var strong = document.createElement("strong");
+        strong.textContent = item.value;
+        var span = document.createElement("span");
+        span.textContent = item.label;
+        stat.appendChild(strong);
+        stat.appendChild(span);
+        statsEl.appendChild(stat);
+      });
 
-      grid.textContent = "";
-      CURRICULUM.forEach(function(w) {
-        var localized = window.RPDI18n.localizeWeekData(w);
-        var badgeInfo = getBadge(w);
-        var badgeClass = badgeInfo[0];
-        var badgeText = badgeInfo[1];
-        var isActive = w.status === "active";
-        var weekCardPreset = preset.weekCard || {};
-        var maxChips = isActive
-          ? (weekCardPreset.activePreviewMaxItems || weekCardPreset.previewMaxItems || 5)
-          : (weekCardPreset.previewMaxItems || 3);
-        var pageUrl = withPresetHref("week.html?week=" + w.week);
-        var previewItems = getWeekCardPreviewItems(localized, preset);
+      // Journey phases
+      renderJourneyPhases(text, preset);
 
-        var isUpcoming = w.status !== "done" && w.status !== "active" && !isExamWeek(w);
+      // Archive quick links
+      var linksEl = document.getElementById("archiveQuickLinks");
+      linksEl.textContent = "";
+      var libraryCount = typeof SHOWME_REGISTRY !== "undefined" ? Object.keys(SHOWME_REGISTRY).length : 0;
+      var quickItems = [
+        { href: withPresetHref("library.html"), iconKey: "layers", label: text.archiveCardLibraryTitle, count: libraryCount + " " + text.archiveCardLibraryMeta },
+        { href: withPresetHref("shortcuts.html"), iconKey: "keyboard", label: text.archiveCardShortcutTitle, count: sumAllShortcuts() + " " + text.archiveCardShortcutMeta },
+        { href: "#programCollection", iconKey: "target", label: text.archiveCardAssemblyTitle, count: CURRICULUM.length + " " + text.archiveCardAssemblyMeta }
+      ];
+      quickItems.forEach(function(item) {
         var a = document.createElement("a");
-        a.className = "week-card " + getCardClass(w) + (isUpcoming ? " is-locked" : "");
-        a.dataset.highlightMode = weekCardPreset.highlightMode || "status";
-        if (!isUpcoming) a.href = pageUrl;
-
-        if (isActive) {
-          var lbl = document.createElement("div");
-          lbl.className = "cw-active-label";
-          lbl.textContent = text.activeLabel;
-          a.appendChild(lbl);
-        }
-
-        var header = document.createElement("div");
-        header.className = "week-card-header";
-        var num = document.createElement("span");
-        num.className = "week-num";
-        num.textContent = "Week " + String(w.week).padStart(2, "0");
-        var badge = document.createElement("span");
-        badge.className = "week-badge " + badgeClass;
-        badge.textContent = badgeText;
-        header.appendChild(num);
-        header.appendChild(badge);
-        a.appendChild(header);
-
-        var title = document.createElement("p");
-        title.className = "week-title";
-        title.textContent = localized.title;
-        a.appendChild(title);
-
-        var sub = document.createElement("p");
-        sub.className = "week-subtitle";
-        sub.textContent = localized.subtitle;
-        a.appendChild(sub);
-
-        var topics = document.createElement("div");
-        topics.className = "week-topics";
-        previewItems.slice(0, maxChips).forEach(function(topic) {
-          var chip = document.createElement("span");
-          chip.className = "topic-chip";
-          chip.textContent = topic;
-          topics.appendChild(chip);
-        });
-        if (previewItems.length > maxChips) {
-          var more = document.createElement("span");
-          more.className = "topic-chip";
-          more.textContent = "+" + (previewItems.length - maxChips);
-          topics.appendChild(more);
-        }
-        a.appendChild(topics);
-
-        var footer = document.createElement("div");
-        footer.className = "week-footer";
-        var metrics = document.createElement("div");
-        metrics.className = "week-metrics";
-        buildWeekCardMetrics(w, text, preset).forEach(function(label) {
-          var metric = document.createElement("span");
-          metric.className = "week-metric";
-          metric.textContent = label;
-          metrics.appendChild(metric);
-        });
-        var arrow = document.createElement("span");
-        arrow.className = "go-arrow";
-        arrow.textContent = "\u2192";
-        arrow.setAttribute("aria-hidden", "true");
-        footer.appendChild(metrics);
-        footer.appendChild(arrow);
-        a.appendChild(footer);
-
-        grid.appendChild(a);
+<<<<<<< HEAD
+        a.className = "archive-quick-link";
+        a.href = item.href;
+        // Static SVG from trusted constant
+        a.insertAdjacentHTML("afterbegin", LUCIDE_ICONS[item.iconKey]);
+        var labelSpan = document.createElement("span");
+        labelSpan.textContent = item.label;
+        a.appendChild(labelSpan);
+        var countSpan = document.createElement("span");
+        countSpan.className = "quick-link-count";
+        countSpan.textContent = item.count;
+        a.appendChild(countSpan);
+        linksEl.appendChild(a);
       });
     }
 

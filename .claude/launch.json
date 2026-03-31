@@ -13,8 +13,9 @@
     {
       "name": "course-site-static",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["serve", "course-site", "-l", "8772"],
-      "port": 8772
+      "runtimeArgs": ["serve", "course-site"],
+      "port": 8772,
+      "autoPort": true
     }
   ]
 }

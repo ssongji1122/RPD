@@ -1551,7 +1551,7 @@ const CURRICULUM = [
   },
   {
     "week": 5,
-    "status": "active",
+    "status": "done",
     "title": "AI 3D 생성 + Sculpting",
     "subtitle": "AI 툴 활용 · Sculpt Mode 기초 · 메쉬 정리",
     "duration": "~3시간",
@@ -1566,7 +1566,7 @@ const CURRICULUM = [
     "steps": [
       {
         "title": "Sculpt Mode 기초",
-        "copy": "브러시로 메쉬를 직접 주무르는 모드예요. 마우스로 칠하듯이 형태를 만들어요. 점토 조각과 가장 비슷한 방식이에요.",
+        "copy": "브러시로 메쉬를 직접 주무르는 모드예요. 마우스로 칠하듯이 형태를 만들고, 점토를 빚는 것과 가장 비슷해요.",
         "goal": [
           "Sculpt Mode 진입 방법을 안다",
           "기본 3대 브러시를 쓴다"
@@ -1640,7 +1640,7 @@ const CURRICULUM = [
       },
       {
         "title": "Remesh + Decimate + 메쉬 정리",
-        "copy": "Sculpt를 하다 보면 메쉬가 늘어나서 찌그러지는 곳이 생겨요. Remesh로 고르게 나누고, Decimate로 줄이고, Mesh Cleaner로 정리해요. 이 도구들은 나중에 AI 메쉬 정리에도 그대로 쓸 거예요.",
+        "copy": "Sculpt를 하다 보면 메쉬가 늘어나서 찌그러지는 곳이 생겨요. Remesh로 고르게 나누고, Decimate로 줄이고, Mesh Cleaner로 정리하는 이 흐름은 AI 메쉬 정리에도 그대로 써요.",
         "goal": [
           "Remesh의 역할을 이해한다",
           "Decimate로 폴리곤을 줄인다",
@@ -1694,7 +1694,7 @@ const CURRICULUM = [
       },
       {
         "title": "무드보드 → AI 프롬프트 설계",
-        "copy": "1주차에 만든 무드보드, 기억하죠? 오늘 그걸 3D로 만들기 시작해요. AI한테 잘 설명하려면 이미지 느낌을 단어로 번역하는 과정이 필요해요. 프롬프트는 짧을수록 AI가 멋대로 해석해요. 형태·스타일·재질감을 구체적으로 써야 원하는 결과가 나와요.",
+        "copy": "1주차 무드보드를 오늘 3D로 만들기 시작해요. 프롬프트에 형태·스타일·재질감을 구체적으로 넣어야 AI가 원하는 방향으로 만들어줘요.",
         "goal": [
           "무드보드 이미지를 텍스트 키워드로 변환할 수 있다",
           "AI 3D 생성용 프롬프트를 작성할 수 있다"
@@ -1909,7 +1909,7 @@ const CURRICULUM = [
   },
   {
     "week": 6,
-    "status": "upcoming",
+    "status": "active",
     "title": "Material & Shader Node",
     "subtitle": "재질 시스템 · Principled BSDF · 노드 편집",
     "duration": "~3시간",
