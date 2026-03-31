@@ -1,7 +1,7 @@
 [
   {
     "week": 1,
-    "title": "수업 시작 준비",
+    "title": "오리엔테이션, Blender 설치, Mixboard 활용하여 디자인 컨셉 설정",
     "subtitle": "오리엔테이션 · Blender 설치 · 컨셉 설정",
     "duration": "~2시간",
     "topics": [
@@ -58,10 +58,7 @@
     "assignment": {
       "title": "Blender 설치 확인 스크린샷",
       "description": "Blender를 실행해서 Welcome Screen이 보이는 화면을 캡처해서 제출하세요.",
-      "checklist": [
-        "Blender 정상 실행 확인",
-        "버전 번호 포함된 스크린샷 제출"
-      ]
+      "checklist": []
     },
     "mistakes": [
       "설치 중 권한 오류 → 관리자 권한으로 재설치",
@@ -901,7 +898,7 @@
     ],
     "steps": [
       {
-        "title": "Step 1: Sculpt Mode 기초",
+        "title": "Step 1: Sculpt 브러시 기초",
         "copy": "브러시로 메쉬를 직접 주무르는 모드예요. 마우스로 칠하듯이 형태를 만들어요. 점토 조각과 가장 비슷한 방식이에요.\n\nSculpt Mode의 기본 브러시예요. 표면을 올리거나(기본) 파낼 수(Ctrl) 있어요.\n\nRadius(F)와 Strength(Shift+F) 로 브러시 크기/강도를 조절하고, Automasking으로 인접 면만 영향받게 제한할 수 있어요.\n\n큰 형태를 먼저 잡을 때 가장 많이 쓰이고, Grab과 번갈아 쓰면 효율적이에요.\n\n메쉬를 잡아서 끌어당기는 브러시예요. 형태의 큰 실루엣을 조정할 때 핵심이에요.\n\n다른 브러시와 달리 표면을 추가/제거하지 않고 기존 점을 이동시켜요.\n\n큰 브러시 크기로 전체 비율을 잡고, 작은 크기로 세부 위치를 조정하세요.\n\n울퉁불퉁한 표면을 부드럽게 정리하는 브러시예요. Shift를 누른 채로 다른 브러시 사용 중 임시 전환도 가능해요.\n\nStrength를 0.3~0.5로 낮게 시작하면 형태를 무너뜨리지 않으면서 정리할 수 있어요.\n\n스컬프팅 마무리 단계에서 전체를 한 번 쓸어주면 깔끔해져요.",
         "goal": [
           "Brush 종류별 사용법 ",
@@ -934,7 +931,7 @@
       },
       {
         "title": "Step 2: Sculpt 브러시 심화",
-        "copy": "기본 3개로 큰 흐름을 잡았으면, 이제 세부 표현용 브러시를 익혀요. Clay는 점토를 덧붙이는 느낌, Crease는 주름이나 홈을 파는 느낌이에요.\n\n점토를 덧붙이듯 형태를 쌓아올리는 브러시예요. Draw보다 넓고 평평한 스트로크를 만들어요.\n\n근육이나 갑옥 같은 넓은 면의 볼륨을 쌓을 때 최적이에요.\n\nStrength를 높이면 한 번에 많이 쌓이고, Normal Radius로 방향을 조정할 수 있어요.\n\n날카로운 홈이나 주름 선을 파는 브러시예요. Pinch 효과가 같이 들어가서 선이 또렬해져요.\n\n관절 접히는 곳, 눈/입 라인, 갑옥 이음새 등 선형 디테일에 적합해요.\n\nCtrl로 반전하면 돌출된 능선을 만들 수 있어요.\n\n표면을 노멀 방향으로 부풀리는 브러시예요. Draw와 달리 모든 방향으로 균일하게 팩잡해요.\n\n볼살, 근육 강조, 둥근 보석 같은 볼록한 형태를 만들 때 유용해요.\n\nCtrl로 반전하면 수축 효과 — 눈구멍이나 움푸 들어간 곳에 활용하세요.\n\n끝점이 따라오면서 메쉬를 길게 늘어나게 끌어내는 브러시예요.\n\n뿔, 촉수, 머리카락, 나렃가지잘럼 가늘고 긴 형태를 빼낼 때 핵심이에요.\n\nDynTopo를 켜고 쓰면 늘어나는 부분에 폴리곤이 자동 추가되어 더 자연스러워지요.",
+        "copy": "기본 3개로 큰 흐름을 잡았으면, 이제 세부 표현용 브러시를 익혀요. Clay는 점토를 덧붙이는 느낌, Crease는 주름이나 홈을 파는 느낌이에요.\n\n점토를 덧붙이듯 형태를 쌓아올리는 브러시예요. Draw보다 넓고 평평한 스트로크를 만들어요.\n\n근육이나 갑옥 같은 넓은 면의 볼륨을 쌓을 때 최적이에요.\n\nStrength를 높이면 한 번에 많이 쌓이고, Normal Radius로 방향을 조정할 수 있어요.\n\n날카로운 홈이나 주름 선을 파는 브러시예요. Pinch 효과가 같이 들어가서 선이 또렬해져요.\n\n관절 접히는 곳, 눈/입 라인, 갑옥 이음새 등 선형 디테일에 적합해요.\n\nCtrl로 반전하면 돌출된 능선을 만들 수 있어요.\n\n표면을 노멀 방향으로 부풀리는 브러시예요. Draw와 달리 모든 방향으로 균일하게 팩잡해요.\n\n볼살, 근육 강조, 둥근 보석 같은 볼록한 형태를 만들 때 유용해요.\n\nCtrl로 반전하면 수축 효과 — 눈구멍이나 움푸 들어간 곳에 활용하세요.\n\n끝점이 따라오면서 메쉬를 길게 늘어나게 끌어내는 브러시예요.\n\n뿔, 촉수, 머리카락, 나렃가지잘럼 가늘고 긴 형태를 빼낼 때 핵심이에요.\n\nDynTopo를 켜고 쓰면 늘어나는 부분에 폴리곤이 자동 추가되어 더 자연스러워지요.\n\nFaceset\n\nMask\n",
         "goal": [
           "용도별 브러시를 구분해 쓴다"
         ],
@@ -964,12 +961,140 @@
         ]
       },
       {
-        "title": "Step 3: Remesh · Dyntopo · Decimate",
+        "title": "Step 3: Addon/Extension 설치 및 활성화",
+        "copy": "Blender는 플러그인으로 기능을 확장할 수 있어요. 내장 애드온은 켜기만 하면 되고, 외부 애드온은 .zip 파일을 설치하거나 Extension 스토어에서 원클릭 설치해요.\n\nAdd-on (레거시) — .zip 파일로 수동 설치\n\nExtension (신규) — 원클릭 설치 (Blender 4.2+)\n\n내장 애드온은 이미 Blender 안에 있어요. 켜기만 하면 돼요.",
+        "goal": [
+          "내장 애드온 활성화 방법을 안다",
+          "외부 .zip 애드온 설치 방법을 안다",
+          "Extension 스토어 사용법을 안다",
+          "Gumroad, GitHub 등에서 .zip 파일 다운로드",
+          "Edit → Preferences → Add-ons → 우측 상단 드롭다운 → Install from Disk",
+          ".zip 파일 선택 → Install Add-on → 체크박스 ON",
+          "Blender 4.1 이하 주요 방식. 4.2+에서도 계속 지원",
+          "Edit → Preferences → Get Extensions 탭",
+          "검색 → Install 버튼 클릭",
+          "extensions.blender.org 에 등록된 공식 애드온만 가능",
+          ".zip 파일을 뷰포트에 드래그 앤 드롭으로도 설치 가능 (4.2+)"
+        ],
+        "done": [],
+        "image": "",
+        "tasks": [
+          {
+            "id": "w5-t7",
+            "label": "Edit → Preferences → Add-ons 탭 열기",
+            "detail": "모든 플러그인 관리의 시작점"
+          },
+          {
+            "id": "w5-t8",
+            "label": "검색창에 'Loop' 입력 → LoopTools 체크박스 ON",
+            "detail": ""
+          },
+          {
+            "id": "w5-t9",
+            "label": "검색창에 'Bool' 입력 → Bool Tool 체크박스 ON",
+            "detail": ""
+          },
+          {
+            "id": "w5-t10",
+            "label": "Get Extensions 탭에서 외부 애드온 검색 체험",
+            "detail": "Blender 4.2+ 원클릭 설치"
+          },
+          {
+            "id": "w5-t5",
+            "label": ".zip 수동 설치: Add-ons → 드롭다운 → Install from Disk → .zip 선택",
+            "detail": ""
+          }
+        ]
+      },
+      {
+        "title": "Step 4: LoopTools · Bool Tool 활용",
+        "copy": "LoopTools는 메쉬 정리에 효과적인 툴이예요  삐뚤어진 꼭짓점을 원으로 만들고, 간격을 맞추고, 엣지를 연결해요. Bool Tool은 오브젝트끼리 파내기·합치기를 빠르게 해줘요.\n\n선택한 버텍스를 완벽한 원형으로 정렬해요. 삐뚤어진 구멍을 깔끔하게 만들 때 핵심이에요.\n\nFit 옵션: Best Fit(기본, 비선형 최적화), Fit Inside(안쪽으로 맞춤, 토폴로지 유지)\n\n사용법: Edit Mode → 버텍스 선택 → 우클릭 → LoopTools → Circle\n\n선택한 버텍스의 위치를 평균화해서 부드럽게 정리해요. Smooth와 비슷하지만 전체 형태를 더 잘 유지해요.\n\n스컬프팅 후 메쉬 정리나 하드서피스 모델링에서 면 정리에 유용해요.\n\n사용법: Edit Mode → 버텍스 선택 → 우클릭 → LoopTools → Relax\n\n선택한 버텍스를 엣지를 따라 고르게 분포시켜요. 루프컷 후 간격이 불균일할 때 유용해요.\n\n사용법: Edit Mode → 엣지 루프의 버텍스 선택 → 우클릭 → LoopTools → Space\n\n두 개의 엣지 루프를 면으로 이어줘요. 아치, 터널, 연결 통로를 만들 때 사용해요.\n\nSegments 값으로 중간 분할 수를 조절할 수 있어요. 0이면 자동으로 정사각형에 가깝게 맞춰요.\n\n사용법: Edit Mode → 두 엣지 루프 선택 → 우클릭 → LoopTools → Bridge\n\n활성 오브젝트(밝은 선택)가 칼이 되어 다른 오브젝트를 파내요.\n\nBlender 5.0에서 Faster Destructive Booleans 옵션으로 30-50% 빨라졌어요.\n\n순서: 깎일 오브젝트 먼저 선택 → Shift+클릭으로 칼 오브젝트 추가 선택 → Ctrl+Shift+B → Difference",
+        "goal": [
+          "LoopTools의 Circle, Relax, Space, Bridge를 쓴다",
+          "Bool Tool로 Difference, Union을 실행한다"
+        ],
+        "done": [],
+        "image": "",
+        "tasks": [
+          {
+            "id": "w5-t1",
+            "label": "Circle",
+            "detail": "선택한 버텍스를 완벽한 원으로 정렬"
+          },
+          {
+            "id": "w5-t2",
+            "label": "Relax",
+            "detail": "울퉁불퉁한 버텍스를 부드럽게 정리 (형태 유지하면서 간격 정리)"
+          },
+          {
+            "id": "w5-t3",
+            "label": "Space",
+            "detail": "선택한 버텍스를 등간격으로 분포"
+          },
+          {
+            "id": "w5-t4",
+            "label": "Bridge",
+            "detail": "떨어진 두 엣지 루프를 면으로 연결"
+          },
+          {
+            "id": "w5-t5",
+            "label": "두 오브젝트를 겹치게 배치 → Ctrl+Shift+B → Difference",
+            "detail": "활성 오브젝트로 파내기"
+          },
+          {
+            "id": "w5-t6",
+            "label": "Union으로 두 오브젝트 합치기",
+            "detail": "겹치는 부분을 하나로"
+          },
+          {
+            "id": "w5-t7",
+            "label": "Intersect로 겹치는 부분만 남기기",
+            "detail": "교차 영역 추출"
+          }
+        ]
+      },
+      {
+        "title": "Step 5: BlenderKit 에셋 라이브러리",
+        "copy": "BlenderKit은 3D 에셋 백화점이에요. 모델, 재질, HDRI를 검색해서 드래그만 하면 바로 씬에 들어와요. 무료 에셋만 10,000개 이상이에요.\n\n무료 에셋: 모델 10,000+, 재질 10,000+, 씬 250+, HDRI 1,000+, 브러시 300+\n\n사용법: 뷰포트 상단 검색바에 키워드 입력 → 결과 클릭 → 씬에 드래그&드롭\n\n카테고리: Models, Materials, Scenes, HDRIs, Brushes, Add-ons\n\n팁: 검색 필터에서 Free만 체크하면 무료 에셋만 볼 수 있어요\n\nBlender 5.0에서도 최신 버전(v3.18+)으로 정상 작동해요.",
+        "goal": [
+          "BlenderKit 설치 및 사용법을 안다",
+          "에셋을 검색하고 씬에 추가할 수 있다"
+        ],
+        "done": [],
+        "image": "",
+        "tasks": [
+          {
+            "id": "w5-t1",
+            "label": "blenderkit.com에서 .zip 다운로드",
+            "detail": "Download BlenderKit 버튼"
+          },
+          {
+            "id": "w5-t2",
+            "label": "Preferences → Add-ons → Install from Disk → .zip 설치 → 체크박스 ON",
+            "detail": ""
+          },
+          {
+            "id": "w5-t3",
+            "label": "뷰포트 상단 BlenderKit 검색창에서 키워드 입력 → 결과 드래그&드롭",
+            "detail": ""
+          },
+          {
+            "id": "w5-t4",
+            "label": "모델 카테고리에서 무료 에셋 1개 추가해보기",
+            "detail": "로그인 없이 무료 에셋 사용 가능"
+          },
+          {
+            "id": "w5-t5",
+            "label": "Material 카테고리에서 재질 1개 적용해보기",
+            "detail": "오브젝트 선택 후 재질 클릭하면 바로 적용"
+          }
+        ]
+      },
+      {
+        "title": "Step 6: Remesh · Dyntopo · Decimate",
         "copy": "스컬프팅 중 메쉬가 뭉개지거나 폴리곤이 너무 많아지면 이 도구들이 필요해요. Blender 내장 Remesh 3가지 방법의 차이를 알고, Dyntopo로 실시간 자동 리메시를 체험하고, Decimate로 가볍게 줄여봐요.\n\nBlender에 Remesh 방법이 3가지 있어요. 상황에 맞게 골라 써야 해요.\n\n1. Sculpt Remesh (Ctrl+R) — 스컬프팅 전 준비용\n\n2. Object Data Properties Remesh (QuadriFlow) — 애니메이션 토폴로지\n\n3. Remesh Modifier — 비파괴 실험용\n\n→ 스컬프팅 준비엔 Ctrl+R, 쿼드 토폴로지 필요하면 QuadriFlow, 비파괴로 실험하려면 Modifier\n\nDyntopo(Dynamic Topology)는 스컬프팅 중 브러시가 지나는 곳에 폴리곤을 자동으로 추가하거나 제거해요. 폴리곤이 부족한 곳에서 뿔, 귀, 손가락 같은 디테일을 자유롭게 만들 수 있어요.\n\n활성화: Sculpt Mode → 헤더 바 → Dyntopo 체크박스 ON\n\n핵심 설정:\n\n주의: 삼각형 메쉬만 생성 → 완성 후 반드시 Remesh로 정리 필요\n\n→ 폴리곤이 부족해서 형태가 안 만들어지면 Dyntopo를 켜보세요. Snake Hook과 함께 쓰면 뿔이나 촉수 표현이 자유로워요.\n\nDecimate Modifier는 메쉬의 폴리곤 수를 줄여서 파일을 가볍게 해요. 리메시와 달리 토폴로지를 재구성하지 않고 기존 면을 합쳐요.\n\n사용법: Properties → Modifiers → Add Modifier → Decimate\n\nRatio 기준: 1.0 = 원본 유지 / 0.5 = 절반으로 줄임 / 0.3~0.5 = 형태 유지 최적 범위\n\n3가지 모드:\n\n→ AI 메쉬 임포트 후 → Decimate 0.5부터 시작 → 형태 확인하며 천천히 낮추기",
         "goal": [
           "Remesh 3가지 방법의 차이를 이해한다",
-          "Dyntopo로 스컬프팅 중 자동 리메시를 체험한다",
-          "Decimate로 폴리곤 수를 줄인다",
           "위치: Sculpt Mode → 헤더 우측 Remesh 패널 → Ctrl+R",
           "Voxel Size로 해상도 조절 (0.02~0.05 권장, 작을수록 디테일 유지)",
           "빠르고 간단 — 스컬프팅 시작 전에 항상 쓰는 기본 방법",
@@ -979,9 +1104,11 @@
           "위치: Properties → Modifiers → Add Modifier → Remesh",
           "Blocks / Smooth / Sharp 세 가지 모드",
           "Apply 전까지 원본 유지 (비파괴) — AI 메쉬 임포트 후 실험에 유용",
+          "Dyntopo로 스컬프팅 중 자동 리메시를 체험한다",
           "Detail Size: 숫자가 작을수록 고해상도 (1~3이 일반적)",
           "Detail Type: Relative (카메라 거리 기준) / Constant (절대 크기 기준)",
           "Refine Method: Subdivide Collapse (기본 — 추가+제거 동시)",
+          "Decimate로 폴리곤 수를 줄인다",
           "Collapse (기본): 가장 많이 사용. 점진적으로 면 합침",
           "Un-Subdivide: Subdivide로 늘어난 메쉬 원래대로",
           "Planar: 거의 평평한 면끼리 합침 (건축 모델에 유용)"
@@ -990,30 +1117,30 @@
         "image": "",
         "tasks": [
           {
-            "id": "w5-t7",
+            "id": "w5-t1",
             "label": "Sculpt Mode → 우측 Remesh 패널 → Ctrl+R",
             "detail": "Voxel Size 조절해서 해상도 맞추기"
           },
           {
-            "id": "w5-t8",
+            "id": "w5-t2",
             "label": "Remesh 전후 비교",
             "detail": "Statistics 켜서 폴리곤 수 변화 확인"
           },
           {
-            "id": "w5-t9",
+            "id": "w5-t3",
             "label": "Dyntopo 켜고 브러시가 닿는 곳만 폴리곤 생성 확인",
             "detail": "Sculpt Mode 헤더 → Dyntopo 체크"
           },
           {
-            "id": "w5-t10",
+            "id": "w5-t4",
             "label": "Decimate Modifier 추가 후 Ratio 조절",
             "detail": "0.3~0.5에서 형태 유지 지점 찾기"
           }
         ]
       },
       {
-        "title": "Step 4: 외부 플러그인 & 메쉬 정리 도구",
-        "copy": "무료 애드온으로 Blender 내장 도구를 넘어서는 리메시와 메쉬 정리가 가능해요. 플러그인 설치 방법을 먼저 이해하고, 상황에 맞는 도구를 골라요.",
+        "title": "Step 7: 외부 Remesh 애드온 & 메쉬 정리 도구",
+        "copy": "무료 애드온으로 Blender 내장 도구를 넘어서는 리메시와 메쉬 정리가 가능해요. Step 3에서 배운 설치 방법을 활용해요.",
         "goal": [],
         "done": [],
         "image": "",
@@ -1092,7 +1219,7 @@
         "tasks": []
       },
       {
-        "title": "Step 5: 무드보드 → AI 프롬프트 설계",
+        "title": "Step 8: 무드보드 → AI 프롬프트 설계",
         "copy": "1주차에 만든 무드보드, 기억하죠? 오늘 그걸 3D로 만들기 시작해요. AI한테 잘 설명하려면 이미지 느낌을 단어로 번역하는 과정이 필요해요.",
         "goal": [
           "무드보드 이미지를 텍스트 키워드로 변환할 수 있다",
@@ -1119,7 +1246,7 @@
         ]
       },
       {
-        "title": "Step 6: 본인 프로젝트 AI 러프 생성",
+        "title": "Step 9: 본인 프로젝트 AI 러프 생성",
         "copy": "내 아이디어의 초벌을 AI가 잡아줘요. 완벽하지 않아도 괜찮아요 — 오늘은 방향을 확인하는 게 목적이에요.",
         "goal": [
           "AI 생성 워크플로우를 이해한다",
@@ -1146,8 +1273,8 @@
         ]
       },
       {
-        "title": "Step 7: AI 메쉬 정리 실전",
-        "copy": "Step 3에서 배운 Mesh Cleaner와 Decimate를 AI가 만든 내 메쉬에 직접 써봐요. Import한 그대로는 폴리곤이 너무 많아서 이후 작업이 힘들어요.",
+        "title": "Step 10: AI 메쉬 정리 실전",
+        "copy": "Step 3에서 배운 Mesh Cleaner와 Decimate를 AI가 만든 내 메쉬에 직접 써봐요. Import한 그대로는 폴리곤이 너무 많아서 이후 작업이 힘들어요.\n\n3D AI 활용해보기 \nMesh AI\nhttps://www.meshy.ai/ko/discover\n\nTripo AI \nhttps://www.tripo3d.ai/app/home\n\nhttps://hyper3d.ai/",
         "goal": [
           "AI 메쉬의 폴리곤 문제를 직접 해결한다"
         ],
@@ -1181,9 +1308,12 @@
       "title": "내 프로젝트 첫 3D 러프",
       "description": "1주차 무드보드를 바탕으로 AI 러프를 뽑고, 메쉬를 정리한 결과물을 제출해요. 완성도보다 방향이 맞는지가 중요해요.",
       "checklist": [
+        "내 무드보드에서 추출한 프롬프트 키워드 (텍스트)",
         "AI 생성 원본 스크린샷",
         "메쉬 정리 후 스크린샷",
-        "한 문장: '나는 앞으로 ___을 만들 예정이에요'"
+        "한 문장: '나는 앞으로 ___을 만들 예정이에요'",
+        "완성 렌더 이미지 1장 이상",
+        "완성 .blend 파일 저장 완료 — Week 6 Material 실습에서 이 파일을 써요\n\n"
       ]
     },
     "mistakes": [
@@ -1193,7 +1323,10 @@
       "형태가 너무 울퉁불퉁 → Smooth 브러시로 정리, 또는 Strength 낮추기",
       "Import 메쉬가 너무 작거나 큼 → S로 크기 맞추고 Ctrl+A로 Scale 적용",
       "프롬프트가 너무 짧음 → 형태+스타일+재질 키워드를 넣어야 원하는 결과가 나와요",
-      "AI 메쉬를 정리 없이 바로 작업 → Mesh Cleaner 먼저 돌리고 시작하기"
+      "AI 메쉬를 정리 없이 바로 작업 → Mesh Cleaner 먼저 돌리고 시작하기",
+      "LoopTools 메뉴가 안 보임 → Preferences에서 애드온 활성화 확인. Edit Mode에서 우클릭해야 나와요",
+      "Bool Tool이 작동 안 함 → 두 오브젝트가 겹쳐 있어야 해요. Object Mode에서 실행",
+      "BlenderKit 패널이 안 보임 → 설치 후 활성화 체크 확인. 뷰포트 상단 검색바 확인"
     ],
     "shortcuts": [
       {
@@ -1227,6 +1360,14 @@
       {
         "keys": "X",
         "action": "Draw 브러시 빠른 선택"
+      },
+      {
+        "keys": "우클릭 → LoopTools",
+        "action": "LoopTools 메뉴 (Edit Mode)"
+      },
+      {
+        "keys": "Ctrl + Shift + B",
+        "action": "Bool Tool 빠른 실행 (Object Mode)"
       }
     ],
     "docs": [
@@ -1257,6 +1398,18 @@
       {
         "title": "QRemeshify",
         "url": "https://ksami.gumroad.com/l/QRemeshify"
+      },
+      {
+        "title": "LoopTools",
+        "url": "https://extensions.blender.org/add-ons/looptools/"
+      },
+      {
+        "title": "Bool Tool",
+        "url": "https://extensions.blender.org/add-ons/bool-tool/"
+      },
+      {
+        "title": "BlenderKit",
+        "url": "https://www.blenderkit.com/get-blenderkit/"
       }
     ],
     "videos": [
