@@ -361,6 +361,7 @@
         var arrow = document.createElement("span");
         arrow.className = "go-arrow";
         arrow.textContent = "\u2192";
+        arrow.setAttribute("aria-hidden", "true");
         footer.appendChild(metrics);
         footer.appendChild(arrow);
         card.appendChild(footer);

@@ -78,7 +78,7 @@
 
     <!-- Show Me Modal -->
     <div class="showme-overlay" id="showmeOverlay" aria-hidden="true">
-      <div class="showme-modal">
+      <div class="showme-modal" role="dialog" aria-modal="true" aria-labelledby="showmeTitle">
         <div class="showme-modal-header">
           <div class="showme-modal-header-copy">
             <div class="showme-modal-card-icon" id="showmeTitleIcon" aria-hidden="true"></div>
@@ -139,7 +139,7 @@
     <!-- Student Login (full-page, shown when ?sid= is missing) -->
     <div class="student-login-overlay" id="studentLoginOverlay">
       <div class="student-login-card">
-        <h2 id="studentLoginTitle">👋 바로 시작하세요</h2>
+        <h2 id="studentLoginTitle"><span aria-hidden="true">👋</span> 바로 시작하세요</h2>
         <p class="login-subtitle" id="studentLoginSubtitle">퀴즈 기록은 이 브라우저에만 저장됩니다</p>
         <input class="student-login-input" id="studentLoginInput"
                type="text" placeholder="이름 없이 사용 가능" maxlength="32" inputmode="text"
