@@ -51,13 +51,13 @@ STEP_MAP = {
     (5, 0): ("ai-3d-import",         None),   # AI 도구, 공식 문서 없음
     (5, 1): ("sculpt-mode",          "https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/introduction/index.html"),
     # Week 5: Sculpt brushes (개별 공식 문서 캡처)
-    (5, 10): ("sculpt-draw",         "https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/tools/draw.html"),
-    (5, 11): ("sculpt-grab",         "https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/tools/grab.html"),
-    (5, 12): ("sculpt-smooth",       "https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/tools/smooth.html"),
-    (5, 13): ("sculpt-clay-strips",  "https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/tools/clay_strips.html"),
-    (5, 14): ("sculpt-crease",       "https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/tools/crease.html"),
-    (5, 15): ("sculpt-inflate",      "https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/tools/inflate.html"),
-    (5, 16): ("sculpt-snake-hook",   "https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/tools/snake_hook.html"),
+    (5, 10): ("sculpt-draw",         "https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/brushes/draw.html"),
+    (5, 11): ("sculpt-grab",         "https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/brushes/grab.html"),
+    (5, 12): ("sculpt-smooth",       "https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/brushes/smooth.html"),
+    (5, 13): ("sculpt-clay-strips",  "https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/brushes/clay_strips.html"),
+    (5, 14): ("sculpt-crease",       "https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/brushes/crease.html"),
+    (5, 15): ("sculpt-inflate",      "https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/brushes/inflate.html"),
+    (5, 16): ("sculpt-snake-hook",   "https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/brushes/snake_hook.html"),
 
     # Week 6: Material & Shader Node
     (6, 0): ("material-assign",      "https://docs.blender.org/manual/en/latest/render/materials/introduction.html"),
