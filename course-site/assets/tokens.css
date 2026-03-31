@@ -799,23 +799,34 @@ section, .section-inner {
   left: -9999px;
   top: 0;
   z-index: 999;
-  padding: 8px 16px;
+  padding: 12px 20px;
   background: var(--key);
   color: #fff;
-  font-size: .88rem;
+  font-size: .9rem;
   font-weight: var(--fw-semi);
   border-radius: 0 0 var(--radius-sm) var(--radius-sm);
 }
 .skip-link:focus {
-  left: 50%;
-  transform: translateX(-50%);
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  transform: none;
 }
 
 /* ─── Focus visible ─────────────────────────────── */
 :focus-visible {
-  outline: 2px solid var(--key);
+  outline: 2px solid var(--key-soft);
   outline-offset: 2px;
 }
 :focus:not(:focus-visible) {
   outline: none;
+}
+
+/* ─── Motion reduction (WCAG 2.3.3) ────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto;
+  }
 }
