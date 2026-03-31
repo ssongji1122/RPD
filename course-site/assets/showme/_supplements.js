@@ -395,6 +395,565 @@ const SHOWME_SUPPLEMENTS = {
       "armature-basics",
       "weight-paint"
     ]
+  },
+  "boolean-modifier": {
+    "title": "Boolean이 꼬였다면?",
+    "analogy": {
+      "emoji": "🍪",
+      "headline": "쿠키 커터로 반죽을 찍어내는 거예요",
+      "body": "Difference는 찍어서 빼고, Union은 두 덩어리를 합치고, Intersect는 겹치는 부분만 남기는 동작이에요. 커터(오브젝트)는 도구일 뿐이라 작업 후에도 남겨둬야 해요."
+    },
+    "before_after": {
+      "before": "Boolean 적용 후 커터 오브젝트를 삭제하면 Boolean이 풀려서 원래 형태로 돌아간다.",
+      "after": "커터는 H로 숨기고, 필요하면 나중에 수정할 수 있게 유지한다. Apply 후에야 안전하게 삭제 가능."
+    },
+    "confusion": [
+      {
+        "symptom": "Boolean 적용했는데 구멍 안쪽이 까맣게 보여요.",
+        "reason": "Difference로 뚫린 면의 Normal이 뒤집혀 있기 때문이에요.",
+        "fix": "Edit Mode → Mesh → Normals → Recalculate Outside (Shift+N)로 노말을 정리하세요."
+      },
+      {
+        "symptom": "커터 오브젝트를 삭제했더니 Boolean이 풀렸어요.",
+        "reason": "Modifier가 커터 오브젝트를 참조하고 있어서, 참조 대상이 사라지면 Modifier도 무효화돼요.",
+        "fix": "커터는 H로 숨기되 삭제하지 마세요. Apply 후에야 안전하게 삭제할 수 있어요."
+      }
+    ],
+    "takeaway": "Boolean은 오브젝트끼리 형태를 더하거나 빼는 도구예요. 커터는 숨기되 삭제하지 않는 게 핵심이에요.",
+    "targets": [
+      "boolean-modifier"
+    ]
+  },
+  "bevel-modifier": {
+    "title": "Bevel이 이상하다면?",
+    "analogy": {
+      "emoji": "🪵",
+      "headline": "나무 가구의 모서리를 사포로 깎는 작업이에요",
+      "body": "Segments는 사포질 횟수(많을수록 둥글게), Width는 깎는 폭이에요. Limit Method로 어떤 모서리만 깎을지 고를 수 있어요."
+    },
+    "before_after": {
+      "before": "Limit Method가 None이면 모든 모서리에 Bevel이 걸려서 의도하지 않은 곳까지 변형된다.",
+      "after": "Weight 방식으로 바꾸고 Ctrl+Shift+E로 원하는 엣지에만 가중치를 주면 선택적 Bevel이 가능하다."
+    },
+    "confusion": [
+      {
+        "symptom": "모든 모서리가 다 깎여버려요.",
+        "reason": "Limit Method가 기본값(None)이라 전체 엣지에 적용되고 있기 때문이에요.",
+        "fix": "Limit Method를 Weight로 바꾸고, 원하는 엣지에 Ctrl+Shift+E로 Bevel Weight를 지정하세요."
+      },
+      {
+        "symptom": "Bevel 후 음영이 지저분해요.",
+        "reason": "Bevel이 만든 좁은 면들의 Normal 방향이 불균일해서예요.",
+        "fix": "Bevel 아래에 Weighted Normal Modifier를 추가하면 음영이 깨끗해져요."
+      }
+    ],
+    "takeaway": "Bevel Modifier는 비파괴적으로 모서리를 다듬는 도구예요. Weight + Weighted Normal 조합이 실전 표준이에요.",
+    "targets": [
+      "bevel-modifier"
+    ]
+  },
+  "weighted-normal": {
+    "title": "음영이 이상하다면?",
+    "analogy": {
+      "emoji": "🪞",
+      "headline": "큰 거울 하나 vs 작은 거울 조각 여러 개",
+      "body": "큰 면이 주변 작은 면의 음영 방향을 이끌어서, 평면은 깨끗하고 곡면만 부드럽게 보이게 해요. Shade Smooth만으로는 이 구분이 안 돼요."
+    },
+    "before_after": {
+      "before": "Shade Smooth만 적용하면 평평해야 할 면까지 울퉁불퉁한 음영이 생긴다.",
+      "after": "Weighted Normal을 추가하면 면 크기 기반으로 Normal이 재계산되어 평면은 깨끗, 곡면만 부드럽게 보인다."
+    },
+    "confusion": [
+      {
+        "symptom": "Weighted Normal을 추가했는데 변화가 없어요.",
+        "reason": "Modifier 스택에서 Bevel보다 위에 있거나, Shade Smooth가 적용되지 않은 상태이기 때문이에요.",
+        "fix": "Weighted Normal은 반드시 Bevel 아래에 놓고, 오브젝트에 Shade Smooth가 적용되어 있어야 해요."
+      },
+      {
+        "symptom": "Shade Smooth 했는데 평평한 면이 울퉁불퉁해요.",
+        "reason": "Auto Smooth 없이 Smooth만 적용하면 모든 면이 무차별적으로 부드러워져서예요.",
+        "fix": "Properties → Object Data → Normals에서 Auto Smooth를 활성화하세요."
+      }
+    ],
+    "takeaway": "Weighted Normal은 면 크기 기반으로 노말을 재계산해서 하드서페이스 음영을 정리하는 마무리 도구예요.",
+    "targets": [
+      "weighted-normal"
+    ]
+  },
+  "join-separate": {
+    "title": "합치기·나누기가 꼬였다면?",
+    "analogy": {
+      "emoji": "🧱",
+      "headline": "레고 블록을 합치거나 분리하는 거예요",
+      "body": "Join(Ctrl+J)은 여러 블록을 하나로 합치고, Separate(P)는 하나의 덩어리에서 일부를 떼어내요. Active Object가 결과의 이름과 Origin을 결정해요."
+    },
+    "before_after": {
+      "before": "Active Object를 신경 쓰지 않고 Join하면 Origin이 엉뚱한 위치로 가서 회전/스케일 기준점이 예상과 달라진다.",
+      "after": "Join 전에 Active Object를 신중하게 선택하면 Origin 위치, 이름, 머티리얼 순서를 예측할 수 있다."
+    },
+    "confusion": [
+      {
+        "symptom": "Join 했더니 Origin이 이상한 곳으로 갔어요.",
+        "reason": "Active Object의 Origin을 따라가기 때문이에요. 마지막에 선택한 오브젝트가 Active가 돼요.",
+        "fix": "Join 전에 Shift+클릭 순서를 조절해서 원하는 오브젝트를 마지막에 선택하세요."
+      },
+      {
+        "symptom": "Separate 했는데 메시가 안 나눠져요.",
+        "reason": "Object Mode에서는 Separate가 불가능해요. Edit Mode에서만 작동해요.",
+        "fix": "Tab으로 Edit Mode 진입 → 분리할 부분 선택 → P → Selection으로 분리하세요."
+      }
+    ],
+    "takeaway": "Join은 합치기, Separate는 나누기. Active Object가 결과의 이름·Origin·머티리얼 순서를 결정해요.",
+    "targets": [
+      "join-separate"
+    ]
+  },
+  "edge-split-modifier": {
+    "title": "엣지가 날카롭지 않다면?",
+    "analogy": {
+      "emoji": "✂️",
+      "headline": "종이접기에서 접힌 선을 칼로 갈라놓는 거예요",
+      "body": "Edge Split은 날카로워야 할 엣지에서 메시를 실제로 분리해서 Smooth가 넘어가지 않게 해요. Mark Sharp는 표시만 하는 것과 달리 실제 분리예요."
+    },
+    "before_after": {
+      "before": "Auto Smooth만으로 날카로운 엣지가 표현 안 될 때, 각도를 줄이면 다른 곳까지 깨져 보인다.",
+      "after": "문제가 되는 엣지에만 Edge Split을 적용하면 해당 엣지만 깔끔하게 갈라진다."
+    },
+    "confusion": [
+      {
+        "symptom": "Edge Split과 Mark Sharp의 차이를 모르겠어요.",
+        "reason": "Edge Split은 메시를 실제로 분리(버텍스 복제)하고, Mark Sharp는 렌더링 힌트만 남겨요.",
+        "fix": "먼저 Auto Smooth + Mark Sharp로 시도하고, 그래도 안 되면 Edge Split을 사용하세요."
+      }
+    ],
+    "takeaway": "Edge Split은 날카로운 엣지를 강제로 만드는 도구예요. Auto Smooth로 해결 안 될 때만 사용하세요.",
+    "targets": [
+      "edge-split-modifier"
+    ]
+  },
+  "triangulate-modifier": {
+    "title": "삼각형으로 바꿔야 하나요?",
+    "analogy": {
+      "emoji": "📐",
+      "headline": "사각 타일을 대각선으로 잘라 삼각형으로 바꾸는 거예요",
+      "body": "게임 엔진은 삼각형만 처리해요. Triangulate는 사각형 이상의 면을 삼각형으로 분할해서 내보내기에 적합하게 만들어요."
+    },
+    "before_after": {
+      "before": "N-gon(5각형 이상)이 포함된 메시를 게임 엔진으로 내보내면 셰이딩이 깨지거나 면이 사라진다.",
+      "after": "Export 직전에 Triangulate를 적용하면 모든 면이 삼각형으로 변환되어 호환성이 보장된다."
+    },
+    "confusion": [
+      {
+        "symptom": "모델링 중에 Triangulate를 써도 되나요?",
+        "reason": "삼각형은 편집이 어렵고 루프컷 등이 안 돼서 모델링에 부적합해요.",
+        "fix": "모델링 중에는 사용하지 말고, Export 직전 마지막 단계에서만 적용하세요."
+      }
+    ],
+    "takeaway": "Triangulate는 내보내기 직전에 적용하는 호환성 도구예요. 모델링 중에는 사용하지 마세요.",
+    "targets": [
+      "triangulate-modifier"
+    ]
+  },
+  "weld-modifier": {
+    "title": "버텍스가 겹쳐 있다면?",
+    "analogy": {
+      "emoji": "⚡",
+      "headline": "겹쳐진 점들을 하나로 녹여 붙이는 용접이에요",
+      "body": "Weld는 지정 거리 안의 중복 버텍스를 자동으로 합쳐요. Merge by Distance와 같은 효과지만, Modifier라서 비파괴적이에요."
+    },
+    "before_after": {
+      "before": "Boolean이나 Array 후 겹친 버텍스가 남아서 음영 깨짐이나 구멍이 생긴다.",
+      "after": "Weld Modifier를 추가하면 중복 버텍스가 자동 합쳐져서 메시가 깨끗해진다."
+    },
+    "confusion": [
+      {
+        "symptom": "Merge by Distance와 뭐가 다르나요?",
+        "reason": "기능은 같지만, Weld는 Modifier(비파괴적)이고 Merge by Distance는 즉시 적용(파괴적)이에요.",
+        "fix": "작업 중에는 Weld Modifier를 쓰고, 최종 정리 시에만 Merge by Distance를 직접 실행하세요."
+      }
+    ],
+    "takeaway": "Weld는 중복 버텍스를 자동 정리하는 비파괴적 도구예요. Boolean·Array 후 정리용으로 사용하세요.",
+    "targets": [
+      "weld-modifier"
+    ]
+  },
+  "build-modifier": {
+    "title": "Build가 안 보인다면?",
+    "analogy": {
+      "emoji": "🏗️",
+      "headline": "벽돌을 하나씩 쌓아올리는 타임랩스예요",
+      "body": "Build는 면을 순서대로 하나씩 나타나게 하는 애니메이션 효과예요. 타임라인을 재생해야 효과가 보여요."
+    },
+    "before_after": {
+      "before": "Build Modifier를 추가했는데 아무 변화가 없어서 고장난 줄 안다.",
+      "after": "Space로 타임라인을 재생하면 면이 순서대로 나타나는 애니메이션을 확인할 수 있다."
+    },
+    "confusion": [
+      {
+        "symptom": "Build를 추가해도 아무것도 안 보여요.",
+        "reason": "현재 프레임이 Build 시작 전이거나, 타임라인을 재생하지 않았기 때문이에요.",
+        "fix": "타임라인을 1프레임으로 이동한 뒤 Space로 재생하세요."
+      }
+    ],
+    "takeaway": "Build는 면을 순서대로 나타나게 하는 애니메이션 Modifier예요. 타임라인 재생이 필수예요.",
+    "targets": [
+      "build-modifier"
+    ]
+  },
+  "decimate-modifier": {
+    "title": "폴리곤을 줄이고 싶다면?",
+    "analogy": {
+      "emoji": "📉",
+      "headline": "고해상도 사진을 저해상도로 압축하는 거예요",
+      "body": "Decimate는 메시의 폴리곤 수를 줄여서 파일 크기를 가볍게 해요. 게임이나 AR처럼 성능이 중요한 곳에서 사용해요."
+    },
+    "before_after": {
+      "before": "Ratio를 너무 낮게 설정하면 형태가 무너져서 알아볼 수 없게 된다.",
+      "after": "Ratio 0.5부터 시작해서 형태가 유지되는 최저 수준까지 점진적으로 낮추면 최적의 결과를 얻을 수 있다."
+    },
+    "confusion": [
+      {
+        "symptom": "폴리곤을 줄였더니 형태가 완전히 무너졌어요.",
+        "reason": "Ratio를 한 번에 너무 낮게 설정했기 때문이에요.",
+        "fix": "0.5부터 시작해서 0.1씩 줄이며 형태를 확인하세요. Planar 모드도 시도해 보세요."
+      }
+    ],
+    "takeaway": "Decimate는 폴리곤 수를 줄이는 최적화 도구예요. Ratio를 점진적으로 조절하는 게 핵심이에요.",
+    "targets": [
+      "decimate-modifier"
+    ]
+  },
+  "remesh-modifier": {
+    "title": "토폴로지가 엉망이라면?",
+    "analogy": {
+      "emoji": "🔲",
+      "headline": "울퉁불퉁한 점토를 균일한 격자로 다시 찍어내는 거예요",
+      "body": "Remesh는 기존 메시의 형태를 유지하면서 토폴로지를 균일한 격자로 재구성해요. 스컬프팅 준비에 많이 써요."
+    },
+    "before_after": {
+      "before": "Voxel Size가 너무 크면 디테일이 뭉개져서 원래 형태를 잃는다.",
+      "after": "Voxel Size를 작게(0.02~0.05) 설정하면 원래 형태를 유지하면서 균일한 토폴로지를 얻을 수 있다."
+    },
+    "confusion": [
+      {
+        "symptom": "Remesh 후 디테일이 다 사라졌어요.",
+        "reason": "Voxel Size가 너무 커서 세부 형태가 뭉개진 거예요.",
+        "fix": "Voxel Size 값을 줄이세요. 오브젝트 크기에 따라 0.01~0.05 범위가 적절해요."
+      }
+    ],
+    "takeaway": "Remesh는 불규칙한 토폴로지를 균일한 격자로 재구성하는 도구예요. Voxel Size 조절이 핵심이에요.",
+    "targets": [
+      "remesh-modifier"
+    ]
+  },
+  "screw-modifier": {
+    "title": "회전체가 안 만들어진다면?",
+    "analogy": {
+      "emoji": "🌀",
+      "headline": "도자기 물레에 프로파일을 돌려 형태를 만드는 거예요",
+      "body": "Screw는 단면(프로파일)을 축 중심으로 회전시켜 3D 형태를 만들어요. 컵, 꽃병, 나사처럼 축 대칭인 물체에 적합해요."
+    },
+    "before_after": {
+      "before": "프로파일이 축 위에 있으면 회전해도 면이 생기지 않는다.",
+      "after": "프로파일을 축에서 적절히 떨어뜨리면 회전 시 원하는 3D 형태가 만들어진다."
+    },
+    "confusion": [
+      {
+        "symptom": "Screw를 추가해도 회전체가 안 생겨요.",
+        "reason": "프로파일(커브나 엣지)이 회전축 위에 있거나 Origin 위치가 잘못된 거예요.",
+        "fix": "Origin을 회전축 중심에 놓고, 프로파일은 축에서 떨어뜨려 배치하세요."
+      }
+    ],
+    "takeaway": "Screw는 단면을 축 중심으로 회전시켜 3D 형태를 만드는 도구예요. Origin 위치가 핵심이에요.",
+    "targets": [
+      "screw-modifier"
+    ]
+  },
+  "skin-modifier": {
+    "title": "뼈대에 살을 입히고 싶다면?",
+    "analogy": {
+      "emoji": "🦠",
+      "headline": "와이어 뼈대에 살을 입히는 거예요",
+      "body": "Skin은 점과 선으로 이루어진 뼈대에 메시 표면을 자동으로 생성해요. 나뭇가지, 촉수, 유기체 형태에 적합해요."
+    },
+    "before_after": {
+      "before": "모든 버텍스가 같은 두께라 밋밋하고 덩어리처럼 보인다.",
+      "after": "버텍스마다 Ctrl+A로 두께를 조절하면 가지가 갈라지는 자연스러운 형태가 만들어진다."
+    },
+    "confusion": [
+      {
+        "symptom": "전체가 하나의 덩어리로 뭉쳐요.",
+        "reason": "모든 버텍스의 반경이 동일하게 설정되어 있기 때문이에요.",
+        "fix": "각 버텍스를 선택하고 Ctrl+A로 X/Y 반경을 개별 조절하세요."
+      }
+    ],
+    "takeaway": "Skin은 뼈대에 메시 표면을 자동 생성하는 도구예요. 버텍스별 Ctrl+A 두께 조절이 핵심이에요.",
+    "targets": [
+      "skin-modifier"
+    ]
+  },
+  "wireframe-modifier": {
+    "title": "와이어프레임을 만들고 싶다면?",
+    "analogy": {
+      "emoji": "🕸️",
+      "headline": "건축 모형의 뼈대만 남기는 거예요",
+      "body": "Wireframe은 엣지를 따라 와이어프레임 형태의 메시를 생성해요. 건축 모형, 장식 패턴, 과학 시각화에 사용해요."
+    },
+    "before_after": {
+      "before": "Replace Original이 켜져 있으면 원래 면이 사라지고 와이어만 남는다.",
+      "after": "Replace Original을 끄면 원래 오브젝트 위에 와이어프레임이 겹쳐서 장식 효과가 된다."
+    },
+    "confusion": [
+      {
+        "symptom": "면이 다 사라지고 선만 보여요.",
+        "reason": "Replace Original이 기본 켜짐이라 원래 면이 와이어로 대체된 거예요.",
+        "fix": "Modifier 패널에서 Replace Original 체크를 해제하세요."
+      }
+    ],
+    "takeaway": "Wireframe은 엣지를 따라 와이어프레임 메시를 생성하는 도구예요. Replace Original 옵션에 주의하세요.",
+    "targets": [
+      "wireframe-modifier"
+    ]
+  },
+  "mask-modifier": {
+    "title": "일부만 숨기고 싶다면?",
+    "analogy": {
+      "emoji": "🎭",
+      "headline": "무대 조명처럼 원하는 부분만 비추는 거예요",
+      "body": "Mask는 Vertex Group에 포함된 부분만 보여주고 나머지를 숨겨요. 복잡한 모델에서 특정 영역만 작업할 때 유용해요."
+    },
+    "before_after": {
+      "before": "Vertex Group을 지정하지 않으면 Mask를 추가해도 아무 변화가 없다.",
+      "after": "Vertex Group을 만들고 Mask에 지정하면 해당 그룹에 포함된 부분만 표시된다."
+    },
+    "confusion": [
+      {
+        "symptom": "Mask를 적용해도 아무것도 안 숨겨져요.",
+        "reason": "Vertex Group이 비어 있거나 지정되지 않았기 때문이에요.",
+        "fix": "먼저 Edit Mode에서 숨길/보여줄 영역을 Vertex Group으로 지정한 뒤 Mask에 연결하세요."
+      }
+    ],
+    "takeaway": "Mask는 Vertex Group 기반으로 메시 일부를 숨기는 도구예요. Vertex Group 설정이 선행되어야 해요.",
+    "targets": [
+      "mask-modifier"
+    ]
+  },
+  "multiresolution-modifier": {
+    "title": "스컬프팅 해상도를 조절하고 싶다면?",
+    "analogy": {
+      "emoji": "🔍",
+      "headline": "지도의 줌 레벨처럼 디테일 단계를 조절하는 거예요",
+      "body": "Multiresolution은 여러 해상도 레벨에서 독립적으로 스컬프팅할 수 있게 해요. 낮은 레벨에서 큰 형태, 높은 레벨에서 세부 디테일을 잡아요."
+    },
+    "before_after": {
+      "before": "Subdivision 레벨을 안 올리면 Sculpt 모드에서 디테일을 잡을 수 없다.",
+      "after": "Subdivide 버튼으로 레벨을 올린 뒤 각 레벨에서 독립적으로 디테일을 추가할 수 있다."
+    },
+    "confusion": [
+      {
+        "symptom": "Sculpt 모드에서 디테일이 안 잡혀요.",
+        "reason": "Subdivision 레벨이 낮아서 버텍스가 부족한 거예요.",
+        "fix": "Modifier 패널에서 Subdivide를 눌러 레벨을 올리세요. 레벨 3~4부터 디테일 작업이 가능해요."
+      }
+    ],
+    "takeaway": "Multiresolution은 해상도 레벨별로 독립 스컬프팅이 가능한 도구예요. SubSurf와 달리 각 레벨을 따로 편집할 수 있어요.",
+    "targets": [
+      "multiresolution-modifier"
+    ]
+  },
+  "volume-to-mesh": {
+    "title": "볼륨을 메시로 바꾸고 싶다면?",
+    "analogy": {
+      "emoji": "💨",
+      "headline": "안개를 얼려서 고체로 만드는 거예요",
+      "body": "Volume to Mesh는 볼륨 데이터(연기, 유체 등)를 메시 표면으로 변환해요. 시뮬레이션 결과를 편집 가능한 메시로 만들 때 사용해요."
+    },
+    "before_after": {
+      "before": "Volume to Mesh가 메뉴에 안 보이거나 적용해도 결과가 없다.",
+      "after": "먼저 Mesh to Volume으로 볼륨을 만든 뒤 Volume to Mesh를 적용하면 메시로 변환된다."
+    },
+    "confusion": [
+      {
+        "symptom": "Volume to Mesh가 메뉴에 없어요.",
+        "reason": "선택한 오브젝트가 볼륨 타입이 아니기 때문이에요.",
+        "fix": "먼저 Mesh to Volume Modifier로 볼륨 오브젝트를 만들거나, 시뮬레이션 캐시에서 볼륨을 가져오세요."
+      }
+    ],
+    "takeaway": "Volume to Mesh는 볼륨 데이터를 편집 가능한 메시로 변환하는 도구예요. 볼륨 오브젝트가 선행되어야 해요.",
+    "targets": [
+      "volume-to-mesh"
+    ]
+  },
+  "curve-to-tube": {
+    "title": "커브로 파이프를 만들고 싶다면?",
+    "analogy": {
+      "emoji": "🔄",
+      "headline": "호스를 경로를 따라 배치하는 거예요",
+      "body": "Curve에 Bevel Depth를 주면 경로를 따라 파이프 형태가 자동으로 생성돼요. 케이블, 파이프, 로프에 적합해요."
+    },
+    "before_after": {
+      "before": "커브만 있고 Bevel Depth가 0이면 경로 선만 보이고 파이프가 안 만들어진다.",
+      "after": "Curve Properties → Geometry → Bevel Depth를 0 이상으로 설정하면 파이프가 생성된다."
+    },
+    "confusion": [
+      {
+        "symptom": "커브가 보이는데 튜브가 안 생겨요.",
+        "reason": "Bevel Depth가 기본값 0이라 두께가 없기 때문이에요.",
+        "fix": "Properties → Object Data → Geometry → Bevel Depth 값을 0.01 이상으로 설정하세요."
+      }
+    ],
+    "takeaway": "Curve to Tube는 커브 경로에 Bevel Depth를 줘서 파이프를 만드는 기법이에요. Depth 설정이 핵심이에요.",
+    "targets": [
+      "curve-to-tube"
+    ]
+  },
+  "scatter-on-surface": {
+    "title": "표면에 오브젝트를 뿌리고 싶다면?",
+    "analogy": {
+      "emoji": "🌿",
+      "headline": "잔디밭에 씨앗을 뿌리는 거예요",
+      "body": "Geometry Nodes 기반으로 표면 위에 오브젝트를 자동 분산 배치해요. 풀, 돌, 나무 등 환경 구성에 적합해요."
+    },
+    "before_after": {
+      "before": "인스턴스 설정 없이 Distribute Points만 하면 점만 보이고 오브젝트가 나타나지 않는다.",
+      "after": "Instance on Points 노드로 오브젝트를 연결하면 각 점 위치에 인스턴스가 배치된다."
+    },
+    "confusion": [
+      {
+        "symptom": "오브젝트가 하나만 생기거나 점만 보여요.",
+        "reason": "Geometry Nodes에서 Instance on Points 설정이 빠져 있기 때문이에요.",
+        "fix": "Distribute Points on Faces → Instance on Points → 대상 오브젝트 연결 순서로 노드를 구성하세요."
+      }
+    ],
+    "takeaway": "Scatter는 Geometry Nodes 기반 분산 배치 도구예요. Distribute + Instance on Points 조합이 기본이에요.",
+    "targets": [
+      "scatter-on-surface"
+    ]
+  },
+  "sculpt-basics": {
+    "title": "Sculpt Mode, 어렵게 생각 말아요",
+    "analogy": {
+      "emoji": "🏺",
+      "headline": "디지털 점토 조각이에요",
+      "body": "Sculpt Mode는 마우스로 디지털 점토를 주무르는 거예요. 버텍스 좌표를 계산하는 게 아니라, 브러시로 밀고 당기고 부드럽게 만들면 돼요. 조각가가 점토 덩어리를 손으로 다듬는 느낌과 완전히 같아요."
+    },
+    "before_after": {
+      "before": "Edit Mode로만 유기적인 형태를 만들려면 버텍스 하나하나를 G키로 이동시켜야 해서 자연스러운 곡면이 나오지 않는다.",
+      "after": "Sculpt Mode에서 Grab 브러시 하나로 형태를 잡아당기면 자연스러운 곡면이 즉시 만들어진다."
+    },
+    "confusion": [
+      {
+        "symptom": "브러시로 칠해도 메쉬가 움직이지 않아요.",
+        "reason": "폴리곤 수가 너무 적으면 브러시 효과가 눈에 보이지 않아요.",
+        "fix": "Sculpt Mode 상단 Remesh 버튼(Ctrl+R)으로 폴리곤을 늘린 다음 다시 시도하세요."
+      }
+    ],
+    "takeaway": "Sculpt는 계산이 아니라 감각이에요. 일단 브러시로 밀고 당겨보면서 형태를 잡는 거예요.",
+    "officialVideos": [
+      {
+        "url": "https://studio.blender.org/training/sculpting-in-blender/introduction/",
+        "label": "Blender Studio — Introduction to Sculpting"
+      }
+    ],
+    "targets": [
+      "sculpt-basics"
+    ]
+  },
+  "sculpt-brushes": {
+    "title": "어떤 브러시를 써야 할지 모르겠다면?",
+    "analogy": {
+      "emoji": "🎨",
+      "headline": "연필·지우개·블렌더를 상황마다 골라 쓰듯이",
+      "body": "그림 그릴 때 스케치는 연필, 실수는 지우개, 경계는 블렌더로 처리하잖아요. Sculpt 브러시도 똑같아요. 처음엔 Grab과 Smooth만 써도 충분해요. 익숙해지면 Clay, Crease, Inflate, Snake Hook을 추가하면 돼요."
+    },
+    "before_after": {
+      "before": "Draw 브러시 하나만 쓰면 모든 형태를 올리고 내리는 것만 반복하게 되어서, 형태 잡기도 느리고 디테일 표현도 힘들다.",
+      "after": "큰 형태는 Grab, 볼륨은 Clay Strips, 선은 Crease, 정리는 Smooth로 나눠 쓰면 훨씬 빠르게 원하는 형태가 나온다."
+    },
+    "confusion": [
+      {
+        "symptom": "어떤 브러시를 써야 할지 모르겠어요.",
+        "reason": "브러시가 너무 많아서 선택 자체가 어렵게 느껴지기 때문이에요.",
+        "fix": "형태 잡기=Grab, 볼륨 쌓기=Clay Strips, 선 파기=Crease, 부풀리기=Inflate, 길게 뽑기=Snake Hook, 정리=Smooth. 이 6개만 기억하세요."
+      }
+    ],
+    "takeaway": "브러시를 많이 아는 것보다 상황에 맞는 브러시를 바로 떠올리는 게 더 중요해요.",
+    "officialVideos": [
+      {
+        "url": "https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/tools/index.html",
+        "label": "Blender 공식 — Sculpt Brushes 전체 목록"
+      }
+    ],
+    "targets": [
+      "sculpt-brushes"
+    ]
+  },
+  "ai-prompt-design": {
+    "title": "AI한테 어떻게 설명해야 원하는 게 나올까요?",
+    "analogy": {
+      "emoji": "📦",
+      "headline": "배달 주소처럼 구체적으로 말해야 해요",
+      "body": "'서울 어딘가'라고 하면 못 찾아요. 동·건물명·층수까지 말해야 찾아가죠. AI 프롬프트도 같아요. '로봇'은 너무 막연하고, '동글한 머리, 짧은 팔, 매트한 플라스틱 재질의 소형 동반자 로봇'이라고 해야 내 의도에 가깝게 나와요."
+    },
+    "before_after": {
+      "before": "'cute robot'으로 생성하면 AI가 마음대로 해석해서 전혀 다른 스타일이 나온다.",
+      "after": "'small companion robot, spherical head, stubby arms, matte plastic finish, 3D model'로 생성하면 형태와 재질감이 훨씬 의도에 가깝게 나온다."
+    },
+    "confusion": [
+      {
+        "symptom": "프롬프트를 길게 썼는데도 결과가 이상해요.",
+        "reason": "'귀여운', '멋진' 같은 추상적인 형용사만 넣었기 때문이에요.",
+        "fix": "추상 형용사 대신 형태를 묘사하는 구체적 명사를 쓰세요. 'cute' 대신 'spherical head, round body'처럼요."
+      }
+    ],
+    "takeaway": "공식: [형태 1~2개] + [스타일 1개] + [재질감 1~2개] + '3D model'. 이 순서로 쓰면 대부분 의도에 가깝게 나와요.",
+    "officialVideos": [
+      {
+        "url": "https://docs.meshy.ai/",
+        "label": "Meshy AI — 공식 문서 (프롬프트 가이드 포함)"
+      }
+    ],
+    "targets": [
+      "ai-prompt-design"
+    ]
+  },
+  "ai-3d-generation": {
+    "title": "AI가 만든 3D, 그냥 써도 될까요?",
+    "analogy": {
+      "emoji": "🤝",
+      "headline": "AI는 조수예요. 70% 방향만 잡아줘요",
+      "body": "AI 3D 생성 결과를 완성품으로 기대하면 실망해요. AI는 대략적인 형태를 빠르게 잡아주는 조수예요. 나머지 30%는 Blender에서 내가 다듬는 거예요. 오늘 목표는 '방향이 맞는지 확인'이지 '완성'이 아니에요."
+    },
+    "before_after": {
+      "before": "AI 결과를 그대로 제출하면 토폴로지 문제, 디테일 부족, 의도와 다른 형태가 그대로 남는다.",
+      "after": "AI 러프를 Sculpt나 Edit Mode로 다듬으면 작업 시간이 크게 줄면서도 완성도 높은 결과물이 나온다."
+    },
+    "confusion": [
+      {
+        "symptom": "AI가 만든 게 내 의도와 너무 달라요.",
+        "reason": "프롬프트 키워드 하나가 AI 해석에 크게 영향을 줘요.",
+        "fix": "키워드 하나씩 바꿔가며 2~3개 결과를 비교하세요. 가장 가까운 걸 선택하고 Blender에서 수정하면 돼요."
+      },
+      {
+        "symptom": "Import한 메쉬 폴리곤이 너무 많아서 느려요.",
+        "reason": "AI 도구는 기본으로 고해상도 메쉬를 생성해요.",
+        "fix": "Decimate Modifier로 Ratio 0.3~0.5 적용하세요. 형태가 유지되는 최저 수치를 찾아요."
+      }
+    ],
+    "takeaway": "AI 결과는 시작점이에요. 완벽하지 않아도 괜찮아요 — 방향이 맞는지 확인하고, 나머지는 Blender에서 다듬어요.",
+    "officialVideos": [
+      {
+        "url": "https://docs.meshy.ai/",
+        "label": "Meshy AI — 공식 문서"
+      },
+      {
+        "url": "https://platform.tripo3d.ai/",
+        "label": "Tripo AI — 공식 사이트"
+      }
+    ],
+    "targets": [
+      "ai-3d-generation"
+    ]
   }
 };
 if (typeof window !== "undefined") window.SHOWME_SUPPLEMENTS = SHOWME_SUPPLEMENTS;
