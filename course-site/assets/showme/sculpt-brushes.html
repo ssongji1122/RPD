@@ -109,6 +109,15 @@ body {
   color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
 }
 
+/* ── Brush Profile Micro-charts ── */
+.brush-profile {
+  display: block;
+  margin: 8px 0 4px;
+  border-radius: 4px;
+  background: rgba(0,0,0,.3);
+  border: 1px solid rgba(255,255,255,.06);
+}
+
 /* ── Badge ── */
 .badge {
   display: inline-block;
@@ -359,13 +368,10 @@ body {
 }
 .doc-ref a:hover { text-decoration: underline; }
 
+/* ── Scenario Nav ── */
 .scenario-nav { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
 .scenario-btn { padding:6px 14px; border-radius:20px; border:1px solid rgba(255,255,255,.15); background:transparent; color:var(--muted-soft); cursor:pointer; font-size:13px; transition:all .2s; font-family:inherit; }
 .scenario-btn.active { background:rgba(99,102,241,.25); border-color:rgba(99,102,241,.5); color:var(--secondary-soft); }
-.before-after { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:12px 0; }
-.ba-panel { border-radius:12px; overflow:hidden; background:var(--surface); }
-.ba-panel canvas { width:100%; display:block; }
-.ba-label { text-align:center; font-size:11px; color:var(--muted-mid); padding:4px; background:rgba(0,0,0,.2); }
 .cause-effect { display:flex; flex-direction:column; gap:8px; margin:12px 0; }
 .ce-row { display:flex; align-items:center; gap:8px; }
 .ce-cause { background:rgba(99,102,241,.12); border:1px solid rgba(99,102,241,.25); border-radius:8px; padding:6px 12px; font-size:13px; flex:1; color:var(--muted-strong); }
@@ -376,16 +382,59 @@ body {
 .result-c { background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.25); color:var(--danger-soft); }
 .scene-desc { font-size:.84rem; color:var(--muted-strong); margin-bottom:10px; padding:10px 14px; border-radius:var(--radius-sm); background:var(--surface); border:1px solid var(--line); line-height:1.7; }
 
-/* ── Sandbox ── */
+/* ── Enhanced Sandbox ── */
 .sandbox-toolbar { display:flex; gap:6px; padding:12px; flex-wrap:wrap; align-items:center; border-bottom:1px solid var(--line); background:var(--bg-soft); }
 .brush-btn { padding:6px 12px; border-radius:999px; border:1px solid var(--line-strong); background:rgba(255,255,255,.04); color:var(--muted-strong); font:inherit; font-size:.78rem; cursor:pointer; transition:background .14s,color .14s; }
 .brush-btn:hover { background:rgba(255,255,255,.09); color:var(--text); }
 .brush-btn.is-active { background:rgba(10,132,255,.14); color:var(--key-soft); border-color:rgba(10,132,255,.3); }
-.sandbox-canvas-wrap { position:relative; border-radius:var(--radius-md); border:1px solid var(--line); background:var(--surface); overflow:hidden; margin:14px 0; }
-.sandbox-canvas-wrap canvas { display:block; width:100%; cursor:crosshair; }
-.sandbox-info { display:flex; justify-content:space-between; padding:8px 12px; font-size:.78rem; color:var(--muted); border-top:1px solid var(--line); }
+.sandbox-canvas-wrap { position:relative; border-radius:var(--radius-md); border:1px solid var(--line); background:#070b14; overflow:hidden; margin:14px 0; }
+.sandbox-canvas-wrap canvas { cursor: crosshair; display: block; width: 100%; }
 .sandbox-reset { padding:6px 16px; border-radius:999px; border:1px solid var(--line-strong); background:rgba(255,255,255,.04); color:var(--muted-strong); font:inherit; font-size:.8rem; cursor:pointer; }
 .sandbox-reset:hover { background:rgba(255,255,255,.09); }
+
+/* ── Brush Formula Bar ── */
+.brush-formula-bar {
+  padding: 7px 12px;
+  background: rgba(0,0,0,.3);
+  border-top: 1px solid var(--line);
+  font-family: monospace;
+  font-size: .8rem;
+  color: var(--key-soft);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.brush-formula-bar .brush-name-tag {
+  background: rgba(10,132,255,.15);
+  border: 1px solid rgba(10,132,255,.3);
+  border-radius: 4px;
+  padding: 2px 8px;
+  color: var(--key-soft);
+  font-size: .74rem;
+}
+
+/* ── Cross-section Comparison ── */
+.comparison-canvas-wrap {
+  margin: 12px 0;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: #070b14;
+  overflow: hidden;
+}
+.comparison-canvas-wrap canvas { display: block; width: 100%; }
+.comparison-annotation {
+  padding: 10px 14px;
+  background: rgba(0,0,0,.2);
+  border-top: 1px solid var(--line);
+  font-size: .82rem;
+  color: var(--muted-strong);
+}
+.comparison-annotation .formula {
+  font-family: monospace;
+  color: var(--key-soft);
+  font-size: .88rem;
+  margin-top: 4px;
+}
 
 /* ── Responsive ── */
 @media (max-width: 600px) {
@@ -393,7 +442,6 @@ body {
   .tabs { padding: 0 8px; }
   .tab { padding: 10px 12px; font-size: .8rem; }
   .panel { padding: 16px 12px; }
-  .before-after { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -414,48 +462,56 @@ body {
 
     <div class="concept-card">
       <h3>Draw <span class="badge badge-blue">기본</span></h3>
+      <canvas class="brush-profile" data-profile="draw" width="80" height="44"></canvas>
       <p>크레파스로 칠하듯이 표면을 올려요. <span class="kbd">X</span>로 빠른 선택, <span class="kbd">Ctrl</span> 누르면 파내기.</p>
       <div class="analogy">크레파스로 종이 위를 칠하는 것처럼 — 누르는 만큼 솟아오르는 기본 브러시예요</div>
     </div>
 
     <div class="concept-card">
       <h3>Clay Strips <span class="badge badge-green">덧붙이기</span></h3>
+      <canvas class="brush-profile" data-profile="clay" width="80" height="44"></canvas>
       <p>찰흙 띠를 붙이듯이 넓은 면에 층층이 쌓아요.</p>
       <div class="analogy">납작하게 민 찰흙 띠를 표면에 하나씩 붙이는 느낌이에요</div>
     </div>
 
     <div class="concept-card">
       <h3>Clay <span class="badge badge-green">밀어붙이기</span></h3>
+      <canvas class="brush-profile" data-profile="claybasic" width="80" height="44"></canvas>
       <p>손바닥으로 찰흙을 누르듯이 밀면서 쌓아요. Draw보다 평탄한 결과.</p>
       <div class="analogy">손바닥으로 찰흙을 꾹 누르는 것 — Draw보다 면이 고르게 쌓여요</div>
     </div>
 
     <div class="concept-card">
       <h3>Inflate <span class="badge badge-amber">부풀리기</span></h3>
+      <canvas class="brush-profile" data-profile="inflate" width="80" height="44"></canvas>
       <p>풍선처럼 바깥으로 부풀려요. 볼이나 근육 강조.</p>
       <div class="analogy">표면 아래에서 공기를 불어넣는 것처럼 — 균일하게 부풀어 오르는 느낌이에요</div>
     </div>
 
     <div class="concept-card">
       <h3>Crease <span class="badge badge-amber">홈 파기</span></h3>
+      <canvas class="brush-profile" data-profile="crease" width="80" height="44"></canvas>
       <p>송곳으로 긋듯이 깊고 날카로운 주름. <span class="kbd">Shift</span>+<span class="kbd">C</span>로 빠른 선택.</p>
       <div class="analogy">손톱으로 찰흙 표면을 꾹 긁듯이 — 날카롭고 깊은 선이 생겨요</div>
     </div>
 
     <div class="concept-card">
       <h3>Grab <span class="badge badge-blue">잡아 당기기</span></h3>
+      <canvas class="brush-profile" data-profile="grab" width="80" height="44"></canvas>
       <p>찰흙을 잡고 끌어당겨요. <span class="kbd">G</span>로 빠른 선택.</p>
       <div class="analogy">반죽을 엄지와 검지로 잡고 당기는 것처럼 — 형태 전체를 크게 변형해요</div>
     </div>
 
     <div class="concept-card">
       <h3>Snake Hook <span class="badge badge-amber">끌어내기</span></h3>
+      <canvas class="brush-profile" data-profile="snakehook" width="80" height="44"></canvas>
       <p>찰흙 끝을 잡고 길게 늘여요. <span class="kbd">K</span>로 빠른 선택.</p>
       <div class="analogy">뱀처럼 늘어나는 느낌 — 뿔이나 촉수를 뽑아낼 때 써요</div>
     </div>
 
     <div class="concept-card">
       <h3>Smooth <span class="badge badge-blue">정리</span></h3>
+      <canvas class="brush-profile" data-profile="smooth" width="80" height="44"></canvas>
       <p>손가락으로 쓸듯이 정리. <span class="kbd">Shift</span> 누르고 있으면 임시 Smooth.</p>
       <div class="analogy">손가락으로 표면을 부드럽게 문지르는 것처럼 — 울퉁불퉁한 부분을 다듬어요</div>
     </div>
@@ -502,14 +558,14 @@ body {
     <button class="sandbox-reset" id="sandboxReset">초기화</button>
   </div>
   <div class="sandbox-canvas-wrap">
-    <canvas id="sandboxCanvas" width="400" height="400"></canvas>
-    <div class="sandbox-info">
-      <span id="sandboxBrushDesc">Draw — 표면을 올려요. Ctrl 누르면 파내기.</span>
-      <span id="sandboxHint">드래그로 조각 · Ctrl=반전 · Shift=Smooth</span>
+    <canvas id="sandboxCanvas" width="600" height="340"></canvas>
+    <div class="brush-formula-bar">
+      <span class="brush-name-tag" id="formulaBrushTag">Draw</span>
+      <span id="formulaText">&#916;v = S &middot; e<sup>-3(d/R)&sup2;</sup> &middot; n&#770;</span>
     </div>
   </div>
   <div class="tip-box">
-    <strong>팁:</strong> 이 샌드박스는 2D 높이맵으로 Sculpt 브러시의 느낌을 시뮬레이션합니다. 각 브러시를 눌러 특성 차이를 직접 비교해보세요.
+    <strong>팁:</strong> 이 샌드박스는 N=60 버텍스 높이맵으로 Sculpt 브러시의 느낌을 시뮬레이션합니다. Ctrl=반전, Shift=Smooth 임시 전환.
   </div>
 </section>
 
@@ -521,15 +577,12 @@ body {
     <button class="scenario-btn" data-scene="crease">Crease</button>
     <button class="scenario-btn" data-scene="snakehook">Snake Hook</button>
   </div>
-  <div class="scene-desc" id="visual-scene-desc">Clay Strips 브러시는 찰흙 띠를 층층이 붙이듯 넓은 면에 볼륨을 쌓아 올립니다.</div>
-  <div class="before-after">
-    <div class="ba-panel">
-      <canvas id="visual-canvas-before" width="280" height="160"></canvas>
-      <div class="ba-label">적용 전</div>
-    </div>
-    <div class="ba-panel">
-      <canvas id="visual-canvas-after" width="280" height="160"></canvas>
-      <div class="ba-label">적용 후</div>
+  <div class="scene-desc" id="visual-scene-desc">Clay Strips 브러시는 찰흙 띠를 층층이 붙이듯 넓은 면에 볼륨을 쌓아 올립니다. 피크를 저항해 평탄한 레이어를 만듭니다.</div>
+  <div class="comparison-canvas-wrap">
+    <canvas id="comparisonCanvas" width="560" height="200"></canvas>
+    <div class="comparison-annotation">
+      <div id="comparisonDesc">넓은 평탄한 화살표가 표면을 균등하게 위로 밀어올리며, 이미 높은 부분은 저항이 생겨 평탄한 층이 쌓입니다.</div>
+      <div class="formula" id="comparisonFormula">&#916;v = S &middot; f(d/R) &middot; clamp(1 - h/h<sub>max</sub>, 0, 1) &middot; n&#770;</div>
     </div>
   </div>
   <div class="cause-effect" id="visual-cause-effect"></div>
@@ -622,11 +675,916 @@ document.querySelectorAll(".tab").forEach(function(tab) {
     document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("is-active"); });
     tab.classList.add("is-active");
     tab.setAttribute("aria-selected", "true");
-    document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+    var targetId = "panel-" + tab.dataset.tab;
+    document.getElementById(targetId).classList.add("is-active");
+    if (tab.dataset.tab === "compare") {
+      setTimeout(function() { switchComparisonScene("claystrips"); }, 50);
+    }
   });
 });
 
-// ── Quiz Engine (Safe DOM methods) ────────────
+// ══════════════════════════════════════════════
+// BRUSH PROFILE MICRO-CHARTS
+// ══════════════════════════════════════════════
+function drawBrushProfile(canvas, type) {
+  var ctx = canvas.getContext("2d");
+  var W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  var padX = 6, padY = 6;
+  var w = W - padX * 2, h = H - padY * 2;
+  var baseline = padY + h * 0.72;
+
+  ctx.lineWidth = 4;
+  ctx.lineJoin = "round";
+  ctx.lineCap = "round";
+
+  function gaussianY(x, cx, sigma, amp) {
+    var dx = (x - cx) / (w * sigma);
+    return baseline - amp * Math.exp(-3 * dx * dx);
+  }
+
+  if (type === "draw") {
+    // Bell curve (Gaussian bump up)
+    var color = "rgba(100,170,255,.9)";
+    ctx.strokeStyle = color;
+    ctx.fillStyle = "rgba(100,170,255,.18)";
+    ctx.beginPath();
+    ctx.moveTo(padX, baseline);
+    for (var x = 0; x <= w; x++) {
+      var y = gaussianY(x, w / 2, 0.38, h * 0.52);
+      if (x === 0) ctx.moveTo(padX + x, y);
+      else ctx.lineTo(padX + x, y);
+    }
+    ctx.lineTo(padX + w, baseline);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(padX, baseline);
+    for (var x2 = 0; x2 <= w; x2++) {
+      var y2 = gaussianY(x2, w / 2, 0.38, h * 0.52);
+      if (x2 === 0) ctx.moveTo(padX + x2, y2);
+      else ctx.lineTo(padX + x2, y2);
+    }
+    ctx.strokeStyle = color;
+    ctx.stroke();
+
+  } else if (type === "clay") {
+    // Flat-top plateau
+    var color2 = "rgba(100,255,150,.9)";
+    var plateauH = h * 0.46;
+    var plateauW = w * 0.45;
+    var cx2 = w / 2;
+    ctx.fillStyle = "rgba(100,255,150,.16)";
+    ctx.beginPath();
+    ctx.moveTo(padX, baseline);
+    ctx.lineTo(padX + cx2 - plateauW / 2 - 10, baseline);
+    ctx.bezierCurveTo(
+      padX + cx2 - plateauW / 2, baseline,
+      padX + cx2 - plateauW / 2, baseline - plateauH,
+      padX + cx2 - plateauW / 2, baseline - plateauH
+    );
+    ctx.lineTo(padX + cx2 + plateauW / 2, baseline - plateauH);
+    ctx.bezierCurveTo(
+      padX + cx2 + plateauW / 2, baseline - plateauH,
+      padX + cx2 + plateauW / 2, baseline,
+      padX + cx2 + plateauW / 2 + 10, baseline
+    );
+    ctx.lineTo(padX + w, baseline);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = color2;
+    ctx.beginPath();
+    ctx.moveTo(padX, baseline);
+    ctx.lineTo(padX + cx2 - plateauW / 2 - 10, baseline);
+    ctx.bezierCurveTo(
+      padX + cx2 - plateauW / 2, baseline,
+      padX + cx2 - plateauW / 2, baseline - plateauH,
+      padX + cx2 - plateauW / 2, baseline - plateauH
+    );
+    ctx.lineTo(padX + cx2 + plateauW / 2, baseline - plateauH);
+    ctx.bezierCurveTo(
+      padX + cx2 + plateauW / 2, baseline - plateauH,
+      padX + cx2 + plateauW / 2, baseline,
+      padX + cx2 + plateauW / 2 + 10, baseline
+    );
+    ctx.lineTo(padX + w, baseline);
+    ctx.stroke();
+
+  } else if (type === "claybasic") {
+    // Smooth rounded mound — shallower than Draw, wider
+    var color3 = "rgba(80,230,130,.9)";
+    ctx.fillStyle = "rgba(80,230,130,.16)";
+    ctx.strokeStyle = color3;
+    ctx.beginPath();
+    ctx.moveTo(padX, baseline);
+    for (var xc = 0; xc <= w; xc++) {
+      var dx3 = (xc - w / 2) / (w * 0.42);
+      var yc = baseline - h * 0.4 * Math.exp(-2.2 * dx3 * dx3);
+      if (xc === 0) ctx.moveTo(padX + xc, yc);
+      else ctx.lineTo(padX + xc, yc);
+    }
+    ctx.lineTo(padX + w, baseline);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(padX, baseline);
+    for (var xc2 = 0; xc2 <= w; xc2++) {
+      var dx4 = (xc2 - w / 2) / (w * 0.42);
+      var yc2 = baseline - h * 0.4 * Math.exp(-2.2 * dx4 * dx4);
+      if (xc2 === 0) ctx.moveTo(padX + xc2, yc2);
+      else ctx.lineTo(padX + xc2, yc2);
+    }
+    ctx.stroke();
+
+  } else if (type === "inflate") {
+    // Smooth outward expansion arcs — wider even bubble
+    var colorI = "rgba(100,200,255,.9)";
+    ctx.fillStyle = "rgba(100,200,255,.16)";
+    ctx.strokeStyle = colorI;
+    // Draw arc-like bump (slightly flatter than gaussian, like a sphere cross-section)
+    ctx.beginPath();
+    ctx.moveTo(padX, baseline);
+    var arcR = w * 0.52;
+    var arcCX = padX + w / 2;
+    var arcCY = baseline + Math.sqrt(Math.max(0, arcR * arcR - (w * 0.48) * (w * 0.48))) - h * 0.35;
+    for (var xi = 0; xi <= w; xi++) {
+      var relX = (xi - w / 2);
+      var insideR = arcR * arcR - relX * relX;
+      var yi;
+      if (insideR >= 0) {
+        yi = arcCY + Math.sqrt(insideR) - arcR + h * 0.35;
+        yi = Math.min(yi, baseline);
+      } else {
+        yi = baseline;
+      }
+      if (xi === 0) ctx.moveTo(padX + xi, yi);
+      else ctx.lineTo(padX + xi, yi);
+    }
+    ctx.lineTo(padX + w, baseline);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(padX, baseline);
+    for (var xi2 = 0; xi2 <= w; xi2++) {
+      var relX2 = (xi2 - w / 2);
+      var insideR2 = arcR * arcR - relX2 * relX2;
+      var yi2;
+      if (insideR2 >= 0) {
+        yi2 = arcCY + Math.sqrt(insideR2) - arcR + h * 0.35;
+        yi2 = Math.min(yi2, baseline);
+      } else {
+        yi2 = baseline;
+      }
+      if (xi2 === 0) ctx.moveTo(padX + xi2, yi2);
+      else ctx.lineTo(padX + xi2, yi2);
+    }
+    ctx.stroke();
+
+  } else if (type === "crease") {
+    // W-shape: center dips, sides rise slightly
+    var colorC = "rgba(255,150,100,.9)";
+    ctx.fillStyle = "rgba(255,150,100,.15)";
+    ctx.strokeStyle = colorC;
+    var dipDepth = h * 0.44;
+    var sideRise = h * 0.16;
+    ctx.beginPath();
+    ctx.moveTo(padX, baseline);
+    for (var xw = 0; xw <= w; xw++) {
+      var t = (xw / w) * 2 - 1; // -1 to 1
+      // W shape: positive at edges, deep negative at center
+      var yw = baseline - (sideRise * (1 - t * t) * 2 - dipDepth * Math.exp(-8 * t * t));
+      if (xw === 0) ctx.moveTo(padX + xw, yw);
+      else ctx.lineTo(padX + xw, yw);
+    }
+    ctx.lineTo(padX + w, baseline);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(padX, baseline);
+    for (var xw2 = 0; xw2 <= w; xw2++) {
+      var t2 = (xw2 / w) * 2 - 1;
+      var yw2 = baseline - (sideRise * (1 - t2 * t2) * 2 - dipDepth * Math.exp(-8 * t2 * t2));
+      if (xw2 === 0) ctx.moveTo(padX + xw2, yw2);
+      else ctx.lineTo(padX + xw2, yw2);
+    }
+    ctx.stroke();
+
+  } else if (type === "grab") {
+    // Translation arrow — cluster moves right and up
+    var colorG = "rgba(200,180,255,.9)";
+    ctx.strokeStyle = colorG;
+    ctx.fillStyle = colorG;
+    // Flat reference line
+    ctx.globalAlpha = 0.3;
+    ctx.lineWidth = 2;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(padX, baseline);
+    ctx.lineTo(padX + w, baseline);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.globalAlpha = 1;
+    ctx.lineWidth = 4;
+    // Arrow body
+    var arrowY = baseline - h * 0.38;
+    ctx.beginPath();
+    ctx.moveTo(padX + w * 0.18, baseline - h * 0.08);
+    ctx.lineTo(padX + w * 0.62, arrowY);
+    ctx.stroke();
+    // Arrowhead
+    ctx.beginPath();
+    ctx.moveTo(padX + w * 0.62, arrowY);
+    ctx.lineTo(padX + w * 0.62 - 8, arrowY + 8);
+    ctx.lineTo(padX + w * 0.62 + 4, arrowY + 6);
+    ctx.closePath();
+    ctx.fill();
+
+  } else if (type === "smooth") {
+    // Left half: jagged, right half: smooth
+    var colorSm = "rgba(180,180,255,.9)";
+    ctx.strokeStyle = colorSm;
+    // Jagged left
+    ctx.lineWidth = 2;
+    ctx.globalAlpha = 0.5;
+    ctx.beginPath();
+    var pts = [0, -8, 14, 6, 22, -12, 32, 2, 40, -6];
+    for (var pi = 0; pi < pts.length; pi += 2) {
+      var px = padX + (pts[pi] / 80) * w;
+      var py = baseline + (pts[pi + 1] / 44) * h;
+      if (pi === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    // Smooth right — gentle wave fading to flat
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(padX + w * 0.5, baseline - h * 0.06);
+    ctx.bezierCurveTo(
+      padX + w * 0.62, baseline - h * 0.14,
+      padX + w * 0.72, baseline - h * 0.04,
+      padX + w * 0.82, baseline - h * 0.02
+    );
+    ctx.bezierCurveTo(
+      padX + w * 0.88, baseline,
+      padX + w * 0.92, baseline,
+      padX + w, baseline
+    );
+    ctx.stroke();
+    // Divider line
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = "rgba(180,180,255,.3)";
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(padX + w * 0.5, padY);
+    ctx.lineTo(padX + w * 0.5, padY + h);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+  } else if (type === "snakehook") {
+    // Elongated pull — spine extending upward-right
+    var colorSh = "rgba(255,200,100,.9)";
+    ctx.strokeStyle = colorSh;
+    ctx.fillStyle = colorSh;
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(padX + w * 0.15, baseline + h * 0.04);
+    ctx.bezierCurveTo(
+      padX + w * 0.3, baseline - h * 0.1,
+      padX + w * 0.55, baseline - h * 0.35,
+      padX + w * 0.82, baseline - h * 0.58
+    );
+    ctx.stroke();
+    // Small arrowhead at tip
+    ctx.beginPath();
+    ctx.moveTo(padX + w * 0.82, baseline - h * 0.58);
+    ctx.lineTo(padX + w * 0.74, baseline - h * 0.54);
+    ctx.lineTo(padX + w * 0.80, baseline - h * 0.45);
+    ctx.closePath();
+    ctx.fill();
+  }
+}
+
+// Draw all profiles on page load
+document.querySelectorAll(".brush-profile[data-profile]").forEach(function(canvas) {
+  drawBrushProfile(canvas, canvas.dataset.profile);
+});
+
+
+// ══════════════════════════════════════════════
+// ENHANCED SANDBOX — N=60 vertex heightmap
+// ══════════════════════════════════════════════
+(function() {
+  var N = 60;
+  var heights = new Float32Array(N);
+  var canvas = document.getElementById("sandboxCanvas");
+  var ctx = canvas.getContext("2d");
+
+  var isDown = false;
+  var mouseX = 0, mouseY = 0;
+  var lastGridX = -1;
+  var dragDeltaY = 0;
+  var prevClientY = 0;
+  var currentBrush = "draw";
+  var ctrlDown = false, shiftDown = false;
+  var brushRadius = 4; // in grid units
+  var brushStrength = 22;
+  var animFrameId = null;
+  var needsRedraw = true;
+
+  var brushFormulas = {
+    draw:      "Draw: \u0394v = S \u00b7 f(d/R) \u00b7 n\u0302  |  f(p)=3p\u00b2\u22122p\u00b3, p=1\u2212d/R",
+    clay:      "Clay Strips: \u0394v = S \u00b7 f(d/R) \u00b7 plane_clamp \u00b7 n\u0302",
+    inflate:   "Inflate: \u0394v = S \u00b7 f(d/R) \u00b7 n\u0302_vertex (vertex normal)",
+    crease:    "Crease: Draw(\u2193) + Pinch(\u2192center) = \u0394v_draw + \u0394v_pinch",
+    grab:      "Grab: \u0394v = \u03b4mouse \u00b7 f(d/R)",
+    snakehook: "Snake Hook: \u0394v = \u03b4step \u00b7 f(d/R) (accumulative)",
+    smooth:    "Smooth: \u0394v = (avg_neighbors \u2212 v) \u00b7 f(d/R) \u00b7 S (Laplacian)"
+  };
+
+  function initHeights() {
+    for (var i = 0; i < N; i++) {
+      heights[i] = 0;
+    }
+    needsRedraw = true;
+  }
+
+  // Blender default: Hermite smoothstep
+  function falloff(d, R) {
+    var t = d / R;
+    if (t >= 1) return 0;
+    var p = 1 - t;
+    return 3 * p * p - 2 * p * p * p;
+  }
+
+  function clamp(v, lo, hi) {
+    return v < lo ? lo : v > hi ? hi : v;
+  }
+
+  // Map grid index to canvas X
+  function gridToCanvasX(i) {
+    var cw = canvas.width;
+    return (i / (N - 1)) * cw;
+  }
+
+  // Map canvas X to nearest grid index
+  function canvasXToGrid(cx) {
+    return Math.round(clamp((cx / canvas.width) * (N - 1), 0, N - 1));
+  }
+
+  // Map height value to canvas Y (higher value = lower Y on canvas)
+  function heightToCanvasY(h) {
+    var ch = canvas.height;
+    var baseline = ch * 0.62;
+    return baseline - h;
+  }
+
+  function applyBrush(gx, deltaY) {
+    var brush = shiftDown ? "smooth" : currentBrush;
+    var dir = ctrlDown ? -1 : 1;
+    var S = brushStrength;
+    var R = brushRadius;
+
+    for (var i = 0; i < N; i++) {
+      var d = Math.abs(i - gx);
+      var f = falloff(d, R);
+      if (f < 0.001) continue;
+
+      if (brush === "draw") {
+        heights[i] += dir * S * f * 0.45;
+
+      } else if (brush === "clay") {
+        var resist = Math.min(1, 1 / (1 + Math.abs(heights[i]) * 0.01));
+        heights[i] += dir * S * f * resist * 0.4;
+
+      } else if (brush === "inflate") {
+        var iNext = Math.min(i + 1, N - 1);
+        var iPrev = Math.max(i - 1, 0);
+        var slope = (heights[iNext] - heights[iPrev]) * 0.5;
+        var normalScale = 1 / Math.sqrt(1 + slope * slope);
+        heights[i] += dir * S * f * normalScale * 0.4;
+
+      } else if (brush === "crease") {
+        heights[i] += dir * S * f * (f - 0.5) * 0.9;
+
+      } else if (brush === "grab") {
+        var grabDelta = clamp(deltaY * f, -20, 20);
+        heights[i] += grabDelta;
+
+      } else if (brush === "snakehook") {
+        var hookF = f * f;
+        heights[i] += deltaY * hookF * 2.2;
+
+      } else if (brush === "smooth") {
+        var iPr = Math.max(i - 1, 0);
+        var iNe = Math.min(i + 1, N - 1);
+        var avg = (heights[iPr] + heights[i] + heights[iNe]) / 3;
+        heights[i] += (avg - heights[i]) * f * S * 0.1;
+      }
+
+      // Clamp height
+      heights[i] = clamp(heights[i], -120, 120);
+    }
+    needsRedraw = true;
+  }
+
+  function render() {
+    if (!needsRedraw) {
+      animFrameId = requestAnimationFrame(render);
+      return;
+    }
+    needsRedraw = false;
+
+    var cw = canvas.width, ch = canvas.height;
+
+    // Background gradient
+    var bgGrad = ctx.createLinearGradient(0, 0, 0, ch);
+    bgGrad.addColorStop(0, "#070b14");
+    bgGrad.addColorStop(1, "#0a1225");
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, cw, ch);
+
+    // Grid lines (subtle)
+    ctx.strokeStyle = "rgba(90,130,200,.06)";
+    ctx.lineWidth = 1;
+    for (var gy = 0; gy < ch; gy += 40) {
+      ctx.beginPath();
+      ctx.moveTo(0, gy);
+      ctx.lineTo(cw, gy);
+      ctx.stroke();
+    }
+
+    var baseline = ch * 0.62;
+
+    // Build polyline points
+    var pts = [];
+    for (var i = 0; i < N; i++) {
+      pts.push({ x: gridToCanvasX(i), y: heightToCanvasY(heights[i]) });
+    }
+
+    // Surface fill — blue-tinted gradient beneath polyline
+    var surfGrad = ctx.createLinearGradient(0, baseline - 140, 0, ch);
+    surfGrad.addColorStop(0, "rgba(40,100,200,.32)");
+    surfGrad.addColorStop(0.5, "rgba(20,60,150,.22)");
+    surfGrad.addColorStop(1, "rgba(10,30,80,.35)");
+    ctx.beginPath();
+    ctx.moveTo(0, ch);
+    ctx.lineTo(pts[0].x, pts[0].y);
+    for (var j = 1; j < N; j++) {
+      ctx.lineTo(pts[j].x, pts[j].y);
+    }
+    ctx.lineTo(cw, ch);
+    ctx.closePath();
+    ctx.fillStyle = surfGrad;
+    ctx.fill();
+
+    // Surface line — glowing
+    ctx.shadowColor = "rgba(90,160,255,.6)";
+    ctx.shadowBlur = 8;
+    ctx.strokeStyle = "rgba(90,160,255,.85)";
+    ctx.lineWidth = 2.5;
+    ctx.lineJoin = "round";
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pts[0].y);
+    for (var k = 1; k < N; k++) {
+      ctx.lineTo(pts[k].x, pts[k].y);
+    }
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Vertex dots colored by height
+    for (var vi = 0; vi < N; vi++) {
+      var h = heights[vi];
+      var dotR = 2.5;
+      var dotColor;
+      if (Math.abs(h) < 8) {
+        dotColor = "rgba(90,140,255,.7)"; // neutral blue
+      } else if (h > 0) {
+        var t = Math.min(h / 100, 1);
+        dotColor = "rgba(" + Math.round(40 + t * 160) + "," + Math.round(180 + t * 60) + ",255,.85)"; // cyan raised
+      } else {
+        var t2 = Math.min(-h / 100, 1);
+        dotColor = "rgba(" + Math.round(140 + t2 * 80) + ",80," + Math.round(200 + t2 * 55) + ",.85)"; // purple lowered
+      }
+      ctx.beginPath();
+      ctx.arc(pts[vi].x, pts[vi].y, dotR, 0, Math.PI * 2);
+      ctx.fillStyle = dotColor;
+      ctx.fill();
+    }
+
+    // Brush cursor (only when mouse is inside canvas area)
+    if (mouseX >= 0 && mouseX <= cw && mouseY >= 0 && mouseY <= ch) {
+      var bR = (brushRadius / (N - 1)) * cw;
+
+      // Falloff rings
+      var ringGrad = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, bR);
+      ringGrad.addColorStop(0, "rgba(255,255,255,.04)");
+      ringGrad.addColorStop(0.6, "rgba(255,255,255,.02)");
+      ringGrad.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.beginPath();
+      ctx.arc(mouseX, mouseY, bR, 0, Math.PI * 2);
+      ctx.fillStyle = ringGrad;
+      ctx.fill();
+
+      // Dashed white circle
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = "rgba(255,255,255,.5)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(mouseX, mouseY, bR, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Crosshair dot
+      ctx.beginPath();
+      ctx.arc(mouseX, mouseY, 2.5, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(255,255,255,.8)";
+      ctx.fill();
+    }
+
+    animFrameId = requestAnimationFrame(render);
+  }
+
+  function getCanvasPos(e) {
+    var rect = canvas.getBoundingClientRect();
+    return {
+      x: (e.clientX - rect.left) * (canvas.width / rect.width),
+      y: (e.clientY - rect.top) * (canvas.height / rect.height)
+    };
+  }
+
+  canvas.addEventListener("mouseenter", function() { needsRedraw = true; });
+  canvas.addEventListener("mouseleave", function() {
+    mouseX = -9999; mouseY = -9999;
+    isDown = false;
+    needsRedraw = true;
+  });
+
+  canvas.addEventListener("mousemove", function(e) {
+    var pos = getCanvasPos(e);
+    var dy = pos.y - (prevClientY * (canvas.height / canvas.getBoundingClientRect().height));
+    mouseX = pos.x;
+    mouseY = pos.y;
+    needsRedraw = true;
+    if (isDown) {
+      var gx = canvasXToGrid(pos.x);
+      dragDeltaY = -(e.clientY - prevClientY) * 1.2;
+      applyBrush(gx, dragDeltaY);
+    }
+    prevClientY = e.clientY;
+  });
+
+  canvas.addEventListener("mousedown", function(e) {
+    isDown = true;
+    prevClientY = e.clientY;
+    var pos = getCanvasPos(e);
+    var gx = canvasXToGrid(pos.x);
+    applyBrush(gx, 0);
+  });
+
+  canvas.addEventListener("mouseup", function() { isDown = false; });
+
+  canvas.addEventListener("touchstart", function(e) {
+    e.preventDefault();
+    var t = e.touches[0];
+    isDown = true;
+    prevClientY = t.clientY;
+    var pos = getCanvasPos(t);
+    mouseX = pos.x; mouseY = pos.y;
+    var gx = canvasXToGrid(pos.x);
+    applyBrush(gx, 0);
+    needsRedraw = true;
+  }, { passive: false });
+
+  canvas.addEventListener("touchmove", function(e) {
+    e.preventDefault();
+    var t = e.touches[0];
+    var pos = getCanvasPos(t);
+    mouseX = pos.x; mouseY = pos.y;
+    dragDeltaY = -(t.clientY - prevClientY) * 1.2;
+    if (isDown) {
+      var gx = canvasXToGrid(pos.x);
+      applyBrush(gx, dragDeltaY);
+    }
+    prevClientY = t.clientY;
+    needsRedraw = true;
+  }, { passive: false });
+
+  canvas.addEventListener("touchend", function(e) {
+    e.preventDefault();
+    isDown = false;
+    needsRedraw = true;
+  }, { passive: false });
+
+  document.addEventListener("keydown", function(e) {
+    if (e.key === "Control") ctrlDown = true;
+    if (e.key === "Shift") shiftDown = true;
+  });
+
+  document.addEventListener("keyup", function(e) {
+    if (e.key === "Control") ctrlDown = false;
+    if (e.key === "Shift") shiftDown = false;
+  });
+
+  document.querySelectorAll(".brush-btn").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      document.querySelectorAll(".brush-btn").forEach(function(b) { b.classList.remove("is-active"); });
+      btn.classList.add("is-active");
+      currentBrush = btn.dataset.brush;
+      var tag = document.getElementById("formulaBrushTag");
+      var formula = document.getElementById("formulaText");
+      if (tag) tag.textContent = btn.textContent;
+      if (formula) formula.textContent = brushFormulas[currentBrush] || "";
+    });
+  });
+
+  document.getElementById("sandboxReset").addEventListener("click", function() {
+    initHeights();
+  });
+
+  mouseX = -9999; mouseY = -9999;
+  initHeights();
+  render();
+})();
+
+
+// ══════════════════════════════════════════════
+// CROSS-SECTION COMPARISON TAB
+// ══════════════════════════════════════════════
+function drawComparisonCrossSection(canvas, brushType) {
+  var ctx = canvas.getContext("2d");
+  var W = canvas.width, H = canvas.height;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Background
+  var bg = ctx.createLinearGradient(0, 0, 0, H);
+  bg.addColorStop(0, "#070b14");
+  bg.addColorStop(1, "#0a1225");
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  // Grid
+  ctx.strokeStyle = "rgba(90,130,200,.05)";
+  ctx.lineWidth = 1;
+  for (var gy = 0; gy < H; gy += 30) {
+    ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke();
+  }
+
+  var NV = 20;
+  var padX = 30, padXR = 30;
+  var usableW = W - padX - padXR;
+  var baseline = H * 0.55;
+
+  // Build base surface heights (slight reference bump for all)
+  var baseH = [];
+  for (var i = 0; i < NV; i++) {
+    var t = i / (NV - 1);
+    var center = t - 0.5;
+    baseH[i] = 12 * Math.exp(-8 * center * center);
+  }
+
+  // Compute arrow vectors depending on brush type
+  function falloffHermite(i, center, R) {
+    var d = Math.abs(i - center);
+    var t = d / R;
+    if (t >= 1) return 0;
+    var p = 1 - t;
+    return 3 * p * p - 2 * p * p * p;
+  }
+
+  var centerIdx = NV / 2;
+  var R = NV * 0.38;
+
+  function drawArrow(ctx, x1, y1, x2, y2, color, width) {
+    var dx = x2 - x1, dy = y2 - y1;
+    var len = Math.sqrt(dx * dx + dy * dy);
+    if (len < 2) return;
+    var ux = dx / len, uy = dy / len;
+    var arrowLen = Math.min(10, len * 0.4);
+    var arrowW = arrowLen * 0.55;
+
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.lineWidth = width;
+    ctx.lineCap = "round";
+
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2 - ux * arrowLen * 0.5, y2 - uy * arrowLen * 0.5);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - ux * arrowLen - uy * arrowW, y2 - uy * arrowLen + ux * arrowW);
+    ctx.lineTo(x2 - ux * arrowLen + uy * arrowW, y2 - uy * arrowLen - ux * arrowW);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  // Draw mesh surface
+  var pts = [];
+  for (var vi = 0; vi < NV; vi++) {
+    var xv = padX + (vi / (NV - 1)) * usableW;
+    var yv = baseline - baseH[vi];
+    pts.push({ x: xv, y: yv });
+  }
+
+  // Surface fill
+  var surfGrad = ctx.createLinearGradient(0, baseline - 80, 0, H);
+  surfGrad.addColorStop(0, "rgba(40,80,180,.25)");
+  surfGrad.addColorStop(1, "rgba(10,25,70,.4)");
+  ctx.beginPath();
+  ctx.moveTo(0, H);
+  ctx.lineTo(pts[0].x, pts[0].y);
+  for (var pi = 1; pi < NV; pi++) ctx.lineTo(pts[pi].x, pts[pi].y);
+  ctx.lineTo(W, H);
+  ctx.closePath();
+  ctx.fillStyle = surfGrad;
+  ctx.fill();
+
+  // Surface line
+  ctx.shadowColor = "rgba(90,160,255,.5)";
+  ctx.shadowBlur = 6;
+  ctx.strokeStyle = "rgba(90,160,255,.8)";
+  ctx.lineWidth = 2;
+  ctx.lineJoin = "round";
+  ctx.beginPath();
+  ctx.moveTo(pts[0].x, pts[0].y);
+  for (var pi2 = 1; pi2 < NV; pi2++) ctx.lineTo(pts[pi2].x, pts[pi2].y);
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // Vertex dots
+  for (var vi2 = 0; vi2 < NV; vi2++) {
+    ctx.beginPath();
+    ctx.arc(pts[vi2].x, pts[vi2].y, 2.5, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(90,160,255,.7)";
+    ctx.fill();
+  }
+
+  // Draw brush influence region label
+  var brushCenterX = padX + (centerIdx / (NV - 1)) * usableW;
+  ctx.strokeStyle = "rgba(255,255,255,.08)";
+  ctx.lineWidth = 1;
+  ctx.setLineDash([3, 5]);
+  ctx.beginPath();
+  var rPx = (R / (NV - 1)) * usableW;
+  ctx.arc(brushCenterX, baseline + 8, rPx, Math.PI, Math.PI * 2);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Draw arrows per brush type
+  for (var ai = 0; ai < NV; ai++) {
+    var fo = falloffHermite(ai, centerIdx, R);
+    if (fo < 0.06) continue;
+    var ax = pts[ai].x, ay = pts[ai].y;
+    var arrowDX = 0, arrowDY = 0;
+    var arrowColor = "rgba(90,220,255,.8)"; // cyan = up/out
+
+    if (brushType === "claystrips") {
+      arrowDY = -fo * 36;
+      // Flatten tall peaks
+      var heightFactor = Math.min(1, 1 / (1 + baseH[ai] * 0.08));
+      arrowDY *= heightFactor;
+      arrowColor = arrowDY < 0 ? "rgba(90,220,255,.85)" : "rgba(90,220,255,.5)";
+
+    } else if (brushType === "inflate") {
+      // Follow surface normal
+      var iNx = Math.min(ai + 1, NV - 1);
+      var iPx = Math.max(ai - 1, 0);
+      var slope2 = (pts[iNx].y - pts[iPx].y) / (pts[iNx].x - pts[iPx].x + 0.001);
+      var nx = -slope2, ny = 1;
+      var nLen = Math.sqrt(nx * nx + ny * ny);
+      arrowDX = (nx / nLen) * fo * 30;
+      arrowDY = -(ny / nLen) * fo * 30;
+      var isUp = arrowDY < 0;
+      arrowColor = isUp ? "rgba(90,220,255,.85)" : "rgba(200,80,255,.8)";
+
+    } else if (brushType === "crease") {
+      var fo2 = fo;
+      var delta = fo2 * (fo2 - 0.5) * 60;
+      arrowDY = delta; // positive = down at center, edges go slightly up
+      arrowColor = delta > 0 ? "rgba(230,70,120,.85)" : "rgba(255,200,80,.8)";
+
+    } else if (brushType === "snakehook") {
+      var tightFo = fo * fo;
+      arrowDX = tightFo * 18;
+      arrowDY = -tightFo * 46;
+      arrowColor = "rgba(90,220,255,.85)";
+    }
+
+    var arrowLen2 = Math.sqrt(arrowDX * arrowDX + arrowDY * arrowDY);
+    if (arrowLen2 > 3) {
+      drawArrow(ctx, ax, ay, ax + arrowDX, ay + arrowDY, arrowColor, 1.5 + fo * 1.2);
+    }
+  }
+
+  // Brush center indicator
+  ctx.beginPath();
+  ctx.arc(brushCenterX, baseline - baseH[Math.round(centerIdx)], 5, 0, Math.PI * 2);
+  ctx.strokeStyle = "rgba(255,255,255,.5)";
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+}
+
+var comparisonScenes = {
+  claystrips: {
+    desc: "Clay Strips 브러시는 찰흙 띠를 층층이 붙이듯 넓은 면에 볼륨을 쌓아 올립니다. 피크를 저항해 평탄한 레이어를 만듭니다.",
+    formula: "\u0394v = S \u00b7 f(d/R) \u00b7 clamp(1 \u2212 h/h_max, 0, 1) \u00b7 n\u0302",
+    ce: [
+      { cause: "Clay Strips 드래그", result: "평평한 구속 층 생성", resultClass: "result-a" },
+      { cause: "반복 레이어링", result: "자연스러운 고기 질감 표현", resultClass: "result-a" },
+      { cause: "Ctrl + Clay Strips", result: "반대 방향으로 파내어 골", resultClass: "result-b" }
+    ]
+  },
+  inflate: {
+    desc: "Inflate 브러시는 표면 법선 방향으로 균일하게 부풀려 볼룬 움직임이나 근육 강조에 주로 씁니다.",
+    formula: "\u0394v = S \u00b7 f(d/R) \u00b7 n\u0302_surface",
+    ce: [
+      { cause: "Inflate 드래그", result: "표면이 맥직하게 부풀라오름", resultClass: "result-a" },
+      { cause: "좌/우 볼에 적용", result: "풍선처럼 팬 볼 표현", resultClass: "result-a" },
+      { cause: "Ctrl + Inflate", result: "내측으로 수축되는 효과", resultClass: "result-b" }
+    ]
+  },
+  crease: {
+    desc: "Crease 브러시는 표면에 깊고 날카로운 주름과 화장을 만듭니다. 눈 라인, 입술 경계, 협곡 표현에 활용합니다.",
+    formula: "\u0394v = Draw(\u2193normal) + Pinch(\u2192center)",
+    ce: [
+      { cause: "Crease 드래그", result: "날카롭고 깊은 화장 생성", resultClass: "result-a" },
+      { cause: "Ctrl + Crease", result: "반대 방향 (화장 대신 마루리)", resultClass: "result-b" },
+      { cause: "눈 라인에 적용", result: "기계적인 눈 주름 표현", resultClass: "result-a" }
+    ]
+  },
+  snakehook: {
+    desc: "Snake Hook 브러시는 표면 끝을 잡고 길게 늘여 등, 뿔, 촉수 같은 돌출부를 만들 때 사용합니다.",
+    formula: "\u0394v = S \u00b7 f(d/R) \u00b7 drag_direction",
+    ce: [
+      { cause: "Snake Hook 드래그", result: "표면에서 돌출부 생성", resultClass: "result-a" },
+      { cause: "빠르게 드래그", result: "기다리고 날쌘한 형태", resultClass: "result-b" },
+      { cause: "천천히 회전하면서", result: "구부러진 부드러운 뿔", resultClass: "result-a" }
+    ]
+  }
+};
+
+function switchComparisonScene(key) {
+  document.querySelectorAll("#visualScenarioNav .scenario-btn").forEach(function(b) {
+    b.classList.toggle("active", b.dataset.scene === key);
+  });
+  var s = comparisonScenes[key];
+  if (!s) return;
+
+  var descEl = document.getElementById("visual-scene-desc");
+  if (descEl) descEl.textContent = s.desc;
+
+  var formulaEl = document.getElementById("comparisonFormula");
+  if (formulaEl) formulaEl.textContent = s.formula;
+
+  var descAnnot = document.getElementById("comparisonDesc");
+  if (descAnnot) descAnnot.textContent = s.desc;
+
+  // Build cause-effect
+  var ce = document.getElementById("visual-cause-effect");
+  while (ce && ce.firstChild) ce.removeChild(ce.firstChild);
+  if (ce && s.ce) {
+    s.ce.forEach(function(c) {
+      var row = document.createElement("div"); row.className = "ce-row";
+      var cause = document.createElement("div"); cause.className = "ce-cause"; cause.textContent = c.cause;
+      var arrow = document.createElement("div"); arrow.className = "ce-arrow"; arrow.textContent = "\u2192";
+      var result = document.createElement("div"); result.className = "ce-result " + c.resultClass; result.textContent = c.result;
+      row.appendChild(cause); row.appendChild(arrow); row.appendChild(result);
+      ce.appendChild(row);
+    });
+  }
+
+  // Draw cross-section
+  var compCanvas = document.getElementById("comparisonCanvas");
+  if (compCanvas) {
+    compCanvas.width = compCanvas.offsetWidth || 560;
+    drawComparisonCrossSection(compCanvas, key);
+  }
+}
+
+document.querySelectorAll("#visualScenarioNav .scenario-btn").forEach(function(btn) {
+  btn.addEventListener("click", function() {
+    switchComparisonScene(btn.dataset.scene);
+  });
+});
+
+// Initialize comparison on tab switch
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    if (tab.dataset.tab === "compare") {
+      setTimeout(function() { switchComparisonScene("claystrips"); }, 60);
+    }
+  });
+});
+
+
+// ══════════════════════════════════════════════
+// QUIZ ENGINE
+// ══════════════════════════════════════════════
 function initQuiz(questions) {
   var container = document.getElementById("quizArea");
   var score = 0, answered = 0;
@@ -748,510 +1706,82 @@ function initQuiz(questions) {
   }
 }
 
-// ── Sandbox (2D Heightmap Sculpt) ─────────────
-(function() {
-  var GRID = 100;
-  var heightmap = [];
-  var canvas = document.getElementById("sandboxCanvas");
-  var ctx = canvas.getContext("2d");
-  var isDown = false;
-  var lastX = -1, lastY = -1;
-  var currentBrush = "draw";
-  var ctrlDown = false, shiftDown = false;
-
-  var brushDescriptions = {
-    draw: "Draw \u2014 \ud45c\uba74\uc744 \uc62c\ub824\uc694. Ctrl \ub204\ub974\uba74 \ud30c\ub0b4\uae30.",
-    clay: "Clay Strips \u2014 \ub113\uc740 \uba74\uc5d0 \uce35\uce35\uc774 \uc313\uc544\uc694.",
-    inflate: "Inflate \u2014 \ud48d\uc120\ucc98\ub7fc \ubc14\uae54\uc73c\ub85c \ubd80\ud480\ub824\uc694.",
-    crease: "Crease \u2014 \ub0a0\uce74\ub86d\uace0 \uae0a\uc740 \ud654\uc7a5\uc744 \ud30c\uc694.",
-    grab: "Grab \u2014 \ud45c\uba74\uc744 \uc7a1\uace0 \ub04c\uc5b4\ub2f9\uae30\uc694.",
-    snakehook: "Snake Hook \u2014 \ub053\uc744 \uc7a1\uace0 \uae38\uac8c \ub298\uc5ec\uc694.",
-    smooth: "Smooth \u2014 \uc6b8\ud29c\ubd88\ud29c\ud55c \ubd80\ubd84\uc744 \uc815\ub9ac\ud574\uc694."
-  };
-
-  function initHeightmap() {
-    heightmap = [];
-    var cx = GRID / 2, cy = GRID / 2, r = GRID * 0.35;
-    for (var y = 0; y < GRID; y++) {
-      heightmap[y] = [];
-      for (var x = 0; x < GRID; x++) {
-        var dx = x - cx, dy = y - cy;
-        var dist = Math.sqrt(dx * dx + dy * dy);
-        var v = Math.max(0, 1 - dist / r);
-        heightmap[y][x] = v * v * 0.6;
-      }
-    }
-  }
-
-  function heightToColor(h) {
-    h = Math.max(0, Math.min(1, h));
-    if (h < 0.3) {
-      var t = h / 0.3;
-      var r2 = Math.round(10 + t * (30 - 10));
-      var g2 = Math.round(30 + t * (60 - 30));
-      var b2 = Math.round(60 + t * (100 - 60));
-      return "rgb(" + r2 + "," + g2 + "," + b2 + ")";
-    } else if (h < 0.6) {
-      var t2 = (h - 0.3) / 0.3;
-      var r3 = Math.round(30 + t2 * (80 - 30));
-      var g3 = Math.round(60 + t2 * (120 - 60));
-      var b3 = Math.round(100 + t2 * (160 - 100));
-      return "rgb(" + r3 + "," + g3 + "," + b3 + ")";
-    } else {
-      var t3 = (h - 0.6) / 0.4;
-      var r4 = Math.round(80 + t3 * (200 - 80));
-      var g4 = Math.round(120 + t3 * (210 - 120));
-      var b4 = Math.round(160 + t3 * (220 - 160));
-      return "rgb(" + r4 + "," + g4 + "," + b4 + ")";
-    }
-  }
-
-  function renderHeightmap() {
-    var w = canvas.width, h = canvas.height;
-    var cellW = w / GRID, cellH = h / GRID;
-    for (var y = 0; y < GRID; y++) {
-      for (var x = 0; x < GRID; x++) {
-        ctx.fillStyle = heightToColor(heightmap[y][x]);
-        ctx.fillRect(Math.round(x * cellW), Math.round(y * cellH), Math.ceil(cellW), Math.ceil(cellH));
-      }
-    }
-  }
-
-  function falloff(dist, radius) {
-    var t = Math.max(0, 1 - dist / radius);
-    return t * t;
-  }
-
-  function applyBrush(gx, gy, dgx, dgy) {
-    var brush = (shiftDown) ? "smooth" : currentBrush;
-    var radius = 10;
-    var strength = 0.04;
-    var invert = ctrlDown ? -1 : 1;
-
-    for (var y = 0; y < GRID; y++) {
-      for (var x = 0; x < GRID; x++) {
-        var dx = x - gx, dy = y - gy;
-        var dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist > radius) continue;
-        var fo = falloff(dist, radius);
-
-        if (brush === "draw") {
-          heightmap[y][x] += invert * strength * fo;
-        } else if (brush === "clay") {
-          var target = 0.55;
-          var diff = target - heightmap[y][x];
-          heightmap[y][x] += invert * diff * strength * fo * 0.5;
-        } else if (brush === "inflate") {
-          heightmap[y][x] += invert * strength * fo * fo;
-        } else if (brush === "crease") {
-          var fo3 = fo * fo * fo;
-          heightmap[y][x] -= invert * strength * fo3 * 2;
-        } else if (brush === "grab") {
-          heightmap[y][x] += invert * (dgx + dgy) * 0.003 * fo;
-        } else if (brush === "snakehook") {
-          var tipFo = Math.max(0, 1 - dist / (radius * 0.5));
-          tipFo = tipFo * tipFo;
-          heightmap[y][x] += invert * (dgx + dgy) * 0.004 * tipFo;
-        } else if (brush === "smooth") {
-          var sum = 0, count = 0;
-          var nx, ny;
-          for (var ky = -2; ky <= 2; ky++) {
-            for (var kx = -2; kx <= 2; kx++) {
-              nx = x + kx; ny = y + ky;
-              if (nx >= 0 && nx < GRID && ny >= 0 && ny < GRID) {
-                sum += heightmap[ny][nx];
-                count++;
-              }
-            }
-          }
-          var avg = sum / count;
-          heightmap[y][x] += (avg - heightmap[y][x]) * fo * 0.5;
-        }
-
-        heightmap[y][x] = Math.max(0, Math.min(1, heightmap[y][x]));
-      }
-    }
-    renderHeightmap();
-  }
-
-  function canvasToGrid(clientX, clientY) {
-    var rect = canvas.getBoundingClientRect();
-    var px = (clientX - rect.left) * (canvas.width / rect.width);
-    var py = (clientY - rect.top) * (canvas.height / rect.height);
-    return {
-      x: (px / canvas.width) * GRID,
-      y: (py / canvas.height) * GRID
-    };
-  }
-
-  canvas.addEventListener("mousedown", function(e) {
-    isDown = true;
-    var g = canvasToGrid(e.clientX, e.clientY);
-    lastX = g.x; lastY = g.y;
-    applyBrush(g.x, g.y, 0, 0);
-  });
-
-  canvas.addEventListener("mousemove", function(e) {
-    if (!isDown) return;
-    var g = canvasToGrid(e.clientX, e.clientY);
-    var dgx = g.x - lastX, dgy = g.y - lastY;
-    applyBrush(g.x, g.y, dgx, dgy);
-    lastX = g.x; lastY = g.y;
-  });
-
-  canvas.addEventListener("mouseup", function() { isDown = false; });
-  canvas.addEventListener("mouseleave", function() { isDown = false; });
-
-  canvas.addEventListener("touchstart", function(e) {
-    e.preventDefault();
-    var t = e.touches[0];
-    var me = new MouseEvent("mousedown", { clientX: t.clientX, clientY: t.clientY });
-    canvas.dispatchEvent(me);
-  }, { passive: false });
-
-  canvas.addEventListener("touchmove", function(e) {
-    e.preventDefault();
-    var t = e.touches[0];
-    var me = new MouseEvent("mousemove", { clientX: t.clientX, clientY: t.clientY });
-    canvas.dispatchEvent(me);
-  }, { passive: false });
-
-  canvas.addEventListener("touchend", function(e) {
-    e.preventDefault();
-    canvas.dispatchEvent(new MouseEvent("mouseup", {}));
-  }, { passive: false });
-
-  document.addEventListener("keydown", function(e) {
-    if (e.key === "Control") ctrlDown = true;
-    if (e.key === "Shift") shiftDown = true;
-  });
-
-  document.addEventListener("keyup", function(e) {
-    if (e.key === "Control") ctrlDown = false;
-    if (e.key === "Shift") shiftDown = false;
-  });
-
-  document.querySelectorAll(".brush-btn").forEach(function(btn) {
-    btn.addEventListener("click", function() {
-      document.querySelectorAll(".brush-btn").forEach(function(b) { b.classList.remove("is-active"); });
-      btn.classList.add("is-active");
-      currentBrush = btn.dataset.brush;
-      document.getElementById("sandboxBrushDesc").textContent = brushDescriptions[currentBrush] || "";
-    });
-  });
-
-  document.getElementById("sandboxReset").addEventListener("click", function() {
-    initHeightmap();
-    renderHeightmap();
-  });
-
-  initHeightmap();
-  renderHeightmap();
-})();
-
-// ── Visual Comparison Scenarios ────────────
-(function() {
-  function drawBg(ctx, w, h) { ctx.fillStyle = "#1e293b"; ctx.fillRect(0, 0, w, h); }
-
-  function drawSphere(ctx, cx, cy, r, color) {
-    var grad = ctx.createRadialGradient(cx - r * 0.3, cy - r * 0.3, r * 0.1, cx, cy, r);
-    grad.addColorStop(0, "#e2e8f0");
-    grad.addColorStop(0.4, color);
-    grad.addColorStop(1, "#0f172a");
-    ctx.beginPath();
-    ctx.arc(cx, cy, r, 0, Math.PI * 2);
-    ctx.fillStyle = grad;
-    ctx.fill();
-  }
-
-  function drawBaseSphere(ctx, w, h) {
-    drawBg(ctx, w, h);
-    var cx = w / 2, cy = h / 2;
-    drawSphere(ctx, cx, cy, 55, "#475569");
-    ctx.strokeStyle = "rgba(148,163,184,.15)";
-    ctx.lineWidth = 0.5;
-    for (var i = 0; i < 8; i++) {
-      var a = (i / 8) * Math.PI * 2;
-      ctx.beginPath();
-      ctx.moveTo(cx, cy);
-      ctx.lineTo(cx + Math.cos(a) * 55, cy + Math.sin(a) * 55);
-      ctx.stroke();
-    }
-    ctx.strokeStyle = "rgba(148,163,184,.1)";
-    for (var rv = 18; rv <= 55; rv += 18) {
-      ctx.beginPath();
-      ctx.arc(cx, cy, rv, 0, Math.PI * 2);
-      ctx.stroke();
-    }
-    ctx.fillStyle = "#94a3b8";
-    ctx.font = "bold 10px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("\uae30\ubcf8 \uad6c (Sphere)", cx, 14);
-  }
-
-  function drawClayStripsAfter(ctx, w, h) {
-    drawBg(ctx, w, h);
-    var cx = w / 2, cy = h / 2;
-    drawSphere(ctx, cx, cy, 52, "#475569");
-    var strips = [-20, -8, 4, 16];
-    strips.forEach(function(yOff, idx) {
-      var alpha = 0.5 - idx * 0.08;
-      ctx.save();
-      ctx.beginPath();
-      ctx.ellipse(cx, cy + yOff, 44 - idx * 2, 9, 0, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(148,163,184," + alpha + ")";
-      ctx.fill();
-      ctx.restore();
-    });
-    ctx.strokeStyle = "rgba(110,231,183,.7)";
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.arc(cx + 12, cy - 10, 18, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.fillStyle = "#6ee7b7";
-    ctx.font = "bold 10px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("Clay Strips \ub85c \uce35 \uc313\uc74c", cx, 14);
-  }
-
-  function drawInflateAfter(ctx, w, h) {
-    drawBg(ctx, w, h);
-    var cx = w / 2, cy = h / 2;
-    drawSphere(ctx, cx, cy, 66, "#5a7a9e");
-    ctx.strokeStyle = "rgba(251,191,36,.7)";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.arc(cx, cy, 66, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.strokeStyle = "rgba(251,191,36,.35)";
-    ctx.lineWidth = 1;
-    ctx.setLineDash([4, 4]);
-    ctx.beginPath();
-    ctx.arc(cx, cy, 52, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.fillStyle = "#fbbf24";
-    ctx.font = "bold 10px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("Inflate \ub85c \ubd80\ud480\ub824\uc9d0", cx, 14);
-  }
-
-  function drawCreaseAfter(ctx, w, h) {
-    drawBg(ctx, w, h);
-    var cx = w / 2, cy = h / 2;
-    drawSphere(ctx, cx, cy, 52, "#475569");
-    ctx.strokeStyle = "rgba(239,68,68,.8)";
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(cx - 25, cy - 38);
-    ctx.quadraticCurveTo(cx + 8, cy, cx - 18, cy + 38);
-    ctx.stroke();
-    ctx.strokeStyle = "rgba(239,68,68,.5)";
-    ctx.lineWidth = 5;
-    ctx.beginPath();
-    ctx.moveTo(cx + 18, cy - 32);
-    ctx.quadraticCurveTo(cx - 10, cy + 5, cx + 22, cy + 36);
-    ctx.stroke();
-    ctx.fillStyle = "#fca5a5";
-    ctx.font = "bold 10px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("Crease \ub85c \uae0a\uc740 \ud654\uc7a5", cx, 14);
-  }
-
-  function drawSnakeHookAfter(ctx, w, h) {
-    drawBg(ctx, w, h);
-    var cx = w / 2, cy = h / 2;
-    drawSphere(ctx, cx, cy, 48, "#475569");
-    ctx.strokeStyle = "rgba(196,181,253,.7)";
-    ctx.lineWidth = 12;
-    ctx.lineCap = "round";
-    ctx.beginPath();
-    ctx.moveTo(cx + 20, cy - 20);
-    ctx.quadraticCurveTo(cx + 45, cy - 40, cx + 50, cy - 65);
-    ctx.stroke();
-    ctx.lineWidth = 8;
-    ctx.beginPath();
-    ctx.moveTo(cx + 20, cy - 20);
-    ctx.quadraticCurveTo(cx + 45, cy - 40, cx + 50, cy - 65);
-    ctx.strokeStyle = "rgba(165,180,252,.9)";
-    ctx.stroke();
-    ctx.fillStyle = "#a5b4fc";
-    ctx.font = "bold 10px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("Snake Hook \ub85c \ub4cc \ube51\uc74c", cx, 14);
-  }
-
-  var visualScenarios = {
-    claystrips: {
-      desc: "Clay Strips \ube0c\ub7ec\uc2dc\ub294 \ucc3a\ud761 \ub744\ub97c \uce35\uce35\uc774 \ubd99\uc774\ub4ef \ub113\uc740 \uba74\uc5d0 \ubcfc\ub968\uc744 \uc313\uc544 \uc62c\ub9bd\ub2c8\ub2e4.",
-      ce: [
-        { cause: "Clay Strips \ub4dc\ub798\uadf8", result: "\ud3c9\ud3c9\ud55c \uad6c\uc1a1 \uce35 \uc0dd\uc131", resultClass: "result-a" },
-        { cause: "\ubc18\ubcf5 \ub808\uc774\uc5b4\ub9c1", result: "\uc790\uc5f0\uc2a4\ub7ec\uc6b4 \uace0\uae30 \uc9c8\uac10 \ud45c\ud604", resultClass: "result-a" },
-        { cause: "Ctrl + Clay Strips", result: "\ubc18\ub300 \ubc29\ud5a5\uc73c\ub85c \ud30c\ub0b4\uc5b4 \uacf0", resultClass: "result-b" }
-      ],
-      before: drawBaseSphere,
-      after: drawClayStripsAfter
-    },
-    inflate: {
-      desc: "Inflate \ube0c\ub7ec\uc2dc\ub294 \ud45c\uba74 \ubc95\uc120 \ubc29\ud5a5\uc73c\ub85c \uade0\uc77c\ud558\uac8c \ubd80\ud480\ub824 \ubcfc\ub978 \uc6a8\uc9c1\uc784\uc774\ub098 \uadfc\uc721 \uac15\uc870\uc5d0 \uc8fc\ub85c \uc4d0\uc785\ub2c8\ub2e4.",
-      ce: [
-        { cause: "Inflate \ub4dc\ub798\uadf8", result: "\ud45c\uba74\uc774 \ub9e5\uc9c1\ud558\uac8c \ubd80\ud480\ub77c\uc624\ub984", resultClass: "result-a" },
-        { cause: "\uc88c/\uc6b0 \ud3c8\uc5d0 \uc801\uc6a9", result: "\ud48d\uc120\ucc98\ub7fc \ud39c \ubcfc \ud45c\ud604", resultClass: "result-a" },
-        { cause: "Ctrl + Inflate", result: "\ub0b4\uce21\uc73c\ub85c \uc218\ucca9\ub418\ub294 \ud6a8\uacfc", resultClass: "result-b" }
-      ],
-      before: drawBaseSphere,
-      after: drawInflateAfter
-    },
-    crease: {
-      desc: "Crease \ube0c\ub7ec\uc2dc\ub294 \ud45c\uba74\uc5d0 \uae0a\uace0 \ub0a0\uce74\ub85c\uc6b4 \uc8fc\ub984\uacfc \ud654\uc7a5\uc744 \ub9cc\ub4ed\ub2c8\ub2e4. \ub208 \ub77c\uc778, \uc785\uc220 \uacbd\uacc4, \ud611\uacf1 \ud45c\ud604\uc5d0 \ud65c\uc6a9\ud569\ub2c8\ub2e4.",
-      ce: [
-        { cause: "Crease \ub4dc\ub798\uadf8", result: "\ub0a0\uce74\ub86d\uace0 \uae0a\uc740 \ud654\uc7a5 \uc0dd\uc131", resultClass: "result-a" },
-        { cause: "Ctrl + Crease", result: "\ubc18\ub300 \ubc29\ud5a5 (\ud654\uc7a5 \ub300\uc2e0 \ub9c8\ub8e8\ub9ac)", resultClass: "result-b" },
-        { cause: "\ub208 \ub77c\uc778\uc5d0 \uc801\uc6a9", result: "\uae30\uacc4\uc801\uc778 \ub208 \uc8fc\ub984 \ud45c\ud604", resultClass: "result-a" }
-      ],
-      before: drawBaseSphere,
-      after: drawCreaseAfter
-    },
-    snakehook: {
-      desc: "Snake Hook \ube0c\ub7ec\uc2dc\ub294 \ud45c\uba74 \ub05d\uc744 \uc7a1\uace0 \uae38\uac8c \ub298\uc5ec \ub4f1, \ubfd4, \ucd09\uc218 \uac19\uc740 \ub3cc\ucd9c\ubd80\ub97c \ub9cc\ub4e4 \ub54c \uc0ac\uc6a9\ud569\ub2c8\ub2e4.",
-      ce: [
-        { cause: "Snake Hook \ub4dc\ub798\uadf8", result: "\ud45c\uba74\uc5d0\uc11c \ub3cc\ucd9c\ubd80 \uc0dd\uc131", resultClass: "result-a" },
-        { cause: "\ube60\ub974\uac8c \ub4dc\ub798\uadf8", result: "\uae30\ub2e4\ub9ac\uace0 \ub150\uce20\ud55c \ud615\ud0dc", resultClass: "result-b" },
-        { cause: "\ucc9c\ucc9c\ud788 \ud68c\uc804\ud558\uba74\uc11c", result: "\uad6c\ubd80\ub7ec\uc9c4 \ubd80\ub4dc\ub7ec\uc6b4 \ub4cc", resultClass: "result-a" }
-      ],
-      before: drawBaseSphere,
-      after: drawSnakeHookAfter
-    }
-  };
-
-  function switchVisualScenario(key) {
-    document.querySelectorAll("#visualScenarioNav .scenario-btn").forEach(function(b) {
-      b.classList.toggle("active", b.dataset.scene === key);
-    });
-    var s = visualScenarios[key];
-    document.getElementById("visual-scene-desc").textContent = s.desc;
-    buildVisualCauseEffect(s.ce);
-    renderVisualBAPanels(s);
-  }
-
-  function buildVisualCauseEffect(ces) {
-    var el = document.getElementById("visual-cause-effect");
-    while (el.firstChild) el.removeChild(el.firstChild);
-    ces.forEach(function(c) {
-      var row = document.createElement("div"); row.className = "ce-row";
-      var cause = document.createElement("div"); cause.className = "ce-cause"; cause.textContent = c.cause;
-      var arrow = document.createElement("div"); arrow.className = "ce-arrow"; arrow.textContent = "\u2192";
-      var result = document.createElement("div"); result.className = "ce-result " + c.resultClass; result.textContent = c.result;
-      row.appendChild(cause); row.appendChild(arrow); row.appendChild(result);
-      el.appendChild(row);
-    });
-  }
-
-  function renderVisualBAPanels(s) {
-    var bc = document.getElementById("visual-canvas-before");
-    var ac = document.getElementById("visual-canvas-after");
-    var bx = bc.getContext("2d"), ax = ac.getContext("2d");
-    bc.width = bc.offsetWidth || 280; bc.height = 160;
-    ac.width = ac.offsetWidth || 280; ac.height = 160;
-    bx.clearRect(0, 0, bc.width, bc.height);
-    ax.clearRect(0, 0, ac.width, ac.height);
-    if (s.before) s.before(bx, bc.width, bc.height);
-    if (s.after) s.after(ax, ac.width, ac.height);
-  }
-
-  document.querySelectorAll("#visualScenarioNav .scenario-btn").forEach(function(btn) {
-    btn.addEventListener("click", function() { switchVisualScenario(btn.dataset.scene); });
-  });
-
-  document.querySelectorAll(".tab").forEach(function(tab) {
-    tab.addEventListener("click", function() {
-      if (tab.dataset.tab === "visual") {
-        setTimeout(function() { switchVisualScenario("claystrips"); }, 50);
-      }
-    });
-  });
-
-  switchVisualScenario("claystrips");
-})();
-
 // ── Quiz Data ─────────────────────────────────
 initQuiz([
   {
-    question: "\ub113\uc740 \uba74\uc5d0 \ucc3a\ud761\uc744 \uce35\uce35\uc774 \uc313\ub294 \ub290\ub08c\uc758 \ube0c\ub7ec\uc2dc\ub294?",
+    question: "Clay Strips 브러시의 가장 큰 특징은?",
     options: [
-      "Inflate",
-      "Clay Strips",
-      "Snake Hook",
-      "Grab"
+      "표면을 법선 방향으로 균일하게 부풀린다",
+      "찰흙 띠를 층층이 붙이듯 넓은 면에 볼륨을 쌓는다",
+      "표면 끝을 잡고 길게 늘인다",
+      "중심을 파고 가장자리를 살짝 올린다"
     ],
     answer: 1,
-    explanation: "Clay Strips\ub294 \ucc3a\ud761 \ub744\ub97c \ubd99\uc774\ub4ef \ub113\uc740 \uba74\uc5d0 \ubd80\ub4dc\ub7ec\uc6b4 \ubcfc\ub968\uc744 \uce35\uce35\uc774 \uc313\uc544\uc62c\ub9bd\ub2c8\ub2e4."
+    explanation: "Clay Strips는 찰흙 띠를 붙이듯 넓은 면에 부드러운 볼륨을 층층이 쌓아올립니다. 이미 높은 부분엔 저항이 생겨 평탄한 레이어가 만들어집니다."
   },
   {
-    question: "\uad00\uc808\uc774\ub098 \ub208 \ub77c\uc778\ucc98\ub7fc \ub0a0\uce74\ub86d\uace0 \uae0a\uc740 \ud654\uc7a5\uc744 \ud30c\ub294 \ube0c\ub7ec\uc2dc\ub294?",
+    question: "Inflate 브러시는 버텍스를 어느 방향으로 이동시키나요?",
     options: [
-      "Draw",
-      "Clay",
-      "Crease",
-      "Smooth"
+      "항상 위쪽(+Y) 방향으로",
+      "브러시 중심에서 바깥쪽으로",
+      "버텍스 법선 방향으로",
+      "드래그 방향으로"
     ],
     answer: 2,
-    explanation: "Crease\ub294 \uc1a1\uacf3\uc73c\ub85c \uae8b\ub4ef\uc774 \ub0a0\uce74\ub86d\uace0 \uae0a\uc740 \ud654\uc7a5\uc744 \ub9cc\ub4e4\uc5b4\uc918\uc11c \uc8fc\ub984\uc774\ub098 \uc5e3\uc9c0 \ud45c\ud604\uc5d0 \ud65c\uc6a9\ud569\ub2c8\ub2e4."
+    explanation: "Inflate는 각 버텍스의 법선(표면에 수직인) 방향으로 이동시킵니다. 그래서 구처럼 부풀어오르는 균일한 팽창 효과가 납니다."
   },
   {
-    question: "\ub4d1\uc774\ub098 \ucd09\uc218\ucc98\ub7fc \ub05d\uc744 \uc7a1\uace0 \uae38\uac8c \ub298\uc774\ub294 \ube0c\ub7ec\uc2dc\ub294?",
+    question: "뿔이나 촉수처럼 표면에서 돌출부를 뽑아낼 때 가장 적합한 브러시는?",
     options: [
-      "Snake Hook",
-      "Grab",
       "Clay Strips",
-      "Inflate"
+      "Crease",
+      "Smooth",
+      "Snake Hook"
     ],
-    answer: 0,
-    explanation: "Snake Hook\uc740 \ud45c\uba74 \ub05d\uc744 \uc7a1\uace0 \uae38\uac8c \ub298\uc5ec\uc11c \ub4f1, \ub4dd, \ucd09\uc218 \uac19\uc740 \ub3cc\ucd9c\ubd80\ub97c \ub9cc\ub4e4 \ub54c \uc4d0\uc785\ub2c8\ub2e4."
+    answer: 3,
+    explanation: "Snake Hook은 표면 끝을 잡고 길게 늘려서 뿔, 뿔기, 촉수 같은 돌출부를 만드는 데 특화되어 있습니다. K 단축키로 빠르게 선택하세요."
   },
   {
-    question: "Sculpt \uc911 \uc5b4\ub5a4 \ube0c\ub7ec\uc2dc\ub97c \uc4f0\ub4e0 Shift\ub97c \ub204\ub974\uba74?",
+    question: "Crease 브러시의 수학적 특성으로 올바른 것은?",
     options: [
-      "\ube0c\ub7ec\uc2dc\uac00 \ucde8\uc18c\ub41c\ub2e4",
-      "\ud06c\uae30\uac00 2\ubc30\uac00 \ub41c\ub2e4",
-      "\uc784\uc2dc Smooth\ub85c \uc804\ud658\ub41c\ub2e4",
-      "Ctrl \ubc18\uc804 \ud6a8\uacfc\uac00 \uc801\uc6a9\ub41c\ub2e4"
+      "모든 버텍스를 동일한 크기로 올린다",
+      "중심은 내려가고 가장자리는 살짝 올라가는 이중 효과",
+      "표면 법선을 따라 균일하게 이동한다",
+      "이웃 버텍스의 평균값으로 수렴한다"
+    ],
+    answer: 1,
+    explanation: "Crease = Draw(파내기) + Pinch(중심으로 모으기) 복합 효과입니다. Draw 성분이 표면을 아래로 누르고, Pinch 성분이 주변 버텍스를 브러시 스트로크 중심으로 끌어당겨 날카로운 홈을 만듭니다."
+  },
+  {
+    question: "Sculpt 모드에서 어떤 브러시를 쓰든 Shift를 누르면 어떻게 되나요?",
+    options: [
+      "브러시가 취소된다",
+      "크기가 2배가 된다",
+      "임시 Smooth로 전환된다",
+      "Ctrl 반전 효과가 적용된다"
     ],
     answer: 2,
-    explanation: "Shift\ub97c \uae30\ub2e4\ub9ac\uba74 \uc5b4\ub5a4 \ube0c\ub7ec\uc2dc\ub3c4 \uc77c\uc2dc\uc801\uc73c\ub85c Smooth\ub85c \uc804\ud658\ub429\ub2c8\ub2e4. \uacb8\uc5d0 \ub450\uace0 \ube60\ub974\uac8c \ub2e4\ub4ec\uc744 \ub54c \ub9e4\uc6b0 \uc720\uc6a9\ud569\ub2c8\ub2e4."
-  },
-  {
-    question: "\ubcfc\uc774\ub098 \uadfc\uc721\uc744 \ud48d\uc120\ucc98\ub7fc \ubd80\ud480\ub9ac\ub294 \ube0c\ub7ec\uc2dc\ub294?",
-    options: [
-      "Draw",
-      "Clay",
-      "Inflate",
-      "Crease"
-    ],
-    answer: 2,
-    explanation: "Inflate\ub294 \ud45c\uba74 \ubc95\uc120 \ubc29\ud5a5\uc73c\ub85c \uade0\uc77c\ud558\uac8c \ubd80\ud480\ub824\uc11c \ubcfc\ub098 \uadfc\uc721\uc744 \uac15\uc870\ud560 \ub54c \uc0ac\uc6a9\ud569\ub2c8\ub2e4."
-  },
-  {
-    question: "\uc5bc\uad74 \uc870\uac01 \uc21c\uc11c\ub85c \uac00\uc7a5 \uc801\uc808\ud55c \uac83\uc740?",
-    options: [
-      "Grab \u2192 Clay Strips \u2192 Crease \u2192 Smooth",
-      "Crease \u2192 Inflate \u2192 Grab \u2192 Clay",
-      "Smooth \u2192 Draw \u2192 Clay Strips \u2192 Crease",
-      "Inflate \u2192 Snake Hook \u2192 Smooth \u2192 Grab"
-    ],
-    answer: 0,
-    explanation: "Grab\uc73c\ub85c \ud070 \uc2e4\ub8e8\uc5e3\uc744 \uc7a1\uace0, Clay Strips\ub85c \ubcfc\ub968\uc744 \uc313\uace0, Crease\ub85c \ub0a0\uce74\ub85c\uc6b4 \uacbd\uacc4\ub97c \ub123\uace0, Smooth\ub85c \ub9c8\ubb34\ub9ac\ud558\ub294 \ud750\ub984\uc774 \uac00\uc7a5 \ud6a8\uc728\uc801\uc785\ub2c8\ub2e4."
+    explanation: "Shift를 기다리면 어떤 브러시도 일시적으로 Smooth로 전환됩니다. 겸에 두고 빠르게 다듬을 때 매우 유용합니다."
   }
 ]);
-</script>
 
-<script src="./_helpers.js?v=20260318ai"></script>
-<script>
+// Initialize comparison tab on load (in case it's the default shown)
 window.addEventListener("load", function() {
   if (window.normalizeStandaloneShowMeLayout) {
     window.normalizeStandaloneShowMeLayout(document);
   }
+  // Draw profiles after layout is normalized
+  document.querySelectorAll(".brush-profile[data-profile]").forEach(function(canvas) {
+    drawBrushProfile(canvas, canvas.dataset.profile);
+  });
+  // If compare tab is active, render it
+  var comparePanel = document.getElementById("panel-compare");
+  if (comparePanel && comparePanel.classList.contains("is-active")) {
+    switchComparisonScene("claystrips");
+  }
 });
 </script>
+
+<script src="./_helpers.js?v=20260318ai"></script>
 </body>
 </html>

@@ -1765,38 +1765,59 @@ const CURRICULUM = [
         ]
       },
       {
-        "title": "Remesh + Decimate + 메쉬 정리",
-        "copy": "Sculpt를 하다 보면 메쉬가 늘어나서 찌그러지는 곳이 생겨요. Remesh로 고르게 나누고, Decimate로 줄이고, Mesh Cleaner로 정리하는 이 흐름은 AI 메쉬 정리에도 그대로 써요.",
+        "title": "Remesh · Dyntopo · Decimate",
+        "copy": "스컬프팅 중 메쉬가 뭉개지거나 폴리곤이 너무 많아지면 이 도구들이 필요해요. Blender 내장 Remesh 3가지 방법의 차이를 알고, Dyntopo로 실시간 자동 리메시를 체험하고, Decimate로 가볍게 줄여봐요.\n\nRemesh 3가지 — Sculpt Remesh(Ctrl+R)는 스컬프팅 전 준비용, Object Data Properties Remesh(QuadriFlow)는 애니메이션 쿼드 토폴로지용, Remesh Modifier는 비파괴 실험용이에요.\n\nDyntopo — 브러시가 닿는 순간 그 자리에만 폴리곤이 자동으로 늘어나요. 뿔이나 손가락처럼 디테일이 필요한 부분을 자유롭게 만들 수 있어요.\n\nDecimate — 고해상도 사진을 저해상도로 압축하듯 폴리곤 수를 줄여요. Ratio 0.5부터 시작해서 형태가 무너지기 직전까지 낮추는 게 핵심이에요.",
         "goal": [
-          "Remesh의 역할을 이해한다",
-          "Decimate로 폴리곤을 줄인다",
-          "Mesh Cleaner 2 애드온을 설치하고 사용한다"
+          "Remesh 3가지 방법의 차이를 이해한다",
+          "Dyntopo로 스컬프팅 중 자동 리메시를 체험한다",
+          "Decimate로 폴리곤 수를 줄인다"
         ],
         "done": [
-          "Remesh 후 메쉬가 고르게 정리됐다",
-          "Decimate로 폴리곤 수가 절반 이하로 줄었다",
-          "Mesh Cleaner로 중복 버텍스가 제거됐다"
+          "Sculpt Remesh(Ctrl+R)와 Object Data Remesh의 차이를 말할 수 있다",
+          "Dyntopo로 자동 폴리곤 생성을 확인했다",
+          "Decimate로 폴리곤 수가 절반 이하로 줄었다"
         ],
         "tasks": [
           {
             "id": "w5-t15",
-            "label": "Sculpt Mode → Remesh 버튼 또는 Ctrl+R",
-            "detail": "Voxel Size를 조절해서 해상도 맞추기"
+            "label": "Sculpt Mode → 우측 Remesh 패널 → Ctrl+R",
+            "detail": "Voxel Size를 조절해서 해상도 맞추기 (0.02~0.05 권장)"
           },
           {
             "id": "w5-t16",
-            "label": "Remesh 전후 비교해보기",
-            "detail": "메쉬가 고르게 나뉘었는지 확인"
+            "label": "Remesh 전후 비교 — Statistics 켜서 폴리곤 수 변화 확인",
+            "detail": "Viewport Overlay → Statistics 켜기"
           },
           {
-            "id": "w5-t4",
-            "label": "Viewport Overlay에서 폴리곤 수 확인",
-            "detail": "Statistics 켜기"
+            "id": "w5-t-dyn",
+            "label": "Dyntopo 켜고 브러시가 닿는 곳만 폴리곤 생성 확인",
+            "detail": "Sculpt Mode → 헤더 Dyntopo 체크 → Detail Size 낮게 유지 (Constant Detail 권장)"
           },
           {
             "id": "w5-t5",
             "label": "Decimate Modifier 추가 후 Ratio 조절",
-            "detail": "0.3~0.5 정도에서 형태 유지되는 지점 찾기"
+            "detail": "0.3~0.5에서 형태 유지되는 지점 찾기"
+          }
+        ],
+        "image": "assets/images/week05/remesh.png",
+        "showme": ["remesh-modifier", "decimate-modifier"]
+      },
+      {
+        "title": "외부 플러그인 & 메쉬 정리 도구",
+        "copy": "무료 애드온으로 Blender 내장 도구를 넘어서는 리메시와 메쉬 정리가 가능해요. 플러그인은 Add-on(레거시 .zip 설치)과 Extension(4.2+ 원클릭) 두 가지 방식이 있어요.\n\nMesh Cleaner 2 — 중복 버텍스, 빈 구멍, 뒤집힌 노멀을 원클릭으로 정리해요. AI 메쉬 임포트 직후 가장 먼저 실행해야 하는 필수 도구예요.\n\nQRemeshify — 삼각형 메쉬를 깨끗한 쿼드로 변환해요. 애니메이션 리그를 걸 예정이라면 이 도구를 써서 쿼드 토폴로지를 확보하세요.",
+        "goal": [
+          "Add-on과 Extension의 차이를 이해하고 .zip으로 설치할 수 있다",
+          "Mesh Cleaner 2로 AI 메쉬를 원클릭 정리할 수 있다"
+        ],
+        "done": [
+          "Mesh Cleaner 2를 설치하고 AI 메쉬에 적용했다",
+          "QRemeshify 설치 방법을 안다"
+        ],
+        "tasks": [
+          {
+            "id": "w5-t-install",
+            "label": "Edit → Preferences → Add-ons → Install from Disk — .zip 설치 방법 확인",
+            "detail": "Gumroad에서 .zip 받아 → Install from Disk 클릭 → 체크박스 ON"
           },
           {
             "id": "w5-t-mc",
@@ -1807,16 +1828,11 @@ const CURRICULUM = [
           {
             "id": "w5-t-qr",
             "label": "QRemeshify로 쿼드 리메시 체험",
-            "detail": "트라이앵글 → 쿼드 변환, 선택적 사용",
+            "detail": "트라이앵글 → 쿼드 변환 — 애니메이션 리그 필요한 메쉬에 사용",
             "url": "https://ksami.gumroad.com/l/QRemeshify"
           }
         ],
-        "image": "assets/images/week05/remesh.png",
-        "showme": ["remesh-modifier", "decimate-modifier"],
-        "widgets": [
-          { "type": "showme", "id": "mask-modifier" },
-          { "type": "showme", "id": "multiresolution-modifier" }
-        ]
+        "image": "assets/images/week05/remesh.png"
       },
       {
         "title": "무드보드 → AI 프롬프트 설계",
@@ -1886,7 +1902,7 @@ const CURRICULUM = [
       },
       {
         "title": "AI 메쉬 정리 실전",
-        "copy": "Step 3에서 배운 Mesh Cleaner와 Decimate를 AI가 만든 내 메쉬에 직접 써봐요. Import한 그대로는 폴리곤이 너무 많아서 이후 작업이 힘들어요.",
+        "copy": "Step 4에서 배운 Mesh Cleaner와 Decimate를 AI가 만든 내 메쉬에 직접 써봐요. Import한 그대로는 폴리곤이 너무 많아서 이후 작업이 힘들어요.",
         "goal": [
           "AI 메쉬의 폴리곤 문제를 직접 해결한다"
         ],
@@ -2014,6 +2030,10 @@ const CURRICULUM = [
       {
         "title": "Blender Studio - Introduction to Sculpting",
         "url": "https://studio.blender.org/training/sculpting-in-blender/introduction/"
+      },
+      {
+        "title": "Blender Fundamentals 4.5 — Basic Sculpting (Remesh · Dyntopo 포함)",
+        "url": "https://studio.blender.org/training/blender-fundamentals-45-lts/basic-sculpting/"
       }
     ],
     "docs": [
@@ -2028,6 +2048,10 @@ const CURRICULUM = [
       {
         "title": "Remesh",
         "url": "https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/tool_settings/remesh.html"
+      },
+      {
+        "title": "Dyntopo",
+        "url": "https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/tool_settings/dyntopo.html"
       },
       {
         "title": "Decimate Modifier",
