@@ -16,6 +16,13 @@
       "runtimeArgs": ["serve", "course-site"],
       "port": 8772,
       "autoPort": true
+    },
+    {
+      "name": "course-site-preview",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "course-site"],
+      "port": 8773,
+      "autoPort": true
     }
   ]
 }

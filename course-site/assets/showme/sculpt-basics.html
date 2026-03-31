@@ -359,23 +359,151 @@ body {
 }
 .doc-ref a:hover { text-decoration: underline; }
 
+/* ── Principle Canvas ── */
+.principle-canvas-wrap {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: #080c16;
+  overflow: hidden;
+  margin: 0 0 14px;
+}
+.principle-canvas-wrap canvas { display: block; width: 100%; }
 
-.scenario-nav { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
-.scenario-btn { padding:6px 14px; border-radius:20px; border:1px solid rgba(255,255,255,.15); background:transparent; color:var(--muted-soft); cursor:pointer; font-size:13px; transition:all .2s; font-family:inherit; }
-.scenario-btn.active { background:rgba(99,102,241,.25); border-color:rgba(99,102,241,.5); color:var(--secondary-soft); }
-.before-after { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:12px 0; }
-.ba-panel { border-radius:12px; overflow:hidden; background:var(--surface); }
-.ba-panel canvas { width:100%; display:block; }
-.ba-label { text-align:center; font-size:11px; color:var(--muted-mid); padding:4px; background:rgba(0,0,0,.2); }
-.cause-effect { display:flex; flex-direction:column; gap:8px; margin:12px 0; }
-.ce-row { display:flex; align-items:center; gap:8px; }
-.ce-cause { background:rgba(99,102,241,.12); border:1px solid rgba(99,102,241,.25); border-radius:8px; padding:6px 12px; font-size:13px; flex:1; color:var(--muted-strong); }
-.ce-arrow { color:var(--muted-dim); font-size:16px; }
-.ce-result { border-radius:8px; padding:6px 12px; font-size:13px; flex:1.5; }
-.result-a { background:rgba(16,185,129,.1); border:1px solid rgba(16,185,129,.25); color:var(--success-soft); }
-.result-b { background:rgba(245,158,11,.1); border:1px solid rgba(245,158,11,.25); color:var(--warn-medium); }
-.result-c { background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.25); color:var(--danger-soft); }
-.scene-desc { font-size:.84rem; color:var(--muted-strong); margin-bottom:10px; padding:10px 14px; border-radius:var(--radius-sm); background:var(--surface); border:1px solid var(--line); line-height:1.7; }
+.formula-box {
+  background: rgba(10,132,255,.06);
+  border: 1px solid rgba(10,132,255,.18);
+  border-radius: var(--radius-sm);
+  padding: 10px 16px;
+  margin: 0 0 16px;
+  font-family: monospace;
+  font-size: .95rem;
+  color: var(--key-soft);
+  text-align: center;
+}
+.formula-box .formula-sub {
+  font-size: .75rem;
+  color: var(--muted);
+  margin-top: 4px;
+  font-family: var(--font);
+}
+
+/* ── Interactive Mesh Demo ── */
+.brush-panel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 12px;
+  background: var(--bg-soft);
+  border-bottom: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.brush-tag {
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit;
+  font-size: .76rem;
+  cursor: pointer;
+  transition: all .14s;
+}
+.brush-tag:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.brush-tag.is-active {
+  background: rgba(10,132,255,.16);
+  border-color: rgba(10,132,255,.4);
+  color: var(--key-soft);
+}
+.brush-panel .controls-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+  font-size: .76rem;
+  color: var(--muted);
+}
+.brush-panel .controls-group label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.brush-panel .controls-group input[type="range"] {
+  width: 70px;
+  accent-color: var(--key);
+}
+.mesh-demo-wrap {
+  position: relative;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  border: 1px solid var(--line);
+  border-top: none;
+  overflow: hidden;
+}
+.mesh-demo-wrap canvas { display: block; width: 100%; cursor: crosshair; }
+.mesh-footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: rgba(0,0,0,.25);
+  border-top: 1px solid var(--line);
+  font-size: .74rem;
+  color: var(--muted-dim);
+}
+.falloff-display {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+}
+.falloff-display canvas { display: block; flex-shrink: 0; }
+.falloff-labels {
+  font-size: .74rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.falloff-labels .brush-formula {
+  font-family: monospace;
+  font-size: .82rem;
+  color: var(--key-soft);
+}
+
+/* ── Mesh panel top wrapper ── */
+.mesh-panel-wrap {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+.mesh-panel-wrap .brush-panel {
+  border-radius: 0;
+  border: none;
+}
+
+/* ── ctrl hint ── */
+.ctrl-hint {
+  font-size: .74rem;
+  color: var(--muted-dim);
+  text-align: center;
+  padding: 4px 0 0;
+}
+
+/* ── Reset btn ── */
+.reset-btn {
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit;
+  font-size: .74rem;
+  cursor: pointer;
+  transition: background .14s;
+}
+.reset-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
 
 /* ── Responsive ── */
 @media (max-width: 600px) {
@@ -383,6 +511,7 @@ body {
   .tabs { padding: 0 8px; }
   .tab { padding: 10px 12px; font-size: .8rem; }
   .panel { padding: 16px 12px; }
+  .brush-panel .controls-group { margin-left: 0; width: 100%; }
 }
 </style>
 </head>
@@ -391,13 +520,25 @@ body {
 <!-- Tab Bar -->
 <nav class="tabs" role="tablist">
   <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
-  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">인터랙션</button>
   <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
   <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
 </nav>
 
 <!-- TAB 1: 개념 이해 -->
 <section class="panel is-active" id="panel-concept" role="tabpanel">
+
+  <!-- Principle Infographic Canvas -->
+  <div class="principle-canvas-wrap">
+    <canvas id="principle-canvas" width="680" height="190"></canvas>
+  </div>
+
+  <!-- Formula Box -->
+  <div class="formula-box">
+    Δv = S · f(d/R) · n̂
+    <div class="formula-sub">S=강도 · f(d/R)=거리별 감쇠(Hermite smoothstep) · n̂=법선 방향</div>
+  </div>
+
   <div class="concept-grid">
     <div class="concept-card">
       <h3>Sculpt Mode란? <span class="badge badge-blue">직관적</span></h3>
@@ -448,25 +589,42 @@ body {
   </div>
 </section>
 
-<!-- TAB 2: 시각적 비교 -->
+<!-- TAB 2: 인터랙션 -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <div class="scenario-nav" id="scenarioNav">
-    <button class="scenario-btn active" data-scene="draw">Draw 브러시</button>
-    <button class="scenario-btn" data-scene="smooth">Smooth 브러시</button>
-    <button class="scenario-btn" data-scene="crease">Crease 브러시</button>
-  </div>
-  <div class="scene-desc" id="scene-desc">Draw 브러시는 메시를 밀어올려 볼록하게 만드는 기본 브러시입니다.</div>
-  <div class="before-after">
-    <div class="ba-panel">
-      <canvas id="canvas-before" width="280" height="160"></canvas>
-      <div class="ba-label">적용 전</div>
+  <div class="mesh-panel-wrap">
+    <div class="brush-panel" id="brushPanel">
+      <button class="brush-tag is-active" data-brush="draw">Draw</button>
+      <button class="brush-tag" data-brush="smooth">Smooth</button>
+      <button class="brush-tag" data-brush="crease">Crease</button>
+      <button class="brush-tag" data-brush="inflate">Inflate</button>
+      <button class="brush-tag" data-brush="grab">Grab</button>
+      <div class="controls-group">
+        <label>
+          반경
+          <input type="range" id="radiusSlider" min="2" max="10" value="5">
+        </label>
+        <label>
+          강도
+          <input type="range" id="strengthSlider" min="1" max="20" value="8">
+        </label>
+        <button class="reset-btn" id="resetBtn">Reset</button>
+      </div>
     </div>
-    <div class="ba-panel">
-      <canvas id="canvas-after" width="280" height="160"></canvas>
-      <div class="ba-label">적용 후</div>
+    <div class="mesh-demo-wrap">
+      <canvas id="mesh-canvas" width="680" height="270"></canvas>
+      <div class="mesh-footer">드래그하여 메쉬를 조각하세요</div>
     </div>
   </div>
-  <div class="cause-effect" id="cause-effect"></div>
+
+  <div class="falloff-display">
+    <canvas id="falloff-mini" width="180" height="70"></canvas>
+    <div class="falloff-labels">
+      <div class="brush-formula" id="falloffFormula">f(p) = 3p² − 2p³, p = 1−d/R</div>
+      <div id="falloffBrushName">현재 브러시: Draw</div>
+      <div>거리가 멀수록 영향 감소 (Hermite smoothstep)</div>
+    </div>
+  </div>
+  <div class="ctrl-hint">Ctrl = 반전 방향 · Shift = 임시 Smooth</div>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->
@@ -533,8 +691,674 @@ document.querySelectorAll(".tab").forEach(function(tab) {
     tab.classList.add("is-active");
     tab.setAttribute("aria-selected", "true");
     document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+    if (tab.dataset.tab === "concept") {
+      setTimeout(drawPrincipleCanvas, 30);
+    }
   });
 });
+
+// ════════════════════════════════════════════════
+// TAB 1 — Principle Infographic Canvas
+// ════════════════════════════════════════════════
+(function() {
+  function drawPrincipleCanvas() {
+    var canvas = document.getElementById("principle-canvas");
+    if (!canvas) return;
+    var W = canvas.width;
+    var H = canvas.height;
+    var ctx = canvas.getContext("2d");
+
+    // Background
+    ctx.fillStyle = "#080c16";
+    ctx.fillRect(0, 0, W, H);
+
+    var N = 26;
+    var baseY = H * 0.72;
+    var margin = W * 0.06;
+    var totalW = W - margin * 2;
+    var step = totalW / (N - 1);
+    var cursorX = W * 0.5;
+    var cursorY = baseY - 75;
+    var R = W * 0.22;
+
+    // Hermite smoothstep (Blender default)
+    function gf(d) {
+      var t = d / R;
+      if (t >= 1) return 0;
+      var p = 1 - t;
+      return 3 * p * p - 2 * p * p * p;
+    }
+
+    // Brush cursor circle (dashed)
+    ctx.save();
+    ctx.strokeStyle = "rgba(255,255,255,0.55)";
+    ctx.lineWidth = 1.2;
+    ctx.setLineDash([5, 4]);
+    ctx.beginPath();
+    ctx.arc(cursorX, cursorY, R, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    // center dot
+    ctx.fillStyle = "rgba(255,255,255,0.9)";
+    ctx.beginPath();
+    ctx.arc(cursorX, cursorY, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+    // crosshair
+    ctx.strokeStyle = "rgba(255,255,255,0.6)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(cursorX - 8, cursorY);
+    ctx.lineTo(cursorX + 8, cursorY);
+    ctx.moveTo(cursorX, cursorY - 8);
+    ctx.lineTo(cursorX, cursorY + 8);
+    ctx.stroke();
+    ctx.restore();
+
+    // R distance arrow + label
+    ctx.save();
+    ctx.strokeStyle = "rgba(255,220,0,0.85)";
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(cursorX, cursorY);
+    ctx.lineTo(cursorX + R, cursorY);
+    ctx.stroke();
+    // arrowhead
+    ctx.fillStyle = "rgba(255,220,0,0.85)";
+    ctx.beginPath();
+    ctx.moveTo(cursorX + R, cursorY);
+    ctx.lineTo(cursorX + R - 6, cursorY - 3);
+    ctx.lineTo(cursorX + R - 6, cursorY + 3);
+    ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle = "rgba(255,220,0,0.9)";
+    ctx.font = "bold 11px monospace";
+    ctx.textAlign = "center";
+    ctx.fillText("R", cursorX + R * 0.5, cursorY - 5);
+    ctx.restore();
+
+    // Falloff labels
+    ctx.save();
+    ctx.font = "10px monospace";
+    ctx.textAlign = "center";
+    // 100% at center
+    ctx.fillStyle = "rgba(200,230,255,0.85)";
+    ctx.fillText("100%", cursorX, cursorY + R * 0.1 - 14);
+    // 50% at ~0.35R for Hermite smoothstep
+    var halfR = R * 0.48;
+    ctx.fillStyle = "rgba(160,200,255,0.7)";
+    ctx.fillText("50%", cursorX + halfR, cursorY - 5);
+    // 0% at edge
+    ctx.fillStyle = "rgba(120,150,200,0.5)";
+    ctx.fillText("0%", cursorX + R + 12, cursorY + 4);
+    ctx.restore();
+
+    // Dotted vertical projection lines (brush edge to surface)
+    var edgeLeft = cursorX - R;
+    var edgeRight = cursorX + R;
+    ctx.save();
+    ctx.strokeStyle = "rgba(100,160,255,0.22)";
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 4]);
+    ctx.beginPath();
+    ctx.moveTo(edgeLeft, cursorY);
+    ctx.lineTo(edgeLeft, baseY);
+    ctx.moveTo(edgeRight, cursorY);
+    ctx.lineTo(edgeRight, baseY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+
+    // Compute vertex positions and arrows
+    var verts = [];
+    for (var i = 0; i < N; i++) {
+      var vx = margin + i * step;
+      var dx = vx - cursorX;
+      var f = gf(Math.abs(dx));
+      var arrowH = f * 55;
+      verts.push({ x: vx, y: baseY, f: f, arrowH: arrowH });
+    }
+
+    // Dotted baseline connecting vertices
+    ctx.save();
+    ctx.strokeStyle = "rgba(80,110,180,0.35)";
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(verts[0].x, baseY);
+    for (var i = 1; i < N; i++) ctx.lineTo(verts[i].x, baseY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+
+    // Draw displacement arrows + vertices
+    for (var i = 0; i < N; i++) {
+      var v = verts[i];
+      var f = v.f;
+      if (f < 0.005) {
+        // dim vertex dot only
+        ctx.save();
+        ctx.fillStyle = "rgba(30,60,130,0.5)";
+        ctx.beginPath();
+        ctx.arc(v.x, baseY, 2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+        continue;
+      }
+
+      var arrowTipY = baseY - v.arrowH;
+      var r = 10 + 80 * f;
+      var g = 100 + 130 * f;
+      var b = 255;
+      var alpha = 0.2 + 0.8 * f;
+
+      // Arrow shaft
+      ctx.save();
+      ctx.strokeStyle = "rgba(" + Math.round(r) + "," + Math.round(g) + "," + b + "," + (alpha * 0.7) + ")";
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(v.x, baseY);
+      ctx.lineTo(v.x, arrowTipY);
+      ctx.stroke();
+
+      // Arrow tip
+      if (v.arrowH > 6) {
+        ctx.fillStyle = "rgba(" + Math.round(r) + "," + Math.round(g) + "," + b + "," + alpha + ")";
+        ctx.beginPath();
+        ctx.moveTo(v.x, arrowTipY);
+        ctx.lineTo(v.x - 3, arrowTipY + 6);
+        ctx.lineTo(v.x + 3, arrowTipY + 6);
+        ctx.closePath();
+        ctx.fill();
+      }
+      ctx.restore();
+
+      // Vertex dot
+      ctx.save();
+      ctx.fillStyle = "rgba(" + Math.round(r) + "," + Math.round(g) + "," + b + "," + alpha + ")";
+      ctx.beginPath();
+      ctx.arc(v.x, baseY, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // ── Mini Hermite curve plot (bottom-right) ──
+    var plotX = W - 80;
+    var plotY = H - 60;
+    var plotW = 55;
+    var plotH = 45;
+
+    // Plot background
+    ctx.save();
+    ctx.fillStyle = "rgba(8,12,22,0.85)";
+    ctx.strokeStyle = "rgba(60,90,140,0.5)";
+    ctx.lineWidth = 0.8;
+    ctx.beginPath();
+    ctx.roundRect(plotX - 6, plotY - 6, plotW + 18, plotH + 18, 4);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+
+    // Axes
+    ctx.save();
+    ctx.strokeStyle = "rgba(80,100,140,0.6)";
+    ctx.lineWidth = 0.8;
+    // Y axis
+    ctx.beginPath();
+    ctx.moveTo(plotX, plotY);
+    ctx.lineTo(plotX, plotY + plotH);
+    // X axis
+    ctx.moveTo(plotX, plotY + plotH);
+    ctx.lineTo(plotX + plotW, plotY + plotH);
+    ctx.stroke();
+
+    // Axis labels
+    ctx.fillStyle = "rgba(120,150,200,0.75)";
+    ctx.font = "8px monospace";
+    ctx.textAlign = "right";
+    ctx.fillText("1", plotX - 2, plotY + 3);
+    ctx.fillText("0", plotX - 2, plotY + plotH + 2);
+    ctx.textAlign = "center";
+    ctx.fillText("0", plotX, plotY + plotH + 8);
+    ctx.fillText("R", plotX + plotW, plotY + plotH + 8);
+
+    // Title
+    ctx.fillStyle = "rgba(140,200,255,0.8)";
+    ctx.font = "bold 8px monospace";
+    ctx.textAlign = "left";
+    ctx.fillText("f(d)", plotX + plotW / 2 - 6, plotY - 1);
+
+    // Hermite smoothstep curve
+    ctx.strokeStyle = "rgba(100,170,255,0.9)";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    var steps = 40;
+    for (var s = 0; s <= steps; s++) {
+      var t = s / steps;
+      var fx = plotX + t * plotW;
+      var p = 1 - t;
+      var fv = 3 * p * p - 2 * p * p * p;
+      var fy = plotY + plotH - fv * plotH;
+      if (s === 0) ctx.moveTo(fx, fy);
+      else ctx.lineTo(fx, fy);
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  window.drawPrincipleCanvas = drawPrincipleCanvas;
+
+  // Draw on load
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", drawPrincipleCanvas);
+  } else {
+    setTimeout(drawPrincipleCanvas, 10);
+  }
+})();
+
+// ════════════════════════════════════════════════
+// TAB 2 — Interactive Deformable Mesh
+// ════════════════════════════════════════════════
+(function() {
+  var N = 50;
+  var heights = new Float32Array(N);
+  var currentBrush = "draw";
+  var isDrawing = false;
+  var mouseGX = -1;
+  var lastMouseGX = -1;
+  var ctrlDown = false;
+  var shiftDown = false;
+  var animId = null;
+
+  var canvas = document.getElementById("mesh-canvas");
+  var radiusSlider = document.getElementById("radiusSlider");
+  var strengthSlider = document.getElementById("strengthSlider");
+  var resetBtn = document.getElementById("resetBtn");
+  var falloffMini = document.getElementById("falloff-mini");
+  var falloffFormula = document.getElementById("falloffFormula");
+  var falloffBrushName = document.getElementById("falloffBrushName");
+
+  if (!canvas) return;
+
+  // Blender default: Hermite smoothstep (cubic)
+  // f(p) = 3p² - 2p³  where p = 1 - d/R
+  function falloff(d, R) {
+    var t = d / R;
+    if (t >= 1) return 0;
+    var p = 1 - t;
+    return 3 * p * p - 2 * p * p * p;
+  }
+
+  function applyBrush(gx) {
+    var dir = ctrlDown ? -1 : 1;
+    var mode = shiftDown ? "smooth" : currentBrush;
+    var S = parseFloat(strengthSlider.value);
+    var R = parseFloat(radiusSlider.value);
+
+    for (var i = 0; i < N; i++) {
+      var d = Math.abs(i - gx);
+      var f = falloff(d, R);
+      if (f < 0.001) continue;
+
+      switch (mode) {
+        case "draw":
+          heights[i] += dir * S * f * 0.4;
+          break;
+        case "smooth": {
+          var l = Math.max(0, i - 1);
+          var r2 = Math.min(N - 1, i + 1);
+          var avg = (heights[l] + heights[i] + heights[r2]) / 3;
+          heights[i] += (avg - heights[i]) * f * S * 0.12;
+          break;
+        }
+        case "crease": {
+          // Blender Crease = Draw(inward) + Pinch(toward center)
+          var drawPart = -dir * S * f * 0.25; // push down
+          var pinchDir = (gx - i) > 0 ? 1 : -1;
+          var pinchStrength = Math.abs(gx - i) * 0.02;
+          heights[i] += drawPart + dir * S * f * pinchStrength * 0.15;
+          break;
+        }
+        case "inflate": {
+          var slope = (i > 0 && i < N - 1) ? (heights[i + 1] - heights[i - 1]) * 0.5 : 0;
+          var normY = 1 / Math.sqrt(1 + slope * slope * 0.001);
+          heights[i] += dir * S * f * normY * 0.35;
+          break;
+        }
+        case "grab":
+          if (lastMouseGX >= 0) {
+            var dy = (gx - lastMouseGX) * 0.3;
+            heights[i] += dir * dy * f;
+          }
+          break;
+      }
+      heights[i] = Math.max(-90, Math.min(130, heights[i]));
+    }
+    lastMouseGX = gx;
+  }
+
+  function drawMesh() {
+    var W = canvas.width;
+    var H = canvas.height;
+    var ctx = canvas.getContext("2d");
+
+    var startX = 30;
+    var endX = W - 30;
+    var cellW = (endX - startX) / (N - 1);
+    var baseY = H * 0.64;
+
+    // Background gradient
+    var bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+    bgGrad.addColorStop(0, "#070b14");
+    bgGrad.addColorStop(1, "#0a1225");
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, W, H);
+
+    // Subtle grid
+    ctx.save();
+    ctx.strokeStyle = "rgba(20,50,120,0.2)";
+    ctx.lineWidth = 0.5;
+    var gridStep = 35;
+    for (var gx2 = 0; gx2 < W; gx2 += gridStep) {
+      ctx.beginPath();
+      ctx.moveTo(gx2, 0);
+      ctx.lineTo(gx2, H);
+      ctx.stroke();
+    }
+    for (var gy = 0; gy < H; gy += gridStep) {
+      ctx.beginPath();
+      ctx.moveTo(0, gy);
+      ctx.lineTo(W, gy);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    // Build vertex positions
+    var vxArr = new Float32Array(N);
+    var vyArr = new Float32Array(N);
+    for (var i = 0; i < N; i++) {
+      vxArr[i] = startX + i * cellW;
+      vyArr[i] = baseY - heights[i];
+    }
+
+    // Surface fill
+    var surfGrad = ctx.createLinearGradient(0, baseY - 130, 0, H);
+    surfGrad.addColorStop(0, "rgba(20,70,180,0.55)");
+    surfGrad.addColorStop(0.5, "rgba(10,30,90,0.7)");
+    surfGrad.addColorStop(1, "rgba(5,10,30,0.9)");
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(vxArr[0], vyArr[0]);
+    for (var i = 1; i < N; i++) ctx.lineTo(vxArr[i], vyArr[i]);
+    ctx.lineTo(vxArr[N - 1], H);
+    ctx.lineTo(vxArr[0], H);
+    ctx.closePath();
+    ctx.fillStyle = surfGrad;
+    ctx.fill();
+    ctx.restore();
+
+    // Surface glow line
+    ctx.save();
+    ctx.shadowColor = "rgba(60,140,255,0.5)";
+    ctx.shadowBlur = 10;
+    ctx.strokeStyle = "rgba(90,160,255,0.85)";
+    ctx.lineWidth = 2;
+    ctx.lineJoin = "round";
+    ctx.beginPath();
+    ctx.moveTo(vxArr[0], vyArr[0]);
+    for (var i = 1; i < N; i++) ctx.lineTo(vxArr[i], vyArr[i]);
+    ctx.stroke();
+    ctx.restore();
+
+    // Vertex dots
+    var R = parseFloat(radiusSlider.value);
+    for (var i = 0; i < N; i++) {
+      var d = mouseGX >= 0 ? Math.abs(i - mouseGX) : 999;
+      var infl = mouseGX >= 0 ? falloff(d, R) : 0;
+      var h = heights[i];
+      var norm = (h + 90) / 220;
+
+      var dotColor;
+      if (h >= 0) {
+        var t = Math.min(1, h / 130);
+        dotColor = "rgba(" + Math.round(20 + 60 * t) + "," + Math.round(80 + 100 * t) + ",255," + (0.5 + 0.4 * t) + ")";
+      } else {
+        var t = Math.min(1, (-h) / 90);
+        dotColor = "rgba(" + Math.round(80 + 100 * t) + "," + Math.round(80 - 30 * t) + "," + Math.round(255 - 75 * t) + "," + (0.5 + 0.4 * t) + ")";
+      }
+
+      ctx.save();
+      ctx.fillStyle = dotColor;
+      ctx.beginPath();
+      ctx.arc(vxArr[i], vyArr[i], 2.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // Brush visualization
+    if (mouseGX >= 0) {
+      var bx = startX + mouseGX * cellW;
+      var by = mouseGX >= 0 && mouseGX < N ? baseY - heights[Math.round(Math.max(0, Math.min(N - 1, mouseGX)))] : baseY;
+      var pixR = R * cellW;
+
+      // Radial fill
+      ctx.save();
+      var radGrad = ctx.createRadialGradient(bx, by, 0, bx, by, pixR);
+      radGrad.addColorStop(0, "rgba(120,190,255,0.1)");
+      radGrad.addColorStop(1, "rgba(100,170,255,0)");
+      ctx.fillStyle = radGrad;
+      ctx.beginPath();
+      ctx.arc(bx, by, pixR, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // Concentric rings
+      var rings = [
+        { scale: 1,   alpha: 0.6  },
+        { scale: 0.7, alpha: 0.3  },
+        { scale: 0.4, alpha: 0.15 }
+      ];
+      rings.forEach(function(ring) {
+        ctx.save();
+        ctx.strokeStyle = "rgba(160,200,255," + ring.alpha + ")";
+        ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        ctx.arc(bx, by, pixR * ring.scale, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      });
+
+      // Outer dashed ring
+      ctx.save();
+      ctx.setLineDash([4, 3]);
+      ctx.strokeStyle = "rgba(180,220,255,0.75)";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(bx, by, pixR, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+
+      // Center dot + crosshair
+      ctx.save();
+      ctx.fillStyle = "rgba(255,255,255,0.9)";
+      ctx.beginPath();
+      ctx.arc(bx, by, 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(255,255,255,0.6)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(bx - 8, by);
+      ctx.lineTo(bx + 8, by);
+      ctx.moveTo(bx, by - 8);
+      ctx.lineTo(bx, by + 8);
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  function renderLoop() {
+    drawMesh();
+    animId = requestAnimationFrame(renderLoop);
+  }
+
+  function drawFalloffMini() {
+    if (!falloffMini) return;
+    var W = falloffMini.width;
+    var H = falloffMini.height;
+    var ctx = falloffMini.getContext("2d");
+    ctx.fillStyle = "#0d1520";
+    ctx.fillRect(0, 0, W, H);
+
+    var px = 18, py = 8, pw = W - 28, ph = H - 20;
+
+    // Axes
+    ctx.save();
+    ctx.strokeStyle = "rgba(80,100,140,0.6)";
+    ctx.lineWidth = 0.8;
+    ctx.beginPath();
+    ctx.moveTo(px, py);
+    ctx.lineTo(px, py + ph);
+    ctx.lineTo(px + pw, py + ph);
+    ctx.stroke();
+
+    ctx.fillStyle = "rgba(120,150,200,0.75)";
+    ctx.font = "7px monospace";
+    ctx.textAlign = "right";
+    ctx.fillText("1", px - 2, py + 4);
+    ctx.fillText("0", px - 2, py + ph + 1);
+    ctx.textAlign = "center";
+    ctx.fillText("0", px, py + ph + 8);
+    ctx.fillText("R", px + pw, py + ph + 8);
+    ctx.restore();
+
+    // Curve
+    ctx.save();
+    ctx.strokeStyle = "rgba(100,170,255,0.9)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    var steps = 60;
+    for (var s = 0; s <= steps; s++) {
+      var t = s / steps;
+      var p = 1 - t;
+      var fv = 3 * p * p - 2 * p * p * p;
+      var fx = px + t * pw;
+      var fy = py + ph - fv * ph;
+      if (s === 0) ctx.moveTo(fx, fy);
+      else ctx.lineTo(fx, fy);
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  var brushNames = {
+    draw:    "Draw",
+    smooth:  "Smooth",
+    crease:  "Crease",
+    inflate: "Inflate",
+    grab:    "Grab"
+  };
+
+  function getMouseGX(offsetX) {
+    var W = canvas.width;
+    var startX = 30;
+    var endX = W - 30;
+    var cellW = (endX - startX) / (N - 1);
+    var gx = (offsetX - startX) / cellW;
+    return Math.max(0, Math.min(N - 1, gx));
+  }
+
+  // Mouse events — scale offsetX from CSS pixels to canvas pixels
+  function scaleX(offsetX) {
+    var rect = canvas.getBoundingClientRect();
+    return offsetX * (canvas.width / rect.width);
+  }
+  canvas.addEventListener("mouseenter", function(e) {
+    mouseGX = getMouseGX(scaleX(e.offsetX));
+  });
+  canvas.addEventListener("mousemove", function(e) {
+    mouseGX = getMouseGX(scaleX(e.offsetX));
+    if (isDrawing) applyBrush(mouseGX);
+  });
+  canvas.addEventListener("mousedown", function(e) {
+    isDrawing = true;
+    lastMouseGX = -1;
+    mouseGX = getMouseGX(scaleX(e.offsetX));
+    applyBrush(mouseGX);
+  });
+  canvas.addEventListener("mouseup", function() { isDrawing = false; lastMouseGX = -1; });
+  canvas.addEventListener("mouseleave", function() { isDrawing = false; mouseGX = -1; lastMouseGX = -1; });
+
+  // Touch events
+  function getTouchGX(touch) {
+    var rect = canvas.getBoundingClientRect();
+    var scaleX = canvas.width / rect.width;
+    var offsetX = (touch.clientX - rect.left) * scaleX;
+    return getMouseGX(offsetX);
+  }
+  canvas.addEventListener("touchstart", function(e) {
+    e.preventDefault();
+    isDrawing = true;
+    lastMouseGX = -1;
+    mouseGX = getTouchGX(e.touches[0]);
+    applyBrush(mouseGX);
+  }, { passive: false });
+  canvas.addEventListener("touchmove", function(e) {
+    e.preventDefault();
+    mouseGX = getTouchGX(e.touches[0]);
+    if (isDrawing) applyBrush(mouseGX);
+  }, { passive: false });
+  canvas.addEventListener("touchend", function(e) {
+    e.preventDefault();
+    isDrawing = false;
+    mouseGX = -1;
+    lastMouseGX = -1;
+  }, { passive: false });
+
+  // Keyboard
+  document.addEventListener("keydown", function(e) {
+    if (e.key === "Control") ctrlDown = true;
+    if (e.key === "Shift") shiftDown = true;
+  });
+  document.addEventListener("keyup", function(e) {
+    if (e.key === "Control") ctrlDown = false;
+    if (e.key === "Shift") shiftDown = false;
+  });
+
+  // Brush buttons
+  document.querySelectorAll(".brush-tag").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      document.querySelectorAll(".brush-tag").forEach(function(b) { b.classList.remove("is-active"); });
+      btn.classList.add("is-active");
+      currentBrush = btn.dataset.brush;
+      if (falloffBrushName) falloffBrushName.textContent = "현재 브러시: " + brushNames[currentBrush];
+    });
+  });
+
+  // Reset
+  if (resetBtn) {
+    resetBtn.addEventListener("click", function() {
+      for (var i = 0; i < N; i++) heights[i] = 0;
+    });
+  }
+
+  // Start loop when tab becomes visible
+  document.querySelectorAll(".tab").forEach(function(tab) {
+    tab.addEventListener("click", function() {
+      if (tab.dataset.tab === "visual") {
+        if (!animId) renderLoop();
+        setTimeout(drawFalloffMini, 30);
+      } else {
+        if (animId) { cancelAnimationFrame(animId); animId = null; }
+      }
+    });
+  });
+
+  // Draw falloff mini on load
+  window.addEventListener("load", function() {
+    drawFalloffMini();
+  });
+})();
 
 // ── Quiz Engine (Safe DOM methods) ────────────
 function initQuiz(questions) {
@@ -658,161 +1482,6 @@ function initQuiz(questions) {
   }
 }
 
-// ── Sculpt Basics Scenario Visualization ────────────
-(function() {
-  function drawBg(ctx, w, h) { ctx.fillStyle = "#1e293b"; ctx.fillRect(0,0,w,h); }
-
-  function drawSphere(ctx, cx, cy, r, color) {
-    var grad = ctx.createRadialGradient(cx-r*0.3, cy-r*0.3, r*0.1, cx, cy, r);
-    grad.addColorStop(0, "#e2e8f0"); grad.addColorStop(0.4, color); grad.addColorStop(1, "#0f172a");
-    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.fillStyle = grad; ctx.fill();
-  }
-
-  function drawBaseSphere(ctx, w, h) {
-    drawBg(ctx, w, h);
-    drawSphere(ctx, w/2, h/2, 55, "#475569");
-    ctx.strokeStyle = "rgba(148,163,184,.15)"; ctx.lineWidth = 0.5;
-    for (var i = 0; i < 8; i++) {
-      var a = (i/8) * Math.PI*2;
-      ctx.beginPath(); ctx.moveTo(w/2, h/2);
-      ctx.lineTo(w/2 + Math.cos(a)*55, h/2 + Math.sin(a)*55); ctx.stroke();
-    }
-    ctx.strokeStyle = "rgba(148,163,184,.1)";
-    for (var rv = 18; rv <= 55; rv += 18) {
-      ctx.beginPath(); ctx.arc(w/2, h/2, rv, 0, Math.PI*2); ctx.stroke();
-    }
-    ctx.fillStyle = "#94a3b8"; ctx.font = "bold 10px sans-serif"; ctx.textAlign = "center";
-    ctx.fillText("\uae30\ubcf8 \uad6c (Sphere)", w/2, 14);
-  }
-
-  function drawDrawAfter(ctx, w, h) {
-    drawBg(ctx, w, h);
-    var cx = w/2, cy = h/2;
-    drawSphere(ctx, cx, cy, 52, "#475569");
-    var bumps = [{a:0.5, r:0.9}, {a:1.8, r:0.85}, {a:3.2, r:0.92}, {a:4.5, r:0.88}];
-    bumps.forEach(function(b) {
-      var bx = cx + Math.cos(b.a) * 52 * b.r;
-      var by = cy + Math.sin(b.a) * 52 * b.r;
-      var grad = ctx.createRadialGradient(bx, by, 0, bx, by, 18);
-      grad.addColorStop(0, "rgba(148,163,184,.8)"); grad.addColorStop(1, "rgba(148,163,184,0)");
-      ctx.beginPath(); ctx.arc(bx, by, 18, 0, Math.PI*2); ctx.fillStyle = grad; ctx.fill();
-    });
-    ctx.strokeStyle = "rgba(99,102,241,.8)"; ctx.lineWidth = 1.5;
-    ctx.beginPath(); ctx.arc(cx+20, cy-20, 16, 0, Math.PI*2); ctx.stroke();
-    ctx.fillStyle = "#a5b4fc"; ctx.font = "bold 10px sans-serif"; ctx.textAlign = "center";
-    ctx.fillText("Draw \ub85c \ubcfc\ub85d \uc0dd\uc131", cx, 14);
-  }
-
-  function drawSmoothAfter(ctx, w, h) {
-    drawBg(ctx, w, h);
-    var cx = w/2, cy = h/2;
-    var grad = ctx.createRadialGradient(cx-16, cy-16, 5, cx, cy, 53);
-    grad.addColorStop(0, "#e2e8f0"); grad.addColorStop(0.3, "#94a3b8"); grad.addColorStop(1, "#1e293b");
-    ctx.beginPath(); ctx.arc(cx, cy, 53, 0, Math.PI*2); ctx.fillStyle = grad; ctx.fill();
-    ctx.strokeStyle = "rgba(16,185,129,.6)"; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.arc(cx, cy, 53, -Math.PI*0.8, -Math.PI*0.1); ctx.stroke();
-    ctx.strokeStyle = "rgba(16,185,129,.6)"; ctx.lineWidth = 1.5;
-    ctx.beginPath(); ctx.arc(cx-10, cy-20, 20, 0, Math.PI*2); ctx.stroke();
-    ctx.fillStyle = "#6ee7b7"; ctx.font = "bold 10px sans-serif"; ctx.textAlign = "center";
-    ctx.fillText("Smooth \ub85c \ubd88\uade0\uc77c \uc81c\uac70", cx, 14);
-  }
-
-  function drawCreaseAfter(ctx, w, h) {
-    drawBg(ctx, w, h);
-    var cx = w/2, cy = h/2;
-    drawSphere(ctx, cx, cy, 52, "#475569");
-    ctx.strokeStyle = "rgba(239,68,68,.7)"; ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(cx-30, cy-40); ctx.quadraticCurveTo(cx+10, cy, cx-20, cy+40); ctx.stroke();
-    ctx.strokeStyle = "rgba(239,68,68,.4)"; ctx.lineWidth = 6;
-    ctx.beginPath();
-    ctx.moveTo(cx+15, cy-35); ctx.quadraticCurveTo(cx-15, cy+5, cx+20, cy+38); ctx.stroke();
-    ctx.strokeStyle = "rgba(239,68,68,.8)"; ctx.lineWidth = 1.5;
-    ctx.beginPath(); ctx.arc(cx-5, cy, 14, 0, Math.PI*2); ctx.stroke();
-    ctx.fillStyle = "#fca5a5"; ctx.font = "bold 10px sans-serif"; ctx.textAlign = "center";
-    ctx.fillText("Crease \ub85c \uae0a\uc740 \ud30c\uc778 \uc0dd\uc131", cx, 14);
-  }
-
-  var scenarios = {
-    draw: {
-      desc: "Draw \ube0c\ub7ec\uc2dc\ub294 \uba54\uc2dc\ub97c \ubc00\uc5b4\uc62c\ub824 \ubcfc\ub85d\ud558\uac8c \ub9cc\ub4dc\ub294 \uae30\ubcf8 \ube0c\ub7ec\uc2dc\uc785\ub2c8\ub2e4. Ctrl\uc744 \ub204\ub974\uba74 \ubc18\ub300\ub85c \ud30c\ub0b4\ub294 \ud6a8\uacfc\ub97c \uc90d\ub2c8\ub2e4.",
-      ce: [
-        { cause: "Draw \ube0c\ub7ec\uc2dc \ub4dc\ub798\uadf8", result: "\uba54\uc2dc \ubc00\uc5b4\uc62c\ub824 \ubcfc\ub85d \uc0dd\uc131", resultClass: "result-a" },
-        { cause: "Ctrl + Draw", result: "\ubc18\ub300\ubc29\ud5a5 (\ud30c\ub0b4\uae30) \ud6a8\uacfc", resultClass: "result-b" },
-        { cause: "\ube0c\ub7ec\uc2dc \ubc18\uacbd \uc870\uc808 (F)", result: "\uc601\ud5a5 \ubc94\uc704 \ubcc0\uacbd", resultClass: "result-a" }
-      ],
-      before: drawBaseSphere,
-      after: drawDrawAfter
-    },
-    smooth: {
-      desc: "Smooth \ube0c\ub7ec\uc2dc\ub294 \ubc84\ud14d\uc2a4\ub97c \ud3c9\uade0\ud654\ud558\uc5ec \ubd88\uade0\uc77c\ud55c \ud45c\uba74\uc744 \uc815\ub9ac\ud569\ub2c8\ub2e4. Shift\ub97c \ub204\ub974\uba74 \uc77c\uc2dc\uc801\uc73c\ub85c Smooth\uac00 \ud65c\uc131\ud654\ub429\ub2c8\ub2e4.",
-      ce: [
-        { cause: "Smooth \ube0c\ub7ec\uc2dc \ub4dc\ub798\uadf8", result: "\ubc84\ud14d\uc2a4 \ud3c9\uade0\ud654, \ubd88\uade0\uc77c \uc81c\uac70", resultClass: "result-a" },
-        { cause: "Shift + \uc5b4\ub5a4 \ube0c\ub7ec\uc2dc\ub3c4", result: "\uc77c\uc2dc\uc801 Smooth \uc801\uc6a9", resultClass: "result-a" },
-        { cause: "Strength \uac12 \uc870\uc808", result: "\ud3c9\ud65c\ud654 \uac15\ub3c4 \ubcc0\uacbd", resultClass: "result-b" }
-      ],
-      before: drawBaseSphere,
-      after: drawSmoothAfter
-    },
-    crease: {
-      desc: "Crease \ube0c\ub7ec\uc2dc\ub294 \ud45c\uba74\uc5d0 \uae0a\uace0 \ub0a0\uce74\ub85c\uc6b4 \uc8fc\ub984\uc744 \ub9cc\ub4ed\ub2c8\ub2e4. \ud611\uacc1\uc774\ub098 \uc8fc\ub984 \ud45c\ud604\uc5d0 \ud65c\uc6a9\ub429\ub2c8\ub2e4.",
-      ce: [
-        { cause: "Crease \ube0c\ub7ec\uc2dc \ub4dc\ub798\uadf8", result: "\uae0a\uace0 \ub0a0\uce74\ub85c\uc6b4 \ud654\uac15 \uc0dd\uc131", resultClass: "result-a" },
-        { cause: "Ctrl + Crease", result: "\ud654\uac15 \ubc18\ub300 (\ubcbd\uc5b4\uc624\ub974\ub294 \ub9d0\ub77c)", resultClass: "result-b" },
-        { cause: "\uacf5\uba74 \ub2e4\uc21c\ud654\uc5d0 Crease \uc0ac\uc6a9", result: "\uae30\uacc4\uc801 \ub77c\uc778 \ud45c\ud604", resultClass: "result-a" }
-      ],
-      before: drawBaseSphere,
-      after: drawCreaseAfter
-    }
-  };
-
-  function switchScenario(key) {
-    document.querySelectorAll('.scenario-btn').forEach(function(b) {
-      b.classList.toggle('active', b.dataset.scene === key);
-    });
-    var s = scenarios[key];
-    document.getElementById('scene-desc').textContent = s.desc;
-    buildCauseEffect(s.ce);
-    renderBAPanels(s);
-  }
-
-  function buildCauseEffect(ces) {
-    var el = document.getElementById('cause-effect');
-    while (el.firstChild) el.removeChild(el.firstChild);
-    ces.forEach(function(c) {
-      var row = document.createElement('div'); row.className = 'ce-row';
-      var cause = document.createElement('div'); cause.className = 'ce-cause'; cause.textContent = c.cause;
-      var arrow = document.createElement('div'); arrow.className = 'ce-arrow'; arrow.textContent = '\u2192';
-      var result = document.createElement('div'); result.className = 'ce-result ' + c.resultClass; result.textContent = c.result;
-      row.appendChild(cause); row.appendChild(arrow); row.appendChild(result);
-      el.appendChild(row);
-    });
-  }
-
-  function renderBAPanels(s) {
-    var bc = document.getElementById('canvas-before'), ac = document.getElementById('canvas-after');
-    var bx = bc.getContext('2d'), ax = ac.getContext('2d');
-    bc.width = bc.offsetWidth || 280; bc.height = 160;
-    ac.width = ac.offsetWidth || 280; ac.height = 160;
-    bx.clearRect(0, 0, bc.width, bc.height);
-    ax.clearRect(0, 0, ac.width, ac.height);
-    if (s.before) s.before(bx, bc.width, bc.height);
-    if (s.after) s.after(ax, ac.width, ac.height);
-  }
-
-  document.querySelectorAll('.scenario-btn').forEach(function(btn) {
-    btn.addEventListener('click', function() { switchScenario(btn.dataset.scene); });
-  });
-
-  document.querySelectorAll('.tab').forEach(function(tab) {
-    tab.addEventListener('click', function() {
-      if (tab.dataset.tab === 'visual') { setTimeout(function() { switchScenario('draw'); }, 50); }
-    });
-  });
-
-  switchScenario('draw');
-})();
-
 // ── Quiz Data ─────────────────────────────────
 initQuiz([
   {
@@ -835,7 +1504,7 @@ initQuiz([
       "Inflate"
     ],
     answer: 2,
-    explanation: "Shift\uB97C \uB204\uB974\uACE0 \uC788\uC73C\uBA74 \uC5B4\uB5A4 \uBE0C\uB7EC\uC2DC\uB97C \uC0AC\uC6A9 \uC911\uC774\uB4E0 \uC784\uC2DC\uB85C Smooth \uBE0C\uB7EC\uC2DC\uB85C \uC804\uD658\uB429\uB2C8\uB2E4. \uC6B8\uD241\uBD88\uD241\uD55C \uBD80\uBD84\uC744 \uBE60\uB974\uAC8C \uB2E4\uB4EC\uC744 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
+    explanation: "Shift\uB97C \uB204\uB974\uACE0 \uC788\uC73C\uBA74 \uC5B4\uB5A4 \uBE0C\uB7EC\uC2DC\uB97C \uC0AC\uC6A9 \uC911\uC774\uB4E0 \uC784\uC2DC\uB85C Smooth \uBE0C\uB7EC\uC2DC\uB85C \uC804\uD658\uB429\uB2C8\uB2E4. \uC6B8\uD540\uBD88\uD540\uD55C \uBD80\uBD84\uC744 \uBE60\uB974\uAC8C \uB2E4\uB4EC\uC744 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
   },
   {
     question: "Sculpt Mode\uC5D0\uC11C \uD3F4\uB9AC\uACE4\uC774 \uC801\uC73C\uBA74 \uC5B4\uB5A4 \uBB38\uC81C\uAC00 \uC0DD\uAE30\uB098\uC694?",
@@ -867,6 +1536,10 @@ initQuiz([
 window.addEventListener("load", function() {
   if (window.normalizeStandaloneShowMeLayout) {
     window.normalizeStandaloneShowMeLayout(document);
+  }
+  // Draw principle canvas after full load
+  if (window.drawPrincipleCanvas) {
+    window.drawPrincipleCanvas();
   }
 });
 </script>
