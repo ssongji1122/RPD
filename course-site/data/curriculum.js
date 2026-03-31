@@ -1551,7 +1551,7 @@ const CURRICULUM = [
   },
   {
     "week": 5,
-    "status": "active",
+    "status": "done",
     "title": "AI 3D 생성 + Sculpting",
     "subtitle": "AI 툴 활용 · Sculpt Mode 기초 · 메쉬 정리",
     "duration": "~3시간",
@@ -1909,7 +1909,7 @@ const CURRICULUM = [
   },
   {
     "week": 6,
-    "status": "upcoming",
+    "status": "active",
     "title": "Material & Shader Node",
     "subtitle": "재질 시스템 · Principled BSDF · 노드 편집",
     "duration": "~3시간",
