@@ -164,9 +164,45 @@ class TestDetectSubmission(unittest.TestCase):
         block = {"type": "pdf", "pdf": {}}
         self.assertTrue(grading_db.detect_submission([block]))
 
-    def test_detect_submission_with_column_list(self):
+    def test_detect_submission_empty_column_list(self):
+        """Empty column_list (no has_children) is not a submission on its own."""
         block = {"type": "column_list", "column_list": {}}
-        self.assertTrue(grading_db.detect_submission([block]))
+        self.assertFalse(grading_db.detect_submission([block]))
+
+    def test_detect_submission_recurses_into_quote(self):
+        """A quote block with has_children containing an image counts as submitted."""
+        quote_block = {
+            "type": "quote",
+            "quote": {"rich_text": []},
+            "has_children": True,
+            "id": "quote-id-1",
+        }
+        child_image = _make_image_block()
+        with patch.object(grading_db, "_get_page_blocks", return_value=[child_image]):
+            self.assertTrue(grading_db.detect_submission([quote_block]))
+
+    def test_detect_submission_recurses_into_column_list(self):
+        """A column_list with has_children containing files counts as submitted."""
+        column_list = {
+            "type": "column_list",
+            "column_list": {},
+            "has_children": True,
+            "id": "col-list-1",
+        }
+        with patch.object(grading_db, "_get_page_blocks", return_value=[_make_file_block()]):
+            self.assertTrue(grading_db.detect_submission([column_list]))
+
+    def test_detect_submission_recurses_into_toggle_empty(self):
+        """A toggle with has_children but only placeholder text inside is not a submission."""
+        toggle_block = {
+            "type": "toggle",
+            "toggle": {"rich_text": []},
+            "has_children": True,
+            "id": "toggle-1",
+        }
+        placeholder_child = _make_paragraph_block("여기에 과제를 업로드하세요")
+        with patch.object(grading_db, "_get_page_blocks", return_value=[placeholder_child]):
+            self.assertFalse(grading_db.detect_submission([toggle_block]))
 
     def test_detect_submission_with_text(self):
         """Non-placeholder paragraph text counts as submission."""

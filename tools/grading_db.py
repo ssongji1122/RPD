@@ -120,11 +120,19 @@ def parse_student_weeks(blocks: list[dict]) -> dict[str, list[dict]]:
 # ---------------------------------------------------------------------------
 # Submission detection
 # ---------------------------------------------------------------------------
-def detect_submission(blocks: list[dict]) -> bool:
+_RECURSIVE_CONTAINERS = (
+    "quote", "toggle", "callout", "column_list", "column",
+    "bulleted_list_item", "numbered_list_item", "synced_block",
+)
+
+
+def detect_submission(blocks: list[dict], token: str | None = None) -> bool:
     """Determine if a list of blocks constitutes a submission.
 
     Returns True if there is at least one meaningful content block
-    (image, file, embed, or non-placeholder text).
+    (image, file, embed, or non-placeholder text). Recurses into
+    container blocks (quote, toggle, callout, column) when they have
+    children, since students often upload assignments inside these.
     """
     for block in blocks:
         btype = block.get("type", "")
@@ -133,17 +141,20 @@ def detect_submission(blocks: list[dict]) -> bool:
         if btype in ("image", "file", "video", "embed", "pdf"):
             return True
 
-        # Column blocks may contain images
-        if btype in ("column_list", "column"):
-            return True
-
         # Text blocks — check if it's a placeholder
         if btype in ("paragraph", "quote", "callout", "bulleted_list_item", "numbered_list_item"):
-            text_key = btype
-            rich_text = block.get(text_key, {}).get("rich_text", [])
+            rich_text = block.get(btype, {}).get("rich_text", [])
             text = extract_text(rich_text).strip()
             if text and text not in PLACEHOLDERS:
                 return True
+
+        # Recurse into containers that may hold submission content
+        if block.get("has_children") and btype in _RECURSIVE_CONTAINERS:
+            block_id = block.get("id")
+            if block_id:
+                children = _get_page_blocks(block_id, token=token)
+                if detect_submission(children, token=token):
+                    return True
 
     return False
 
