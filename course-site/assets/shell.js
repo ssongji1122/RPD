@@ -55,9 +55,9 @@
   var topbar = el('header', { className: 'app-topbar' });
 
   topbar.appendChild(el('div', { className: 'app-tabs' }, [
-    el('a', { className: 'app-tab', href: '/index.html', 'data-tab-target': 'archive', textContent: (document.documentElement.getAttribute('data-lang') || document.documentElement.lang || 'ko') === 'ko' ? '홈' : 'Home' }),
-    el('a', { className: 'app-tab', href: '/inha.html', 'data-tab-target': 'class', textContent: 'Class' }),
-    el('a', { className: 'app-tab', href: '/studio.html', 'data-tab-target': 'studio', textContent: 'My Studio' })
+    el('a', { className: 'app-tab', href: 'index.html', 'data-tab-target': 'archive', textContent: (document.documentElement.getAttribute('data-lang') || document.documentElement.lang || 'ko') === 'ko' ? '홈' : 'Home' }),
+    el('a', { className: 'app-tab', href: 'inha.html', 'data-tab-target': 'class', textContent: 'Class' }),
+    el('a', { className: 'app-tab', href: 'studio.html', 'data-tab-target': 'studio', textContent: 'My Studio' })
   ]));
 
   // --- Search ---
@@ -86,18 +86,18 @@
 
     var items = {
       archive: [
-        { href: '/index.html', svg: ICONS.home, text: '홈', page: 'index.html' },
+        { href: 'index.html', svg: ICONS.home, text: '홈', page: 'index.html' },
         { href: '#', svg: ICONS.layers, text: '내 덱', page: '' },
-        { href: '/library.html', svg: ICONS.search, text: '카드 찾기', page: 'library.html' },
-        { href: '/shortcuts.html', svg: ICONS.keyboard, text: '단축키', page: 'shortcuts.html' }
+        { href: 'library.html', svg: ICONS.search, text: '카드 찾기', page: 'library.html' },
+        { href: 'shortcuts.html', svg: ICONS.keyboard, text: '단축키', page: 'shortcuts.html' }
       ],
       class: [
-        { href: '/inha.html', svg: ICONS.graduationCap, text: '수업 개요', page: 'inha.html' }
+        { href: 'inha.html', svg: ICONS.graduationCap, text: '수업 개요', page: 'inha.html' }
       ],
       studio: [
-        { href: '/studio.html', svg: ICONS.package, text: '내 덱', page: 'studio.html' },
-        { href: '/studio.html#progress', svg: ICONS.barChart, text: '진도', page: '' },
-        { href: '/studio.html#settings', svg: ICONS.settings, text: '설정', page: '' }
+        { href: 'studio.html', svg: ICONS.package, text: '내 덱', page: 'studio.html' },
+        { href: 'studio.html#progress', svg: ICONS.barChart, text: '진도', page: '' },
+        { href: 'studio.html#settings', svg: ICONS.settings, text: '설정', page: '' }
       ]
     };
 
@@ -125,7 +125,7 @@
       for (var w = 1; w <= 15; w++) {
         var weekNum = w < 10 ? '0' + w : '' + w;
         sub.appendChild(
-          el('a', { className: 'rail-sub-item', href: '/week.html?week=' + w }, [
+          el('a', { className: 'rail-sub-item', href: 'week.html?week=' + w }, [
             el('span', { className: 'rail-sub-dot' }),
             document.createTextNode('Week ' + weekNum)
           ])
@@ -163,18 +163,15 @@
       el('div', { className: 'rail-user-menu-divider' }),
       el('button', { className: 'rail-user-menu-item', onclick: 'changeUserName()', textContent: '✏️ 이름 변경' }),
       el('div', { className: 'rail-user-menu-divider' }),
-      el('a', { className: 'rail-user-menu-item admin-only', href: '/admin.html', hidden: '', textContent: '🔧 관리자 패널' })
+      el('a', { className: 'rail-user-menu-item admin-only', href: 'admin.html', hidden: '', textContent: '🔧 관리자 패널' })
     ])
   ]);
   rail.appendChild(userProfile);
 
-  // Toggle button
-  rail.appendChild(
-    el('button', { className: 'rail-toggle', id: 'railToggle' }, [
-      el('span', { className: 'rail-toggle-arrow', textContent: '▶' }),
-      el('span', { className: 'rail-text', textContent: '접기' })
-    ])
-  );
+  // Toggle button — sidebar panel icon (Claude-style)
+  var toggleBtn = el('button', { className: 'rail-toggle', id: 'railToggle', 'aria-label': '사이드바 접기/펼치기' });
+  toggleBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="1.5" y="1.5" width="13" height="13" rx="2" stroke="currentColor" stroke-width="1.3"/><line x1="5.5" y1="1.5" x2="5.5" y2="14.5" stroke="currentColor" stroke-width="1.3"/></svg>';
+  rail.appendChild(toggleBtn);
 
   // --- Assemble ---
   var main = app.querySelector('.main') || app.querySelector('main');

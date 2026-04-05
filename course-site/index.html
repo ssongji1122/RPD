@@ -51,11 +51,6 @@
               <div class="program-stats" id="programStats"></div>
             </div>
 
-            <div class="section-intro">
-              <div class="eyebrow" id="weekSectionEyebrow">Week Assemblies</div>
-              <h3 class="section-title" id="weekSectionTitle">주차별 수업 구성</h3>
-              <p class="section-copy" id="weekSectionDescription">매주 배울 실습, 참고 영상, 단축키를 한 페이지에 모아뒀어요.</p>
-            </div>
 
             <!-- Phase groups rendered by JS -->
             <div class="journey-phases" id="journeyPhases"></div>
@@ -548,9 +543,6 @@
       document.getElementById("programEyebrow").textContent = text.programEyebrow;
       document.getElementById("programTitle").textContent = getPresetProgramTitle(text);
       document.getElementById("programDescription").textContent = text.programDescription;
-      document.getElementById("weekSectionEyebrow").textContent = text.weekSectionEyebrow;
-      document.getElementById("weekSectionTitle").textContent = text.weekSectionTitle;
-      document.getElementById("weekSectionDescription").textContent = text.weekSectionDescription;
       document.getElementById("footerLabel").textContent = text.footerLabel;
 
       // Program stats (inline pills)
