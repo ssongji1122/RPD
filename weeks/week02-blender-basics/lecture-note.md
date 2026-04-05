@@ -33,15 +33,28 @@
 
 ## 학습 목표
 
+### 🎯 핵심 5개 (수업 내 달성 목표)
+
 - [ ] Blender 5.0을 설치하고 기본 환경 설정을 완료할 수 있다
-- [ ] Blender UI 4개 영역의 역할을 설명할 수 있다
 - [ ] 뷰포트를 자유롭게 회전·이동·줌 할 수 있다
 - [ ] G·R·S + 축 제한으로 오브젝트를 원하는 위치에 배치할 수 있다
-- [ ] 3D Cursor를 원하는 위치에 놓고, Shift+S로 정밀 이동할 수 있다
-- [ ] Origin(오리진)의 역할을 이해하고 Set Origin으로 위치를 조정할 수 있다
-- [ ] Transform Pivot Point 5가지 옵션의 차이를 구분하고 상황에 맞게 쓸 수 있다
-- [ ] Apply Transform과 Origin의 개념을 이해하고 적용할 수 있다
-- [ ] Join·Separate·Bridge로 오브젝트를 합치고, 분리하고, 연결할 수 있다
+- [ ] Apply Transform(Ctrl+A)을 습관처럼 적용할 수 있다 ⭐
+- [ ] Blender MCP를 연결하고 기본 명령 실행에 성공할 수 있다
+
+### 📎 부가 목표 (시간 여유 시 / 다음 주 이월 가능)
+
+- [ ] Blender UI 4개 영역의 역할을 설명할 수 있다
+- [ ] 3D Cursor를 Shift+S로 정밀 이동할 수 있다
+- [ ] Origin(오리진)의 역할을 이해하고 Set Origin으로 조정할 수 있다
+- [ ] Transform Pivot Point 5가지 옵션의 차이를 구분할 수 있다
+- [ ] Join·Separate·Bridge 개념을 알고 있다 (심화는 Week 3에서)
+
+> ⚠️ **강사 노트:** 9개 목표를 3시간에 모두 달성하기는 타이트합니다. 특히 Blender 미설치 학생이 많거나 MCP 설치에 문제가 생기면 시간이 부족해집니다.
+>
+> **시간 부족 시 우선순위:**
+> 1. 핵심 5개는 반드시 완수
+> 2. MCP 연결이 막히면 수업 시연만 하고 "MCP 설치는 과제로 제출"로 전환
+> 3. 3D Cursor/Origin/Pivot Point는 Week 3 시작 시 복습 형태로 재소개 가능
 
 ---
 
