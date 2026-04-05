@@ -9,6 +9,20 @@
   gap: 48px;
 }
 
+/* ── Defensive: hide styled wrappers when JS hasn't populated them
+   (padding/border/background should not render as an empty box) ── */
+.week-featured:empty,
+.archive-quick-links:empty,
+.hero-actions:empty,
+.program-stats:empty,
+.journey-phases:empty,
+.hero-meta:empty {
+  display: none;
+}
+.hero-meta-wrap:has(> #heroMeta:empty) {
+  display: none;
+}
+
 /* ================================================================
    SECTION 1 — HERO
    2-column 유지 + animated gradient mesh 배경
