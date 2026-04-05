@@ -55,28 +55,8 @@
 
 ---
 
-## 3. 시간 배분 (3시간 수업)
 
-| 시간 | 내용 | 비율 |
-|------|------|------|
-| 00:00-00:10 | 인트로, Week 2 복습 (G/R/S, Apply Transform) | 6% |
-| 00:10-00:30 | 이론: Edit Mode 4도구 + Modifier 개념 | 11% |
-| 00:30-01:00 | 실습: Extrude, Loop Cut, Inset, Bevel로 기본형 | 17% |
-| 01:00-01:20 | 실습: Mirror + Subdivision + Solidify | 11% |
-| 01:20-01:30 | 실습: Array + Boolean 데모 | 6% |
-| 01:30-02:00 | **중간 휴식 + 개인 작업 시간** | - |
-| 02:00-02:20 | 실습: Bevel Modifier + Weighted Normal | 11% |
-| 02:20-02:40 | 실습: Join/Separate + Apply 타이밍 정리 | 11% |
-| 02:40-02:50 | 개인 작업 + 막힘 지점 Q&A | 6% |
-| 02:50-03:00 | 과제 안내 + 마무리 | 6% |
-
-**실습 : 강의 비율** = 약 65% : 35%
-
-> ⚠️ **현실성 주의:** Edit Mode 4도구 + Modifier 5개 + Bevel/Weighted Normal + Join/Separate를 모두 3시간 안에 커버하는 것은 매우 빡빡함. 특히 Boolean은 Normal 문제로 디버깅 시간이 길어질 수 있음. Array와 Boolean은 데모 위주로 진행하고 Mirror/Subdivision/Solidify에 집중하는 편이 현실적.
-
----
-
-## 4. 평가 정합성 (Assignment Alignment)
+## 3. 평가 정합성 (Assignment Alignment)
 
 ### 과제
 > Edit Mode 도구 3가지 이상 + Modifier 2가지 이상 사용한 로봇 기본형. 스크린샷 3장(과정/Modifier Stack/최종) + Modifier 목록 + 한줄 코멘트 제출.
@@ -109,7 +89,7 @@
 
 ---
 
-## 5. 의존성 체크
+## 4. 의존성 체크
 
 ### 전주차 연결
 - Week 2: G/R/S, 축 제한, Apply Transform, Origin → Week 3 Edit Mode에 즉시 필요 ✅
@@ -124,7 +104,7 @@
 
 ---
 
-## 6. 콘텐츠 공백 (Gap Analysis)
+## 5. 콘텐츠 공백 (Gap Analysis)
 
 ### 검토 완료 항목
 - [x] Edit Mode 4도구 설명 → lecture-note + slides 양쪽 커버 ✅
@@ -141,7 +121,7 @@
 
 ---
 
-## 7. Rubric 자가 평가 (1-5점)
+## 6. Rubric 자가 평가 (1-5점)
 
 > Content Lead 리뷰 — 2026-04-05
 
@@ -150,14 +130,13 @@
 | 1. 학습 목표 구체성 | 4 | 6개 목표가 명확하고 측정 가능. Edit Mode 4도구 + Modifier 5개로 구체적 범위 명시. 우선순위 구분(필수/선택)도 있음. |
 | 2. 전제 명시 | 4 | Week 2 복습 항목(G/R/S, Apply Transform, Join/Separate) 명시됨. Blender 미설치 학생 대응만 보강 필요. |
 | 3. Stuck Map 완성도 | 3 | Edit Mode, Modifier, Apply 타이밍 주요 막힘 커버됨. Boolean 검은 면, Mirror Origin 이슈 대응 가이드 보완 필요. |
-| 4. 시간 배분 현실성 | 3 | 3시간에 Edit Mode 4도구 + Modifier 7개(필수5+추가2) + Apply 타이밍 + Join/Separate는 타이트. Array/Boolean은 데모 위주로 진행해야 현실적. |
-| 5. 평가 정합성 | 4 | 3개 파일(curriculum.js, assignment.md, slides.md)이 잘 정합됨. 채점 기준 문구 약간 다르나 내용 일치. 비교적 양호. |
+| 4. 평가 정합성 | 4 | 3개 파일(curriculum.js, assignment.md, slides.md)이 잘 정합됨. 채점 기준 문구 약간 다르나 내용 일치. 비교적 양호. |
 
-**총점: 18/25**
+**총점: 15/20**
 
 ---
 
-## 8. 개선 액션
+## 7. 개선 액션
 
 ### P0 — 즉시 반영 필요
 
