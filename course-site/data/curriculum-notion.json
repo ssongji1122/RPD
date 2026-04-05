@@ -1428,8 +1428,10 @@
     "steps": [
       {
         "title": "AI 메쉬 Remesh 정리 — 작업 가능 컨디션 만들기",
-        "copy": "Week 5에서 AI(Meshy/Tripo 등)로 뽑은 메쉬가 하이폴리인 경우, 블렌더에서 바로 작업하기 어려운 일이 많아요. \n\nMaterial을 입혀도 쉐이더가 깨지거나 UV 전개가 불가능할 수 있어요. 오늘은 Remesh로 \"작업 가능한 상태\"를 먼저 만들어요.\n\n왜 필요한가: AI 메쉬는 삼각형이 뒤엉켜 있어 쉐이더가 깨지거나 노멀이 뒤집힙니다. \nVoxel Remesh → Decimate → Mesh Cleanup 순서로 정리해요.",
+        "copy": "",
         "goal": [
+          "Week 5에서 AI(Meshy/Tripo 등)로 뽑은 메쉬가 하이폴리인 경우, 블렌더에서 바로 작업하기 어려운 일이 많아요.  Material을 입혀도 쉐이더가 깨지거나 UV 전개가 불가능할 수 있어요. ",
+          "Remesh로 \"작업 가능한 상태\"를 먼저 만들어요.\n\n왜 필요한가: AI 메쉬는 삼각형이 뒤엉켜 있어 쉐이더가 깨지거나 노멀이 뒤집힙니다. \nVoxel Remesh → Decimate → Mesh Cleanup 순서로 정리해요.",
           "AI 메쉬가 Material 적용에 문제 없는 상태임을 확인한다",
           "Voxel Remesh · Decimate · Mesh Cleanup 의 차이를 이해한다"
         ],
@@ -1618,8 +1620,7 @@
       "checklist": [
         "5가지 재질 구 렌더 이미지",
         "각 재질의 핵심 파라미터 값 메모",
-        "Shader Editor 노드 연결 스크린샷 1장",
-        ".blend 파일"
+        "Shader Editor 노드 연결 스크린샷 1장"
       ]
     },
     "mistakes": [
