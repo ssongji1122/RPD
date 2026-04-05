@@ -19,10 +19,13 @@
     },
     {
       "name": "course-site-preview",
-      "runtimeExecutable": "npx",
-      "runtimeArgs": ["serve", "course-site"],
+      "runtimeExecutable": "/Users/ssongji/.nvm/versions/node/v24.14.0/bin/node",
+      "runtimeArgs": ["/Users/ssongji/.nvm/versions/node/v24.14.0/bin/npx", "serve", "course-site"],
       "port": 8773,
-      "autoPort": true
+      "autoPort": true,
+      "env": {
+        "PATH": "/Users/ssongji/.nvm/versions/node/v24.14.0/bin:/usr/local/bin:/usr/bin:/bin"
+      }
     }
   ]
 }
