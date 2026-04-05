@@ -86,11 +86,13 @@ const CURRICULUM = [
     ],
     "explore": [],
     "assignment": {
-      "title": "Blender 설치 확인 스크린샷",
-      "description": "Blender를 실행해서 Welcome Screen이 보이는 화면을 캡처해서 제출하세요.",
+      "title": "무드보드 제작",
+      "description": "Mixboard 또는 나노바나나를 활용하여 자신의 로봇/캐릭터 무드보드를 제작한다. 무드보드 이미지 2장 + 캐릭터/로봇 컨셉 한줄 설명을 Discord #week01-assignment 채널에 제출.",
       "checklist": [
-        "Blender 정상 실행 확인",
-        "버전 번호 포함된 스크린샷 제출"
+        "AI 도구(Mixboard 또는 나노바나나) 사용",
+        "무드보드 이미지 2장 이상 생성",
+        "캐릭터/로봇 컨셉 한줄 설명 작성",
+        "Discord #week01-assignment 제출 완료"
       ]
     },
     "mistakes": [
@@ -413,12 +415,14 @@ const CURRICULUM = [
     ],
     "explore": [],
     "assignment": {
-      "title": "간단한 로우폴리 소품 만들기",
-      "description": "화면 조작과 기본 모델링 도구를 사용해 간단한 소품을 만들고 제출합니다.",
+      "title": "기본 도형 배치 + MCP 테스트",
+      "description": "Blender 기본 뷰 조작과 Transform 기능을 활용해 기본 도형 5개 이상을 배치하고, Blender MCP 연결을 테스트한다. Discord #week02-assignment 채널에 스크린샷 2장 + 한줄 코멘트를 제출.",
       "checklist": [
-        "완성 이미지 2장 이상",
-        ".blend 파일 1개",
-        "사용한 도구 3개 이상 적기"
+        "기본 도형 5개 이상 배치 스크린샷",
+        "Transform(이동/회전/스케일) 적용 확인",
+        "Blender MCP 연결 테스트 스크린샷",
+        "한줄 코멘트 작성",
+        "Discord #week02-assignment 제출 완료"
       ]
     },
     "mistakes": [
@@ -1501,14 +1505,14 @@ const CURRICULUM = [
       }
     ],
     "assignment": {
-      "title": "로봇 몸체 완성",
-      "description": "Week 03 머리/얼굴/안테나에 몸통, 팔다리, 손발을 붙여 로봇 전신을 완성하세요.",
+      "title": "로봇 디테일 & 음영 정리",
+      "description": "Week 03 기본형(머리/얼굴/안테나)에 얼굴·관절·패널 디테일을 추가하고 Bevel·Weighted Normal로 표면 음영을 정리하여 제출한다.",
       "checklist": [
-        "몸통 + 관절 구체 배치 완료",
-        "팔/다리 파츠 좌우 대칭 제작",
-        "손 또는 발 디테일 1곳 이상",
-        "Bevel 1회 이상 사용",
-        "파츠 정리 + Apply Transform 완료 스크린샷"
+        "디테일 1곳 이상 추가 (Inset/Extrude/Boolean 중 하나)",
+        "Bevel(Ctrl+B 또는 Modifier) 1회 이상 사용",
+        "Weighted Normal 적용 또는 전후 비교",
+        "Ctrl+A Transform 정리 확인",
+        "Modifier Stack 또는 Transform 확인 화면 포함 스크린샷"
       ]
     },
     "mistakes": [
