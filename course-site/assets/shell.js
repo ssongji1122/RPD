@@ -54,11 +54,17 @@
   // --- Topbar — centered tabs + theme toggle ---
   var topbar = el('header', { className: 'app-topbar' });
 
-  topbar.appendChild(el('div', { className: 'app-tabs' }, [
-    el('a', { className: 'app-tab', href: 'index.html', 'data-tab-target': 'archive', textContent: (document.documentElement.getAttribute('data-lang') || document.documentElement.lang || 'ko') === 'ko' ? '홈' : 'Home' }),
-    el('a', { className: 'app-tab', href: 'inha.html', 'data-tab-target': 'class', textContent: 'Class' }),
-    el('a', { className: 'app-tab', href: 'studio.html', 'data-tab-target': 'studio', textContent: 'My Studio' })
-  ]));
+  var lang = document.documentElement.getAttribute('data-lang') || document.documentElement.lang || 'ko';
+  var navItems = (window.RPDNavConfig && window.RPDNavConfig.getTopbarItems(lang)) || [];
+  var tabEls = navItems.map(function (item) {
+    return el('a', {
+      className: 'app-tab',
+      href: item.href,
+      'data-tab-target': item.tabTarget,
+      textContent: item.label
+    });
+  });
+  topbar.appendChild(el('div', { className: 'app-tabs' }, tabEls));
 
   // --- Search ---
   var searchWrap = el('div', { className: 'app-topbar-search' });
