@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Blender Archive — RPD</title>
-  <meta name="description" content="Blender Archive와 인하대학교 RPD 수업 조합 허브" />
+  <title>Edu Home — RPD</title>
+  <meta name="description" content="RPD 학습 허브 — 인하대학교 RPD 수업의 통합 진입점" />
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -64,6 +64,18 @@
 
         <!-- SECTION 4: Archive Quick Links -->
         <nav class="archive-quick-links" id="archiveQuickLinks" aria-label="아카이브 바로가기"></nav>
+
+        <!-- SECTION 5: Current Week References (Edu Home) -->
+        <section class="edu-references" id="eduReferences" aria-label="이번 주 참고자료" hidden>
+          <div class="edu-refs-inner">
+            <div class="edu-refs-header">
+              <div class="eyebrow" id="eduRefsEyebrow">이번 주 참고자료</div>
+              <h2 class="edu-refs-title" id="eduRefsTitle">Notion 튜토리얼</h2>
+            </div>
+            <div class="edu-refs-grid" id="eduRefsGrid"></div>
+            <a class="edu-refs-more" id="eduRefsMore" href="#" hidden>이 주차 전체 참고자료 보기 →</a>
+          </div>
+        </section>
 
         <!-- Footer -->
         <footer class="page-footer">
@@ -591,9 +603,85 @@
       });
     }
 
+    // Notion icon SVG (static constant — safe to use with insertAdjacentHTML)
+    var NOTION_ICON_SVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22h14a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v4"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M2 15h10"/><path d="M9 18l3-3-3-3"/></svg>';
+
+    function renderEduReferences() {
+      var activeWeek = CURRICULUM.find(function(w) { return w.status === "active"; });
+      if (!activeWeek) return;
+
+      var text = getPageStrings();
+      var weekNum = activeWeek.week;
+
+      fetch("data/references.json")
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          var sections = (data.sections || []).filter(function(s) {
+            return Array.isArray(s.weeks) && s.weeks.indexOf(weekNum) !== -1;
+          });
+          var tutorials = sections.reduce(function(acc, s) {
+            return acc.concat(s.tutorials || []);
+          }, []).slice(0, 4);
+
+          if (!tutorials.length) return;
+
+          var grid = document.getElementById("eduRefsGrid");
+          if (!grid) return;
+          grid.textContent = "";
+          tutorials.forEach(function(t) {
+            var card = document.createElement("a");
+            card.className = "edu-ref-card";
+            card.href = t.notion_url;
+            card.target = "_blank";
+            card.rel = "noopener noreferrer";
+
+            var iconEl = document.createElement("span");
+            iconEl.className = "edu-ref-icon";
+            // Static SVG constant — safe
+            iconEl.insertAdjacentHTML("afterbegin", NOTION_ICON_SVG);
+
+            var titleEl = document.createElement("span");
+            titleEl.className = "edu-ref-title";
+            titleEl.textContent = t.title;
+
+            var ctaEl = document.createElement("span");
+            ctaEl.className = "edu-ref-cta";
+            ctaEl.textContent = text.eduRefsOpenLabel || "Notion에서 열기";
+
+            card.appendChild(iconEl);
+            card.appendChild(titleEl);
+            card.appendChild(ctaEl);
+            grid.appendChild(card);
+          });
+
+          // Update eyebrow/title
+          var eyebrow = document.getElementById("eduRefsEyebrow");
+          if (eyebrow) eyebrow.textContent = text.eduRefsEyebrow || "이번 주 참고자료";
+          var title = document.getElementById("eduRefsTitle");
+          if (title) title.textContent = text.eduRefsTitle || "Notion 튜토리얼";
+
+          // Show "more" link
+          var moreEl = document.getElementById("eduRefsMore");
+          if (moreEl) {
+            moreEl.href = withPresetHref("week.html?week=" + weekNum + "#references");
+            moreEl.textContent = text.eduRefsMore || "이 주차 전체 참고자료 보기 →";
+            moreEl.removeAttribute("hidden");
+          }
+
+          // Reveal section
+          var section = document.getElementById("eduReferences");
+          if (section) section.removeAttribute("hidden");
+        })
+        .catch(function() { /* silently skip if references unavailable */ });
+    }
+
     window.RPDWeekUI.init({ url: "data/week-ui.json?v=20260318a" }).finally(function() {
       window.RPDI18n.mountLanguageSwitcher(document.getElementById("langSwitcher"));
-      window.RPDI18n.onLanguageChange(renderPage);
+      window.RPDI18n.onLanguageChange(function() {
+        renderPage();
+        renderEduReferences();
+      });
+      renderEduReferences();
     });
 
     // Theme toggle

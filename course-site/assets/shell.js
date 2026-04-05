@@ -55,7 +55,7 @@
   var topbar = el('header', { className: 'app-topbar' });
 
   topbar.appendChild(el('div', { className: 'app-tabs' }, [
-    el('a', { className: 'app-tab', href: '/index.html', 'data-tab-target': 'archive', textContent: 'Archive' }),
+    el('a', { className: 'app-tab', href: '/index.html', 'data-tab-target': 'archive', textContent: (document.documentElement.getAttribute('data-lang') || document.documentElement.lang || 'ko') === 'ko' ? '홈' : 'Home' }),
     el('a', { className: 'app-tab', href: '/inha.html', 'data-tab-target': 'class', textContent: 'Class' }),
     el('a', { className: 'app-tab', href: '/studio.html', 'data-tab-target': 'studio', textContent: 'My Studio' })
   ]));

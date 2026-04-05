@@ -628,6 +628,97 @@
   }
 }
 
+/* ── Edu Home: References Section ── */
+.edu-references {
+  padding: var(--sp-6) var(--sp-6);
+}
+
+.edu-refs-inner {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.edu-refs-header {
+  margin-bottom: var(--sp-4);
+}
+
+.edu-refs-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: var(--sp-1) 0 0;
+  letter-spacing: -0.02em;
+}
+
+.edu-refs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-3);
+}
+
+.edu-ref-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  min-height: 100px;
+}
+
+.edu-ref-card:hover {
+  border-color: var(--key-soft);
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+
+.edu-ref-icon {
+  display: flex;
+  align-items: center;
+  color: var(--text-secondary);
+}
+
+.edu-ref-title {
+  font-size: .86rem;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.edu-ref-cta {
+  font-size: .75rem;
+  color: var(--key);
+  font-weight: 500;
+  margin-top: auto;
+}
+
+.edu-refs-more {
+  display: inline-block;
+  font-size: .82rem;
+  color: var(--key);
+  text-decoration: none;
+  font-weight: 500;
+  padding: var(--sp-1) 0;
+}
+
+.edu-refs-more:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  .edu-refs-grid {
+    grid-template-columns: 1fr;
+  }
+  .edu-references {
+    padding: var(--sp-4) var(--sp-4);
+  }
+}
+
 @media (max-width: 375px) {
   .hero h1 {
     font-size: 1.5rem;
