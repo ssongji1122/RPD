@@ -4,11 +4,47 @@ theme: rpd
 paginate: true
 ---
 
-# Week 06: Material & Shader Node
+# Week 06: AI 메쉬 Remesh 정리 + Material & Shader Node
 
 ## 로봇프러덕트 디자인
 
 2026 Spring | 인하대학교 | 송지희
+
+---
+
+## Step 1: AI 메쉬 Remesh — 왜 필요한가?
+
+AI(Meshy/Tripo)로 만든 메쉬는 토폴로지가 엉망이에요.
+
+**정리 안 하면:**
+- Material 쉐이더가 깨짐
+- UV 전개 불가
+- Normal 방향 오류
+
+**→ 오늘 Remesh로 '작업 가능한 상태' 먼저 만들기**
+
+---
+
+## Remesh 도구 5종
+
+| 도구 | 용도 |
+|------|------|
+| **Mesh Cleaner 2** | 중복 버텍스·노멀 원클릭 정리 |
+| **Voxel Remesh** | 폴리곤 균일화 |
+| **Quad Remesh (Ctrl+R)** | 쿼드 토폴로지 (애니메이션용) |
+| **Decimate Modifier** | 고폴리 감량 |
+| **QRemeshify** | 삼각형 → 쿼드 변환 |
+
+---
+
+## Remesh 실습 순서
+
+1. **Statistics 켜서 Before 폴리곤 수 기록**
+2. **Mesh Cleaner 2 실행** (가장 먼저)
+3. **Decimate Modifier → Ratio 0.5**
+4. **Quad Remesh (Ctrl+R)** (선택)
+5. **Before/After 비교 스크린샷** (Numpad 1 고정)
+6. **체크:** Material Preview로 쉐이더 깨짐 없음 확인
 
 ---
 
@@ -156,11 +192,12 @@ paginate: true
 
 - **제출처:** Discord #week06-assignment 채널
 - **내용:**
+  - Remesh 전후 비교 스크린샷 (Statistics, Numpad 1 고정)
   - 렌더 이미지 1~2장
   - 사용한 재질 종류 설명
   - 한줄 코멘트
 - **평가:** Material 활용 다양성 40% / 완성도 30% / 창의성 30%
-- **조건:** 3가지 이상의 서로 다른 재질을 적용할 것
+- **조건:** Remesh 정리 후 3가지 이상의 서로 다른 재질을 적용할 것
 
 ---
 

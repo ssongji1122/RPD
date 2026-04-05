@@ -4,7 +4,7 @@ theme: rpd
 paginate: true
 ---
 
-# Week 05: AI 3D 생성 + Sculpting + MCP 활용
+# Week 05: AI 3D 생성 + Sculpting
 
 ## 로봇프러덕트 디자인
 
@@ -175,9 +175,9 @@ paginate: true
 
 ## 다음 주 예고
 
-**Week 06: Material & Shader**
+**Week 06: AI 메쉬 Remesh 정리 + Material & Shader**
 
+- **Step 1 — Remesh 정리:** Voxel/Quad Remesh, QRemeshify, Mesh Cleaner 2로 AI 메쉬 '작업 가능한 상태' 만들기
 - Blender의 Material 시스템 이해
 - Shader Editor와 Node 기반 재질 설정
-- PBR (Physically Based Rendering) 기초
-- AI 텍스처 생성 도구 활용
+- **오늘 .blend 파일 저장 필수!** Week 6 Step 1에서 바로 씁니다

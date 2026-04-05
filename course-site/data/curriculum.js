@@ -1557,15 +1557,15 @@ const CURRICULUM = [
     "week": 5,
     "status": "done",
     "title": "AI 3D 생성 + Sculpting",
-    "subtitle": "AI 툴 활용 · Sculpt Mode 기초 · 메쉬 정리",
+    "subtitle": "AI 툴 활용 · Sculpt Mode 기초",
     "duration": "~3시간",
     "topics": [
       "Sculpt Mode 기초 브러시",
       "Sculpt 브러시 심화 (Clay/Crease/Inflate/Snake Hook)",
+      "Dyntopo (스컬프팅 중 자동 리메시)",
       "Addon/Extension 설치 및 활성화",
       "LoopTools · Bool Tool 내장 애드온 활용",
       "BlenderKit 에셋 검색 및 활용",
-      "Remesh·Decimate·메쉬 정리 애드온",
       "무드보드 → AI 프롬프트 설계",
       "AI 3D 생성 (Meshy/Tripo/Hyper3D)"
     ],
@@ -1639,6 +1639,11 @@ const CURRICULUM = [
             "id": "w5-t-snake",
             "label": "Snake Hook으로 뿔이나 촉수 끌어내기",
             "detail": "끝점이 따라오며 길게 늘어나요 — 뿔·안테나·꼬리를 끄집어낼 때"
+          },
+          {
+            "id": "w5-t-dyn",
+            "label": "Dyntopo 켜고 브러시가 닿는 곳만 폴리곤 생성 확인",
+            "detail": "Sculpt Mode → 헤더 Dyntopo 체크 → Detail Size 낮게 유지 (Constant Detail 권장). 디테일이 필요한 부분에서만 폴리곤이 자동으로 늘어나요"
           }
         ],
         "image": "assets/images/week05/sculpt-brushes.png",
@@ -1769,76 +1774,6 @@ const CURRICULUM = [
         ]
       },
       {
-        "title": "Remesh · Dyntopo · Decimate",
-        "copy": "스컬프팅 중 메쉬가 뭉개지거나 폴리곤이 너무 많아지면 이 도구들이 필요해요. Blender 내장 Remesh 3가지 방법의 차이를 알고, Dyntopo로 실시간 자동 리메시를 체험하고, Decimate로 가볍게 줄여봐요.\n\nRemesh 3가지 — Sculpt Remesh(Ctrl+R)는 스컬프팅 전 준비용, Object Data Properties Remesh(QuadriFlow)는 애니메이션 쿼드 토폴로지용, Remesh Modifier는 비파괴 실험용이에요.\n\nDyntopo — 브러시가 닿는 순간 그 자리에만 폴리곤이 자동으로 늘어나요. 뿔이나 손가락처럼 디테일이 필요한 부분을 자유롭게 만들 수 있어요.\n\nDecimate — 고해상도 사진을 저해상도로 압축하듯 폴리곤 수를 줄여요. Ratio 0.5부터 시작해서 형태가 무너지기 직전까지 낮추는 게 핵심이에요.",
-        "goal": [
-          "Remesh 3가지 방법의 차이를 이해한다",
-          "Dyntopo로 스컬프팅 중 자동 리메시를 체험한다",
-          "Decimate로 폴리곤 수를 줄인다"
-        ],
-        "done": [
-          "Sculpt Remesh(Ctrl+R)와 Object Data Remesh의 차이를 말할 수 있다",
-          "Dyntopo로 자동 폴리곤 생성을 확인했다",
-          "Decimate로 폴리곤 수가 절반 이하로 줄었다"
-        ],
-        "tasks": [
-          {
-            "id": "w5-t15",
-            "label": "Sculpt Mode → 우측 Remesh 패널 → Ctrl+R",
-            "detail": "Voxel Size를 조절해서 해상도 맞추기 (0.02~0.05 권장)"
-          },
-          {
-            "id": "w5-t16",
-            "label": "Remesh 전후 비교 — Statistics 켜서 폴리곤 수 변화 확인",
-            "detail": "Viewport Overlay → Statistics 켜기"
-          },
-          {
-            "id": "w5-t-dyn",
-            "label": "Dyntopo 켜고 브러시가 닿는 곳만 폴리곤 생성 확인",
-            "detail": "Sculpt Mode → 헤더 Dyntopo 체크 → Detail Size 낮게 유지 (Constant Detail 권장)"
-          },
-          {
-            "id": "w5-t5",
-            "label": "Decimate Modifier 추가 후 Ratio 조절",
-            "detail": "0.3~0.5에서 형태 유지되는 지점 찾기"
-          }
-        ],
-        "image": "assets/images/week05/remesh.png",
-        "showme": ["remesh-modifier", "decimate-modifier"]
-      },
-      {
-        "title": "외부 플러그인 & 메쉬 정리 도구",
-        "copy": "무료 애드온으로 Blender 내장 도구를 넘어서는 리메시와 메쉬 정리가 가능해요. 플러그인은 Add-on(레거시 .zip 설치)과 Extension(4.2+ 원클릭) 두 가지 방식이 있어요.\n\nMesh Cleaner 2 — 중복 버텍스, 빈 구멍, 뒤집힌 노멀을 원클릭으로 정리해요. AI 메쉬 임포트 직후 가장 먼저 실행해야 하는 필수 도구예요.\n\nQRemeshify — 삼각형 메쉬를 깨끗한 쿼드로 변환해요. 애니메이션 리그를 걸 예정이라면 이 도구를 써서 쿼드 토폴로지를 확보하세요.",
-        "goal": [
-          "Add-on과 Extension의 차이를 이해하고 .zip으로 설치할 수 있다",
-          "Mesh Cleaner 2로 AI 메쉬를 원클릭 정리할 수 있다"
-        ],
-        "done": [
-          "Mesh Cleaner 2를 설치하고 AI 메쉬에 적용했다",
-          "QRemeshify 설치 방법을 안다"
-        ],
-        "tasks": [
-          {
-            "id": "w5-t-install",
-            "label": "Edit → Preferences → Add-ons → Install from Disk — .zip 설치 방법 확인",
-            "detail": "Gumroad에서 .zip 받아 → Install from Disk 클릭 → 체크박스 ON"
-          },
-          {
-            "id": "w5-t-mc",
-            "label": "Mesh Cleaner 2 애드온 설치 및 실행",
-            "detail": "Preferences → Add-ons에서 설치 후 one-click 정리",
-            "url": "https://decoded.gumroad.com/l/meshcleaner"
-          },
-          {
-            "id": "w5-t-qr",
-            "label": "QRemeshify로 쿼드 리메시 체험",
-            "detail": "트라이앵글 → 쿼드 변환 — 애니메이션 리그 필요한 메쉬에 사용",
-            "url": "https://ksami.gumroad.com/l/QRemeshify"
-          }
-        ],
-        "image": "assets/images/week05/remesh.png"
-      },
-      {
         "title": "무드보드 → AI 프롬프트 설계",
         "copy": "1주차 무드보드를 오늘 3D로 만들기 시작해요. 프롬프트에 형태·스타일·재질감을 구체적으로 넣어야 AI가 원하는 방향으로 만들어줘요.",
         "goal": [
@@ -1906,7 +1841,7 @@ const CURRICULUM = [
       },
       {
         "title": "AI 메쉬 정리 실전",
-        "copy": "앞에서 배운 Mesh Cleaner와 Decimate를 AI가 만든 내 메쉬에 직접 써봐요. Import한 그대로는 폴리곤이 너무 많아서 이후 작업이 힘들어요.",
+        "copy": "Mesh Cleaner와 Decimate를 AI가 만든 내 메쉬에 직접 써봐요. Import한 그대로는 폴리곤이 너무 많아서 이후 작업이 힘들어요. Week 6에서 Remesh를 본격적으로 배우기 전에 기본 정리를 먼저 해둬요.",
         "goal": [
           "AI 메쉬의 폴리곤 문제를 직접 해결한다"
         ],
@@ -2092,9 +2027,10 @@ const CURRICULUM = [
     "week": 6,
     "status": "active",
     "title": "Material & Shader Node",
-    "subtitle": "재질 시스템 · Principled BSDF · 노드 편집",
+    "subtitle": "AI 메쉬 Remesh 정리 · 재질 시스템 · Principled BSDF · 노드 편집",
     "duration": "~3시간",
     "topics": [
+      "AI 메쉬 Remesh 정리 (Voxel/Quad/Decimate/QRemeshify/Mesh Cleaner 2)",
       "Material 슬롯 구조",
       "Principled BSDF 핵심 파라미터",
       "Shader Node Editor 기초",
@@ -2104,8 +2040,61 @@ const CURRICULUM = [
     ],
     "steps": [
       {
+        "title": "AI 메쉬 Remesh 정리 — 작업 가능 컨디션 만들기",
+        "copy": "Week 5에서 AI(Meshy/Tripo)로 뽑은 메쉬는 토폴로지가 엉망이에요. Material을 입혀도 쉐이더가 깨지거나 UV 전개가 불가능해요. 오늘 Remesh로 '작업 가능한 상태'를 먼저 만들어요.\n\nVoxel Remesh — Object Data Properties에서 Voxel Size 조절 후 Remesh. 폴리곤을 균일하게 정리해요.\n\nQuad Remesh (Ctrl+R in Sculpt Mode) — 애니메이션·머테리얼 적용에 유리한 쿼드 토폴로지로 변환해요.\n\nDecimate Modifier — 고폴리 AI 메쉬를 감량해요. Ratio 0.3~0.5에서 형태 유지되는 지점 찾기.\n\nQRemeshify — 트라이앵글 → 쿼드 자동 변환. 리그를 걸 예정이라면 필수예요.\n\nMesh Cleaner 2 — 중복 버텍스, 빈 구멍, 뒤집힌 노멀을 원클릭 정리. AI 메쉬 임포트 직후 가장 먼저 실행.",
+        "goal": [
+          "AI 메쉬가 Material 적용에 문제 없는 상태임을 확인한다",
+          "Voxel Remesh · Decimate · Mesh Cleaner 2의 차이를 이해한다"
+        ],
+        "done": [
+          "Remesh 전후 폴리곤 수 비교(Statistics)를 확인했다",
+          "Material 적용에 문제 없는 .blend 파일이 준비됐다"
+        ],
+        "tasks": [
+          {
+            "id": "w6-r1",
+            "label": "Week 5 .blend 파일 열기 — Statistics 켜서 폴리곤 수 확인",
+            "detail": "Viewport Overlay → Statistics 체크. 현재 폴리곤 수 기록해두기"
+          },
+          {
+            "id": "w6-r2",
+            "label": "Mesh Cleaner 2 실행 — 중복 버텍스 · 뒤집힌 노멀 정리",
+            "detail": "Preferences에서 설치 후 one-click 정리. AI 메쉬 직후 가장 먼저 실행",
+            "url": "https://decoded.gumroad.com/l/meshcleaner"
+          },
+          {
+            "id": "w6-r3",
+            "label": "Decimate Modifier 추가 → Ratio 0.5로 폴리곤 절반 감량",
+            "detail": "Properties → Modifier → Add Modifier → Generate → Decimate. 형태 유지 지점까지 Ratio 낮추기"
+          },
+          {
+            "id": "w6-r4",
+            "label": "Sculpt Mode → Ctrl+R → Quad Remesh (Voxel Remesh 후)",
+            "detail": "애니메이션/머테리얼에 유리한 쿼드 토폴로지 확보. Voxel Size 0.02~0.05 권장"
+          },
+          {
+            "id": "w6-r5",
+            "label": "QRemeshify로 삼각형 메쉬 → 쿼드 변환 체험",
+            "detail": "트라이앵글이 많은 AI 메쉬에 특히 효과적",
+            "url": "https://ksami.gumroad.com/l/QRemeshify"
+          },
+          {
+            "id": "w6-r6",
+            "label": "Before/After 폴리곤 수 비교 스크린샷 (Statistics)",
+            "detail": "Numpad 1 고정 앵글로 Remesh 전·후 동일 앵글 촬영. Ctrl+F3으로 저장"
+          },
+          {
+            "id": "w6-r7",
+            "label": "체크: Material 적용에 문제 없는 상태인가?",
+            "detail": "Material Preview(Z)로 확인 — 쉐이더 깨짐 없음, 표면 노멀 정상"
+          }
+        ],
+        "image": "assets/images/week05/remesh.png",
+        "showme": ["remesh-modifier", "decimate-modifier"]
+      },
+      {
         "title": "Material 할당",
-        "copy": "옷을 입히듯 오브젝트에 재질을 입혀요. 같은 로봇이라도 재질 하나로 장난감이 될 수도, 군용 장비가 될 수도 있어요.",
+        "copy": "리메시로 정리된 메쉬에 옷을 입히듯 재질을 입혀요. 같은 로봇이라도 재질 하나로 장난감이 될 수도, 군용 장비가 될 수도 있어요.",
         "goal": [
           "Material 슬롯의 구조를 안다",
           "하나의 오브젝트에 여러 Material을 쓸 수 있다"
@@ -2260,6 +2249,14 @@ const CURRICULUM = [
     ],
     "shortcuts": [
       {
+        "keys": "Ctrl + R (Sculpt Mode)",
+        "action": "Quad Remesh 실행"
+      },
+      {
+        "keys": "Viewport Overlay → Statistics",
+        "action": "폴리곤 수 표시"
+      },
+      {
         "keys": "Z",
         "action": "Shading 모드 전환 파이 메뉴"
       },
@@ -2316,6 +2313,9 @@ const CURRICULUM = [
       ]
     },
     "mistakes": [
+      "Remesh 후 쉐이더가 깨짐 → 노멀 방향 문제. Mesh Cleaner 2 재실행 또는 Edit Mode → Mesh → Normals → Recalculate Outside",
+      "Decimate Ratio 너무 낮추면 형태 붕괴 → 0.3~0.5에서 멈추기. Apply 전에 값 확인",
+      "Remesh 전후 비교가 어려움 → Statistics 켜고 Numpad 1 고정 앵글로 Before/After 촬영",
       "재질이 화면에서 안 보임 → Viewport Shading을 Material Preview 또는 Rendered로 변경",
       "노드 연결이 안 됨 → 소켓 색이 같은 것끼리 연결 (노란색끼리, 보라색끼리)",
       "Emission이 안 빛남 → Rendered 모드에서만 보여요. Material Preview에선 약하게 보임",
@@ -2329,6 +2329,22 @@ const CURRICULUM = [
       }
     ],
     "docs": [
+      {
+        "title": "Remesh (Blender Manual)",
+        "url": "https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/tool_settings/remesh.html"
+      },
+      {
+        "title": "Decimate Modifier",
+        "url": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/decimate.html"
+      },
+      {
+        "title": "Mesh Cleaner 2",
+        "url": "https://decoded.gumroad.com/l/meshcleaner"
+      },
+      {
+        "title": "QRemeshify",
+        "url": "https://ksami.gumroad.com/l/QRemeshify"
+      },
       {
         "title": "Materials",
         "url": "https://docs.blender.org/manual/en/latest/render/materials/introduction.html"
@@ -2350,7 +2366,7 @@ const CURRICULUM = [
         "url": "https://docs.blender.org/manual/en/latest/render/shader_nodes/converter/color_ramp.html"
       }
     ],
-    "summary": "Material의 원리와 Shader Editor를 이해하고 Principled BSDF로 다양한 재질을 표현해요."
+    "summary": "AI 메쉬를 Remesh로 '작업 가능한 상태'로 정리한 뒤, Material 원리와 Shader Editor를 이해하고 Principled BSDF로 다양한 재질을 표현해요."
   },
   {
     "week": 7,

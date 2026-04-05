@@ -3,7 +3,7 @@
 > **목적:** curriculum.js의 콘텐츠가 아닌, 수업 기획 자체의 질을 검증하기 위한 문서.
 > Content Lead + CPO가 Rubric 기반으로 주차별 기획을 심층 리뷰할 때 사용한다.
 
-**주제:** AI 3D 생성 + Sculpting + MCP 활용
+**주제:** AI 3D 생성 + Sculpting (Remesh 심화는 Week 6로 이동)
 **수업일:** 2026-04-01 (화) 예정
 **강의실:** 인하대학교 (60주년관)
 **Duration:** ~3시간
@@ -23,8 +23,9 @@
 - [ ] Meshy AI(Text to 3D) 또는 Tripo AI(Image to 3D)로 3D 모델 생성 가능
 - [ ] AI 모델을 Blender에 GLB 임포트 가능 (스케일 조정, Origin 설정, Apply Transform)
 - [ ] Sculpt Mode 기본 브러시(Draw, Smooth, Grab, Clay Strips) 사용 가능
-- [ ] Voxel Remesh로 AI 모델 토폴로지 균등화 가능
+- [ ] Dyntopo로 스컬프팅 중 자동 폴리곤 생성 체험 가능
 - [ ] Before/After 비교 스크린샷 제출 가능
+- [ ] **Remesh 심화 (Voxel/Quad/QRemeshify/Mesh Cleaner 2)는 Week 6 Step 1에서 학습**
 - [ ] (optional) Blender MCP로 씬 자동 생성 경험
 - [ ] Discord #week05-assignment 제출 완료
 - [ ] **Week 6 Material 실습용 .blend 파일 저장 완료** (curriculum.js 명시 항목)
@@ -45,7 +46,6 @@
 | GLB 임포트 | 모델이 너무 크거나 작음 | GLB 스케일 100배 문제 | "S 키로 스케일 조정, Apply Transform 필수" |
 | GLB 임포트 | 텍스처가 없는 회색 모델로 들어옴 | 텍스처 미포함 GLB | "Week 5는 형태만 사용, 텍스처는 Week 6에서" 안내 |
 | GLB 임포트 | 모델이 여러 파츠로 쪼개져 들어옴 | AI 모델 파츠 분리 | "Ctrl+J로 Join 후 작업" 안내 |
-| Remesh | Voxel Remesh 후 모델이 구멍남 | Voxel Size 너무 큼 | "0.02~0.05에서 시작, Preview로 미리보기" |
 | Sculpt Mode | 브러시가 너무 작거나 큰 효과 | 브러시 크기/강도 미조정 | "F키 = 크기, Shift+F = 강도" 안내 |
 | Sculpt Mode | 브러시가 전체에 영향을 줌 | Mask 없이 전체 조각 | "Mask 브러시로 보호 영역 먼저" |
 | Sculpt Mode | Ctrl 눌렀는데 이상한 효과 | Draw 브러시에서 Ctrl = Subtract | "Ctrl로 더하기/빼기 전환됨" 안내 |
@@ -94,8 +94,8 @@
 - Apply Transform (Ctrl+A) → AI 모델 임포트 후 필수 단계 ✅ (lecture-note에 명시)
 
 ### 다음 주차 연결 (Week 6: Material & Shader Node)
-- Week 5 완성 .blend 파일 → **Week 6 Material 실습에 직접 사용** → 반드시 저장 안내 필요
-- Mesh 정리 상태 → Material Preview에서 보이는 결과에 영향
+- Week 5 완성 .blend 파일 → **Week 6 Step 1 Remesh + Material 실습에 직접 사용** → 반드시 저장 안내 필요
+- Week 5는 AI 메쉬를 Mesh Cleaner + Decimate로 기본 정리만 → **Week 6 Step 1에서 Voxel Remesh / Quad Remesh / QRemeshify 심화**
 - **curriculum.js에는 "Week 6 Material 실습에서 이 파일을 씁니다" 명시되어 있으나 assignment.md+slides.md에는 없음** → P1 불일치
 
 ---
@@ -105,8 +105,8 @@
 ### 검토 완료 항목
 - [x] AI 3D 도구 3종 비교 → lecture-note 표 있음 ✅
 - [x] GLB 임포트 스케일 주의 → lecture-note에 명시 ✅
-- [x] Voxel Remesh 안내 → lecture-note에 포함 ✅
 - [x] Sculpt 브러시 기본 4종 설명 → lecture-note에 포함 ✅
+- [x] Dyntopo → Sculpt 브러시 심화 step에 포함 (2026-04-05 이동) ✅
 - [x] Week 1 컨셉 이미지 활용 (Tripo Image to 3D) → assignment.md에 언급 ✅
 
 ### 추가 필요 항목
@@ -140,11 +140,12 @@
 
 ### P1 — 이번 주 내 반영 권고
 
-- [ ] **assignment.md 체크리스트 보강:** curriculum.js 기준으로 "무드보드 프롬프트 키워드", "완성 .blend 파일 저장 — Week 6에서 씁니다" 항목 추가.
+- [ ] **assignment.md 체크리스트 보강:** curriculum.js 기준으로 "무드보드 프롬프트 키워드", "완성 .blend 파일 저장 — Week 6 Step 1 Remesh + Material 실습에서 씁니다" 항목 추가.
 - [ ] **slides.md 과제 안내 업데이트:** 동일 내용 추가.
 - [ ] **AI 생성 대기 시간 활용 가이드:** lecture-note 강사 노트에 "Meshy 대기 중 Week 1 컨셉 이미지 준비 유도" 안내 추가.
+- [x] **Remesh 심화 Week 6으로 이동 (2026-04-05):** "Remesh·Dyntopo·Decimate" 및 "외부 플러그인 & 메쉬 정리 도구" Step 삭제. Dyntopo는 Sculpt 브러시 심화 step에 유지.
 
 ### P2 — 차기 주차 리뷰 전 반영
 
-- [ ] Decimate Modifier 사용 가이드 supplement 추가 (고폴리 AI 모델 경량화).
+- [ ] lecture-note.md에서 Remesh 섹션을 "기본 정리만" 수준으로 축약, Week 6 Remesh 심화 참고 안내 추가.
 - [ ] 채점 기준 slides.md ↔ assignment.md 일치 확인 (현재 일치함).
