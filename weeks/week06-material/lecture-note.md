@@ -9,6 +9,22 @@
 > - **Mesh 정리** (Week 03-05): Material을 적용하려면 메쉬가 깨끗해야 함 — 겹치는 Face나 비정상 Normal이 있으면 재질이 올바르게 표시되지 않음
 > - 아직 모델이 완성되지 않았다면, 이번 주 실습은 기본 Primitive(Cube, Sphere)로 진행한 뒤 다음 주까지 모델을 완성하세요
 
+## ✅ 수업 시작 체크리스트
+
+실습 전 반드시 확인:
+
+- [ ] **Blender 5.0 이상 버전 사용 중**
+  - 확인: Blender 좌측 상단 로고 클릭 → About Blender
+  - 4.x 이하는 Thin Film Iridescence 기능이 없어 수업 진행 불가
+- [ ] **Render Engine = Eevee (또는 Eevee Next)**
+  - 확인: Properties > Render Properties > Render Engine 드롭다운
+  - Cycles 상태에서는 Material Preview 반응이 느리거나 달라질 수 있음
+- [ ] **Viewport Shading = Material Preview**
+  - 단축키 Z → Material Preview 선택 (또는 우측 상단 구체 아이콘 3번째)
+  - Solid 모드에서는 재질 변화가 보이지 않음
+
+> ⚠️ 위 3개 미확인 시 Transmission(유리), Emission(발광), Thin Film 실습이 예상대로 동작하지 않습니다.
+
 ## 학습 목표
 
 - [ ] Material을 생성하고 오브젝트에 할당할 수 있다
