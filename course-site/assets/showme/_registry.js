@@ -70,6 +70,10 @@ const SHOWME_REGISTRY = {
   "material-basics":        { label: "Material 시스템 기초",     icon: "🎨", week: 6 },
   "principled-bsdf":        { label: "Principled BSDF 이해",    icon: "🎭", week: 6 },
   "shader-editor":          { label: "Shader Editor 이해",      icon: "🔌", week: 6 },
+  "color-ramp":             { label: "Color Ramp 이해",         icon: "🌈", week: 6 },
+  "noise-texture":          { label: "Noise Texture 이해",      icon: "🌫️", week: 6 },
+  "texture-types":          { label: "Procedural vs Image",     icon: "🔀", week: 6 },
+  "image-texture-pbr":      { label: "Image Texture + PBR",     icon: "🖼️", week: 6 },
 
   // ── Week 7: UV ──
   "uv-unwrapping":          { label: "UV Unwrapping 이해",      icon: "📐", week: 7 },

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — Image Texture + PBR 맵 연결</title>
+<style>
+:root {
+  --bg:#0a0a0a;--bg-soft:#111214;--surface:#17181a;--surface-strong:#1c1d20;
+  --line:rgba(255,255,255,.08);--line-strong:rgba(255,255,255,.14);
+  --key:#0a84ff;--key-strong:#0071e3;--key-soft:#8ec5ff;
+  --success:#10b981;--success-soft:#6ee7b7;
+  --warn:#f59e0b;--warn-soft:#fbbf24;
+  --danger:#ef4444;--danger-soft:#fca5a5;
+  --text:#f5f5f7;--muted:#a1a1aa;--muted-strong:#d4d4d8;--muted-mid:#94a3b8;
+  --muted-soft:#cbd5e1;--muted-dim:#64748b;--info-soft:#67e8f9;
+  --radius-sm:12px;--radius-md:18px;--radius-lg:24px;
+  --font:"Noto Sans KR",-apple-system,BlinkMacSystemFont,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;padding:0;font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--line);padding:0 16px;background:var(--bg-soft);overflow-x:auto}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:12px 16px;font-size:.84rem;font-weight:500;color:var(--muted);cursor:pointer;border:none;border-bottom:2px solid transparent;white-space:nowrap;transition:color .14s,border-color .14s;background:none;font-family:inherit}
+.tab:hover{color:var(--muted-strong)}
+.tab.is-active{color:var(--key-soft);border-bottom-color:var(--key)}
+.panel{display:none;padding:20px 16px}.panel.is-active{display:block}
+.concept-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.concept-card{border-radius:var(--radius-md);border:1px solid var(--line);background:var(--surface);padding:18px}
+.concept-card h3{margin:0 0 8px;font-size:1rem;display:flex;align-items:center;gap:8px}
+.concept-card p{margin:0;color:var(--muted-strong);font-size:.88rem;line-height:1.7}
+.concept-card ul{margin:8px 0 0;padding-left:16px;color:var(--muted-strong);font-size:.85rem;line-height:1.8}
+.badge{display:inline-block;padding:3px 9px;border-radius:999px;font-size:.72rem;font-weight:600}
+.badge-blue{background:rgba(10,132,255,.15);color:var(--key-soft)}
+.badge-green{background:rgba(16,185,129,.15);color:var(--success-soft)}
+.badge-amber{background:rgba(245,158,11,.15);color:var(--warn-soft)}
+.badge-red{background:rgba(239,68,68,.15);color:var(--danger-soft)}
+.analogy{margin-top:8px;padding:10px 14px;border-radius:var(--radius-sm);background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.15);font-size:.82rem;color:var(--warn-soft);font-style:italic}
+
+.node-flow{display:flex;flex-direction:column;gap:12px;margin:14px 0}
+.node-row{display:flex;align-items:center;gap:10px;padding:14px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--surface)}
+.node-box{padding:8px 14px;border-radius:var(--radius-sm);font-size:.84rem;font-weight:600;white-space:nowrap;flex-shrink:0}
+.node-img{background:rgba(165,180,252,.12);color:var(--secondary-soft);border:1px solid rgba(165,180,252,.25)}
+.node-mid{background:rgba(245,158,11,.1);color:var(--warn-soft);border:1px solid rgba(245,158,11,.2)}
+.node-bsdf{background:rgba(16,185,129,.1);color:var(--success-soft);border:1px solid rgba(16,185,129,.2)}
+.node-arrow{color:var(--muted-dim);font-size:1.2rem;flex-shrink:0}
+.node-label{font-size:.8rem;color:var(--muted);margin-left:auto}
+
+.usage-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.usage-card{border-radius:var(--radius-md);border:1px solid var(--line);background:var(--surface);padding:16px}
+.usage-card h4{margin:0 0 8px;font-size:.92rem;color:var(--key-soft)}
+.usage-card ul{margin:0;padding-left:16px;color:var(--muted-strong);font-size:.85rem;line-height:1.8}
+.tip-box{border-radius:var(--radius-md);border:1px solid rgba(10,132,255,.2);background:rgba(10,132,255,.06);padding:14px 16px;margin-top:14px;font-size:.86rem;color:var(--muted-strong)}
+.tip-box strong{color:var(--key-soft)}
+.warn-box{border-radius:var(--radius-md);border:1px solid rgba(239,68,68,.2);background:rgba(239,68,68,.06);padding:14px 16px;margin-top:14px;font-size:.86rem;color:var(--danger-soft)}
+.warn-box strong{color:var(--danger-soft)}
+.shortcut-list{margin-top:16px;padding:14px 16px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--surface)}
+.shortcut-list h4{margin:0 0 10px;font-size:.9rem;color:var(--text)}
+.shortcut-row{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:.84rem;color:var(--muted-strong)}
+.shortcut-row+.shortcut-row{border-top:1px solid var(--line)}
+.kbd{display:inline-block;padding:3px 8px;border-radius:6px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:var(--key-soft);font-size:.82rem;font-weight:600;font-family:var(--font)}
+.doc-ref{margin-top:16px;padding:10px 14px;border-radius:var(--radius-sm);border:1px solid rgba(10,132,255,.15);background:rgba(10,132,255,.04);display:flex;align-items:center;gap:8px}
+.doc-ref a{color:var(--key-soft);font-size:.84rem;text-decoration:none;line-height:1.5}
+.doc-ref a:hover{text-decoration:underline}
+
+.step-list{counter-reset:steps;margin:14px 0}
+.step-item{counter-increment:steps;display:flex;gap:14px;padding:14px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--surface);margin-bottom:10px}
+.step-item::before{content:counter(steps);display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:rgba(10,132,255,.15);color:var(--key-soft);font-weight:700;font-size:.9rem;flex-shrink:0}
+.step-content h4{margin:0 0 4px;font-size:.9rem;color:var(--text)}
+.step-content p{margin:0;font-size:.84rem;color:var(--muted-strong);line-height:1.6}
+
+.quiz-question{margin-bottom:20px;padding:16px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--surface)}
+.quiz-question h4{margin:0 0 12px;font-size:.94rem}
+.quiz-option{display:block;width:100%;padding:10px 14px;margin-bottom:6px;border-radius:var(--radius-sm);border:1px solid var(--line);background:rgba(255,255,255,.025);color:var(--text);font:inherit;font-size:.86rem;cursor:pointer;text-align:left;transition:background .14s,border-color .14s}
+.quiz-option:hover{background:rgba(255,255,255,.06);border-color:var(--line-strong)}
+.quiz-option.correct{background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.4);color:var(--success-soft)}
+.quiz-option.wrong{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.3);color:var(--danger-soft)}
+.quiz-option:disabled{cursor:default;opacity:.85}
+.quiz-feedback{margin-top:8px;padding:10px 14px;border-radius:var(--radius-sm);font-size:.84rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.correct-fb{background:rgba(16,185,129,.08);color:var(--success-soft)}
+.quiz-feedback.wrong-fb{background:rgba(239,68,68,.06);color:var(--danger-soft)}
+@media(max-width:600px){.concept-grid,.usage-grid{grid-template-columns:1fr}.tabs{padding:0 8px}.tab{padding:10px 12px;font-size:.8rem}.panel{padding:16px 12px}.node-row{flex-wrap:wrap}}
+</style>
+</head>
+<body>
+
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false">노드 연결법</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false">실전 워크플로우</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false">퀴즈</button>
+</nav>
+
+<!-- TAB 1: 개념 이해 -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3>PBR 맵이란? <span class="badge badge-blue">기초</span></h3>
+      <p><strong>Physically Based Rendering</strong> — 물리 기반 렌더링에 필요한 이미지 세트입니다. 하나의 재질을 표현하기 위해 여러 장의 이미지를 사용해요.</p>
+      <div class="analogy">화장에 비유하면: Base Color = 파운데이션(피부색), Roughness = 파우더(광택 조절), Normal = 콘투어링(입체감 추가)</div>
+    </div>
+    <div class="concept-card">
+      <h3>PBR 맵 3종 <span class="badge badge-green">필수</span></h3>
+      <ul>
+        <li><strong>Diffuse (Base Color)</strong> — 물체의 기본 색상. 컬러 이미지</li>
+        <li><strong>Roughness</strong> — 표면 거칠기. 흑백 이미지 (검=매끄러움, 흰=거침)</li>
+        <li><strong>Normal</strong> — 표면 요철/디테일. 파란색 이미지. 실제 메쉬 변형 없이 입체감</li>
+      </ul>
+    </div>
+    <div class="concept-card">
+      <h3>Color Space 주의! <span class="badge badge-red">꼭 기억</span></h3>
+      <p>Blender에서 이미지를 로드할 때 Color Space 설정이 중요합니다:</p>
+      <ul>
+        <li><strong>Diffuse</strong> → <strong>sRGB</strong> (기본값, 변경 불필요)</li>
+        <li><strong>Roughness</strong> → <strong>Non-Color</strong> (필수 변경!)</li>
+        <li><strong>Normal</strong> → <strong>Non-Color</strong> (필수 변경!)</li>
+      </ul>
+      <div class="analogy">sRGB = "사람 눈이 보는 색" / Non-Color = "데이터 값". 거칠기나 요철은 색이 아니라 데이터이므로 Non-Color로 해야 정확해요</div>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <span>📖</span>
+    <a href="https://docs.blender.org/manual/en/latest/render/shader_nodes/textures/image.html" target="_blank" rel="noopener">Blender Manual — Image Texture Node</a>
+  </div>
+</section>
+
+<!-- TAB 2: 노드 연결법 -->
+<section class="panel" id="panel-visual" role="tabpanel">
+  <h3 style="margin:0 0 14px;font-size:1rem;">PBR 3종 맵 노드 연결 다이어그램</h3>
+
+  <div class="node-flow">
+    <div class="node-row">
+      <span class="node-box node-img">Image Texture<br><small style="color:var(--muted-dim)">Color Space: sRGB</small></span>
+      <span class="node-arrow">→</span>
+      <span style="font-size:.85rem;color:var(--muted-strong)">Color 출력</span>
+      <span class="node-arrow">→</span>
+      <span class="node-box node-bsdf">Base Color</span>
+      <span class="node-label">🎨 Diffuse 맵</span>
+    </div>
+    <div class="node-row">
+      <span class="node-box node-img">Image Texture<br><small style="color:var(--muted-dim)">Color Space: <strong>Non-Color</strong></small></span>
+      <span class="node-arrow">→</span>
+      <span style="font-size:.85rem;color:var(--muted-strong)">Color 출력</span>
+      <span class="node-arrow">→</span>
+      <span class="node-box node-bsdf">Roughness</span>
+      <span class="node-label">⬛ Roughness 맵</span>
+    </div>
+    <div class="node-row">
+      <span class="node-box node-img">Image Texture<br><small style="color:var(--muted-dim)">Color Space: <strong>Non-Color</strong></small></span>
+      <span class="node-arrow">→</span>
+      <span class="node-box node-mid">Normal Map</span>
+      <span class="node-arrow">→</span>
+      <span class="node-box node-bsdf">Normal</span>
+      <span class="node-label">🔵 Normal 맵</span>
+    </div>
+  </div>
+
+  <div class="warn-box">
+    <strong>주의:</strong> Normal 맵은 <strong>직접 Normal에 연결하면 안 돼요!</strong> 반드시 중간에 <strong>Normal Map 노드</strong>를 거쳐야 합니다. 또한 Roughness와 Normal 모두 Color Space를 <strong>Non-Color</strong>로 바꿔야 정상 작동합니다.
+  </div>
+
+  <div class="shortcut-list">
+    <h4>유용한 단축키</h4>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Ctrl+T</span></span>
+      <span>Image Texture에 Texture Coordinate + Mapping 자동 연결</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Ctrl+Shift+Click</span></span>
+      <span>노드 프리뷰 (Viewer 연결)</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Shift+A</span> → Texture → Image Texture</span>
+      <span>Image Texture 노드 추가</span>
+    </div>
+  </div>
+</section>
+
+<!-- TAB 3: 실전 워크플로우 -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <h3 style="margin:0 0 14px;font-size:1rem;">Poly AI PBR 텍스처 적용 워크플로우</h3>
+
+  <div class="step-list">
+    <div class="step-item">
+      <div class="step-content">
+        <h4>Poly에서 PBR 맵 다운로드</h4>
+        <p><a href="https://withpoly.com" target="_blank" style="color:var(--key-soft)">withpoly.com</a>에서 프롬프트 입력 (예: "rusty painted metal"). Color/Roughness/Normal 3종 다운로드</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-content">
+        <h4>Shader Editor에 Image Texture 3개 추가</h4>
+        <p>Shift+A → Texture → Image Texture를 3번. 각각에 다운받은 이미지 할당 (Open 클릭)</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-content">
+        <h4>Color Space 설정</h4>
+        <p>Diffuse는 sRGB(기본값). Roughness와 Normal은 반드시 <strong>Non-Color</strong>로 변경!</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-content">
+        <h4>연결: Diffuse → Base Color</h4>
+        <p>첫 번째 Image Texture의 Color 출력 → Principled BSDF의 Base Color 입력</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-content">
+        <h4>연결: Roughness → Roughness</h4>
+        <p>두 번째 Image Texture의 Color 출력 → Principled BSDF의 Roughness 입력</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-content">
+        <h4>연결: Normal → Normal Map → Normal</h4>
+        <p>Shift+A → Vector → Normal Map 추가. Image Texture Color → Normal Map Color, Normal Map Normal → BSDF Normal</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-content">
+        <h4>결과 확인</h4>
+        <p>Z → Rendered 모드에서 확인. 이미지가 늘어나 보이면 정상 — UV가 없어서예요 (Week 7에서 해결)</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>Poly Haven, AmbientCG</strong> 같은 무료 사이트에서도 PBR 맵 세트를 다운로드할 수 있어요. Poly는 AI로 "생성"하고, 이 사이트들은 실제 촬영/스캔한 텍스처를 제공합니다.
+  </div>
+</section>
+
+<!-- TAB 4: 퀴즈 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+// ── Tab Switching ──────────────────────────────
+document.querySelectorAll(".tab").forEach(function(tab){
+  tab.addEventListener("click",function(){
+    document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("is-active");t.setAttribute("aria-selected","false");});
+    document.querySelectorAll(".panel").forEach(function(p){p.classList.remove("is-active");});
+    tab.classList.add("is-active");tab.setAttribute("aria-selected","true");
+    document.getElementById("panel-"+tab.dataset.tab).classList.add("is-active");
+  });
+});
+
+// ── Quiz Engine ────────────────────────────────
+function initQuiz(questions){
+  var container=document.getElementById("quizArea");
+  questions.forEach(function(q,qi){
+    var div=document.createElement("div");div.className="quiz-question";
+    var h4=document.createElement("h4");h4.textContent="Q"+(qi+1)+". "+q.question;div.appendChild(h4);
+    var fb=document.createElement("div");fb.className="quiz-feedback";
+    q.options.forEach(function(opt,oi){
+      var btn=document.createElement("button");btn.className="quiz-option";btn.textContent=opt;
+      btn.addEventListener("click",function(){
+        if(btn.disabled)return;
+        div.querySelectorAll(".quiz-option").forEach(function(b){b.disabled=true;});
+        if(oi===q.answer){btn.classList.add("correct");fb.className="quiz-feedback show correct-fb";fb.textContent="\u2705 "+q.explanation;}
+        else{btn.classList.add("wrong");div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");fb.className="quiz-feedback show wrong-fb";fb.textContent="\u274c "+q.explanation;}
+      });
+      div.appendChild(btn);
+    });
+    div.appendChild(fb);container.appendChild(div);
+  });
+}
+
+initQuiz([
+  {question:"Roughness 맵의 Color Space는 무엇으로 설정해야 하나요?",options:["sRGB","Non-Color","Linear","Raw"],answer:1,explanation:"Roughness는 색상이 아니라 데이터 값이므로 Non-Color로 설정해야 합니다. sRGB로 두면 값이 왜곡돼요."},
+  {question:"Normal Map을 Principled BSDF에 연결할 때 중간에 어떤 노드가 필요한가요?",options:["Color Ramp","MixRGB","Normal Map 노드","Bump 노드"],answer:2,explanation:"Normal Map 이미지는 반드시 Normal Map 노드를 거쳐 Principled BSDF의 Normal 입력에 연결해야 합니다."},
+  {question:"PBR 맵 3종(Diffuse, Roughness, Normal) 중 컬러 이미지는 어느 것인가요?",options:["Roughness","Normal","Diffuse (Base Color)","세 개 다 컬러"],answer:2,explanation:"Diffuse(Base Color)만 컬러 이미지이고, Roughness는 흑백, Normal은 파란색 데이터 이미지입니다."},
+  {question:"Image Texture를 적용했는데 텍스처가 이상하게 늘어나 보여요. 원인은?",options:["Color Space가 잘못됐다","Roughness 값이 높다","UV 매핑이 없다","Normal Map이 빠졌다"],answer:2,explanation:"Image Texture는 UV 좌표가 있어야 정확하게 매핑됩니다. UV가 없으면 기본 프로젝션으로 늘어나 보여요. Week 7에서 해결!"}
+]);
+</script>
+
+<script src="./_helpers.js?v=20260318ai"></script>
+<script>
+window.addEventListener("load",function(){if(window.normalizeStandaloneShowMeLayout)window.normalizeStandaloneShowMeLayout(document);});
+</script>
+</body>
+</html>

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — Color Ramp 이해</title>
+<style>
+:root {
+  --bg:#0a0a0a;--bg-soft:#111214;--surface:#17181a;--surface-strong:#1c1d20;
+  --line:rgba(255,255,255,.08);--line-strong:rgba(255,255,255,.14);
+  --key:#0a84ff;--key-strong:#0071e3;--key-soft:#8ec5ff;
+  --success:#10b981;--success-soft:#6ee7b7;
+  --warn:#f59e0b;--warn-soft:#fbbf24;
+  --danger:#ef4444;--danger-soft:#fca5a5;
+  --accent-soft:#FFB347;--secondary-soft:#a5b4fc;--secondary-mid:#c4b5fd;
+  --text:#f5f5f7;--muted:#a1a1aa;--muted-strong:#d4d4d8;--muted-mid:#94a3b8;
+  --muted-soft:#cbd5e1;--muted-dim:#64748b;--info-soft:#67e8f9;
+  --radius-sm:12px;--radius-md:18px;--radius-lg:24px;
+  --font:"Noto Sans KR",-apple-system,BlinkMacSystemFont,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;padding:0;font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--line);padding:0 16px;background:var(--bg-soft);overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:12px 16px;font-size:.84rem;font-weight:500;color:var(--muted);cursor:pointer;border:none;border-bottom:2px solid transparent;white-space:nowrap;transition:color .14s,border-color .14s;background:none;font-family:inherit}
+.tab:hover{color:var(--muted-strong)}
+.tab.is-active{color:var(--key-soft);border-bottom-color:var(--key)}
+.panel{display:none;padding:20px 16px}.panel.is-active{display:block}
+.concept-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.concept-card{border-radius:var(--radius-md);border:1px solid var(--line);background:var(--surface);padding:18px}
+.concept-card h3{margin:0 0 8px;font-size:1rem;display:flex;align-items:center;gap:8px}
+.concept-card p{margin:0;color:var(--muted-strong);font-size:.88rem;line-height:1.7}
+.concept-card ul{margin:8px 0 0;padding-left:16px;color:var(--muted-strong);font-size:.85rem;line-height:1.8}
+.badge{display:inline-block;padding:3px 9px;border-radius:999px;font-size:.72rem;font-weight:600}
+.badge-blue{background:rgba(10,132,255,.15);color:var(--key-soft)}
+.badge-green{background:rgba(16,185,129,.15);color:var(--success-soft)}
+.badge-amber{background:rgba(245,158,11,.15);color:var(--warn-soft)}
+.analogy{margin-top:8px;padding:10px 14px;border-radius:var(--radius-sm);background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.15);font-size:.82rem;color:var(--warn-soft);font-style:italic}
+.demo-wrap{border-radius:var(--radius-md);border:1px solid var(--line);background:var(--surface);overflow:hidden;margin:14px 0}
+.demo-wrap canvas{display:block;width:100%}
+.demo-controls{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line);flex-wrap:wrap;align-items:center}
+.demo-hint{font-size:.78rem;color:var(--muted);text-align:center;padding:6px 0 0}
+.demo-btn{padding:7px 14px;border-radius:999px;border:1px solid var(--line-strong);background:rgba(255,255,255,.04);color:var(--muted-strong);font:inherit;font-size:.82rem;cursor:pointer;transition:background .14s,color .14s}
+.demo-btn:hover{background:rgba(255,255,255,.09);color:var(--text)}
+.demo-btn.is-active{background:rgba(10,132,255,.14);color:var(--key-soft);border-color:rgba(10,132,255,.3)}
+.demo-slider-group{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--muted-strong)}
+.demo-slider-group input[type="range"]{width:90px;accent-color:var(--key)}
+.demo-slider-group input[type="color"]{width:28px;height:28px;border:1px solid var(--line-strong);border-radius:6px;background:none;cursor:pointer;padding:0}
+.usage-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.usage-card{border-radius:var(--radius-md);border:1px solid var(--line);background:var(--surface);padding:16px}
+.usage-card h4{margin:0 0 8px;font-size:.92rem;color:var(--key-soft)}
+.usage-card ul{margin:0;padding-left:16px;color:var(--muted-strong);font-size:.85rem;line-height:1.8}
+.tip-box{border-radius:var(--radius-md);border:1px solid rgba(10,132,255,.2);background:rgba(10,132,255,.06);padding:14px 16px;margin-top:14px;font-size:.86rem;color:var(--muted-strong)}
+.tip-box strong{color:var(--key-soft)}
+.shortcut-list{margin-top:16px;padding:14px 16px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--surface)}
+.shortcut-list h4{margin:0 0 10px;font-size:.9rem;color:var(--text)}
+.shortcut-row{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:.84rem;color:var(--muted-strong)}
+.shortcut-row+.shortcut-row{border-top:1px solid var(--line)}
+.shortcut-keys{flex-shrink:0}
+.kbd{display:inline-block;padding:3px 8px;border-radius:6px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:var(--key-soft);font-size:.82rem;font-weight:600;font-family:var(--font)}
+.quiz-progress{font-size:.78rem;color:var(--muted);margin-bottom:12px}
+.quiz-question{margin-bottom:20px;padding:16px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--surface)}
+.quiz-question h4{margin:0 0 12px;font-size:.94rem}
+.quiz-option{display:block;width:100%;padding:10px 14px;margin-bottom:6px;border-radius:var(--radius-sm);border:1px solid var(--line);background:rgba(255,255,255,.025);color:var(--text);font:inherit;font-size:.86rem;cursor:pointer;text-align:left;transition:background .14s,border-color .14s}
+.quiz-option:hover{background:rgba(255,255,255,.06);border-color:var(--line-strong)}
+.quiz-option.correct{background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.4);color:var(--success-soft)}
+.quiz-option.wrong{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.3);color:var(--danger-soft)}
+.quiz-option:disabled{cursor:default;opacity:.85}
+.quiz-feedback{margin-top:8px;padding:10px 14px;border-radius:var(--radius-sm);font-size:.84rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.correct-fb{background:rgba(16,185,129,.08);color:var(--success-soft)}
+.quiz-feedback.wrong-fb{background:rgba(239,68,68,.06);color:var(--danger-soft)}
+.quiz-score{text-align:center;padding:20px;font-size:1.1rem;font-weight:600}
+.quiz-retry{display:block;margin:12px auto;padding:10px 24px;border-radius:999px;border:1px solid var(--key);background:rgba(10,132,255,.12);color:var(--key-soft);font:inherit;font-size:.88rem;cursor:pointer;transition:background .14s}
+.quiz-retry:hover{background:rgba(10,132,255,.22)}
+.doc-ref{margin-top:16px;padding:10px 14px;border-radius:var(--radius-sm);border:1px solid rgba(10,132,255,.15);background:rgba(10,132,255,.04);display:flex;align-items:center;gap:8px}
+.doc-ref a{color:var(--key-soft);font-size:.84rem;text-decoration:none;line-height:1.5}
+.doc-ref a:hover{text-decoration:underline}
+@media(max-width:600px){.concept-grid,.usage-grid{grid-template-columns:1fr}.tabs{padding:0 8px}.tab{padding:10px 12px;font-size:.8rem}.panel{padding:16px 12px}}
+</style>
+</head>
+<body>
+
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false">시각적 비교</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false">퀴즈</button>
+</nav>
+
+<!-- TAB 1: 개념 이해 -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3>Color Ramp란? <span class="badge badge-blue">기초</span></h3>
+      <p>입력값(0~1 흑백)을 <strong>원하는 색상 그라데이션</strong>으로 변환하는 노드입니다. "흑백 데이터를 컬러로 바꾸는 번역기"예요.</p>
+      <div class="analogy">온도계를 생각해보세요 — 0°C는 파랑, 50°C는 노랑, 100°C는 빨강. Color Ramp가 바로 이 매핑을 합니다</div>
+    </div>
+    <div class="concept-card">
+      <h3>핵심 구성 요소 <span class="badge badge-green">필수</span></h3>
+      <ul>
+        <li><strong>Color Stop (색상 정지점)</strong> — 특정 위치에 색상을 지정. 여러 개 추가 가능</li>
+        <li><strong>Fac (입력)</strong> — 0~1 사이 값을 받음 (보통 Noise 등 텍스처에서 연결)</li>
+        <li><strong>Color (출력)</strong> — 매핑된 색상 결과</li>
+        <li><strong>Interpolation</strong> — Linear(부드러운) / Constant(딱딱 끊기는) 등 보간 방식</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="shortcut-list">
+    <h4>노드 조작법</h4>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Shift+A</span> → Color → Color Ramp</span>
+      <span>Color Ramp 노드 추가</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys">Color Stop 클릭</span>
+      <span>색상 변경 (하단 색상 바 클릭)</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys">+ 버튼</span>
+      <span>새 Color Stop 추가</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys">- 버튼</span>
+      <span>선택된 Color Stop 삭제</span>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <span>📖</span>
+    <a href="https://docs.blender.org/manual/en/latest/render/shader_nodes/converter/color_ramp.html" target="_blank" rel="noopener">Blender Manual — Color Ramp Node</a>
+  </div>
+</section>
+
+<!-- TAB 2: 시각적 비교 -->
+<section class="panel" id="panel-visual" role="tabpanel">
+  <h3 style="margin:0 0 14px;font-size:1rem;">Color Ramp 인터랙티브 데모</h3>
+  <div class="demo-wrap">
+    <canvas id="rampCanvas" width="800" height="260"></canvas>
+    <div class="demo-controls">
+      <div class="demo-slider-group">
+        <span>색1</span>
+        <input type="color" id="color1" value="#0a84ff">
+      </div>
+      <div class="demo-slider-group">
+        <span>색2</span>
+        <input type="color" id="color2" value="#ef4444">
+      </div>
+      <div class="demo-slider-group">
+        <span>정지점 위치</span>
+        <input type="range" id="stopPos" min="10" max="90" value="50">
+        <span id="valStop">0.50</span>
+      </div>
+      <button class="demo-btn" id="btnConstant">Constant</button>
+      <button class="demo-btn is-active" id="btnLinear">Linear</button>
+    </div>
+    <p class="demo-hint">위: 입력 그라데이션(0→1) / 아래: Color Ramp 출력 결과</p>
+  </div>
+
+  <div class="tip-box">
+    <strong>팁:</strong> Color Stop 위치를 극단적으로 가깝게 놓으면 <strong>또렷한 경계선</strong>이 생겨요. Constant 모드는 만화풍 셀 셰이딩에 유용합니다.
+  </div>
+</section>
+
+<!-- TAB 3: 언제 쓰나요? -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>🎨 색상 매핑</h4>
+      <ul>
+        <li>Noise Texture → Color Ramp로 대리석, 나무결 표현</li>
+        <li>높이 데이터 → 색상으로 지형 그라데이션</li>
+        <li>Fresnel → Color Ramp로 림라이트 효과</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>⚫ 대비 조절</h4>
+      <ul>
+        <li>흑백 텍스처의 명암 대비 강화</li>
+        <li>Roughness 맵 세밀 조정</li>
+        <li>마스크 경계를 부드럽게/날카롭게</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>✂️ Constant = 셀 셰이딩</h4>
+      <ul>
+        <li>Interpolation을 Constant로 바꾸면 딱딱 끊기는 효과</li>
+        <li>만화풍, 로우폴리 스타일</li>
+        <li>단계별 색상 분리</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>🔗 자주 쓰는 연결 조합</h4>
+      <ul>
+        <li>Noise → Color Ramp → Base Color</li>
+        <li>Noise → Color Ramp → Roughness</li>
+        <li>Layer Weight → Color Ramp → Mix Shader</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- TAB 4: 퀴즈 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+// ── Color Ramp Demo ─────────────────────────────
+(function() {
+  var canvas = document.getElementById("rampCanvas");
+  var ctx = canvas.getContext("2d");
+  var c1 = document.getElementById("color1");
+  var c2 = document.getElementById("color2");
+  var stopSlider = document.getElementById("stopPos");
+  var valStop = document.getElementById("valStop");
+  var btnConst = document.getElementById("btnConstant");
+  var btnLinear = document.getElementById("btnLinear");
+  var mode = "linear";
+
+  function hexToRgb(hex) {
+    var r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+    return [r,g,b];
+  }
+  function lerp(a,b,t) { return a + (b-a)*t; }
+
+  function draw() {
+    var w = canvas.width, h = canvas.height;
+    var mid = h * 0.45;
+    var stopF = stopSlider.value / 100;
+    valStop.textContent = stopF.toFixed(2);
+    var rgb1 = hexToRgb(c1.value), rgb2 = hexToRgb(c2.value);
+
+    ctx.clearRect(0,0,w,h);
+
+    // Top: input gradient (black to white)
+    for (var x = 0; x < w; x++) {
+      var t = x / w;
+      var v = Math.round(t * 255);
+      ctx.fillStyle = "rgb(" + v + "," + v + "," + v + ")";
+      ctx.fillRect(x, 0, 1, mid - 10);
+    }
+
+    // Label
+    ctx.fillStyle = "#666";
+    ctx.font = "11px sans-serif";
+    ctx.fillText("입력 (Fac: 0 → 1)", 10, mid - 16);
+    ctx.fillText("Color Ramp 출력", 10, mid + 4);
+
+    // Bottom: Color Ramp output
+    for (var x2 = 0; x2 < w; x2++) {
+      var t2 = x2 / w;
+      var r, g, b;
+      if (mode === "constant") {
+        if (t2 < stopF) { r=rgb1[0]; g=rgb1[1]; b=rgb1[2]; }
+        else { r=rgb2[0]; g=rgb2[1]; b=rgb2[2]; }
+      } else {
+        if (t2 <= stopF) {
+          var lt = stopF > 0 ? t2 / stopF : 0;
+          r=lerp(rgb1[0],rgb2[0],lt); g=lerp(rgb1[1],rgb2[1],lt); b=lerp(rgb1[2],rgb2[2],lt);
+        } else {
+          r=rgb2[0]; g=rgb2[1]; b=rgb2[2];
+        }
+      }
+      ctx.fillStyle = "rgb(" + Math.round(r) + "," + Math.round(g) + "," + Math.round(b) + ")";
+      ctx.fillRect(x2, mid + 10, 1, h - mid - 10);
+    }
+
+    // Stop marker
+    var sx = Math.round(stopF * w);
+    ctx.strokeStyle = "#fff";
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(sx, mid - 10); ctx.lineTo(sx, h); ctx.stroke();
+    ctx.fillStyle = "#fff";
+    ctx.font = "bold 11px sans-serif";
+    ctx.fillText("▼ " + stopF.toFixed(2), sx + 4, mid + 8);
+  }
+
+  c1.addEventListener("input", draw);
+  c2.addEventListener("input", draw);
+  stopSlider.addEventListener("input", draw);
+  btnConst.addEventListener("click", function() { mode = "constant"; btnConst.classList.add("is-active"); btnLinear.classList.remove("is-active"); draw(); });
+  btnLinear.addEventListener("click", function() { mode = "linear"; btnLinear.classList.add("is-active"); btnConst.classList.remove("is-active"); draw(); });
+  draw();
+})();
+
+// ── Tab Switching ──────────────────────────────
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(t) { t.classList.remove("is-active"); t.setAttribute("aria-selected","false"); });
+    document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("is-active"); });
+    tab.classList.add("is-active"); tab.setAttribute("aria-selected","true");
+    document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+  });
+});
+
+// ── Quiz Engine ────────────────────────────────
+function initQuiz(questions) {
+  var container = document.getElementById("quizArea");
+  var score = 0, answered = 0;
+  questions.forEach(function(q, qi) {
+    var div = document.createElement("div"); div.className = "quiz-question";
+    var h4 = document.createElement("h4"); h4.textContent = "Q" + (qi+1) + ". " + q.question; div.appendChild(h4);
+    var fb = document.createElement("div"); fb.className = "quiz-feedback";
+    q.options.forEach(function(opt, oi) {
+      var btn = document.createElement("button"); btn.className = "quiz-option"; btn.textContent = opt;
+      btn.addEventListener("click", function() {
+        if (btn.disabled) return;
+        div.querySelectorAll(".quiz-option").forEach(function(b) { b.disabled = true; });
+        answered++;
+        if (oi === q.answer) { btn.classList.add("correct"); score++; fb.className = "quiz-feedback show correct-fb"; fb.textContent = "✅ " + q.explanation; }
+        else { btn.classList.add("wrong"); div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct"); fb.className = "quiz-feedback show wrong-fb"; fb.textContent = "❌ " + q.explanation; }
+      });
+      div.appendChild(btn);
+    });
+    div.appendChild(fb); container.appendChild(div);
+  });
+}
+
+initQuiz([
+  { question: "Color Ramp 노드의 입력(Fac)은 어떤 범위의 값을 받나요?", options: ["0~255","0~1","-1~1","0~100"], answer: 1, explanation: "Color Ramp는 0부터 1 사이의 float 값을 입력으로 받아 색상으로 매핑합니다." },
+  { question: "Interpolation을 Constant로 바꾸면 어떤 효과가 나나요?", options: ["색상이 부드럽게 섞인다","색상이 단계별로 딱 끊긴다","투명해진다","색상이 반전된다"], answer: 1, explanation: "Constant 보간은 색상이 부드럽게 섞이지 않고 단계별로 딱 나뉩니다. 셀 셰이딩에 사용됩니다." },
+  { question: "Noise Texture → Color Ramp → Base Color 연결 시, Color Ramp의 역할은?", options: ["노이즈 패턴 크기 조절","노이즈의 흑백값을 원하는 색상으로 변환","텍스처 해상도 높이기","UV 좌표 생성"], answer: 1, explanation: "Color Ramp는 Noise의 0~1 값을 지정한 색상 그라데이션으로 변환합니다. 대리석이나 나무결 표현에 핵심입니다." },
+  { question: "Color Stop을 추가하려면 Color Ramp 노드에서 어떻게 하나요?", options: ["Ctrl+클릭","+ 버튼 클릭","더블클릭","Shift+A"], answer: 1, explanation: "Color Ramp 노드의 + 버튼을 클릭하면 새로운 Color Stop이 추가됩니다. 위치를 드래그해서 조절할 수 있어요." }
+]);
+</script>
+
+<script src="./_helpers.js?v=20260318ai"></script>
+<script>
+window.addEventListener("load", function() {
+  if (window.normalizeStandaloneShowMeLayout) window.normalizeStandaloneShowMeLayout(document);
+});
+</script>
+</body>
+</html>
