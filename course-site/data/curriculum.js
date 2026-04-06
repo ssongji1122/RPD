@@ -492,6 +492,7 @@ const CURRICULUM = [
     "steps": [
       {
         "title": "레퍼런스 이미지 설정",
+        "image": "assets/images/week03/base-form.png",
         "copy": "모델링 전에 참고할 이미지를 뷰포트에 깔아 두면 형태를 잡기가 훨씬 쉬워요. 정면·측면·후면 레퍼런스를 각 뷰에 배치해서 로봇의 비율과 구조를 미리 파악해요.",
         "goal": [
           "이미지 레퍼런스를 뷰포트에 올린다",
@@ -578,7 +579,7 @@ const CURRICULUM = [
             "detail": "Bevel은 스크롤로 세그먼트 추가"
           }
         ],
-        "image": "assets/images/week03/base-form.png",
+        "image": "assets/images/week03/mirror-modifier.png",
         "link": "https://docs.blender.org/manual/en/latest/modeling/meshes/tools/extrude_region.html",
         "showme": [
           "edit-mode-tools",
@@ -621,7 +622,7 @@ const CURRICULUM = [
             "detail": "중심선 벌어지면 S+X+0으로 정렬"
           }
         ],
-        "image": "assets/images/week03/mirror-modifier.png",
+        "image": "assets/images/week03/subdivision-surface.png",
         "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html",
         "showme": "mirror-modifier",
         "widgets": [
@@ -663,7 +664,7 @@ const CURRICULUM = [
             "detail": "두 방법의 차이를 눈으로 확인"
           }
         ],
-        "image": "assets/images/week03/subdivision-surface.png",
+        "image": "assets/images/week03/array-boolean-detail.png",
         "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/subdivision_surface.html",
         "showme": "subdivision-surface"
       },
@@ -688,7 +689,7 @@ const CURRICULUM = [
             "detail": "두께가 안쪽/양쪽/바깥쪽으로 붙는 차이 확인"
           }
         ],
-        "image": "assets/images/week03/solidify-modifier.png",
+        "image": "assets/images/week03/bevel-weighted-normal.png",
         "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/solidify.html",
         "showme": "solidify-modifier",
         "widgets": [
@@ -872,6 +873,7 @@ const CURRICULUM = [
       },
       {
         "title": "Collection",
+        "image": "assets/images/week03/loop-cut.png",
         "copy": "씬이 복잡해질수록 오브젝트를 묶어서 관리하는 게 중요해요. Collection은 폴더처럼 오브젝트를 그룹으로 정리해서 켜고 끄거나 한꺼번에 선택할 수 있어요.",
         "goal": [
           "Collection을 만들고 오브젝트를 정리한다",
@@ -902,6 +904,7 @@ const CURRICULUM = [
       },
       {
         "title": "Reference Image 실습",
+        "image": "assets/images/week03/inset-faces.png",
         "copy": "민트 로봇 레퍼런스 이미지를 뷰포트에 올려서 정면·측면을 각각 배치해요. 영상을 따라하면서 세팅을 완성해요.",
         "goal": [
           "레퍼런스 이미지를 뷰포트에 정확히 정렬한다"
@@ -1255,7 +1258,7 @@ const CURRICULUM = [
             "detail": "몸통 표면 꼭짓점에 관절이 딱 붙는 느낌 확인"
           }
         ],
-        "image": "assets/images/week04/inset-panel-detail.png",
+        "image": "assets/images/week04/bevel-modifier.png",
         "showme": "snap",
         "widgets": [
           {
@@ -1297,7 +1300,7 @@ const CURRICULUM = [
             "detail": "총 6~8개 관절 구체 (좌우 대칭)"
           }
         ],
-        "image": "assets/images/week04/inset-panel-detail.png",
+        "image": "assets/images/week04/weighted-normal.png",
         "showme": "origin-vs-3dcursor"
       },
       {
@@ -1333,7 +1336,7 @@ const CURRICULUM = [
             "detail": "허벅지/종아리를 관절 구체 사이에 배치"
           }
         ],
-        "image": "assets/images/week04/bevel-modifier.png",
+        "image": "assets/images/week04/array-modifier.png",
         "showme": "extrude",
         "widgets": [
           {
@@ -1646,7 +1649,7 @@ const CURRICULUM = [
             "detail": "Sculpt Mode → 헤더 Dyntopo 체크 → Detail Size 낮게 유지 (Constant Detail 권장). 디테일이 필요한 부분에서만 폴리곤이 자동으로 늘어나요"
           }
         ],
-        "image": "assets/images/week05/sculpt-brushes.png",
+        "image": "assets/images/week05/sculpt-mode.png",
         "showme": "sculpt-brushes"
       },
       {
@@ -2089,7 +2092,7 @@ const CURRICULUM = [
             "detail": "Material Preview(Z)로 확인 — 쉐이더 깨짐 없음, 표면 노멀 정상"
           }
         ],
-        "image": "assets/images/week05/remesh.png",
+        "image": "assets/images/week06/material-assign.png",
         "showme": ["remesh-modifier", "decimate-modifier"]
       },
       {
@@ -2120,7 +2123,7 @@ const CURRICULUM = [
             "detail": "눈이나 가슴판에 다른 색 입히기"
           }
         ],
-        "image": "assets/images/week06/material-assign.png",
+        "image": "assets/images/week06/principled-bsdf.png",
         "showme": "material-basics"
       },
       {
@@ -2156,7 +2159,7 @@ const CURRICULUM = [
             "detail": "로봇 눈이나 표시등에 활용"
           }
         ],
-        "image": "assets/images/week06/principled-bsdf.png",
+        "image": "assets/images/week06/shader-editor.png",
         "showme": "principled-bsdf"
       },
       {
@@ -3051,7 +3054,7 @@ const CURRICULUM = [
             "detail": "2배로 커지는 애니메이션"
           }
         ],
-        "image": "assets/images/week10/rotation-scale.png"
+        "image": "assets/images/week10/dope-sheet.png"
       },
       {
         "title": "Dope Sheet 타이밍",
@@ -3531,7 +3534,7 @@ const CURRICULUM = [
             "detail": ""
           }
         ],
-        "image": "assets/images/week12/mixamo-upload.png"
+        "image": "assets/images/week12/mixamo-import.png"
       },
       {
         "title": "애니메이션 선택 및 임포트",

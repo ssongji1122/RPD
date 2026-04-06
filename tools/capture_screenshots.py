@@ -91,7 +91,6 @@ CLEAN_JS = """
     hide.forEach(sel => document.querySelectorAll(sel).forEach(el => { el.style.display = 'none'; }));
     const art = document.querySelector('article') || document.querySelector('.bd-content') || document.body;
     art.style.cssText += 'max-width:860px;margin:0 auto;padding:32px;';
-    document.body.style.background = '#111';
     return 'ok';
 }
 """
@@ -260,7 +259,7 @@ def main():
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
-        ctx = browser.new_context(viewport={"width": 1280, "height": 820}, color_scheme="dark")
+        ctx = browser.new_context(viewport={"width": 1280, "height": 820})
         page = ctx.new_page()
 
         success = 0
