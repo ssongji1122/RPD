@@ -33,7 +33,7 @@
   margin-top: 4px;
 }
 .hero-actions .btn-primary {
-  box-shadow: 0 16px 32px rgba(10,132,255,.26);
+  box-shadow: 0 16px 32px rgba(0,191,165,.26);
 }
 .hero-actions .btn-ghost {
   border-color: var(--line-strong);
@@ -65,7 +65,7 @@
   outline: none;
   transition: border-color .18s, background .18s;
 }
-.search-input:focus { border-color: rgba(10,132,255,.5); background: var(--modal-hover-bg); }
+.search-input:focus { border-color: rgba(0,191,165,.5); background: var(--modal-hover-bg); }
 .search-input::placeholder { color: var(--muted); }
 .search-icon {
   position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
@@ -112,7 +112,7 @@
 .view-btn:hover { background: var(--overlay-white-hover); border-color: var(--line-strong); }
 .view-btn.is-active {
   background: var(--modal-nav-active-bg);
-  border-color: rgba(10,132,255,.24);
+  border-color: rgba(0,191,165,.24);
   color: #fff;
 }
 
@@ -155,7 +155,7 @@
 .shortcut-row:first-child { margin-top: 0; }
 .shortcut-row:hover {
   transform: translateY(-1px);
-  border-color: rgba(10,132,255,.28);
+  border-color: rgba(0,191,165,.28);
   background: var(--modal-hover-bg);
 }
 .shortcut-row-keys { min-width: 160px; flex-shrink: 0; }
@@ -200,8 +200,8 @@
 }
 .kbd-detail-key-badge {
   font-family: var(--font-mono, monospace);
-  background: rgba(10,132,255,.15);
-  border: 1px solid rgba(10,132,255,.35);
+  background: rgba(0,191,165,.15);
+  border: 1px solid rgba(0,191,165,.35);
   color: var(--key-soft);
   padding: 2px 10px; border-radius: var(--radius-sm); font-size: .9rem;
 }
