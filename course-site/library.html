@@ -1328,6 +1328,12 @@ window.addEventListener("resize", function() {
   }
 });
 
+window.addEventListener("message", function(e) {
+  if (!e.data || e.data.type !== "showme-open-card" || !e.data.cardId) return;
+  var cardId = String(e.data.cardId);
+  if (SHOWME_REGISTRY[cardId]) openShowMe(cardId);
+});
+
 I18N.mountLanguageSwitcher(document.getElementById("langSwitcher"));
 I18N.onLanguageChange(function() {
   renderPage();
