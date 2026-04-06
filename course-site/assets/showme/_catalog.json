@@ -76,6 +76,10 @@
     "material-basics": "materials-uv",
     "principled-bsdf": "materials-uv",
     "shader-editor": "materials-uv",
+    "color-ramp": "materials-uv",
+    "noise-texture": "materials-uv",
+    "texture-types": "materials-uv",
+    "image-texture-pbr": "materials-uv",
     "uv-unwrapping": "materials-uv",
     "uv-editor": "materials-uv",
     "light-types": "rendering",
@@ -139,6 +143,10 @@
     "material-basics": "Material",
     "principled-bsdf": "Material",
     "shader-editor": "Material",
+    "color-ramp": "Material",
+    "noise-texture": "Material",
+    "texture-types": "Material",
+    "image-texture-pbr": "Material",
     "uv-unwrapping": "UV",
     "uv-editor": "UV",
     "light-types": "Lighting",
@@ -490,6 +498,30 @@
       "keywords": ["shader editor", "node", "socket", "link"],
       "prerequisites": ["material-basics"],
       "audienceNeed": "노드가 많은데 어디서부터 읽어야 할지 막막할 때"
+    },
+    "color-ramp": {
+      "confusionLabel": "색상 매핑",
+      "keywords": ["color ramp", "gradient", "interpolation", "color stop"],
+      "prerequisites": ["shader-editor"],
+      "audienceNeed": "흑백 데이터를 원하는 색상 그라데이션으로 바꾸고 싶을 때"
+    },
+    "noise-texture": {
+      "confusionLabel": "절차적 패턴",
+      "keywords": ["noise", "procedural", "scale", "detail", "perlin"],
+      "prerequisites": ["shader-editor"],
+      "audienceNeed": "이미지 파일 없이 자연스러운 무늬를 만들고 싶을 때"
+    },
+    "texture-types": {
+      "confusionLabel": "텍스처 구분",
+      "keywords": ["procedural", "image texture", "texture types", "pbr"],
+      "prerequisites": ["shader-editor"],
+      "audienceNeed": "Procedural과 Image Texture 중 뭘 써야 할지 모를 때"
+    },
+    "image-texture-pbr": {
+      "confusionLabel": "PBR 연결",
+      "keywords": ["image texture", "pbr", "normal map", "roughness map", "diffuse", "non-color"],
+      "prerequisites": ["shader-editor", "texture-types"],
+      "audienceNeed": "PBR 맵 3종을 Shader Editor에서 어떻게 연결하는지 모를 때"
     },
     "uv-unwrapping": {
       "confusionLabel": "펼치기",
