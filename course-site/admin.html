@@ -112,28 +112,54 @@
           <option value="2">2반</option>
         </select>
         <button id="grading-refresh-btn" class="btn-secondary">새로고침</button>
+        <div class="grading-view-toggle" role="group" aria-label="보기 전환">
+          <button id="grading-view-table" class="btn-view-toggle is-active" type="button" aria-pressed="true" title="표 보기">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            표 보기
+          </button>
+          <button id="grading-view-card" class="btn-view-toggle" type="button" aria-pressed="false" title="카드 보기">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="5" rx="1"/><rect x="2" y="10" width="9" height="5" rx="1"/><rect x="13" y="10" width="9" height="5" rx="1"/><rect x="2" y="17" width="9" height="4" rx="1"/><rect x="13" y="17" width="9" height="4" rx="1"/></svg>
+            카드 보기
+          </button>
+        </div>
       </div>
       <div class="grading-summary" id="grading-summary"></div>
-      <div class="grading-heatmap-wrap">
-        <table class="grading-heatmap" id="grading-heatmap">
-          <thead><tr><th>학생</th></tr></thead>
-          <tbody></tbody>
-        </table>
+
+      <!-- Table view (default) -->
+      <div id="grading-table-view">
+        <div class="grading-heatmap-wrap">
+          <table class="grading-heatmap" id="grading-heatmap">
+            <thead><tr><th>학생</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <h3 style="margin-top:24px">학기 성적 종합</h3>
+        <div class="grading-grades-wrap">
+          <table class="grading-grades" id="grading-grades">
+            <thead>
+              <tr>
+                <th>학생</th><th>분반</th><th>출석(10%)</th>
+                <th>과제(20%)</th><th>중간(35%)</th><th>기말(35%)</th>
+                <th>총점</th><th>등급</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
       </div>
-      <h3 style="margin-top:var(--space-6)">학기 성적 종합</h3>
-      <div class="grading-grades-wrap">
-        <table class="grading-grades" id="grading-grades">
-          <thead>
-            <tr>
-              <th>학생</th><th>분반</th><th>출석(10%)</th>
-              <th>과제(20%)</th><th>중간(35%)</th><th>기말(35%)</th>
-              <th>총점</th><th>등급</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
+
+      <!-- Card view -->
+      <div id="student-grid-view" class="student-grid-view" hidden></div>
     </section>
+
+    <!-- Student detail drawer -->
+    <div id="student-detail-backdrop" class="student-detail-backdrop" aria-hidden="true"></div>
+    <div id="student-detail-drawer" class="student-detail-drawer" aria-hidden="true" role="dialog" aria-modal="true" aria-label="학생 상세 정보">
+      <button class="sdd-close" type="button" id="studentDrawerClose" aria-label="닫기">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div class="sdd-content"></div>
+    </div>
 
     <!-- Toast container -->
     <div class="toast-container" id="toastContainer"></div>
@@ -170,6 +196,8 @@
 
   <!-- Sync review overlay removed: save flow simplified (Notion is source of truth) -->
 
+  <script src="assets/student-card.js"></script>
+  <script src="assets/student-detail-drawer.js"></script>
   <script src="assets/site-shell.js?v=20260318a"></script>
   <script src="assets/nav-config.js"></script>
   <script src="assets/topbar-sync.js"></script>
@@ -1873,6 +1901,11 @@
   var WEEKS = [];
   for (var i = 1; i <= 15; i++) WEEKS.push(String(i).padStart(2, '0'));
 
+  // ── View state ──────────────────────────────────────────
+  var gradingView = 'table'; // 'table' | 'card'
+  var lastSubmissions = [];
+  var lastGrades = [];
+
   function calcGrade(total) {
     if (total >= 95) return 'A+';
     if (total >= 90) return 'A';
@@ -1970,6 +2003,30 @@
     });
   }
 
+  function applyGradingView() {
+    var tableView = document.getElementById('grading-table-view');
+    var cardView  = document.getElementById('student-grid-view');
+    var btnTable  = document.getElementById('grading-view-table');
+    var btnCard   = document.getElementById('grading-view-card');
+    if (gradingView === 'card') {
+      if (tableView) tableView.hidden = true;
+      if (cardView)  cardView.hidden  = false;
+      if (btnTable) { btnTable.classList.remove('is-active'); btnTable.setAttribute('aria-pressed', 'false'); }
+      if (btnCard)  { btnCard.classList.add('is-active');    btnCard.setAttribute('aria-pressed', 'true'); }
+      var gridContainer = document.getElementById('student-grid-view');
+      if (gridContainer && window.RPDStudentCard) {
+        window.RPDStudentCard.render(lastSubmissions, lastGrades, gridContainer, function(data) {
+          if (window.RPDStudentDrawer) window.RPDStudentDrawer.open(data);
+        });
+      }
+    } else {
+      if (tableView) tableView.hidden = false;
+      if (cardView)  cardView.hidden  = true;
+      if (btnTable) { btnTable.classList.add('is-active');    btnTable.setAttribute('aria-pressed', 'true'); }
+      if (btnCard)  { btnCard.classList.remove('is-active'); btnCard.setAttribute('aria-pressed', 'false'); }
+    }
+  }
+
   async function loadGradingPanel() {
     var classNum = document.getElementById('grading-class-filter').value;
     var params = classNum ? '?class=' + encodeURIComponent(classNum) : '';
@@ -1978,8 +2035,11 @@
         fetchJSON('/api/submissions' + params),
         fetchJSON('/api/grades' + params),
       ]);
-      renderHeatmap(results[0]);
-      renderGrades(results[1]);
+      lastSubmissions = results[0];
+      lastGrades      = results[1];
+      renderHeatmap(lastSubmissions);
+      renderGrades(lastGrades);
+      applyGradingView();
     } catch (e) {
       var summary = document.getElementById('grading-summary');
       clearChildren(summary);
@@ -1995,6 +2055,16 @@
 
   var refreshBtn = document.getElementById('grading-refresh-btn');
   if (refreshBtn) refreshBtn.addEventListener('click', loadGradingPanel);
+
+  // View toggle buttons
+  var btnViewTable = document.getElementById('grading-view-table');
+  var btnViewCard  = document.getElementById('grading-view-card');
+  if (btnViewTable) btnViewTable.addEventListener('click', function() {
+    if (gradingView !== 'table') { gradingView = 'table'; applyGradingView(); }
+  });
+  if (btnViewCard) btnViewCard.addEventListener('click', function() {
+    if (gradingView !== 'card') { gradingView = 'card'; applyGradingView(); }
+  });
 
   // Tab switching
   var tabBtns = document.querySelectorAll('.tab-btn[data-tab]');
