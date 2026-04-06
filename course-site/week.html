@@ -1707,7 +1707,12 @@
     }
 
     window.addEventListener("message", function(e) {
-      if (!e.data || e.data.type !== "showme-quiz-complete") return;
+      if (!e.data) return;
+      if (e.data.type === "showme-open-card" && e.data.cardId) {
+        openShowMe(String(e.data.cardId));
+        return;
+      }
+      if (e.data.type !== "showme-quiz-complete") return;
       var d = e.data;
       var key = getQuizKey();
       var quizzes = JSON.parse(localStorage.getItem(key) || "{}");
