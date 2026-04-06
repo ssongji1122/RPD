@@ -1,0 +1,5 @@
+# RPD 과제 제출 리마인더 (매주 화요일)
+30 13 * * 2 /Users/ssongji/Developer/Workspace/RPD/tools/run_remind.sh 1
+30 16 * * 2 /Users/ssongji/Developer/Workspace/RPD/tools/run_remind.sh 2
+# Claude Code 자동 정리 (매주 일요일 03:00)
+0 3 * * 0 bash $HOME/.claude/scripts/cleanup.sh

@@ -7,6 +7,7 @@
 <style>
 /* ══════════════════════════════════════════════════
    Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
    ══════════════════════════════════════════════════ */
 :root {
   --bg:            #0a0a0a;
@@ -40,6 +41,8 @@
   --radius-lg:     24px;
   --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
 }
+
+/* ── Reset ── */
 *, *::before, *::after { box-sizing: border-box; }
 body {
   margin: 0; padding: 0;
@@ -49,6 +52,8 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
 }
+
+/* ── Tab Navigation ── */
 .tabs {
   display: flex; gap: 0;
   border-bottom: 1px solid var(--line);
@@ -74,8 +79,12 @@ body {
   color: var(--key-soft);
   border-bottom-color: var(--key);
 }
+
+/* ── Tab Panels ── */
 .panel { display: none; padding: 20px 16px; }
 .panel.is-active { display: block; }
+
+/* ── Concept Cards ── */
 .concept-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -87,7 +96,10 @@ body {
   background: var(--surface);
   padding: 18px;
 }
-.concept-card h3 { margin: 0 0 8px; font-size: 1rem; }
+.concept-card h3 {
+  margin: 0 0 8px; font-size: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
 .concept-card p {
   margin: 0; color: var(--muted-strong);
   font-size: .88rem; line-height: 1.7;
@@ -96,6 +108,8 @@ body {
   margin: 8px 0 0; padding-left: 16px;
   color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
 }
+
+/* ── Badge ── */
 .badge {
   display: inline-block;
   padding: 3px 9px; border-radius: 999px;
@@ -104,6 +118,8 @@ body {
 .badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
 .badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
 .badge-amber { background: rgba(245,158,11,.15);  color: var(--warn-soft); }
+
+/* ── Keyboard Shortcut ── */
 .kbd {
   display: inline-block;
   padding: 3px 8px; border-radius: 6px;
@@ -113,6 +129,8 @@ body {
   font-size: .82rem; font-weight: 600;
   font-family: var(--font);
 }
+
+/* ── Canvas / Demo ── */
 .demo-wrap {
   border-radius: var(--radius-md);
   border: 1px solid var(--line);
@@ -120,11 +138,14 @@ body {
   overflow: hidden;
   margin: 14px 0;
 }
-.demo-wrap canvas { display: block; width: 100%; }
+.demo-wrap canvas {
+  display: block; width: 100%;
+}
 .demo-controls {
   display: flex; gap: 8px; padding: 12px;
   border-top: 1px solid var(--line);
   flex-wrap: wrap;
+  align-items: center;
 }
 .demo-hint {
   font-size: .78rem; color: var(--muted);
@@ -145,6 +166,52 @@ body {
   color: var(--key-soft);
   border-color: rgba(10,132,255,.3);
 }
+
+/* ── Slider ── */
+.demo-slider-group {
+  display: flex; align-items: center; gap: 6px;
+  font-size: .78rem; color: var(--muted-strong);
+}
+.demo-slider-group input[type="range"] {
+  width: 90px; accent-color: var(--key);
+}
+.demo-slider-group input[type="color"] {
+  width: 28px; height: 28px; border: 1px solid var(--line-strong);
+  border-radius: 6px; background: none; cursor: pointer; padding: 0;
+}
+
+/* ── Modifier Panel (inline Blender-style controls) ── */
+.modifier-panel {
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface-strong);
+  margin: 0;
+}
+.modifier-panel .mp-title {
+  font-size: .78rem; font-weight: 600; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .08em;
+  margin-bottom: 10px;
+}
+.mp-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 5px 0; font-size: .84rem; color: var(--muted-strong);
+}
+.mp-label { flex: 0 0 90px; font-size: .82rem; color: var(--muted); }
+.mp-slider { flex: 1; accent-color: var(--key); cursor: pointer; }
+.mp-slider.green { accent-color: var(--success); }
+.mp-value {
+  width: 44px; text-align: right;
+  font-size: .82rem; font-weight: 600; color: var(--text);
+  background: rgba(255,255,255,.06); border: 1px solid var(--line);
+  border-radius: 6px; padding: 2px 6px;
+}
+.mp-color {
+  width: 32px; height: 28px; border: 1px solid var(--line-strong);
+  border-radius: 6px; background: none; cursor: pointer; padding: 0;
+}
+
+/* ── Usage Grid ── */
 .usage-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -165,6 +232,8 @@ body {
   color: var(--muted-strong); font-size: .85rem;
   line-height: 1.8;
 }
+
+/* ── Tip Box ── */
 .tip-box {
   border-radius: var(--radius-md);
   border: 1px solid rgba(10,132,255,.2);
@@ -175,8 +244,21 @@ body {
   color: var(--muted-strong);
 }
 .tip-box strong { color: var(--key-soft); }
-.combo-section { margin-top: 18px; }
-.combo-section h4 { margin: 0 0 10px; font-size: .92rem; color: var(--text); }
+.tip-box.green {
+  border-color: rgba(16,185,129,.2);
+  background: rgba(16,185,129,.06);
+}
+.tip-box.green strong { color: var(--success-soft); }
+
+/* ── Combo Section ── */
+.combo-section {
+  margin-top: 18px;
+}
+.combo-section h4 {
+  margin: 0 0 10px;
+  font-size: .92rem;
+  color: var(--text);
+}
 .combo-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -189,12 +271,18 @@ body {
   padding: 12px 14px;
 }
 .combo-card .combo-name {
-  font-size: .86rem; font-weight: 600;
-  color: var(--key-soft); margin-bottom: 4px;
+  font-size: .86rem;
+  font-weight: 600;
+  color: var(--key-soft);
+  margin-bottom: 4px;
 }
 .combo-card .combo-desc {
-  font-size: .8rem; color: var(--muted); line-height: 1.5;
+  font-size: .8rem;
+  color: var(--muted);
+  line-height: 1.5;
 }
+
+/* ── Shortcut Reference ── */
 .shortcut-list {
   margin-top: 16px;
   padding: 14px 16px;
@@ -202,40 +290,62 @@ body {
   border: 1px solid var(--line);
   background: var(--surface);
 }
-.shortcut-list h4 { margin: 0 0 10px; font-size: .9rem; color: var(--text); }
-.shortcut-row {
-  display: flex; align-items: center; gap: 10px;
-  padding: 6px 0;
-  font-size: .84rem; color: var(--muted-strong);
+.shortcut-list h4 {
+  margin: 0 0 10px;
+  font-size: .9rem;
+  color: var(--text);
 }
-.shortcut-row + .shortcut-row { border-top: 1px solid var(--line); }
-.shortcut-keys { flex-shrink: 0; }
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: .84rem;
+  color: var(--muted-strong);
+}
+.shortcut-row + .shortcut-row {
+  border-top: 1px solid var(--line);
+}
+.shortcut-keys {
+  flex-shrink: 0;
+}
 .analogy {
   margin-top: 8px;
   padding: 10px 14px;
   border-radius: var(--radius-sm);
   background: rgba(245,158,11,.06);
   border: 1px solid rgba(245,158,11,.15);
-  font-size: .82rem; color: var(--warn-soft);
+  font-size: .82rem;
+  color: var(--warn-soft);
   font-style: italic;
 }
-.quiz-progress { font-size: .78rem; color: var(--muted); margin-bottom: 12px; }
+
+/* ── Quiz ── */
+.quiz-progress {
+  font-size: .78rem; color: var(--muted);
+  margin-bottom: 12px;
+}
 .quiz-question {
-  margin-bottom: 20px; padding: 16px;
+  margin-bottom: 20px;
+  padding: 16px;
   border-radius: var(--radius-md);
   border: 1px solid var(--line);
   background: var(--surface);
 }
-.quiz-question h4 { margin: 0 0 12px; font-size: .94rem; }
+.quiz-question h4 {
+  margin: 0 0 12px; font-size: .94rem;
+}
 .quiz-option {
   display: block; width: 100%;
-  padding: 10px 14px; margin-bottom: 6px;
+  padding: 10px 14px;
+  margin-bottom: 6px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--line);
   background: rgba(255,255,255,.025);
   color: var(--text);
   font: inherit; font-size: .86rem;
-  cursor: pointer; text-align: left;
+  cursor: pointer;
+  text-align: left;
   transition: background .14s, border-color .14s;
 }
 .quiz-option:hover {
@@ -256,52 +366,71 @@ body {
 .quiz-feedback {
   margin-top: 8px; padding: 10px 14px;
   border-radius: var(--radius-sm);
-  font-size: .84rem; display: none;
+  font-size: .84rem;
+  display: none;
 }
 .quiz-feedback.show { display: block; }
 .quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
 .quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: var(--danger-soft); }
+
 .quiz-score {
   text-align: center; padding: 20px;
   font-size: 1.1rem; font-weight: 600;
 }
 .quiz-retry {
   display: block; margin: 12px auto;
-  padding: 10px 24px; border-radius: 999px;
+  padding: 10px 24px;
+  border-radius: 999px;
   border: 1px solid var(--key);
   background: rgba(10,132,255,.12);
   color: var(--key-soft);
   font: inherit; font-size: .88rem;
-  cursor: pointer; transition: background .14s;
+  cursor: pointer;
+  transition: background .14s;
 }
 .quiz-retry:hover { background: rgba(10,132,255,.22); }
+
+/* ── Official Doc Reference ── */
 .doc-ref {
   margin-top: 16px;
   padding: 10px 14px;
   border-radius: var(--radius-sm);
   border: 1px solid rgba(10,132,255,.15);
   background: rgba(10,132,255,.04);
-  display: flex; align-items: center; gap: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 .doc-ref a {
   color: var(--key-soft);
   font-size: .84rem;
-  text-decoration: none; line-height: 1.5;
+  text-decoration: none;
+  line-height: 1.5;
 }
 .doc-ref a:hover { text-decoration: underline; }
+
+/* ── Preset Buttons ── */
+.preset-row {
+  display: flex; gap: 8px; flex-wrap: wrap;
+  padding: 10px 0 0;
+}
+
+/* ── Responsive ── */
 @media (max-width: 600px) {
   .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
   .tabs { padding: 0 8px; }
   .tab { padding: 10px 12px; font-size: .8rem; }
   .panel { padding: 16px 12px; }
+  .demo-controls { flex-direction: column; align-items: stretch; }
 }
 </style>
 </head>
 <body>
 
+<!-- Tab Bar -->
 <nav class="tabs" role="tablist">
   <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
-  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">interaction</button>
   <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
   <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
 </nav>
@@ -310,33 +439,49 @@ body {
 <section class="panel is-active" id="panel-concept" role="tabpanel">
   <div class="concept-grid">
     <div class="concept-card">
-      <h3>Shader Editor란?</h3>
-      <p>노드를 연결해서 재질을 만드는 비주얼 에디터예요. 레고 블록처럼 각 노드가 하나의 기능을 담당하고, 선으로 연결하면 복잡한 재질이 완성됩니다.</p>
-      <div class="analogy">레고 블록을 연결하듯 — 색상 블록 + 텍스처 블록 + 출력 블록을 이어서 재질을 조립해요</div>
+      <h3>노드란? <span class="badge badge-blue">기초</span></h3>
+      <p>Input → Processing → Output 구조의 기능 블록입니다. 소켓을 선으로 연결하면 데이터가 왼쪽에서 오른쪽으로 흐르며 재질이 만들어집니다.</p>
+      <div class="analogy">레고 블록처럼 — 각 노드가 하나의 기능을 담당하고, 선으로 연결하면 복잡한 재질이 완성돼요</div>
     </div>
     <div class="concept-card">
-      <h3>핵심 노드 3가지</h3>
+      <h3>Socket 색상 규칙 <span class="badge badge-amber">필수</span></h3>
       <ul>
-        <li><strong>Principled BSDF</strong> — 재질의 핵심 엔진 (색, 금속, 거칠기 등)</li>
-        <li><strong>Image Texture</strong> — 이미지 파일을 재질에 입히기</li>
-        <li><strong>Material Output</strong> — 최종 출력 (반드시 필요)</li>
+        <li><strong style="color:#fbbf24">노랑</strong> — Color (색상 데이터)</li>
+        <li><strong style="color:#a1a1aa">회색</strong> — Value (숫자 1개)</li>
+        <li><strong style="color:#c4b5fd">보라</strong> — Vector (좌표/방향)</li>
+        <li><strong style="color:#6ee7b7">초록</strong> — Shader (셰이더 출력)</li>
+      </ul>
+      <p style="margin-top:8px;">같은 색 소켓끼리 연결하는 것이 기본이며, 일부는 자동 변환됩니다.</p>
+    </div>
+    <div class="concept-card">
+      <h3>필수 노드 3종 <span class="badge badge-green">핵심</span></h3>
+      <ul>
+        <li><strong>Principled BSDF</strong> — 메인 셰이더 (색, 금속, 거칠기 등 통합 제어)</li>
+        <li><strong>Image Texture</strong> — 이미지 파일을 재질에 입력</li>
+        <li><strong>Mapping</strong> — UV 좌표 변환 (위치, 회전, 크기)</li>
       </ul>
     </div>
   </div>
+
+  <!-- Concept Visual: Node Chain Diagram -->
+  <div class="demo-wrap" style="margin-top:18px">
+    <canvas id="nodeChainCanvas" width="680" height="220"></canvas>
+  </div>
+  <div class="demo-hint">Image Texture → Mapping → Principled BSDF → Material Output 노드 체인</div>
 
   <div class="shortcut-list">
     <h4>주요 단축키</h4>
     <div class="shortcut-row">
       <span class="shortcut-keys"><span class="kbd">Shift</span> + <span class="kbd">A</span></span>
-      <span>노드 추가 메뉴</span>
+      <span>노드 추가 메뉴 (Add)</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">T</span></span>
+      <span>텍스처 매핑 노드 세트 자동 추가 (Texture Setup)</span>
     </div>
     <div class="shortcut-row">
       <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">Shift</span> + <span class="kbd">Click</span></span>
       <span>Viewer Node 연결 (노드 출력 미리보기)</span>
-    </div>
-    <div class="shortcut-row">
-      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">T</span></span>
-      <span>Texture Mapping 노드 자동 연결</span>
     </div>
     <div class="shortcut-row">
       <span class="shortcut-keys"><span class="kbd">M</span></span>
@@ -350,73 +495,103 @@ body {
 
   <div class="doc-ref">
     <a href="https://docs.blender.org/manual/en/latest/editors/shader_editor.html" target="_blank" rel="noopener">
-      📖 Blender 공식 문서 — Shader Editor
+      Blender 공식 문서 — Shader Editor
     </a>
   </div>
 </section>
 
-<!-- TAB 2: 시각적 비교 -->
+<!-- TAB 2: interaction — Mix Shader Demo -->
 <section class="panel" id="panel-visual" role="tabpanel">
-  <div class="scenario-nav" id="scenarioNav">
-    <button class="scenario-btn active" data-scene="basic">기본 노드</button>
-    <button class="scenario-btn" data-scene="texture">텍스쳐 연결</button>
-    <button class="scenario-btn" data-scene="mix">Mix Shader</button>
+  <div style="font-size:.85rem;color:var(--muted-strong);font-weight:600;margin-bottom:10px">Mix Shader 데모</div>
+
+  <div class="demo-wrap">
+    <canvas id="mixCanvas" width="680" height="300"></canvas>
   </div>
-  <div class="scene-desc" id="scene-desc">기본 노드 구성: Principled BSDF → Material Output. 모든 Blender 셰이더의 출발점입니다.</div>
-  <div class="before-after">
-    <div class="ba-panel">
-      <canvas id="canvas-before" width="280" height="160"></canvas>
-      <div class="ba-label">적용 전</div>
+
+  <div class="modifier-panel" style="margin-top:12px">
+    <div class="mp-title">Mix Shader Controls</div>
+    <div class="mp-row">
+      <span class="mp-label">Shader A Color</span>
+      <input type="color" id="colorA" class="mp-color" value="#ef4444">
     </div>
-    <div class="ba-panel">
-      <canvas id="canvas-after" width="280" height="160"></canvas>
-      <div class="ba-label">적용 후</div>
+    <div class="mp-row">
+      <span class="mp-label">Shader B Color</span>
+      <input type="color" id="colorB" class="mp-color" value="#3b82f6">
+    </div>
+    <div class="mp-row">
+      <span class="mp-label">Mix Factor</span>
+      <input type="range" id="mixFactor" class="mp-slider" min="0" max="100" value="50">
+      <span class="mp-value" id="valFactor">0.50</span>
+    </div>
+    <div class="mp-row">
+      <span class="mp-label">Roughness A</span>
+      <input type="range" id="roughA" class="mp-slider" min="0" max="100" value="30">
+      <span class="mp-value" id="valRoughA">0.30</span>
+    </div>
+    <div class="mp-row">
+      <span class="mp-label">Roughness B</span>
+      <input type="range" id="roughB" class="mp-slider green" min="0" max="100" value="70">
+      <span class="mp-value" id="valRoughB">0.70</span>
     </div>
   </div>
-  <div class="cause-effect" id="cause-effect"></div>
+
+  <div class="preset-row">
+    <button class="demo-btn" data-preset="rust">부식 (금속+녹)</button>
+    <button class="demo-btn" data-preset="car">자동차 (페인트+금속)</button>
+    <button class="demo-btn" data-preset="mattgloss">무광+광택</button>
+  </div>
+  <div class="demo-hint">Factor를 조절하여 두 재질이 섞이는 비율을 실시간으로 확인하세요.</div>
 </section>
 
 <!-- TAB 3: 언제 쓰나요? -->
 <section class="panel" id="panel-when" role="tabpanel">
   <div class="usage-grid">
     <div class="usage-card">
-      <h4>Shader Editor가 필요할 때</h4>
+      <h4>Shader Editor가 필요한 경우</h4>
       <ul>
         <li>텍스처 이미지를 재질에 입힐 때</li>
         <li>복잡한 그라데이션/패턴 재질</li>
         <li>투명, 발광, 유리 등 특수 재질</li>
         <li>여러 재질을 섞을 때 (Mix Shader)</li>
+        <li>UV 좌표를 직접 조절해야 할 때</li>
       </ul>
     </div>
     <div class="usage-card">
-      <h4>안 써도 되는 경우</h4>
+      <h4>Material Properties만으로 충분한 경우</h4>
       <ul>
         <li>단색 Base Color만 바꾸는 경우</li>
         <li>기본 Metallic/Roughness 조절</li>
-        <li>Properties 패널에서 충분한 경우</li>
+        <li>간단한 Emission 색상 변경</li>
+        <li>Properties 패널 슬라이더로 해결 가능할 때</li>
       </ul>
     </div>
   </div>
-  <div class="tip-box">
-    <strong>팁:</strong> <span class="kbd">Ctrl</span>+<span class="kbd">Shift</span>+<span class="kbd">Click</span>으로 아무 노드나 클릭하면 그 노드의 출력만 미리 볼 수 있어요. 복잡한 노드 트리를 디버깅할 때 필수입니다.
-  </div>
+
   <div class="combo-section">
     <h4>자주 쓰는 노드 조합</h4>
     <div class="combo-grid">
       <div class="combo-card">
-        <div class="combo-name">Image Texture + Mapping + Tex Coord</div>
-        <div class="combo-desc">Ctrl+T로 한 번에 자동 연결. UV 기반 텍스처 매핑의 기본 세트.</div>
+        <div class="combo-name">Mix Shader</div>
+        <div class="combo-desc">두 셰이더를 Factor 비율로 혼합. 부식, 칠 벗김, 젖은 표면 등 2가지 재질 전환에 사용.</div>
       </div>
       <div class="combo-card">
-        <div class="combo-name">ColorRamp + Noise Texture</div>
-        <div class="combo-desc">절차적 패턴 생성. 나무결, 대리석, 녹 등 자연스러운 재질 표현.</div>
+        <div class="combo-name">Color Ramp</div>
+        <div class="combo-desc">그라데이션 커브로 색상 매핑. Noise/Wave 텍스처와 함께 사용하면 자연스러운 패턴 생성.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Mapping Node</div>
+        <div class="combo-desc">텍스처 UV 좌표의 위치/회전/크기를 조절. Ctrl+T로 자동 추가되는 기본 세트에 포함.</div>
       </div>
     </div>
   </div>
 
+  <div class="tip-box green">
+    <strong>Learning Path:</strong> 이미지 텍스처를 매핑하고 싶을 때 → Texture Nodes (Image Texture + Mapping + Texture Coordinate) 조합을 먼저 익히세요. <span class="kbd">Ctrl</span>+<span class="kbd">T</span>로 한 번에 추가할 수 있습니다.
+  </div>
+
   <div class="doc-ref">
     <a href="https://docs.blender.org/manual/en/latest/editors/shader_editor.html" target="_blank" rel="noopener">
-      📖 Blender 공식 문서 — Shader Editor
+      Blender 공식 문서 — Shader Editor
     </a>
   </div>
 </section>
@@ -441,7 +616,293 @@ document.querySelectorAll(".tab").forEach(function(tab) {
   });
 });
 
-// ── Quiz Engine ────────────────────────────────
+// ── Node Chain Diagram (Tab 1 Concept Visual) ──────
+(function() {
+  var canvas = document.getElementById("nodeChainCanvas");
+  if (!canvas) return;
+  var ctx = canvas.getContext("2d");
+
+  function drawNode(ctx, x, y, w, h, title, color, inputs, outputs) {
+    // Dark node box with rounded corners
+    ctx.fillStyle = "rgba(40,40,45,0.95)";
+    ctx.strokeStyle = "rgba(255,255,255,0.15)";
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.roundRect(x, y, w, h, 6); ctx.fill(); ctx.stroke();
+    // Color title bar
+    ctx.fillStyle = color;
+    ctx.beginPath(); ctx.roundRect(x, y, w, 22, [6,6,0,0]); ctx.fill();
+    // Title text
+    ctx.fillStyle = "#fff"; ctx.font = "bold 10px sans-serif";
+    ctx.textAlign = "center"; ctx.fillText(title, x + w/2, y + 15);
+    // Input sockets (left)
+    inputs.forEach(function(inp, i) {
+      var sy = y + 34 + i * 18;
+      ctx.beginPath(); ctx.arc(x, sy, 4, 0, Math.PI*2);
+      ctx.fillStyle = inp.color; ctx.fill();
+      ctx.fillStyle = "#aaa"; ctx.font = "9px sans-serif"; ctx.textAlign = "left";
+      ctx.fillText(inp.name, x + 8, sy + 3);
+    });
+    // Output sockets (right)
+    outputs.forEach(function(out, i) {
+      var sy = y + 34 + i * 18;
+      ctx.beginPath(); ctx.arc(x + w, sy, 4, 0, Math.PI*2);
+      ctx.fillStyle = out.color; ctx.fill();
+      ctx.fillStyle = "#aaa"; ctx.font = "9px sans-serif"; ctx.textAlign = "right";
+      ctx.fillText(out.name, x + w - 8, sy + 3);
+    });
+  }
+
+  function drawBezier(ctx, x1, y1, x2, y2, color) {
+    ctx.strokeStyle = color; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(x1, y1);
+    var mx = (x1 + x2) / 2;
+    ctx.bezierCurveTo(mx, y1, mx, y2, x2, y2);
+    ctx.stroke();
+  }
+
+  function render() {
+    var w = canvas.width, h = canvas.height;
+    // Background
+    ctx.fillStyle = "#1e293b"; ctx.fillRect(0, 0, w, h);
+    // Grid
+    ctx.strokeStyle = "rgba(255,255,255,.04)"; ctx.lineWidth = 1;
+    for (var gx = 20; gx < w; gx += 20) { ctx.beginPath(); ctx.moveTo(gx,0); ctx.lineTo(gx,h); ctx.stroke(); }
+    for (var gy = 20; gy < h; gy += 20) { ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(w,gy); ctx.stroke(); }
+
+    // Node positions
+    var nw = 130;
+    // Image Texture node
+    var itX = 20, itY = 40, itH = 76;
+    drawNode(ctx, itX, itY, nw, itH, "Image Texture", "rgba(99,80,40,0.9)",
+      [{ name: "Vector", color: "#c4b5fd" }],
+      [{ name: "Color", color: "#fbbf24" }, { name: "Alpha", color: "#a1a1aa" }]
+    );
+
+    // Mapping node
+    var mpX = 185, mpY = 28, mpH = 94;
+    drawNode(ctx, mpX, mpY, nw, mpH, "Mapping", "rgba(90,50,120,0.9)",
+      [{ name: "Vector", color: "#c4b5fd" }, { name: "Location", color: "#c4b5fd" }, { name: "Scale", color: "#c4b5fd" }],
+      [{ name: "Vector", color: "#c4b5fd" }]
+    );
+
+    // Principled BSDF node
+    var pbX = 355, pbY = 20, pbH = 130;
+    drawNode(ctx, pbX, pbY, nw + 10, pbH, "Principled BSDF", "rgba(40,120,60,0.9)",
+      [{ name: "Base Color", color: "#fbbf24" }, { name: "Metallic", color: "#a1a1aa" },
+       { name: "Roughness", color: "#a1a1aa" }, { name: "Normal", color: "#c4b5fd" }],
+      [{ name: "BSDF", color: "#6ee7b7" }]
+    );
+
+    // Material Output node
+    var moX = 540, moY = 55, moH = 76;
+    drawNode(ctx, moX, moY, nw, moH, "Material Output", "rgba(120,40,40,0.9)",
+      [{ name: "Surface", color: "#6ee7b7" }, { name: "Volume", color: "#6ee7b7" }],
+      []
+    );
+
+    // Connections (bezier curves)
+    // Image Texture Color → Principled BSDF Base Color
+    drawBezier(ctx, itX + nw, itY + 34, pbX, pbY + 34, "rgba(251,191,36,0.7)");
+    // Mapping Vector out → Image Texture Vector in
+    drawBezier(ctx, mpX + nw, mpY + 34, itX, itY + 34, "rgba(196,181,253,0.7)");
+    // Principled BSDF out → Material Output Surface
+    drawBezier(ctx, pbX + nw + 10, pbY + 34, moX, moY + 34, "rgba(110,231,183,0.7)");
+
+    // Legend
+    ctx.font = "9px sans-serif"; ctx.textAlign = "left";
+    var ly = h - 20;
+    var legends = [
+      { color: "#fbbf24", label: "Color" },
+      { color: "#a1a1aa", label: "Value" },
+      { color: "#c4b5fd", label: "Vector" },
+      { color: "#6ee7b7", label: "Shader" }
+    ];
+    var lx = 20;
+    legends.forEach(function(leg) {
+      ctx.beginPath(); ctx.arc(lx, ly, 4, 0, Math.PI * 2);
+      ctx.fillStyle = leg.color; ctx.fill();
+      ctx.fillStyle = "#94a3b8"; ctx.fillText(leg.label, lx + 8, ly + 3);
+      lx += 70;
+    });
+  }
+
+  render();
+})();
+
+// ── Mix Shader Interactive Demo (Tab 2) ───────
+(function() {
+  var canvas = document.getElementById("mixCanvas");
+  if (!canvas) return;
+  var ctx = canvas.getContext("2d");
+
+  var elColorA = document.getElementById("colorA");
+  var elColorB = document.getElementById("colorB");
+  var elFactor = document.getElementById("mixFactor");
+  var elRoughA = document.getElementById("roughA");
+  var elRoughB = document.getElementById("roughB");
+  var valFactor = document.getElementById("valFactor");
+  var valRoughA = document.getElementById("valRoughA");
+  var valRoughB = document.getElementById("valRoughB");
+
+  function hexToRgb(hex) {
+    return {
+      r: parseInt(hex.slice(1,3),16),
+      g: parseInt(hex.slice(3,5),16),
+      b: parseInt(hex.slice(5,7),16)
+    };
+  }
+
+  function renderSphere(ctx, cx, cy, radius, baseRgb, metallic, roughness) {
+    for (var y = -radius; y <= radius; y++) {
+      for (var x = -radius; x <= radius; x++) {
+        var dist = Math.sqrt(x*x + y*y);
+        if (dist > radius) continue;
+
+        var nz = Math.sqrt(1 - (x/radius)*(x/radius) - (y/radius)*(y/radius));
+        var nx = x/radius;
+        var ny = y/radius;
+
+        // Light direction (top-right)
+        var lx = 0.4, ly = -0.6, lz = 0.7;
+        var ll = Math.sqrt(lx*lx + ly*ly + lz*lz);
+        lx /= ll; ly /= ll; lz /= ll;
+
+        // Diffuse
+        var diff = Math.max(0, nx*lx + ny*ly + nz*lz);
+
+        // Specular (Blinn-Phong)
+        var hx = lx, hy = ly, hz = lz + 1;
+        var hl = Math.sqrt(hx*hx + hy*hy + hz*hz);
+        hx /= hl; hy /= hl; hz /= hl;
+        var spec = Math.max(0, nx*hx + ny*hy + nz*hz);
+        var shininess = 2 + (1 - roughness) * 200;
+        spec = Math.pow(spec, shininess);
+
+        // Fresnel
+        var viewDot = nz;
+        var fresnel = 0.04 + 0.96 * Math.pow(1 - viewDot, 5);
+        fresnel = fresnel * (1 - metallic) + metallic;
+
+        var ambient = 0.08;
+        var r, g, b;
+        if (metallic > 0.5) {
+          r = baseRgb.r/255 * (ambient + diff*0.4) + (baseRgb.r/255) * spec * (1-roughness) * 1.5;
+          g = baseRgb.g/255 * (ambient + diff*0.4) + (baseRgb.g/255) * spec * (1-roughness) * 1.5;
+          b = baseRgb.b/255 * (ambient + diff*0.4) + (baseRgb.b/255) * spec * (1-roughness) * 1.5;
+        } else {
+          r = baseRgb.r/255 * (ambient + diff*0.7) + spec * (1-roughness) * fresnel;
+          g = baseRgb.g/255 * (ambient + diff*0.7) + spec * (1-roughness) * fresnel;
+          b = baseRgb.b/255 * (ambient + diff*0.7) + spec * (1-roughness) * fresnel;
+        }
+
+        r = Math.min(1, Math.max(0, r));
+        g = Math.min(1, Math.max(0, g));
+        b = Math.min(1, Math.max(0, b));
+
+        ctx.fillStyle = "rgb(" + Math.round(r*255) + "," + Math.round(g*255) + "," + Math.round(b*255) + ")";
+        ctx.fillRect(cx + x, cy + y, 1.5, 1.5);
+      }
+    }
+  }
+
+  function draw() {
+    var w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = "#17181a"; ctx.fillRect(0, 0, w, h);
+
+    // Grid
+    ctx.strokeStyle = "rgba(255,255,255,.04)"; ctx.lineWidth = 1;
+    for (var gx = 40; gx < w; gx += 40) { ctx.beginPath(); ctx.moveTo(gx,0); ctx.lineTo(gx,h); ctx.stroke(); }
+    for (var gy = 40; gy < h; gy += 40) { ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(w,gy); ctx.stroke(); }
+
+    var f = parseInt(elFactor.value) / 100;
+    var rgbA = hexToRgb(elColorA.value);
+    var rgbB = hexToRgb(elColorB.value);
+    var rA = parseInt(elRoughA.value) / 100;
+    var rB = parseInt(elRoughB.value) / 100;
+
+    // Mix colors and roughness
+    var mixedRgb = {
+      r: Math.round(rgbA.r * (1-f) + rgbB.r * f),
+      g: Math.round(rgbA.g * (1-f) + rgbB.g * f),
+      b: Math.round(rgbA.b * (1-f) + rgbB.b * f)
+    };
+    var mixedRoughness = rA * (1-f) + rB * f;
+
+    var radius = 90;
+    var cy = h/2 - 5;
+
+    // Shader A (left)
+    renderSphere(ctx, 120, cy, 55, rgbA, 0, rA);
+    ctx.fillStyle = "#94a3b8"; ctx.font = "bold 10px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("Shader A", 120, cy + 70);
+
+    // Mixed sphere (center)
+    renderSphere(ctx, w/2, cy, radius, mixedRgb, 0, mixedRoughness);
+    ctx.fillStyle = "#e2e8f0"; ctx.font = "bold 12px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("Mix Result (Factor: " + f.toFixed(2) + ")", w/2, cy + radius + 18);
+
+    // Shader B (right)
+    renderSphere(ctx, w - 120, cy, 55, rgbB, 0, rB);
+    ctx.fillStyle = "#94a3b8"; ctx.font = "bold 10px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("Shader B", w - 120, cy + 70);
+
+    // Mix arrows
+    ctx.strokeStyle = "rgba(255,255,255,.15)"; ctx.lineWidth = 1;
+    ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(175, cy); ctx.lineTo(w/2 - radius - 10, cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(w - 175, cy); ctx.lineTo(w/2 + radius + 10, cy); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  function update() {
+    valFactor.textContent = (parseInt(elFactor.value)/100).toFixed(2);
+    valRoughA.textContent = (parseInt(elRoughA.value)/100).toFixed(2);
+    valRoughB.textContent = (parseInt(elRoughB.value)/100).toFixed(2);
+    draw();
+  }
+
+  [elColorA, elColorB, elFactor, elRoughA, elRoughB].forEach(function(el) {
+    el.addEventListener("input", update);
+  });
+
+  // Touch support
+  canvas.addEventListener("touchstart", function(e) { e.preventDefault(); }, { passive: false });
+
+  // Presets
+  var presets = {
+    rust:      { colorA: "#b87333", colorB: "#4a6741", factor: 35, roughA: 40, roughB: 90 },
+    car:       { colorA: "#dc2626", colorB: "#94a3b8", factor: 20, roughA: 15, roughB: 50 },
+    mattgloss: { colorA: "#f5f5f5", colorB: "#f5f5f5", factor: 50, roughA: 90, roughB: 5 }
+  };
+
+  document.querySelectorAll("[data-preset]").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      var p = presets[btn.dataset.preset];
+      if (!p) return;
+      elColorA.value = p.colorA;
+      elColorB.value = p.colorB;
+      elFactor.value = p.factor;
+      elRoughA.value = p.roughA;
+      elRoughB.value = p.roughB;
+      update();
+      // Highlight active preset
+      document.querySelectorAll("[data-preset]").forEach(function(b) { b.classList.remove("is-active"); });
+      btn.classList.add("is-active");
+    });
+  });
+
+  // Initial draw on tab switch
+  document.querySelectorAll(".tab").forEach(function(tab) {
+    tab.addEventListener("click", function() {
+      if (tab.dataset.tab === "visual") { setTimeout(draw, 50); }
+    });
+  });
+
+  draw();
+})();
+
+// ── Quiz Engine (Safe DOM methods) ────────────
 function initQuiz(questions) {
   var container = document.getElementById("quizArea");
   var score = 0, answered = 0;
@@ -512,12 +973,13 @@ function initQuiz(questions) {
 
   function showScore() {
     if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+
     scoreDiv = document.createElement("div");
     scoreDiv.className = "quiz-score";
 
     var emoji = document.createElement("div");
     emoji.style.cssText = "font-size:36px;margin-bottom:8px";
-    emoji.textContent = score === questions.length ? "\ud83c\udf89" : score >= Math.ceil(questions.length / 2) ? "\ud83d\udc4d" : "\ud83d\udcda";
+    emoji.textContent = score === questions.length ? "\ud83c\udf89" : score >= Math.ceil(questions.length * 0.75) ? "\ud83d\udc4d" : "\ud83d\udcda";
     scoreDiv.appendChild(emoji);
 
     var result = document.createElement("div");
@@ -527,7 +989,7 @@ function initQuiz(questions) {
 
     var msg = document.createElement("div");
     msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
-    msg.textContent = score === questions.length ? "\uC644\uBCBD\uD569\uB2C8\uB2E4!" : "\uC870\uAE08 \uB354 \uC5F0\uC2B5\uD558\uBA74 \uC644\uBCBD\uD574\uC9C8 \uAC70\uC608\uC694!";
+    msg.textContent = score >= Math.ceil(questions.length * 0.75) ? "\uC644\uBCBD\uD569\uB2C8\uB2E4!" : "\uC870\uAE08 \uB354 \uC5F0\uC2B5\uD558\uBA74 \uC644\uBCBD\uD574\uC9C8 \uAC70\uC608\uC694!";
     scoreDiv.appendChild(msg);
 
     var saveBtn = document.createElement("button");
@@ -562,230 +1024,62 @@ function initQuiz(questions) {
   }
 }
 
-// ── Shader Editor Scenario Visualization ────────────
-(function() {
-  function drawBg(ctx, w, h) { ctx.fillStyle = "#1e293b"; ctx.fillRect(0,0,w,h); }
-
-  function drawGridLines(ctx, w, h) {
-    ctx.strokeStyle = "rgba(255,255,255,.04)"; ctx.lineWidth = 1;
-    for (var gx = 20; gx < w; gx += 20) { ctx.beginPath(); ctx.moveTo(gx,0); ctx.lineTo(gx,h); ctx.stroke(); }
-    for (var gy = 20; gy < h; gy += 20) { ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(w,gy); ctx.stroke(); }
-  }
-
-  function drawNode(ctx, x, y, title, inputs, outputs, color) {
-    var nw = 128, nh = 20 + Math.max(inputs.length, outputs.length) * 18 + 8;
-    ctx.fillStyle = color || "rgba(30,41,59,.9)";
-    ctx.strokeStyle = "rgba(99,102,241,.5)"; ctx.lineWidth = 1;
-    if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(x, y, nw, nh, 4); ctx.fill(); ctx.stroke(); }
-    else { ctx.fillRect(x, y, nw, nh); ctx.strokeRect(x, y, nw, nh); }
-    ctx.fillStyle = "rgba(99,102,241,.3)";
-    if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(x, y, nw, 20, [4,4,0,0]); ctx.fill(); }
-    else { ctx.fillRect(x, y, nw, 20); }
-    ctx.fillStyle = "#e2e8f0"; ctx.font = "bold 9px sans-serif"; ctx.textAlign = "center";
-    ctx.fillText(title, x + nw/2, y + 13);
-    inputs.forEach(function(inp, i) {
-      var py = y + 28 + i*18;
-      ctx.beginPath(); ctx.arc(x, py, 4, 0, Math.PI*2); ctx.fillStyle = "#a5b4fc"; ctx.fill();
-      ctx.fillStyle = "#94a3b8"; ctx.font = "8px sans-serif"; ctx.textAlign = "left";
-      ctx.fillText(inp, x+8, py+3);
-    });
-    outputs.forEach(function(out, i) {
-      var py = y + 28 + i*18;
-      ctx.beginPath(); ctx.arc(x+nw, py, 4, 0, Math.PI*2); ctx.fillStyle = "#6ee7b7"; ctx.fill();
-      ctx.fillStyle = "#94a3b8"; ctx.font = "8px sans-serif"; ctx.textAlign = "right";
-      ctx.fillText(out, x+nw-8, py+3);
-    });
-    return { x: x, y: y, w: nw, h: nh };
-  }
-
-  function drawWire(ctx, x1, y1, x2, y2, color) {
-    ctx.strokeStyle = color || "rgba(165,180,252,.6)"; ctx.lineWidth = 1.5;
-    ctx.beginPath(); ctx.moveTo(x1, y1);
-    var mx = (x1+x2)/2;
-    ctx.bezierCurveTo(mx, y1, mx, y2, x2, y2); ctx.stroke();
-  }
-
-  function drawEmptyEditor(ctx, w, h) {
-    drawBg(ctx, w, h); drawGridLines(ctx, w, h);
-    ctx.fillStyle = "#64748b"; ctx.font = "11px sans-serif"; ctx.textAlign = "center";
-    ctx.fillText("\ub178\ub4dc \uc5c6\uc74c (\ube48 Shader Editor)", w/2, h/2);
-    ctx.fillStyle = "#475569"; ctx.font = "10px sans-serif";
-    ctx.fillText("Add \u2192 Shader \u2192 Principled BSDF", w/2, h/2+16);
-  }
-
-  function drawBasicAfter(ctx, w, h) {
-    drawBg(ctx, w, h); drawGridLines(ctx, w, h);
-    var n1 = drawNode(ctx, 18, 45, "Principled BSDF", ["Base Color","Metallic","Roughness"], ["BSDF"]);
-    var n2 = drawNode(ctx, w-150, 58, "Material Output", ["Surface","Volume"], []);
-    drawWire(ctx, n1.x+n1.w, n1.y+28, n2.x, n2.y+28, "rgba(110,231,183,.7)");
-    ctx.fillStyle = "#a5b4fc"; ctx.font = "bold 9px sans-serif"; ctx.textAlign = "center";
-    ctx.fillText("\uae30\ubcf8 PBR \uc18c\uc7ac \uc5f0\uacb0", w/2, h-8);
-  }
-
-  function drawTextureBefore(ctx, w, h) {
-    drawBg(ctx, w, h); drawGridLines(ctx, w, h);
-    drawNode(ctx, 18, 58, "Principled BSDF", ["Base Color","Metallic"], ["BSDF"]);
-    var n2 = drawNode(ctx, w-150, 58, "Material Output", ["Surface"], []);
-    ctx.fillStyle = "#f59e0b"; ctx.font = "10px sans-serif"; ctx.textAlign = "center";
-    ctx.fillText("\ub2e8\uc0c9 BSDF\ub9cc \uc788\uc74c", w/2, h-8);
-  }
-
-  function drawTextureAfter(ctx, w, h) {
-    drawBg(ctx, w, h); drawGridLines(ctx, w, h);
-    var nt = drawNode(ctx, 8, 18, "Image Texture", ["Vector"], ["Color","Alpha"], "rgba(16,185,129,.2)");
-    var nb = drawNode(ctx, 8, 90, "Principled BSDF", ["Base Color","Roughness"], ["BSDF"]);
-    var no = drawNode(ctx, w-148, 55, "Material Output", ["Surface"], []);
-    drawWire(ctx, nt.x+nt.w, nt.y+28, nb.x, nb.y+28, "rgba(251,191,36,.7)");
-    drawWire(ctx, nb.x+nb.w, nb.y+28, no.x, no.y+28, "rgba(110,231,183,.7)");
-    ctx.fillStyle = "#fcd34d"; ctx.font = "bold 9px sans-serif"; ctx.textAlign = "center";
-    ctx.fillText("\ud14d\uc2a4\ucc98 \u2192 BSDF Base Color", w/2, h-8);
-  }
-
-  function drawMixBefore(ctx, w, h) {
-    drawBg(ctx, w, h); drawGridLines(ctx, w, h);
-    drawNode(ctx, 18, 58, "Principled BSDF", ["Base Color"], ["BSDF"]);
-    ctx.fillStyle = "#64748b"; ctx.font = "10px sans-serif"; ctx.textAlign = "center";
-    ctx.fillText("\ub2e8\uc77c \uc18c\uc7ac\ub9cc \uc874\uc7ac", w/2, h-8);
-  }
-
-  function drawMixAfter(ctx, w, h) {
-    drawBg(ctx, w, h); drawGridLines(ctx, w, h);
-    var na = drawNode(ctx, 6, 8, "BSDF Diffuse", ["Color"], ["BSDF"], "rgba(59,130,246,.2)");
-    var nb = drawNode(ctx, 6, 72, "BSDF Glossy", ["Color","Rough"], ["BSDF"], "rgba(245,158,11,.2)");
-    var nm = drawNode(ctx, w/2-65, 38, "Mix Shader", ["Fac","Shader","Shader"], ["Shader"], "rgba(99,102,241,.2)");
-    var no = drawNode(ctx, w-148, 53, "Material Output", ["Surface"], []);
-    drawWire(ctx, na.x+na.w, na.y+28, nm.x, nm.y+46, "rgba(147,197,253,.6)");
-    drawWire(ctx, nb.x+nb.w, nb.y+28, nm.x, nm.y+64, "rgba(251,191,36,.6)");
-    drawWire(ctx, nm.x+nm.w, nm.y+28, no.x, no.y+28, "rgba(110,231,183,.7)");
-    ctx.fillStyle = "#a5b4fc"; ctx.font = "bold 9px sans-serif"; ctx.textAlign = "center";
-    ctx.fillText("Diffuse + Glossy Mix \uc18c\uc7ac", w/2, h-8);
-  }
-
-  var scenarios = {
-    basic: {
-      desc: "\uae30\ubcf8 \ub178\ub4dc \uad6c\uc131: Principled BSDF \u2192 Material Output. \ubaa8\ub4e0 Blender \uc170\uc774\ub354\uc758 \ucd9c\ubc1c\uc810\uc785\ub2c8\ub2e4.",
-      ce: [
-        { cause: "Principled BSDF \ucd94\uac00", result: "\ud558\ub098\uc758 \ub178\ub4dc\ub85c \uc2e4\uc9c8\uac10 \uc81c\uc5b4", resultClass: "result-a" },
-        { cause: "Material Output \uc5f0\uacb0", result: "\uc624\ube0c\uc81d\ud2b8\uc5d0 \uc18c\uc7ac \ud65c\uc131\ud654", resultClass: "result-a" },
-        { cause: "Base Color \uac12 \ubcc0\uacbd", result: "\uac1d\uccb4 \uc0c9\uc0c1 \ubcc0\uacbd", resultClass: "result-b" }
-      ],
-      before: drawEmptyEditor,
-      after: drawBasicAfter
-    },
-    texture: {
-      desc: "Image Texture \ub178\ub4dc\ub97c Principled BSDF\uc758 Base Color\uc5d0 \uc5f0\uacb0\ud558\uba74 \ud14d\uc2a4\uccd0 \uc774\ubbf8\uc9c0\uac00 \uc18c\uc7ac\ub85c \uc801\uc6a9\ub429\ub2c8\ub2e4.",
-      ce: [
-        { cause: "Image Texture \ub178\ub4dc \ucd94\uac00", result: "\uc774\ubbf8\uc9c0 \ud30c\uc77c \ub85c\ub4dc", resultClass: "result-a" },
-        { cause: "Color \uc5f0\uacb0 \u2192 Base Color", result: "\ud14d\uc2a4\uccd0\uac00 \uc18c\uc7ac\uc5d0 \ud45c\uc2dc\ub428", resultClass: "result-a" },
-        { cause: "UV \ub9f5 \uc5c6\uc74c", result: "\ud14d\uc2a4\uccd0 \uc801\uc6a9 \ubd88\uac00", resultClass: "result-c" }
-      ],
-      before: drawTextureBefore,
-      after: drawTextureAfter
-    },
-    mix: {
-      desc: "Mix Shader\ub85c \ub450 \uac1c\uc758 \uc170\uc774\ub354\ub97c \ud63c\ud569\ud560 \uc218 \uc788\uc2b5\ub2c8\ub2e4. Fac \uac12\uc73c\ub85c \ube44\uc728\uc744 \uc870\uc808\ud558\uc5ec \ub2e4\uc591\ud55c \uc18c\uc7ac\ub97c \ud45c\ud604\ud569\ub2c8\ub2e4.",
-      ce: [
-        { cause: "Mix Shader \ucd94\uac00", result: "2\uac1c \uc170\uc774\ub354 \ud63c\ud569 \uac00\ub2a5", resultClass: "result-a" },
-        { cause: "Fac \uac12 0 \u2192 1 \uc870\uc808", result: "\uc170\uc774\ub354 A\uc5d0\uc11c B\ub85c \ube44\uc728 \ubcc0\ud654", resultClass: "result-b" },
-        { cause: "Diffuse + Glossy \ud63c\ud569", result: "\ubc18\uad11 \uc18c\uc7ac \ud45c\ud604", resultClass: "result-a" }
-      ],
-      before: drawMixBefore,
-      after: drawMixAfter
-    }
-  };
-
-  function switchScenario(key) {
-    document.querySelectorAll('.scenario-btn').forEach(function(b) {
-      b.classList.toggle('active', b.dataset.scene === key);
-    });
-    var s = scenarios[key];
-    document.getElementById('scene-desc').textContent = s.desc;
-    buildCauseEffect(s.ce);
-    renderBAPanels(s);
-  }
-
-  function buildCauseEffect(ces) {
-    var el = document.getElementById('cause-effect');
-    while (el.firstChild) el.removeChild(el.firstChild);
-    ces.forEach(function(c) {
-      var row = document.createElement('div'); row.className = 'ce-row';
-      var cause = document.createElement('div'); cause.className = 'ce-cause'; cause.textContent = c.cause;
-      var arrow = document.createElement('div'); arrow.className = 'ce-arrow'; arrow.textContent = '\u2192';
-      var result = document.createElement('div'); result.className = 'ce-result ' + c.resultClass; result.textContent = c.result;
-      row.appendChild(cause); row.appendChild(arrow); row.appendChild(result);
-      el.appendChild(row);
-    });
-  }
-
-  function renderBAPanels(s) {
-    var bc = document.getElementById('canvas-before'), ac = document.getElementById('canvas-after');
-    var bx = bc.getContext('2d'), ax = ac.getContext('2d');
-    bc.width = bc.offsetWidth || 280; bc.height = 160;
-    ac.width = ac.offsetWidth || 280; ac.height = 160;
-    bx.clearRect(0, 0, bc.width, bc.height);
-    ax.clearRect(0, 0, ac.width, ac.height);
-    if (s.before) s.before(bx, bc.width, bc.height);
-    if (s.after) s.after(ax, ac.width, ac.height);
-  }
-
-  document.querySelectorAll('.scenario-btn').forEach(function(btn) {
-    btn.addEventListener('click', function() { switchScenario(btn.dataset.scene); });
-  });
-
-  document.querySelectorAll('.tab').forEach(function(tab) {
-    tab.addEventListener('click', function() {
-      if (tab.dataset.tab === 'visual') { setTimeout(function() { switchScenario('basic'); }, 50); }
-    });
-  });
-
-  switchScenario('basic');
-})();
-
-// ── Quiz Data ─────────────────────────────────
+// ── Quiz Data (5 questions, 75% pass) ─────────
 initQuiz([
   {
-    question: "Shader Editor\uC5D0\uC11C \uB178\uB4DC\uB97C \uCD94\uAC00\uD558\uB294 \uB2E8\uCD95\uD0A4\uB294?",
+    question: "\uB178\uB4DC\uC5D0\uC11C \uB370\uC774\uD130\uAC00 \uD750\uB974\uB294 \uBC29\uD5A5\uC740?",
     options: [
-      "Ctrl + A",
-      "Shift + A",
-      "Alt + A",
-      "Ctrl + N"
+      "\uC624\uB978\uCABD\uC5D0\uC11C \uC67C\uCABD\uC73C\uB85C",
+      "\uC67C\uCABD\uC5D0\uC11C \uC624\uB978\uCABD\uC73C\uB85C",
+      "\uC704\uC5D0\uC11C \uC544\uB798\uB85C",
+      "\uBC29\uD5A5 \uC5C6\uC774 \uC591\uBC29\uD5A5"
     ],
     answer: 1,
-    explanation: "Shift + A\uB97C \uB204\uB974\uBA74 Add \uBA54\uB274\uAC00 \uC5F4\uB9AC\uACE0 \uC6D0\uD558\uB294 \uB178\uB4DC\uB97C \uAC80\uC0C9/\uCD94\uAC00\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
+    explanation: "\uB178\uB4DC \uADF8\uB798\uD504\uC5D0\uC11C \uB370\uC774\uD130\uB294 \uD56D\uC0C1 \uC67C\uCABD(Input)\uC5D0\uC11C \uC624\uB978\uCABD(Output)\uC73C\uB85C \uD750\uB985\uB2C8\uB2E4."
+  },
+  {
+    question: "\uB178\uB791 \uC18C\uCF13\uC740 \uC5B4\uB5A4 \uB370\uC774\uD130\uB97C \uC758\uBBF8\uD558\uB098\uC694?",
+    options: [
+      "Shader (\uC170\uC774\uB354 \uCD9C\uB825)",
+      "Vector (\uC88C\uD45C/\uBC29\uD5A5)",
+      "Value (\uC22B\uC790 1\uAC1C)",
+      "Color (\uC0C9\uC0C1 \uB370\uC774\uD130)"
+    ],
+    answer: 3,
+    explanation: "\uB178\uB791 \uC18C\uCF13\uC740 Color(\uC0C9\uC0C1) \uB370\uC774\uD130\uB97C \uB098\uD0C0\uB0C5\uB2C8\uB2E4. \uD68C\uC0C9=Value, \uBCF4\uB77C=Vector, \uCD08\uB85D=Shader\uC785\uB2C8\uB2E4."
+  },
+  {
+    question: "Mix Shader\uC758 Factor\uAC00 0\uC77C \uB54C \uACB0\uACFC\uB294?",
+    options: [
+      "Shader B\uB9CC \uBCF4\uC778\uB2E4",
+      "\uB450 \uC170\uC774\uB354\uAC00 50:50\uC73C\uB85C \uC12D\uC778\uB2E4",
+      "Shader A\uB9CC \uBCF4\uC778\uB2E4",
+      "\uD22C\uBA85\uD558\uAC8C \uBCC0\uD55C\uB2E4"
+    ],
+    answer: 2,
+    explanation: "Factor 0 = Shader A 100%, Factor 1 = Shader B 100%. Factor\uB294 B\uC758 \uBE44\uC728\uC744 \uC758\uBBF8\uD569\uB2C8\uB2E4."
   },
   {
     question: "Material Output \uB178\uB4DC\uC758 \uC5ED\uD560\uC740?",
     options: [
       "\uC0C9\uC0C1\uC744 \uC12D\uB294 \uAC83",
       "\uD14D\uC2A4\uCC98\uB97C \uBD88\uB7EC\uC624\uB294 \uAC83",
-      "\uCD5C\uC885 \uC7AC\uC9C8 \uACB0\uACFC\uB97C \uCD9C\uB825\uD558\uB294 \uAC83",
+      "\uCD5C\uC885 \uC7AC\uC9C8 \uACB0\uACFC\uB97C \uC624\uBE0C\uC81D\uD2B8\uC5D0 \uCD9C\uB825\uD558\uB294 \uAC83",
       "\uBE5B\uC744 \uCD94\uAC00\uD558\uB294 \uAC83"
     ],
     answer: 2,
     explanation: "Material Output\uC740 \uB178\uB4DC \uD2B8\uB9AC\uC758 \uCD5C\uC885 \uCD9C\uB825\uC810\uC785\uB2C8\uB2E4. \uC774 \uB178\uB4DC\uAC00 \uC5C6\uC73C\uBA74 \uC7AC\uC9C8\uC774 \uD45C\uC2DC\uB418\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4."
   },
   {
-    question: "Ctrl + T\uB97C \uB204\uB974\uBA74 \uC5B4\uB5A4 \uB178\uB4DC\uB4E4\uC774 \uC790\uB3D9 \uC5F0\uACB0\uB418\uB098\uC694?",
+    question: "Shader Editor\uB97C \uC5EC\uB294 \uBC29\uBC95\uC740?",
     options: [
-      "ColorRamp + MixRGB",
-      "Texture Coordinate + Mapping",
-      "Normal Map + Bump",
-      "Emission + Volume"
+      "Properties \uD328\uB110\uC5D0\uC11C Material \uD0ED \uD074\uB9AD",
+      "Editor Type \uB4DC\uB86D\uB2E4\uC6B4\uC5D0\uC11C Shader Editor \uC120\uD0DD",
+      "Ctrl + Tab \uB2E8\uCD95\uD0A4",
+      "File \uBA54\uB274\uC5D0\uC11C Open Shader"
     ],
     answer: 1,
-    explanation: "Ctrl + T\uB294 Texture Coordinate\uC640 Mapping \uB178\uB4DC\uB97C \uC790\uB3D9\uC73C\uB85C \uCD94\uAC00\uD558\uACE0 \uC5F0\uACB0\uD574\uC90D\uB2C8\uB2E4. \uD14D\uC2A4\uCC98 \uB9E4\uD551\uC758 \uAE30\uBCF8 \uC138\uD2B8\uC785\uB2C8\uB2E4."
-  },
-  {
-    question: "Ctrl + Shift + Click\uC73C\uB85C \uB178\uB4DC\uB97C \uD074\uB9AD\uD558\uBA74?",
-    options: [
-      "\uB178\uB4DC\uAC00 \uC0AD\uC81C\uB41C\uB2E4",
-      "\uB178\uB4DC\uAC00 \uBCF5\uC81C\uB41C\uB2E4",
-      "Viewer Node\uAC00 \uC5F0\uACB0\uB418\uC5B4 \uCD9C\uB825\uC744 \uBBF8\uB9AC\uBCFC \uC218 \uC788\uB2E4",
-      "\uB178\uB4DC\uAC00 Frame\uC73C\uB85C \uBB36\uC778\uB2E4"
-    ],
-    answer: 2,
-    explanation: "Ctrl + Shift + Click\uC740 Viewer Node\uB97C \uC790\uB3D9\uC73C\uB85C \uC5F0\uACB0\uD574\uC11C \uD574\uB2F9 \uB178\uB4DC\uC758 \uCD9C\uB825\uB9CC \uBBF8\uB9AC\uBCFC \uC218 \uC788\uAC8C \uD569\uB2C8\uB2E4."
+    explanation: "\uC5D0\uB514\uD130 \uC601\uC5ED \uC67C\uCABD \uC0C1\uB2E8\uC758 Editor Type \uB4DC\uB86D\uB2E4\uC6B4\uC5D0\uC11C Shader Editor\uB97C \uC120\uD0DD\uD558\uBA74 \uC5F4\uB9BD\uB2C8\uB2E4."
   }
 ]);
 </script>
