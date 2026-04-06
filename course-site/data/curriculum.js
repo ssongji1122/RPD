@@ -2221,7 +2221,8 @@ const CURRICULUM = [
             "detail": "표면 광택에 변화를 줘요"
           }
         ],
-        "image": "assets/images/week06/texture-node.png"
+        "image": "assets/images/week06/texture-node.png",
+        "showme": "texture-nodes"
       },
       {
         "title": "Viewport Shading 비교",

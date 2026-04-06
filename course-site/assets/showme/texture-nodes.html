@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — Texture Nodes</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --danger-soft:   #fca5a5;
+  --warn-soft:     #fbbf24;
+  --warn-medium:   #fcd34d;
+  --accent-soft:   #FFB347;
+  --secondary-soft:#a5b4fc;
+  --secondary-mid: #c4b5fd;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --muted-mid:     #94a3b8;
+  --muted-soft:    #cbd5e1;
+  --muted-dim:     #64748b;
+  --info-soft:     #67e8f9;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Tab Navigation ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+
+/* ── Tab Panels ── */
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+
+/* ── Concept Cards ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card h3 {
+  margin: 0 0 8px; font-size: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.concept-card p {
+  margin: 0; color: var(--muted-strong);
+  font-size: .88rem; line-height: 1.7;
+}
+.concept-card ul {
+  margin: 8px 0 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
+}
+
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: .72rem; font-weight: 600;
+}
+.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: var(--warn-soft); }
+
+/* ── Canvas / Demo ── */
+.demo-wrap {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+  margin: 14px 0;
+}
+.demo-wrap canvas {
+  display: block; width: 100%;
+}
+.demo-controls {
+  display: flex; gap: 8px; padding: 12px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+  align-items: center;
+}
+.demo-hint {
+  font-size: .78rem; color: var(--muted);
+  text-align: center; padding: 6px 0 0;
+}
+.demo-btn {
+  padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .82rem;
+  cursor: pointer;
+  transition: background .14s, color .14s;
+}
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active {
+  background: rgba(10,132,255,.14);
+  color: var(--key-soft);
+  border-color: rgba(10,132,255,.3);
+}
+
+/* ── Concept Visual (checker scale) ── */
+.concept-visual {
+  margin-top: 16px;
+}
+.concept-visual h4 {
+  margin: 0 0 10px;
+  font-size: .9rem;
+  color: var(--text);
+}
+.scale-compare {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.scale-item {
+  text-align: center;
+}
+.scale-item canvas {
+  width: 100%;
+  display: block;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+}
+.scale-item .scale-label {
+  font-size: .78rem;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+/* ── Interaction Layout (modifier-panel) ── */
+.interaction-layout {
+  display: grid;
+  grid-template-columns: minmax(220px, 260px) 1fr;
+  gap: 14px;
+  align-items: start;
+}
+.modifier-panel {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+  padding: 14px;
+}
+.modifier-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.modifier-title {
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.modifier-badge {
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(10,132,255,.14);
+  color: var(--key-soft);
+  font-size: .72rem;
+  font-weight: 600;
+}
+.modifier-subtitle {
+  margin: 0 0 14px;
+  font-size: .78rem;
+  color: var(--muted);
+}
+.control-group + .control-group {
+  margin-top: 12px;
+}
+.control-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.control-label {
+  font-size: .82rem;
+  color: var(--muted-strong);
+  font-weight: 600;
+}
+.control-value {
+  font-size: .76rem;
+  color: var(--key-soft);
+}
+.control-row {
+  display: grid;
+  grid-template-columns: 1fr 74px;
+  gap: 8px;
+  align-items: center;
+}
+.control-row input[type="range"] {
+  width: 100%;
+  accent-color: var(--key);
+}
+.control-row input[type="number"] {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--text);
+  padding: 7px 10px;
+  font: inherit;
+  font-size: .82rem;
+}
+.control-row input[type="number"]:focus {
+  outline: 1px solid rgba(10,132,255,.45);
+  border-color: rgba(10,132,255,.45);
+}
+.modifier-reset {
+  width: 100%;
+  margin-top: 14px;
+}
+.demo-stage {
+  display: grid;
+  gap: 10px;
+}
+.texture-btns {
+  display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;
+}
+
+/* ── Usage Grid ── */
+.usage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.usage-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 16px;
+}
+.usage-card h4 {
+  margin: 0 0 8px; font-size: .92rem;
+  color: var(--key-soft);
+}
+.usage-card ul {
+  margin: 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem;
+  line-height: 1.8;
+}
+
+/* ── Tip Box ── */
+.tip-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(10,132,255,.2);
+  background: rgba(10,132,255,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+}
+.tip-box strong { color: var(--key-soft); }
+
+/* ── Combo Section ── */
+.combo-section {
+  margin-top: 18px;
+}
+.combo-section h4 {
+  margin: 0 0 10px;
+  font-size: .92rem;
+  color: var(--text);
+}
+.combo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.combo-card {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 12px 14px;
+}
+.combo-card .combo-name {
+  font-size: .86rem;
+  font-weight: 600;
+  color: var(--key-soft);
+  margin-bottom: 4px;
+}
+.combo-card .combo-desc {
+  font-size: .8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ── Official Doc Reference ── */
+.doc-ref {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(10,132,255,.15);
+  background: rgba(10,132,255,.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-ref a {
+  color: var(--key-soft);
+  font-size: .84rem;
+  text-decoration: none;
+  line-height: 1.5;
+}
+.doc-ref a:hover { text-decoration: underline; }
+
+/* ── Quiz ── */
+.quiz-progress {
+  font-size: .78rem; color: var(--muted);
+  margin-bottom: 12px;
+}
+.quiz-question {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.quiz-question h4 {
+  margin: 0 0 12px; font-size: .94rem;
+}
+.quiz-option {
+  display: block; width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.025);
+  color: var(--text);
+  font: inherit; font-size: .86rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background .14s, border-color .14s;
+}
+.quiz-option:hover {
+  background: rgba(255,255,255,.06);
+  border-color: var(--line-strong);
+}
+.quiz-option.correct {
+  background: rgba(16,185,129,.12);
+  border-color: rgba(16,185,129,.4);
+  color: var(--success-soft);
+}
+.quiz-option.wrong {
+  background: rgba(239,68,68,.1);
+  border-color: rgba(239,68,68,.3);
+  color: var(--danger-soft);
+}
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback {
+  margin-top: 8px; padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: .84rem;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: var(--danger-soft); }
+
+.quiz-score {
+  text-align: center; padding: 20px;
+  font-size: 1.1rem; font-weight: 600;
+}
+.quiz-retry {
+  display: block; margin: 12px auto;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--key);
+  background: rgba(10,132,255,.12);
+  color: var(--key-soft);
+  font: inherit; font-size: .88rem;
+  cursor: pointer;
+  transition: background .14s;
+}
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
+  .scale-compare { grid-template-columns: 1fr; }
+  .interaction-layout { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+  .demo-controls { flex-direction: column; align-items: stretch; }
+  .texture-btns { justify-content: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- Tab Bar -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">interaction</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+</nav>
+
+<!-- TAB 1: 개념 이해 -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3>Texture Node란? <span class="badge badge-blue">기초</span></h3>
+      <p>Image Texture(사진), Noise(잡음), Checker(체크무늬), Wave(파도) 등 이미지/절차적 패턴을 생성하는 노드입니다. Shader Editor에서 Material의 색상, 거칠기 등에 연결하여 표면에 패턴을 입힙니다.</p>
+    </div>
+    <div class="concept-card">
+      <h3>Mapping Node <span class="badge badge-green">제어</span></h3>
+      <p>Texture의 위치(Location), 크기(Scale), 회전(Rotation)을 제어하는 노드입니다. Texture Coordinate 노드와 함께 사용하여 패턴의 배치를 정밀하게 조절합니다.</p>
+    </div>
+    <div class="concept-card">
+      <h3>UV vs Generated 좌표계 <span class="badge badge-amber">좌표</span></h3>
+      <ul>
+        <li><strong>UV</strong> — 수동으로 펼친 좌표 (정밀한 제어, UV Unwrap 필요)</li>
+        <li><strong>Generated</strong> — 오브젝트 바운딩 박스 기반 자동 좌표 (빠르지만 변형 시 제한적)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Concept Visual: Checker Scale 비교 -->
+  <div class="concept-visual">
+    <h4>Checker 텍스처 Scale 비교</h4>
+    <div class="scale-compare">
+      <div class="scale-item">
+        <canvas id="cvScale2" width="180" height="180"></canvas>
+        <div class="scale-label">Scale 2</div>
+      </div>
+      <div class="scale-item">
+        <canvas id="cvScale5" width="180" height="180"></canvas>
+        <div class="scale-label">Scale 5</div>
+      </div>
+      <div class="scale-item">
+        <canvas id="cvScale10" width="180" height="180"></canvas>
+        <div class="scale-label">Scale 10</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/render/shader_nodes/textures/index.html" target="_blank" rel="noopener">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      Blender 공식 문서 — Texture Nodes
+    </a>
+  </div>
+</section>
+
+<!-- TAB 2: interaction -->
+<section class="panel" id="panel-visual" role="tabpanel">
+  <div class="texture-btns">
+    <button class="demo-btn is-active" id="btnChecker" data-tex="checker">Checker</button>
+    <button class="demo-btn" id="btnNoise" data-tex="noise">Noise</button>
+    <button class="demo-btn" id="btnWave" data-tex="wave">Wave</button>
+  </div>
+
+  <div class="interaction-layout">
+    <aside class="modifier-panel" aria-label="Texture controls">
+      <div class="modifier-header">
+        <div class="modifier-title">Texture</div>
+        <span class="modifier-badge">Node</span>
+      </div>
+      <p class="modifier-subtitle">Scale, Rotation, Distortion을 조절해 보세요.</p>
+
+      <div class="control-group">
+        <div class="control-head">
+          <span class="control-label">Scale X</span>
+          <span class="control-value" id="valScaleX">5</span>
+        </div>
+        <div class="control-row">
+          <input type="range" id="sliderScaleX" min="1" max="20" step="1" value="5">
+          <input type="number" id="numScaleX" min="1" max="20" step="1" value="5">
+        </div>
+      </div>
+
+      <div class="control-group">
+        <div class="control-head">
+          <span class="control-label">Scale Y</span>
+          <span class="control-value" id="valScaleY">5</span>
+        </div>
+        <div class="control-row">
+          <input type="range" id="sliderScaleY" min="1" max="20" step="1" value="5">
+          <input type="number" id="numScaleY" min="1" max="20" step="1" value="5">
+        </div>
+      </div>
+
+      <div class="control-group">
+        <div class="control-head">
+          <span class="control-label">Rotation</span>
+          <span class="control-value" id="valRotation">0&deg;</span>
+        </div>
+        <div class="control-row">
+          <input type="range" id="sliderRotation" min="0" max="360" step="1" value="0">
+          <input type="number" id="numRotation" min="0" max="360" step="1" value="0">
+        </div>
+      </div>
+
+      <div class="control-group">
+        <div class="control-head">
+          <span class="control-label">Distortion</span>
+          <span class="control-value" id="valDistortion">0</span>
+        </div>
+        <div class="control-row">
+          <input type="range" id="sliderDistortion" min="0" max="100" step="1" value="0">
+          <input type="number" id="numDistortion" min="0" max="100" step="1" value="0">
+        </div>
+      </div>
+
+      <button class="demo-btn modifier-reset" id="btnResetTex">리셋</button>
+    </aside>
+
+    <div class="demo-stage">
+      <div class="demo-wrap">
+        <canvas id="texCanvas" width="680" height="300"></canvas>
+      </div>
+      <div class="demo-hint">텍스처 타입을 선택하고 파라미터를 변경하여 패턴 변화를 확인하세요.</div>
+    </div>
+  </div>
+</section>
+
+<!-- TAB 3: 언제 쓰나요? -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>Image Texture</h4>
+      <ul>
+        <li>사진 기반 — 실제 이미지 파일 사용</li>
+        <li>리얼리즘 표현에 최적</li>
+        <li>UV Unwrap 필요</li>
+        <li>해상도에 제한됨 (확대 시 흐려짐)</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>Procedural Texture</h4>
+      <ul>
+        <li>수학 기반 — 알고리즘으로 패턴 생성</li>
+        <li>무한 해상도 (확대해도 선명)</li>
+        <li>UV 없이도 사용 가능</li>
+        <li>파라미터로 자유롭게 커스터마이즈</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="combo-section">
+    <h4>자주 쓰는 조합</h4>
+    <div class="combo-grid">
+      <div class="combo-card">
+        <div class="combo-name">Noise + ColorRamp</div>
+        <div class="combo-desc">Noise 출력을 ColorRamp로 매핑하여 자연스러운 얼룩, 먼지, 산화 효과를 만듭니다.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Checker + Mapping</div>
+        <div class="combo-desc">Mapping으로 Scale/Rotation을 조절해 바닥 타일, 체스보드 패턴을 정밀 배치합니다.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Image + Mapping</div>
+        <div class="combo-desc">이미지 텍스처의 위치와 크기를 Mapping 노드로 미세 조정합니다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>팁:</strong> Procedural Texture는 해상도 걱정 없이 클로즈업에서도 선명하게 유지됩니다. 반면 Image Texture는 실제 사진의 디테일을 그대로 살릴 수 있어 리얼리즘에 강합니다. 둘을 혼합하면 최상의 결과를 얻을 수 있습니다.
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/render/shader_nodes/textures/index.html" target="_blank" rel="noopener">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      Blender 공식 문서 — Texture Nodes
+    </a>
+  </div>
+</section>
+
+<!-- TAB 4: 퀴즈 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+/* ══════════════════════════════════════════════════
+   Tab Switching
+   ══════════════════════════════════════════════════ */
+document.querySelectorAll(".tab").forEach(function(tab) {
+  function activate() {
+    document.querySelectorAll(".tab").forEach(function(t) {
+      t.classList.remove("is-active");
+      t.setAttribute("aria-selected", "false");
+    });
+    document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("is-active"); });
+    tab.classList.add("is-active");
+    tab.setAttribute("aria-selected", "true");
+    document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+  }
+  tab.addEventListener("click", activate);
+  tab.addEventListener("touchend", function(e) { e.preventDefault(); activate(); });
+});
+
+/* ══════════════════════════════════════════════════
+   Concept Visual — Checker Scale Compare
+   ══════════════════════════════════════════════════ */
+(function() {
+  function drawCheckerCanvas(canvasId, scale) {
+    var cv = document.getElementById(canvasId);
+    var ctx = cv.getContext("2d");
+    var w = cv.width, h = cv.height;
+    var imgData = ctx.createImageData(w, h);
+    var data = imgData.data;
+    for (var py = 0; py < h; py++) {
+      for (var px = 0; px < w; px++) {
+        var u = px / w;
+        var v = py / h;
+        var val = (Math.floor(u * scale) + Math.floor(v * scale)) % 2;
+        var idx = (py * w + px) * 4;
+        var c = val ? 51 : 224;
+        data[idx] = c; data[idx + 1] = c; data[idx + 2] = c; data[idx + 3] = 255;
+      }
+    }
+    ctx.putImageData(imgData, 0, 0);
+  }
+  document.addEventListener("DOMContentLoaded", function() {
+    drawCheckerCanvas("cvScale2", 2);
+    drawCheckerCanvas("cvScale5", 5);
+    drawCheckerCanvas("cvScale10", 10);
+  });
+})();
+
+/* ══════════════════════════════════════════════════
+   Texture Demo — Procedural Texture Rendering
+   ══════════════════════════════════════════════════ */
+(function() {
+  var canvas = document.getElementById("texCanvas");
+  var ctx = canvas.getContext("2d");
+  var W = canvas.width, H = canvas.height;
+
+  var currentTex = "checker";
+  var scaleX = 5, scaleY = 5, rotation = 0, distortion = 0;
+  var needsRedraw = true;
+  var rafId = null;
+
+  /* ── Texture Functions ── */
+  function checker(u, v, sx, sy) {
+    return (Math.floor(u * sx) + Math.floor(v * sy)) % 2;
+  }
+
+  function fade(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
+  function lerp(a, b, t) { return a + t * (b - a); }
+  function hash(x, y) {
+    var h = (x * 374761393 + y * 668265263 + 1274126177) & 0x7fffffff;
+    h = ((h >> 13) ^ h) * 1274126177;
+    return ((h >> 13) ^ h) & 0x7fffffff;
+  }
+  function grad(hsh, x, y) {
+    var h = hsh & 3;
+    var u = h < 2 ? x : y, v = h < 2 ? y : x;
+    return ((h & 1) ? -u : u) + ((h & 2) ? -v : v);
+  }
+  function perlin2D(x, y) {
+    var xi = Math.floor(x), yi = Math.floor(y);
+    var xf = x - xi, yf = y - yi;
+    var u = fade(xf), v = fade(yf);
+    var aa = hash(xi, yi), ab = hash(xi, yi + 1);
+    var ba = hash(xi + 1, yi), bb = hash(xi + 1, yi + 1);
+    var x1 = lerp(grad(aa, xf, yf), grad(ba, xf - 1, yf), u);
+    var x2 = lerp(grad(ab, xf, yf - 1), grad(bb, xf - 1, yf - 1), u);
+    return (lerp(x1, x2, v) + 1) / 2;
+  }
+
+  function wave(u, v, sx, dist) {
+    var n = perlin2D(u * 5, v * 5) * dist;
+    return (Math.sin((u * sx + n) * Math.PI * 2) + 1) / 2;
+  }
+
+  function rotateUV(u, v, angleDeg) {
+    var rad = angleDeg * Math.PI / 180;
+    var cu = u - 0.5, cv = v - 0.5;
+    return {
+      u: cu * Math.cos(rad) - cv * Math.sin(rad) + 0.5,
+      v: cu * Math.sin(rad) + cv * Math.cos(rad) + 0.5
+    };
+  }
+
+  /* ── Rendering ── */
+  function render() {
+    if (!needsRedraw) { rafId = requestAnimationFrame(render); return; }
+    needsRedraw = false;
+
+    var imgData = ctx.createImageData(W, H);
+    var data = imgData.data;
+    var sx = scaleX, sy = scaleY, rot = rotation, dist = distortion / 100;
+
+    for (var py = 0; py < H; py++) {
+      for (var px = 0; px < W; px++) {
+        var rawU = px / W;
+        var rawV = py / H;
+
+        var uv = rotateUV(rawU, rawV, rot);
+        var u = uv.u, v = uv.v;
+
+        var val, r, g, b;
+        if (currentTex === "checker") {
+          val = checker(u, v, sx, sy);
+          if (val) { r = 51; g = 51; b = 51; }
+          else { r = 224; g = 224; b = 224; }
+        } else if (currentTex === "noise") {
+          val = perlin2D(u * sx, v * sy);
+          val = Math.max(0, Math.min(1, val));
+          r = Math.round(val * 255);
+          g = r; b = r;
+        } else {
+          // wave
+          val = wave(u, v, sx, dist);
+          val = Math.max(0, Math.min(1, val));
+          // dark blue (#1a1a4e) to light blue (#8ec5ff)
+          r = Math.round(26 + val * (142 - 26));
+          g = Math.round(26 + val * (197 - 26));
+          b = Math.round(78 + val * (255 - 78));
+        }
+
+        var idx = (py * W + px) * 4;
+        data[idx] = r; data[idx + 1] = g; data[idx + 2] = b; data[idx + 3] = 255;
+      }
+    }
+    ctx.putImageData(imgData, 0, 0);
+
+    // Overlay info
+    ctx.fillStyle = "rgba(0,0,0,.55)";
+    ctx.beginPath();
+    ctx.roundRect(8, 8, 190, 26, 8);
+    ctx.fill();
+    ctx.fillStyle = "rgba(142,197,255,.9)";
+    ctx.font = "bold 12px sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText(currentTex.charAt(0).toUpperCase() + currentTex.slice(1) + "  |  Scale " + sx + "x" + sy + "  Rot " + rot + "\u00b0", 16, 26);
+
+    rafId = requestAnimationFrame(render);
+  }
+
+  function markDirty() { needsRedraw = true; }
+
+  /* ── Controls Binding ── */
+  var slScaleX = document.getElementById("sliderScaleX");
+  var slScaleY = document.getElementById("sliderScaleY");
+  var slRotation = document.getElementById("sliderRotation");
+  var slDistortion = document.getElementById("sliderDistortion");
+  var numScaleX = document.getElementById("numScaleX");
+  var numScaleY = document.getElementById("numScaleY");
+  var numRotation = document.getElementById("numRotation");
+  var numDistortion = document.getElementById("numDistortion");
+  var valScaleXEl = document.getElementById("valScaleX");
+  var valScaleYEl = document.getElementById("valScaleY");
+  var valRotEl = document.getElementById("valRotation");
+  var valDistEl = document.getElementById("valDistortion");
+
+  function syncControl(slider, numInput, valEl, setter, suffix) {
+    suffix = suffix || "";
+    function update(v) {
+      setter(parseInt(v, 10));
+      slider.value = v;
+      numInput.value = v;
+      valEl.textContent = v + suffix;
+      markDirty();
+    }
+    slider.addEventListener("input", function() { update(this.value); });
+    numInput.addEventListener("input", function() {
+      var v = Math.max(parseInt(slider.min), Math.min(parseInt(slider.max), parseInt(this.value) || 0));
+      update(v);
+    });
+  }
+
+  syncControl(slScaleX, numScaleX, valScaleXEl, function(v) { scaleX = v; });
+  syncControl(slScaleY, numScaleY, valScaleYEl, function(v) { scaleY = v; });
+  syncControl(slRotation, numRotation, valRotEl, function(v) { rotation = v; }, "\u00b0");
+  syncControl(slDistortion, numDistortion, valDistEl, function(v) { distortion = v; });
+
+  /* ── Texture Type Buttons ── */
+  document.querySelectorAll(".texture-btns .demo-btn").forEach(function(btn) {
+    function activate() {
+      document.querySelectorAll(".texture-btns .demo-btn").forEach(function(b) { b.classList.remove("is-active"); });
+      btn.classList.add("is-active");
+      currentTex = btn.dataset.tex;
+      markDirty();
+    }
+    btn.addEventListener("click", activate);
+    btn.addEventListener("touchend", function(e) { e.preventDefault(); activate(); });
+  });
+
+  /* ── Reset ── */
+  document.getElementById("btnResetTex").addEventListener("click", function() {
+    scaleX = 5; scaleY = 5; rotation = 0; distortion = 0;
+    slScaleX.value = 5; numScaleX.value = 5; valScaleXEl.textContent = "5";
+    slScaleY.value = 5; numScaleY.value = 5; valScaleYEl.textContent = "5";
+    slRotation.value = 0; numRotation.value = 0; valRotEl.textContent = "0\u00b0";
+    slDistortion.value = 0; numDistortion.value = 0; valDistEl.textContent = "0";
+    markDirty();
+  });
+
+  document.addEventListener("DOMContentLoaded", function() {
+    rafId = requestAnimationFrame(render);
+  });
+})();
+
+/* ══════════════════════════════════════════════════
+   Quiz Engine (Safe DOM methods)
+   ══════════════════════════════════════════════════ */
+function initQuiz(questions) {
+  var container = document.getElementById("quizArea");
+  var score = 0, answered = 0;
+  var scoreDiv = null;
+
+  var progress = document.createElement("div");
+  progress.className = "quiz-progress";
+  progress.textContent = "\uBB38\uC81C 0 / " + questions.length + " \u00b7 \uC810\uC218 0\uC810";
+  container.appendChild(progress);
+
+  questions.forEach(function(q, qi) {
+    var div = document.createElement("div");
+    div.className = "quiz-question";
+
+    var heading = document.createElement("h4");
+    heading.textContent = "Q" + (qi + 1) + ". " + q.question;
+    div.appendChild(heading);
+
+    var fb = document.createElement("div");
+    fb.className = "quiz-feedback";
+
+    q.options.forEach(function(opt, oi) {
+      var btn = document.createElement("button");
+      btn.className = "quiz-option";
+      btn.textContent = opt;
+      function handleClick() {
+        if (btn.disabled) return;
+        div.querySelectorAll(".quiz-option").forEach(function(b) { b.disabled = true; });
+        answered++;
+        if (oi === q.answer) {
+          btn.classList.add("correct");
+          fb.className = "quiz-feedback show correct-fb";
+          fb.textContent = "\u2705 " + q.explanation;
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
+          fb.className = "quiz-feedback show wrong-fb";
+          fb.textContent = "\u274c " + q.explanation;
+
+          var retryBtn = document.createElement("button");
+          retryBtn.className = "quiz-retry";
+          retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
+          retryBtn.textContent = "\uB2E4\uC2DC \uD480\uAE30";
+          retryBtn.addEventListener("click", function() {
+            answered--;
+            div.querySelectorAll(".quiz-option").forEach(function(b) {
+              b.disabled = false;
+              b.classList.remove("wrong", "correct");
+            });
+            fb.className = "quiz-feedback";
+            fb.textContent = "";
+            retryBtn.remove();
+            if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+            progress.textContent = "\uBB38\uC81C " + answered + " / " + questions.length + " \u00b7 \uC810\uC218 " + score + "\uC810";
+          });
+          fb.appendChild(retryBtn);
+        }
+        progress.textContent = "\uBB38\uC81C " + answered + " / " + questions.length + " \u00b7 \uC810\uC218 " + score + "\uC810";
+        if (answered === questions.length) showScore();
+      }
+      btn.addEventListener("click", handleClick);
+      btn.addEventListener("touchend", function(e) { e.preventDefault(); handleClick(); });
+      div.appendChild(btn);
+    });
+
+    div.appendChild(fb);
+    container.appendChild(div);
+  });
+
+  function showScore() {
+    if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+
+    scoreDiv = document.createElement("div");
+    scoreDiv.className = "quiz-score";
+
+    var emoji = document.createElement("div");
+    emoji.style.cssText = "font-size:36px;margin-bottom:8px";
+    emoji.textContent = score === questions.length ? "\ud83c\udf89" : score >= Math.ceil(questions.length * 0.75) ? "\ud83d\udc4d" : "\ud83d\udcda";
+    scoreDiv.appendChild(emoji);
+
+    var result = document.createElement("div");
+    result.style.cssText = "font-size:18px;font-weight:500;margin-bottom:6px";
+    result.textContent = score + " / " + questions.length + " \uC815\uB2F5";
+    scoreDiv.appendChild(result);
+
+    var msg = document.createElement("div");
+    msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
+    msg.textContent = score === questions.length ? "\uC644\uBCBD\uD569\uB2C8\uB2E4!" : "\uC870\uAE08 \uB354 \uC5F0\uC2B5\uD558\uBA74 \uC644\uBCBD\uD574\uC9C8 \uAC70\uC608\uC694!";
+    scoreDiv.appendChild(msg);
+
+    var saveBtn = document.createElement("button");
+    saveBtn.className = "quiz-retry";
+    saveBtn.style.cssText = "background:rgba(10,132,255,.18);border-color:var(--key);margin-bottom:8px";
+    saveBtn.textContent = "\uAE30\uB85D \uC800\uC7A5\uD558\uAE30";
+    saveBtn.addEventListener("click", function() {
+      try {
+        var wid = new URLSearchParams(location.search).get("wid")
+               || location.pathname.split("/").pop().replace(".html", "");
+        window.parent.postMessage({
+          type: "showme-quiz-complete",
+          widgetId: wid,
+          score: score,
+          total: questions.length,
+          pass: score >= Math.ceil(questions.length * 0.75)
+        }, "*");
+      } catch(e) {}
+      saveBtn.textContent = "\uC800\uC7A5 \uC644\uB8CC!";
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = ".5";
+    });
+    scoreDiv.appendChild(saveBtn);
+
+    var retry = document.createElement("button");
+    retry.className = "quiz-retry";
+    retry.textContent = "\uCC98\uC74C\uBD80\uD130 \uB2E4\uC2DC";
+    retry.addEventListener("click", function() { location.reload(); });
+    scoreDiv.appendChild(retry);
+
+    container.appendChild(scoreDiv);
+  }
+}
+
+/* ── Quiz Data ── */
+document.addEventListener("DOMContentLoaded", function() {
+  initQuiz([
+    {
+      question: "Procedural Texture와 Image Texture의 가장 큰 차이점은?",
+      options: [
+        "Procedural은 수학 기반이라 무한 해상도, Image는 파일 해상도에 제한된다",
+        "Image Texture가 항상 더 빠르다",
+        "Procedural Texture는 색상을 사용할 수 없다",
+        "둘은 완전히 동일한 결과를 낸다"
+      ],
+      answer: 0,
+      explanation: "Procedural Texture는 수학 공식으로 생성되어 해상도 제한이 없고, Image Texture는 파일의 픽셀 해상도에 의존합니다."
+    },
+    {
+      question: "Mapping Node의 주요 역할은?",
+      options: [
+        "Material을 삭제한다",
+        "텍스처의 위치(Location), 크기(Scale), 회전(Rotation)을 제어한다",
+        "오브젝트의 형태를 변경한다",
+        "렌더링 해상도를 설정한다"
+      ],
+      answer: 1,
+      explanation: "Mapping Node는 텍스처 좌표를 변환하여 패턴의 위치, 크기, 회전을 조절합니다."
+    },
+    {
+      question: "UV 좌표와 Generated 좌표의 차이로 올바른 것은?",
+      options: [
+        "Generated가 항상 더 정밀하다",
+        "UV는 자동 생성, Generated는 수동이다",
+        "UV는 수동으로 펼친 좌표(정밀), Generated는 오브젝트 기반 자동 좌표(빠르지만 제한적)",
+        "둘 다 동일한 결과를 낸다"
+      ],
+      answer: 2,
+      explanation: "UV는 수동 Unwrap으로 정밀한 제어가 가능하고, Generated는 오브젝트 바운딩 박스 기반으로 자동 생성되어 빠르지만 변형 시 한계가 있습니다."
+    },
+    {
+      question: "Texture Node에서 Scale 값을 올리면 패턴은 어떻게 변하나요?",
+      options: [
+        "패턴이 더 커진다 (넓어진다)",
+        "패턴이 더 작아진다 (촘촘해진다)",
+        "패턴이 사라진다",
+        "색상이 반전된다"
+      ],
+      answer: 1,
+      explanation: "Scale을 올리면 같은 공간에 더 많은 반복이 들어가므로 패턴이 작아지고 촘촘해집니다."
+    },
+    {
+      question: "Wave Texture에서 Distortion 값을 높이면 어떤 효과가 나타나나요?",
+      options: [
+        "파도 패턴이 완전히 사라진다",
+        "직선 파도가 노이즈의 영향으로 왜곡/일그러진다",
+        "패턴 색상이 빨간색으로 변한다",
+        "Scale이 자동으로 리셋된다"
+      ],
+      answer: 1,
+      explanation: "Distortion은 Perlin Noise를 Wave에 혼합하여 규칙적인 파도 패턴을 유기적으로 왜곡시킵니다."
+    }
+  ]);
+});
+</script>
+</body>
+</html>
