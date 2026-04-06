@@ -40,6 +40,7 @@ const SHOWME_REGISTRY = {
   "mirror-origin-mode":     { label: "Mirror·Origin·모드 이해", icon: "🔀", week: 3 },
   "multiresolution-modifier": { label: "Multiresolution 이해",  icon: "🔍", week: 4 },
   "remesh-modifier":        { label: "Remesh 이해",             icon: "🔲", week: 4 },
+  "remesh-decimate":        { label: "Remesh vs Decimate",      icon: "🔀", week: 5 },
   "scatter-on-surface":     { label: "Scatter on Surface 이해", icon: "🌿", week: 4 },
   "screw-modifier":         { label: "Screw Modifier 이해",     icon: "🌀", week: 4 },
   "skin-modifier":          { label: "Skin Modifier 이해",      icon: "🦠", week: 4 },
