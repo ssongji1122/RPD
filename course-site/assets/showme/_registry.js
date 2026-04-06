@@ -75,10 +75,6 @@ const SHOWME_REGISTRY = {
   "texture-types":          { label: "Procedural vs Image",     icon: "🔀", week: 6 },
   "image-texture-pbr":      { label: "Image Texture + PBR",     icon: "🖼️", week: 6 },
 
-  // ── Week 6: MCP & AI 연결 ──
-  "mcp-concept":            { label: "MCP 개념 이해",            icon: "🔌", week: 6 },
-  "blender-mcp":            { label: "Claude로 Blender 조작하기", icon: "🤖", week: 6 },
-
   // ── Week 7: UV ──
   "uv-unwrapping":          { label: "UV Unwrapping 이해",      icon: "📐", week: 7 },
   "uv-editor":              { label: "UV Editor 조작",          icon: "🗺️", week: 7 },
