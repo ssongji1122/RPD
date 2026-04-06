@@ -2193,7 +2193,7 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week06/shader-editor.png",
-        "showme": "shader-editor"
+        "showme": ["shader-editor", "color-ramp"]
       },
       {
         "title": "Texture 노드로 질감 추가",
@@ -2221,7 +2221,8 @@ const CURRICULUM = [
             "detail": "표면 광택에 변화를 줘요"
           }
         ],
-        "image": "assets/images/week06/texture-node.png"
+        "image": "assets/images/week06/texture-node.png",
+        "showme": ["noise-texture", "texture-types", "image-texture-pbr"]
       },
       {
         "title": "Viewport Shading 비교",
