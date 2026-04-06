@@ -33,7 +33,6 @@
   margin-top: 4px;
 }
 .hero-actions .btn-primary {
-  box-shadow: 0 16px 32px rgba(0,191,165,.26);
 }
 .hero-actions .btn-ghost {
   border-color: var(--line-strong);
@@ -44,8 +43,7 @@
 .search-wrap {
   position: sticky; top: 60px; z-index: 40;
   padding: 14px 0 18px;
-  background: linear-gradient(180deg, rgba(10,10,10,.92), rgba(10,10,10,.72));
-  backdrop-filter: blur(18px);
+  background: var(--bg);
 }
 .search-inner {
   width: min(var(--max-width), calc(100% - 32px));

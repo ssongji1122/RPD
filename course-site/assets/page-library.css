@@ -84,7 +84,6 @@
   border-color: var(--key-border);
   color: var(--text);
   background: var(--modal-nav-active-bg);
-  box-shadow: inset 0 0 0 1px var(--key-glow-soft);
 }
 .lib-card-week {
   display: inline-flex;
@@ -171,7 +170,6 @@
   border-color: var(--key-border);
   color: var(--text);
   background: var(--modal-nav-active-bg);
-  box-shadow: inset 0 0 0 1px var(--key-glow-soft);
 }
 .lib-chip.is-disabled {
   opacity: .45;
@@ -337,10 +335,9 @@
 }
 .lib-card-reason.is-category {
   border-color: rgba(110,232,216,.42);
-  background: linear-gradient(135deg, rgba(0,191,165,.18), rgba(0,191,165,.08));
+  background: rgba(0,191,165,.10);
   color: #eff6ff;
   font-weight: var(--fw-bold);
-  box-shadow: inset 0 0 0 1px rgba(110,232,216,.14);
 }
 .lib-card-reason.is-current {
   border-color: rgba(110,232,216,.28);
@@ -385,7 +382,7 @@
   display: none; position: fixed; inset: 0;
   z-index: 100;
   background: rgba(0,0,0,.72);
-  backdrop-filter: blur(8px);
+  
   justify-content: center; align-items: center;
   padding: 20px;
   overscroll-behavior: contain;
@@ -432,8 +429,7 @@
   height: 46px;
   border-radius: var(--radius);
   border: 1px solid rgba(122,162,247,.2);
-  background: linear-gradient(145deg, rgba(0,191,165,.18), rgba(255,255,255,.04)), rgba(255,255,255,.03);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 14px 32px rgba(0,0,0,.22);
+  background: rgba(255,255,255,.03);
   display: grid;
   place-items: center;
   color: #eaf3ff;
@@ -606,14 +602,13 @@
 }
 .showme-browser-item.is-active {
   border-color: rgba(110,232,216,.44);
-  background: linear-gradient(135deg, rgba(15,23,42,.94), rgba(18,34,58,.82)), rgba(255,255,255,.04);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.06), inset 0 0 0 1px rgba(110,232,216,.16), 0 18px 36px rgba(0,0,0,.24);
+  background: rgba(255,255,255,.03);
 }
 .showme-browser-item.is-active::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(0,191,165,.14), transparent 42%);
+  background: transparent;
   pointer-events: none;
 }
 .showme-browser-item-icon {
@@ -659,9 +654,8 @@
 }
 .showme-browser-item-kicker.is-category {
   border-color: rgba(110,232,216,.4);
-  background: linear-gradient(135deg, rgba(0,191,165,.18), rgba(0,191,165,.08));
+  background: rgba(0,191,165,.10);
   color: #eff6ff;
-  box-shadow: inset 0 0 0 1px rgba(110,232,216,.12);
 }
 .showme-browser-item-kicker.is-current {
   border-color: rgba(110,232,216,.26);
