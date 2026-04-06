@@ -222,6 +222,8 @@ class AdminServerE2ETest(PlaywrightFailureArtifactsMixin, unittest.TestCase):
         uploaded_image = self.temp_root / "course-site" / "assets" / "images" / "week-01" / "step-0.png"
         self.assertTrue(uploaded_image.exists())
 
+        page.locator("#adminUserBtn").click()
+        page.locator("#logoutBtn").wait_for(state="visible")
         page.locator("#logoutBtn").click()
         page.locator("#authInput").wait_for(state="visible")
 
