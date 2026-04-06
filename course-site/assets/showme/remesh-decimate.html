@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — Remesh vs Decimate 이해</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --danger-soft:   #fca5a5;
+  --warn-soft:     #fbbf24;
+  --warn-medium:   #fcd34d;
+  --accent-soft:   #FFB347;
+  --secondary-soft:#a5b4fc;
+  --secondary-mid: #c4b5fd;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --muted-mid:     #94a3b8;
+  --muted-soft:    #cbd5e1;
+  --muted-dim:     #64748b;
+  --info-soft:     #67e8f9;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Tab Navigation ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active { color: var(--key-soft); border-bottom-color: var(--key); }
+
+/* ── Tab Panels ── */
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+
+/* ── Concept Cards ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card h3 { margin: 0 0 8px; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+.concept-card p { margin: 0; color: var(--muted-strong); font-size: .88rem; line-height: 1.7; }
+.concept-card ul { margin: 8px 0 0; padding-left: 16px; color: var(--muted-strong); font-size: .85rem; line-height: 1.8; }
+
+/* ── Badge ── */
+.badge { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: .72rem; font-weight: 600; }
+.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: var(--warn-soft); }
+.badge-red   { background: rgba(239,68,68,.15);   color: var(--danger-soft); }
+
+/* ── Analogy Box ── */
+.analogy {
+  margin-top: 8px; padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(245,158,11,.06);
+  border: 1px solid rgba(245,158,11,.15);
+  font-size: .82rem; color: var(--warn-soft); font-style: italic;
+}
+
+/* ── Keyboard Shortcut ── */
+.kbd {
+  display: inline-block; padding: 3px 8px; border-radius: 6px;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14);
+  color: var(--key-soft); font-size: .82rem; font-weight: 600; font-family: var(--font);
+}
+.shortcut-list {
+  margin-top: 16px; padding: 14px 16px;
+  border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface);
+}
+.shortcut-list h4 { margin: 0 0 10px; font-size: .9rem; color: var(--text); }
+.shortcut-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-size: .84rem; color: var(--muted-strong); }
+.shortcut-row + .shortcut-row { border-top: 1px solid var(--line); }
+.shortcut-keys { flex-shrink: 0; }
+
+/* ── Canvas / Demo ── */
+.demo-wrap {
+  border-radius: var(--radius-md); border: 1px solid var(--line);
+  background: var(--surface); overflow: hidden; margin: 14px 0;
+}
+.demo-wrap canvas { display: block; width: 100%; }
+.demo-controls {
+  display: flex; gap: 8px; padding: 12px;
+  border-top: 1px solid var(--line); flex-wrap: wrap;
+}
+.demo-hint { font-size: .78rem; color: var(--muted); text-align: center; padding: 6px 0 0; }
+.demo-btn {
+  padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong); background: rgba(255,255,255,.04);
+  color: var(--muted-strong); font: inherit; font-size: .82rem; cursor: pointer;
+  transition: background .14s, color .14s;
+}
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active { background: rgba(10,132,255,.14); color: var(--key-soft); border-color: rgba(10,132,255,.3); }
+
+/* ── Usage Grid ── */
+.usage-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.usage-card { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); padding: 16px; }
+.usage-card h4 { margin: 0 0 8px; font-size: .92rem; }
+.usage-card h4.blue { color: var(--key-soft); }
+.usage-card h4.green { color: var(--success-soft); }
+.usage-card ul { margin: 0; padding-left: 16px; color: var(--muted-strong); font-size: .85rem; line-height: 1.8; }
+
+/* ── Tip Box ── */
+.tip-box {
+  border-radius: var(--radius-md); border: 1px solid rgba(10,132,255,.2);
+  background: rgba(10,132,255,.06); padding: 14px 16px; margin-top: 14px;
+  font-size: .86rem; color: var(--muted-strong);
+}
+.tip-box strong { color: var(--key-soft); }
+.tip-box.warn { border-color: rgba(245,158,11,.2); background: rgba(245,158,11,.06); }
+.tip-box.warn strong { color: var(--warn-soft); }
+
+/* ── Combo Section ── */
+.combo-section { margin-top: 18px; }
+.combo-section h4 { margin: 0 0 10px; font-size: .92rem; color: var(--text); }
+.combo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.combo-card { border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--surface); padding: 12px 14px; }
+.combo-card .combo-name { font-size: .86rem; font-weight: 600; color: var(--key-soft); margin-bottom: 4px; }
+.combo-card .combo-desc { font-size: .8rem; color: var(--muted); line-height: 1.5; }
+
+/* ── Doc Ref ── */
+.doc-ref {
+  margin-top: 16px; padding: 10px 14px;
+  border-radius: var(--radius-sm); border: 1px solid rgba(10,132,255,.15);
+  background: rgba(10,132,255,.04); display: flex; align-items: center; gap: 8px;
+}
+.doc-ref-list { margin-top: 16px; display: flex; flex-direction: column; gap: 8px; }
+.doc-ref-list .doc-ref { margin-top: 0; }
+.doc-ref a { color: var(--key-soft); font-size: .84rem; text-decoration: none; line-height: 1.5; }
+.doc-ref a:hover { text-decoration: underline; }
+
+/* ── Section Divider ── */
+.section-divider { border: none; border-top: 1px solid var(--line); margin: 20px 0; }
+
+/* ── Quiz ── */
+.quiz-progress { font-size: .78rem; color: var(--muted); margin-bottom: 12px; }
+.quiz-question { margin-bottom: 20px; padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); }
+.quiz-question h4 { margin: 0 0 12px; font-size: .94rem; }
+.quiz-option {
+  display: block; width: 100%; padding: 10px 14px; margin-bottom: 6px;
+  border-radius: var(--radius-sm); border: 1px solid var(--line);
+  background: rgba(255,255,255,.025); color: var(--text);
+  font: inherit; font-size: .86rem; cursor: pointer; text-align: left;
+  transition: background .14s, border-color .14s;
+}
+.quiz-option:hover { background: rgba(255,255,255,.06); border-color: var(--line-strong); }
+.quiz-option.correct { background: rgba(16,185,129,.12); border-color: rgba(16,185,129,.4); color: var(--success-soft); }
+.quiz-option.wrong { background: rgba(239,68,68,.1); border-color: rgba(239,68,68,.3); color: var(--danger-soft); }
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback { margin-top: 8px; padding: 10px 14px; border-radius: var(--radius-sm); font-size: .84rem; display: none; }
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: var(--danger-soft); }
+.quiz-score { text-align: center; padding: 20px; font-size: 1.1rem; font-weight: 600; }
+.quiz-retry {
+  display: block; margin: 12px auto; padding: 10px 24px;
+  border-radius: 999px; border: 1px solid var(--key);
+  background: rgba(10,132,255,.12); color: var(--key-soft);
+  font: inherit; font-size: .88rem; cursor: pointer; transition: background .14s;
+}
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+
+/* ── Modifier Panel (inline Blender-style controls) ── */
+.modifier-panel {
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface-strong);
+  margin: 0;
+}
+.modifier-panel .mp-title {
+  font-size: .78rem; font-weight: 600; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .08em;
+  margin-bottom: 10px;
+}
+.mp-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 5px 0; font-size: .84rem; color: var(--muted-strong);
+}
+.mp-label { flex: 0 0 90px; font-size: .82rem; color: var(--muted); }
+.mp-slider { flex: 1; accent-color: var(--key); cursor: pointer; }
+.mp-slider.green { accent-color: var(--success); }
+.mp-value {
+  width: 44px; text-align: right;
+  font-size: .82rem; font-weight: 600; color: var(--text);
+  background: rgba(255,255,255,.06); border: 1px solid var(--line);
+  border-radius: 6px; padding: 2px 6px;
+}
+.mp-stat {
+  margin-top: 10px; padding: 8px 12px;
+  border-radius: var(--radius-sm); background: rgba(255,255,255,.03);
+  border: 1px solid var(--line); font-size: .81rem; color: var(--muted);
+  display: flex; justify-content: space-between;
+}
+.mp-stat span { color: var(--text); font-weight: 600; }
+
+/* ── Side-by-side demo layout ── */
+.split-demo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 14px 0;
+}
+.split-panel {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+}
+.split-panel-header {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+  font-size: .84rem; font-weight: 600;
+  display: flex; align-items: center; gap: 8px;
+}
+.split-panel-header.blue { color: var(--key-soft); }
+.split-panel-header.green { color: var(--success-soft); }
+.split-panel canvas { display: block; width: 100%; }
+.split-panel .modifier-panel {
+  border-radius: 0; border: none; border-top: 1px solid var(--line);
+}
+
+/* ── Concept visual (before/after) ── */
+.concept-visual {
+  margin-top: 20px; padding: 16px 18px;
+  border-radius: var(--radius-md); border: 1px solid rgba(10,132,255,.15);
+  background: rgba(255,255,255,.015);
+}
+.concept-visual .cv-title {
+  font-size: .9rem; font-weight: 600; margin-bottom: 14px;
+  color: var(--text); padding-bottom: 8px; border-bottom: 1px solid var(--line);
+}
+.cv-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  gap: 8px; align-items: center;
+  margin-bottom: 12px;
+}
+.cv-box {
+  border-radius: var(--radius-sm); border: 1px solid var(--line);
+  background: var(--surface); overflow: hidden; text-align: center;
+}
+.cv-box canvas { display: block; width: 100%; }
+.cv-box .cv-label {
+  font-size: .75rem; color: var(--muted);
+  padding: 4px 6px; border-top: 1px solid var(--line);
+}
+.cv-arrow { font-size: 1.2rem; color: var(--muted-dim); text-align: center; }
+.cv-arrow .cv-arrow-label { font-size: .72rem; color: var(--muted-dim); display: block; margin-top: 2px; }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
+  .split-demo { grid-template-columns: 1fr; }
+  .cv-row { grid-template-columns: 1fr; gap: 6px; }
+  .cv-arrow { transform: rotate(90deg); }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Tab Bar -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">interaction</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+</nav>
+
+<!-- ══════════════════════════════════════════
+     TAB 1: 개념 이해
+     ══════════════════════════════════════════ -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">Decimate</span> 폴리곤 수 줄이기</h3>
+      <p>메시의 <strong>형태를 유지</strong>하면서 폴리곤 수만 줄이는 Modifier입니다. 0.0~1.0 사이의 Ratio로 얼마나 줄일지 결정합니다.</p>
+      <ul>
+        <li>원본 토폴로지 구조 유지</li>
+        <li>Ratio 1.0 = 원본 / 0.1 = 90% 감소</li>
+        <li>형태는 유지, 폴리 수만 감소</li>
+      </ul>
+      <div class="analogy">지도를 단순화할 때처럼 — 해안선 모양은 그대로지만 선의 꺾임 수가 줄어드는 것</div>
+    </div>
+
+    <div class="concept-card">
+      <h3><span class="badge badge-green">Remesh</span> 토폴로지 재구성</h3>
+      <p>기존 메시 구조를 <strong>완전히 무시</strong>하고, 새로운 균일한 폴리곤 그리드로 처음부터 다시 만드는 Modifier입니다.</p>
+      <ul>
+        <li>Voxel 모드: 3D 복셀 격자로 재구성</li>
+        <li>Blocks/Smooth/Sharp: 픽셀 방식 재구성</li>
+        <li>토폴로지 구조 완전히 새로 생성</li>
+      </ul>
+      <div class="analogy">구겨진 종이를 펼친 뒤 새 종이에 다시 그리는 것 — 형태는 비슷하지만 선의 구성이 완전히 달라짐</div>
+    </div>
+  </div>
+
+  <!-- Concept Visual: before/after 비교 -->
+  <div class="concept-visual">
+    <div class="cv-title">AI 생성 메시 → Remesh → Decimate 파이프라인</div>
+    <div class="cv-row">
+      <div class="cv-box">
+        <canvas id="cv-original" width="160" height="120"></canvas>
+        <div class="cv-label">AI 생성 메시<br><span style="color:var(--danger-soft)">불균일·복잡한 삼각형</span></div>
+      </div>
+      <div class="cv-arrow">→<span class="cv-arrow-label">Remesh</span></div>
+      <div class="cv-box">
+        <canvas id="cv-remeshed" width="160" height="120"></canvas>
+        <div class="cv-label">Remesh 후<br><span style="color:var(--success-soft)">균일한 쿼드 그리드</span></div>
+      </div>
+      <div class="cv-arrow">→<span class="cv-arrow-label">Decimate</span></div>
+      <div class="cv-box">
+        <canvas id="cv-decimated" width="160" height="120"></canvas>
+        <div class="cv-label">Decimate 후<br><span style="color:var(--key-soft)">경량화 완료</span></div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px">
+      <div style="padding:10px 14px;border-radius:12px;border:1px solid rgba(239,68,68,.2);background:rgba(239,68,68,.04);font-size:.82rem;color:var(--muted-strong)">
+        <strong style="color:var(--danger-soft)">AI 생성 메시의 문제</strong><br>
+        Meshy, Tripo 등의 AI 3D 도구는 폴리곤이 불균일한 삼각형 수천 개로 이루어져 있어 스컬팅·수정이 거의 불가능
+      </div>
+      <div style="padding:10px 14px;border-radius:12px;border:1px solid rgba(16,185,129,.2);background:rgba(16,185,129,.04);font-size:.82rem;color:var(--muted-strong)">
+        <strong style="color:var(--success-soft)">해결 파이프라인</strong><br>
+        Remesh로 균일한 구조 확보 → Sculpt로 세부 수정 → Decimate로 최종 폴리카운트 최적화
+      </div>
+    </div>
+  </div>
+
+  <div class="shortcut-list">
+    <h4>주요 접근 방법</h4>
+    <div class="shortcut-row">
+      <span class="shortcut-keys">Properties → <span class="kbd">🔧</span> Modifier → Add → Generate</span>
+      <span>Decimate / Remesh Modifier 추가</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys">Sculpt Mode → Header → <span class="kbd">Remesh</span></span>
+      <span>스컬팅 중 빠른 Voxel Remesh</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">R</span></span>
+      <span>Sculpt Mode에서 즉시 Remesh 실행</span>
+    </div>
+  </div>
+
+  <div class="doc-ref-list">
+    <div class="doc-ref">
+      <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/decimate.html" target="_blank" rel="noopener">📖 Blender 공식 문서 — Decimate Modifier</a>
+    </div>
+    <div class="doc-ref">
+      <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/remesh.html" target="_blank" rel="noopener">📖 Blender 공식 문서 — Remesh Modifier</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     TAB 2: interaction
+     ══════════════════════════════════════════ -->
+<section class="panel" id="panel-visual" role="tabpanel">
+
+  <div class="split-demo">
+    <!-- Decimate Panel -->
+    <div class="split-panel">
+      <div class="split-panel-header blue">📉 Decimate</div>
+      <canvas id="canvas-decimate" width="320" height="200"></canvas>
+      <div class="modifier-panel">
+        <div class="mp-title">Decimate Properties</div>
+        <div class="mp-row">
+          <span class="mp-label">Ratio</span>
+          <input type="range" class="mp-slider" id="dec-ratio" min="1" max="100" value="100">
+          <span class="mp-value" id="dec-ratio-val">1.00</span>
+        </div>
+        <div class="mp-stat">
+          Face count: <span id="dec-face-count">2 048</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Remesh Panel -->
+    <div class="split-panel">
+      <div class="split-panel-header green">🔲 Remesh (Voxel)</div>
+      <canvas id="canvas-remesh" width="320" height="200"></canvas>
+      <div class="modifier-panel">
+        <div class="mp-title">Remesh Properties</div>
+        <div class="mp-row">
+          <span class="mp-label">Voxel Size</span>
+          <input type="range" class="mp-slider green" id="rem-depth" min="1" max="10" value="6">
+          <span class="mp-value" id="rem-depth-val">0.05</span>
+        </div>
+        <div class="mp-stat">
+          Face count: <span id="rem-face-count">~3 200</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-hint">슬라이더를 조절해 폴리곤 밀도 변화를 확인하세요</div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px">
+    <div style="padding:10px 14px;border-radius:12px;border:1px solid rgba(10,132,255,.2);background:rgba(10,132,255,.04);font-size:.81rem;color:var(--muted)">
+      <strong style="color:var(--key-soft)">Decimate 특징</strong><br>
+      Ratio를 낮출수록 삼각형이 커지고 수가 줄어듦. 형태는 유지되지만 <strong style="color:var(--warn-soft)">기존 토폴로지 왜곡</strong> 발생 가능
+    </div>
+    <div style="padding:10px 14px;border-radius:12px;border:1px solid rgba(16,185,129,.2);background:rgba(16,185,129,.04);font-size:.81rem;color:var(--muted)">
+      <strong style="color:var(--success-soft)">Remesh 특징</strong><br>
+      Voxel Size가 클수록 격자가 거칠어짐. 기존 UV·버텍스 그룹은 <strong style="color:var(--danger-soft)">모두 초기화</strong>되므로 주의
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     TAB 3: 언제 쓰나요?
+     ══════════════════════════════════════════ -->
+<section class="panel" id="panel-when" role="tabpanel">
+
+  <div style="margin-bottom:16px;font-size:.9rem;font-weight:600;color:var(--text)">Decimate vs Remesh — 상황별 선택</div>
+
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4 class="blue">📉 Decimate 쓸 때</h4>
+      <ul>
+        <li>AI 생성 메시 파일 크기 줄이기</li>
+        <li>게임 엔진용 저폴리 LOD 생성</li>
+        <li>렌더링 시 폴리 수 경량화</li>
+        <li>형태 유지하면서 빠르게 단순화</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4 class="green">🔲 Remesh 쓸 때</h4>
+      <ul>
+        <li>스컬팅 전 메시 균일화</li>
+        <li>AI 생성 불균일 메시 정리</li>
+        <li>Boolean 연산 후 토폴로지 수정</li>
+        <li>스캔 데이터 정리·재구성</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="usage-grid" style="margin-top:12px">
+    <div class="usage-card">
+      <h4 style="color:var(--muted);margin:0 0 8px;font-size:.88rem">Decimate 쓰지 말아야 할 때</h4>
+      <ul>
+        <li>스컬팅 전 (균일한 분포 필요)</li>
+        <li>애니메이션 리그가 있을 때</li>
+        <li>UV 유지가 중요할 때 (토폴로지 변경됨)</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4 style="color:var(--muted);margin:0 0 8px;font-size:.88rem">Remesh 쓰지 말아야 할 때</h4>
+      <ul>
+        <li>UV·버텍스 그룹 유지 필요할 때</li>
+        <li>정밀한 하드서페이스 디테일 있을 때</li>
+        <li>파일 용량만 줄이고 싶을 때 (→ Decimate)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="combo-section">
+    <h4>추천 조합 워크플로우</h4>
+    <div class="combo-grid">
+      <div class="combo-card">
+        <div class="combo-name">AI 메시 정리 파이프라인</div>
+        <div class="combo-desc">AI 생성 → <strong>Remesh(Voxel)</strong> → Sculpt 세부 수정 → <strong>Decimate</strong> 경량화 → 렌더</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">스컬팅 준비</div>
+        <div class="combo-desc"><strong>Remesh(Smooth)</strong>로 균일화 → 브러시로 조각 → <strong>Decimate</strong>로 최종 출력 최적화</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">빠른 Boolean 수정</div>
+        <div class="combo-desc">Boolean 연산 후 엉망인 토폴로지 → <strong>Remesh</strong>로 리셋 → 원하는 해상도로 재구성</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">게임 에셋 최적화</div>
+        <div class="combo-desc">고해상도 메시 완성 → <strong>Decimate(Collapse)</strong> → Ratio 0.3~0.5로 LOD 생성</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip-box warn">
+    <strong>주의:</strong> Remesh를 적용하면 기존 UV 맵과 버텍스 그룹이 <strong>전부 사라집니다.</strong> Texture Painting이나 Weight Paint를 이미 했다면 Remesh 전에 반드시 백업하세요.
+  </div>
+
+  <div class="doc-ref-list">
+    <div class="doc-ref">
+      <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/decimate.html" target="_blank" rel="noopener">📖 Blender 공식 문서 — Decimate Modifier</a>
+    </div>
+    <div class="doc-ref">
+      <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/remesh.html" target="_blank" rel="noopener">📖 Blender 공식 문서 — Remesh Modifier</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     TAB 4: 퀴즈
+     ══════════════════════════════════════════ -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quiz-wrap"></div>
+</section>
+
+<script>
+/* ── Tab Switching ── */
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const target = tab.dataset.tab;
+    document.querySelectorAll('.tab').forEach(t => {
+      t.classList.toggle('is-active', t.dataset.tab === target);
+      t.setAttribute('aria-selected', t.dataset.tab === target);
+    });
+    document.querySelectorAll('.panel').forEach(p => {
+      p.classList.toggle('is-active', p.id === 'panel-' + target);
+    });
+    if (target === 'visual') requestAnimationFrame(renderAll);
+  });
+});
+
+/* ═══════════════════════════════════════
+   Mesh Drawing Utilities
+   ═══════════════════════════════════════ */
+
+// Seeded pseudo-random (consistent across renders)
+function rnd(n) {
+  const x = Math.sin(n * 9301 + 49297) * 233280;
+  return x - Math.floor(x);
+}
+
+// Generate blob outline points
+function blobPoints(cx, cy, r, n, seedOffset) {
+  const pts = [];
+  for (let i = 0; i < n; i++) {
+    const angle = (i / n) * Math.PI * 2;
+    const noise = 0.82 + rnd(i * 7 + seedOffset) * 0.36;
+    pts.push({ x: cx + Math.cos(angle) * r * noise, y: cy + Math.sin(angle) * r * noise });
+  }
+  return pts;
+}
+
+function isInside(px, py, pts) {
+  // Point-in-polygon test
+  let inside = false;
+  for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) {
+    const xi = pts[i].x, yi = pts[i].y, xj = pts[j].x, yj = pts[j].y;
+    if ((yi > py) !== (yj > py) && px < (xj - xi) * (py - yi) / (yj - yi) + xi) inside = !inside;
+  }
+  return inside;
+}
+
+// Draw filled polygon
+function fillPoly(ctx, pts, fillColor, strokeColor, lw) {
+  ctx.beginPath();
+  ctx.moveTo(pts[0].x, pts[0].y);
+  pts.forEach(p => ctx.lineTo(p.x, p.y));
+  ctx.closePath();
+  ctx.fillStyle = fillColor;
+  ctx.fill();
+  ctx.strokeStyle = strokeColor;
+  ctx.lineWidth = lw;
+  ctx.stroke();
+}
+
+/* ── Decimate Canvas ── */
+function drawDecimate(ratio) {
+  const canvas = document.getElementById('canvas-decimate');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const cx = W / 2, cy = H / 2 - 10, r = Math.min(W, H) * 0.38;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Background
+  ctx.fillStyle = '#111214';
+  ctx.fillRect(0, 0, W, H);
+
+  // Number of outer vertices based on ratio
+  const baseN = 48;
+  const n = Math.max(5, Math.round(baseN * ratio));
+  const outer = blobPoints(cx, cy, r, n, 0);
+
+  // Fill shape
+  fillPoly(ctx, outer, 'rgba(10,132,255,0.06)', 'rgba(10,132,255,0.7)', 1.2);
+
+  // Internal triangulation lines
+  ctx.strokeStyle = 'rgba(10,132,255,0.25)';
+  ctx.lineWidth = 0.6;
+
+  // Fan from center
+  outer.forEach(p => {
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(p.x, p.y); ctx.stroke();
+  });
+
+  // Inner ring (high-density only)
+  if (n >= 10) {
+    const innerN = Math.round(n * 0.55);
+    const inner = blobPoints(cx, cy, r * 0.52, innerN, 50);
+    ctx.beginPath();
+    ctx.moveTo(inner[0].x, inner[0].y);
+    inner.forEach(p => ctx.lineTo(p.x, p.y));
+    ctx.closePath();
+    ctx.stroke();
+    inner.forEach((p, i) => {
+      const oi = Math.round(i * n / innerN) % n;
+      ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(outer[oi].x, outer[oi].y); ctx.stroke();
+      // Cross connects
+      if (i % 2 === 0 && i + 1 < inner.length) {
+        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(inner[i + 1].x, inner[i + 1].y); ctx.stroke();
+      }
+    });
+    // Vertices
+    ctx.fillStyle = '#8ec5ff';
+    inner.forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, 1.5, 0, Math.PI * 2); ctx.fill(); });
+  }
+
+  // Outer vertices
+  ctx.fillStyle = '#8ec5ff';
+  outer.forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, ratio > 0.3 ? 1.8 : 2.4, 0, Math.PI * 2); ctx.fill(); });
+
+  // Face count display
+  const faceCount = Math.round(n * (n > 12 ? 2.2 : 1.4));
+  ctx.fillStyle = 'rgba(142,197,255,0.6)';
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(`${faceCount.toLocaleString()} faces`, cx, cy + r + 22);
+
+  return faceCount;
+}
+
+/* ── Remesh (Voxel) Canvas ── */
+function drawRemesh(depth) {
+  const canvas = document.getElementById('canvas-remesh');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const cx = W / 2, cy = H / 2 - 10, r = Math.min(W, H) * 0.38;
+
+  ctx.clearRect(0, 0, W, H);
+
+  ctx.fillStyle = '#111214';
+  ctx.fillRect(0, 0, W, H);
+
+  const n = 48;
+  const outer = blobPoints(cx, cy, r, n, 0);
+
+  // Cell size inversely proportional to depth
+  const maxCells = 14;
+  const cells = Math.max(3, Math.round(depth * maxCells / 10));
+  const cellSize = (r * 2.1) / cells;
+  const startX = cx - r * 1.05;
+  const startY = cy - r * 1.05;
+
+  // Draw voxel grid (clipped to shape)
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(outer[0].x, outer[0].y);
+  outer.forEach(p => ctx.lineTo(p.x, p.y));
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(16,185,129,0.06)';
+  ctx.fill();
+  ctx.clip();
+
+  let quadCount = 0;
+  for (let xi = 0; xi <= cells + 1; xi++) {
+    for (let yi = 0; yi <= cells + 1; yi++) {
+      const px = startX + xi * cellSize;
+      const py = startY + yi * cellSize;
+      const pcx = px + cellSize / 2;
+      const pcy = py + cellSize / 2;
+      if (isInside(pcx, pcy, outer)) {
+        ctx.strokeStyle = 'rgba(16,185,129,0.55)';
+        ctx.lineWidth = 0.8;
+        ctx.strokeRect(px, py, cellSize, cellSize);
+        quadCount++;
+      }
+    }
+  }
+  ctx.restore();
+
+  // Draw outline on top
+  fillPoly(ctx, outer, 'transparent', 'rgba(16,185,129,0.85)', 1.5);
+
+  // Vertex dots at grid intersections (sparse)
+  ctx.fillStyle = 'rgba(110,231,183,0.65)';
+  for (let xi = 0; xi <= cells + 1; xi++) {
+    for (let yi = 0; yi <= cells + 1; yi++) {
+      const px = startX + xi * cellSize;
+      const py = startY + yi * cellSize;
+      if (isInside(px, py, outer)) {
+        ctx.beginPath(); ctx.arc(px, py, 1.4, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+  }
+
+  // Face count
+  ctx.fillStyle = 'rgba(110,231,183,0.65)';
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(`~${quadCount.toLocaleString()} quads`, cx, cy + r + 22);
+
+  return quadCount;
+}
+
+/* ── Concept Visual (Tab 1) ── */
+function drawConceptVisual() {
+  const n = 48;
+  const baseR = 50;
+
+  // Original (AI mesh): very dense irregular triangles
+  (function() {
+    const c = document.getElementById('cv-original');
+    if (!c) return;
+    const ctx = c.getContext('2d');
+    const W = c.width, H = c.height;
+    const cx = W/2, cy = H/2 - 4;
+    ctx.fillStyle = '#111214'; ctx.fillRect(0,0,W,H);
+
+    const outer = blobPoints(cx, cy, baseR, n, 0);
+    fillPoly(ctx, outer, 'rgba(239,68,68,0.06)', 'rgba(239,68,68,0.7)', 1);
+
+    // Dense irregular triangulation
+    ctx.strokeStyle = 'rgba(239,68,68,0.2)';
+    ctx.lineWidth = 0.5;
+    // Multiple inner rings to simulate dense/chaotic mesh
+    [0.25, 0.5, 0.75].forEach((scale, ri) => {
+      const inner = blobPoints(cx, cy, baseR * scale, Math.round(n * scale * 1.3), ri * 30 + 10);
+      ctx.beginPath(); ctx.moveTo(inner[0].x, inner[0].y);
+      inner.forEach(p => ctx.lineTo(p.x, p.y));
+      ctx.closePath(); ctx.stroke();
+      inner.forEach((p, i) => {
+        const op = outer[Math.round(i * n / inner.length) % n];
+        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(op.x, op.y); ctx.stroke();
+      });
+    });
+    // Chaotic diagonal lines
+    for (let i = 0; i < 20; i++) {
+      const p1 = blobPoints(cx, cy, baseR * (0.2 + rnd(i*3)*0.6), 1, i*13)[0];
+      const p2 = blobPoints(cx, cy, baseR * (0.2 + rnd(i*5+1)*0.6), 1, i*7+1)[0];
+      if (isInside(p1.x, p1.y, outer) && isInside(p2.x, p2.y, outer)) {
+        ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+      }
+    }
+    ctx.fillStyle = 'rgba(252,165,165,0.5)';
+    for (let i = 0; i < 30; i++) {
+      const p = blobPoints(cx, cy, baseR * (0.1 + rnd(i*11)*0.85), 1, i*9)[0];
+      if (isInside(p.x, p.y, outer)) { ctx.beginPath(); ctx.arc(p.x,p.y,1.2,0,Math.PI*2); ctx.fill(); }
+    }
+  })();
+
+  // Remeshed: uniform voxel quads
+  (function() {
+    const c = document.getElementById('cv-remeshed');
+    if (!c) return;
+    const ctx = c.getContext('2d');
+    const W = c.width, H = c.height;
+    const cx = W/2, cy = H/2 - 4;
+    ctx.fillStyle = '#111214'; ctx.fillRect(0,0,W,H);
+
+    const outer = blobPoints(cx, cy, baseR, n, 0);
+    const cells = 8;
+    const cellSize = (baseR * 2.1) / cells;
+    const sx = cx - baseR * 1.05, sy = cy - baseR * 1.05;
+
+    ctx.save();
+    ctx.beginPath(); ctx.moveTo(outer[0].x, outer[0].y);
+    outer.forEach(p => ctx.lineTo(p.x, p.y)); ctx.closePath();
+    ctx.fillStyle = 'rgba(16,185,129,0.06)'; ctx.fill(); ctx.clip();
+
+    ctx.strokeStyle = 'rgba(16,185,129,0.5)'; ctx.lineWidth = 0.8;
+    for (let xi = 0; xi <= cells + 1; xi++)
+      for (let yi = 0; yi <= cells + 1; yi++) {
+        const px = sx + xi*cellSize, py = sy + yi*cellSize;
+        if (isInside(px + cellSize/2, py + cellSize/2, outer)) ctx.strokeRect(px, py, cellSize, cellSize);
+      }
+    ctx.restore();
+    fillPoly(ctx, outer, 'transparent', 'rgba(16,185,129,0.8)', 1.2);
+    ctx.fillStyle = 'rgba(110,231,183,0.6)';
+    for (let xi = 0; xi <= cells+1; xi++)
+      for (let yi = 0; yi <= cells+1; yi++) {
+        const px = sx + xi*cellSize, py = sy + yi*cellSize;
+        if (isInside(px, py, outer)) { ctx.beginPath(); ctx.arc(px,py,1.2,0,Math.PI*2); ctx.fill(); }
+      }
+  })();
+
+  // Decimated: fewer triangles
+  (function() {
+    const c = document.getElementById('cv-decimated');
+    if (!c) return;
+    const ctx = c.getContext('2d');
+    const W = c.width, H = c.height;
+    const cx = W/2, cy = H/2 - 4;
+    ctx.fillStyle = '#111214'; ctx.fillRect(0,0,W,H);
+
+    const outer = blobPoints(cx, cy, baseR, Math.round(n * 0.3), 0);
+    fillPoly(ctx, outer, 'rgba(10,132,255,0.06)', 'rgba(10,132,255,0.7)', 1);
+
+    ctx.strokeStyle = 'rgba(10,132,255,0.2)'; ctx.lineWidth = 0.6;
+    outer.forEach(p => { ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(p.x, p.y); ctx.stroke(); });
+
+    ctx.fillStyle = 'rgba(142,197,255,0.65)';
+    outer.forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI*2); ctx.fill(); });
+  })();
+}
+
+/* ── Controls ── */
+function renderAll() {
+  const decRatio = document.getElementById('dec-ratio').value / 100;
+  const remDepth = document.getElementById('rem-depth').value / 1;
+
+  const fc = drawDecimate(decRatio);
+  const rc = drawRemesh(remDepth);
+
+  document.getElementById('dec-ratio-val').textContent = decRatio.toFixed(2);
+  document.getElementById('dec-face-count').textContent = fc.toLocaleString();
+
+  // Voxel size label: smaller depth = larger voxel
+  const voxelSizes = ['0.20', '0.15', '0.12', '0.10', '0.08', '0.05', '0.04', '0.03', '0.02', '0.01'];
+  const idx = Math.max(0, Math.min(9, 10 - remDepth));
+  document.getElementById('rem-depth-val').textContent = voxelSizes[idx];
+  document.getElementById('rem-face-count').textContent = '~' + rc.toLocaleString();
+}
+
+document.getElementById('dec-ratio').addEventListener('input', renderAll);
+document.getElementById('rem-depth').addEventListener('input', renderAll);
+
+// Touch support
+['dec-ratio', 'rem-depth'].forEach(id => {
+  document.getElementById(id).addEventListener('touchend', e => { e.preventDefault(); renderAll(); }, { passive: false });
+});
+
+/* ═══════════════════════════════════════
+   Quiz
+   ═══════════════════════════════════════ */
+function initQuiz(questions) {
+  const wrap = document.getElementById('quiz-wrap');
+  let current = 0, score = 0;
+
+  function render() {
+    if (current >= questions.length) {
+      const pass = score >= Math.ceil(questions.length * 0.75);
+      wrap.innerHTML = `
+        <div class="quiz-score">
+          ${pass ? '✅' : '❌'} ${score} / ${questions.length} 정답
+          <div style="font-size:.88rem;font-weight:400;color:var(--muted);margin-top:6px">
+            ${pass ? '잘 이해했어요! Decimate와 Remesh의 차이를 파악했습니다.' : '다시 한 번 개념 탭을 확인해보세요.'}
+          </div>
+        </div>
+        <button class="quiz-retry" onclick="initQuiz(questions)">다시 풀기</button>`;
+      window.parent.postMessage({
+        type: "showme-quiz-complete",
+        widgetId: new URLSearchParams(location.search).get("wid"),
+        score, total: questions.length,
+        pass
+      }, "*");
+      return;
+    }
+
+    const q = questions[current];
+    wrap.innerHTML = `
+      <div class="quiz-progress">${current + 1} / ${questions.length}</div>
+      <div class="quiz-question">
+        <h4>${q.question}</h4>
+        ${q.options.map((o, i) =>
+          `<button class="quiz-option" data-idx="${i}" onclick="handleAnswer(this,${i},${q.answer},'${encodeURIComponent(q.explanation)}')">${o}</button>`
+        ).join('')}
+        <div class="quiz-feedback" id="qfb"></div>
+      </div>`;
+  }
+
+  window.handleAnswer = function(btn, chosen, correct, expEnc) {
+    const exp = decodeURIComponent(expEnc);
+    document.querySelectorAll('.quiz-option').forEach(b => b.disabled = true);
+    if (chosen === correct) {
+      btn.classList.add('correct'); score++;
+      document.getElementById('qfb').className = 'quiz-feedback correct-fb show';
+      document.getElementById('qfb').textContent = '✅ ' + exp;
+    } else {
+      btn.classList.add('wrong');
+      document.querySelectorAll('.quiz-option')[correct].classList.add('correct');
+      document.getElementById('qfb').className = 'quiz-feedback wrong-fb show';
+      document.getElementById('qfb').textContent = '❌ ' + exp;
+    }
+    setTimeout(() => { current++; render(); }, 1800);
+  };
+
+  // Store reference for retry
+  window.questions = questions;
+  render();
+}
+
+initQuiz([
+  {
+    question: "AI(Meshy/Tripo)로 만든 메시에 Sculpt를 적용하려 합니다. 가장 먼저 해야 할 작업은?",
+    options: [
+      "Decimate Modifier로 폴리 수를 줄인다",
+      "Remesh Modifier로 토폴로지를 균일하게 재구성한다",
+      "바로 Sculpt 브러시로 작업한다",
+      "Subdivision Surface를 추가한다"
+    ],
+    answer: 1,
+    explanation: "AI 생성 메시는 불균일한 삼각형으로 구성돼 Sculpt 브러시가 제대로 작동하지 않습니다. Remesh로 균일한 격자를 만든 후 작업해야 합니다."
+  },
+  {
+    question: "Decimate Modifier의 Ratio를 0.1로 설정했습니다. 결과는?",
+    options: [
+      "폴리곤 수가 10%만 남는다 (90% 감소)",
+      "폴리곤 수가 10% 증가한다",
+      "메시가 10등분으로 분리된다",
+      "토폴로지가 새로운 격자로 재구성된다"
+    ],
+    answer: 0,
+    explanation: "Ratio 0.1 = 원본의 10%만 남긴다는 의미입니다. 형태는 유지되지만 폴리곤이 90% 감소합니다."
+  },
+  {
+    question: "Remesh Modifier를 적용(Apply)할 때 주의해야 할 사항은?",
+    options: [
+      "파일 크기가 반드시 줄어든다",
+      "UV 맵과 버텍스 그룹이 모두 초기화된다",
+      "애니메이션 키프레임이 추가된다",
+      "아무것도 변하지 않는다"
+    ],
+    answer: 1,
+    explanation: "Remesh는 토폴로지를 완전히 새로 생성하므로 기존 UV 맵, 버텍스 그룹, 페인팅 데이터가 모두 사라집니다. Apply 전에 백업 필수!"
+  },
+  {
+    question: "게임 엔진에 넣을 3D 캐릭터의 폴리 수를 줄이되, 형태는 최대한 유지하고 싶습니다. 어떤 Modifier를 사용하나요?",
+    options: [
+      "Remesh (Voxel 모드)",
+      "Subdivision Surface",
+      "Decimate (Collapse 모드)",
+      "Solidify"
+    ],
+    answer: 2,
+    explanation: "Decimate(Collapse)는 형태를 최대한 유지하면서 폴리곤 수를 줄이는 데 최적화된 모드입니다. 게임용 LOD 메시 제작에 많이 쓰입니다."
+  },
+  {
+    question: "두 Modifier의 핵심 차이를 가장 정확하게 설명한 것은?",
+    options: [
+      "Decimate는 형태 변형, Remesh는 폴리 수 감소",
+      "Decimate는 폴리 수 감소(형태 유지), Remesh는 토폴로지 재구성",
+      "둘 다 동일하게 폴리곤만 줄인다",
+      "Remesh는 렌더링 전용, Decimate는 스컬팅 전용이다"
+    ],
+    answer: 1,
+    explanation: "Decimate = 형태 유지하며 폴리 수 줄임 / Remesh = 기존 토폴로지 무시하고 처음부터 새 격자로 재구성. 목적과 결과가 완전히 다릅니다."
+  }
+]);
+
+/* ── Init ── */
+drawConceptVisual();
+renderAll();
+</script>
+</body>
+</html>

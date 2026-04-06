@@ -2222,7 +2222,7 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week06/texture-node.png",
-        "showme": ["noise-texture", "texture-types", "image-texture-pbr"]
+        "showme": ["texture-nodes", "noise-texture", "texture-types", "image-texture-pbr"]
       },
       {
         "title": "Viewport Shading 비교",
