@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — MCP 개념 이해</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --danger-soft:   #fca5a5;
+  --warn-soft:     #fbbf24;
+  --warn-medium:   #fcd34d;
+  --accent-soft:   #FFB347;
+  --secondary-soft:#a5b4fc;
+  --secondary-mid: #c4b5fd;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --muted-mid:     #94a3b8;
+  --muted-soft:    #cbd5e1;
+  --muted-dim:     #64748b;
+  --info-soft:     #67e8f9;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Tab Navigation ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+
+/* ── Tab Panels ── */
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+
+/* ── Concept Cards ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card h3 {
+  margin: 0 0 8px; font-size: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.concept-card p {
+  margin: 0; color: var(--muted-strong);
+  font-size: .88rem; line-height: 1.7;
+}
+.concept-card ul {
+  margin: 8px 0 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
+}
+
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: .72rem; font-weight: 600;
+}
+.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: var(--warn-soft); }
+.badge-purple{ background: rgba(165,132,255,.15); color: var(--secondary-mid); }
+
+/* ── Keyboard Shortcut ── */
+.kbd {
+  display: inline-block;
+  padding: 3px 8px; border-radius: 6px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  color: var(--key-soft);
+  font-size: .82rem; font-weight: 600;
+  font-family: var(--font);
+}
+
+/* ── Canvas / Demo ── */
+.demo-wrap {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+  margin: 14px 0;
+}
+.demo-wrap canvas {
+  display: block; width: 100%;
+}
+.demo-controls {
+  display: flex; gap: 8px; padding: 12px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.demo-hint {
+  font-size: .78rem; color: var(--muted);
+  text-align: center; padding: 6px 0 0;
+}
+.demo-btn {
+  padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .82rem;
+  cursor: pointer;
+  transition: background .14s, color .14s;
+}
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active {
+  background: rgba(10,132,255,.14);
+  color: var(--key-soft);
+  border-color: rgba(10,132,255,.3);
+}
+
+/* ── Usage Grid ── */
+.usage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.usage-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 16px;
+}
+.usage-card h4 {
+  margin: 0 0 8px; font-size: .92rem;
+  color: var(--key-soft);
+}
+.usage-card ul {
+  margin: 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem;
+  line-height: 1.8;
+}
+
+/* ── Tip Box ── */
+.tip-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(10,132,255,.2);
+  background: rgba(10,132,255,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+}
+.tip-box strong { color: var(--key-soft); }
+
+/* ── Combo Section ── */
+.combo-section { margin-top: 18px; }
+.combo-section h4 { margin: 0 0 10px; font-size: .92rem; color: var(--text); }
+.combo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.combo-card {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 12px 14px;
+}
+.combo-card .combo-name { font-size: .86rem; font-weight: 600; color: var(--key-soft); margin-bottom: 4px; }
+.combo-card .combo-desc { font-size: .8rem; color: var(--muted); line-height: 1.5; }
+
+/* ── Analogy ── */
+.analogy {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(245,158,11,.06);
+  border: 1px solid rgba(245,158,11,.15);
+  font-size: .82rem;
+  color: var(--warn-soft);
+  font-style: italic;
+}
+
+/* ── Quiz ── */
+.quiz-progress { font-size: .78rem; color: var(--muted); margin-bottom: 12px; }
+.quiz-question {
+  margin-bottom: 20px; padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.quiz-question h4 { margin: 0 0 12px; font-size: .94rem; }
+.quiz-option {
+  display: block; width: 100%;
+  padding: 10px 14px; margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.025);
+  color: var(--text); font: inherit; font-size: .86rem;
+  cursor: pointer; text-align: left;
+  transition: background .14s, border-color .14s;
+}
+.quiz-option:hover { background: rgba(255,255,255,.06); border-color: var(--line-strong); }
+.quiz-option.correct { background: rgba(16,185,129,.12); border-color: rgba(16,185,129,.4); color: var(--success-soft); }
+.quiz-option.wrong   { background: rgba(239,68,68,.1);  border-color: rgba(239,68,68,.3);  color: var(--danger-soft); }
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback { margin-top: 8px; padding: 10px 14px; border-radius: var(--radius-sm); font-size: .84rem; display: none; }
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: var(--danger-soft); }
+.quiz-score { text-align: center; padding: 20px; font-size: 1.1rem; font-weight: 600; }
+.quiz-retry {
+  display: block; margin: 12px auto;
+  padding: 10px 24px; border-radius: 999px;
+  border: 1px solid var(--key);
+  background: rgba(10,132,255,.12);
+  color: var(--key-soft);
+  font: inherit; font-size: .88rem;
+  cursor: pointer; transition: background .14s;
+}
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+
+/* ── Doc Ref ── */
+.doc-ref {
+  margin-top: 16px; padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(10,132,255,.15);
+  background: rgba(10,132,255,.04);
+  display: flex; align-items: center; gap: 8px;
+}
+.doc-ref a { color: var(--key-soft); font-size: .84rem; text-decoration: none; line-height: 1.5; }
+.doc-ref a:hover { text-decoration: underline; }
+
+/* ── MCP Specific ── */
+.flow-diagram {
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; flex-wrap: wrap;
+  margin: 16px 0; padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.flow-node {
+  padding: 10px 16px; border-radius: var(--radius-sm);
+  font-size: .82rem; font-weight: 600; text-align: center;
+  min-width: 90px;
+}
+.flow-node.claude  { background: rgba(165,132,255,.14); border: 1px solid rgba(165,132,255,.3); color: var(--secondary-mid); }
+.flow-node.mcp     { background: rgba(10,132,255,.14);  border: 1px solid rgba(10,132,255,.3);  color: var(--key-soft); }
+.flow-node.tool    { background: rgba(16,185,129,.12);  border: 1px solid rgba(16,185,129,.3);  color: var(--success-soft); }
+.flow-arrow        { color: var(--muted-dim); font-size: 1.1rem; }
+.flow-label        { font-size: .72rem; color: var(--muted); margin-top: 4px; }
+
+.primitive-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px; margin-top: 14px;
+}
+.primitive-card {
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.primitive-card .p-icon { font-size: 1.4rem; margin-bottom: 6px; }
+.primitive-card .p-name { font-size: .86rem; font-weight: 700; color: var(--key-soft); margin-bottom: 4px; }
+.primitive-card .p-desc { font-size: .78rem; color: var(--muted); line-height: 1.5; }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid, .combo-grid, .primitive-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+  .flow-diagram { gap: 6px; }
+  .flow-node { min-width: 70px; padding: 8px 10px; font-size: .76rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Tab Bar -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">interaction</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+</nav>
+
+<!-- TAB 1: 개념 이해 -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">Protocol</span> MCP란?</h3>
+      <p>MCP(Model Context Protocol)는 AI 모델이 외부 도구·서비스와 대화하는 <strong>표준 언어</strong>입니다. Anthropic이 2024년 공개했으며, Claude가 Blender·GitHub·DB 등 어떤 앱이든 일관된 방식으로 조작할 수 있게 해줍니다.</p>
+      <div class="analogy">USB처럼, MCP 이전에는 AI마다 각자 다른 케이블(커스텀 API)이 필요했어요. MCP는 하나의 표준 포트로 어떤 기기든 연결하게 해줘요</div>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-green">Architecture</span> 어떻게 동작하나요?</h3>
+      <p>MCP는 <strong>Host(Claude Desktop)</strong> ↔ <strong>Client</strong> ↔ <strong>Server(각 앱)</strong> 구조로 동작합니다. Claude가 명령을 보내면 MCP 서버가 실제 앱을 조작하고 결과를 돌려줍니다.</p>
+      <div class="flow-diagram">
+        <div class="flow-node claude">Claude<div class="flow-label">AI 모델</div></div>
+        <div class="flow-arrow">⟷</div>
+        <div class="flow-node mcp">MCP<div class="flow-label">표준 프로토콜</div></div>
+        <div class="flow-arrow">⟷</div>
+        <div class="flow-node tool">Blender<div class="flow-label">실제 앱</div></div>
+      </div>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-amber">Why</span> 왜 중요한가요?</h3>
+      <p>MCP 이전에는 AI가 앱을 조작하려면 각 앱마다 별도 코드가 필요했어요. MCP는 <strong>한 번 만들면 어디서든 재사용</strong>할 수 있는 표준을 제공합니다. Blender용 MCP 서버를 만들면 Claude든 다른 AI든 바로 사용 가능합니다.</p>
+      <div class="analogy">레고 블록처럼, MCP 서버만 있으면 어느 AI와도 연결돼요. AI를 바꿔도 서버를 다시 만들 필요가 없어요</div>
+    </div>
+  </div>
+
+  <details style="margin:14px 0 0;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:14px 16px">
+    <summary style="cursor:pointer;color:var(--key-soft);font-weight:600;list-style:none">MCP 3대 핵심 기능 더보기</summary>
+    <div class="primitive-grid" style="margin-top:12px">
+      <div class="primitive-card">
+        <div class="p-icon">🔧</div>
+        <div class="p-name">Tools</div>
+        <div class="p-desc">AI가 직접 실행하는 기능. Blender에서 "오브젝트 추가", "렌더 실행" 같은 동작</div>
+      </div>
+      <div class="primitive-card">
+        <div class="p-icon">📄</div>
+        <div class="p-name">Resources</div>
+        <div class="p-desc">AI가 읽을 수 있는 데이터. 현재 씬 정보, 오브젝트 목록, 재질 목록 등</div>
+      </div>
+      <div class="primitive-card">
+        <div class="p-icon">💬</div>
+        <div class="p-name">Prompts</div>
+        <div class="p-desc">서버가 제공하는 명령 템플릿. "로봇 만들기", "씬 정리" 같은 미리 정의된 작업</div>
+      </div>
+    </div>
+  </details>
+
+  <div class="doc-ref">
+    <a href="https://modelcontextprotocol.io/introduction" target="_blank" rel="noopener">
+      📖 MCP 공식 문서 — Introduction to Model Context Protocol
+    </a>
+  </div>
+</section>
+
+<!-- TAB 2: interaction -->
+<section class="panel" id="panel-visual" role="tabpanel">
+<style>
+.mcp-canvas-wrap {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+  margin: 0 0 12px;
+}
+.mcp-canvas-wrap canvas { display: block; width: 100%; }
+.step-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px; margin-top: 12px;
+}
+.step-card {
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.step-card:hover { border-color: var(--key); background: rgba(10,132,255,.04); }
+.step-card.active { border-color: var(--key); background: rgba(10,132,255,.08); }
+.step-num { font-size: .72rem; color: var(--key-soft); font-weight: 700; margin-bottom: 4px; }
+.step-title { font-size: .84rem; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.step-desc { font-size: .76rem; color: var(--muted); line-height: 1.5; }
+</style>
+
+  <div class="mcp-canvas-wrap">
+    <canvas id="mcpCanvas" width="680" height="300"></canvas>
+  </div>
+  <p class="demo-hint">단계를 클릭하면 데이터 흐름을 확인할 수 있어요</p>
+
+  <div class="step-cards">
+    <div class="step-card active" onclick="setStep(0)">
+      <div class="step-num">STEP 1</div>
+      <div class="step-title">사용자 요청</div>
+      <div class="step-desc">Claude에게 자연어로 명령 입력</div>
+    </div>
+    <div class="step-card" onclick="setStep(1)">
+      <div class="step-num">STEP 2</div>
+      <div class="step-title">Tool 선택</div>
+      <div class="step-desc">Claude가 MCP 서버의 도구 목록 확인 후 선택</div>
+    </div>
+    <div class="step-card" onclick="setStep(2)">
+      <div class="step-num">STEP 3</div>
+      <div class="step-title">서버 실행</div>
+      <div class="step-desc">MCP 서버가 Blender API 직접 호출</div>
+    </div>
+    <div class="step-card" onclick="setStep(3)">
+      <div class="step-num">STEP 4</div>
+      <div class="step-title">결과 반환</div>
+      <div class="step-desc">실행 결과가 Claude에게 돌아옴</div>
+    </div>
+  </div>
+
+<script>
+(function() {
+  const canvas = document.getElementById('mcpCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = 680, H = 300;
+
+  const NODES = [
+    { x: 100, y: 150, label: 'Claude\nDesktop', color: '#c4b5fd', bg: 'rgba(165,132,255,.15)', icon: '🤖' },
+    { x: 280, y: 150, label: 'MCP\nServer', color: '#8ec5ff', bg: 'rgba(10,132,255,.15)', icon: '🔌' },
+    { x: 460, y: 150, label: 'Blender\nPython API', color: '#6ee7b7', bg: 'rgba(16,185,129,.12)', icon: '🎨' },
+    { x: 580, y: 150, label: 'Scene', color: '#fbbf24', bg: 'rgba(245,158,11,.12)', icon: '🧊' }
+  ];
+
+  const STEPS = [
+    { label: '"큐브 만들어줘"', active: [0], arrows: [], msg: '사용자가 Claude에게 자연어로 명령을 입력해요' },
+    { label: 'Tool 탐색 → create_object 선택', active: [0, 1], arrows: [[0,1]], msg: 'Claude가 MCP 서버에서 사용 가능한 Tool 목록을 받아 적합한 도구를 선택해요' },
+    { label: 'bpy.ops.mesh.primitive_cube_add()', active: [1, 2, 3], arrows: [[1,2],[2,3]], msg: 'MCP 서버가 Blender Python API를 직접 호출해서 씬을 수정해요' },
+    { label: '결과: { success: true, object: "Cube" }', active: [0,1,2,3], arrows: [[3,2],[2,1],[1,0]], msg: '실행 결과가 JSON으로 MCP를 통해 Claude에게 돌아오고, Claude가 자연어로 응답해요' }
+  ];
+
+  let currentStep = 0;
+  let animT = 0;
+
+  function drawNode(n, isActive) {
+    const r = 42;
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
+    ctx.fillStyle = n.bg;
+    ctx.fill();
+    ctx.strokeStyle = isActive ? n.color : 'rgba(255,255,255,.1)';
+    ctx.lineWidth = isActive ? 2 : 1;
+    ctx.stroke();
+    ctx.font = '22px serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(n.icon, n.x, n.y - 8);
+    ctx.font = '500 11px "Noto Sans KR", sans-serif';
+    ctx.fillStyle = isActive ? n.color : '#64748b';
+    ctx.textBaseline = 'top';
+    n.label.split('\n').forEach((l, i) => ctx.fillText(l, n.x, n.y + 16 + i * 13));
+  }
+
+  function drawArrow(from, to, progress, reverse) {
+    const a = NODES[from], b = NODES[to];
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    const r = 42;
+    const sx = a.x + (dx/dist)*r, sy = a.y + (dy/dist)*r;
+    const ex = b.x - (dx/dist)*r, ey = b.y - (dy/dist)*r;
+    const px = sx + (ex-sx)*progress, py = sy + (ey-sy)*progress;
+    ctx.beginPath();
+    ctx.moveTo(sx, sy);
+    ctx.lineTo(px, py);
+    ctx.strokeStyle = reverse ? '#6ee7b7' : '#8ec5ff';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    if (progress > 0.95) {
+      const ang = Math.atan2(ey-sy, ex-sx);
+      ctx.beginPath();
+      ctx.moveTo(px, py);
+      ctx.lineTo(px - 10*Math.cos(ang-0.4), py - 10*Math.sin(ang-0.4));
+      ctx.lineTo(px - 10*Math.cos(ang+0.4), py - 10*Math.sin(ang+0.4));
+      ctx.closePath();
+      ctx.fillStyle = reverse ? '#6ee7b7' : '#8ec5ff';
+      ctx.fill();
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    const step = STEPS[currentStep];
+    const actSet = new Set(step.active);
+    ctx.fillStyle = 'rgba(255,255,255,.03)';
+    ctx.fillRect(20, H-50, W-40, 34);
+    ctx.font = '12px "Noto Sans KR", sans-serif';
+    ctx.fillStyle = '#a1a1aa';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(step.label, W/2, H-33);
+    for (let i = 0; i < NODES.length - 1; i++) {
+      const a = NODES[i], b = NODES[i+1];
+      ctx.beginPath();
+      ctx.moveTo(a.x + 42, a.y);
+      ctx.lineTo(b.x - 42, b.y);
+      ctx.strokeStyle = 'rgba(255,255,255,.06)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([]);
+      ctx.stroke();
+    }
+    const arrowProg = Math.min(animT / 60, 1);
+    step.arrows.forEach(([f, t]) => {
+      const isReverse = t < f;
+      drawArrow(isReverse ? t : f, isReverse ? f : t, arrowProg, isReverse);
+    });
+    NODES.forEach((n, i) => drawNode(n, actSet.has(i)));
+    STEPS.forEach((_, i) => {
+      ctx.beginPath();
+      ctx.arc(W/2 - (STEPS.length-1)*12 + i*24, 18, i === currentStep ? 6 : 4, 0, Math.PI*2);
+      ctx.fillStyle = i === currentStep ? '#8ec5ff' : '#333';
+      ctx.fill();
+    });
+    animT++;
+    requestAnimationFrame(draw);
+  }
+
+  window.setStep = function(i) {
+    currentStep = i;
+    animT = 0;
+    document.querySelectorAll('.step-card').forEach((el, j) => el.classList.toggle('active', j === i));
+  };
+
+  draw();
+
+  canvas.addEventListener('touchend', e => {
+    e.preventDefault();
+    const t = e.changedTouches[0];
+    const rect = canvas.getBoundingClientRect();
+    const cx = (t.clientX - rect.left) * (W / rect.width);
+    const cy = (t.clientY - rect.top) * (H / rect.height);
+    NODES.forEach((n, i) => {
+      if (Math.hypot(cx - n.x, cy - n.y) < 50) setStep(Math.min(i, STEPS.length-1));
+    });
+  });
+})();
+</script>
+</section>
+
+<!-- TAB 3: 언제 쓰나요? -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>MCP가 필요할 때</h4>
+      <ul>
+        <li>Claude에게 Blender를 자연어로 지시하고 싶을 때</li>
+        <li>반복적인 씬 세팅을 자동화하고 싶을 때</li>
+        <li>AI와 실시간으로 3D 작업을 협업하고 싶을 때</li>
+        <li>여러 앱(GitHub, Notion 등)을 Claude로 통합 관리할 때</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>없어도 되는 경우</h4>
+      <ul>
+        <li>Blender를 직접 수작업으로 조작할 때</li>
+        <li>Python 스크립트를 직접 실행할 줄 알 때</li>
+        <li>단순한 단발성 작업일 때</li>
+        <li>Claude Desktop이 설치되어 있지 않을 때</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="combo-section">
+    <h4>MCP 활용 예시</h4>
+    <div class="combo-grid">
+      <div class="combo-card">
+        <div class="combo-name">자동 씬 생성</div>
+        <div class="combo-desc">"로봇 3개를 삼각형으로 배치해줘" → Claude가 좌표 계산 + 오브젝트 배치</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">재질 자동화</div>
+        <div class="combo-desc">"모든 금속 파츠에 Metallic 1.0 적용해줘" → 씬 순회 + Material 일괄 설정</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">렌더 파이프라인</div>
+        <div class="combo-desc">"카메라 세팅하고 4K로 렌더해줘" → 카메라 설정 + 렌더 설정 + 실행</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">씬 분석</div>
+        <div class="combo-desc">"이 씬에 폴리곤이 몇 개야?" → 씬 데이터 읽어 통계 계산</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>핵심 포인트:</strong> MCP는 "AI가 앱을 직접 조작"하는 표준입니다. blender-mcp 서버만 설치하면 Claude가 Blender의 Python API를 대신 실행해줘요. 코딩을 몰라도 자연어로 복잡한 3D 작업을 자동화할 수 있어요.
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://modelcontextprotocol.io/introduction" target="_blank" rel="noopener">
+      📖 MCP 공식 문서 — Model Context Protocol
+    </a>
+  </div>
+</section>
+
+<!-- TAB 4: 퀴즈 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quiz-wrap"></div>
+</section>
+
+<script>
+/* ── Tab switching ── */
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const target = tab.dataset.tab;
+    document.querySelectorAll('.tab').forEach(t => {
+      t.classList.toggle('is-active', t.dataset.tab === target);
+      t.setAttribute('aria-selected', t.dataset.tab === target);
+    });
+    document.querySelectorAll('.panel').forEach(p => {
+      p.classList.toggle('is-active', p.id === 'panel-' + target);
+    });
+  });
+});
+
+/* ── Quiz ── */
+function initQuiz(questions) {
+  const wrap = document.getElementById('quiz-wrap');
+  let scores = new Array(questions.length).fill(null);
+
+  function render() {
+    wrap.innerHTML = '';
+    const prog = document.createElement('div');
+    prog.className = 'quiz-progress';
+    const done = scores.filter(s => s !== null).length;
+    prog.textContent = `진행도 ${done} / ${questions.length}`;
+    wrap.appendChild(prog);
+
+    questions.forEach((q, qi) => {
+      const qEl = document.createElement('div');
+      qEl.className = 'quiz-question';
+      const h4 = document.createElement('h4');
+      h4.textContent = `Q${qi+1}. ${q.question}`;
+      qEl.appendChild(h4);
+
+      q.options.forEach((opt, oi) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-option';
+        btn.textContent = opt;
+        if (scores[qi] !== null) {
+          btn.disabled = true;
+          if (oi === q.answer) btn.classList.add('correct');
+          else if (oi === scores[qi]) btn.classList.add('wrong');
+        }
+        btn.addEventListener('click', () => {
+          if (scores[qi] !== null) return;
+          scores[qi] = oi;
+          render();
+          checkDone();
+        });
+        qEl.appendChild(btn);
+      });
+
+      if (scores[qi] !== null) {
+        const fb = document.createElement('div');
+        fb.className = 'quiz-feedback show ' + (scores[qi] === q.answer ? 'correct-fb' : 'wrong-fb');
+        fb.textContent = (scores[qi] === q.answer ? '✓ ' : '✗ ') + q.explanation;
+        qEl.appendChild(fb);
+      }
+      wrap.appendChild(qEl);
+    });
+  }
+
+  function checkDone() {
+    if (scores.some(s => s === null)) return;
+    const score = scores.filter((s, i) => s === questions[i].answer).length;
+    const pass = score >= Math.ceil(questions.length * 0.75);
+    const scoreEl = document.createElement('div');
+    scoreEl.className = 'quiz-score';
+    scoreEl.style.color = pass ? 'var(--success-soft)' : 'var(--danger-soft)';
+    scoreEl.textContent = `${score} / ${questions.length} ${pass ? '— 통과! 🎉' : '— 다시 도전해봐요'}`;
+    wrap.appendChild(scoreEl);
+
+    const retry = document.createElement('button');
+    retry.className = 'quiz-retry';
+    retry.textContent = '다시 풀기';
+    retry.addEventListener('click', () => { scores = new Array(questions.length).fill(null); render(); });
+    wrap.appendChild(retry);
+
+    window.parent.postMessage({
+      type: 'showme-quiz-complete',
+      widgetId: new URLSearchParams(location.search).get('wid'),
+      score: score,
+      total: questions.length,
+      pass: pass
+    }, '*');
+  }
+
+  render();
+}
+
+initQuiz([
+  {
+    question: 'MCP의 풀네임은 무엇인가요?',
+    options: ['Model Connection Protocol', 'Model Context Protocol', 'Multi-Channel Protocol', 'Machine Control Protocol'],
+    answer: 1,
+    explanation: 'MCP는 Model Context Protocol의 약자로, Anthropic이 2024년에 공개한 AI 도구 연결 표준 프로토콜입니다.'
+  },
+  {
+    question: 'MCP에서 AI가 직접 실행하는 기능(함수)을 부르는 이름은?',
+    options: ['Resources', 'Prompts', 'Tools', 'Plugins'],
+    answer: 2,
+    explanation: 'Tools는 AI가 직접 호출·실행하는 기능입니다. Resources는 읽기 전용 데이터, Prompts는 미리 정의된 명령 템플릿입니다.'
+  },
+  {
+    question: 'blender-mcp를 사용할 때 Claude는 Blender의 무엇을 통해 씬을 조작하나요?',
+    options: ['GUI 마우스 클릭 시뮬레이션', 'Python API (bpy)', '터미널 셸 명령', 'Blender 단축키'],
+    answer: 1,
+    explanation: 'MCP 서버가 Blender의 Python API(bpy)를 내부적으로 호출합니다. Claude는 자연어로 요청하고, MCP 서버가 그것을 bpy 코드로 변환해 실행해요.'
+  },
+  {
+    question: 'MCP가 "USB 표준"과 닮은 이유는?',
+    options: ['빠른 데이터 전송 속도', '하나의 표준으로 여러 기기/앱에 연결 가능', '충전과 데이터 동시 지원', '무선 연결 지원'],
+    answer: 1,
+    explanation: 'USB처럼, MCP는 하나의 표준 프로토콜로 Claude가 Blender, GitHub, Notion 등 다양한 앱과 일관된 방식으로 연결될 수 있게 해줍니다.'
+  },
+  {
+    question: 'MCP 아키텍처에서 "Host"에 해당하는 것은?',
+    options: ['Blender', 'MCP 서버', 'Claude Desktop', 'Python API'],
+    answer: 2,
+    explanation: 'Host는 MCP 클라이언트를 포함하고 연결을 관리하는 최상위 앱입니다. Claude Desktop이 Host 역할을 합니다. MCP 서버는 개별 앱(Blender 등)과 연결됩니다.'
+  }
+]);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — Blender MCP 연결법</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --danger-soft:   #fca5a5;
+  --warn-soft:     #fbbf24;
+  --warn-medium:   #fcd34d;
+  --accent-soft:   #FFB347;
+  --secondary-soft:#a5b4fc;
+  --secondary-mid: #c4b5fd;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --muted-mid:     #94a3b8;
+  --muted-soft:    #cbd5e1;
+  --muted-dim:     #64748b;
+  --info-soft:     #67e8f9;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Tab Navigation ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active { color: var(--key-soft); border-bottom-color: var(--key); }
+
+/* ── Tab Panels ── */
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+
+/* ── Concept Cards ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card h3 { margin: 0 0 8px; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+.concept-card p { margin: 0; color: var(--muted-strong); font-size: .88rem; line-height: 1.7; }
+.concept-card ul { margin: 8px 0 0; padding-left: 16px; color: var(--muted-strong); font-size: .85rem; line-height: 1.8; }
+
+/* ── Badge ── */
+.badge { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: .72rem; font-weight: 600; }
+.badge-blue   { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green  { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber  { background: rgba(245,158,11,.15);  color: var(--warn-soft); }
+.badge-purple { background: rgba(165,132,255,.15); color: var(--secondary-mid); }
+
+/* ── Demo / Canvas ── */
+.demo-wrap {
+  border-radius: var(--radius-md); border: 1px solid var(--line);
+  background: var(--surface); overflow: hidden; margin: 14px 0;
+}
+.demo-wrap canvas { display: block; width: 100%; }
+.demo-hint { font-size: .78rem; color: var(--muted); text-align: center; padding: 6px 0 0; }
+.demo-btn {
+  padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04); color: var(--muted-strong);
+  font: inherit; font-size: .82rem; cursor: pointer;
+  transition: background .14s, color .14s;
+}
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active { background: rgba(10,132,255,.14); color: var(--key-soft); border-color: rgba(10,132,255,.3); }
+
+/* ── Usage Grid ── */
+.usage-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.usage-card { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); padding: 16px; }
+.usage-card h4 { margin: 0 0 8px; font-size: .92rem; color: var(--key-soft); }
+.usage-card ul { margin: 0; padding-left: 16px; color: var(--muted-strong); font-size: .85rem; line-height: 1.8; }
+
+/* ── Tip Box ── */
+.tip-box {
+  border-radius: var(--radius-md); border: 1px solid rgba(10,132,255,.2);
+  background: rgba(10,132,255,.06); padding: 14px 16px; margin-top: 14px;
+  font-size: .86rem; color: var(--muted-strong);
+}
+.tip-box strong { color: var(--key-soft); }
+.warn-box {
+  border-radius: var(--radius-md); border: 1px solid rgba(245,158,11,.25);
+  background: rgba(245,158,11,.06); padding: 14px 16px; margin-top: 14px;
+  font-size: .86rem; color: var(--muted-strong);
+}
+.warn-box strong { color: var(--warn-soft); }
+
+/* ── Analogy ── */
+.analogy {
+  margin-top: 8px; padding: 10px 14px; border-radius: var(--radius-sm);
+  background: rgba(245,158,11,.06); border: 1px solid rgba(245,158,11,.15);
+  font-size: .82rem; color: var(--warn-soft); font-style: italic;
+}
+
+/* ── Combo Section ── */
+.combo-section { margin-top: 18px; }
+.combo-section h4 { margin: 0 0 10px; font-size: .92rem; color: var(--text); }
+.combo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.combo-card { border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--surface); padding: 12px 14px; }
+.combo-card .combo-name { font-size: .86rem; font-weight: 600; color: var(--key-soft); margin-bottom: 4px; }
+.combo-card .combo-desc { font-size: .8rem; color: var(--muted); line-height: 1.5; }
+
+/* ── Quiz ── */
+.quiz-progress { font-size: .78rem; color: var(--muted); margin-bottom: 12px; }
+.quiz-question { margin-bottom: 20px; padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); }
+.quiz-question h4 { margin: 0 0 12px; font-size: .94rem; }
+.quiz-option {
+  display: block; width: 100%; padding: 10px 14px; margin-bottom: 6px;
+  border-radius: var(--radius-sm); border: 1px solid var(--line);
+  background: rgba(255,255,255,.025); color: var(--text);
+  font: inherit; font-size: .86rem; cursor: pointer; text-align: left;
+  transition: background .14s, border-color .14s;
+}
+.quiz-option:hover { background: rgba(255,255,255,.06); border-color: var(--line-strong); }
+.quiz-option.correct { background: rgba(16,185,129,.12); border-color: rgba(16,185,129,.4); color: var(--success-soft); }
+.quiz-option.wrong   { background: rgba(239,68,68,.1);  border-color: rgba(239,68,68,.3);  color: var(--danger-soft); }
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback { margin-top: 8px; padding: 10px 14px; border-radius: var(--radius-sm); font-size: .84rem; display: none; }
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: var(--danger-soft); }
+.quiz-score { text-align: center; padding: 20px; font-size: 1.1rem; font-weight: 600; }
+.quiz-retry {
+  display: block; margin: 12px auto; padding: 10px 24px; border-radius: 999px;
+  border: 1px solid var(--key); background: rgba(10,132,255,.12);
+  color: var(--key-soft); font: inherit; font-size: .88rem;
+  cursor: pointer; transition: background .14s;
+}
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+
+/* ── Doc Ref ── */
+.doc-ref {
+  margin-top: 16px; padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(10,132,255,.15);
+  background: rgba(10,132,255,.04);
+  display: flex; align-items: center; gap: 8px;
+}
+.doc-ref-list { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+.doc-ref a { color: var(--key-soft); font-size: .84rem; text-decoration: none; line-height: 1.5; }
+.doc-ref a:hover { text-decoration: underline; }
+
+/* ── Setup Steps ── */
+.setup-steps { display: flex; flex-direction: column; gap: 12px; margin-top: 4px; }
+.setup-step {
+  display: flex; gap: 14px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.step-num-badge {
+  flex-shrink: 0;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: rgba(10,132,255,.15);
+  border: 1px solid rgba(10,132,255,.3);
+  color: var(--key-soft);
+  font-size: .82rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.step-body h4 { margin: 0 0 4px; font-size: .9rem; }
+.step-body p { margin: 0; font-size: .83rem; color: var(--muted-strong); line-height: 1.6; }
+.code-block {
+  margin-top: 8px; padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: rgba(0,0,0,.4);
+  border: 1px solid var(--line-strong);
+  font-family: "SF Mono", "Fira Code", monospace;
+  font-size: .78rem;
+  color: var(--key-soft);
+  white-space: pre-wrap;
+  word-break: break-all;
+  line-height: 1.7;
+}
+.code-block .cm { color: var(--muted-dim); }
+.code-block .ck { color: var(--warn-soft); }
+.code-block .cv { color: var(--success-soft); }
+
+/* ── YouTube Cards ── */
+.yt-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 4px; }
+.yt-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+  text-decoration: none;
+  display: block;
+  transition: border-color .15s, background .15s;
+}
+.yt-card:hover { border-color: var(--key); background: rgba(10,132,255,.04); }
+.yt-thumb {
+  width: 100%; aspect-ratio: 16/9;
+  background: rgba(239,68,68,.08);
+  border-bottom: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.4rem;
+  position: relative;
+}
+.yt-thumb::after {
+  content: '▶';
+  position: absolute;
+  font-size: 1.4rem;
+  color: white;
+  background: rgba(239,68,68,.85);
+  width: 48px; height: 36px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  padding-left: 4px;
+}
+.yt-info { padding: 12px 14px; }
+.yt-title { font-size: .86rem; font-weight: 600; color: var(--text); margin-bottom: 4px; line-height: 1.4; }
+.yt-channel { font-size: .76rem; color: var(--muted); }
+.yt-tag {
+  display: inline-block; margin-top: 6px;
+  padding: 2px 8px; border-radius: 999px;
+  font-size: .7rem; font-weight: 600;
+  background: rgba(239,68,68,.12); color: #f87171;
+}
+
+/* ── Screenshot Mock ── */
+.screen-mock {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+  margin: 12px 0;
+}
+.screen-mock-header {
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-strong);
+  display: flex; align-items: center; gap: 8px;
+}
+.dot { width: 10px; height: 10px; border-radius: 50%; }
+.dot-r { background: #ef4444; } .dot-y { background: #f59e0b; } .dot-g { background: #10b981; }
+.screen-title { font-size: .76rem; color: var(--muted); margin-left: 4px; }
+.screen-body { padding: 14px 16px; font-family: "SF Mono","Fira Code",monospace; font-size: .78rem; color: var(--muted-strong); line-height: 1.9; }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid, .combo-grid, .yt-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+  .setup-step { flex-direction: column; gap: 8px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Tab Bar -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">interaction</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+</nav>
+
+<!-- TAB 1: 개념 이해 (설치 가이드) -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">필요한 것</span> 사전 준비물</h3>
+      <ul>
+        <li><strong>Claude Desktop</strong> — claude.ai/download에서 설치</li>
+        <li><strong>Blender 4.0+</strong> — blender.org에서 최신 버전</li>
+        <li><strong>Python 3.10+</strong> — MCP 서버 실행용</li>
+        <li><strong>uv</strong> — Python 패키지 실행 도구 (추천)</li>
+      </ul>
+      <div class="analogy">Claude Desktop = 지휘관, blender-mcp = 통역사, Blender = 실제 작업자. 세 가지가 다 있어야 해요</div>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-green">blender-mcp</span> 핵심 구성</h3>
+      <p>blender-mcp는 두 부분으로 이루어집니다:</p>
+      <ul>
+        <li><strong>Blender 애드온</strong> — Blender 내부에서 소켓 서버 실행 (포트 9876)</li>
+        <li><strong>MCP 서버</strong> — Claude와 Blender 소켓 사이를 연결하는 Python 프로세스</li>
+      </ul>
+      <p style="margin-top:8px;font-size:.83rem;color:var(--muted-strong)">Claude Desktop이 MCP 서버를 자동으로 시작하고, MCP 서버가 Blender와 통신해요.</p>
+    </div>
+  </div>
+
+  <div style="margin-top:18px;font-size:.92rem;font-weight:600;color:var(--text);margin-bottom:12px">
+    설치 단계 <span class="badge badge-amber">5단계</span>
+  </div>
+
+  <div class="setup-steps">
+    <div class="setup-step">
+      <div class="step-num-badge">1</div>
+      <div class="step-body">
+        <h4>blender-mcp 저장소 다운로드</h4>
+        <p>GitHub에서 blender-mcp를 클론하거나 ZIP으로 받아요.</p>
+        <div class="code-block"><span class="cm"># 터미널에서 실행</span>
+git clone https://github.com/ahuja312/blender-mcp.git
+cd blender-mcp</div>
+      </div>
+    </div>
+
+    <div class="setup-step">
+      <div class="step-num-badge">2</div>
+      <div class="step-body">
+        <h4>Blender 애드온 설치</h4>
+        <p>Blender → Edit → Preferences → Add-ons → Install… 에서 <code style="background:rgba(255,255,255,.08);padding:1px 5px;border-radius:4px;font-size:.8rem">addon.py</code> 파일을 선택하고 활성화해요.</p>
+        <div class="code-block"><span class="cm"># 애드온 파일 경로</span>
+blender-mcp/addon.py</div>
+      </div>
+    </div>
+
+    <div class="setup-step">
+      <div class="step-num-badge">3</div>
+      <div class="step-body">
+        <h4>Blender 소켓 서버 시작</h4>
+        <p>Blender 사이드바(N키) → MCP 탭 → <strong>Start MCP Server</strong> 클릭. 포트 9876에서 수신 대기를 시작해요.</p>
+        <p style="font-size:.79rem;color:var(--muted);margin-top:4px">또는 View3D 상단 메뉴 → MCP → Start Server</p>
+      </div>
+    </div>
+
+    <div class="setup-step">
+      <div class="step-num-badge">4</div>
+      <div class="step-body">
+        <h4>Claude Desktop 설정 파일 수정</h4>
+        <p>Claude Desktop의 <code style="background:rgba(255,255,255,.08);padding:1px 5px;border-radius:4px;font-size:.8rem">claude_desktop_config.json</code>에 MCP 서버를 등록해요.</p>
+        <div class="code-block"><span class="cm">// macOS: ~/Library/Application Support/Claude/claude_desktop_config.json
+// Windows: %APPDATA%\Claude\claude_desktop_config.json</span>
+
+{
+  <span class="ck">"mcpServers"</span>: {
+    <span class="ck">"blender"</span>: {
+      <span class="ck">"command"</span>: <span class="cv">"uvx"</span>,
+      <span class="ck">"args"</span>: [<span class="cv">"blender-mcp"</span>]
+    }
+  }
+}</div>
+      </div>
+    </div>
+
+    <div class="setup-step">
+      <div class="step-num-badge">5</div>
+      <div class="step-body">
+        <h4>Claude Desktop 재시작 → 연결 확인</h4>
+        <p>Claude Desktop을 완전히 종료 후 재시작해요. 대화창에 🔌 아이콘이 보이면 MCP 연결 성공! 이제 "큐브 만들어줘" 같은 명령을 해보세요.</p>
+        <div class="tip-box" style="margin-top:8px">
+          <strong>확인 방법:</strong> Claude 채팅창에서 <em>"Blender에 현재 씬에 오브젝트가 몇 개야?"</em> 라고 물어보세요. 답변이 나오면 연결 완료!
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-ref-list">
+    <div class="doc-ref">
+      <a href="https://github.com/ahuja312/blender-mcp" target="_blank" rel="noopener">
+        🔗 blender-mcp GitHub — 소스코드 & 설치 가이드
+      </a>
+    </div>
+    <div class="doc-ref">
+      <a href="https://modelcontextprotocol.io/quickstart/user" target="_blank" rel="noopener">
+        📖 MCP 공식 문서 — Claude Desktop 연결 가이드
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- TAB 2: interaction (연결 다이어그램 + 사용 예시) -->
+<section class="panel" id="panel-visual" role="tabpanel">
+<style>
+.conn-diagram {
+  border-radius: var(--radius-md); border: 1px solid var(--line);
+  background: var(--surface); padding: 20px; margin-bottom: 14px;
+}
+.conn-row { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; }
+.conn-block {
+  padding: 12px 18px; border-radius: var(--radius-md);
+  text-align: center; min-width: 110px;
+}
+.conn-block.user  { background: rgba(165,132,255,.12); border: 1px solid rgba(165,132,255,.25); }
+.conn-block.claude{ background: rgba(165,132,255,.18); border: 1px solid rgba(165,132,255,.4); }
+.conn-block.mcp   { background: rgba(10,132,255,.14);  border: 1px solid rgba(10,132,255,.3); }
+.conn-block.blender{background: rgba(245,158,11,.12);  border: 1px solid rgba(245,158,11,.3); }
+.conn-block-icon { font-size: 1.5rem; margin-bottom: 4px; }
+.conn-block-name { font-size: .82rem; font-weight: 700; }
+.conn-block-sub  { font-size: .72rem; color: var(--muted); margin-top: 2px; }
+.conn-arrow {
+  display: flex; flex-direction: column; align-items: center;
+  color: var(--muted-dim); font-size: .72rem; gap: 2px;
+}
+.conn-arrow-line { font-size: 1.2rem; line-height: 1; }
+
+.prompt-examples { display: flex; flex-direction: column; gap: 8px; }
+.prompt-row {
+  display: flex; gap: 10px; align-items: flex-start;
+  padding: 12px 14px; border-radius: var(--radius-md);
+  border: 1px solid var(--line); background: var(--surface);
+}
+.prompt-tag {
+  flex-shrink: 0; padding: 2px 8px; border-radius: 999px;
+  font-size: .7rem; font-weight: 700;
+  background: rgba(10,132,255,.14); color: var(--key-soft);
+  margin-top: 2px;
+}
+.prompt-text { font-size: .85rem; color: var(--muted-strong); line-height: 1.5; }
+.prompt-result { font-size: .76rem; color: var(--success-soft); margin-top: 4px; }
+</style>
+
+  <div class="conn-diagram">
+    <div style="font-size:.84rem;font-weight:600;color:var(--text);margin-bottom:14px;text-align:center">연결 구조</div>
+    <div class="conn-row">
+      <div class="conn-block user">
+        <div class="conn-block-icon">🧑</div>
+        <div class="conn-block-name" style="color:var(--secondary-mid)">사용자</div>
+        <div class="conn-block-sub">자연어 입력</div>
+      </div>
+      <div class="conn-arrow">
+        <div class="conn-arrow-line">→</div>
+        <div>채팅</div>
+      </div>
+      <div class="conn-block claude">
+        <div class="conn-block-icon">🤖</div>
+        <div class="conn-block-name" style="color:var(--secondary-mid)">Claude Desktop</div>
+        <div class="conn-block-sub">AI 분석 + Tool 호출</div>
+      </div>
+      <div class="conn-arrow">
+        <div class="conn-arrow-line">⟷</div>
+        <div>JSON-RPC</div>
+      </div>
+      <div class="conn-block mcp">
+        <div class="conn-block-icon">🔌</div>
+        <div class="conn-block-name" style="color:var(--key-soft)">blender-mcp</div>
+        <div class="conn-block-sub">MCP Server (Python)</div>
+      </div>
+      <div class="conn-arrow">
+        <div class="conn-arrow-line">⟷</div>
+        <div>TCP 9876</div>
+      </div>
+      <div class="conn-block blender">
+        <div class="conn-block-icon">🎨</div>
+        <div class="conn-block-name" style="color:var(--warn-soft)">Blender</div>
+        <div class="conn-block-sub">Python API (bpy)</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="font-size:.88rem;font-weight:600;color:var(--text);margin-bottom:10px">실전 프롬프트 예시</div>
+  <div class="prompt-examples">
+    <div class="prompt-row">
+      <div class="prompt-tag">씬 생성</div>
+      <div>
+        <div class="prompt-text">"씬 중앙에 큐브, 구, 원통을 각각 X축으로 2m 간격으로 배치해줘"</div>
+        <div class="prompt-result">→ create_object 3회 호출, 각 좌표 자동 계산 후 배치</div>
+      </div>
+    </div>
+    <div class="prompt-row">
+      <div class="prompt-tag">재질 적용</div>
+      <div>
+        <div class="prompt-text">"선택된 오브젝트에 Metallic 1.0, Roughness 0.1인 금속 재질 적용해줘"</div>
+        <div class="prompt-result">→ set_material_properties 호출, Principled BSDF 파라미터 자동 설정</div>
+      </div>
+    </div>
+    <div class="prompt-row">
+      <div class="prompt-tag">씬 분석</div>
+      <div>
+        <div class="prompt-text">"현재 씬에 있는 오브젝트 목록과 각각의 폴리곤 수를 알려줘"</div>
+        <div class="prompt-result">→ get_scene_info 호출, 씬 데이터 읽어 텍스트로 요약</div>
+      </div>
+    </div>
+    <div class="prompt-row">
+      <div class="prompt-tag">Python 실행</div>
+      <div>
+        <div class="prompt-text">"모든 메시 오브젝트의 이름 앞에 'ROBOT_' 접두사를 붙여줘"</div>
+        <div class="prompt-result">→ execute_blender_code로 Python 루프 직접 실행</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="demo-hint" style="margin-top:10px">Blender에서 MCP 서버를 먼저 켜야 Claude와 연결돼요</p>
+</section>
+
+<!-- TAB 3: 언제 쓰나요? (YouTube 큐레이션 포함) -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>이럴 때 쓰세요</h4>
+      <ul>
+        <li>반복 배치·네이밍을 자동화하고 싶을 때</li>
+        <li>Python 스크립트 없이 복잡한 작업을 할 때</li>
+        <li>씬 정보를 빠르게 파악하고 싶을 때</li>
+        <li>AI와 실시간으로 아이디어를 탐색할 때</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>주의사항</h4>
+      <ul>
+        <li>Blender MCP 서버 먼저 켜기 (N → MCP → Start)</li>
+        <li>Claude Desktop 재시작 후 연결 확인</li>
+        <li>작업 전 .blend 파일 저장 권장</li>
+        <li>복잡한 작업은 단계별로 나눠서 요청</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="warn-box">
+    <strong>⚠️ 주의:</strong> MCP로 실행한 명령은 Undo(Ctrl+Z)가 적용 안 될 수 있어요. 중요한 작업 전에 파일을 저장해두세요.
+  </div>
+
+  <div style="margin-top:20px;font-size:.92rem;font-weight:600;color:var(--text);margin-bottom:12px">
+    📺 예제 영상 큐레이션
+  </div>
+
+  <div class="yt-grid">
+    <a class="yt-card" href="https://www.youtube.com/results?search_query=blender+mcp+claude+ai" target="_blank" rel="noopener">
+      <div class="yt-thumb">🎨</div>
+      <div class="yt-info">
+        <div class="yt-title">Controlling Blender with Claude AI via MCP</div>
+        <div class="yt-channel">YouTube 검색: "blender mcp claude"</div>
+        <div class="yt-tag">데모</div>
+      </div>
+    </a>
+    <a class="yt-card" href="https://www.youtube.com/results?search_query=blender+mcp+setup+tutorial" target="_blank" rel="noopener">
+      <div class="yt-thumb">🔧</div>
+      <div class="yt-info">
+        <div class="yt-title">Blender MCP 설치 튜토리얼</div>
+        <div class="yt-channel">YouTube 검색: "blender mcp setup tutorial"</div>
+        <div class="yt-tag">설치 가이드</div>
+      </div>
+    </a>
+    <a class="yt-card" href="https://www.youtube.com/results?search_query=model+context+protocol+blender+3d" target="_blank" rel="noopener">
+      <div class="yt-thumb">🤖</div>
+      <div class="yt-info">
+        <div class="yt-title">AI로 3D 모델 만들기 — MCP + Blender</div>
+        <div class="yt-channel">YouTube 검색: "MCP blender 3D AI workflow"</div>
+        <div class="yt-tag">워크플로우</div>
+      </div>
+    </a>
+  </div>
+
+  <div class="screen-mock" style="margin-top:18px">
+    <div class="screen-mock-header">
+      <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+      <div class="screen-title">Claude Desktop — MCP 연결 확인 화면</div>
+    </div>
+    <div class="screen-body">
+<span style="color:var(--muted-dim)">🔌 MCP Server: blender (connected)</span>
+
+<span style="color:var(--secondary-mid)">You:</span> 큐브를 씬 원점에 추가해줘
+
+<span style="color:var(--key-soft)">Claude:</span> Blender MCP를 통해 큐브를 추가하겠습니다.
+
+<span style="color:var(--success-soft)">  ✓ create_object({type: "MESH", mesh_type: "Cube"})
+  → Object "Cube" created at (0, 0, 0)</span>
+
+씬 원점 (0, 0, 0)에 큐브를 추가했습니다.
+Blender 뷰포트를 확인해 보세요!
+    </div>
+  </div>
+
+  <div class="doc-ref-list" style="margin-top: 12px;">
+    <div class="doc-ref">
+      <a href="https://github.com/ahuja312/blender-mcp" target="_blank" rel="noopener">
+        🔗 blender-mcp GitHub 저장소 — Issues & Wiki 포함
+      </a>
+    </div>
+    <div class="doc-ref">
+      <a href="https://modelcontextprotocol.io/introduction" target="_blank" rel="noopener">
+        📖 MCP 공식 문서 — Model Context Protocol 소개
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- TAB 4: 퀴즈 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quiz-wrap"></div>
+</section>
+
+<script>
+/* ── Tab switching ── */
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const target = tab.dataset.tab;
+    document.querySelectorAll('.tab').forEach(t => {
+      t.classList.toggle('is-active', t.dataset.tab === target);
+      t.setAttribute('aria-selected', t.dataset.tab === target);
+    });
+    document.querySelectorAll('.panel').forEach(p => {
+      p.classList.toggle('is-active', p.id === 'panel-' + target);
+    });
+  });
+});
+
+/* ── Quiz ── */
+function initQuiz(questions) {
+  const wrap = document.getElementById('quiz-wrap');
+  let scores = new Array(questions.length).fill(null);
+
+  function render() {
+    wrap.innerHTML = '';
+    const prog = document.createElement('div');
+    prog.className = 'quiz-progress';
+    prog.textContent = `진행도 ${scores.filter(s=>s!==null).length} / ${questions.length}`;
+    wrap.appendChild(prog);
+
+    questions.forEach((q, qi) => {
+      const qEl = document.createElement('div');
+      qEl.className = 'quiz-question';
+      const h4 = document.createElement('h4');
+      h4.textContent = `Q${qi+1}. ${q.question}`;
+      qEl.appendChild(h4);
+
+      q.options.forEach((opt, oi) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-option';
+        btn.textContent = opt;
+        if (scores[qi] !== null) {
+          btn.disabled = true;
+          if (oi === q.answer) btn.classList.add('correct');
+          else if (oi === scores[qi]) btn.classList.add('wrong');
+        }
+        btn.addEventListener('click', () => {
+          if (scores[qi] !== null) return;
+          scores[qi] = oi; render(); checkDone();
+        });
+        qEl.appendChild(btn);
+      });
+
+      if (scores[qi] !== null) {
+        const fb = document.createElement('div');
+        fb.className = 'quiz-feedback show ' + (scores[qi] === q.answer ? 'correct-fb' : 'wrong-fb');
+        fb.textContent = (scores[qi] === q.answer ? '✓ ' : '✗ ') + q.explanation;
+        qEl.appendChild(fb);
+      }
+      wrap.appendChild(qEl);
+    });
+  }
+
+  function checkDone() {
+    if (scores.some(s => s === null)) return;
+    const score = scores.filter((s,i) => s === questions[i].answer).length;
+    const pass = score >= Math.ceil(questions.length * 0.75);
+    const scoreEl = document.createElement('div');
+    scoreEl.className = 'quiz-score';
+    scoreEl.style.color = pass ? 'var(--success-soft)' : 'var(--danger-soft)';
+    scoreEl.textContent = `${score} / ${questions.length} ${pass ? '— 통과! 🎉' : '— 다시 도전해봐요'}`;
+    wrap.appendChild(scoreEl);
+
+    const retry = document.createElement('button');
+    retry.className = 'quiz-retry';
+    retry.textContent = '다시 풀기';
+    retry.addEventListener('click', () => { scores = new Array(questions.length).fill(null); render(); });
+    wrap.appendChild(retry);
+
+    window.parent.postMessage({
+      type: 'showme-quiz-complete',
+      widgetId: new URLSearchParams(location.search).get('wid'),
+      score, total: questions.length, pass
+    }, '*');
+  }
+
+  render();
+}
+
+initQuiz([
+  {
+    question: 'Blender에서 MCP 서버를 시작하려면 어디서 클릭해야 하나요?',
+    options: ['Properties 패널 → Scene', 'N키 사이드바 → MCP 탭 → Start MCP Server', 'Edit → Preferences → Add-ons', 'Render → Render Image'],
+    answer: 1,
+    explanation: 'N키로 사이드바를 열고 MCP 탭에서 Start MCP Server를 클릭해요. 포트 9876에서 수신 대기를 시작합니다.'
+  },
+  {
+    question: 'blender-mcp 설치 시 claude_desktop_config.json에 등록해야 하는 것은?',
+    options: ['API 키', 'Blender 파일 경로', 'mcpServers 섹션에 blender 서버 정보', 'Python 경로'],
+    answer: 2,
+    explanation: 'Claude Desktop의 설정 파일에 mcpServers 섹션을 추가하고, command와 args로 MCP 서버 실행 방법을 지정해야 해요.'
+  },
+  {
+    question: 'blender-mcp가 Blender와 통신할 때 사용하는 기본 포트 번호는?',
+    options: ['3000', '8080', '9876', '4444'],
+    answer: 2,
+    explanation: 'blender-mcp는 Blender 애드온과 TCP 포트 9876을 통해 통신합니다. 충돌 시 설정에서 변경 가능해요.'
+  },
+  {
+    question: 'MCP를 통해 Claude가 Blender 씬을 수정할 때 내부적으로 사용하는 것은?',
+    options: ['마우스 GUI 클릭 시뮬레이션', 'Blender Python API (bpy)', 'Blender 단축키 입력', 'Blender 쉘 커맨드'],
+    answer: 1,
+    explanation: 'MCP 서버가 Blender Python API(bpy)를 호출합니다. execute_blender_code 도구로 임의의 Python 코드도 실행할 수 있어요.'
+  },
+  {
+    question: 'Claude Desktop에서 MCP 연결이 성공했음을 확인하는 방법은?',
+    options: ['터미널에 "Connected" 출력', '채팅창에 🔌 아이콘 표시 + Blender 씬 정보 조회 성공', 'Blender 콘솔에 로그 출력', 'Python 파일 실행 후 종료'],
+    answer: 1,
+    explanation: 'Claude Desktop 대화창에 MCP 연결 아이콘이 표시되고, "씬에 오브젝트 몇 개야?" 같은 질문에 정확히 답변하면 연결이 성공한 것입니다.'
+  }
+]);
+</script>
+
+</body>
+</html>
