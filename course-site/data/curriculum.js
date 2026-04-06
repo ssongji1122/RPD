@@ -2246,6 +2246,37 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week06/shading-modes.png"
+      },
+      {
+        "title": "Claude MCP로 Blender 조작하기",
+        "copy": "MCP(Model Context Protocol)는 Claude가 Blender를 직접 조작할 수 있게 해주는 표준 프로토콜이에요. blender-mcp 애드온만 설치하면 '큐브 만들어줘', '금속 재질 적용해줘' 같은 자연어 명령으로 3D 작업을 자동화할 수 있어요.\n\n오늘 배운 Material 시스템을 Claude에게 지시해 자동 적용해보면, AI 협업 워크플로우의 가능성을 체험할 수 있어요.",
+        "goal": [
+          "MCP가 무엇인지 개념을 이해한다",
+          "blender-mcp 연결 구조를 파악한다"
+        ],
+        "done": [
+          "MCP의 역할(Host ↔ Server ↔ Tool 구조)을 설명할 수 있다",
+          "blender-mcp 설치 5단계를 순서대로 말할 수 있다"
+        ],
+        "tasks": [
+          {
+            "id": "w6-mcp1",
+            "label": "MCP 개념 카드 학습 — Tools/Resources/Prompts 3가지 구분",
+            "detail": "MCP는 AI가 앱을 직접 조작하는 표준. USB처럼 한 번 만들면 어느 AI든 연결 가능"
+          },
+          {
+            "id": "w6-mcp2",
+            "label": "blender-mcp 설치 가이드 읽기",
+            "detail": "Claude Desktop + blender-mcp 애드온 + claude_desktop_config.json 설정 3가지 필요",
+            "url": "https://github.com/ahuja312/blender-mcp"
+          },
+          {
+            "id": "w6-mcp3",
+            "label": "(선택) blender-mcp 직접 설치 후 '큐브 만들어줘' 테스트",
+            "detail": "N키 → MCP 탭 → Start Server → Claude Desktop에서 테스트"
+          }
+        ],
+        "showme": ["mcp-concept", "blender-mcp"]
       }
     ],
     "shortcuts": [
