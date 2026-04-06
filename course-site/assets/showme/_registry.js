@@ -71,6 +71,7 @@ const SHOWME_REGISTRY = {
   "material-basics":        { label: "Material 시스템 기초",     icon: "🎨", week: 6 },
   "principled-bsdf":        { label: "Principled BSDF 이해",    icon: "🎭", week: 6 },
   "shader-editor":          { label: "Shader Editor 이해",      icon: "🔌", week: 6 },
+  "texture-nodes":          { label: "Texture Nodes 이해",      icon: "🧩", week: 6 },
 
   // ── Week 7: UV ──
   "uv-unwrapping":          { label: "UV Unwrapping 이해",      icon: "📐", week: 7 },
