@@ -277,39 +277,22 @@
 /* Rail spacer & toggle */
 .rail-spacer { flex: 1; }
 .rail-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  height: 36px;
-  padding: 0 12px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--line);
+  border: 1px solid transparent;
   background: transparent;
   color: var(--muted);
-  font-size: .82rem;
   cursor: pointer;
-  transition: color .14s, background .14s;
+  transition: color .14s, background .14s, border-color .14s;
   flex-shrink: 0;
 }
 .rail-toggle:hover {
   color: var(--text);
-  background: var(--overlay-white);
-}
-.rail-toggle .rail-text {
-  opacity: 0;
-  transition: opacity .15s;
-  font-size: .76rem;
-  font-weight: var(--fw-medium);
-}
-.rail.is-expanded .rail-toggle .rail-text {
-  opacity: 1;
-}
-.rail-toggle-arrow {
-  transition: transform .2s;
-}
-.rail.is-expanded .rail-toggle-arrow {
-  transform: rotate(180deg);
+  background: var(--overlay-white-hover);
+  border-color: var(--line);
 }
 
 /* ── Rail context sections ── */
