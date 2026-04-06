@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — Procedural vs Image Texture</title>
+<style>
+:root {
+  --bg:#0a0a0a;--bg-soft:#111214;--surface:#17181a;--surface-strong:#1c1d20;
+  --line:rgba(255,255,255,.08);--line-strong:rgba(255,255,255,.14);
+  --key:#0a84ff;--key-strong:#0071e3;--key-soft:#8ec5ff;
+  --success:#10b981;--success-soft:#6ee7b7;
+  --warn:#f59e0b;--warn-soft:#fbbf24;
+  --danger:#ef4444;--danger-soft:#fca5a5;
+  --text:#f5f5f7;--muted:#a1a1aa;--muted-strong:#d4d4d8;--muted-mid:#94a3b8;
+  --muted-soft:#cbd5e1;--muted-dim:#64748b;--info-soft:#67e8f9;
+  --radius-sm:12px;--radius-md:18px;--radius-lg:24px;
+  --font:"Noto Sans KR",-apple-system,BlinkMacSystemFont,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;padding:0;font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--line);padding:0 16px;background:var(--bg-soft);overflow-x:auto}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:12px 16px;font-size:.84rem;font-weight:500;color:var(--muted);cursor:pointer;border:none;border-bottom:2px solid transparent;white-space:nowrap;transition:color .14s,border-color .14s;background:none;font-family:inherit}
+.tab:hover{color:var(--muted-strong)}
+.tab.is-active{color:var(--key-soft);border-bottom-color:var(--key)}
+.panel{display:none;padding:20px 16px}.panel.is-active{display:block}
+.concept-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.concept-card{border-radius:var(--radius-md);border:1px solid var(--line);background:var(--surface);padding:18px}
+.concept-card h3{margin:0 0 8px;font-size:1rem;display:flex;align-items:center;gap:8px}
+.concept-card p{margin:0;color:var(--muted-strong);font-size:.88rem;line-height:1.7}
+.concept-card ul{margin:8px 0 0;padding-left:16px;color:var(--muted-strong);font-size:.85rem;line-height:1.8}
+.badge{display:inline-block;padding:3px 9px;border-radius:999px;font-size:.72rem;font-weight:600}
+.badge-blue{background:rgba(10,132,255,.15);color:var(--key-soft)}
+.badge-green{background:rgba(16,185,129,.15);color:var(--success-soft)}
+.badge-amber{background:rgba(245,158,11,.15);color:var(--warn-soft)}
+.badge-purple{background:rgba(165,180,252,.15);color:var(--secondary-soft)}
+.analogy{margin-top:8px;padding:10px 14px;border-radius:var(--radius-sm);background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.15);font-size:.82rem;color:var(--warn-soft);font-style:italic}
+
+.compare-table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.85rem}
+.compare-table th,.compare-table td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--line)}
+.compare-table th{background:var(--surface-strong);color:var(--text);font-weight:600;font-size:.82rem}
+.compare-table td{color:var(--muted-strong)}
+.compare-table tr:last-child td{border-bottom:none}
+.compare-table .col-proc{border-right:1px solid var(--line)}
+.compare-table .label-col{width:120px;font-weight:600;color:var(--muted-mid)}
+.tag-proc{display:inline-block;padding:2px 8px;border-radius:999px;font-size:.72rem;font-weight:600;background:rgba(16,185,129,.15);color:var(--success-soft)}
+.tag-img{display:inline-block;padding:2px 8px;border-radius:999px;font-size:.72rem;font-weight:600;background:rgba(10,132,255,.15);color:var(--key-soft)}
+
+.demo-wrap{border-radius:var(--radius-md);border:1px solid var(--line);background:var(--surface);overflow:hidden;margin:14px 0}
+.demo-wrap canvas{display:block;width:100%}
+.demo-controls{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line);flex-wrap:wrap;align-items:center}
+.demo-hint{font-size:.78rem;color:var(--muted);text-align:center;padding:6px 0 0}
+.demo-btn{padding:7px 14px;border-radius:999px;border:1px solid var(--line-strong);background:rgba(255,255,255,.04);color:var(--muted-strong);font:inherit;font-size:.82rem;cursor:pointer;transition:background .14s,color .14s}
+.demo-btn:hover{background:rgba(255,255,255,.09);color:var(--text)}
+.demo-btn.is-active{background:rgba(10,132,255,.14);color:var(--key-soft);border-color:rgba(10,132,255,.3)}
+
+.usage-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.usage-card{border-radius:var(--radius-md);border:1px solid var(--line);background:var(--surface);padding:16px}
+.usage-card h4{margin:0 0 8px;font-size:.92rem;color:var(--key-soft)}
+.usage-card ul{margin:0;padding-left:16px;color:var(--muted-strong);font-size:.85rem;line-height:1.8}
+.tip-box{border-radius:var(--radius-md);border:1px solid rgba(10,132,255,.2);background:rgba(10,132,255,.06);padding:14px 16px;margin-top:14px;font-size:.86rem;color:var(--muted-strong)}
+.tip-box strong{color:var(--key-soft)}
+.doc-ref{margin-top:16px;padding:10px 14px;border-radius:var(--radius-sm);border:1px solid rgba(10,132,255,.15);background:rgba(10,132,255,.04);display:flex;align-items:center;gap:8px}
+.doc-ref a{color:var(--key-soft);font-size:.84rem;text-decoration:none;line-height:1.5}
+.doc-ref a:hover{text-decoration:underline}
+
+.quiz-question{margin-bottom:20px;padding:16px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--surface)}
+.quiz-question h4{margin:0 0 12px;font-size:.94rem}
+.quiz-option{display:block;width:100%;padding:10px 14px;margin-bottom:6px;border-radius:var(--radius-sm);border:1px solid var(--line);background:rgba(255,255,255,.025);color:var(--text);font:inherit;font-size:.86rem;cursor:pointer;text-align:left;transition:background .14s,border-color .14s}
+.quiz-option:hover{background:rgba(255,255,255,.06);border-color:var(--line-strong)}
+.quiz-option.correct{background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.4);color:var(--success-soft)}
+.quiz-option.wrong{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.3);color:var(--danger-soft)}
+.quiz-option:disabled{cursor:default;opacity:.85}
+.quiz-feedback{margin-top:8px;padding:10px 14px;border-radius:var(--radius-sm);font-size:.84rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.correct-fb{background:rgba(16,185,129,.08);color:var(--success-soft)}
+.quiz-feedback.wrong-fb{background:rgba(239,68,68,.06);color:var(--danger-soft)}
+@media(max-width:600px){.concept-grid,.usage-grid{grid-template-columns:1fr}.tabs{padding:0 8px}.tab{padding:10px 12px;font-size:.8rem}.panel{padding:16px 12px}.compare-table{font-size:.78rem}.compare-table th,.compare-table td{padding:8px 10px}}
+</style>
+</head>
+<body>
+
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false">비교 표</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false">언제 뭘 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false">퀴즈</button>
+</nav>
+
+<!-- TAB 1: 개념 이해 -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3><span class="tag-proc">Procedural</span> 절차적 텍스처</h3>
+      <p><strong>수식(알고리즘)으로 만드는</strong> 텍스처. Noise, Voronoi, Musgrave 등이 있어요. 이미지 파일이 필요 없고, 해상도 제한이 없습니다.</p>
+      <ul>
+        <li>장점: 무한 해상도, 파일 용량 0, 파라미터 변경만으로 무한 변형</li>
+        <li>한계: 구체적 디테일(글자, 로고) 표현 어려움</li>
+      </ul>
+      <div class="analogy">만화경을 생각해보세요 — 규칙에 따라 자동으로 패턴이 생기지만, "정확히 이 그림"을 보여줄 수는 없어요</div>
+    </div>
+    <div class="concept-card">
+      <h3><span class="tag-img">Image</span> 이미지 텍스처</h3>
+      <p><strong>사진/그림 파일을 불러와서</strong> 표면에 입히는 텍스처. 벽돌, 나무결, 녹, 페인트 벗겨짐 등 구체적 재질 표현에 강합니다.</p>
+      <ul>
+        <li>장점: 정확한 디테일 표현, PBR 맵 세트 활용 가능</li>
+        <li>한계: 해상도 고정, 파일 용량, <strong>UV 매핑 필요</strong> (Week 7)</li>
+      </ul>
+      <div class="analogy">벽지를 붙이는 것과 같아요 — 원하는 그림을 정확히 입힐 수 있지만, 크기와 위치를 맞춰야 해요 (그게 UV!)</div>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>핵심:</strong> 둘 다 쓰는 게 정답! Procedural로 자연스러운 바탕을 깔고, Image Texture로 구체적 디테일을 입히는 조합이 프로 워크플로우입니다.
+  </div>
+
+  <div class="doc-ref">
+    <span>📖</span>
+    <a href="https://docs.blender.org/manual/en/latest/render/shader_nodes/textures/index.html" target="_blank" rel="noopener">Blender Manual — Texture Nodes</a>
+  </div>
+</section>
+
+<!-- TAB 2: 비교 표 -->
+<section class="panel" id="panel-visual" role="tabpanel">
+  <h3 style="margin:0 0 14px;font-size:1rem;">한눈에 비교</h3>
+  <table class="compare-table" style="border-radius:var(--radius-md);overflow:hidden;border:1px solid var(--line)">
+    <thead>
+      <tr>
+        <th class="label-col">항목</th>
+        <th class="col-proc"><span class="tag-proc">Procedural</span></th>
+        <th><span class="tag-img">Image</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="label-col">생성 방식</td><td class="col-proc">수식 (알고리즘)</td><td>이미지 파일 (.png, .jpg 등)</td></tr>
+      <tr><td class="label-col">해상도</td><td class="col-proc">무한 (확대해도 선명)</td><td>파일 해상도에 고정</td></tr>
+      <tr><td class="label-col">파일 용량</td><td class="col-proc">0 (수식이므로)</td><td>이미지 크기만큼 (수 MB~)</td></tr>
+      <tr><td class="label-col">UV 필요</td><td class="col-proc">불필요 (3D 좌표 사용)</td><td>필요 (Week 7에서 학습)</td></tr>
+      <tr><td class="label-col">디테일 표현</td><td class="col-proc">추상적 패턴 (노이즈, 줄무늬)</td><td>구체적 디테일 (벽돌, 녹, 로고)</td></tr>
+      <tr><td class="label-col">변형 용이성</td><td class="col-proc">파라미터만 조절</td><td>새 이미지 필요</td></tr>
+      <tr><td class="label-col">대표 노드</td><td class="col-proc">Noise, Voronoi, Wave, Musgrave</td><td>Image Texture</td></tr>
+      <tr><td class="label-col">활용 예시</td><td class="col-proc">대리석, 구름, 녹슨 금속 얼룩</td><td>벽돌벽, 나무 판자, AI PBR 맵</td></tr>
+    </tbody>
+  </table>
+
+  <div class="demo-wrap">
+    <canvas id="compareCanvas" width="800" height="200"></canvas>
+    <div class="demo-controls">
+      <button class="demo-btn is-active" id="btnProc">Procedural (Noise)</button>
+      <button class="demo-btn" id="btnImg">Image (시뮬레이션)</button>
+      <button class="demo-btn" id="btnBoth">둘 다 합성</button>
+    </div>
+    <p class="demo-hint">각 버튼을 눌러 Procedural과 Image Texture의 차이를 확인하세요</p>
+  </div>
+</section>
+
+<!-- TAB 3: 언제 뭘 쓰나요? -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>🎲 Procedural을 쓸 때</h4>
+      <ul>
+        <li>추상적/유기적 패턴 (대리석, 구름, 물결)</li>
+        <li>Roughness/Bump 같은 보조 맵</li>
+        <li>파일 용량을 줄여야 할 때</li>
+        <li>빠른 프로토타이핑</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>🖼️ Image를 쓸 때</h4>
+      <ul>
+        <li>구체적 디테일 (벽돌, 타일, 나무 판자)</li>
+        <li>PBR 맵 세트 (Poly, Poly Haven 등에서 다운)</li>
+        <li>사실적 재질이 필요할 때</li>
+        <li>로고, 텍스트 등 정확한 이미지가 필요할 때</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>🔀 섞어 쓸 때 (프로 팁)</h4>
+      <ul>
+        <li>Image Texture로 기본 재질 + Noise로 얼룩 추가</li>
+        <li>Image Roughness 맵에 Noise를 Mix해서 변형</li>
+        <li>MixRGB 노드로 두 텍스처 합성</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>⚠️ 주의할 점</h4>
+      <ul>
+        <li>Image Texture는 반드시 <strong>UV 매핑</strong> 필요 (Week 7)</li>
+        <li>Normal Map은 Color Space를 <strong>Non-Color</strong>로!</li>
+        <li>이미지 경로가 깨지면 분홍색 표시</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- TAB 4: 퀴즈 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+// ── Compare Demo ─────────────────────────────
+(function() {
+  var canvas = document.getElementById("compareCanvas");
+  var ctx = canvas.getContext("2d");
+  var btnProc = document.getElementById("btnProc");
+  var btnImg = document.getElementById("btnImg");
+  var btnBoth = document.getElementById("btnBoth");
+  var mode = "proc";
+
+  var perm=[];for(var i=0;i<512;i++)perm[i]=Math.floor(Math.random()*256);
+  function fade(t){return t*t*t*(t*(t*6-15)+10)}
+  function lrp(a,b,t){return a+t*(b-a)}
+  function hash(x,y){return perm[(perm[x&255]+y)&255]/255}
+  function vnoise(x,y){var xi=Math.floor(x),yi=Math.floor(y),xf=x-xi,yf=y-yi,u=fade(xf),v=fade(yf);return lrp(lrp(hash(xi,yi),hash(xi+1,yi),u),lrp(hash(xi,yi+1),hash(xi+1,yi+1),u),v)}
+  function fbm(x,y,o){var v=0,a=.5,f=1;for(var i=0;i<o;i++){v+=a*vnoise(x*f,y*f);a*=.5;f*=2}return v}
+
+  // Fake "image" texture — brick-like pattern
+  function brickPattern(x, y) {
+    var bw = 60, bh = 30;
+    var row = Math.floor(y / bh);
+    var ox = (row % 2 === 0) ? 0 : bw / 2;
+    var bx = (x + ox) % bw;
+    var by = y % bh;
+    var mortar = 3;
+    if (bx < mortar || by < mortar) return 0.3;
+    return 0.55 + vnoise(x * 0.1, y * 0.1) * 0.2;
+  }
+
+  function draw() {
+    var w = canvas.width, h = canvas.height;
+    var img = ctx.createImageData(w, h);
+    for (var y = 0; y < h; y++) {
+      for (var x = 0; x < w; x++) {
+        var v;
+        if (mode === "proc") {
+          v = fbm(x / w * 8, y / h * 8, 5);
+          v = Math.min(1, Math.max(0, v * 1.4));
+        } else if (mode === "img") {
+          v = brickPattern(x, y);
+          v = Math.min(1, Math.max(0, v));
+        } else {
+          var noise = fbm(x / w * 12, y / h * 12, 4) * 0.3;
+          var brick = brickPattern(x, y);
+          v = Math.min(1, Math.max(0, brick + noise - 0.15));
+        }
+        var c = Math.round(v * 255);
+        var idx = (y * w + x) * 4;
+        if (mode === "proc") {
+          img.data[idx] = Math.round(c * 0.6); img.data[idx+1] = Math.round(c * 0.7); img.data[idx+2] = c;
+        } else if (mode === "img") {
+          img.data[idx] = Math.round(c * 1.1); img.data[idx+1] = Math.round(c * 0.7); img.data[idx+2] = Math.round(c * 0.5);
+        } else {
+          img.data[idx] = Math.round(c * 0.9); img.data[idx+1] = Math.round(c * 0.65); img.data[idx+2] = Math.round(c * 0.5);
+        }
+        img.data[idx+3] = 255;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+    ctx.fillStyle = "rgba(0,0,0,.5)";
+    ctx.fillRect(0, 0, w, 24);
+    ctx.fillStyle = "#fff";
+    ctx.font = "bold 12px sans-serif";
+    var labels = { proc: "Procedural: 수식으로 만든 노이즈 패턴", img: "Image: 벽돌 패턴 (파일 기반)", both: "합성: Image 기반 + Procedural 얼룩 추가" };
+    ctx.fillText(labels[mode], 12, 16);
+  }
+
+  function setMode(m) {
+    mode = m;
+    [btnProc, btnImg, btnBoth].forEach(function(b) { b.classList.remove("is-active"); });
+    if (m === "proc") btnProc.classList.add("is-active");
+    else if (m === "img") btnImg.classList.add("is-active");
+    else btnBoth.classList.add("is-active");
+    draw();
+  }
+
+  btnProc.addEventListener("click", function() { setMode("proc"); });
+  btnImg.addEventListener("click", function() { setMode("img"); });
+  btnBoth.addEventListener("click", function() { setMode("both"); });
+  draw();
+})();
+
+// ── Tab Switching ──────────────────────────────
+document.querySelectorAll(".tab").forEach(function(tab){
+  tab.addEventListener("click",function(){
+    document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("is-active");t.setAttribute("aria-selected","false");});
+    document.querySelectorAll(".panel").forEach(function(p){p.classList.remove("is-active");});
+    tab.classList.add("is-active");tab.setAttribute("aria-selected","true");
+    document.getElementById("panel-"+tab.dataset.tab).classList.add("is-active");
+  });
+});
+
+// ── Quiz Engine ────────────────────────────────
+function initQuiz(questions){
+  var container=document.getElementById("quizArea");
+  questions.forEach(function(q,qi){
+    var div=document.createElement("div");div.className="quiz-question";
+    var h4=document.createElement("h4");h4.textContent="Q"+(qi+1)+". "+q.question;div.appendChild(h4);
+    var fb=document.createElement("div");fb.className="quiz-feedback";
+    q.options.forEach(function(opt,oi){
+      var btn=document.createElement("button");btn.className="quiz-option";btn.textContent=opt;
+      btn.addEventListener("click",function(){
+        if(btn.disabled)return;
+        div.querySelectorAll(".quiz-option").forEach(function(b){b.disabled=true;});
+        if(oi===q.answer){btn.classList.add("correct");fb.className="quiz-feedback show correct-fb";fb.textContent="\u2705 "+q.explanation;}
+        else{btn.classList.add("wrong");div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");fb.className="quiz-feedback show wrong-fb";fb.textContent="\u274c "+q.explanation;}
+      });
+      div.appendChild(btn);
+    });
+    div.appendChild(fb);container.appendChild(div);
+  });
+}
+
+initQuiz([
+  {question:"Procedural Texture의 가장 큰 장점은?",options:["항상 더 사실적이다","해상도 무한 + 파일 용량 0","UV 매핑이 자동이다","색상이 더 정확하다"],answer:1,explanation:"Procedural Texture는 수식으로 생성되므로 해상도 제한이 없고 파일 용량도 차지하지 않습니다."},
+  {question:"벽돌벽 재질을 만들 때 가장 적합한 텍스처 종류는?",options:["Noise Texture","Voronoi Texture","Image Texture","Wave Texture"],answer:2,explanation:"벽돌처럼 구체적인 디테일이 있는 재질은 Image Texture(사진/PBR 맵)가 가장 적합합니다."},
+  {question:"Image Texture를 사용할 때 반드시 필요한 것은?",options:["Color Ramp 노드","UV 매핑","Noise Texture","Emission 설정"],answer:1,explanation:"Image Texture는 2D 이미지를 3D 표면에 매핑하는 UV 좌표가 필요합니다. Week 7에서 배워요!"},
+  {question:"Procedural + Image를 함께 쓰면 어떤 효과를 얻을 수 있나요?",options:["렌더 속도가 빨라진다","이미지 재질 위에 자연스러운 얼룩/변형 추가","UV 매핑이 불필요해진다","파일이 자동으로 압축된다"],answer:1,explanation:"Image Texture로 기본 재질을 입히고, Procedural Noise로 얼룩이나 변형을 추가하면 더 자연스러운 결과를 얻을 수 있습니다."}
+]);
+</script>
+
+<script src="./_helpers.js?v=20260318ai"></script>
+<script>
+window.addEventListener("load",function(){if(window.normalizeStandaloneShowMeLayout)window.normalizeStandaloneShowMeLayout(document);});
+</script>
+</body>
+</html>
