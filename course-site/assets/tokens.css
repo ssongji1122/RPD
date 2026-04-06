@@ -15,9 +15,9 @@
   --surface-tint:  rgba(255, 255, 255, 0.03);
   --line:          rgba(255, 255, 255, 0.08);
   --line-strong:   rgba(255, 255, 255, 0.14);
-  --key:           #0a84ff;
-  --key-strong:    #0071e3;
-  --key-soft:      #93c5fd;
+  --key:           #00bfa5;
+  --key-strong:    #009e8a;
+  --key-soft:      #6ee8d8;
   --success:       #10b981;
   --success-soft:  #6ee7b7;
   --warn:          #f59e0b;
@@ -34,7 +34,7 @@
   --topbar-border: rgba(255,255,255,.06);
   --grid-line: rgba(255,255,255,.02);
   --modal-panel-bg:
-    radial-gradient(circle at top left, rgba(10,132,255,.12), transparent 36%),
+    radial-gradient(circle at top left, rgba(0,191,165,.12), transparent 36%),
     linear-gradient(180deg, var(--surface-tint), transparent 72%),
     var(--surface);
   --modal-panel-soft-bg:
@@ -52,20 +52,20 @@
     inset 0 1px 0 rgba(255,255,255,.08);
   --modal-active-shadow:
     inset 0 1px 0 rgba(255,255,255,.06),
-    inset 0 0 0 1px rgba(96,165,250,.12),
+    inset 0 0 0 1px rgba(110,232,216,.12),
     0 24px 46px rgba(0,0,0,.22);
-  --modal-top-line: linear-gradient(90deg, transparent, rgba(147,197,253,.46), transparent);
+  --modal-top-line: linear-gradient(90deg, transparent, rgba(110,232,216,.46), transparent);
   --modal-accent-bg:
-    linear-gradient(135deg, rgba(10,132,255,.16), rgba(255,255,255,.03) 56%),
+    linear-gradient(135deg, rgba(0,191,165,.16), rgba(255,255,255,.03) 56%),
     rgba(255,255,255,.03);
   --modal-hover-bg:
-    linear-gradient(135deg, rgba(10,132,255,.12), rgba(255,255,255,.02)),
+    linear-gradient(135deg, rgba(0,191,165,.12), rgba(255,255,255,.02)),
     rgba(255,255,255,.02);
   --modal-nav-active-bg:
-    linear-gradient(135deg, rgba(10,132,255,.16), rgba(255,255,255,.02)),
+    linear-gradient(135deg, rgba(0,191,165,.16), rgba(255,255,255,.02)),
     rgba(255,255,255,.03);
   --modal-icon-bg:
-    linear-gradient(145deg, rgba(10,132,255,.18), rgba(255,255,255,.04)),
+    linear-gradient(145deg, rgba(0,191,165,.18), rgba(255,255,255,.04)),
     rgba(255,255,255,.03);
   --modal-icon-shadow:
     inset 0 1px 0 rgba(255,255,255,.08),
@@ -111,11 +111,11 @@
   --glass-shadow:        rgba(0,0,0,.18);
   --glass-shadow-light:  rgba(0,0,0,.08);
   --glass-inset:         rgba(255,255,255,.05);
-  --glass-accent:        rgba(10,132,255,.12);
-  --glass-accent-strong: rgba(10,132,255,.18);
-  --key-border:          rgba(96,165,250,.34);
-  --key-glow:            rgba(147,197,253,.46);
-  --key-glow-soft:       rgba(147,197,253,.12);
+  --glass-accent:        rgba(0,191,165,.12);
+  --glass-accent-strong: rgba(0,191,165,.18);
+  --key-border:          rgba(110,232,216,.34);
+  --key-glow:            rgba(110,232,216,.46);
+  --key-glow-soft:       rgba(110,232,216,.12);
   --success-border:      rgba(16,185,129,.35);
   --success-glow:        rgba(16,185,129,.06);
 
@@ -138,9 +138,9 @@
   --surface-tint:  rgba(0, 0, 0, 0.02);
   --line:          rgba(0, 0, 0, 0.08);
   --line-strong:   rgba(0, 0, 0, 0.14);
-  --key:           #0071e3;
-  --key-strong:    #005bb5;
-  --key-soft:      #0071e3;
+  --key:           #00897b;
+  --key-strong:    #006b5f;
+  --key-soft:      #00897b;
   --success:       #059669;
   --success-soft:  #059669;
   --warn:          #d97706;
@@ -155,7 +155,7 @@
   --topbar-border: rgba(0,0,0,.08);
   --grid-line: rgba(0,0,0,.02);
   --modal-panel-bg:
-    radial-gradient(circle at top left, rgba(0,113,227,.08), transparent 34%),
+    radial-gradient(circle at top left, rgba(0,137,123,.08), transparent 34%),
     linear-gradient(180deg, rgba(0,0,0,.02), transparent 72%),
     var(--surface);
   --modal-panel-soft-bg:
@@ -173,20 +173,20 @@
     inset 0 1px 0 rgba(255,255,255,.82);
   --modal-active-shadow:
     inset 0 1px 0 rgba(255,255,255,.88),
-    inset 0 0 0 1px rgba(0,113,227,.14),
+    inset 0 0 0 1px rgba(0,137,123,.14),
     0 20px 36px rgba(0,0,0,.1);
-  --modal-top-line: linear-gradient(90deg, transparent, rgba(0,113,227,.24), transparent);
+  --modal-top-line: linear-gradient(90deg, transparent, rgba(0,137,123,.24), transparent);
   --modal-accent-bg:
-    linear-gradient(135deg, rgba(0,113,227,.12), rgba(255,255,255,.88) 56%),
+    linear-gradient(135deg, rgba(0,137,123,.12), rgba(255,255,255,.88) 56%),
     rgba(255,255,255,.86);
   --modal-hover-bg:
-    linear-gradient(135deg, rgba(0,113,227,.08), rgba(255,255,255,.92)),
+    linear-gradient(135deg, rgba(0,137,123,.08), rgba(255,255,255,.92)),
     rgba(255,255,255,.88);
   --modal-nav-active-bg:
-    linear-gradient(135deg, rgba(0,113,227,.1), rgba(255,255,255,.92)),
+    linear-gradient(135deg, rgba(0,137,123,.1), rgba(255,255,255,.92)),
     rgba(255,255,255,.88);
   --modal-icon-bg:
-    linear-gradient(145deg, rgba(0,113,227,.16), rgba(255,255,255,.9)),
+    linear-gradient(145deg, rgba(0,137,123,.16), rgba(255,255,255,.9)),
     rgba(255,255,255,.84);
   --modal-icon-shadow:
     inset 0 1px 0 rgba(255,255,255,.92),
@@ -199,11 +199,11 @@
   --glass-shadow:        rgba(0,0,0,.06);
   --glass-shadow-light:  rgba(0,0,0,.03);
   --glass-inset:         rgba(255,255,255,.78);
-  --glass-accent:        rgba(0,113,227,.08);
-  --glass-accent-strong: rgba(0,113,227,.14);
-  --key-border:          rgba(0,113,227,.24);
-  --key-glow:            rgba(0,113,227,.24);
-  --key-glow-soft:       rgba(0,113,227,.08);
+  --glass-accent:        rgba(0,137,123,.08);
+  --glass-accent-strong: rgba(0,137,123,.14);
+  --key-border:          rgba(0,137,123,.24);
+  --key-glow:            rgba(0,137,123,.24);
+  --key-glow-soft:       rgba(0,137,123,.08);
   --success-border:      rgba(5,150,105,.3);
   --success-glow:        rgba(5,150,105,.06);
   --shadow-card: none;
@@ -639,8 +639,8 @@ section, .section-inner {
 }
 .task-item.is-expanded .task-toggle-indicator {
   transform: rotate(180deg);
-  border-color: rgba(147,197,253,.22);
-  background: rgba(10,132,255,.08);
+  border-color: rgba(110,232,216,.22);
+  background: rgba(0,191,165,.08);
   color: var(--key-soft);
 }
 .task-link {
@@ -651,7 +651,7 @@ section, .section-inner {
   padding: 4px 10px 4px 8px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--line);
-  background: rgba(10,132,255,.06);
+  background: rgba(0,191,165,.06);
   color: var(--key-soft);
   font-size: .76rem;
   font-weight: var(--fw-medium);
@@ -661,8 +661,8 @@ section, .section-inner {
   width: fit-content;
 }
 .task-link:hover {
-  background: rgba(10,132,255,.12);
-  border-color: rgba(10,132,255,.3);
+  background: rgba(0,191,165,.12);
+  border-color: rgba(0,191,165,.3);
   color: #93c5fd;
 }
 .task-detail {
@@ -676,7 +676,7 @@ section, .section-inner {
 .step-footer {
   display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
   gap: 12px; margin-top: 16px; padding-top: 16px;
-  border-top: 1px solid rgba(147,197,253,.08);
+  border-top: 1px solid rgba(110,232,216,.08);
 }
 .step-hint { color: var(--key-soft); font-size: .82rem; }
 
@@ -693,12 +693,12 @@ section, .section-inner {
 .doc-link {
   display: inline-flex; align-items: flex-start; flex-direction: column; gap: 2px;
   padding: 8px 13px; border-radius: var(--pill-radius);
-  border: 1px solid rgba(147,197,253,.14);
+  border: 1px solid rgba(110,232,216,.14);
   background: var(--overlay-white);
   color: var(--muted-strong); font-size: .83rem;
   transition: border-color .15s, color .15s;
 }
-.doc-link:hover { border-color: rgba(147,197,253,.32); color: var(--text); }
+.doc-link:hover { border-color: rgba(110,232,216,.32); color: var(--text); }
 .doc-link-main { font-size: .83rem; }
 .doc-link-desc { font-size: .75rem; color: var(--muted); line-height: 1.4; }
 
@@ -712,7 +712,7 @@ section, .section-inner {
   width: 100%; border-collapse: collapse;
   font-size: .9rem;
 }
-.shortcut-table thead { background: rgba(10,132,255,.06); }
+.shortcut-table thead { background: rgba(0,191,165,.06); }
 .shortcut-table th {
   padding: 12px 18px; text-align: left;
   color: var(--muted-strong); font-weight: var(--fw-semi); font-size: .82rem;
@@ -744,12 +744,12 @@ section, .section-inner {
 }
 .explore-card {
   border-radius: var(--radius-lg);
-  border: 1px dashed rgba(147,197,253,.2);
+  border: 1px dashed rgba(110,232,216,.2);
   background: var(--surface);
   padding: 20px;
   transition: border-color .18s;
 }
-.explore-card:hover { border-color: rgba(147,197,253,.4); }
+.explore-card:hover { border-color: rgba(110,232,216,.4); }
 .explore-card strong {
   display: block; font-size: .96rem; margin-bottom: 8px;
   color: var(--key-soft);
