@@ -43,6 +43,50 @@
       padding: 0 24px 72px;
     }
 
+    /* ── Admin user menu dropdown ────────────────────── */
+    .admin-user-btn {
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+    }
+    .admin-user-dropdown {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      background: var(--surface-strong);
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      padding: 4px;
+      display: none;
+      z-index: 200;
+      min-width: 140px;
+      box-shadow: 0 4px 16px rgba(0,0,0,.22);
+      white-space: nowrap;
+    }
+    .admin-user-dropdown.is-open { display: block; }
+    .admin-user-dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: calc(var(--radius) - 2px);
+      color: var(--muted-strong);
+      font-size: .8rem;
+      cursor: pointer;
+      width: 100%;
+      font: inherit;
+      background: none;
+      border: none;
+      text-align: left;
+      transition: background .14s, color .14s;
+    }
+    .admin-user-dropdown-item:hover {
+      color: var(--text);
+      background: var(--overlay-white-hover);
+    }
+
     /* ── Admin layout ─────────────────────────────────── */
     body { overflow-x: hidden; }
 
@@ -902,6 +946,15 @@
       .table-editor-row .field-input.short { max-width: none; flex: 1; }
       .task-editor-row { flex-direction: column; }
       /* sync-review responsive rules removed */
+      /* 좁은 뷰포트: nav 탭 숨기고 액션 버튼이 topbar 전체 사용 */
+      body[data-tab="admin"] .app-topbar .app-tabs { display: none; }
+      body[data-tab="admin"] .app-topbar { min-height: 52px; }
+      body[data-tab="admin"] .app-topbar-right {
+        position: static;
+        flex: 1;
+        justify-content: flex-end;
+        flex-wrap: nowrap;
+      }
     }
 
     /* ── Empty state ──────────────────────────────────── */
