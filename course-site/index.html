@@ -38,10 +38,7 @@
           </div>
         </section>
 
-        <!-- SECTION 2: Featured Active Week ("NOW") -->
-        <section class="week-featured" id="weekFeatured" aria-label="현재 진행 주차"></section>
-
-        <!-- SECTION 3: Phase Journey Timeline -->
+        <!-- SECTION 2: Phase Journey Timeline -->
         <section class="content-block rpd-glass-surface" id="programSection">
           <div class="program-shell" id="programCollection">
             <div class="program-head">
@@ -289,106 +286,16 @@
       }).join("");
     }
 
-    function renderFeaturedWeek(text, preset) {
-      var el = document.getElementById("weekFeatured");
-      var activeWeek = CURRICULUM.find(function(w) { return w.status === "active"; });
-
-      if (!activeWeek) {
-        el.textContent = "";
-        var empty = document.createElement("div");
-        empty.className = "week-featured-empty";
-        empty.textContent = text.featuredEmpty || "\uc9c4\ud589 \uc911\uc778 \uc8fc\ucc28\uac00 \uc5c6\uc5b4\uc694";
-        el.appendChild(empty);
-        return;
-      }
-
-      var localized = window.RPDI18n.localizeWeekData(activeWeek);
-      var previewItems = getWeekCardPreviewItems(localized, preset);
-      var weekCardPreset = preset.weekCard || {};
-      var maxChips = weekCardPreset.activePreviewMaxItems || 5;
-      var pageUrl = withPresetHref("week.html?week=" + activeWeek.week);
-
-      // Build with DOM methods for safety
-      el.textContent = "";
-      var inner = document.createElement("div");
-      inner.className = "week-featured-inner";
-
-      var lbl = document.createElement("div");
-      lbl.className = "cw-active-label";
-      lbl.textContent = text.activeLabel;
-      inner.appendChild(lbl);
-
-      var header = document.createElement("div");
-      header.className = "week-featured-header";
-      var num = document.createElement("span");
-      num.className = "week-num";
-      num.textContent = "Week " + String(activeWeek.week).padStart(2, "0");
-      header.appendChild(num);
-      inner.appendChild(header);
-
-      var title = document.createElement("p");
-      title.className = "week-title";
-      title.textContent = localized.title;
-      inner.appendChild(title);
-
-      var sub = document.createElement("p");
-      sub.className = "week-subtitle";
-      sub.textContent = localized.subtitle;
-      inner.appendChild(sub);
-
-      var topics = document.createElement("div");
-      topics.className = "week-topics";
-      previewItems.slice(0, maxChips).forEach(function(t) {
-        var chip = document.createElement("span");
-        chip.className = "topic-chip";
-        chip.textContent = t;
-        topics.appendChild(chip);
-      });
-      if (previewItems.length > maxChips) {
-        var more = document.createElement("span");
-        more.className = "topic-chip";
-        more.textContent = "+" + (previewItems.length - maxChips);
-        topics.appendChild(more);
-      }
-      inner.appendChild(topics);
-
-      var footer = document.createElement("div");
-      footer.className = "week-footer";
-      var metrics = document.createElement("div");
-      metrics.className = "week-metrics";
-      buildWeekCardMetrics(activeWeek, text, preset).forEach(function(label) {
-        var m = document.createElement("span");
-        m.className = "week-metric";
-        m.textContent = label;
-        metrics.appendChild(m);
-      });
-      var arrow = document.createElement("a");
-      arrow.className = "go-arrow";
-      arrow.href = pageUrl;
-      arrow.setAttribute("aria-label", "Week " + activeWeek.week + " \uc5f4\uae30");
-      arrow.textContent = "\u2192";
-      footer.appendChild(metrics);
-      footer.appendChild(arrow);
-      inner.appendChild(footer);
-
-      el.appendChild(inner);
-    }
 
     function renderJourneyPhases(text, preset) {
       var container = document.getElementById("journeyPhases");
       container.textContent = "";
-      var activeWeekNum = null;
-      var activeWeek = CURRICULUM.find(function(w) { return w.status === "active"; });
-      if (activeWeek) activeWeekNum = activeWeek.week;
-
       PHASES.forEach(function(phase) {
         var phaseWeeks = phase.weeks.map(function(num) {
           return CURRICULUM.find(function(w) { return w.week === num; });
         }).filter(Boolean);
 
-        var displayWeeks = phaseWeeks.filter(function(w) {
-          return w.week !== activeWeekNum;
-        });
+        var displayWeeks = phaseWeeks;
 
         var doneCount = phaseWeeks.filter(function(w) { return w.status === "done"; }).length;
         var totalCount = phaseWeeks.length;
@@ -536,9 +443,6 @@
         chip.textContent = item;
         heroMetaEl.appendChild(chip);
       });
-
-      // Featured active week
-      renderFeaturedWeek(text, preset);
 
       // Program section
       document.getElementById("programEyebrow").textContent = text.programEyebrow;

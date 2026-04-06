@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — BSDF 이름 뜯어보기</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --danger-soft:   #fca5a5;
+  --warn-soft:     #fbbf24;
+  --warn-medium:   #fcd34d;
+  --accent-soft:   #FFB347;
+  --secondary-soft:#a5b4fc;
+  --secondary-mid: #c4b5fd;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --muted-mid:     #94a3b8;
+  --muted-soft:    #cbd5e1;
+  --muted-dim:     #64748b;
+  --info-soft:     #67e8f9;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Tab Navigation ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+
+/* ── Tab Panels ── */
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+
+/* ── Concept Cards ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card h3 {
+  margin: 0 0 8px; font-size: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.concept-card p {
+  margin: 0; color: var(--muted-strong);
+  font-size: .88rem; line-height: 1.7;
+}
+.concept-card ul {
+  margin: 8px 0 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
+}
+
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: .72rem; font-weight: 600;
+}
+.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: var(--warn-soft); }
+.badge-red   { background: rgba(239,68,68,.15);   color: var(--danger-soft); }
+.badge-purple{ background: rgba(165,180,252,.15); color: var(--secondary-soft); }
+
+/* ── Keyboard Shortcut ── */
+.kbd {
+  display: inline-block;
+  padding: 3px 8px; border-radius: 6px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  color: var(--key-soft);
+  font-size: .82rem; font-weight: 600;
+  font-family: var(--font);
+}
+
+/* ── Canvas / Demo ── */
+.demo-wrap {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+  margin: 14px 0;
+}
+.demo-wrap canvas {
+  display: block; width: 100%;
+}
+.demo-controls {
+  display: flex; gap: 8px; padding: 12px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.demo-hint {
+  font-size: .78rem; color: var(--muted);
+  text-align: center; padding: 6px 0 0;
+}
+.demo-btn {
+  padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .82rem;
+  cursor: pointer;
+  transition: background .14s, color .14s;
+}
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active {
+  background: rgba(10,132,255,.14);
+  color: var(--key-soft);
+  border-color: rgba(10,132,255,.3);
+}
+
+/* ── Usage Grid ── */
+.usage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.usage-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 16px;
+}
+.usage-card h4 {
+  margin: 0 0 8px; font-size: .92rem;
+  color: var(--key-soft);
+}
+.usage-card ul {
+  margin: 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem;
+  line-height: 1.8;
+}
+
+/* ── Tip Box ── */
+.tip-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(10,132,255,.2);
+  background: rgba(10,132,255,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+}
+.tip-box strong { color: var(--key-soft); }
+
+/* ── Combo Section ── */
+.combo-section {
+  margin-top: 18px;
+}
+.combo-section h4 {
+  margin: 0 0 10px;
+  font-size: .92rem;
+  color: var(--text);
+}
+.combo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.combo-card {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 12px 14px;
+}
+.combo-card .combo-name {
+  font-size: .86rem;
+  font-weight: 600;
+  color: var(--key-soft);
+  margin-bottom: 4px;
+}
+.combo-card .combo-desc {
+  font-size: .8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ── Shortcut Reference ── */
+.shortcut-list {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.shortcut-list h4 {
+  margin: 0 0 10px;
+  font-size: .9rem;
+  color: var(--text);
+}
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: .84rem;
+  color: var(--muted-strong);
+}
+.shortcut-row + .shortcut-row {
+  border-top: 1px solid var(--line);
+}
+.shortcut-keys {
+  flex-shrink: 0;
+}
+.analogy {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(245,158,11,.06);
+  border: 1px solid rgba(245,158,11,.15);
+  font-size: .82rem;
+  color: var(--warn-soft);
+  font-style: italic;
+}
+
+/* ── Quiz ── */
+.quiz-progress {
+  font-size: .78rem; color: var(--muted);
+  margin-bottom: 12px;
+}
+.quiz-question {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.quiz-question h4 {
+  margin: 0 0 12px; font-size: .94rem;
+}
+.quiz-option {
+  display: block; width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.025);
+  color: var(--text);
+  font: inherit; font-size: .86rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background .14s, border-color .14s;
+}
+.quiz-option:hover {
+  background: rgba(255,255,255,.06);
+  border-color: var(--line-strong);
+}
+.quiz-option.correct {
+  background: rgba(16,185,129,.12);
+  border-color: rgba(16,185,129,.4);
+  color: var(--success-soft);
+}
+.quiz-option.wrong {
+  background: rgba(239,68,68,.1);
+  border-color: rgba(239,68,68,.3);
+  color: var(--danger-soft);
+}
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback {
+  margin-top: 8px; padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: .84rem;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: var(--danger-soft); }
+
+.quiz-score {
+  text-align: center; padding: 20px;
+  font-size: 1.1rem; font-weight: 600;
+}
+.quiz-retry {
+  display: block; margin: 12px auto;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--key);
+  background: rgba(10,132,255,.12);
+  color: var(--key-soft);
+  font: inherit; font-size: .88rem;
+  cursor: pointer;
+  transition: background .14s;
+}
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+
+/* ── Official Doc Reference ── */
+.doc-ref {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(10,132,255,.15);
+  background: rgba(10,132,255,.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-ref a {
+  color: var(--key-soft);
+  font-size: .84rem;
+  text-decoration: none;
+  line-height: 1.5;
+}
+.doc-ref a:hover { text-decoration: underline; }
+
+/* ── Formula Block ── */
+.formula-block {
+  margin: 18px 0 0;
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(165,180,252,.2);
+  background: rgba(165,180,252,.05);
+}
+.formula-block .formula-label {
+  font-size: .75rem;
+  color: var(--secondary-soft);
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.formula-block .formula-eq {
+  font-family: "Courier New", "Menlo", monospace;
+  font-size: .92rem;
+  color: var(--secondary-mid);
+  letter-spacing: .02em;
+}
+.formula-block .formula-desc {
+  margin-top: 8px;
+  font-size: .8rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+/* ── Acronym Breakdown ── */
+.acronym-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+.acronym-card {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 14px 16px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.acronym-letter {
+  font-size: 1.4rem;
+  font-weight: 800;
+  line-height: 1;
+  min-width: 28px;
+}
+.acronym-body h5 {
+  margin: 0 0 4px;
+  font-size: .86rem;
+  color: var(--text);
+}
+.acronym-body p {
+  margin: 0;
+  font-size: .8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ── Compare Table ── */
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 14px;
+  font-size: .84rem;
+}
+.compare-table th {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--line-strong);
+  color: var(--muted-mid);
+  font-weight: 600;
+  text-align: left;
+}
+.compare-table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted-strong);
+  vertical-align: top;
+}
+.compare-table tr:last-child td { border-bottom: none; }
+
+/* ── Modifier Panel ── */
+.modifier-panel {
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.03);
+  padding: 14px;
+}
+.modifier-panel .panel-title {
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 14px;
+}
+.param-row {
+  margin-bottom: 12px;
+}
+.param-row label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--muted-strong);
+  margin-bottom: 6px;
+}
+.param-row label span { color: var(--key-soft); }
+.param-row input[type="range"] {
+  width: 100%;
+  accent-color: var(--key);
+}
+.mode-toggle {
+  display: flex;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.mode-btn {
+  flex: 1;
+  padding: 7px 10px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: .78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .14s;
+  text-align: center;
+}
+.mode-btn.active {
+  background: rgba(10,132,255,.18);
+  color: var(--key-soft);
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid, .combo-grid, .acronym-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Tab Bar -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">interaction</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+</nav>
+
+<!-- TAB 1: 개념 이해 -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+
+  <!-- 이름 뜯어보기 -->
+  <div style="margin-bottom:16px;padding:14px 16px;border-radius:var(--radius-md);border:1px solid var(--line-strong);background:var(--surface)">
+    <div style="font-size:.75rem;color:var(--muted-dim);font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px">이름을 한 글자씩 뜯어보면</div>
+    <div style="display:flex;align-items:baseline;gap:6px;flex-wrap:wrap">
+      <span style="font-size:1.6rem;font-weight:800;color:var(--key-soft);letter-spacing:.04em">B</span>
+      <span style="font-size:1rem;color:var(--muted-strong)">idirectional</span>
+      <span style="font-size:1.6rem;font-weight:800;color:var(--success-soft);letter-spacing:.04em;margin-left:6px">S</span>
+      <span style="font-size:1rem;color:var(--muted-strong)">cattering</span>
+      <span style="font-size:1.6rem;font-weight:800;color:var(--warn-soft);letter-spacing:.04em;margin-left:6px">D</span>
+      <span style="font-size:1rem;color:var(--muted-strong)">istribution</span>
+      <span style="font-size:1.6rem;font-weight:800;color:var(--secondary-soft);letter-spacing:.04em;margin-left:6px">F</span>
+      <span style="font-size:1rem;color:var(--muted-strong)">unction</span>
+    </div>
+  </div>
+
+  <div class="acronym-grid">
+    <div class="acronym-card">
+      <div class="acronym-letter" style="color:var(--key-soft)">B</div>
+      <div class="acronym-body">
+        <h5>Bidirectional — 양방향</h5>
+        <p>빛이 <strong style="color:var(--muted-strong)">들어오는 방향(ωᵢ)</strong>과 <strong style="color:var(--muted-strong)">나가는 방향(ωₒ)</strong>, 두 방향을 동시에 인수로 받습니다. "어느 방향에서 온 빛이 어느 방향으로 가는가?"를 표현합니다.</p>
+      </div>
+    </div>
+    <div class="acronym-card">
+      <div class="acronym-letter" style="color:var(--success-soft)">S</div>
+      <div class="acronym-body">
+        <h5>Scattering — 산란</h5>
+        <p>표면에서 빛이 <strong style="color:var(--muted-strong)">반사(Reflection)</strong>되거나 <strong style="color:var(--muted-strong)">투과(Transmission)</strong>되는 것을 통합한 개념입니다. 반사만 다루면 BRDF, 투과만 다루면 BTDF가 됩니다.</p>
+      </div>
+    </div>
+    <div class="acronym-card">
+      <div class="acronym-letter" style="color:var(--warn-soft)">DF</div>
+      <div class="acronym-body">
+        <h5>Distribution Function — 분포 함수</h5>
+        <p>빛이 어느 방향으로 <strong style="color:var(--muted-strong)">얼마나 많이</strong> 나가는지를 방향 공간 전체에 걸쳐 <strong style="color:var(--muted-strong)">확률 밀도</strong>처럼 표현합니다. 단순한 값이 아니라 방향에 따른 함수입니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="formula-block">
+    <div class="formula-label">수식</div>
+    <div class="formula-eq">BSDF(ωᵢ, ωₒ)  =  dLₒ(ωₒ)  /  dEᵢ(ωᵢ)</div>
+    <div class="formula-desc">
+      <strong style="color:var(--muted-soft)">Lₒ(ωₒ)</strong> = 나가는 방향의 휘도(Radiance) &nbsp;·&nbsp;
+      <strong style="color:var(--muted-soft)">Eᵢ(ωᵢ)</strong> = 들어오는 방향의 조도(Irradiance)<br>
+      단위는 sr⁻¹ — "입력 조도 1 당, 출력 휘도가 얼마인가"
+    </div>
+  </div>
+
+  <!-- BRDF/BTDF/BSDF 관계 -->
+  <div style="margin-top:18px">
+    <div style="font-size:.88rem;font-weight:600;color:var(--text);margin-bottom:10px">BSDF = BRDF + BTDF</div>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>이름</th>
+          <th>뜻</th>
+          <th>빛의 방향</th>
+          <th>예시</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-blue">BRDF</span></td>
+          <td>Bidirectional <strong>Reflectance</strong> DF</td>
+          <td>입사 → 같은 쪽으로 반사</td>
+          <td>Diffuse, Specular, Glossy</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-green">BTDF</span></td>
+          <td>Bidirectional <strong>Transmittance</strong> DF</td>
+          <td>입사 → 반대쪽으로 투과</td>
+          <td>Glass, SSS, Refraction</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-purple">BSDF</span></td>
+          <td>Bidirectional <strong>Scattering</strong> DF</td>
+          <td>반사 + 투과 모두</td>
+          <td>Principled BSDF</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <details style="margin:14px 0 0;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:14px 16px">
+    <summary style="cursor:pointer;color:var(--key-soft);font-weight:600;list-style:none">더보기 — 왜 "양방향"인가?</summary>
+    <div style="margin-top:10px;color:var(--muted-strong);font-size:.84rem;line-height:1.7">
+      직관적으로 빛은 광원 → 표면 → 눈 순서로 한 방향으로 흐릅니다. 그런데 렌더러는 종종 카메라에서 역방향으로 광선을 추적합니다 (Path Tracing). BSDF가 "양방향"인 이유는 <strong style="color:var(--text)">에너지 보존(Helmholtz 상반성)</strong> 덕분에 ωᵢ↔ωₒ를 뒤집어도 같은 값이 나오기 때문입니다. 이 성질이 있어야 양방향 광선 추적이 물리적으로 일관성을 유지합니다.
+    </div>
+  </details>
+
+  <div class="analogy" style="margin-top:14px">
+    카메라 셔터에 비유하면: 셔터가 열렸을 때(입사) 들어온 빛이 필름(표면)에서 어떻게 퍼지느냐를 정확히 기술하는 수학적 공식이 BSDF입니다.
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/render/shader_nodes/shader/principled.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Principled BSDF
+    </a>
+  </div>
+</section>
+
+<!-- TAB 2: interaction -->
+<section class="panel" id="panel-visual" role="tabpanel">
+  <div style="display:grid;grid-template-columns:minmax(200px,240px) 1fr;gap:14px;align-items:start;margin-top:4px">
+
+    <!-- 파라미터 패널 -->
+    <aside class="modifier-panel">
+      <div class="panel-title">BSDF 파라미터</div>
+
+      <div style="font-size:.72rem;color:var(--muted-dim);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Mode</div>
+      <div class="mode-toggle" id="modeToggle">
+        <button class="mode-btn active" data-mode="brdf">BRDF</button>
+        <button class="mode-btn" data-mode="btdf">BTDF</button>
+        <button class="mode-btn" data-mode="bsdf">BSDF</button>
+      </div>
+
+      <div class="param-row">
+        <label for="roughnessRange">Roughness <span id="roughnessLabel">0.3</span></label>
+        <input type="range" id="roughnessRange" min="0" max="1" step="0.01" value="0.3">
+      </div>
+
+      <div class="param-row">
+        <label for="iorRange">IOR <span id="iorLabel">1.45</span></label>
+        <input type="range" id="iorRange" min="1.0" max="2.4" step="0.05" value="1.45">
+      </div>
+
+      <div style="margin-top:10px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.02);padding:10px 12px">
+        <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">현재 모드</div>
+        <strong id="modeLabel" style="font-size:.84rem;color:var(--key-soft)">BRDF — 반사만</strong>
+      </div>
+
+      <div style="margin-top:8px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.02);padding:10px 12px">
+        <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">광선 분포</div>
+        <strong id="spreadLabel" style="font-size:.84rem;color:var(--success-soft)">Glossy</strong>
+      </div>
+
+      <button class="demo-btn" id="resetBtn" style="width:100%;margin-top:12px">기본값 Reset</button>
+    </aside>
+
+    <!-- 캔버스 -->
+    <div>
+      <div class="demo-wrap">
+        <canvas id="bsdfCanvas" width="680" height="320"></canvas>
+      </div>
+      <p class="demo-hint">슬라이더로 Roughness를 바꾸면 산란 분포가 달라져요</p>
+    </div>
+  </div>
+</section>
+
+<!-- TAB 3: 언제 쓰나요? -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>BSDF 개념이 필요할 때</h4>
+      <ul>
+        <li>Principled BSDF 파라미터가 왜 그런 결과를 내는지 이해할 때</li>
+        <li>Roughness · Metallic · Transmission 값이 빛에 어떻게 작용하는지 파악할 때</li>
+        <li>커스텀 셰이더 노드를 직접 조합할 때</li>
+        <li>렌더러(Cycles vs EEVEE)의 물리 기반 차이를 이해할 때</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>몰라도 바로 쓸 수 있는 경우</h4>
+      <ul>
+        <li>Principled BSDF의 슬라이더만 조절해서 원하는 질감을 만들 때</li>
+        <li>PBR 텍스처 맵을 노드에 연결하는 워크플로우</li>
+        <li>이미 만들어진 Material 프리셋을 가져다 쓸 때</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>핵심 연결 고리:</strong> Blender의 셰이더 노드 이름에 "BSDF"가 붙은 것들(Diffuse BSDF, Glossy BSDF, Glass BSDF, Principled BSDF)은 모두 이 개념을 구현한 것입니다. Principled BSDF는 이것들을 하나의 노드로 통합한 버전입니다.
+  </div>
+
+  <div class="combo-section">
+    <h4>Blender BSDF 셰이더 계층</h4>
+    <div class="combo-grid">
+      <div class="combo-card">
+        <div class="combo-name">Diffuse BSDF</div>
+        <div class="combo-desc">모든 방향으로 균일하게 반사 (Lambertian). Roughness = 1 상태의 완전 무광.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Glossy BSDF</div>
+        <div class="combo-desc">정반사 ~ 광택 반사. Roughness 0이면 완전 거울, 1이면 Diffuse에 가까워짐.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Glass BSDF</div>
+        <div class="combo-desc">반사 + 굴절 투과. IOR로 굴절률 조절. BRDF + BTDF가 합쳐진 진정한 BSDF.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Principled BSDF</div>
+        <div class="combo-desc">위의 모든 것을 하나로 통합. Disney BSDF 모델 기반. 실무에서 가장 많이 씀.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/render/shader_nodes/shader/index.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Shader Nodes 목록
+    </a>
+  </div>
+</section>
+
+<!-- TAB 4: 퀴즈 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+// ── BSDF 인터랙션 데모 ───────────────────────────────
+(function() {
+  var canvas = document.getElementById("bsdfCanvas");
+  var ctx = canvas.getContext("2d");
+  var W = canvas.width, H = canvas.height;
+
+  var state = {
+    mode: "brdf",   // brdf | btdf | bsdf
+    roughness: 0.3,
+    ior: 1.45,
+    angle: 0        // animation tick
+  };
+
+  var animId = null;
+  var particles = [];
+  var spawnTimer = 0;
+
+  function reset() {
+    state.mode = "brdf";
+    state.roughness = 0.3;
+    state.ior = 1.45;
+    updateUI();
+    syncControls();
+    particles = [];
+  }
+
+  function updateUI() {
+    var modeTexts = {
+      brdf: "BRDF — 반사만",
+      btdf: "BTDF — 투과만",
+      bsdf: "BSDF — 반사 + 투과"
+    };
+    document.getElementById("modeLabel").textContent = modeTexts[state.mode];
+
+    var r = state.roughness;
+    var spread = r < 0.1 ? "Specular (거울)" :
+                 r < 0.35 ? "Glossy" :
+                 r < 0.7 ? "Satin" : "Diffuse (완전 무광)";
+    document.getElementById("spreadLabel").textContent = spread;
+    document.getElementById("roughnessLabel").textContent = state.roughness.toFixed(2);
+    document.getElementById("iorLabel").textContent = state.ior.toFixed(2);
+  }
+
+  function syncControls() {
+    document.getElementById("roughnessRange").value = state.roughness;
+    document.getElementById("iorRange").value = state.ior;
+    document.querySelectorAll(".mode-btn").forEach(function(btn) {
+      btn.classList.toggle("active", btn.dataset.mode === state.mode);
+    });
+  }
+
+  // Surface position
+  var SY = Math.round(H * 0.55);
+  var CX = Math.round(W * 0.5);
+
+  // Incident ray angle (from normal, radians)
+  var INCIDENT_ANGLE = Math.PI / 4; // 45 degrees
+
+  function spawnParticle() {
+    var r = state.roughness;
+    var mode = state.mode;
+
+    // For each particle, decide: reflect or transmit?
+    var isTransmit = false;
+    if (mode === "btdf") isTransmit = true;
+    else if (mode === "bsdf") isTransmit = Math.random() < 0.35;
+
+    // Base angle
+    var baseAngle;
+    if (!isTransmit) {
+      // Reflection: mirror angle = PI - incident
+      baseAngle = Math.PI - INCIDENT_ANGLE;
+    } else {
+      // Refraction: Snell's law approximation
+      var sinT = Math.sin(INCIDENT_ANGLE) / state.ior;
+      sinT = Math.min(sinT, 1);
+      var refractAngle = Math.asin(sinT);
+      baseAngle = refractAngle; // below surface
+    }
+
+    // Add roughness scatter
+    var spread = r * (Math.PI / 2.2);
+    var scattered = baseAngle + (Math.random() * 2 - 1) * spread;
+
+    // For reflection: clamp so it stays above surface (negative Y is up)
+    if (!isTransmit) {
+      scattered = Math.max(0.04, Math.min(Math.PI - 0.04, scattered));
+    }
+
+    var speed = 1.8 + Math.random() * 0.8;
+    var dx, dy;
+    if (!isTransmit) {
+      // Upward from surface
+      dx = -Math.cos(scattered) * speed;
+      dy = -Math.sin(scattered) * speed; // negative = up
+    } else {
+      // Downward (transmitted)
+      dx = Math.cos(scattered) * speed;
+      dy = Math.sin(scattered) * speed; // positive = down
+    }
+
+    particles.push({
+      x: CX, y: SY,
+      dx: dx, dy: dy,
+      life: 1.0,
+      decay: 0.014 + Math.random() * 0.006,
+      isTransmit: isTransmit,
+      r: 2 + Math.random() * 1.5
+    });
+  }
+
+  function drawFrame() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Background
+    ctx.fillStyle = "#0f1117";
+    ctx.fillRect(0, 0, W, H);
+
+    // Surface line
+    var grad = ctx.createLinearGradient(0, SY, W, SY);
+    grad.addColorStop(0,   "rgba(255,255,255,0)");
+    grad.addColorStop(0.3, "rgba(255,255,255,.18)");
+    grad.addColorStop(0.5, "rgba(255,255,255,.3)");
+    grad.addColorStop(0.7, "rgba(255,255,255,.18)");
+    grad.addColorStop(1,   "rgba(255,255,255,0)");
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(0, SY);
+    ctx.lineTo(W, SY);
+    ctx.stroke();
+
+    // Surface fill
+    ctx.fillStyle = "rgba(255,255,255,.03)";
+    ctx.fillRect(0, SY, W, H - SY);
+
+    // Normal line (dotted)
+    ctx.setLineDash([4, 6]);
+    ctx.strokeStyle = "rgba(255,255,255,.15)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(CX, SY - 80);
+    ctx.lineTo(CX, SY + 80);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Incident ray
+    var incLen = 110;
+    var ix = CX + Math.cos(Math.PI - INCIDENT_ANGLE) * incLen;
+    var iy = SY - Math.sin(INCIDENT_ANGLE) * incLen;
+    ctx.strokeStyle = "rgba(255,220,80,.85)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(ix, iy);
+    ctx.lineTo(CX, SY);
+    ctx.stroke();
+
+    // Arrowhead at surface
+    ctx.fillStyle = "rgba(255,220,80,.85)";
+    ctx.save();
+    ctx.translate(CX, SY);
+    ctx.rotate(Math.atan2(SY - iy, CX - ix));
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(-10, -4);
+    ctx.lineTo(-10, 4);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+
+    // Label: ωᵢ
+    ctx.fillStyle = "rgba(255,220,80,.7)";
+    ctx.font = "600 13px 'Courier New', monospace";
+    ctx.fillText("ωᵢ", ix - 22, iy - 6);
+
+    // Incident angle arc
+    ctx.strokeStyle = "rgba(255,220,80,.25)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(CX, SY, 36, -Math.PI / 2, -(INCIDENT_ANGLE), true);
+    ctx.stroke();
+
+    // Particles
+    spawnTimer++;
+    if (spawnTimer % 2 === 0) spawnParticle();
+
+    for (var i = particles.length - 1; i >= 0; i--) {
+      var p = particles[i];
+      p.x += p.dx;
+      p.y += p.dy;
+      p.life -= p.decay;
+      if (p.life <= 0) { particles.splice(i, 1); continue; }
+
+      var alpha = p.life * 0.75;
+      var color = p.isTransmit
+        ? "rgba(102,232,249," + alpha + ")"   // cyan for transmit
+        : "rgba(142,197,255," + alpha + ")";  // blue for reflect
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.fill();
+    }
+
+    // Legend
+    var legendX = 16, legendY = 18;
+    ctx.fillStyle = "rgba(0,0,0,.5)";
+    ctx.beginPath();
+    ctx.roundRect(legendX - 8, legendY - 14, 180, 58, 8);
+    ctx.fill();
+
+    ctx.font = "500 11px 'Noto Sans KR', sans-serif";
+    ctx.fillStyle = "rgba(255,220,80,.8)";
+    ctx.fillText("─── 입사광 (ωᵢ)", legendX, legendY);
+
+    if (state.mode !== "btdf") {
+      ctx.fillStyle = "rgba(142,197,255,.8)";
+      ctx.fillText("● 반사광 (BRDF)", legendX, legendY + 18);
+    }
+    if (state.mode !== "brdf") {
+      ctx.fillStyle = "rgba(102,232,249,.8)";
+      ctx.fillText("● 투과광 (BTDF)", legendX, legendY + (state.mode === "bsdf" ? 36 : 18));
+    }
+
+    // Mode label on canvas
+    var modeNames = { brdf: "BRDF", btdf: "BTDF", bsdf: "BSDF" };
+    ctx.font = "700 13px 'Noto Sans KR', sans-serif";
+    ctx.fillStyle = "rgba(165,180,252,.55)";
+    ctx.textAlign = "right";
+    ctx.fillText(modeNames[state.mode], W - 14, 22);
+    ctx.textAlign = "left";
+
+    animId = requestAnimationFrame(drawFrame);
+  }
+
+  // Controls
+  document.getElementById("roughnessRange").addEventListener("input", function() {
+    state.roughness = parseFloat(this.value);
+    particles = [];
+    updateUI();
+  });
+
+  document.getElementById("iorRange").addEventListener("input", function() {
+    state.ior = parseFloat(this.value);
+    particles = [];
+    updateUI();
+  });
+
+  document.querySelectorAll(".mode-btn").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      state.mode = this.dataset.mode;
+      particles = [];
+      document.querySelectorAll(".mode-btn").forEach(function(b) {
+        b.classList.toggle("active", b === btn);
+      });
+      updateUI();
+    });
+  });
+
+  document.getElementById("resetBtn").addEventListener("click", reset);
+
+  updateUI();
+  drawFrame();
+})();
+</script>
+
+<script>
+// ── Quiz Data ───────────────────────────────────────
+initQuiz([
+  {
+    question: "BSDF에서 'B'(Bidirectional)가 의미하는 것은?",
+    options: [
+      "빛이 두 개의 파장으로 나뉜다",
+      "입사 방향(ωᵢ)과 출사 방향(ωₒ) 두 벡터를 인수로 받는다",
+      "카메라가 두 방향을 동시에 본다",
+      "렌더링 패스가 두 단계로 나뉜다"
+    ],
+    answer: 1,
+    explanation: "Bidirectional은 '두 방향'을 뜻합니다. 빛이 어디서 들어오는지(ωᵢ)와 어느 방향으로 나가는지(ωₒ), 두 방향 벡터를 동시에 입력받아 그 관계를 기술합니다."
+  },
+  {
+    question: "BSDF = BRDF + BTDF 입니다. 이 때 BTDF의 'T'가 뜻하는 것은?",
+    options: [
+      "Texture",
+      "Translucent",
+      "Transmittance (투과)",
+      "Tone"
+    ],
+    answer: 2,
+    explanation: "BTDF = Bidirectional Transmittance Distribution Function. Transmittance는 투과를 의미하며, 빛이 표면을 통과해 반대쪽으로 나가는 현상을 다룹니다. Glass, SSS 등이 여기 해당합니다."
+  },
+  {
+    question: "Blender의 Principled BSDF에서 'Transmission' 값을 높이면 어떤 BSDF 성분이 활성화되나요?",
+    options: [
+      "BRDF (반사) 성분",
+      "BTDF (투과) 성분",
+      "두 성분 모두 비활성화",
+      "Displacement 성분"
+    ],
+    answer: 1,
+    explanation: "Transmission을 높이면 빛이 표면을 통과하는 BTDF 성분이 활성화됩니다. IOR(굴절률)과 함께 작용해 유리나 물 같은 투명 재질을 표현합니다."
+  },
+  {
+    question: "BSDF에서 'Distribution Function'(분포 함수)이 의미하는 것은?",
+    options: [
+      "텍스처의 UV 분포를 나타낸다",
+      "폴리곤이 얼마나 고르게 분포되었는지 나타낸다",
+      "방향 공간 전체에 걸쳐 빛이 얼마나 나가는지를 확률 밀도처럼 표현한다",
+      "렌더링 샘플이 픽셀에 분포되는 방식이다"
+    ],
+    answer: 2,
+    explanation: "Distribution Function은 단순한 숫자가 아니라, 출사 방향(ωₒ) 전체에 걸쳐 빛의 세기가 어떻게 분포하는지를 나타내는 함수입니다. Roughness가 낮으면 특정 방향에 집중, 높으면 넓게 퍼집니다."
+  },
+  {
+    question: "Roughness = 0인 완전 거울에서 BSDF(ωᵢ, ωₒ)는?",
+    options: [
+      "모든 방향에 동일한 값을 가진다",
+      "정반사 방향에만 값이 집중되고 나머지는 0에 가깝다",
+      "BTDF 성분만 남는다",
+      "함수가 정의되지 않는다"
+    ],
+    answer: 1,
+    explanation: "Roughness = 0 (완전 거울)이면 빛이 오직 정반사 방향으로만 나갑니다. 분포 함수가 델타 함수처럼 그 방향에만 극도로 집중됩니다. 이것이 Specular(경면 반사)입니다."
+  }
+]);
+</script>
+
+<script src="./_helpers.js?v=20260318ai"></script>
+<script>
+window.addEventListener("load", function() {
+  if (window.normalizeStandaloneShowMeLayout) {
+    window.normalizeStandaloneShowMeLayout(document);
+  }
+});
+</script>
+</body>
+</html>
