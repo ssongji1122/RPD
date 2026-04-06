@@ -24,12 +24,15 @@
   justify-content: center;
   position: relative;
   gap: 16px;
-  padding: 10px 20px;
+  padding: 10px 20px 10px 76px;
   border-bottom: 1px solid var(--line);
   background: var(--bg);
   position: sticky;
   top: 0;
   z-index: 50;
+}
+.app:has(.rail.is-expanded) .app-topbar {
+  padding-left: 240px;
 }
 .app-topbar-left {
   display: flex;
