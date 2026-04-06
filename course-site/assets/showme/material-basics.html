@@ -7,7 +7,6 @@
 <style>
 /* ══════════════════════════════════════════════════
    Show Me Widget — Standalone Dark Theme
-   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
    ══════════════════════════════════════════════════ */
 :root {
   --bg:            #0a0a0a;
@@ -41,8 +40,6 @@
   --radius-lg:     24px;
   --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
 }
-
-/* ── Reset ── */
 *, *::before, *::after { box-sizing: border-box; }
 body {
   margin: 0; padding: 0;
@@ -75,10 +72,7 @@ body {
   font-family: inherit;
 }
 .tab:hover { color: var(--muted-strong); }
-.tab.is-active {
-  color: var(--key-soft);
-  border-bottom-color: var(--key);
-}
+.tab.is-active { color: var(--key-soft); border-bottom-color: var(--key); }
 
 /* ── Tab Panels ── */
 .panel { display: none; padding: 20px 16px; }
@@ -96,326 +90,246 @@ body {
   background: var(--surface);
   padding: 18px;
 }
-.concept-card h3 {
-  margin: 0 0 8px; font-size: 1rem;
-  display: flex; align-items: center; gap: 8px;
-}
-.concept-card p {
-  margin: 0; color: var(--muted-strong);
-  font-size: .88rem; line-height: 1.7;
-}
-.concept-card ul {
-  margin: 8px 0 0; padding-left: 16px;
-  color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
-}
+.concept-card h3 { margin: 0 0 8px; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+.concept-card p { margin: 0; color: var(--muted-strong); font-size: .88rem; line-height: 1.7; }
+.concept-card ul { margin: 8px 0 0; padding-left: 16px; color: var(--muted-strong); font-size: .85rem; line-height: 1.8; }
 
 /* ── Badge ── */
-.badge {
-  display: inline-block;
-  padding: 3px 9px; border-radius: 999px;
-  font-size: .72rem; font-weight: 600;
-}
+.badge { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: .72rem; font-weight: 600; }
 .badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
 .badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
 .badge-amber { background: rgba(245,158,11,.15);  color: var(--warn-soft); }
 
-/* ── Keyboard Shortcut ── */
-.kbd {
-  display: inline-block;
-  padding: 3px 8px; border-radius: 6px;
-  background: rgba(255,255,255,.08);
-  border: 1px solid rgba(255,255,255,.14);
-  color: var(--key-soft);
-  font-size: .82rem; font-weight: 600;
-  font-family: var(--font);
-}
-
-/* ── Canvas / Demo ── */
-.demo-wrap {
-  border-radius: var(--radius-md);
-  border: 1px solid var(--line);
-  background: var(--surface);
-  overflow: hidden;
-  margin: 14px 0;
-}
-.demo-wrap canvas {
-  display: block; width: 100%;
-}
-.demo-controls {
-  display: flex; gap: 8px; padding: 12px;
-  border-top: 1px solid var(--line);
-  flex-wrap: wrap;
-  align-items: center;
-}
-.demo-hint {
-  font-size: .78rem; color: var(--muted);
-  text-align: center; padding: 6px 0 0;
-}
-.demo-btn {
-  padding: 7px 14px; border-radius: 999px;
-  border: 1px solid var(--line-strong);
-  background: rgba(255,255,255,.04);
-  color: var(--muted-strong);
-  font: inherit; font-size: .82rem;
-  cursor: pointer;
-  transition: background .14s, color .14s;
-}
-.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
-.demo-btn.is-active {
-  background: rgba(10,132,255,.14);
-  color: var(--key-soft);
-  border-color: rgba(10,132,255,.3);
-}
-
-/* ── Slider ── */
-.demo-slider-group {
-  display: flex; align-items: center; gap: 6px;
-  font-size: .78rem; color: var(--muted-strong);
-}
-.demo-slider-group input[type="range"] {
-  width: 90px; accent-color: var(--key);
-}
-.demo-slider-group input[type="color"] {
-  width: 28px; height: 28px; border: 1px solid var(--line-strong);
-  border-radius: 6px; background: none; cursor: pointer; padding: 0;
-}
-
-/* ── Usage Grid ── */
-.usage-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-}
-.usage-card {
-  border-radius: var(--radius-md);
-  border: 1px solid var(--line);
-  background: var(--surface);
-  padding: 16px;
-}
-.usage-card h4 {
-  margin: 0 0 8px; font-size: .92rem;
-  color: var(--key-soft);
-}
-.usage-card ul {
-  margin: 0; padding-left: 16px;
-  color: var(--muted-strong); font-size: .85rem;
-  line-height: 1.8;
-}
-
-/* ── Tip Box ── */
-.tip-box {
-  border-radius: var(--radius-md);
-  border: 1px solid rgba(10,132,255,.2);
-  background: rgba(10,132,255,.06);
-  padding: 14px 16px;
-  margin-top: 14px;
-  font-size: .86rem;
-  color: var(--muted-strong);
-}
-.tip-box strong { color: var(--key-soft); }
-
-/* ── Combo Section ── */
-.combo-section {
-  margin-top: 18px;
-}
-.combo-section h4 {
-  margin: 0 0 10px;
-  font-size: .92rem;
-  color: var(--text);
-}
-.combo-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-.combo-card {
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--line);
-  background: var(--surface);
-  padding: 12px 14px;
-}
-.combo-card .combo-name {
-  font-size: .86rem;
-  font-weight: 600;
-  color: var(--key-soft);
-  margin-bottom: 4px;
-}
-.combo-card .combo-desc {
-  font-size: .8rem;
-  color: var(--muted);
-  line-height: 1.5;
-}
-
-/* ── Shortcut Reference ── */
-.shortcut-list {
-  margin-top: 16px;
-  padding: 14px 16px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--line);
-  background: var(--surface);
-}
-.shortcut-list h4 {
-  margin: 0 0 10px;
-  font-size: .9rem;
-  color: var(--text);
-}
-.shortcut-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 6px 0;
-  font-size: .84rem;
-  color: var(--muted-strong);
-}
-.shortcut-row + .shortcut-row {
-  border-top: 1px solid var(--line);
-}
-.shortcut-keys {
-  flex-shrink: 0;
-}
+/* ── Analogy ── */
 .analogy {
-  margin-top: 8px;
-  padding: 10px 14px;
+  margin-top: 8px; padding: 10px 14px;
   border-radius: var(--radius-sm);
   background: rgba(245,158,11,.06);
   border: 1px solid rgba(245,158,11,.15);
-  font-size: .82rem;
-  color: var(--warn-soft);
-  font-style: italic;
+  font-size: .82rem; color: var(--warn-soft); font-style: italic;
 }
 
+/* ── Keyboard Shortcut ── */
+.kbd {
+  display: inline-block; padding: 3px 8px; border-radius: 6px;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14);
+  color: var(--key-soft); font-size: .82rem; font-weight: 600; font-family: var(--font);
+}
+.shortcut-list {
+  margin-top: 16px; padding: 14px 16px;
+  border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface);
+}
+.shortcut-list h4 { margin: 0 0 10px; font-size: .9rem; color: var(--text); }
+.shortcut-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-size: .84rem; color: var(--muted-strong); }
+.shortcut-row + .shortcut-row { border-top: 1px solid var(--line); }
+.shortcut-keys { flex-shrink: 0; }
+
+/* ── Canvas / Demo ── */
+.demo-wrap {
+  border-radius: var(--radius-md); border: 1px solid var(--line);
+  background: var(--surface); overflow: hidden; margin: 14px 0;
+}
+.demo-wrap canvas { display: block; width: 100%; }
+.demo-hint { font-size: .78rem; color: var(--muted); text-align: center; padding: 6px 0 0; }
+.demo-btn {
+  padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong); background: rgba(255,255,255,.04);
+  color: var(--muted-strong); font: inherit; font-size: .82rem; cursor: pointer;
+  transition: background .14s, color .14s;
+}
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active { background: rgba(10,132,255,.14); color: var(--key-soft); border-color: rgba(10,132,255,.3); }
+
+/* ── Modifier Panel ── */
+.modifier-panel {
+  padding: 14px 16px; border-radius: var(--radius-md);
+  border: 1px solid var(--line); background: var(--surface-strong);
+}
+.modifier-panel .mp-title {
+  font-size: .78rem; font-weight: 600; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .08em; margin-bottom: 10px;
+}
+.mp-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 5px 0; font-size: .84rem; color: var(--muted-strong);
+}
+.mp-label { flex: 0 0 90px; font-size: .82rem; color: var(--muted); }
+.mp-slider { flex: 1; accent-color: var(--key); cursor: pointer; }
+.mp-value {
+  width: 44px; text-align: right; font-size: .82rem; font-weight: 600; color: var(--text);
+  background: rgba(255,255,255,.06); border: 1px solid var(--line);
+  border-radius: 6px; padding: 2px 6px;
+}
+.mp-color {
+  width: 32px; height: 24px; border: 1px solid var(--line-strong);
+  border-radius: 6px; background: none; cursor: pointer; padding: 0;
+}
+.mp-stat {
+  margin-top: 10px; padding: 8px 12px;
+  border-radius: var(--radius-sm); background: rgba(255,255,255,.03);
+  border: 1px solid var(--line); font-size: .81rem; color: var(--muted);
+  display: flex; justify-content: space-between;
+}
+.mp-stat span { color: var(--text); font-weight: 600; }
+
+/* ── Presets Row ── */
+.preset-row {
+  display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px;
+}
+
+/* ── Usage Grid ── */
+.usage-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.usage-card { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); padding: 16px; }
+.usage-card h4 { margin: 0 0 8px; font-size: .92rem; color: var(--key-soft); }
+.usage-card ul { margin: 0; padding-left: 16px; color: var(--muted-strong); font-size: .85rem; line-height: 1.8; }
+
+/* ── Tip Box ── */
+.tip-box {
+  border-radius: var(--radius-md); border: 1px solid rgba(10,132,255,.2);
+  background: rgba(10,132,255,.06); padding: 14px 16px; margin-top: 14px;
+  font-size: .86rem; color: var(--muted-strong);
+}
+.tip-box strong { color: var(--key-soft); }
+.tip-box.warn { border-color: rgba(245,158,11,.2); background: rgba(245,158,11,.06); }
+.tip-box.warn strong { color: var(--warn-soft); }
+
+/* ── Combo Section ── */
+.combo-section { margin-top: 18px; }
+.combo-section h4 { margin: 0 0 10px; font-size: .92rem; color: var(--text); }
+.combo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.combo-card { border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--surface); padding: 12px 14px; }
+.combo-card .combo-name { font-size: .86rem; font-weight: 600; color: var(--key-soft); margin-bottom: 4px; }
+.combo-card .combo-desc { font-size: .8rem; color: var(--muted); line-height: 1.5; }
+
+/* ── Doc Ref ── */
+.doc-ref {
+  margin-top: 16px; padding: 10px 14px;
+  border-radius: var(--radius-sm); border: 1px solid rgba(10,132,255,.15);
+  background: rgba(10,132,255,.04); display: flex; align-items: center; gap: 8px;
+}
+.doc-ref a { color: var(--key-soft); font-size: .84rem; text-decoration: none; line-height: 1.5; }
+.doc-ref a:hover { text-decoration: underline; }
+
+/* ── Concept Visual ── */
+.concept-visual {
+  margin-top: 20px; padding: 16px 18px;
+  border-radius: var(--radius-md); border: 1px solid rgba(10,132,255,.15);
+  background: rgba(255,255,255,.015);
+}
+.concept-visual .cv-title {
+  font-size: .9rem; font-weight: 600; margin-bottom: 12px;
+  color: var(--text); padding-bottom: 8px; border-bottom: 1px solid var(--line);
+}
+.cv-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+}
+.cv-item {
+  border-radius: var(--radius-sm); border: 1px solid var(--line);
+  background: var(--surface); overflow: hidden; text-align: center;
+}
+.cv-item canvas { display: block; width: 100%; }
+.cv-item .cv-label {
+  font-size: .75rem; color: var(--muted); padding: 6px;
+  border-top: 1px solid var(--line);
+}
+.cv-item .cv-label strong { color: var(--text); font-size: .78rem; }
+
 /* ── Quiz ── */
-.quiz-progress {
-  font-size: .78rem; color: var(--muted);
-  margin-bottom: 12px;
-}
-.quiz-question {
-  margin-bottom: 20px;
-  padding: 16px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--line);
-  background: var(--surface);
-}
-.quiz-question h4 {
-  margin: 0 0 12px; font-size: .94rem;
-}
+.quiz-progress { font-size: .78rem; color: var(--muted); margin-bottom: 12px; }
+.quiz-question { margin-bottom: 20px; padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); }
+.quiz-question h4 { margin: 0 0 12px; font-size: .94rem; }
 .quiz-option {
-  display: block; width: 100%;
-  padding: 10px 14px;
-  margin-bottom: 6px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--line);
-  background: rgba(255,255,255,.025);
-  color: var(--text);
-  font: inherit; font-size: .86rem;
-  cursor: pointer;
-  text-align: left;
+  display: block; width: 100%; padding: 10px 14px; margin-bottom: 6px;
+  border-radius: var(--radius-sm); border: 1px solid var(--line);
+  background: rgba(255,255,255,.025); color: var(--text);
+  font: inherit; font-size: .86rem; cursor: pointer; text-align: left;
   transition: background .14s, border-color .14s;
 }
-.quiz-option:hover {
-  background: rgba(255,255,255,.06);
-  border-color: var(--line-strong);
-}
-.quiz-option.correct {
-  background: rgba(16,185,129,.12);
-  border-color: rgba(16,185,129,.4);
-  color: var(--success-soft);
-}
-.quiz-option.wrong {
-  background: rgba(239,68,68,.1);
-  border-color: rgba(239,68,68,.3);
-  color: var(--danger-soft);
-}
+.quiz-option:hover { background: rgba(255,255,255,.06); border-color: var(--line-strong); }
+.quiz-option.correct { background: rgba(16,185,129,.12); border-color: rgba(16,185,129,.4); color: var(--success-soft); }
+.quiz-option.wrong { background: rgba(239,68,68,.1); border-color: rgba(239,68,68,.3); color: var(--danger-soft); }
 .quiz-option:disabled { cursor: default; opacity: .85; }
-.quiz-feedback {
-  margin-top: 8px; padding: 10px 14px;
-  border-radius: var(--radius-sm);
-  font-size: .84rem;
-  display: none;
-}
+.quiz-feedback { margin-top: 8px; padding: 10px 14px; border-radius: var(--radius-sm); font-size: .84rem; display: none; }
 .quiz-feedback.show { display: block; }
 .quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
 .quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: var(--danger-soft); }
-
-.quiz-score {
-  text-align: center; padding: 20px;
-  font-size: 1.1rem; font-weight: 600;
-}
+.quiz-score { text-align: center; padding: 20px; font-size: 1.1rem; font-weight: 600; }
 .quiz-retry {
-  display: block; margin: 12px auto;
-  padding: 10px 24px;
-  border-radius: 999px;
-  border: 1px solid var(--key);
-  background: rgba(10,132,255,.12);
-  color: var(--key-soft);
-  font: inherit; font-size: .88rem;
-  cursor: pointer;
-  transition: background .14s;
+  display: block; margin: 12px auto; padding: 10px 24px;
+  border-radius: 999px; border: 1px solid var(--key);
+  background: rgba(10,132,255,.12); color: var(--key-soft);
+  font: inherit; font-size: .88rem; cursor: pointer; transition: background .14s;
 }
 .quiz-retry:hover { background: rgba(10,132,255,.22); }
-
-/* ── Official Doc Reference ── */
-.doc-ref {
-  margin-top: 16px;
-  padding: 10px 14px;
-  border-radius: var(--radius-sm);
-  border: 1px solid rgba(10,132,255,.15);
-  background: rgba(10,132,255,.04);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.doc-ref a {
-  color: var(--key-soft);
-  font-size: .84rem;
-  text-decoration: none;
-  line-height: 1.5;
-}
-.doc-ref a:hover { text-decoration: underline; }
 
 /* ── Responsive ── */
 @media (max-width: 600px) {
   .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
+  .cv-grid { grid-template-columns: 1fr; }
   .tabs { padding: 0 8px; }
   .tab { padding: 10px 12px; font-size: .8rem; }
   .panel { padding: 16px 12px; }
-  .demo-controls { flex-direction: column; align-items: stretch; }
 }
 </style>
 </head>
 <body>
 
-<!-- Tab Bar -->
 <nav class="tabs" role="tablist">
   <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
-  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">interaction</button>
   <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
   <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
 </nav>
 
-<!-- TAB 1: 개념 이해 -->
+<!-- ══════════════════════════════════════════
+     TAB 1: 개념 이해
+     ══════════════════════════════════════════ -->
 <section class="panel is-active" id="panel-concept" role="tabpanel">
   <div class="concept-grid">
     <div class="concept-card">
       <h3>Material이란? <span class="badge badge-blue">기초</span></h3>
-      <p>오브젝트에 색상, 질감, 반사 등의 시각적 속성을 부여하는 시스템입니다. 하나의 오브젝트에 여러 Material을 할당할 수 있으며, Material Slot으로 관리합니다.</p>
-      <div class="analogy">물체에 페인트를 칠하는 것과 같아요 — 색상뿐 아니라 광택, 거칠기까지 조절합니다</div>
+      <p>오브젝트에 색상, 질감, 반사 등의 시각적 속성을 부여하는 시스템입니다. 하나의 오브젝트에 여러 Material을 할당할 수 있으며, <strong>Material Slot</strong>으로 관리합니다.</p>
+      <div class="analogy">물체에 페인트를 칠하는 것 — 색상뿐 아니라 광택, 거칠기까지 한 번에 설정해요</div>
     </div>
     <div class="concept-card">
       <h3>핵심 속성 3가지 <span class="badge badge-green">필수</span></h3>
       <ul>
-        <li><strong>Base Color</strong> — 물체의 기본 색상 (페인트 색)</li>
-        <li><strong>Metallic</strong> — 0=비금속(플라스틱), 1=금속</li>
-        <li><strong>Roughness</strong> — 0=매끄러움(거울), 1=거침(분필)</li>
+        <li><strong>Base Color</strong> — 물체의 기본 색상</li>
+        <li><strong>Metallic</strong> — 0 = 비금속(플라스틱) / 1 = 금속</li>
+        <li><strong>Roughness</strong> — 0 = 매끄러움(거울) / 1 = 거침(분필)</li>
       </ul>
-      <p style="margin-top:8px;">이 3가지만으로도 대부분의 기본 재질을 표현할 수 있습니다.</p>
+      <p style="margin-top:8px;">이 3가지만으로 대부분의 기본 재질을 표현할 수 있습니다.</p>
+    </div>
+    <div class="concept-card">
+      <h3>Material Slot <span class="badge badge-amber">핵심</span></h3>
+      <p>하나의 오브젝트에 여러 재질을 적용하는 구조입니다. Edit Mode에서 면을 선택한 뒤 <strong>Assign</strong>으로 각 면에 다른 Material을 할당합니다.</p>
+      <div class="analogy">색칠 놀이 — 팔은 피부색, 옷은 파랑, 신발은 검정으로 각각 칠하는 것과 같아요</div>
+    </div>
+  </div>
+
+  <!-- 개념 시각화: 속성 3가지 비교 -->
+  <div class="concept-visual">
+    <div class="cv-title">핵심 속성별 효과 비교</div>
+    <div class="cv-grid">
+      <div class="cv-item">
+        <canvas id="cv-plastic" width="160" height="130"></canvas>
+        <div class="cv-label"><strong>무광 플라스틱</strong><br>Metallic 0 · Roughness 0.7</div>
+      </div>
+      <div class="cv-item">
+        <canvas id="cv-glossy" width="160" height="130"></canvas>
+        <div class="cv-label"><strong>광택 플라스틱</strong><br>Metallic 0 · Roughness 0.05</div>
+      </div>
+      <div class="cv-item">
+        <canvas id="cv-metal" width="160" height="130"></canvas>
+        <div class="cv-label"><strong>금속</strong><br>Metallic 1 · Roughness 0.3</div>
+      </div>
     </div>
   </div>
 
   <div class="shortcut-list">
     <h4>주요 조작법</h4>
     <div class="shortcut-row">
-      <span class="shortcut-keys">Properties &rarr; Material tab</span>
+      <span class="shortcut-keys">Properties → <span class="kbd">🎨</span> Material</span>
       <span>Material 설정 패널 열기</span>
     </div>
     <div class="shortcut-row">
@@ -423,641 +337,401 @@ body {
       <span>새 Material 생성</span>
     </div>
     <div class="shortcut-row">
-      <span class="shortcut-keys"><span class="kbd">+</span> / <span class="kbd">-</span> 버튼</span>
-      <span>Material Slot 추가/제거</span>
+      <span class="shortcut-keys"><span class="kbd">Z</span> → Material Preview</span>
+      <span>뷰포트에서 Material 미리보기 <span class="badge badge-amber">자주 사용</span></span>
     </div>
     <div class="shortcut-row">
-      <span class="shortcut-keys"><span class="kbd">Assign</span> 버튼</span>
-      <span>Edit Mode에서 선택한 면에 Material 할당</span>
+      <span class="shortcut-keys">Edit Mode → 면 선택 → <span class="kbd">Assign</span></span>
+      <span>선택한 면에 현재 Slot의 Material 할당</span>
     </div>
   </div>
 
   <div class="doc-ref">
-    <a href="https://docs.blender.org/manual/en/latest/render/materials/introduction.html" target="_blank" rel="noopener">
-      📖 Blender 공식 문서 — Materials Introduction
-    </a>
+    <a href="https://docs.blender.org/manual/en/latest/render/materials/introduction.html" target="_blank" rel="noopener">📖 Blender 공식 문서 — Materials Introduction</a>
   </div>
 </section>
 
-<!-- TAB 2: 시각적 비교 -->
+<!-- ══════════════════════════════════════════
+     TAB 2: interaction
+     ══════════════════════════════════════════ -->
 <section class="panel" id="panel-visual" role="tabpanel">
-<style>
-.scenario-nav{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
-.scenario-btn{padding:6px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.15);background:transparent;color:var(--muted-soft);cursor:pointer;font-size:13px;transition:all .2s;font-family:inherit}
-.scenario-btn.active{background:rgba(99,102,241,.25);border-color:rgba(99,102,241,.5);color:var(--secondary-soft)}
-.before-after{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
-.ba-panel{border-radius:12px;overflow:hidden}
-.ba-panel canvas{width:100%;display:block}
-.ba-label{text-align:center;font-size:11px;color:var(--muted-mid);padding:4px;background:rgba(0,0,0,.2)}
-.cause-effect{display:flex;flex-direction:column;gap:8px;margin:12px 0}
-.ce-row{display:flex;align-items:center;gap:8px}
-.ce-cause{background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);border-radius:8px;padding:6px 12px;font-size:13px;flex:1}
-.ce-arrow{color:var(--muted-dim);font-size:16px}
-.ce-result{border-radius:8px;padding:6px 12px;font-size:13px;flex:1.5}
-.result-a{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:var(--success-soft)}
-.result-b{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);color:var(--warn-medium)}
-.result-c{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:var(--danger-soft)}
-</style>
-  <div class="scenario-nav">
-    <button class="scenario-btn active" data-scene="color" onclick="switchScenarioMB('color')">기본 색상 적용</button>
-    <button class="scenario-btn" data-scene="metallic" onclick="switchScenarioMB('metallic')">Metallic 효과</button>
-    <button class="scenario-btn" data-scene="roughness" onclick="switchScenarioMB('roughness')">Roughness 비교</button>
+  <div class="demo-wrap">
+    <canvas id="demoCanvas" width="680" height="300"></canvas>
   </div>
-  <div id="scene-desc-mb" style="font-size:.84rem;color:var(--muted-strong);margin-bottom:10px;padding:10px 14px;border-radius:12px;background:var(--surface);border:1px solid var(--line);">시나리오를 선택하세요.</div>
-  <div class="before-after">
-    <div class="ba-panel">
-      <div class="ba-label">BEFORE</div>
-      <canvas id="mb-before" width="320" height="160"></canvas>
-    </div>
-    <div class="ba-panel">
-      <div class="ba-label">AFTER</div>
-      <canvas id="mb-after" width="320" height="160"></canvas>
-    </div>
-  </div>
-  <div class="cause-effect" id="cause-effect-mb"></div>
 
-  <!-- 인터랙티브 데모 -->
-  <div style="margin-top:20px">
-    <div style="font-size:.85rem;color:var(--muted-strong);font-weight:600;margin-bottom:6px">인터랙티브 데모</div>
-    <div class="demo-wrap">
-      <canvas id="demoCanvas" width="680" height="300"></canvas>
+  <div class="modifier-panel" style="margin-top:0">
+    <div class="mp-title">Principled BSDF</div>
+    <div class="mp-row">
+      <span class="mp-label">Base Color</span>
+      <input type="color" class="mp-color" id="sliderColor" value="#3b82f6">
+      <span style="flex:1"></span>
+      <span class="mp-value" id="matTypeLabel" style="width:auto;padding:3px 10px;font-size:.78rem">무광 플라스틱</span>
     </div>
-    <div class="demo-controls">
-      <div class="demo-slider-group">
-        <label for="sliderColor">Base Color</label>
-        <input type="color" id="sliderColor" value="#3b82f6">
-      </div>
-      <div class="demo-slider-group">
-        <label for="sliderMetallic">Metallic</label>
-        <input type="range" id="sliderMetallic" min="0" max="100" step="1" value="0">
-        <span id="valMetallic">0.00</span>
-      </div>
-      <div class="demo-slider-group">
-        <label for="sliderRoughness">Roughness</label>
-        <input type="range" id="sliderRoughness" min="0" max="100" step="1" value="50">
-        <span id="valRoughness">0.50</span>
-      </div>
+    <div class="mp-row">
+      <span class="mp-label">Metallic</span>
+      <input type="range" class="mp-slider" id="sliderMetallic" min="0" max="100" step="1" value="0">
+      <span class="mp-value" id="valMetallic">0.00</span>
+    </div>
+    <div class="mp-row">
+      <span class="mp-label">Roughness</span>
+      <input type="range" class="mp-slider" id="sliderRoughness" min="0" max="100" step="1" value="50">
+      <span class="mp-value" id="valRoughness">0.50</span>
+    </div>
+    <div class="preset-row">
+      <button class="demo-btn" data-preset="plastic" onclick="applyPreset('plastic')">플라스틱</button>
+      <button class="demo-btn" data-preset="metal" onclick="applyPreset('metal')">금속</button>
+      <button class="demo-btn" data-preset="rubber" onclick="applyPreset('rubber')">고무</button>
+      <button class="demo-btn" data-preset="chrome" onclick="applyPreset('chrome')">크롬</button>
+      <button class="demo-btn" data-preset="wood" onclick="applyPreset('wood')">나무</button>
       <button class="demo-btn" id="btnReset">리셋</button>
     </div>
-    <div class="demo-hint">색상, Metallic, Roughness 값을 조절하여 재질 변화를 실시간으로 확인하세요.</div>
   </div>
+
+  <div class="demo-hint">Base Color, Metallic, Roughness를 조절해 재질 변화를 확인하세요. 프리셋 버튼으로 다양한 재질을 체험할 수 있습니다.</div>
 </section>
 
-<!-- TAB 3: 언제 쓰나요? -->
+<!-- ══════════════════════════════════════════
+     TAB 3: 언제 쓰나요?
+     ══════════════════════════════════════════ -->
 <section class="panel" id="panel-when" role="tabpanel">
   <div class="usage-grid">
     <div class="usage-card">
       <h4>Material이 필요한 경우</h4>
       <ul>
-        <li>렌더링 시 색상과 질감 표현</li>
+        <li>렌더링 시 색상·질감·반사 표현</li>
         <li>하나의 오브젝트에 여러 색상 적용</li>
-        <li>Viewport Shading에서 확인</li>
-        <li>게임 엔진으로 Export 할 때</li>
+        <li>게임 엔진(Unity/Unreal)으로 Export</li>
+        <li>Viewport에서 실시간 미리보기</li>
       </ul>
     </div>
     <div class="usage-card">
-      <h4>Material Slot 활용</h4>
+      <h4>Material Slot 활용 예시</h4>
       <ul>
-        <li>캐릭터: 피부, 옷, 눈 각각 다른 Material</li>
-        <li>건물: 벽, 창문, 지붕 분리</li>
-        <li>Edit Mode에서 면 선택 후 Assign</li>
+        <li><strong>캐릭터:</strong> 피부·옷·눈·머리카락 분리</li>
+        <li><strong>건물:</strong> 벽·창문·지붕·문 각각 다른 재질</li>
+        <li><strong>차량:</strong> 차체(금속)·타이어(고무)·유리</li>
+        <li><strong>소품:</strong> 손잡이(나무)·금속 부분 분리</li>
       </ul>
     </div>
   </div>
-  <div class="tip-box">
-    <strong>팁:</strong> Material Preview 모드(<span class="kbd">Z</span> &rarr; Material Preview)에서 Material 변경 결과를 실시간으로 확인할 수 있습니다. Viewport Shading 옵션에서 HDRI 환경을 바꾸면 다양한 조명에서 Material을 미리 볼 수 있어요.
-  </div>
+
   <div class="combo-section">
-    <h4>Material 관련 개념</h4>
+    <h4>Material 관련 개념 구분</h4>
     <div class="combo-grid">
       <div class="combo-card">
         <div class="combo-name">Material vs Texture</div>
-        <div class="combo-desc">Material은 전체 재질 속성, Texture는 이미지 패턴입니다. Texture는 Material의 일부로 사용됩니다.</div>
+        <div class="combo-desc">Material = 전체 재질 속성(색상+반사+거칠기), Texture = 이미지 패턴. Texture는 Material의 <strong>일부</strong>로 사용됨</div>
       </div>
       <div class="combo-card">
         <div class="combo-name">Material vs Shader</div>
-        <div class="combo-desc">Shader는 빛과 표면의 상호작용을 계산하는 프로그램, Material은 Shader에 전달되는 파라미터 세트입니다.</div>
+        <div class="combo-desc">Shader = 빛·표면 상호작용 계산 프로그램, Material = Shader에 전달되는 파라미터 세트. Shader Editor에서 노드로 조합</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Principled BSDF</div>
+        <div class="combo-desc">Blender의 기본 만능 Shader. Base Color, Metallic, Roughness 3개 파라미터만으로 대부분의 재질 표현 가능</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Material + UV</div>
+        <div class="combo-desc">Texture를 붙이려면 UV 맵이 필요. Material은 "어떤 재질인지", UV는 "어디에 이미지를 붙일지" 결정</div>
       </div>
     </div>
   </div>
 
+  <div class="tip-box">
+    <strong>팁:</strong> <span class="kbd">Z</span> → Material Preview 모드에서 Material 결과를 실시간으로 확인하세요. HDRI 환경을 바꾸면 다양한 조명에서 미리 볼 수 있습니다.
+  </div>
+
+  <div class="tip-box warn" style="margin-top:10px">
+    <strong>주의:</strong> Metallic 값은 0 또는 1만 사용하세요. 현실에서 물체는 금속이거나 비금속이지 중간은 없습니다. 0.5 같은 중간 값은 비현실적 결과를 만듭니다.
+  </div>
+
   <div class="doc-ref">
-    <a href="https://docs.blender.org/manual/en/latest/render/materials/introduction.html" target="_blank" rel="noopener">
-      📖 Blender 공식 문서 — Materials Introduction
-    </a>
+    <a href="https://docs.blender.org/manual/en/latest/render/materials/introduction.html" target="_blank" rel="noopener">📖 Blender 공식 문서 — Materials Introduction</a>
   </div>
 </section>
 
-<!-- TAB 4: 퀴즈 -->
+<!-- ══════════════════════════════════════════
+     TAB 4: 퀴즈
+     ══════════════════════════════════════════ -->
 <section class="panel" id="panel-quiz" role="tabpanel">
-  <div id="quizArea"></div>
+  <div id="quiz-wrap"></div>
 </section>
 
 <script>
-// ── Material Basics Visual Scenarios ──────────
-(function() {
-  var BG = '#1e293b';
-  function drawBg(ctx, w, h) { ctx.fillStyle = BG; ctx.fillRect(0, 0, w, h); }
-  function lbl(ctx, text, x, y, color) {
-    ctx.save(); ctx.font = 'bold 11px sans-serif'; ctx.fillStyle = color || '#94a3b8';
-    ctx.textAlign = 'center'; ctx.fillText(text, x, y); ctx.restore();
-  }
-  function drawSphere(ctx, cx, cy, r, fillColor, specHighlight) {
-    // base sphere
-    var grad = ctx.createRadialGradient(cx - r * 0.3, cy - r * 0.3, r * 0.05, cx, cy, r);
-    grad.addColorStop(0, specHighlight || 'rgba(255,255,255,0.5)');
-    grad.addColorStop(0.4, fillColor);
-    grad.addColorStop(1, 'rgba(0,0,0,0.6)');
-    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2);
-    ctx.fillStyle = grad; ctx.fill();
-  }
-
-  var scenarios = {
-    color: {
-      desc: 'Base Color로 오브젝트의 기본 색상을 설정합니다. Material을 추가하기 전과 후를 비교하세요.',
-      ce: [
-        { cause: 'Material 없음 (기본값)', result: '회색 기본 재질로 표시됨', cls: 'result-b' },
-        { cause: 'Base Color 설정', result: '원하는 색상으로 렌더링됨', cls: 'result-a' }
-      ],
-      before: function(ctx, w, h) {
-        drawBg(ctx, w, h);
-        drawSphere(ctx, w/2, h/2, 55, '#6b7280', 'rgba(200,200,200,0.4)');
-        lbl(ctx, 'Material 없음 (기본 회색)', w/2, h - 12);
-      },
-      after: function(ctx, w, h) {
-        drawBg(ctx, w, h);
-        drawSphere(ctx, w/2, h/2, 55, '#3b82f6', 'rgba(255,255,255,0.6)');
-        lbl(ctx, 'Base Color 적용 (파랑)', w/2, h - 12, '#93c5fd');
-      }
-    },
-    metallic: {
-      desc: 'Metallic 값을 1로 설정하면 금속 재질이 됩니다. 빛 반사 방식이 완전히 달라집니다.',
-      ce: [
-        { cause: 'Metallic = 0 (기본)', result: '비금속 — 표면 아래 빛 산란', cls: 'result-b' },
-        { cause: 'Metallic = 1', result: '금속 — 환경광 그대로 반사', cls: 'result-a' }
-      ],
-      before: function(ctx, w, h) {
-        drawBg(ctx, w, h);
-        drawSphere(ctx, w/2, h/2, 55, '#3b82f6', 'rgba(255,255,255,0.5)');
-        lbl(ctx, 'Metallic 0 (플라스틱)', w/2, h - 12, '#93c5fd');
-      },
-      after: function(ctx, w, h) {
-        drawBg(ctx, w, h);
-        drawSphere(ctx, w/2, h/2, 55, '#1e3a5f', 'rgba(180,220,255,0.9)');
-        // metallic reflection band
-        var rGrad = ctx.createLinearGradient(w/2 - 55, h/2 - 20, w/2 + 55, h/2 + 10);
-        rGrad.addColorStop(0, 'rgba(100,160,220,0)');
-        rGrad.addColorStop(0.4, 'rgba(180,220,255,0.35)');
-        rGrad.addColorStop(0.7, 'rgba(100,160,220,0.1)');
-        rGrad.addColorStop(1, 'rgba(0,0,0,0)');
-        ctx.beginPath(); ctx.arc(w/2, h/2, 55, 0, Math.PI * 2);
-        ctx.fillStyle = rGrad; ctx.fill();
-        lbl(ctx, 'Metallic 1 (금속)', w/2, h - 12, '#bfdbfe');
-      }
-    },
-    roughness: {
-      desc: 'Roughness는 표면 거칠기를 제어합니다. 낮을수록 거울처럼 선명하게 반사하고, 높을수록 흩어집니다.',
-      ce: [
-        { cause: 'Roughness = 0', result: '완전히 매끄러운 거울 반사', cls: 'result-a' },
-        { cause: 'Roughness = 1', result: '빛이 넓게 산란 — 무광 마트 표면', cls: 'result-b' }
-      ],
-      before: function(ctx, w, h) {
-        drawBg(ctx, w, h);
-        // Glossy sphere (roughness 0)
-        drawSphere(ctx, w/2, h/2, 55, '#475569', 'rgba(255,255,255,0.95)');
-        lbl(ctx, 'Roughness 0 (광택)', w/2, h - 12, '#e2e8f0');
-      },
-      after: function(ctx, w, h) {
-        drawBg(ctx, w, h);
-        // Matte sphere (roughness 1)
-        var flatGrad = ctx.createRadialGradient(w/2, h/2, 5, w/2, h/2, 55);
-        flatGrad.addColorStop(0, '#8a95a3');
-        flatGrad.addColorStop(0.7, '#64748b');
-        flatGrad.addColorStop(1, '#475569');
-        ctx.beginPath(); ctx.arc(w/2, h/2, 55, 0, Math.PI * 2);
-        ctx.fillStyle = flatGrad; ctx.fill();
-        lbl(ctx, 'Roughness 1 (무광)', w/2, h - 12, '#94a3b8');
-      }
-    }
-  };
-
-  function buildCauseEffect(ceList) {
-    var c = document.getElementById('cause-effect-mb');
-    c.textContent = '';
-    ceList.forEach(function(item) {
-      var row = document.createElement('div'); row.className = 'ce-row';
-      var cause = document.createElement('span'); cause.className = 'ce-cause'; cause.textContent = item.cause;
-      var arrow = document.createElement('span'); arrow.className = 'ce-arrow'; arrow.textContent = '→';
-      var result = document.createElement('span'); result.className = 'ce-result ' + item.cls; result.textContent = item.result;
-      row.appendChild(cause); row.appendChild(arrow); row.appendChild(result);
-      c.appendChild(row);
+/* ── Tab Switching ── */
+document.querySelectorAll('.tab').forEach(function(tab) {
+  tab.addEventListener('click', function() {
+    var target = tab.dataset.tab;
+    document.querySelectorAll('.tab').forEach(function(t) {
+      t.classList.toggle('is-active', t.dataset.tab === target);
+      t.setAttribute('aria-selected', t.dataset.tab === target);
     });
-  }
-
-  function renderBAPanels(scene) {
-    var cvB = document.getElementById('mb-before');
-    var cvA = document.getElementById('mb-after');
-    scene.before(cvB.getContext('2d'), cvB.width, cvB.height);
-    scene.after(cvA.getContext('2d'), cvA.width, cvA.height);
-  }
-
-  window.switchScenarioMB = function(key) {
-    var scene = scenarios[key];
-    document.getElementById('scene-desc-mb').textContent = scene.desc;
-    document.querySelectorAll('#panel-visual .scenario-btn').forEach(function(b) {
-      b.classList.toggle('active', b.dataset.scene === key);
+    document.querySelectorAll('.panel').forEach(function(p) {
+      p.classList.toggle('is-active', p.id === 'panel-' + target);
     });
-    renderBAPanels(scene);
-    buildCauseEffect(scene.ce);
-  };
-
-  document.addEventListener('DOMContentLoaded', function() { switchScenarioMB('color'); });
-})();
-
-// ── Tab Switching ──────────────────────────────
-document.querySelectorAll(".tab").forEach(function(tab) {
-  tab.addEventListener("click", function() {
-    document.querySelectorAll(".tab").forEach(function(t) {
-      t.classList.remove("is-active");
-      t.setAttribute("aria-selected", "false");
-    });
-    document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("is-active"); });
-    tab.classList.add("is-active");
-    tab.setAttribute("aria-selected", "true");
-    document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+    if (target === 'visual') requestAnimationFrame(drawDemo);
   });
 });
 
-// ── Quiz Engine (Safe DOM methods) ────────────
-function initQuiz(questions) {
-  var container = document.getElementById("quizArea");
-  var score = 0, answered = 0;
-  var scoreDiv = null;
+/* ═══════════════════════════════════════
+   Sphere Rendering (Blinn-Phong)
+   ═══════════════════════════════════════ */
+function hexToRgb(hex) {
+  return {
+    r: parseInt(hex.slice(1, 3), 16),
+    g: parseInt(hex.slice(3, 5), 16),
+    b: parseInt(hex.slice(5, 7), 16)
+  };
+}
 
-  var progress = document.createElement("div");
-  progress.className = "quiz-progress";
-  progress.textContent = "\uBB38\uC81C 0 / " + questions.length + " \u00b7 \uC810\uC218 0\uC810";
-  container.appendChild(progress);
+function renderSphere(ctx, cx, cy, radius, baseColorHex, metallic, roughness) {
+  var rgb = hexToRgb(baseColorHex);
+  var lx = 0.4, ly = -0.6, lz = 0.7;
+  var ll = Math.sqrt(lx*lx + ly*ly + lz*lz);
+  lx /= ll; ly /= ll; lz /= ll;
 
-  questions.forEach(function(q, qi) {
-    var div = document.createElement("div");
-    div.className = "quiz-question";
+  for (var y = -radius; y <= radius; y++) {
+    for (var x = -radius; x <= radius; x++) {
+      var dist = Math.sqrt(x*x + y*y);
+      if (dist > radius) continue;
 
-    var heading = document.createElement("h4");
-    heading.textContent = "Q" + (qi + 1) + ". " + q.question;
-    div.appendChild(heading);
+      var nx = x / radius, ny = y / radius;
+      var nz = Math.sqrt(1 - nx*nx - ny*ny);
 
-    var fb = document.createElement("div");
-    fb.className = "quiz-feedback";
+      var diff = Math.max(0, nx*lx + ny*ly + nz*lz);
+      var hx = lx, hy = ly, hz = lz + 1;
+      var hl = Math.sqrt(hx*hx + hy*hy + hz*hz);
+      hx /= hl; hy /= hl; hz /= hl;
+      var spec = Math.max(0, nx*hx + ny*hy + nz*hz);
+      spec = Math.pow(spec, 2 + (1 - roughness) * 200);
 
-    q.options.forEach(function(opt, oi) {
-      var btn = document.createElement("button");
-      btn.className = "quiz-option";
-      btn.textContent = opt;
-      btn.addEventListener("click", function() {
-        if (btn.disabled) return;
-        div.querySelectorAll(".quiz-option").forEach(function(b) { b.disabled = true; });
-        answered++;
-        if (oi === q.answer) {
-          btn.classList.add("correct");
-          fb.className = "quiz-feedback show correct-fb";
-          fb.textContent = "\u2705 " + q.explanation;
-          score++;
-        } else {
-          btn.classList.add("wrong");
-          div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
-          fb.className = "quiz-feedback show wrong-fb";
-          fb.textContent = "\u274c " + q.explanation;
+      var fresnel = 0.04 + 0.96 * Math.pow(1 - nz, 5);
+      fresnel = fresnel * (1 - metallic) + metallic;
 
-          var retryBtn = document.createElement("button");
-          retryBtn.className = "quiz-retry";
-          retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
-          retryBtn.textContent = "\uB2E4\uC2DC \uD480\uAE30";
-          retryBtn.addEventListener("click", function() {
-            answered--;
-            div.querySelectorAll(".quiz-option").forEach(function(b) {
-              b.disabled = false;
-              b.classList.remove("wrong", "correct");
-            });
-            fb.className = "quiz-feedback";
-            fb.textContent = "";
-            retryBtn.remove();
-            if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
-            progress.textContent = "\uBB38\uC81C " + answered + " / " + questions.length + " \u00b7 \uC810\uC218 " + score + "\uC810";
-          });
-          fb.appendChild(retryBtn);
-        }
-        progress.textContent = "\uBB38\uC81C " + answered + " / " + questions.length + " \u00b7 \uC810\uC218 " + score + "\uC810";
-        if (answered === questions.length) showScore();
-      });
-      div.appendChild(btn);
-    });
+      var r, g, b, ambient = 0.08;
+      if (metallic > 0.5) {
+        r = rgb.r/255 * (ambient + diff*0.4) + (rgb.r/255) * spec * (1-roughness) * 1.5;
+        g = rgb.g/255 * (ambient + diff*0.4) + (rgb.g/255) * spec * (1-roughness) * 1.5;
+        b = rgb.b/255 * (ambient + diff*0.4) + (rgb.b/255) * spec * (1-roughness) * 1.5;
+      } else {
+        r = rgb.r/255 * (ambient + diff*0.7) + spec * (1-roughness) * fresnel;
+        g = rgb.g/255 * (ambient + diff*0.7) + spec * (1-roughness) * fresnel;
+        b = rgb.b/255 * (ambient + diff*0.7) + spec * (1-roughness) * fresnel;
+      }
+      var met = metallic;
+      r = r * (1 - met*0.3) + (rgb.r/255 * spec * 0.5) * met;
+      g = g * (1 - met*0.3) + (rgb.g/255 * spec * 0.5) * met;
+      b = b * (1 - met*0.3) + (rgb.b/255 * spec * 0.5) * met;
 
-    div.appendChild(fb);
-    container.appendChild(div);
-  });
+      r = Math.min(1, Math.max(0, r));
+      g = Math.min(1, Math.max(0, g));
+      b = Math.min(1, Math.max(0, b));
 
-  function showScore() {
-    if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
-
-    scoreDiv = document.createElement("div");
-    scoreDiv.className = "quiz-score";
-
-    var emoji = document.createElement("div");
-    emoji.style.cssText = "font-size:36px;margin-bottom:8px";
-    emoji.textContent = score === questions.length ? "\ud83c\udf89" : score >= Math.ceil(questions.length / 2) ? "\ud83d\udc4d" : "\ud83d\udcda";
-    scoreDiv.appendChild(emoji);
-
-    var result = document.createElement("div");
-    result.style.cssText = "font-size:18px;font-weight:500;margin-bottom:6px";
-    result.textContent = score + " / " + questions.length + " \uC815\uB2F5";
-    scoreDiv.appendChild(result);
-
-    var msg = document.createElement("div");
-    msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
-    msg.textContent = score === questions.length ? "\uC644\uBCBD\uD569\uB2C8\uB2E4!" : "\uC870\uAE08 \uB354 \uC5F0\uC2B5\uD558\uBA74 \uC644\uBCBD\uD574\uC9C8 \uAC70\uC608\uC694!";
-    scoreDiv.appendChild(msg);
-
-    var saveBtn = document.createElement("button");
-    saveBtn.className = "quiz-retry";
-    saveBtn.style.cssText = "background:rgba(10,132,255,.18);border-color:var(--key);margin-bottom:8px";
-    saveBtn.textContent = "\uAE30\uB85D \uC800\uC7A5\uD558\uAE30";
-    saveBtn.addEventListener("click", function() {
-      try {
-        var wid = new URLSearchParams(location.search).get("wid")
-               || location.pathname.split("/").pop().replace(".html", "");
-        window.parent.postMessage({
-          type: "showme-quiz-complete",
-          widgetId: wid,
-          score: score,
-          total: questions.length,
-          pass: score >= Math.ceil(questions.length * 0.75)
-        }, "*");
-      } catch(e) {}
-      saveBtn.textContent = "\uC800\uC7A5 \uC644\uB8CC!";
-      saveBtn.disabled = true;
-      saveBtn.style.opacity = ".5";
-    });
-    scoreDiv.appendChild(saveBtn);
-
-    var retry = document.createElement("button");
-    retry.className = "quiz-retry";
-    retry.textContent = "\uCC98\uC74C\uBD80\uD130 \uB2E4\uC2DC";
-    retry.addEventListener("click", function() { location.reload(); });
-    scoreDiv.appendChild(retry);
-
-    container.appendChild(scoreDiv);
+      ctx.fillStyle = 'rgb(' + Math.round(r*255) + ',' + Math.round(g*255) + ',' + Math.round(b*255) + ')';
+      ctx.fillRect(cx + x, cy + y, 1.5, 1.5);
+    }
   }
 }
 
-// ── Canvas Material Demo ──────────────────────
-(function() {
-  var canvas = document.getElementById("demoCanvas");
-  var ctx = canvas.getContext("2d");
+/* ── Concept Visual (Tab 1): 3 preset spheres ── */
+function drawConceptSpheres() {
+  var configs = [
+    { id: 'cv-plastic', color: '#3b82f6', metallic: 0, roughness: 0.7 },
+    { id: 'cv-glossy',  color: '#ef4444', metallic: 0, roughness: 0.05 },
+    { id: 'cv-metal',   color: '#d4a855', metallic: 1, roughness: 0.3 }
+  ];
+  configs.forEach(function(cfg) {
+    var c = document.getElementById(cfg.id);
+    if (!c) return;
+    var ctx = c.getContext('2d');
+    ctx.fillStyle = '#17181a';
+    ctx.fillRect(0, 0, c.width, c.height);
+    renderSphere(ctx, c.width/2, c.height/2 - 4, 48, cfg.color, cfg.metallic, cfg.roughness);
+  });
+}
 
-  var baseColor = "#3b82f6";
-  var metallic = 0;
-  var roughness = 0.5;
+/* ── Interactive Demo (Tab 2) ── */
+var baseColor = '#3b82f6', metallic = 0, roughness = 0.5;
+var sliderColor = document.getElementById('sliderColor');
+var sliderMetallic = document.getElementById('sliderMetallic');
+var sliderRoughness = document.getElementById('sliderRoughness');
 
-  var sliderColor = document.getElementById("sliderColor");
-  var sliderMetallic = document.getElementById("sliderMetallic");
-  var sliderRoughness = document.getElementById("sliderRoughness");
-  var valMetallic = document.getElementById("valMetallic");
-  var valRoughness = document.getElementById("valRoughness");
+function drawDemo() {
+  var canvas = document.getElementById('demoCanvas');
+  var ctx = canvas.getContext('2d');
+  var w = canvas.width, h = canvas.height;
 
-  function hexToRgb(hex) {
-    var r = parseInt(hex.slice(1, 3), 16);
-    var g = parseInt(hex.slice(3, 5), 16);
-    var b = parseInt(hex.slice(5, 7), 16);
-    return { r: r, g: g, b: b };
+  ctx.fillStyle = '#17181a';
+  ctx.fillRect(0, 0, w, h);
+
+  // Subtle grid
+  ctx.strokeStyle = 'rgba(255,255,255,.03)';
+  ctx.lineWidth = 1;
+  for (var gx = 40; gx < w; gx += 40) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke(); }
+  for (var gy = 40; gy < h; gy += 40) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke(); }
+
+  renderSphere(ctx, w/2, h/2 - 10, 110, baseColor, metallic, roughness);
+
+  // Material type label on canvas
+  var matType = metallic > 0.5
+    ? (roughness < 0.3 ? '광택 금속' : '무광 금속')
+    : (roughness < 0.3 ? '광택 플라스틱' : '무광 플라스틱');
+
+  ctx.fillStyle = 'rgba(10,132,255,.7)';
+  ctx.font = 'bold 12px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('Material Preview', 12, 22);
+
+  document.getElementById('matTypeLabel').textContent = matType;
+}
+
+function updateValues() {
+  metallic = sliderMetallic.value / 100;
+  roughness = sliderRoughness.value / 100;
+  baseColor = sliderColor.value;
+  document.getElementById('valMetallic').textContent = metallic.toFixed(2);
+  document.getElementById('valRoughness').textContent = roughness.toFixed(2);
+  drawDemo();
+}
+
+sliderColor.addEventListener('input', updateValues);
+sliderMetallic.addEventListener('input', updateValues);
+sliderRoughness.addEventListener('input', updateValues);
+
+// Touch support
+['sliderColor', 'sliderMetallic', 'sliderRoughness'].forEach(function(id) {
+  document.getElementById(id).addEventListener('touchend', function(e) {
+    e.preventDefault(); updateValues();
+  }, { passive: false });
+});
+
+// Presets
+var presets = {
+  plastic: { color: '#3b82f6', metallic: 0,   roughness: 0.5 },
+  metal:   { color: '#d4a855', metallic: 1,   roughness: 0.3 },
+  rubber:  { color: '#1a1a1a', metallic: 0,   roughness: 0.9 },
+  chrome:  { color: '#e0e0e0', metallic: 1,   roughness: 0.02 },
+  wood:    { color: '#8B6914', metallic: 0,   roughness: 0.7 }
+};
+
+window.applyPreset = function(key) {
+  var p = presets[key];
+  sliderColor.value = p.color;
+  sliderMetallic.value = Math.round(p.metallic * 100);
+  sliderRoughness.value = Math.round(p.roughness * 100);
+  updateValues();
+  // Highlight active preset
+  document.querySelectorAll('.preset-row .demo-btn[data-preset]').forEach(function(b) {
+    b.classList.toggle('is-active', b.dataset.preset === key);
+  });
+};
+
+document.getElementById('btnReset').addEventListener('click', function() {
+  applyPreset('plastic');
+  document.querySelectorAll('.preset-row .demo-btn[data-preset]').forEach(function(b) {
+    b.classList.remove('is-active');
+  });
+});
+
+/* ═══════════════════════════════════════
+   Quiz (Standard Pattern)
+   ═══════════════════════════════════════ */
+function initQuiz(questions) {
+  var wrap = document.getElementById('quiz-wrap');
+  var current = 0, score = 0;
+
+  function render() {
+    if (current >= questions.length) {
+      var pass = score >= Math.ceil(questions.length * 0.75);
+      wrap.innerHTML =
+        '<div class="quiz-score">' +
+          (pass ? '✅' : '❌') + ' ' + score + ' / ' + questions.length + ' 정답' +
+          '<div style="font-size:.88rem;font-weight:400;color:var(--muted);margin-top:6px">' +
+            (pass ? 'Material 기초를 잘 이해했어요!' : '개념 탭에서 핵심 속성을 다시 확인해보세요.') +
+          '</div>' +
+        '</div>' +
+        '<button class="quiz-retry" onclick="initQuiz(questions)">다시 풀기</button>';
+      window.parent.postMessage({
+        type: "showme-quiz-complete",
+        widgetId: new URLSearchParams(location.search).get("wid"),
+        score: score,
+        total: questions.length,
+        pass: pass
+      }, "*");
+      return;
+    }
+
+    var q = questions[current];
+    wrap.innerHTML =
+      '<div class="quiz-progress">' + (current + 1) + ' / ' + questions.length + '</div>' +
+      '<div class="quiz-question"><h4>' + q.question + '</h4>' +
+      q.options.map(function(o, i) {
+        return '<button class="quiz-option" data-idx="' + i + '" onclick="handleAnswer(this,' + i + ',' + q.answer + ',\'' + encodeURIComponent(q.explanation) + '\')">' + o + '</button>';
+      }).join('') +
+      '<div class="quiz-feedback" id="qfb"></div></div>';
   }
 
-  function draw() {
-    var w = canvas.width, h = canvas.height;
-    ctx.clearRect(0, 0, w, h);
-    ctx.fillStyle = "#17181a";
-    ctx.fillRect(0, 0, w, h);
-
-    // Grid
-    ctx.strokeStyle = "rgba(255,255,255,.04)";
-    ctx.lineWidth = 1;
-    for (var gx = 40; gx < w; gx += 40) {
-      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
+  window.handleAnswer = function(btn, chosen, correct, expEnc) {
+    var exp = decodeURIComponent(expEnc);
+    document.querySelectorAll('.quiz-option').forEach(function(b) { b.disabled = true; });
+    if (chosen === correct) {
+      btn.classList.add('correct'); score++;
+      document.getElementById('qfb').className = 'quiz-feedback correct-fb show';
+      document.getElementById('qfb').textContent = '✅ ' + exp;
+    } else {
+      btn.classList.add('wrong');
+      document.querySelectorAll('.quiz-option')[correct].classList.add('correct');
+      document.getElementById('qfb').className = 'quiz-feedback wrong-fb show';
+      document.getElementById('qfb').textContent = '❌ ' + exp;
     }
-    for (var gy = 40; gy < h; gy += 40) {
-      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
-    }
+    setTimeout(function() { current++; render(); }, 1800);
+  };
 
-    var cx = w / 2;
-    var cy = h / 2 - 10;
-    var radius = 100;
-    var rgb = hexToRgb(baseColor);
+  window.questions = questions;
+  render();
+}
 
-    // Draw sphere with shading simulation
-    for (var y = -radius; y <= radius; y++) {
-      for (var x = -radius; x <= radius; x++) {
-        var dist = Math.sqrt(x * x + y * y);
-        if (dist > radius) continue;
-
-        // Normal direction (simplified)
-        var nz = Math.sqrt(1 - (x / radius) * (x / radius) - (y / radius) * (y / radius));
-        var nx = x / radius;
-        var ny = y / radius;
-
-        // Light direction (top-right)
-        var lx = 0.4, ly = -0.6, lz = 0.7;
-        var ll = Math.sqrt(lx * lx + ly * ly + lz * lz);
-        lx /= ll; ly /= ll; lz /= ll;
-
-        // Diffuse
-        var diff = Math.max(0, nx * lx + ny * ly + nz * lz);
-
-        // Specular (Blinn-Phong)
-        var hx = lx, hy = ly, hz = lz + 1;
-        var hl = Math.sqrt(hx * hx + hy * hy + hz * hz);
-        hx /= hl; hy /= hl; hz /= hl;
-        var spec = Math.max(0, nx * hx + ny * hy + nz * hz);
-        var shininess = 2 + (1 - roughness) * 200;
-        spec = Math.pow(spec, shininess);
-
-        // Fresnel (metallic effect)
-        var viewDot = nz; // view is straight at screen
-        var fresnel = 0.04 + 0.96 * Math.pow(1 - viewDot, 5);
-        fresnel = fresnel * (1 - metallic) + metallic;
-
-        // Combine
-        var ambient = 0.08;
-        var r, g, b;
-
-        if (metallic > 0.5) {
-          // Metallic: color tints the specular
-          r = rgb.r / 255 * (ambient + diff * 0.4) + (rgb.r / 255) * spec * (1 - roughness) * 1.5;
-          g = rgb.g / 255 * (ambient + diff * 0.4) + (rgb.g / 255) * spec * (1 - roughness) * 1.5;
-          b = rgb.b / 255 * (ambient + diff * 0.4) + (rgb.b / 255) * spec * (1 - roughness) * 1.5;
-        } else {
-          // Dielectric: white specular
-          r = rgb.r / 255 * (ambient + diff * 0.7) + spec * (1 - roughness) * fresnel;
-          g = rgb.g / 255 * (ambient + diff * 0.7) + spec * (1 - roughness) * fresnel;
-          b = rgb.b / 255 * (ambient + diff * 0.7) + spec * (1 - roughness) * fresnel;
-        }
-
-        // Metallic blend
-        var metBlend = metallic;
-        r = r * (1 - metBlend * 0.3) + (rgb.r / 255 * spec * 0.5) * metBlend;
-        g = g * (1 - metBlend * 0.3) + (rgb.g / 255 * spec * 0.5) * metBlend;
-        b = b * (1 - metBlend * 0.3) + (rgb.b / 255 * spec * 0.5) * metBlend;
-
-        r = Math.min(1, Math.max(0, r));
-        g = Math.min(1, Math.max(0, g));
-        b = Math.min(1, Math.max(0, b));
-
-        ctx.fillStyle = "rgb(" + Math.round(r * 255) + "," + Math.round(g * 255) + "," + Math.round(b * 255) + ")";
-        ctx.fillRect(cx + x, cy + y, 1.5, 1.5);
-      }
-    }
-
-    // Property panel display (right side)
-    var panelX = w - 200;
-    var panelY = 30;
-    ctx.fillStyle = "rgba(23,24,26,.9)";
-    ctx.strokeStyle = "rgba(255,255,255,.1)";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.roundRect(panelX, panelY, 180, 160, 10);
-    ctx.fill(); ctx.stroke();
-
-    ctx.fillStyle = "rgba(255,255,255,.5)";
-    ctx.font = "bold 11px sans-serif";
-    ctx.textAlign = "left";
-    ctx.fillText("N-Panel Properties", panelX + 12, panelY + 22);
-
-    ctx.font = "10px monospace";
-    ctx.fillStyle = "rgba(142,197,255,.8)";
-    ctx.fillText("Base Color:", panelX + 12, panelY + 48);
-    ctx.fillStyle = baseColor;
-    ctx.fillRect(panelX + 100, panelY + 38, 60, 14);
-    ctx.strokeStyle = "rgba(255,255,255,.2)";
-    ctx.strokeRect(panelX + 100, panelY + 38, 60, 14);
-
-    ctx.fillStyle = "rgba(142,197,255,.8)";
-    ctx.fillText("Metallic:", panelX + 12, panelY + 78);
-    ctx.fillStyle = "rgba(255,255,255,.6)";
-    ctx.fillText(metallic.toFixed(2), panelX + 100, panelY + 78);
-    // Bar
-    ctx.fillStyle = "rgba(255,255,255,.1)";
-    ctx.fillRect(panelX + 100, panelY + 82, 60, 4);
-    ctx.fillStyle = "rgba(10,132,255,.7)";
-    ctx.fillRect(panelX + 100, panelY + 82, 60 * metallic, 4);
-
-    ctx.fillStyle = "rgba(142,197,255,.8)";
-    ctx.fillText("Roughness:", panelX + 12, panelY + 108);
-    ctx.fillStyle = "rgba(255,255,255,.6)";
-    ctx.fillText(roughness.toFixed(2), panelX + 100, panelY + 108);
-    ctx.fillStyle = "rgba(255,255,255,.1)";
-    ctx.fillRect(panelX + 100, panelY + 112, 60, 4);
-    ctx.fillStyle = "rgba(245,158,11,.7)";
-    ctx.fillRect(panelX + 100, panelY + 112, 60 * roughness, 4);
-
-    // Material type label
-    var matType = metallic > 0.5 ? (roughness < 0.3 ? "\uAD11\uD0DD \uAE08\uC18D" : "\uBB34\uAD11 \uAE08\uC18D") : (roughness < 0.3 ? "\uAD11\uD0DD \uD50C\uB77C\uC2A4\uD2F1" : "\uBB34\uAD11 \uD50C\uB77C\uC2A4\uD2F1");
-    ctx.fillStyle = "rgba(245,158,11,.8)";
-    ctx.font = "bold 11px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText(matType, panelX + 90, panelY + 148);
-
-    // Title
-    ctx.fillStyle = "rgba(10,132,255,.8)";
-    ctx.font = "bold 12px sans-serif";
-    ctx.textAlign = "left";
-    ctx.fillText("Material Preview", 12, 22);
-  }
-
-  sliderColor.addEventListener("input", function() {
-    baseColor = this.value;
-    draw();
-  });
-  sliderMetallic.addEventListener("input", function() {
-    metallic = this.value / 100;
-    valMetallic.textContent = metallic.toFixed(2);
-    draw();
-  });
-  sliderRoughness.addEventListener("input", function() {
-    roughness = this.value / 100;
-    valRoughness.textContent = roughness.toFixed(2);
-    draw();
-  });
-
-  document.getElementById("btnReset").addEventListener("click", function() {
-    baseColor = "#3b82f6";
-    metallic = 0;
-    roughness = 0.5;
-    sliderColor.value = baseColor;
-    sliderMetallic.value = 0;
-    sliderRoughness.value = 50;
-    valMetallic.textContent = "0.00";
-    valRoughness.textContent = "0.50";
-    draw();
-  });
-
-  draw();
-})();
-
-// ── Quiz Data ─────────────────────────────────
 initQuiz([
   {
-    question: "Metallic \uAC12\uC744 1\uB85C \uC124\uC815\uD558\uBA74 \uC5B4\uB5A4 \uC7AC\uC9C8\uC774 \uB418\uB098\uC694?",
-    options: [
-      "\uD22C\uBA85 \uC720\uB9AC",
-      "\uD50C\uB77C\uC2A4\uD2F1",
-      "\uAE08\uC18D",
-      "\uBC1C\uAD11 \uC7AC\uC9C8"
-    ],
+    question: "Metallic 값을 1로 설정하면 어떤 재질이 되나요?",
+    options: ["투명 유리", "플라스틱", "금속", "발광 재질"],
     answer: 2,
-    explanation: "Metallic=1\uC740 \uAE08\uC18D \uC7AC\uC9C8\uC785\uB2C8\uB2E4. \uBC18\uC0AC\uAC00 \uAE08\uC18D \uC0C9\uC0C1\uC73C\uB85C \uBCC0\uD558\uACE0, \uD45C\uBA74 \uBC18\uC0AC\uAC00 \uAC15\uD574\uC9D1\uB2C8\uB2E4."
+    explanation: "Metallic=1은 금속 재질입니다. 반사가 금속 색상으로 변하고, 표면 반사가 강해집니다."
   },
   {
-    question: "Roughness \uAC12\uC774 0\uC5D0 \uAC00\uAE4C\uC6B0\uBA74 \uD45C\uBA74\uC740 \uC5B4\uB5BB\uAC8C \uBCF4\uC774\uB098\uC694?",
-    options: [
-      "\uAC70\uCE60\uACE0 \uBD88\uD22C\uBA85\uD558\uB2E4",
-      "\uAC70\uC6B8\uCC98\uB7FC \uB9E4\uB044\uB7FD\uACE0 \uBC18\uC0AC\uAC00 \uAC15\uD558\uB2E4",
-      "\uD22C\uBA85\uD574\uC9C4\uB2E4",
-      "\uBE5B\uC744 \uBC1C\uC0B0\uD55C\uB2E4"
-    ],
+    question: "Roughness 값이 0에 가까우면 표면은 어떻게 보이나요?",
+    options: ["거칠고 불투명하다", "거울처럼 매끄럽고 반사가 강하다", "투명해진다", "빛을 발산한다"],
     answer: 1,
-    explanation: "Roughness=0\uC740 \uC644\uBCBD\uD788 \uB9E4\uB044\uB7EC\uC6B4 \uD45C\uBA74\uC785\uB2C8\uB2E4. \uAC70\uC6B8\uCC98\uB7FC \uC8FC\uBCC0 \uD658\uACBD\uC774 \uC120\uBA85\uD558\uAC8C \uBC18\uC0AC\uB429\uB2C8\uB2E4."
+    explanation: "Roughness=0은 완전히 매끄러운 표면입니다. 거울처럼 주변 환경이 선명하게 반사됩니다."
   },
   {
-    question: "\uD558\uB098\uC758 \uC624\uBE0C\uC81D\uD2B8\uC5D0 \uC5EC\uB7EC \uC0C9\uC0C1\uC744 \uC801\uC6A9\uD558\uB824\uBA74 \uC5B4\uB5BB\uAC8C \uD574\uC57C \uD558\uB098\uC694?",
+    question: "하나의 오브젝트에 여러 색상을 적용하려면 어떻게 해야 하나요?",
     options: [
-      "Texture Paint\uB85C \uCE60\uD55C\uB2E4",
-      "Material Slot\uC744 \uC5EC\uB7EC \uAC1C \uB9CC\uB4E4\uACE0 Edit Mode\uC5D0\uC11C \uBA74\uC5D0 Assign\uD55C\uB2E4",
-      "Vertex Color\uB97C \uC0AC\uC6A9\uD55C\uB2E4",
-      "\uC624\uBE0C\uC81D\uD2B8\uB97C \uBD84\uB9AC\uD55C\uB2E4"
+      "Texture Paint로 칠한다",
+      "Material Slot을 여러 개 만들고 Edit Mode에서 면에 Assign한다",
+      "Vertex Color를 사용한다",
+      "오브젝트를 분리한다"
     ],
     answer: 1,
-    explanation: "Material Slot\uC744 \uC5EC\uB7EC \uAC1C \uCD94\uAC00\uD558\uACE0, Edit Mode\uC5D0\uC11C \uBA74\uC744 \uC120\uD0DD\uD55C \uB4A4 Assign \uBC84\uD2BC\uC73C\uB85C \uAC01 \uBA74\uC5D0 \uB2E4\uB978 Material\uC744 \uD560\uB2F9\uD569\uB2C8\uB2E4."
+    explanation: "Material Slot을 여러 개 추가하고, Edit Mode에서 면을 선택한 뒤 Assign 버튼으로 각 면에 다른 Material을 할당합니다."
   },
   {
-    question: "Material Preview \uBAA8\uB4DC\uB97C \uD65C\uC131\uD654\uD558\uB294 \uBC29\uBC95\uC740?",
-    options: [
-      "F12\uB97C \uB204\uB978\uB2E4",
-      "Z \uD0A4\uB97C \uB204\uB974\uACE0 Material Preview\uB97C \uC120\uD0DD\uD55C\uB2E4",
-      "Ctrl+Z\uB97C \uB204\uB978\uB2E4",
-      "Tab \uD0A4\uB97C \uB204\uB978\uB2E4"
-    ],
+    question: "Metallic 값은 보통 어떤 값을 사용해야 하나요?",
+    options: ["항상 0.5", "0 또는 1 (중간값은 비현실적)", "0.3~0.7 사이", "아무 값이나 가능"],
     answer: 1,
-    explanation: "Z \uD0A4\uB85C Shading Pie Menu\uB97C \uC5F4\uACE0 Material Preview\uB97C \uC120\uD0DD\uD558\uBA74 \uBDF0\uD3EC\uD2B8\uC5D0\uC11C Material\uC744 \uBBF8\uB9AC \uD655\uC778\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
+    explanation: "현실에서 물체는 금속(1)이거나 비금속(0)이지 중간은 없습니다. 0.5 같은 중간 값은 비현실적 결과를 만듭니다."
+  },
+  {
+    question: "Material Preview 모드를 활성화하는 방법은?",
+    options: ["F12를 누른다", "Z 키를 누르고 Material Preview를 선택한다", "Ctrl+Z를 누른다", "Tab 키를 누른다"],
+    answer: 1,
+    explanation: "Z 키로 Shading Pie Menu를 열고 Material Preview를 선택하면 뷰포트에서 Material을 실시간 확인할 수 있습니다."
   }
 ]);
-</script>
 
-<script src="./_helpers.js?v=20260318ai"></script>
-<script>
-window.addEventListener("load", function() {
-  if (window.normalizeStandaloneShowMeLayout) {
-    window.normalizeStandaloneShowMeLayout(document);
-  }
-});
+/* ── Init ── */
+drawConceptSpheres();
+drawDemo();
 </script>
 </body>
 </html>
