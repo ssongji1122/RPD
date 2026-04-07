@@ -43,24 +43,19 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash(python3:*), Bash(node:*), Bas
 ❌ Week 04: "topics" 필드 누락
 ```
 
-**Iterative Refinement 루프:**
+**재검증 루프 (Iterative Refinement):**
 
-검증 완료 후 critical 오류가 있으면 자동 수정을 시도합니다 (최대 2회 재시도):
-
-```
-1회차 검증 → critical 오류 발견?
-  YES → 자동 수정 가능한 항목 수정 → 재검증
-  NO  → 판정으로 이동
-
-2회차 검증 → critical 오류 발견?
-  YES → 수동 수정 필요 항목 리포트 → FAIL 판정
-  NO  → 판정으로 이동
-```
-
-**판정 기준:**
-- **PASS**: critical 오류 0개
-- **GOOD**: critical 0개, warning 1~3개
-- **FAIL**: critical 오류 1개 이상 (재시도 후에도)
+1. 검증 실행 → 이슈 수집
+2. auto-fixable 이슈 발견 시:
+   - task ID 중복 → 재번호 제안
+   - 누락 status → "upcoming" 기본값 제안
+   - showme 참조 중 registry 미등록 → registry 추가 제안
+3. 사용자 확인 후 수정 적용
+4. 재검증 (최대 2회)
+5. 최종 판정:
+   - `PASS`: critical 0건
+   - `GOOD`: critical 0건 + warning 3건 이하
+   - `FAIL`: critical 1건 이상
 
 ---
 
@@ -96,34 +91,23 @@ Week N을 curriculum.js에 템플릿으로 추가합니다.
 
 ---
 
-#### `sync` — Notion 동기화 + 검증 (Error Recovery)
+#### `sync` — Notion 동기화 + 검증
 
 Notion에서 최신 콘텐츠를 가져와 curriculum.json을 재생성하고 검증합니다.
 
-**사전 진단 (3단계):**
-
-```
-Step 1: NOTION_TOKEN 확인
-  - 환경변수 존재? NO → "export NOTION_TOKEN=..." 안내 후 중단
-
-Step 2: 네트워크 확인
-  - curl https://api.notion.com/v1 응답 확인
-  - 실패 → "Notion API 연결 불가. 네트워크 확인 후 재시도" 후 중단
-
-Step 3: 권한 확인
-  - notion-mapping.json의 첫 번째 페이지 ID로 접근 테스트
-  - 403 → "Notion Integration 권한 없음. 워크스페이스 연동 확인" 후 중단
-```
-
-**실행 절차:**
-1. `python3 tools/notion-sync.py --fetch-only` 실행 — Notion snapshot 갱신
+**절차 (Error Recovery 포함):**
+1. `python3 tools/notion-sync.py --fetch-only` 실행
+   - 실패 시 진단:
+     - `NOTION_TOKEN` 미설정? → `export NOTION_TOKEN=...` 안내
+     - 네트워크 오류? → 재시도 안내
+     - 권한 오류? → Notion integration Connect 안내
+   - 3회 재시도 후에도 실패 → "sync 불가" 리포트 + 마지막 성공 시점 출력
 2. curriculum-notion.json + overrides.json → curriculum.json 자동 merge 확인
-3. `/rpd-check` 스킬 호출 — Phase 1 데이터 검증
-4. 변경된 주차 요약 출력
-
-**롤백:**
-- sync 실패 시 이전 curriculum.json 백업본 복원
-- 백업 위치: `.claude/skill-logs/curriculum-backup-{timestamp}.json`
+   - 예상 merge 결과와 현재 curriculum.json 비교
+   - 불일치 시 diff 출력 + "이전 버전으로 복구하려면 `git checkout -- course-site/data/curriculum.json`" 안내
+3. `/rpd-check` Phase 1 실행
+   - critical 이슈 있으면 → result를 "partial"로 표시 + 이슈 목록 출력
+4. 최종 판정: `success` / `partial` / `fail`
 
 ---
 
@@ -160,33 +144,25 @@ Step 3: 권한 확인
 
 ---
 
-### 레퍼런스
-- 핵심 파일 경로: references/file-paths.md
-- curriculum.js 파싱: references/parsing-guide.md
+### 레퍼런스 (필요 시 참조)
 
----
-
-### Success Criteria
-
-**validate:**
-- PASS: critical 오류 0개
-
-**sync:**
-- curriculum.json 재생성 완료 + validate PASS/GOOD
-
-**add-week:**
-- validate PASS/GOOD + 이미지 디렉토리 생성 확인
-
----
+- 핵심 파일 경로: `references/file-paths.md`
+- curriculum.js 파싱 패턴: `references/parsing-guide.md`
 
 ## 실행 로그
 실행 완료 시 아래 형식으로 기록:
 ```bash
 echo "[$(date '+%Y-%m-%d %H:%M')] mode=$MODE result=$RESULT quality=$QUALITY target=$TARGET" >> .claude/skill-logs/curriculum.log
 ```
+- `result`: `success` / `partial` / `fail`
+- `quality`: `pass` / `warn` / `fail`
 
-## Gotchas ⚠️
-> Claude가 이 스킬을 쓸 때 실수했던 것들. 새 함정 발견 시 여기에 추가.
+## Gotchas ⚠️ (자동 축적)
+
+스킬 실행 중 예상치 못한 실패/우회가 발생하면:
+1. 이 섹션 하단에 한 줄 추가
+2. 형식: `N. [날짜] 증상 → 원인 → 해결`
+3. 같은 실수 반복 시 해당 항목에 빈도 카운터 추가
 
 1. curriculum.json, curriculum-notion.json, curriculum.js는 generated file — 직접 수정 금지
 2. 콘텐츠(title/copy/tasks) 수정은 반드시 Notion MCP 경로로
