@@ -4,14 +4,14 @@ model: opus
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash(python3 -m http.server:*), Bash(curl:*), Bash(wc:*), Bash(ls:*), Agent
 ---
 
-> **품질 철학**: 이 스킬은 반드시 Opus 4.6 모델로 실행합니다. 표면적 정의가 아닌, Blender를 실제로 쓸 때 학생이 겪는 혼란과 깨달음을 관통하는 카드를 만드세요. 품질 기준은 `references/card-quality.md`를 참조.
+> **품질 철학**: 학생이 이 카드 하나로 해당 개념을 **정확히 이해하고 즉시 실습**할 수 있어야 한다. 정보 나열이 아니라 인지 부하를 최소화한 학습 경험을 만든다.
 
 ## Context
 
 - 워크트리 위치: !`git worktree list 2>/dev/null | head -3`
 - 기존 카드 수: !`ls course-site/assets/showme/*.html 2>/dev/null | grep -v _template | wc -l | tr -d ' '`개
 - 기존 카드: !`ls course-site/assets/showme/*.html 2>/dev/null | grep -v _template | xargs -I{} basename {} .html | tr '\n' ', '`
-- 레지스트리 항목 수: !`grep -c "\"label\"" course-site/assets/showme/_registry.js 2>/dev/null || echo 0`개
+- 레지스트리 항목 수: !`grep -c '"label"' course-site/assets/showme/_registry.js 2>/dev/null || echo 0`개
 
 ## Task
 
@@ -52,7 +52,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash(python3 -m http.server:*), Ba
 
 반드시 `mirror-modifier.html`의 **전체 CSS**를 복사하여 사용 (외부 참조 없이 독립형).
 
-**필수 구조** (4탭): `references/template.md` 참조
+**필수 구조** (4탭): → [references/template.md](references/template.md) 참조
 
 #### 탭별 필수 컴포넌트
 
@@ -98,18 +98,14 @@ window.parent.postMessage({
 }, "*");
 ```
 
-#### Step 3.5: 품질 게이트 (자기 검증)
+#### Step 3.5: 품질 게이트
 
-생성된 HTML을 아래 기준으로 검증합니다 (`references/card-quality.md` 상세 참조):
+생성된 카드를 배포 전에 검증한다. → [references/card-quality.md](references/card-quality.md) 참조
 
-1. **개념탭**: 각 concept-card에 "왜 이게 중요한지" + "비유(analogy)" 포함?
-   → 단순 정의만이면 → 해당 카드 재작성
-2. **interaction탭**: 프리셋에 "이 조합의 핵심" 설명 포함?
-   → 설명 없으면 → 프리셋 설명 추가
-3. **퀴즈**: 5문제 중 2문제 이상이 상황 판단형?
-   → 암기형만이면 → 퀴즈 재출제
-4. FAIL 항목이 있으면 재생성 (최대 2회 반복)
-5. 2회 후에도 FAIL이면 → 사용자에게 어떤 기준을 충족하지 못했는지 명시하고 판단 요청
+1. **자가 검증**: 품질 기준 체크리스트를 순회하며 pass/fail 판정
+2. **실패 항목 수정**: fail 항목이 있으면 해당 부분만 수정 후 재검증
+3. **최대 2회 재시도**: 2회 수정 후에도 fail이면 실패 사유를 로그에 기록하고 진행
+4. **통과 기준**: "기술 완성도" 5개는 필수 통과, 나머지는 80% 이상 통과
 
 #### Step 4: 레지스트리 등록
 
@@ -140,11 +136,9 @@ window.parent.postMessage({
 
 ---
 
-### 레퍼런스 (필요 시 참조)
+### CSS 레퍼런스
 
-- CSS 변수/컴포넌트: `references/css-reference.md`
-- HTML 골격/URL 패턴/참조 파일: `references/template.md`
-- 품질 기준/좋은·나쁜 예시: `references/card-quality.md`
+→ [references/css-reference.md](references/css-reference.md) 참조
 
 ### 병렬 생성 (여러 카드)
 
@@ -154,19 +148,20 @@ window.parent.postMessage({
 2. `mirror-modifier.html` 전체 내용 (CSS 복사용)
 3. 해당 Blender 기능의 개념/단축키/사용 사례
 
+### 참조 파일
+
+→ [references/template.md](references/template.md) 참조
+
 ## 실행 로그
 실행 완료 시 아래 형식으로 기록:
 ```bash
-echo "[$(date '+%Y-%m-%d %H:%M')] mode=$MODE result=$RESULT quality=$QUALITY target=$TARGET" >> .claude/skill-logs/showme.log
+echo "[$(date '+%Y-%m-%d %H:%M')] mode=$MODE target=$TARGET result=$RESULT quality=$QUALITY" >> .claude/skill-logs/showme.log
 ```
-- `result`: `success` / `partial` / `fail`
-- `quality`: `pass` / `warn` / `fail`
+- `result`: `success` | `fail(reason)` | `skip(reason)`
+- `quality`: `PASS` | `FAIL(reason)` | `N/A` (verify/list 모드)
 
-## Gotchas ⚠️ (자동 축적)
+## Gotchas
+> 이 스킬 실행 중 발견된 함정들. 새 함정 발견 시 아래에 자동 추가한다.
+> 형식: `- **{날짜}** {증상} → {원인} → {해결}`
 
-스킬 실행 중 예상치 못한 실패/우회가 발생하면:
-1. 이 섹션 하단에 한 줄 추가
-2. 형식: `N. [날짜] 증상 → 원인 → 해결`
-3. 같은 실수 반복 시 해당 항목에 빈도 카운터 추가
-
-1. (아직 없음 — 사용하면서 추가)
+- (아직 없음)
