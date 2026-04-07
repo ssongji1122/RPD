@@ -1112,7 +1112,8 @@
           "Voxel Size로 해상도 조절 (0.02~0.05 권장, 작을수록 디테일 유지)",
           "빠르고 간단 — 스컬프팅 시작 전에 항상 쓰는 기본 방법",
           "위치: Properties → Object Data Properties (초록 메쉬 아이콘) → Remesh",
-          "쿼드 기반 리메시 — 루프 흐름이 자연스러워 애니메이션에 적합",
+          "voxel remesh ",
+          "quad remesh — 루프 흐름이 자연스러워 애니메이션에 적합",
           "처리 시간 김, Face Count로 목표 면 수 직접 지정 가능",
           "위치: Properties → Modifiers → Add Modifier → Remesh",
           "Blocks / Smooth / Sharp 세 가지 모드",
@@ -1128,28 +1129,7 @@
         ],
         "done": [],
         "image": "",
-        "tasks": [
-          {
-            "id": "w5-t1",
-            "label": "Sculpt Mode → 우측 Remesh 패널 → Ctrl+R",
-            "detail": "Voxel Size 조절해서 해상도 맞추기"
-          },
-          {
-            "id": "w5-t2",
-            "label": "Remesh 전후 비교",
-            "detail": "Statistics 켜서 폴리곤 수 변화 확인"
-          },
-          {
-            "id": "w5-t3",
-            "label": "Dyntopo 켜고 브러시가 닿는 곳만 폴리곤 생성 확인",
-            "detail": "Sculpt Mode 헤더 → Dyntopo 체크"
-          },
-          {
-            "id": "w5-t4",
-            "label": "Decimate Modifier 추가 후 Ratio 조절",
-            "detail": "0.3~0.5에서 형태 유지 지점 찾기"
-          }
-        ]
+        "tasks": []
       },
       {
         "title": "외부 Remesh 애드온 & 메쉬 정리 도구",
@@ -1161,7 +1141,7 @@
       },
       {
         "title": "🧩 무료 Remesh 애드온 (추천 3개)",
-        "copy": "BiMDF/QuadWild 알고리즘 기반. 삼각형 메쉬를 깨끗한 쿼드로 변환해요.\n\nETH Zurich 개발. 독립 실행 앱으로, Blender 밖에서 작동해요.\n\n전체가 아닌 선택 영역만 리메시할 수 있는 애드온이에요.",
+        "copy": "BiMDF/QuadWild 알고리즘 기반. 삼각형 메쉬를 깨끗한 쿼드로 변환해요.\n\nETH Zurich 개발. 독립 실행 앱으로, Blender 밖에서 작동해요.",
         "goal": [
           "다운로드: Gumroad (무료) · GitHub",
           "설치: Edit → Preferences → Add-ons → Install → .zip 선택",
@@ -1170,11 +1150,7 @@
           "다운로드: GitHub Releases",
           "설치: 별도 설치 불필요, 다운받은 앱 실행",
           "사용법: .obj 파일 드래그&드롭 → Vertex Count 설정 → Solve → Export",
-          "특징: 3D 스캔 메쉬 정리에 강함, 빠른 처리, 대용량 메쉬 지원",
-          "다운로드: GitHub",
-          "설치: Edit → Preferences → Add-ons → Install → .zip 선택",
-          "사용법: Edit Mode → 영역 선택 → N 패널 → LocalRemesher → Remesh Selected",
-          "특징: 부분 리메시 가능, 나머지 토폴로지 유지, 수정 작업에 유용"
+          "특징: 3D 스캔 메쉬 정리에 강함, 빠른 처리, 대용량 메쉬 지원"
         ],
         "done": [],
         "image": "",
