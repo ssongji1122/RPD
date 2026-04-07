@@ -65,7 +65,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash(python3 -m http.server:*), Ba
 - `.doc-ref` 또는 `.doc-ref-list` (Blender 공식 문서 링크)
 
 **탭 2 — interaction**:
-- `.demo-wrap` > `<canvas>` (680x300 권장)
+- `.demo-wrap` > `<canvas>` (데모 캔버스: 최소 `width="1360" height="600"` — CSS로 100% 축소)
 - 파라미터형 기능은 `.modifier-panel` + `input[type="range"]` + `input[type="number"]` + checkbox 조합을 우선 사용
 - `.demo-controls` > `.demo-btn` 는 모드 전환이나 Reset 같이 꼭 필요한 경우만 사용
 - 문장형 보조 설명은 최소화하고, 꼭 필요한 정보는 작은 카드 2~3개로 요약
@@ -75,6 +75,24 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash(python3 -m http.server:*), Ba
 - "얇은 벽 / 두꺼운 벽" 같은 프리셋 이름보다 `Thickness`, `Offset`, `Count`, `Bevel Width`처럼 Blender 실제 파라미터명을 그대로 노출
 - Canvas에 `requestAnimationFrame` 애니메이션 사용
 - 터치 이벤트 지원 (`touchend` with `preventDefault`)
+
+**Canvas 해상도 기준** (탭 1 개념 시각화 + 탭 2 공통):
+- 개념 비교 캔버스(탭 1): `width="400" height="320"` 이상 — CSS `width: 100%`로 표시되므로 낮으면 흐릿하게 보임
+- 픽셀 단위 렌더링(구체, 셰이딩 등)은 `ctx.fillRect` 루프 대신 `ImageData` + `putImageData` 사용 — 훨씬 빠르고 선명함
+- 구체·메시 등 부드러운 곡면을 그릴 때는 **SSAA 2×2** 적용 (픽셀당 4개 서브샘플 평균) — 가장자리 계단 현상 제거
+  ```js
+  // SSAA 2x2 패턴 예시
+  var offsets = [-0.25, 0.25];
+  var ar = 0, ag = 0, ab = 0;
+  for (var si = 0; si < 2; si++)
+    for (var sj = 0; sj < 2; sj++) {
+      // sub-sample at (px + offsets[si], py + offsets[sj])
+      var c = shade(px + offsets[si], py + offsets[sj]);
+      ar += c[0]; ag += c[1]; ab += c[2];
+    }
+  // result = [ar/4, ag/4, ab/4]
+  ```
+- 디바이스 픽셀비(DPR)가 필요한 경우: `canvas.width = cssW * devicePixelRatio`, CSS `width: cssW + "px"`
 
 **탭 3 — 언제 쓰나요?**:
 - `.usage-grid` > `.usage-card` (2열: 필요할 때 vs 안 필요할 때)
