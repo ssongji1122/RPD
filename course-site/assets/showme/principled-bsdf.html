@@ -564,15 +564,15 @@ body {
   <!-- Concept Visual: 3 canvases -->
   <div class="concept-visual">
     <div class="concept-visual-item">
-      <canvas id="cvSubsurface" width="200" height="160"></canvas>
+      <canvas id="cvSubsurface" width="400" height="320"></canvas>
       <div class="cv-label">Subsurface (피부톤)</div>
     </div>
     <div class="concept-visual-item">
-      <canvas id="cvEmission" width="200" height="160"></canvas>
+      <canvas id="cvEmission" width="400" height="320"></canvas>
       <div class="cv-label">Emission (발광)</div>
     </div>
     <div class="concept-visual-item">
-      <canvas id="cvTransmission" width="200" height="160"></canvas>
+      <canvas id="cvTransmission" width="400" height="320"></canvas>
       <div class="cv-label">Transmission (투명)</div>
     </div>
   </div>
@@ -766,114 +766,159 @@ body {
 </section>
 
 <script>
-// ── Concept Visual — 3 comparison spheres ────────
+// ── Concept Visual — 3 comparison spheres (ImageData SSAA 2x) ────────
 (function() {
-  var BG = "#1e293b";
-  function drawBg(ctx, w, h) { ctx.fillStyle = BG; ctx.fillRect(0, 0, w, h); }
+  var BASE = { r: 0.75, g: 0.55, b: 0.42 }; // shared base color for all 3
+  var BG = { r: 0.118, g: 0.161, b: 0.231 };
+  // Light direction (normalised)
+  var LX = 0.4, LY = -0.6, LZ = 0.7;
+  var ll = Math.sqrt(LX*LX + LY*LY + LZ*LZ);
+  LX /= ll; LY /= ll; LZ /= ll;
+  // Half-vector for Blinn-Phong
+  var HX = LX, HY = LY, HZ = LZ + 1;
+  var hl = Math.sqrt(HX*HX + HY*HY + HZ*HZ);
+  HX /= hl; HY /= hl; HZ /= hl;
 
-  function drawSphere(ctx, cx, cy, r, opts) {
-    var baseR = opts.r || 0.5, baseG = opts.g || 0.5, baseB = opts.b || 0.5;
-    var metallic = opts.metallic || 0;
-    var roughness = opts.roughness != null ? opts.roughness : 0.5;
-    var subsurface = opts.subsurface || 0;
-    var ssR = opts.ssR || 0.8, ssG = opts.ssG || 0.3, ssB = opts.ssB || 0.2;
-    var emission = opts.emission || 0;
-    var emR = opts.emR || 0, emG = opts.emG || 0, emB = opts.emB || 0;
-    var transmission = opts.transmission || 0;
-
-    for (var py = -r; py <= r; py++) {
-      for (var px = -r; px <= r; px++) {
-        var dist = Math.sqrt(px * px + py * py);
-        if (dist > r) continue;
-        var nz = Math.sqrt(1 - (px / r) * (px / r) - (py / r) * (py / r));
-        var nx = px / r, ny = py / r;
-        var lx = 0.4, ly = -0.6, lz = 0.7;
-        var ll = Math.sqrt(lx * lx + ly * ly + lz * lz);
-        lx /= ll; ly /= ll; lz /= ll;
-        var diff = Math.max(0, nx * lx + ny * ly + nz * lz);
-        var hx = lx, hy = ly, hz = lz + 1;
-        var hl = Math.sqrt(hx * hx + hy * hy + hz * hz);
-        hx /= hl; hy /= hl; hz /= hl;
-        var spec = Math.max(0, nx * hx + ny * hy + nz * hz);
-        var shininess = 2 + (1 - roughness) * 200;
-        spec = Math.pow(spec, shininess);
-        var viewDot = nz;
-        var fresnel = 0.04 + 0.96 * Math.pow(1 - viewDot, 5);
-        fresnel = fresnel * (1 - metallic) + metallic;
-        var ambient = 0.08;
-        var cr, cg, cb;
-        if (metallic > 0.5) {
-          cr = baseR * (ambient + diff * 0.4) + baseR * spec * (1 - roughness) * 1.5;
-          cg = baseG * (ambient + diff * 0.4) + baseG * spec * (1 - roughness) * 1.5;
-          cb = baseB * (ambient + diff * 0.4) + baseB * spec * (1 - roughness) * 1.5;
-        } else {
-          cr = baseR * (ambient + diff * 0.7) + spec * (1 - roughness) * fresnel;
-          cg = baseG * (ambient + diff * 0.7) + spec * (1 - roughness) * fresnel;
-          cb = baseB * (ambient + diff * 0.7) + spec * (1 - roughness) * fresnel;
-        }
-        // Subsurface blending
-        if (subsurface > 0) {
-          var ssFactor = subsurface * (0.4 + 0.6 * (1 - Math.abs(nz)));
-          cr = cr * (1 - ssFactor) + ssR * ssFactor * (ambient + diff * 0.6);
-          cg = cg * (1 - ssFactor) + ssG * ssFactor * (ambient + diff * 0.6);
-          cb = cb * (1 - ssFactor) + ssB * ssFactor * (ambient + diff * 0.6);
-        }
-        // Emission
-        cr += emR * emission;
-        cg += emG * emission;
-        cb += emB * emission;
-        // Transmission (alpha blend with BG)
-        if (transmission > 0) {
-          var bgR = 0.118, bgG = 0.161, bgB = 0.231;
-          var alpha = 1 - transmission * 0.8;
-          cr = cr * alpha + bgR * (1 - alpha);
-          cg = cg * alpha + bgG * (1 - alpha);
-          cb = cb * alpha + bgB * (1 - alpha);
-          // add some refraction highlight
-          var refrSpec = Math.pow(Math.max(0, spec), shininess * 0.5) * transmission * 0.3;
-          cr += refrSpec; cg += refrSpec; cb += refrSpec;
-        }
-        cr = Math.min(1, Math.max(0, cr));
-        cg = Math.min(1, Math.max(0, cg));
-        cb = Math.min(1, Math.max(0, cb));
-        ctx.fillStyle = "rgb(" + Math.round(cr * 255) + "," + Math.round(cg * 255) + "," + Math.round(cb * 255) + ")";
-        ctx.fillRect(cx + px, cy + py, 1.5, 1.5);
+  // Sample one pixel using SSAA 2x2 (4 sub-samples)
+  function samplePixel(cx, cy, r, shadeFn) {
+    var offsets = [-0.25, 0.25];
+    var ar = 0, ag = 0, ab = 0;
+    for (var si = 0; si < 2; si++) {
+      for (var sj = 0; sj < 2; sj++) {
+        var px = cx + offsets[si], py = cy + offsets[sj];
+        var d2 = px*px + py*py;
+        if (d2 > r*r) { ar += BG.r; ag += BG.g; ab += BG.b; continue; }
+        var nz = Math.sqrt(1 - d2/(r*r));
+        var nx = px/r, ny = py/r;
+        var diff = Math.max(0, nx*LX + ny*LY + nz*LZ);
+        var specDot = Math.max(0, nx*HX + ny*HY + nz*HZ);
+        var res = shadeFn(nx, ny, nz, diff, specDot);
+        ar += res[0]; ag += res[1]; ab += res[2];
       }
     }
+    return [ar/4, ag/4, ab/4];
+  }
+
+  function renderSphere(ctx, cx, cy, r, shadeFn) {
+    var w = ctx.canvas.width, h = ctx.canvas.height;
+    var img = ctx.createImageData(w, h);
+    var d = img.data;
+    // Background fill
+    for (var i = 0; i < w * h * 4; i += 4) {
+      d[i]   = Math.round(BG.r * 255);
+      d[i+1] = Math.round(BG.g * 255);
+      d[i+2] = Math.round(BG.b * 255);
+      d[i+3] = 255;
+    }
+    // Sphere pixels (bounding box)
+    var x0 = Math.max(0, Math.floor(cx - r - 1));
+    var x1 = Math.min(w - 1, Math.ceil(cx + r + 1));
+    var y0 = Math.max(0, Math.floor(cy - r - 1));
+    var y1 = Math.min(h - 1, Math.ceil(cy + r + 1));
+    for (var py = y0; py <= y1; py++) {
+      for (var px = x0; px <= x1; px++) {
+        var lx = px - cx, ly = py - cy;
+        // Early discard (with 1px border for AA)
+        if (lx*lx + ly*ly > (r+1)*(r+1)) continue;
+        var c = samplePixel(lx, ly, r, shadeFn);
+        var idx = (py * w + px) * 4;
+        d[idx]   = Math.round(Math.min(1, c[0]) * 255);
+        d[idx+1] = Math.round(Math.min(1, c[1]) * 255);
+        d[idx+2] = Math.round(Math.min(1, c[2]) * 255);
+        d[idx+3] = 255;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+  }
+
+  // ─── Shade functions ─────────────────────────────
+
+  function shadeSubsurface(nx, ny, nz, diff, specDot) {
+    var roughness = 0.45;
+    var shininess = 2 + (1 - roughness) * 160;
+    var spec = Math.pow(specDot, shininess);
+    var fresnel = 0.04 + 0.96 * Math.pow(1 - nz, 5);
+    var ambient = 0.10;
+    // Base diffuse
+    var cr = BASE.r * (ambient + diff * 0.75) + spec * (1 - roughness) * fresnel;
+    var cg = BASE.g * (ambient + diff * 0.75) + spec * (1 - roughness) * fresnel;
+    var cb = BASE.b * (ambient + diff * 0.75) + spec * (1 - roughness) * fresnel;
+    // SSS: light wraps around edges, warm reddish scatter
+    var ssWeight = 0.6;
+    var ssFactor = ssWeight * (0.3 + 0.7 * (1 - Math.abs(nz)));
+    var ssR = 0.92, ssG = 0.48, ssB = 0.32;
+    cr = cr * (1 - ssFactor) + ssR * ssFactor * (ambient + diff * 0.65);
+    cg = cg * (1 - ssFactor) + ssG * ssFactor * (ambient + diff * 0.65);
+    cb = cb * (1 - ssFactor) + ssB * ssFactor * (ambient + diff * 0.65);
+    return [cr, cg, cb];
+  }
+
+  function shadeEmission(nx, ny, nz, diff, specDot) {
+    var roughness = 0.5;
+    var shininess = 2 + (1 - roughness) * 160;
+    var spec = Math.pow(specDot, shininess);
+    var fresnel = 0.04 + 0.96 * Math.pow(1 - nz, 5);
+    var ambient = 0.10;
+    var cr = BASE.r * (ambient + diff * 0.75) + spec * (1 - roughness) * fresnel;
+    var cg = BASE.g * (ambient + diff * 0.75) + spec * (1 - roughness) * fresnel;
+    var cb = BASE.b * (ambient + diff * 0.75) + spec * (1 - roughness) * fresnel;
+    // Emission: additive, uniform (self-lit, ignores lighting direction)
+    var emStr = 0.85;
+    cr += BASE.r * emStr;
+    cg += BASE.g * emStr;
+    cb += BASE.b * emStr;
+    return [cr, cg, cb];
+  }
+
+  function shadeTransmission(nx, ny, nz, diff, specDot, cx, cy, r, px, py) {
+    var fresnel = 0.04 + 0.96 * Math.pow(1 - nz, 5);
+    // Refraction: offset background sample by IOR-based distortion
+    var ior = 1.45;
+    var refStr = 0.4 * r;
+    var bsx = (px + nx * refStr * (1/ior)) / (r * 2);
+    var bsy = (py + ny * refStr * (1/ior)) / (r * 2);
+    var refR = BG.r + 0.07 * Math.sin(bsx * 14 + 1.0) + 0.03 * Math.cos(bsy * 9);
+    var refG = BG.g + 0.06 * Math.sin(bsy * 11 + 0.5) + 0.02 * Math.sin(bsx * 7);
+    var refB = BG.b + 0.09 * Math.cos(bsx * 9 + bsy * 6);
+    // Sharp specular highlight
+    var spec = Math.pow(specDot, 400);
+    // Caustic glow near limb
+    var caustic = Math.pow(1 - nz, 4) * 0.12;
+    // Rim light (blue-tinted)
+    var rim = Math.pow(1 - nz, 7) * 0.30;
+    // Env reflection color (cool blue-grey)
+    var envR = 0.20, envG = 0.24, envB = 0.38;
+    var cr = refR * (1 - fresnel) + envR * fresnel + spec + caustic + rim * 0.6;
+    var cg = refG * (1 - fresnel) + envG * fresnel + spec + caustic + rim * 0.75;
+    var cb = refB * (1 - fresnel) + envB * fresnel + spec + caustic + rim * 1.0;
+    return [cr, cg, cb];
   }
 
   document.addEventListener("DOMContentLoaded", function() {
-    // Subsurface sphere (skin tone)
-    var cv1 = document.getElementById("cvSubsurface");
-    var ctx1 = cv1.getContext("2d");
-    drawBg(ctx1, cv1.width, cv1.height);
-    drawSphere(ctx1, cv1.width / 2, cv1.height / 2, 55, {
-      r: 0.831, g: 0.627, b: 0.478, roughness: 0.5,
-      subsurface: 0.5, ssR: 0.9, ssG: 0.4, ssB: 0.3
-    });
+    var R = 110; // sphere radius (canvas is 400x320)
 
-    // Emission sphere (green glow)
+    // Subsurface
+    var cv1 = document.getElementById("cvSubsurface");
+    renderSphere(cv1.getContext("2d"), cv1.width/2, cv1.height/2, R, shadeSubsurface);
+
+    // Emission — render first, then add glow overlay
     var cv2 = document.getElementById("cvEmission");
     var ctx2 = cv2.getContext("2d");
-    drawBg(ctx2, cv2.width, cv2.height);
-    drawSphere(ctx2, cv2.width / 2, cv2.height / 2, 55, {
-      r: 0, g: 0.3, b: 0.15, roughness: 0.5,
-      emission: 1.0, emR: 0, emG: 1.0, emB: 0.533
-    });
-    // Glow halo
-    var grd = ctx2.createRadialGradient(cv2.width / 2, cv2.height / 2, 50, cv2.width / 2, cv2.height / 2, 90);
-    grd.addColorStop(0, "rgba(0,255,136,0.15)");
-    grd.addColorStop(1, "rgba(0,255,136,0)");
+    renderSphere(ctx2, cv2.width/2, cv2.height/2, R, shadeEmission);
+    // Radial glow halo
+    var grd = ctx2.createRadialGradient(cv2.width/2, cv2.height/2, R*0.9, cv2.width/2, cv2.height/2, R*1.55);
+    grd.addColorStop(0, "rgba(" + Math.round(BASE.r*255) + "," + Math.round(BASE.g*255) + "," + Math.round(BASE.b*255) + ",0.22)");
+    grd.addColorStop(1, "rgba(" + Math.round(BASE.r*255) + "," + Math.round(BASE.g*255) + "," + Math.round(BASE.b*255) + ",0)");
     ctx2.fillStyle = grd;
     ctx2.fillRect(0, 0, cv2.width, cv2.height);
 
-    // Transmission sphere (transparent glass)
+    // Transmission — use closure to pass pixel coords
     var cv3 = document.getElementById("cvTransmission");
     var ctx3 = cv3.getContext("2d");
-    drawBg(ctx3, cv3.width, cv3.height);
-    drawSphere(ctx3, cv3.width / 2, cv3.height / 2, 55, {
-      r: 1, g: 1, b: 1, roughness: 0.02,
-      transmission: 1.0
+    var cx3 = cv3.width/2, cy3 = cv3.height/2;
+    renderSphere(ctx3, cx3, cy3, R, function(nx, ny, nz, diff, specDot) {
+      // reconstruct local px, py from nx, ny
+      return shadeTransmission(nx, ny, nz, diff, specDot, cx3, cy3, R, nx*R, ny*R);
     });
   });
 })();
