@@ -1,6 +1,6 @@
 ---
-description: "사이트 콘텐츠 검증. 예: /rpd-check, /rpd-check week 5, /rpd-check all, /rpd-check showme, /rpd-check --fix"
-allowed-tools: Read, Glob, Grep, Bash(ls:*), Bash(wc:*), Bash(stat:*), Bash(npx serve:*), Agent, Write, Edit
+description: "사이트 콘텐츠 검증. 예: /rpd-check, /rpd-check week 5, /rpd-check all, /rpd-check showme, /rpd-check --fix. DO NOT use for: 코드 품질 검증(/quality 사용), 배포 확인(/deploy 사용)"
+allowed-tools: Read, Glob, Grep, Bash(ls:*), Bash(wc:*), Bash(stat:*), Bash(npx serve:*), Bash(git diff:*), Agent, Write, Edit
 ---
 
 ## Context
@@ -27,6 +27,19 @@ allowed-tools: Read, Glob, Grep, Bash(ls:*), Bash(wc:*), Bash(stat:*), Bash(npx 
 | `all` | Phase 1 + Phase 2 전체 (15주) |
 | `showme` | ShowMe 카드 시스템만 집중 검증 |
 | `--fix` | 검증 + 자동 수정 가능 항목 수정 (다른 인자와 조합 가능) |
+
+### Smart Scoping (인자 없을 때)
+
+인자 없이 `/rpd-check` 실행 시, 최근 변경 파일 기반으로 관련 검증을 우선 실행:
+
+| 변경 패턴 | 우선 검증 |
+|----------|----------|
+| `course-site/assets/showme/` | 1.3 ShowMe 카드 체인 |
+| `course-site/assets/images/` | 1.1 이미지 검증 |
+| `course-site/data/curriculum*` 또는 `overrides.json` | 1.4 데이터 구조 + 1.8 동기화 |
+| 변경 없음 | Phase 1 전체 |
+
+우선 검증 결과를 먼저 출력한 뒤, 나머지 Phase 1 항목도 실행.
 
 ---
 
@@ -115,88 +128,19 @@ curriculum.json을 읽고 아래 7개 카테고리를 검증한다.
 
 ---
 
-## Phase 2: Browser Verify
+### 최종 판정
 
-**실행 조건**: `week {N}`, `all` 인자가 있을 때만 실행.
+PASS: critical 0건            → "✅ PASS (0 critical / N warning / N info)"
+WARN: critical 0 + warning ≤5 → "⚠️ WARN (0 critical / N warning / N info)"
+FAIL: critical ≥1             → "❌ FAIL (N critical / N warning / N info)"
 
-### 2.0 서버 기동
+판정 결과를 리포트 맨 마지막 줄에 출력.
 
-preview_start 또는 기존 서버 활용. base URL: `http://localhost:8771`
-
-### 2.1 페이지 로드 검증
-
-대상 주차 각각에 대해:
-1. `week.html?week={N}` 로드
-2. 콘솔 에러 확인 (preview_console_logs) — 허용 목록: `getComputedStyle`, `sidebarToggle`
-3. Noto Sans KR 폰트 로드 확인 (preview_eval: `document.fonts.check('16px "Noto Sans KR"')`)
-
-### 2.2 이미지 렌더링 검증
-
-```javascript
-// preview_eval로 실행
-[...document.querySelectorAll('img')].filter(img =>
 ---
 
-  img.complete && img.naturalWidth === 0
-).map(img => ({ src: img.src, alt: img.alt, step: img.closest('.practice-step')?.querySelector('.step-title')?.textContent }))
-```
-- 결과가 있으면 → `[CRITICAL] 깨진 이미지 렌더링`
-- alt 속성 없는 img → `[WARNING]`
+## Phase 2: Browser Verify
 
-### 2.3 카드/레이아웃 검증
-
-```javascript
-// 빈 카드 감지
-[...document.querySelectorAll('.practice-step')].filter(step => {
-  const copy = step.querySelector('.step-copy');
-  return !copy || copy.textContent.trim().length < 5;
-}).map(step => step.querySelector('.step-title')?.textContent)
-```
-
-```javascript
-// step 개수 매칭 (curriculum의 steps 수와 비교)
-document.querySelectorAll('.practice-step').length
-```
-
-### 2.4 테마 일관성 검증
-
-**다크 모드 검증 (기본):**
-1. 페이지 로드 (기본 다크 모드)
-2. 모든 iframe 요소의 배경색 확인:
-```javascript
-[...document.querySelectorAll('iframe')].map(f => {
-  const style = getComputedStyle(f);
-  return { src: f.src, bg: style.backgroundColor };
-})
-```
-3. showme 버튼이 있으면 첫 번째 클릭 → 모달 내 iframe 배경 확인
-4. 밝은 배경 (rgb 평균 > 200) 감지 → `[WARNING] 테마 불일치`
-
-**라이트 모드 검증:**
-1. 테마 전환: `document.documentElement.setAttribute('data-theme', 'light')`
-2. 동일 검증 반복
-3. 어두운 배경 iframe 감지 → `[WARNING] 테마 불일치`
-
-**외부 삽입 이미지 검증:**
-1. `.step-image-wrap img` 요소 중 밝은 배경 이미지 감지
-2. 이미지 주변 배경과 이미지 자체 밝기 대비가 너무 강하면 → `[WARNING]`
-
-### 2.5 모바일 검증
-
-1. 뷰포트 375px로 리사이즈
-2. 수평 잘림 확인: `document.documentElement.scrollWidth > document.documentElement.clientWidth`
-3. 터치 타겟 확인:
-```javascript
-[...document.querySelectorAll('button, a, [role="button"]')].filter(el => {
-  const rect = el.getBoundingClientRect();
-  return rect.width < 44 || rect.height < 44;
-}).length
-```
-
-### 2.6 스크린샷 증거
-
-문제 발견 시 `preview_screenshot`으로 캡처.
-파일명: `claudedocs/rpd-check-week{N}-{issue-type}.png`
+`week {N}` 또는 `all` 인자가 있을 때만 실행. 상세: `references/browser-verify.md`
 
 ---
 
@@ -254,26 +198,19 @@ Summary: X critical / Y warning / Z info
 
 ### --fix 자동 수정
 
-`--fix` 플래그가 있을 때만 실행. 수정 가능 범위:
-
-| 이슈 | 자동 수정 | 방법 |
-|------|----------|------|
-| 누락 supplement | skeleton 생성 | `_supplements.json`에 템플릿 엔트리 추가 |
-| task ID 중복 | 재번호 | 중복 ID를 순차 번호로 변경 |
-| registry 누락 | 엔트리 추가 | curriculum의 showme ID를 registry에 추가 |
-| 누락 이미지 | **수정 안 함** | 목록만 출력 (수동 대응) |
-| orphan 파일 | **수정 안 함** | 목록만 출력 (수동 판단) |
-| 테마 불일치 | **수정 안 함** | 목록만 출력 (CSS 수정 필요) |
+--fix 자동 수정 규칙과 재검증 루프: `references/fix-rules.md`
 
 ---
 
 ## 실행 로그
 
 ```bash
-echo "[$(date '+%Y-%m-%d %H:%M')] mode=$MODE critical=$CRITICAL warning=$WARNING info=$INFO" >> .claude/skill-logs/rpd-check.log
+echo "[$(date '+%Y-%m-%d %H:%M')] mode=$MODE result=$RESULT quality=$QUALITY critical=$CRITICAL warning=$WARNING info=$INFO" >> .claude/skill-logs/rpd-check.log
 ```
 
 ## Gotchas
+
+<!-- 실행 시마다 새로운 발견을 이 목록에 추가 (날짜 포함). 오래된 항목은 유지. -->
 
 1. curriculum.json은 ~3800줄이므로 전체를 한 번에 읽는다 (분할 불필요)
 2. `_registry.js`는 JS 파일이므로 JSON 파싱 불가 — Grep으로 키를 추출하거나 전체 읽기 후 파싱
