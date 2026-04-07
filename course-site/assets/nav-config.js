@@ -13,6 +13,7 @@
       var isKo = (lang || 'ko') === 'ko';
       return [
         { href: 'index.html', tabTarget: 'archive', label: isKo ? '홈' : 'Home' },
+        { href: 'library.html', tabTarget: 'showme', label: 'Show Me' },
         { href: 'inha.html', tabTarget: 'class', label: 'Class' },
         { href: 'studio.html', tabTarget: 'studio', label: 'My Studio' }
       ];
