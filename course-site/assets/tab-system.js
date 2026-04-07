@@ -23,6 +23,7 @@
   if (search) {
     var placeholders = {
       archive: '카드 검색... (Extrude, Boolean, UV...)',
+      showme: '카드 검색... (Array, Mirror, UV...)',
       class: '주차 검색... (Week 3, Mirror...)',
       studio: '내 덱 검색...'
     };

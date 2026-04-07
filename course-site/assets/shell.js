@@ -94,8 +94,10 @@
       archive: [
         { href: 'index.html', svg: ICONS.home, text: '홈', page: 'index.html' },
         { href: '#', svg: ICONS.layers, text: '내 덱', page: '' },
-        { href: 'library.html', svg: ICONS.search, text: '카드 찾기', page: 'library.html' },
         { href: 'shortcuts.html', svg: ICONS.keyboard, text: '단축키', page: 'shortcuts.html' }
+      ],
+      showme: [
+        { href: 'library.html', svg: ICONS.search, text: '카드 찾기', page: 'library.html' }
       ],
       class: [
         { href: 'inha.html', svg: ICONS.graduationCap, text: '수업 개요', page: 'inha.html' }
@@ -147,7 +149,7 @@
   var rail = el('nav', { className: 'rail', id: 'sideRail', 'aria-label': '사이드 탐색' });
 
   // Add all tab contexts (tab-system.js will show/hide them)
-  ['archive', 'class', 'studio'].forEach(function (tab) {
+  ['archive', 'showme', 'class', 'studio'].forEach(function (tab) {
     rail.appendChild(createRailItems(tab));
   });
 
