@@ -1,23 +1,15 @@
-# ShowMe CSS 레퍼런스
+# ShowMe CSS Reference
 
 ## CSS 변수
 
-| 변수 | 값 |
-|------|-----|
-| `--bg` | `#0a0a0a` |
-| `--surface` | `#17181a` |
-| `--line` | `rgba(255,255,255,.08)` |
-| `--key` | `#0a84ff` |
-| `--key-soft` | `#8ec5ff` |
-| `--success` | `#10b981` |
-| `--warn` | `#f59e0b` |
-| `--danger` | `#ef4444` |
-| `--text` | `#f5f5f7` |
-| `--muted` | `#a1a1aa` |
-| `--radius-sm` | `12px` |
-| `--radius-md` | `18px` |
+```
+--bg: #0a0a0a          --surface: #17181a      --line: rgba(255,255,255,.08)
+--key: #0a84ff         --key-soft: #8ec5ff     --success: #10b981
+--warn: #f59e0b        --danger: #ef4444       --text: #f5f5f7
+--muted: #a1a1aa       --radius-sm: 12px       --radius-md: 18px
+```
 
-## CSS 컴포넌트
+## CSS 컴포넌트 요약
 
 | 클래스 | 용도 |
 |--------|------|
@@ -26,7 +18,6 @@
 | `.analogy` | 비유 설명 박스 (amber) |
 | `.shortcut-list` / `.shortcut-row` / `.kbd` | 단축키 목록 |
 | `.demo-wrap` / `.demo-controls` / `.demo-btn` | Canvas 데모 영역 |
-| `.modifier-panel` / `.mp-row` / `.mp-slider` / `.mp-value` | 파라미터 패널 |
 | `.usage-grid` / `.usage-card` | 사용 사례 2열 |
 | `.combo-section` / `.combo-grid` / `.combo-card` | 추천 조합 |
 | `.tip-box` | 팁/주의사항 박스 |

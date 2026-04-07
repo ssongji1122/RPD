@@ -1,6 +1,6 @@
-# ShowMe HTML 템플릿
+# ShowMe Template & References
 
-## 골격 구조
+## HTML 기본 구조
 
 ```html
 <!DOCTYPE html>
@@ -54,3 +54,5 @@
 | `course-site/data/curriculum.js` | 주차별 showme 필드 |
 | `course-site/assets/showme/_supplements.js` | 보충 설명 데이터 (프론트엔드 accordion) |
 | `course-site/assets/showme/_supplements.json` | 보충 설명 데이터 (Notion sync용) |
+
+> 보충 설명 생성은 `/brainstormC` 스킬 사용

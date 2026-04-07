@@ -9,7 +9,7 @@ allowed-tools: Read, Glob, Grep, Bash(ls:*), Bash(wc:*), Bash(stat:*), Bash(npx 
 - 전체 주차 수: !`python3 -c "import json; d=json.load(open('course-site/data/curriculum.json')); print(len(d))" 2>/dev/null || echo "?"`
 - 이미지 파일 수: !`find course-site/assets/images -type f ! -name '.gitkeep' 2>/dev/null | wc -l | tr -d ' '`
 - ShowMe 카드 수: !`ls course-site/assets/showme/*.html 2>/dev/null | grep -v _template | wc -l | tr -d ' '`
-- Registry 항목 수: !`grep -c "\"label\"" course-site/assets/showme/_registry.js 2>/dev/null || echo 0`
+- Registry 항목 수: !`grep -c '"label"' course-site/assets/showme/_registry.js 2>/dev/null || echo 0`
 - Supplement 항목 수: !`python3 -c "import json; d=json.load(open('course-site/assets/showme/_supplements.json')); print(len(d))" 2>/dev/null || echo "?"`
 
 ## Task
@@ -22,7 +22,7 @@ allowed-tools: Read, Glob, Grep, Bash(ls:*), Bash(wc:*), Bash(stat:*), Bash(npx 
 
 | 인자 | 동작 |
 |------|------|
-| (없음) | Phase 1 전체 데이터 검증 (Smart Scoping 적용) |
+| (없음) | Phase 1 전체 데이터 검증 |
 | `week {N}` | Phase 1 + Phase 2 해당 주차 |
 | `all` | Phase 1 + Phase 2 전체 (15주) |
 | `showme` | ShowMe 카드 시스템만 집중 검증 |
@@ -31,10 +31,6 @@ allowed-tools: Read, Glob, Grep, Bash(ls:*), Bash(wc:*), Bash(stat:*), Bash(npx 
 ### Smart Scoping (인자 없을 때)
 
 인자 없이 `/rpd-check` 실행 시, 최근 변경 파일 기반으로 관련 검증을 우선 실행:
-
-```bash
-git diff --name-only HEAD~3
-```
 
 | 변경 패턴 | 우선 검증 |
 |----------|----------|
@@ -132,11 +128,19 @@ curriculum.json을 읽고 아래 7개 카테고리를 검증한다.
 
 ---
 
+### 최종 판정
+
+PASS: critical 0건            → "✅ PASS (0 critical / N warning / N info)"
+WARN: critical 0 + warning ≤5 → "⚠️ WARN (0 critical / N warning / N info)"
+FAIL: critical ≥1             → "❌ FAIL (N critical / N warning / N info)"
+
+판정 결과를 리포트 맨 마지막 줄에 출력.
+
+---
+
 ## Phase 2: Browser Verify
 
-상세 내용: `references/browser-verify.md`
-
-**실행 조건**: `week {N}`, `all` 인자가 있을 때만 실행.
+`week {N}` 또는 `all` 인자가 있을 때만 실행. 상세: `references/browser-verify.md`
 
 ---
 
@@ -155,8 +159,14 @@ curriculum.json을 읽고 아래 7개 카테고리를 검증한다.
   week 5 step "Sculpt 브러시 심화" → assets/images/week05/sculpt-brushes.png
   week 5 step "Remesh와 마무리" → assets/images/week05/remesh.png
 
+[CRITICAL] ShowMe HTML 누락 (0건)
+  (없음)
+
 [WARNING] ShowMe supplement 누락 (N건)
   sculpt-brushes: _supplements.json에 없음
+
+[WARNING] 테마 불일치 (N건)
+  showme/remesh-modifier.html: 다크 모드에서 라이트 iframe
 
 [INFO] Orphan 파일 (N건)
   assets/images/week03/unused-image.png
@@ -165,16 +175,6 @@ curriculum.json을 읽고 아래 7개 카테고리를 검증한다.
 Summary: X critical / Y warning / Z info
 ```
 
-### 최종 판정
-
-```
-PASS: critical 0건            → "✅ PASS (0 critical / N warning / N info)"
-WARN: critical 0 + warning ≤5 → "⚠️ WARN (0 critical / N warning / N info)"
-FAIL: critical ≥1             → "❌ FAIL (N critical / N warning / N info)"
-```
-
-판정 결과를 리포트 맨 마지막 줄에 출력.
-
 ### JSON 리포트 저장
 
 `claudedocs/rpd-check-report.json`에 구조화된 결과 저장:
@@ -182,14 +182,23 @@ FAIL: critical ≥1             → "❌ FAIL (N critical / N warning / N info)"
 {
   "timestamp": "2026-03-31T...",
   "mode": "full | week:5 | showme",
-  "issues": [...],
+  "issues": [
+    {
+      "severity": "critical",
+      "category": "image",
+      "week": 5,
+      "step": "AI 메쉬 정리",
+      "message": "이미지 누락: assets/images/week05/mesh-cleanup.png",
+      "path": "assets/images/week05/mesh-cleanup.png"
+    }
+  ],
   "summary": { "critical": 3, "warning": 2, "info": 1 }
 }
 ```
 
 ### --fix 자동 수정
 
-`--fix` 플래그가 있을 때만 실행. 상세: `references/fix-rules.md`
+--fix 자동 수정 규칙과 재검증 루프: `references/fix-rules.md`
 
 ---
 
@@ -198,22 +207,17 @@ FAIL: critical ≥1             → "❌ FAIL (N critical / N warning / N info)"
 ```bash
 echo "[$(date '+%Y-%m-%d %H:%M')] mode=$MODE result=$RESULT quality=$QUALITY critical=$CRITICAL warning=$WARNING info=$INFO" >> .claude/skill-logs/rpd-check.log
 ```
-- `result`: `success` / `partial` / `fail`
-- `quality`: `pass` / `warn` / `fail`
 
-## Gotchas ⚠️ (자동 축적)
+## Gotchas
 
-스킬 실행 중 예상치 못한 실패/우회가 발생하면:
-1. 이 섹션 하단에 한 줄 추가
-2. 형식: `N. [날짜] 증상 → 원인 → 해결`
-3. 같은 실수 반복 시 해당 항목에 빈도 카운터 추가
+<!-- 실행 시마다 새로운 발견을 이 목록에 추가 (날짜 포함). 오래된 항목은 유지. -->
 
 1. curriculum.json은 ~3800줄이므로 전체를 한 번에 읽는다 (분할 불필요)
-2. `_registry.js`는 JS 파일이므로 JSON 파싱 불가 — Grep으로 키 추출
+2. `_registry.js`는 JS 파일이므로 JSON 파싱 불가 — Grep으로 키를 추출하거나 전체 읽기 후 파싱
 3. Phase 2 브라우저 검증 시 서버가 이미 떠 있으면 재기동하지 않는다
 4. 외부 URL에 HTTP 요청을 보내지 않는다 (속도/안정성)
 5. showme 모달 클릭 시 iframe 로드 시간이 필요하므로 짧은 대기 필요
-6. 이미지 테마 검증 시 iframe cross-origin 제한 — 배경색만 확인
+6. 이미지 테마 검증 시 iframe cross-origin 제한으로 내부 스타일 직접 접근 불가 — 배경색만 확인
 
 ## 금지 사항
 
