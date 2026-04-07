@@ -2044,7 +2044,7 @@ const CURRICULUM = [
     "steps": [
       {
         "title": "AI 메쉬 Remesh 정리 — 작업 가능 컨디션 만들기",
-        "copy": "Week 5에서 AI(Meshy/Tripo)로 뽑은 메쉬는 토폴로지가 엉망이에요. Material을 입혀도 쉐이더가 깨지거나 UV 전개가 불가능해요. 오늘 Remesh로 '작업 가능한 상태'를 먼저 만들어요.\n\nVoxel Remesh — Object Data Properties에서 Voxel Size 조절 후 Remesh. 폴리곤을 균일하게 정리해요.\n\nQuad Remesh (Ctrl+R in Sculpt Mode) — 애니메이션·머테리얼 적용에 유리한 쿼드 토폴로지로 변환해요.\n\nDecimate Modifier — 고폴리 AI 메쉬를 감량해요. Ratio 0.3~0.5에서 형태 유지되는 지점 찾기.\n\nQRemeshify — 트라이앵글 → 쿼드 자동 변환. 리그를 걸 예정이라면 필수예요.\n\nMesh Cleaner 2 — 중복 버텍스, 빈 구멍, 뒤집힌 노멀을 원클릭 정리. AI 메쉬 임포트 직후 가장 먼저 실행.",
+        "copy": "Week 5에서 AI(Meshy/Tripo)로 뽑은 메쉬는 토폴로지가 엉망이에요. Material을 입혀도 쉐이더가 깨지거나 UV 전개가 불가능해요. 오늘 Remesh로 '작업 가능한 상태'를 먼저 만들어요.\n\nVoxel Remesh — Object Data Properties에서 Voxel Size 조절 후 Remesh. 폴리곤을 균일하게 정리해요.\n\nQuad Remesh (Ctrl+R in Sculpt Mode) — 애니메이션·머테리얼 적용에 유리한 쿼드 토폴로지로 변환해요.\n\nDecimate Modifier — 고폴리 AI 메쉬를 감량해요. Ratio 0.3~0.5에서 형태 유지되는 지점 찾기.\n\nQRemeshify — 트라이앵글 → 쿼드 자동 변환. 리그를 걸 예정이라면 필수예요.\n\nMesh Cleaner 2 — 중복 버텍스, 빈 구멍, 뒤집힌 노멀을 원클릭 정리. AI 메쉬 임포트 직후 가장 먼저 실행.\n\n✅ 오늘 수업 전 체크: Blender 5 설치 완료 / Week 5 .blend 파일 준비 / Shader Editor 워크스페이스 열어두기",
         "goal": [
           "AI 메쉬가 Material 적용에 문제 없는 상태임을 확인한다",
           "Voxel Remesh · Decimate · Mesh Cleaner 2의 차이를 이해한다"
@@ -2096,170 +2096,273 @@ const CURRICULUM = [
         "showme": ["remesh-modifier", "decimate-modifier"]
       },
       {
-        "title": "Material 할당",
-        "copy": "리메시로 정리된 메쉬에 옷을 입히듯 재질을 입혀요. 같은 로봇이라도 재질 하나로 장난감이 될 수도, 군용 장비가 될 수도 있어요.",
+        "title": "Material 기초 + Principled BSDF",
+        "copy": "리메시로 정리된 메쉬에 옷을 입히듯 재질을 입혀요. 같은 로봇이라도 재질 하나로 장난감이 될 수도, 군용 장비가 될 수도 있어요.\n\nMaterial Properties(재질 구 아이콘) → + New → Principled BSDF 자동 생성돼요. 슬롯을 여러 개 만들면 한 오브젝트에 여러 재질을 쓸 수 있어요.\n\nPrincipled BSDF 핵심 파라미터:\n• Base Color — 재질의 기본 색상\n• Metallic — 0=비금속, 1=금속\n• Roughness — 0=반짝, 1=무광\n• Emission — 자체 발광 색상 + Strength\n• Transmission — 0=불투명, 1=투명(유리)",
         "goal": [
-          "Material 슬롯의 구조를 안다",
-          "하나의 오브젝트에 여러 Material을 쓸 수 있다"
+          "Material 슬롯 구조를 이해한다",
+          "Principled BSDF 핵심 파라미터 5가지를 구분한다"
         ],
         "done": [
-          "오브젝트 색이 바뀌었다",
+          "금속/유리/발광 재질을 각각 슬라이더로 만들었다",
           "한 오브젝트에 2가지 이상 Material을 할당했다"
         ],
         "tasks": [
           {
             "id": "w6-t1",
-            "label": "Material Properties에서 + New 클릭",
+            "label": "Material Properties(구 아이콘) → + New 클릭",
             "detail": "기본 Principled BSDF가 자동 생성돼요"
           },
           {
             "id": "w6-t2",
-            "label": "Base Color 바꿔서 색 변경 확인",
-            "detail": "Z → Material Preview로 확인"
+            "label": "Base Color 바꿔서 색 변경 확인 (Z → Material Preview)",
+            "detail": "색상 박스 클릭 → 컬러 피커에서 원하는 색 선택"
           },
           {
             "id": "w6-t3",
-            "label": "Edit Mode에서 면 선택 → 두 번째 Material Assign",
-            "detail": "눈이나 가슴판에 다른 색 입히기"
-          }
-        ],
-        "image": "assets/images/week06/principled-bsdf.png",
-        "showme": "material-basics"
-      },
-      {
-        "title": "Principled BSDF 탐색",
-        "copy": "숫자 하나로 금속/유리/플라스틱이 바뀌어요. Metallic을 1로 올리면 금속, Transmission을 1로 올리면 유리처럼 보여요. 옷감을 고르듯 슬라이더를 움직여보세요.",
-        "goal": [
-          "핵심 파라미터 4가지를 구분한다",
-          "원하는 재질을 슬라이더로 만든다"
-        ],
-        "done": [
-          "금속/유리/플라스틱 재질을 각각 흉내냈다",
-          "Roughness 차이를 눈으로 구분할 수 있다"
-        ],
-        "tasks": [
+            "label": "Metallic 1.0 + Roughness 0.1 → 광택 금속",
+            "detail": "Roughness를 0.8로 올리면 무광 금속으로 변해요"
+          },
           {
             "id": "w6-t4",
-            "label": "Metallic 1.0으로 금속 재질 만들기",
-            "detail": "Roughness도 같이 바꿔서 광택 비교"
+            "label": "Transmission 1.0 + IOR 1.45 → 유리 재질",
+            "detail": "Rendered 모드에서 확인해야 제대로 보여요"
           },
           {
             "id": "w6-t5",
-            "label": "Transmission 1.0으로 유리 재질 만들기",
-            "detail": "IOR 1.45 정도면 유리 느낌"
+            "label": "Emission Color 지정 + Strength 5 → 발광 재질",
+            "detail": "로봇 눈이나 에너지 코어에 활용"
           },
           {
             "id": "w6-t6",
-            "label": "Roughness 0 vs 0.5 vs 1 비교",
-            "detail": "반짝 → 은은 → 무광 변화 확인"
-          },
-          {
-            "id": "w6-t7",
-            "label": "Emission으로 발광 재질 만들기",
-            "detail": "로봇 눈이나 표시등에 활용"
+            "label": "Edit Mode에서 면 선택 → + 버튼으로 슬롯 추가 → Assign",
+            "detail": "눈이나 가슴판에 다른 재질 입히기"
           }
         ],
-        "image": "assets/images/week06/shader-editor.png",
-        "showme": "principled-bsdf"
+        "image": "assets/images/week06/principled-bsdf.png",
+        "showme": ["material-basics", "principled-bsdf"]
       },
       {
-        "title": "Shader Node Editor",
-        "copy": "노드는 레고 블록처럼 연결해서 재질을 만들어요. 색을 그라데이션으로 바꾸거나 질감을 섞을 수 있어요. 선을 연결하는 것만으로 복잡한 재질이 가능해져요.",
+        "title": "머티리얼 소스 활용 — BlenderKit & PBR 사이트",
+        "copy": "재질을 처음부터 만들 필요 없어요. BlenderKit 라이브러리와 무료 PBR 사이트에서 전문가가 만든 재질을 바로 가져다 쓸 수 있어요. 가져온 뒤 파라미터를 읽어보면 '왜 이렇게 생겼는지' 자연스럽게 이해돼요.\n\n재질 이름은 영문+언더바로 지어두세요(robot_metal, eye_glow). 나중에 Blender MCP로 Claude가 자동으로 재질을 찾아 적용할 수 있어요.",
         "goal": [
-          "노드 기반 재질 편집 방식을 이해한다",
-          "Color Ramp 노드를 연결한다"
+          "BlenderKit에서 머티리얼을 검색해 오브젝트에 적용한다",
+          "무료 PBR 사이트에서 텍스처를 다운받는 방법을 안다"
         ],
         "done": [
-          "ColorRamp를 Principled BSDF에 연결했다",
-          "노드 2개 이상을 직접 연결했다"
+          "BlenderKit 머티리얼 1개 이상 적용했다",
+          "재질 이름을 영문+언더바 규칙으로 변경했다"
+        ],
+        "tasks": [
+          {
+            "id": "w6-bk1",
+            "label": "Edit → Preferences → Add-ons → BlenderKit 활성화",
+            "detail": "Blender 5에 내장되어 있어요. 검색창에 'blenderkit' 입력"
+          },
+          {
+            "id": "w6-bk2",
+            "label": "N키 → BlenderKit 탭 → 검색창에 'metal' 또는 'plastic' 입력",
+            "detail": "무료(Free) 필터 체크 후 검색"
+          },
+          {
+            "id": "w6-bk3",
+            "label": "마음에 드는 머티리얼 클릭 → 오브젝트에 드래그 앤 드롭",
+            "detail": "자동으로 Material Slot에 추가돼요"
+          },
+          {
+            "id": "w6-bk4",
+            "label": "ambientcg.com 접속 → 'Concrete' 검색 → 1K PNG 다운로드",
+            "detail": "Diffuse/Roughness/Normal 3종 세트로 다운받으면 좋아요",
+            "url": "https://ambientcg.com"
+          },
+          {
+            "id": "w6-bk5",
+            "label": "머티리얼 이름을 영문+언더바 규칙으로 변경",
+            "detail": "예: robot_aluminum, eye_glow, body_plastic — MCP 자동화에 필요해요"
+          }
+        ],
+        "image": "assets/images/week06/material-assign.png",
+        "showme": ["material-basics", "blenderkit"]
+      },
+      {
+        "title": "Shader Node Editor — 노드 실습 3종",
+        "copy": "노드는 레고 블록처럼 연결해서 재질을 만들어요. 선 하나로 완전히 다른 질감이 만들어지는 게 Shader Editor의 매력이에요.\n\n레시피 1 — 절차적 패턴: Noise Texture → Color Ramp → Principled BSDF\n레시피 2 — 이미지 텍스처: Image Texture → BSDF Base Color\n레시피 3 — 발광 혼합: Emission BSDF + Principled BSDF → Add Shader → Material Output",
+        "goal": [
+          "Shader Editor에서 노드를 추가하고 연결한다",
+          "3가지 노드 레시피를 직접 만든다"
+        ],
+        "done": [
+          "Noise Texture가 Color Ramp를 거쳐 BSDF에 연결됐다",
+          "Add Shader 노드로 두 재질을 혼합했다"
         ],
         "tasks": [
           {
             "id": "w6-t8",
-            "label": "Shader Editor 열기",
-            "detail": "상단 에디터 타입 메뉴 또는 워크스페이스 Shading 탭"
+            "label": "Shading 워크스페이스 탭으로 전환",
+            "detail": "상단 메뉴바 Shading 탭 클릭 또는 에디터 타입에서 Shader Editor 선택"
           },
           {
             "id": "w6-t9",
-            "label": "Shift+A → Color → Color Ramp 추가",
-            "detail": ""
+            "label": "[레시피 1] Shift+A → Texture → Noise Texture 추가",
+            "detail": "Scale: 5, Detail: 8로 설정해보세요"
           },
           {
             "id": "w6-t10",
-            "label": "Color Ramp 출력 → Base Color 입력 연결",
-            "detail": "드래그로 소켓 연결"
+            "label": "[레시피 1] Shift+A → Color → Color Ramp 추가 → Noise Color 소켓 연결",
+            "detail": "Noise의 Color 출력 → Color Ramp의 Fac 입력에 드래그"
           },
           {
             "id": "w6-t11",
-            "label": "Color Ramp 색상 두 개 바꿔서 그라데이션 만들기",
-            "detail": "색 포인트 클릭 후 변경"
-          }
-        ],
-        "image": "assets/images/week06/shader-editor.png",
-        "showme": ["shader-editor", "color-ramp"]
-      },
-      {
-        "title": "Texture 노드로 질감 추가",
-        "copy": "Noise Texture를 연결하면 표면에 얼룩이나 먼지 같은 질감이 생겨요. 실제 물건은 완전히 깨끗한 법이 없으니까, 이 한 단계가 리얼함을 크게 올려줘요.",
-        "goal": [
-          "Noise/Musgrave 등 텍스처 노드를 연결한다"
-        ],
-        "done": [
-          "표면에 패턴이나 질감이 보인다"
-        ],
-        "tasks": [
+            "label": "[레시피 1] Color Ramp 출력 → Principled BSDF Base Color 연결",
+            "detail": "Color Ramp에서 흑백 포인트 색상 바꿔서 그라데이션 커스텀"
+          },
           {
             "id": "w6-t12",
-            "label": "Shift+A → Texture → Noise Texture 추가",
-            "detail": ""
+            "label": "[레시피 2] Shift+A → Texture → Image Texture → 이미지 파일 불러오기",
+            "detail": "Open → ambientcg에서 받은 Diffuse 파일 선택. Color Space: sRGB"
           },
           {
             "id": "w6-t13",
-            "label": "Noise → Color Ramp → Base Color 연결",
-            "detail": "Scale을 바꿔서 패턴 크기 조절"
+            "label": "[레시피 2] Image Texture Color 출력 → Base Color 연결",
+            "detail": "UV 전개가 없으면 텍스처가 깨져 보여요. Object Data → UV Maps 확인"
           },
           {
             "id": "w6-t14",
-            "label": "Noise의 Roughness 출력을 Principled BSDF Roughness에 연결",
-            "detail": "표면 광택에 변화를 줘요"
+            "label": "[레시피 3] Shift+A → Shader → Emission 추가",
+            "detail": "Emission Color: 파란색, Strength: 3"
+          },
+          {
+            "id": "w6-t15",
+            "label": "[레시피 3] Shift+A → Shader → Add Shader 추가",
+            "detail": "Emission + Principled BSDF 두 출력을 Add Shader에 연결 → Material Output"
           }
         ],
-        "image": "assets/images/week06/texture-node.png",
-        "showme": ["noise-texture", "texture-types", "image-texture-pbr"]
+        "image": "assets/images/week06/shader-editor.png",
+        "showme": ["shader-editor", "color-ramp", "noise-texture", "texture-types"]
       },
       {
-        "title": "Viewport Shading 비교",
-        "copy": "Z 키 하나로 와이어프레임/솔리드/미리보기/렌더를 오가요. 작업 중에는 Material Preview로, 최종 확인은 Rendered로 보는 습관을 들이면 편해요.",
+        "title": "Poly AI로 PBR 텍스처 만들기",
+        "copy": "withpoly.com에서 텍스트 설명만으로 PBR 텍스처 3종(Diffuse/Roughness/Normal)을 AI가 생성해줘요. 다운받은 3종을 Blender에 가져오면 Ctrl+Shift+T 단축키 하나로 자동 연결돼요.",
         "goal": [
-          "4가지 Shading 모드를 구분한다"
+          "Poly AI에서 PBR 텍스처를 생성하고 다운로드한다",
+          "Ctrl+Shift+T로 3종 맵을 자동 연결한다"
         ],
         "done": [
-          "Z 파이 메뉴로 모드 전환이 자연스럽다"
+          "Diffuse/Roughness/Normal 3종이 노드로 연결됐다",
+          "렌더에서 텍스처가 오브젝트에 적용된 것이 확인됐다"
         ],
         "tasks": [
           {
-            "id": "w6-t15",
-            "label": "Z 파이 메뉴로 4가지 모드 각각 전환",
-            "detail": "Wireframe/Solid/Material/Rendered"
+            "id": "w6-poly1",
+            "label": "withpoly.com 접속 → 텍스트 입력: 'rusted metal surface'",
+            "detail": "Style, Resolution(1K), Format(PNG) 선택",
+            "url": "https://withpoly.com"
           },
           {
-            "id": "w6-t16",
-            "label": "Material Preview에서 작업 후 Rendered에서 최종 확인",
-            "detail": "빛 반사가 다르게 보여요"
+            "id": "w6-poly2",
+            "label": "Generate 클릭 → Diffuse / Roughness / Normal 3종 다운로드",
+            "detail": "파일명 형식: texture_diffuse.png, texture_roughness.png, texture_normal.png"
+          },
+          {
+            "id": "w6-poly3",
+            "label": "Node Wrangler 애드온 활성화 (Preferences → Add-ons)",
+            "detail": "Ctrl+Shift+T 단축키는 Node Wrangler가 있어야 동작해요"
+          },
+          {
+            "id": "w6-poly4",
+            "label": "Shader Editor에서 Principled BSDF 선택 → Ctrl+Shift+T",
+            "detail": "파일 탐색기에서 3종 파일 모두 선택(Ctrl+클릭) → Open"
+          },
+          {
+            "id": "w6-poly5",
+            "label": "자동 연결 확인: Diffuse→Base Color, Roughness→Roughness, Normal→Normal Map→Normal",
+            "detail": "Normal Map 노드가 중간에 자동 삽입돼요. Color Space 자동 설정도 확인"
           }
         ],
-        "image": "assets/images/week06/shading-modes.png"
+        "image": "assets/images/week06/texture-node.png",
+        "showme": ["image-texture-pbr", "noise-texture"]
+      },
+      {
+        "title": "렌더링 — 라이팅과 카메라",
+        "copy": "Z 키 하나로 와이어프레임/솔리드/미리보기/렌더를 오가요. 재질이 아무리 좋아도 조명이 없으면 아무것도 안 보여요. 간단한 3점 조명으로 로봇을 돋보이게 해봐요.",
+        "goal": [
+          "4가지 Viewport Shading 모드를 구분한다",
+          "기본 3점 조명을 설정한다"
+        ],
+        "done": [
+          "Z 파이 메뉴로 모드 전환이 자연스럽다",
+          "Rendered 모드에서 조명 효과가 보인다"
+        ],
+        "tasks": [
+          {
+            "id": "w6-t16",
+            "label": "Z 파이 메뉴로 4가지 모드 각각 전환",
+            "detail": "Wireframe / Solid / Material Preview / Rendered"
+          },
+          {
+            "id": "w6-t17",
+            "label": "Shift+A → Light → Point 추가 → 로봇 정면 45도 위 배치",
+            "detail": "에너지(Energy) 500~1000W. 메인 키 라이트"
+          },
+          {
+            "id": "w6-t18",
+            "label": "두 번째 Point Light → 로봇 반대편 옆 → 에너지 200W",
+            "detail": "그림자 채우는 필 라이트. 메인보다 약하게"
+          },
+          {
+            "id": "w6-t19",
+            "label": "Numpad 0 → 카메라 뷰 → G+Z로 높이 조절",
+            "detail": "카메라는 약간 위에서 내려다보는 앵글이 로봇에 잘 어울려요"
+          }
+        ],
+        "image": "assets/images/week06/shading-modes.png",
+        "showme": ["shader-editor"]
+      },
+      {
+        "title": "EEVEE Next vs Cycles — 렌더 엔진 선택",
+        "copy": "렌더 엔진 두 가지 중 어떤 걸 쓰느냐에 따라 속도와 품질이 완전히 달라져요.\n\nEEVEE Next — 실시간 렌더, 수업 중 작업에 적합. Screen Space Reflections를 켜면 반사 품질이 올라가요.\n\nCycles — 빛의 물리 경로를 시뮬레이션. 유리·금속 반사가 훨씬 정교하지만 렌더 시간이 길어요.\n\n권장: 작업 중엔 EEVEE Next, 최종 포트폴리오 렌더는 Cycles.",
+        "goal": [
+          "EEVEE Next와 Cycles의 차이를 설명한다",
+          "렌더 엔진을 상황에 맞게 전환한다"
+        ],
+        "done": [
+          "같은 장면을 두 엔진으로 렌더해서 차이를 확인했다",
+          "EEVEE Next에서 Screen Space Reflections를 활성화했다"
+        ],
+        "tasks": [
+          {
+            "id": "w6-ev1",
+            "label": "Render Properties → Render Engine → EEVEE Next 선택",
+            "detail": "Z → Rendered로 실시간 미리보기. 작업 속도가 빨라요"
+          },
+          {
+            "id": "w6-ev2",
+            "label": "EEVEE Next → Screen Space Reflections 체크",
+            "detail": "금속 재질의 반사가 더 사실적으로 보여요"
+          },
+          {
+            "id": "w6-ev3",
+            "label": "Render Engine → Cycles로 전환 후 동일 장면 렌더",
+            "detail": "F12로 렌더. 시간이 걸리지만 유리·금속 품질이 높아요"
+          },
+          {
+            "id": "w6-ev4",
+            "label": "Cycles → Device: GPU Compute로 변경 (GPU 있는 경우)",
+            "detail": "Preferences → System → Cycles Render Devices에서 GPU 활성화"
+          }
+        ],
+        "image": "assets/images/week06/shading-modes.png",
+        "showme": ["shader-editor"]
       },
       {
         "title": "Claude MCP로 Blender 조작하기",
-        "copy": "MCP(Model Context Protocol)는 Claude가 Blender를 직접 조작할 수 있게 해주는 표준 프로토콜이에요. blender-mcp 애드온만 설치하면 '큐브 만들어줘', '금속 재질 적용해줘' 같은 자연어 명령으로 3D 작업을 자동화할 수 있어요.\n\n오늘 배운 Material 시스템을 Claude에게 지시해 자동 적용해보면, AI 협업 워크플로우의 가능성을 체험할 수 있어요.",
+        "copy": "MCP(Model Context Protocol)는 Claude가 Blender를 직접 조작할 수 있게 해주는 표준 프로토콜이에요. blender-mcp 애드온만 설치하면 '큐브 만들어줘', '금속 재질 적용해줘' 같은 자연어 명령으로 3D 작업을 자동화할 수 있어요.\n\n오늘 배운 Material 시스템을 Claude에게 지시해 자동 적용해보면, AI 협업 워크플로우의 가능성을 체험할 수 있어요.\n\n실습 명령어 예시:\n• '오브젝트 robot_body에 metallic 1.0, roughness 0.2 재질 적용해줘'\n• 'eye_glow 오브젝트에 파란색 발광 재질 만들어줘'\n• '전체 씬 EEVEE Next로 렌더해줘'",
         "goal": [
           "MCP가 무엇인지 개념을 이해한다",
-          "blender-mcp 연결 구조를 파악한다"
+          "blender-mcp로 재질 자동 적용을 체험한다"
         ],
         "done": [
           "MCP의 역할(Host ↔ Server ↔ Tool 구조)을 설명할 수 있다",
-          "blender-mcp 설치 5단계를 순서대로 말할 수 있다"
+          "(선택) blender-mcp 명령어 1개 이상 실행했다"
         ],
         "tasks": [
           {
@@ -2269,17 +2372,58 @@ const CURRICULUM = [
           },
           {
             "id": "w6-mcp2",
-            "label": "blender-mcp 설치 가이드 읽기",
+            "label": "blender-mcp GitHub 가이드 읽기",
             "detail": "Claude Desktop + blender-mcp 애드온 + claude_desktop_config.json 설정 3가지 필요",
             "url": "https://github.com/ahuja312/blender-mcp"
           },
           {
             "id": "w6-mcp3",
-            "label": "(선택) blender-mcp 직접 설치 후 '큐브 만들어줘' 테스트",
-            "detail": "N키 → MCP 탭 → Start Server → Claude Desktop에서 테스트"
+            "label": "(선택) blender-mcp 설치 → N키 → MCP 탭 → Start Server",
+            "detail": "Claude Desktop에서 '큐브 만들어줘' 테스트"
+          },
+          {
+            "id": "w6-mcp4",
+            "label": "(선택) 재질 이름이 영문+언더바인지 확인 후 Claude에게 재질 적용 지시",
+            "detail": "예: 'robot_body 오브젝트에 Metallic 1.0, Roughness 0.15 재질 만들어줘'"
           }
         ],
         "showme": ["mcp-concept", "blender-mcp"]
+      },
+      {
+        "title": "과제 — 로봇 파츠별 재질 완성",
+        "copy": "오늘 배운 모든 걸 로봇에 적용해서 완성해요. 파츠마다 다른 재질을 쓰면 훨씬 생동감 있어 보여요.",
+        "goal": [
+          "로봇 오브젝트에 3가지 이상 재질을 파츠별로 적용한다",
+          "EEVEE Next로 렌더링한 이미지를 저장한다"
+        ],
+        "done": [
+          "몸체/눈/관절 등 최소 3파츠에 다른 재질이 적용됐다",
+          "Ctrl+F3으로 렌더 이미지를 저장했다",
+          ".blend 파일로 저장 완료"
+        ],
+        "tasks": [
+          {
+            "id": "w6-hw1",
+            "label": "로봇 파츠별 Material Slot 분리 (최소 3개 파츠)",
+            "detail": "몸체 / 눈 / 관절·팔 등. Edit Mode에서 면 선택 후 Assign"
+          },
+          {
+            "id": "w6-hw2",
+            "label": "BlenderKit 또는 Poly AI 텍스처 최소 1개 적용",
+            "detail": "직접 만든 노드 재질 + 외부 소스 재질 혼용 OK"
+          },
+          {
+            "id": "w6-hw3",
+            "label": "EEVEE Next로 렌더 → Ctrl+F3으로 PNG 저장",
+            "detail": "해상도 1920x1080 권장. Image Editor → Image → Save As"
+          },
+          {
+            "id": "w6-hw4",
+            "label": ".blend 파일 저장 (Ctrl+S) → 노션 과제 제출 링크에 업로드",
+            "detail": "파일명: week06_yourname.blend"
+          }
+        ],
+        "showme": ["material-basics", "principled-bsdf"]
       }
     ],
     "shortcuts": [
@@ -2361,6 +2505,34 @@ const CURRICULUM = [
       {
         "title": "Blender Studio - Materials and Shading",
         "url": "https://studio.blender.org/training/blender-2-8-fundamentals/materials-and-shading/"
+      },
+      {
+        "title": "Blender Studio - Shading Nodes",
+        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/shading-nodes/"
+      },
+      {
+        "title": "Blender Studio - Principled BSDF",
+        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/principled-bsdf/"
+      },
+      {
+        "title": "How to use BlenderKit — Free Materials & Models",
+        "url": "https://www.youtube.com/watch?v=VxGDCCt7vQY"
+      },
+      {
+        "title": "Shader Editor Beginner Tutorial — Blender (Darrin Lile)",
+        "url": "https://www.youtube.com/watch?v=TkBBqBpVwv4"
+      },
+      {
+        "title": "PBR Texturing in Blender — Node Wrangler + Ctrl+Shift+T",
+        "url": "https://www.youtube.com/watch?v=JiSMOIhpnW0"
+      },
+      {
+        "title": "EEVEE Next vs Cycles — Which to Use?",
+        "url": "https://www.youtube.com/watch?v=aST0LcPRDO4"
+      },
+      {
+        "title": "Blender MCP — Claude AI로 Blender 조작하기",
+        "url": "https://www.youtube.com/watch?v=4o-9sJovAhA"
       }
     ],
     "docs": [
