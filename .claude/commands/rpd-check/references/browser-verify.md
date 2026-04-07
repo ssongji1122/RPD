@@ -1,32 +1,30 @@
-## Phase 2: Browser Verify
+# rpd-check Phase 2: Browser Verify
 
 **실행 조건**: `week {N}`, `all` 인자가 있을 때만 실행.
 
-### 2.0 서버 기동
+## 2.0 서버 기동
 
 preview_start 또는 기존 서버 활용. base URL: `http://localhost:8771`
 
-### 2.1 페이지 로드 검증
+## 2.1 페이지 로드 검증
 
 대상 주차 각각에 대해:
 1. `week.html?week={N}` 로드
 2. 콘솔 에러 확인 (preview_console_logs) — 허용 목록: `getComputedStyle`, `sidebarToggle`
 3. Noto Sans KR 폰트 로드 확인 (preview_eval: `document.fonts.check('16px "Noto Sans KR"')`)
 
-### 2.2 이미지 렌더링 검증
+## 2.2 이미지 렌더링 검증
 
 ```javascript
 // preview_eval로 실행
 [...document.querySelectorAll('img')].filter(img =>
----
-
   img.complete && img.naturalWidth === 0
 ).map(img => ({ src: img.src, alt: img.alt, step: img.closest('.practice-step')?.querySelector('.step-title')?.textContent }))
 ```
 - 결과가 있으면 → `[CRITICAL] 깨진 이미지 렌더링`
 - alt 속성 없는 img → `[WARNING]`
 
-### 2.3 카드/레이아웃 검증
+## 2.3 카드/레이아웃 검증
 
 ```javascript
 // 빈 카드 감지
@@ -41,7 +39,7 @@ preview_start 또는 기존 서버 활용. base URL: `http://localhost:8771`
 document.querySelectorAll('.practice-step').length
 ```
 
-### 2.4 테마 일관성 검증
+## 2.4 테마 일관성 검증
 
 **다크 모드 검증 (기본):**
 1. 페이지 로드 (기본 다크 모드)
@@ -64,7 +62,7 @@ document.querySelectorAll('.practice-step').length
 1. `.step-image-wrap img` 요소 중 밝은 배경 이미지 감지
 2. 이미지 주변 배경과 이미지 자체 밝기 대비가 너무 강하면 → `[WARNING]`
 
-### 2.5 모바일 검증
+## 2.5 모바일 검증
 
 1. 뷰포트 375px로 리사이즈
 2. 수평 잘림 확인: `document.documentElement.scrollWidth > document.documentElement.clientWidth`
@@ -76,7 +74,7 @@ document.querySelectorAll('.practice-step').length
 }).length
 ```
 
-### 2.6 스크린샷 증거
+## 2.6 스크린샷 증거
 
 문제 발견 시 `preview_screenshot`으로 캡처.
 파일명: `claudedocs/rpd-check-week{N}-{issue-type}.png`
