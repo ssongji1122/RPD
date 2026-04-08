@@ -818,13 +818,6 @@
               }).join("")}</div>` : ""}
               <p class="step-copy">${step.copy}</p>
               ${showmeHtml}
-              ${taskItems ? `
-                <details class="task-group">
-                  <summary>${text.taskGroupLabel} (${tasks.length})</summary>
-                  <div class="task-group-body">
-                    <div class="task-list">${taskItems}</div>
-                  </div>
-                </details>` : ""}
             </div>
           </article>`;
       }).join("");
@@ -1116,7 +1109,8 @@
       }
 
       function isComplete(step) {
-        return getTasks(step).every(function(task) { return task.checked; });
+        var tasks = getTasks(step);
+        return tasks.length > 0 && tasks.every(function(task) { return task.checked; });
       }
 
       function updateStep(step) {
