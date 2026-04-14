@@ -185,7 +185,7 @@ with soft shadows and white background"
 
 ## 과제 안내
 
-- **제출처:** Discord #week09-assignment 채널
+- **제출처:** 본인 학생 페이지
 - **내용:**
   - 3가지 조명 환경에서 자신의 로봇 렌더 이미지 3장
   - 각 이미지에 조명 설정 한줄 설명
