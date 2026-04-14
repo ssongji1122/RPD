@@ -1390,7 +1390,7 @@
   },
   {
     "week": 6,
-    "title": "[BACKUP] Week 06 (이전 버전)",
+    "title": "Material & Shader Node + AI PBR Texture",
     "subtitle": "재질 시스템 · Principled BSDF · 노드 편집",
     "duration": "~3시간",
     "topics": [
@@ -1403,189 +1403,373 @@
     ],
     "steps": [
       {
-        "title": "AI 메쉬 Remesh 정리 — 작업 가능 컨디션 만들기",
+        "title": "Remesh · Dyntopo · Decimate",
+        "copy": "스컬프팅 중 메쉬가 뭉개지거나 폴리곤이 너무 많아지면 이 도구들이 필요해요. Blender 내장 Remesh 3가지 방법의 차이를 알고, Dyntopo로 실시간 자동 리메시를 체험하고, Decimate로 가볍게 줄여봐요.\n\nBlender에 Remesh 방법이 3가지 있어요. 상황에 맞게 골라 써야 해요.\n\n1. Sculpt Remesh (Ctrl+R) — 스컬프팅 전 준비용\n\n2. Object Data Properties Remesh (QuadriFlow) — 애니메이션 토폴로지\n\n3. Remesh Modifier — 비파괴 실험용\n\n→ 스컬프팅 준비엔 Ctrl+R, 쿼드 토폴로지 필요하면 QuadriFlow, 비파괴로 실험하려면 Modifier\n\nDyntopo(Dynamic Topology)는 스컬프팅 중 브러시가 지나는 곳에 폴리곤을 자동으로 추가하거나 제거해요. 폴리곤이 부족한 곳에서 뿔, 귀, 손가락 같은 디테일을 자유롭게 만들 수 있어요.\n\n활성화: Sculpt Mode → 헤더 바 → Dyntopo 체크박스 ON\n\n핵심 설정:\n\n주의: 삼각형 메쉬만 생성 → 완성 후 반드시 Remesh로 정리 필요\n\n→ 폴리곤이 부족해서 형태가 안 만들어지면 Dyntopo를 켜보세요. Snake Hook과 함께 쓰면 뿔이나 촉수 표현이 자유로워요.\n\nDecimate Modifier는 메쉬의 폴리곤 수를 줄여서 파일을 가볍게 해요. 리메시와 달리 토폴로지를 재구성하지 않고 기존 면을 합쳐요.\n\n사용법: Properties → Modifiers → Add Modifier → Decimate\n\nRatio 기준: 1.0 = 원본 유지 / 0.5 = 절반으로 줄임 / 0.3~0.5 = 형태 유지 최적 범위\n\n3가지 모드:\n\n→ AI 메쉬 임포트 후 → Decimate 0.5부터 시작 → 형태 확인하며 천천히 낮추기",
+        "goal": [
+          "Remesh 3가지 방법의 차이를 이해한다",
+          "위치: Sculpt Mode → 헤더 우측 Remesh 패널 → Ctrl+R",
+          "Voxel Size로 해상도 조절 (0.02~0.05 권장, 작을수록 디테일 유지)",
+          "빠르고 간단 — 스컬프팅 시작 전에 항상 쓰는 기본 방법",
+          "위치: Properties → Object Data Properties (초록 메쉬 아이콘) → Remesh",
+          "voxel remesh ",
+          "quad remesh — 루프 흐름이 자연스러워 애니메이션에 적합",
+          "처리 시간 김, Face Count로 목표 면 수 직접 지정 가능",
+          "위치: Properties → Modifiers → Add Modifier → Remesh",
+          "Blocks / Smooth / Sharp 세 가지 모드",
+          "Apply 전까지 원본 유지 (비파괴) — AI 메쉬 임포트 후 실험에 유용",
+          "Dyntopo로 스컬프팅 중 자동 리메시를 체험한다",
+          "Detail Size: 숫자가 작을수록 고해상도 (1~3이 일반적)",
+          "Detail Type: Relative (카메라 거리 기준) / Constant (절대 크기 기준)",
+          "Refine Method: Subdivide Collapse (기본 — 추가+제거 동시)",
+          "Decimate로 폴리곤 수를 줄인다",
+          "Collapse (기본): 가장 많이 사용. 점진적으로 면 합침",
+          "Un-Subdivide: Subdivide로 늘어난 메쉬 원래대로",
+          "Planar: 거의 평평한 면끼리 합침 (건축 모델에 유용)"
+        ],
+        "done": [],
+        "image": "",
+        "tasks": []
+      },
+      {
+        "title": "외부 Remesh 애드온 & 메쉬 정리 도구",
+        "copy": "무료 애드온으로 Blender 내장 도구를 넘어서는 리메시와 메쉬 정리가 가능해요. 위 섹션에서 배운 Add-on 설치 방법(.zip → Install from Disk)을 활용해요.",
+        "goal": [],
+        "done": [],
+        "image": "",
+        "tasks": []
+      },
+      {
+        "title": "🧩 무료 Remesh 애드온 (추천 3개)",
+        "copy": "BiMDF/QuadWild 알고리즘 기반. 삼각형 메쉬를 깨끗한 쿼드로 변환해요.\n\nETH Zurich 개발. 독립 실행 앱으로, Blender 밖에서 작동해요.",
+        "goal": [
+          "다운로드: Gumroad (무료) · GitHub",
+          "설치: Edit → Preferences → Add-ons → Install → .zip 선택",
+          "사용법: Object Mode → 오브젝트 선택 → N 패널 → QRemeshify 탭 → Target Face Count 설정 → Remesh",
+          "특징: 쿼드 품질 최상, 엣지 루프 보존, Sculpt → Retopo 워크플로우 최적",
+          "다운로드: GitHub Releases",
+          "설치: 별도 설치 불필요, 다운받은 앱 실행",
+          "사용법: .obj 파일 드래그&드롭 → Vertex Count 설정 → Solve → Export",
+          "특징: 3D 스캔 메쉬 정리에 강함, 빠른 처리, 대용량 메쉬 지원"
+        ],
+        "done": [],
+        "image": "",
+        "tasks": []
+      },
+      {
+        "title": "📊 상황별 추천 도구",
+        "copy": "",
+        "goal": [],
+        "done": [],
+        "image": "",
+        "tasks": []
+      },
+      {
+        "title": "1.1 Material이란 무엇인가",
         "copy": "",
         "goal": [
-          "Week 5에서 AI(Meshy/Tripo 등)로 뽑은 메쉬가 하이폴리인 경우, 블렌더에서 바로 작업하기 어려운 일이 많아요.  Material을 입혀도 쉐이더가 깨지거나 UV 전개가 불가능할 수 있어요. ",
-          "Remesh로 \"작업 가능한 상태\"를 먼저 만들어요.\n\n왜 필요한가: AI 메쉬는 삼각형이 뒤엉켜 있어 쉐이더가 깨지거나 노멀이 뒤집힙니다. \nVoxel Remesh → Decimate → Mesh Cleanup 순서로 정리해요.",
-          "AI 메쉬가 Material 적용에 문제 없는 상태임을 확인한다",
-          "Voxel Remesh · Decimate · Mesh Cleanup 의 차이를 이해한다"
+          "오브젝트의 \"옷\"이에요. 같은 메쉬여도 Material을 바꾸면 금속 로봇도 되고, 유리 로봇도 돼요. 하나의 오브젝트에 여러 Material을 쓸 수도 있어요 — 로봇 몸체는 금속, 눈은 발광처럼요. Material은 Material Properties 패널에서 관리하고, Material 슬롯에 담겨요.",
+          "Material Basic",
+          "Material 지우는법"
+        ],
+        "done": [],
+        "image": "",
+        "tasks": []
+      },
+      {
+        "title": "1.2 Principled BSDF — 재질 핵심 파라미터",
+        "copy": "Principled BSDF는 Blender의 만능 재질 노드예요. 아래 파라미터 6개만 알면 대부분의 재질을 표현할 수 있어요.\n\nUnderstanding Material ",
+        "goal": [
+          "Base Color — 재질의 기본 색상. 금속이면 금속 색, 유리면 흰색/투명 계열",
+          "Metallic — 0 = 비금속 (플라스틱·피부), 1 = 금속 (철·금). ⚠️ 중간값은 사용 안 함",
+          "Roughness — 0 = 거울처럼 매끈, 1 = 분필처럼 거침. 사포 질감 = 표면을 얼마나 긁었는지",
+          "IOR — 굴절률. 유리 기본값 1.45. 빛이 재질 안에서 얼마나 꺾이는지",
+          "Transmission Weight — 0 = 불투명, 1 = 완전 투명. 유리·물 표현 핵심",
+          "Emission Color + Strength — 자체 발광. Strength를 높이면 오브젝트가 빛을 방출해요"
+        ],
+        "done": [],
+        "image": "",
+        "tasks": []
+      },
+      {
+        "title": "1.3 Shader Node란 — 레고 블록",
+        "copy": "Shader Editor는 Material을 '노드 그래프'로 편집하는 공간이에요. 각 노드는 레고 블록처럼 출력 소켓을 다음 노드의 입력에 꽂아서 연결합니다.",
+        "goal": [
+          "흐름: 텍스처 → 수정 노드 → Principled BSDF → Material Output (왼쪽 → 오른쪽)",
+          "Shift+A — 노드 추가 메뉴 열기",
+          "Ctrl+Shift+T — 텍스처 파일들 선택 → PBR 맵 자동 연결 (Node Wrangler 애드온 필요)",
+          "M — 노드 Mute(비활성화) 토글. 연결을 끊지 않고 임시로 노드 꺼볼 때",
+          "Shader Editor에서 노드 = 레고 블록, 연결선 = 데이터 흐름이에요. 왼쪽 노드 출력을 오른쪽 노드 입력에 꽂으면, 앞 단계 결과가 뒤로 흘러가요. 마지막엔 항상 Material Output으로 들어가야 화면에 보여요. 소켓 색: 노란=색상, 회색=숫자, 초록=쉐이더, 보라=벡터."
+        ],
+        "done": [],
+        "image": "",
+        "tasks": []
+      },
+      {
+        "title": "1.4 Procedural vs Image Texture — 핵심 구분",
+        "copy": "Blender에서 텍스처는 두 종류예요. 장단점이 달라서 상황에 맞게 선택해야 해요.\n\n비교 요약:\n\n💡 처음엔 Procedural로 노드 흐름을 익히고, Image Texture는 UV를 배운 뒤에 제대로 써요.",
+        "goal": [
+          "Procedural Texture — 수학 공식으로 패턴 생성. UV Unwrap 불필요, 해상도 무한대, 타일링 자연스러움. 예: Noise Texture, Wave Texture, Voronoi",
+          "Image Texture — 실제 이미지 파일(.png/.jpg/.exr) 사용. 사진 같은 사실감. UV Unwrap이 있어야 오브젝트에 정확히 붙음",
+          "해상도 제한 없음 → Procedural | 사진처럼 사실적 → Image Texture",
+          "UV 없어도 OK → Procedural | UV 필수 → Image Texture (Week 7에서 다룸)",
+          "수업 순서: 레시피 1 (Noise Texture) → 레시피 2 (Image Texture) 순으로 실습"
+        ],
+        "done": [],
+        "image": "",
+        "tasks": []
+      },
+      {
+        "title": "1.5 PBR 맵 3종 용어",
+        "copy": "PBR은 Physically Based Rendering의 약자이며, 블렌더에서는 “현실 재질처럼 보이게 만드는 표준적인 머티리얼 방식”이라고 이해하면 됩니다. 빛이 표면에 닿을 때 실제 물체처럼 반사·흡수되도록 계산하는 방식이라, 나무·금속·플라스틱·천 같은 재질 표현에 자주 사용합니다.\n\n블렌더의 Principled BSDF는 PBR 워크플로우를 잘 반영한 셰이더입니다. 보통 Base Color, Metallic, Roughness 같은 맵을 조합해서 재질을 만듭니다.\n\nPBR은 “예쁜 텍스처”가 아니라, 빛에 대한 재질의 반응을 현실적으로 맞추는 방식입니다. 그래서 같은 재질이라도 조명이 바뀌어도 훨씬 자연스럽게 보입니다.\n\n💡 Node Wrangler의 Ctrl+Shift+T로 3개 파일을 한 번에 선택하면 Principled BSDF에 자동 연결돼요. 파일 이름에 'Diffuse', 'Roughness', 'Normal'이 있어야 자동 인식.\n\nNode Wrangler는 블렌더에 기본 내장된 애드온으로, 별도 다운로드 없이 활성화만 하면 됩니다. 셰이더 노드 작업을 훨씬 빠르게 해주는 도구예요. \n\n노드 두 개 선택 후 Ctrl + 0으로 Mix 노드 자동 생성. Geometry Nodes에서도 일부 기능 작동합니다. \n\n→ Week 7에서 UV Unwrap까지 배우면 이 맵들을 오브젝트에 예쁘게 적용시킬수 있어요.\n",
+        "goal": [
+          "블렌더에서 의미",
+          "핵심 맵",
+          "Base Color: 재질의 기본 색",
+          "Metallic: 금속인지 아닌지 구분하는 값",
+          "Roughness: 표면의 거칠기, 즉 반사의 퍼짐 정도를 조절",
+          "쉽게 이해하면",
+          "Node Wrangler 활성화 방법 ",
+          "Edit > Preferences > Add-ons 로 이동하세요. 검색창에 \"node\" 입력 후 Node: Node Wrangler 체크하고 창 닫기.  노드 에디터에서 Node Wrangler 메뉴가 활성화됩니다. ",
+          "주요 사용법",
+          "Shift + W: 노드 에디터에서 Wrangler 메뉴 불러오기 (프리뷰, 정렬 등). windsworld.tistory",
+          "Ctrl + Shift + T: PBR 텍스처 (Base Color 등) 자동 연결. blog.naver",
+          "Alt + X: 연결 안 된 노드 일괄 제거. windsworld.tistory",
+          "Ctrl + Shift + LMB: 이미지 텍스처 바로 미리보기. youtube",
+          "팁"
+        ],
+        "done": [],
+        "image": "",
+        "tasks": []
+      },
+      {
+        "title": "Step 1: Remesh로 작업 준비",
+        "copy": "",
+        "goal": [
+          "Remesh 이해하기 ",
+          "ShowMe: Remesh vs Decimate"
+        ],
+        "done": [],
+        "image": "",
+        "tasks": []
+      },
+      {
+        "title": "Retopology 작업",
+        "copy": "─── Retopology란? ───\n\n─── 기본 세팅 (CG Boost 강의 기준) ───\n\n─── 주요 단축키 ───\n\n─── Blender Secrets 4가지 팁 ───\n\n─── Blender 4.5 간편 리토폴로지 (Farrukh 3D) ───",
+        "goal": [
+          "3d ai 로 만들고 싶은 모델 이미지 생성 ",
+          "생성한 모델 블렌더로 불러오기 ",
+          "Gemini 에게 Retopology 를 요청",
+          "Retopology \n생성된 모델을 레퍼런스로 새롭게 topology 를 생성하는 방법 ",
+          "F2 , Bsurfaces GPL Edition extensions를 Install 하세요 ",
+          "Rotopology  사용법 ",
+          "AI 생성 또는 스컄프로 만들어진 High-poly 메쉬는 폴리곤이 불규칙하게 배치됨 → UV·애니메이션에 부적합",
+          "Retopology = High-poly 메쉬 위에 깨끗한 엣지 루프를 가진 새 Low-poly 메쉬를 덮어 그리는 작업",
+          "결과: 애니메이션·UV 적용에 적합한 정돈된 메쉬 완성",
+          "① AI 메쉬를 참조 오브젝트로 설정 → Properties > Object > Visibility > In Front 체크 (주석 메쉬가 앞에 보이게)",
+          "② Shift+A → Mesh → Plane 추가 → Tab으로 Edit Mode 진입",
+          "③ 스냅 켜기: Shift+Tab → Face Project 선택 + Individual Origins 켜기 → 버텍스가 High-poly 표면에 달라붙음",
+          "⑤ G로 이동하면서 High-poly 표면을 따라 폴리곤 배치 시작",
+          "Ctrl+R — 엣지 루프 추가 (가로/세로 라인 기준 면 분할)",
+          "E — 엣지/버텍스 Extrude 확장",
+          "F — 선택한 버텍스/엣지를 Face로 채우기",
+          "Alt+Click — 엣지 루프 전체 선택",
+          "Shrinkwrap 모디파이어 — 새 메쉬가 High-poly 표면에 자동으로 달라붙게 설정 (Target = AI 메쉬)",
+          "팁 1: Face Snap + Project Individual Elements 켜기 → G로 이동 시 High-poly 표면에 완벽히 달라붙음",
+          "팁 2: Mirror 모디파이어 먼저 추가 → 절반만 리토폴로지 → 반대쪽 자동 생성 (대칭 모델 시간 절반 단축)",
+          "팁 3: Shrinkwrap 모디파이어 설정 → 폴리곤을 이동해도 항상 High-poly 표면에 달라붙어 있음",
+          "팁 4: High-poly Wireframe 모드 활성화 (Alt+Z) → 내부가 투명하게 보여서 작업 효율 상승",
+          "Sculpt 모드에서 Remesh 컨트롤(R 키) → Voxel 크기를 줄이면서 점진적 메쉬 정리",
+          "Edit Mode에서 Smart Fill(F) 개선 → 구멍 채우기 더 쉽고 빠름",
+          "⚠️ AI 생성 모델은 리토폴로지 후 UV Unwrap(Week 7)에서 텍스처 적용이 훨씬 부드럽게 돼"
+        ],
+        "done": [],
+        "image": "",
+        "tasks": []
+      },
+      {
+        "title": "Step 2: Material 할당 + Principled BSDF 탐색",
+        "copy": "🎮 ShowMe: Material 시스템 기초\n\n🎮 ShowMe: Principled BSDF 이해\n\n━━━ 실습 A — 매직팔레트: 머티리얼 공유하기 ━━━\n\n🎯 목표: 큐브와 구체가 같은 머티리얼을 공유 → 하나의 색을 바꾸면 둘 다 동시에 바뀌는 원리 이해\n\n① 큐브 클릭해서 선택\n\n② 구체 클릭해서 선택\n\n💡 비유: 같은 물감통을 두 붓이 같이 쓰는 것 — 물감을 바꾸면 두 그림 색이 동시에 바뀜\n\n③ 큐브 선택 → Base Color 변경\n\n━━━ 실습 B — 3가지 표면 레시피: Principled BSDF 직접 조작 ━━━\n\n🎯 목표: 플라스틱 / 금속 / 유리 질감의 오브젝트 3개 만들기\n\n파라미터가 많아 보이지만 아래 레시피에서 쓰는 4가지만 기억하면 됩니다: Base Color / Metallic / Roughness / Transmission Weight\n\n🔵 레시피 1: 플라스틱\n\n💡 Roughness = 표면을 사포로 얼마나 긁었는지. 0.0 = 거울처럼 매끈 / 1.0 = 분필처럼 거침\n\n🔩 레시피 2: 금속\n\n💡 Metallic = 표면이 금속으로 만들어졌는지 여부. 0 = 비금속 / 1 = 완전 금속\n\n🪟 레시피 3: 유리\n\n💡 Transmission = 빛이 오브젝트를 얼마나 통과하는지. 0 = 불투명 / 1 = 완전 투명",
+        "goal": [
+          "오른쪽 Properties 패널 > 빨간 구체 아이콘(Material Properties) 탭 클릭",
+          "이미 머티리얼이 있으면 이름(예: 'Material')이 슬롯에 표시됨",
+          "Material Properties > 슬롯 이름 써진 긴 드롭다운 바 클릭",
+          "목록에서 큐브에 쓴 머티리얼 이름 선택 → 구체에 같은 머티리얼 적용됨",
+          "구체도 자동으로 같은 색으로 바뀌는 것을 확인",
+          "Base Color  →  원하는 색 선택",
+          "Metallic    →  0.0   (금속 아님)",
+          "Roughness   →  0.3 ~ 0.5   (살짝 반질반질한 표면)",
+          "Base Color  →  금속 색상 선택  (금색: #FFD700 / 은색: #C0C0C0)",
+          "Metallic    →  1.0   ← 이것만 올리면 금속 느낌!",
+          "Roughness   →  0.1 ~ 0.3   (광택 있는 금속)",
+          "Base Color         →  흰색 또는 연한 색",
+          "Roughness          →  0.0",
+          "IOR                →  1.45   (유리 굴절률, 기본값 그대로 OK)",
+          "Transmission Weight →  1.0   ← 이게 핵심! 이걸 올려야 투명해짐"
+        ],
+        "done": [],
+        "image": "",
+        "tasks": []
+      },
+      {
+        "title": "Step 3: 머티리얼 소스 활용 — BlenderKit & PBR 사이트",
+        "copy": "① BlenderKit 내장 라이브러리 사용하기\n\n② 무료 PBR 사이트 활용\n\n③ 재질 이름 규칙 (중요!)",
+        "goal": [
+          "Edit → Preferences → Add-ons → 'BlenderKit' 검색 → 활성화 체크",
+          "N키 → BlenderKit 탭 → 검색창에 'metal' 또는 'plastic' 입력",
+          "Free 필터 체크 후 검색 → 마음에 드는 재질 클릭 → 오브젝트에 드래그 앤 드롭",
+          "자동으로 Material Slot에 추가되고 노드가 연결됩니다",
+          "ambientcg.com — 무료 CC0 PBR 텍스처. 'Concrete'/'Metal'/'Wood' 검색 → ZIP 다운로드 (Base Color/Roughness/Normal 3종)",
+          "withpoly.com/browse/textures — AI 생성 PBR. 텍스트 프롬프트로 Base Color/Roughness/Normal 자동 생성 (무료 2K~8K)",
+          "💡 치트시트: 다운받은 재질 값 읽기 — Metallic 1.0 = 금속 / Roughness 0.1 = 광택 / Roughness 0.9 = 무광",
+          "영문 + 언더바로 이름 짓기 → 예: robot_metal, eye_glow, body_plastic"
+        ],
+        "done": [],
+        "image": "",
+        "tasks": []
+      },
+      {
+        "title": "Step 4: Shader Editor 실습 3종",
+        "copy": "🎬 레시피 1 — Color Ramp 그라데이션 (절차적 텍스처)\n\n🎬 레시피 2 — Image Texture 연결\n\n🎬 레시피 3 — Emission 혼합 (발광 로봇 코어)\n\n참고영상\n\n🎮 ShowMe: Noise Texture",
+        "goal": [
+          "ShowMe: Shader Editor 이해",
+          "Shift+A → Texture → Image Texture 추가",
+          "Open → 다운받은 Diffuse 이미지 파일 선택 (Color Space: sRGB 유지)",
+          "Image Texture Color 출력 → Principled BSDF Base Color 입력 연결",
+          "UV Unwrap이 없으면 텍스처가 늘어져 보여요 — 다음 주에 해결",
+          "Shift+A → Shader → Emission 추가 → Color: 파란색, Strength: 3",
+          "Shift+A → Shader → Add Shader 추가",
+          "Emission Shader 출력 → Add Shader 입력 1에 연결",
+          "Principled BSDF 출력 → Add Shader 입력 2에 연결",
+          "Add Shader 출력 → Material Output Surface에 연결",
+          "Shader Editor 참고 영상",
+          "Emission 참고 영상",
+          "Gradient Texture 참고 영상"
         ],
         "done": [],
         "image": "",
         "tasks": [
           {
             "id": "w6-t1",
-            "label": "Week 5 .blend 파일 열기",
-            "detail": "Statistics 켜서 폴리곤 수 확인 (Before)"
+            "label": "Shader Editor 열기 (워크스페이스 Shading 탭)",
+            "detail": ""
           },
           {
             "id": "w6-t2",
-            "label": "Mesh Cleaner 2 실행",
-            "detail": "중복 버텍스 · 뒤집힌 노멀 정리"
+            "label": "Shift+A → Texture → Noise Texture 추가 (Scale: 5, Detail: 8)",
+            "detail": ""
           },
           {
             "id": "w6-t3",
-            "label": "Decimate Modifier 추가 → Ratio 0.5로 폴리곤 절반 감량",
+            "label": "Shift+A → Color → Color Ramp 추가 → Noise Color 출력을 Color Ramp Fac에 연결",
             "detail": ""
           },
           {
             "id": "w6-t4",
-            "label": "Sculpt Mode → Ctrl+R → Quad Remesh (애니메이션/Material에 유리한 쿼드 토폴로지)",
+            "label": "Color Ramp 출력 → Principled BSDF Base Color 연결",
             "detail": ""
           },
           {
             "id": "w6-t5",
-            "label": "QRemeshify로 삼각형 → 쿼드 변환 체험 (트라이앵글이 많은 AI 메쉬에 효과적)",
-            "detail": ""
-          },
-          {
-            "id": "w6-t6",
-            "label": "Before/After 폴리곤 수 비교 스크린샷",
-            "detail": "Numpad 1 고정 앵글로 촬영 (Ctrl+F3)"
-          },
-          {
-            "id": "w6-t7",
-            "label": "체크: Material Preview(Z)로 쉐이더 깨짐 없음 확인",
+            "label": "색상 두 개 바꿔서 그라데이션 커스텀",
             "detail": ""
           }
         ]
       },
       {
-        "title": "Material 할당",
-        "copy": "Properties 패널에서 Material을 추가하고 Principled BSDF의 기본 파라미터(Base Color, Metallic, Roughness)를 조절하는 기초 방법을 다룹니다.\n\n오브젝트에서 필요 없는 Material을 슬롯에서 제거하거나 완전히 삭제하는 방법을 설명합니다.\n\n옷을 입히듯 오브젝트에 재질을 입혀요. 같은 로봇이라도 재질 하나로 장난감이 될 수도, 군용 장비가 될 수도 있어요.",
-        "goal": [
-          "Material 슬롯의 구조를 안다",
-          "하나의 오브젝트에 여러 Material을 쓸 수 있다"
-        ],
-        "done": [],
-        "image": "",
-        "tasks": [
-          {
-            "id": "w6-t4",
-            "label": "Material Properties에서 + New 클릭",
-            "detail": "기본 Principled BSDF가 자동 생성돼요"
-          },
-          {
-            "id": "w6-t5",
-            "label": "Base Color 바꿔서 색 변경 확인",
-            "detail": "Z → Material Preview로 확인"
-          },
-          {
-            "id": "w6-t6",
-            "label": "Edit Mode에서 면 선택 → 두 번째 Material Assign",
-            "detail": "눈이나 가슴판에 다른 색 입히기"
-          }
-        ]
-      },
-      {
-        "title": "Principled BSDF 탐색",
-        "copy": "숫자 하나로 금속/유리/플라스틱이 바뀌어요. Metallic을 1로 올리면 금속, Transmission을 1로 올리면 유리처럼 보여요. 옷감을 고르듯 슬라이더를 움직여보세요.",
-        "goal": [
-          "핵심 파라미터 4가지를 구분한다",
-          "원하는 재질을 슬라이더로 만든다"
-        ],
-        "done": [],
-        "image": "",
-        "tasks": [
-          {
-            "id": "w6-t8",
-            "label": "Metallic 1.0으로 금속 재질 만들기",
-            "detail": "Roughness도 같이 바꿔서 광택 비교"
-          },
-          {
-            "id": "w6-t9",
-            "label": "Transmission 1.0으로 유리 재질 만들기",
-            "detail": "IOR 1.45 정도면 유리 느낌"
-          },
-          {
-            "id": "w6-t10",
-            "label": "Roughness 0 vs 0.5 vs 1 비교",
-            "detail": "반짝 → 은은 → 무광 변화 확인"
-          },
-          {
-            "id": "w6-t11",
-            "label": "Emission으로 발광 재질 만들기",
-            "detail": "로봇 눈이나 표시등에 활용"
-          }
-        ]
-      },
-      {
-        "title": "Shader Node Editor",
-        "copy": "Shader Editor에서 노드를 연결해 복잡한 재질을 만드는 방법. Color Ramp, Mix Shader, Texture 노드 활용법을 포함합니다.\n\n노드는 레고 블록처럼 연결해서 재질을 만들어요. 색을 그라데이션으로 바꾸거나 질감을 섞을 수 있어요. 선을 연결하는 것만으로 복잡한 재질이 가능해져요.",
-        "goal": [
-          "노드 기반 재질 편집 방식을 이해한다",
-          "Color Ramp 노드를 연결한다"
-        ],
-        "done": [],
-        "image": "",
-        "tasks": [
-          {
-            "id": "w6-t12",
-            "label": "Shader Editor 열기",
-            "detail": "상단 에디터 타입 메뉴 또는 워크스페이스 Shading 탭"
-          },
-          {
-            "id": "w6-t13",
-            "label": "Shift+A → Color → Color Ramp 추가",
-            "detail": ""
-          },
-          {
-            "id": "w6-t14",
-            "label": "Color Ramp 출력 → Base Color 입력 연결",
-            "detail": "드래그로 소켓 연결"
-          },
-          {
-            "id": "w6-t4",
-            "label": "Color Ramp 색상 두 개 바꿔서 그라데이션 만들기",
-            "detail": "색 포인트 클릭 후 변경"
-          }
-        ]
-      },
-      {
-        "title": "Texture 노드로 질감 추가",
-        "copy": "Noise Texture를 연결하면 표면에 얼룩이나 먼지 같은 질감이 생겨요. 실제 물건은 완전히 깨끗한 법이 없으니까, 이 한 단계가 리얼함을 크게 올려줘요.",
-        "goal": [
-          "Noise/Musgrave 등 텍스처 노드를 연결한다"
-        ],
-        "done": [],
-        "image": "",
-        "tasks": [
-          {
-            "id": "w6-t15",
-            "label": "Shift+A → Texture → Noise Texture 추가",
-            "detail": ""
-          },
-          {
-            "id": "w6-t16",
-            "label": "Noise → Color Ramp → Base Color 연결",
-            "detail": "Scale을 바꿔서 패턴 크기 조절"
-          },
-          {
-            "id": "w6-t3",
-            "label": "Noise의 Roughness 출력을 Principled BSDF Roughness에 연결",
-            "detail": "표면 광택에 변화를 줘요"
-          }
-        ]
-      },
-      {
-        "title": "Viewport Shading 비교",
-        "copy": "Z 키 하나로 와이어프레임/솔리드/미리보기/렌더를 오가요. 작업 중에는 Material Preview로, 최종 확인은 Rendered로 보는 습관을 들이면 편해요.",
-        "goal": [
-          "4가지 Shading 모드를 구분한다"
-        ],
+        "title": "Step 5: Poly AI PBR 텍스처 + Ctrl+Shift+T 자동 연결",
+        "copy": "",
+        "goal": [],
         "done": [],
         "image": "",
         "tasks": [
           {
             "id": "w6-t1",
-            "label": "Z 파이 메뉴로 4가지 모드 각각 전환",
-            "detail": "Wireframe/Solid/Material/Rendered"
+            "label": "PBR 3종 맵 다운로드 (Diffuse / Roughness / Normal)",
+            "detail": ""
           },
           {
             "id": "w6-t2",
-            "label": "Material Preview에서 작업 후 Rendered에서 최종 확인",
-            "detail": "빛 반사가 다르게 보여요"
+            "label": "Shader Editor에 Image Texture 노드 추가",
+            "detail": ""
+          },
+          {
+            "id": "w6-t3",
+            "label": "Color → Base Color",
+            "detail": ""
+          },
+          {
+            "id": "w6-t4",
+            "label": "Roughness → Roughness (Color Space: Non-Color)",
+            "detail": ""
+          },
+          {
+            "id": "w6-t5",
+            "label": "Normal → Normal Map 노드 → Normal (Color Space: Non-Color)",
+            "detail": ""
+          },
+          {
+            "id": "w6-t6",
+            "label": "렌더 결과 확인",
+            "detail": ""
+          }
+        ]
+      },
+      {
+        "title": "🔗 PBR 다운로드 링크",
+        "copy": "⚡ Ctrl+Shift+T 자동 연결 (Node Wrangler 애드온 필요)\n\n📺 PBR Texturing 참고 영상\n\n🎮 ShowMe: Image Texture PBR",
+        "goal": [
+          "https://freepbr.com/",
+          "Poly Haven — 무료 HDRI / 텍스처 / 3D 모델 — polyhaven.com",
+          "AmbientCG — 무료 PBR 텍스처 라이브러리 — ambientcg.com",
+          "Poliigon — 유/무료 고품질 텍스처 — poliigon.com",
+          "AI 텍스처 생성 도구 — DreamTextures, Stable Diffusion 등 AI 기반 PBR 텍스처 생성",
+          "Preferences → Add-ons → 'Node Wrangler' 검색 → 활성화",
+          "Shader Editor에서 Principled BSDF 노드 선택 (클릭)",
+          "Ctrl + Shift + T 누르기 → 파일 탐색기 열림",
+          "Diffuse, Roughness, Normal 3개 파일 모두 선택 (Ctrl+클릭) → Open",
+          "자동 연결 확인: Diffuse→Base Color / Roughness→Roughness / Normal→Normal Map→Normal",
+          "Paint System addon — 블렌더에서 직접 텍스처 페인팅"
+        ],
+        "done": [],
+        "image": "",
+        "tasks": []
+      },
+      {
+        "title": "과제 — 로봇 파츠별 재질 완성",
+        "copy": "💡 파일명: week06_yourname.blend",
+        "goal": [],
+        "done": [],
+        "image": "",
+        "tasks": [
+          {
+            "id": "w6-t1",
+            "label": "로봇 파츠별 Material Slot 분리 (최소 3개 파츠: 몸체 / 눈 / 관절)",
+            "detail": ""
+          },
+          {
+            "id": "w6-t2",
+            "label": "Metal, Plastic, Glass, Emission 등 각기 다른 재질 3가지 이상 적용",
+            "detail": ""
+          },
+          {
+            "id": "w6-t3",
+            "label": "BlenderKit 또는 Poly AI 텍스처 최소 1개 적용",
+            "detail": ""
+          },
+          {
+            "id": "w6-t4",
+            "label": "Material Preview ↔ Rendered 비교샷",
+            "detail": ""
+          },
+          {
+            "id": "w6-t5",
+            "label": "EEVEE Next로 렌더 → Ctrl+F3으로 PNG 저장 (1920x1080)",
+            "detail": ""
+          },
+          {
+            "id": "w6-t6",
+            "label": ".blend 파일 저장 (Ctrl+S) → 노션 과제 제출 링크에 업로드",
+            "detail": ""
           }
         ]
       }
@@ -1809,11 +1993,21 @@
       "checklist": []
     },
     "mistakes": [
-      "텍스처가 늘어남 → Seam 위치를 조정하거나 UV 섬 크기를 맞추기",
-      "텍스처가 뒤집혀 보임 → UV Editor에서 해당 섬 선택 후 S → Y → -1",
-      "UV가 겹침 → UV Editor에서 섬이 서로 겹치지 않게 배치",
-      "이미지가 흐림 → 텍스처 해상도가 너무 낮으면 1024×1024 이상으로",
-      "연결이 안 됨 → UV Map 이름이 Material과 동일한지 확인"
+      "UV 맵을 확인하고 필요한 경우 UV 아일랜드의 크기를 조정합니다.",
+      "오브젝트 스케일이 적용되었는지 확인합니다.",
+      "심을 더 잘 보이지 않는 곳에 배치합니다.",
+      "타일링 가능한 텍스처를 사용합니다.",
+      "UV 아일랜드 간의 마진을 조정합니다.",
+      "모델에 적절한 심을 추가합니다.",
+      "또는 'Smart UV Project'와 같은 자동 언래핑 방법을 사용합니다.",
+      "UV 아일랜드의 크기와 위치를 최적화합니다.",
+      "'Pack Islands' 기능을 사용하여 자동으로 아일랜드를 재배치합니다.",
+      "참고영상 ",
+      "Unwrapping UVs addon",
+      "mio3 addon :https://extensions.blender.org/add-ons/mio3-uv/",
+      "텍스쳐가 늘어남 → Seam 위치를 조정하거나 UV 섬 크기를 맞춰 재언래핑",
+      "텍스쳐가 뒤집혀 보임 → UV Editor에서 해당 섬 선택 후 S → Y → -1",
+      "텍스쳐 연결이 안 됨 → UV Map 이름이 Material과 동일한지 확인"
     ],
     "shortcuts": [
       {
@@ -1851,6 +2045,18 @@
       {
         "keys": "A",
         "action": "전체 선택"
+      },
+      {
+        "keys": "L",
+        "action": "UV Island 개별 선택"
+      },
+      {
+        "keys": "P",
+        "action": "UV Pin 고정"
+      },
+      {
+        "keys": "S + X/Y + 0",
+        "action": "UV Island 정렬"
       },
       {
         "keys": "UV > Pack Islands",
