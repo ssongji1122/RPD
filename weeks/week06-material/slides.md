@@ -190,7 +190,7 @@ AI(Meshy/Tripo)로 만든 메쉬는 토폴로지가 엉망이에요.
 
 ## 과제 안내
 
-- **제출처:** Discord #week06-assignment 채널
+- **제출처:** 본인 학생 페이지
 - **내용:**
   - Remesh 전후 비교 스크린샷 (Statistics, Numpad 1 고정)
   - 렌더 이미지 1~2장

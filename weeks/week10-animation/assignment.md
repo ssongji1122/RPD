@@ -45,11 +45,11 @@
 1. MP4 파일을 GIF로 변환하고 싶은 경우:
    - [ezgif.com](https://ezgif.com/video-to-gif) 등 온라인 변환 도구 활용
    - 또는 FFmpeg 커맨드: `ffmpeg -i input.mp4 -vf "fps=12,scale=480:-1" output.gif`
-2. GIF는 Discord에서 바로 재생되어 공유하기 편리
+2. GIF는 학생 페이지에 올리기 쉽고 공유하기 편리
 
 ## 제출 방법
 
-- **제출처:** Discord #week10-assignment 채널
+- **제출처:** 본인 학생 페이지
 - **형식:**
   - MP4 영상 파일 또는 GIF 파일 1개
   - 한줄 코멘트 (어떤 동작을 만들었는지, 어떤 이징을 적용했는지)
