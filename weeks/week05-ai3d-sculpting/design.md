@@ -27,7 +27,7 @@
 - [ ] Before/After 비교 스크린샷 제출 가능
 - [ ] **Remesh 심화 (Voxel/Quad/QRemeshify/Mesh Cleaner 2)는 Week 6 Step 1에서 학습**
 - [ ] (optional) Blender MCP로 씬 자동 생성 경험
-- [ ] Discord #week05-assignment 제출 완료
+- [ ] 본인 학생 페이지에 업로드 완료
 - [ ] **Week 6 Material 실습용 .blend 파일 저장 완료** (curriculum.js 명시 항목)
 
 ### 핵심 전환점 ("아하!" 모먼트)

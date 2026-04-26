@@ -28,7 +28,7 @@
 - [ ] Apply Transform (Ctrl+A) 적용 가능
 - [ ] Join/Separate 기본 사용 가능
 - [ ] Blender MCP 연결 완료 + 기본 명령 실행 성공
-- [ ] Discord #week02-assignment 제출 완료
+- [ ] 본인 학생 페이지에 업로드 완료
 
 ### 핵심 전환점 ("아하!" 모먼트)
 1. **G+X, G+Y, G+Z 축 고정이 작동할 때** — "오, 이렇게 정밀하게 이동하는구나"
@@ -50,7 +50,7 @@
 | Origin | Origin 이동 후 Mirror Modifier가 이상함 | Origin 위치 변경 효과 | "Mirror는 Origin 기준. Apply Transform 후 작업" 명시 |
 | Apply Transform | Scale이 (1,1,1)이 아닌데 모르고 진행 | 확인 습관 미형성 | N 패널 > Item 탭 > Scale 확인 스크린샷 supplement |
 | MCP 설치 | Blender MCP addon 설치 오류 | 버전 불일치, 경로 오류 | GitHub 링크 + 설치 단계별 스크린샷 supplement 필요 |
-| MCP 연결 | Claude와 연결은 됐는데 명령이 안 작동 | 포트 충돌, addon 미활성화 | 콘솔 로그 확인 + Discord 질문 유도 |
+| MCP 연결 | Claude와 연결은 됐는데 명령이 안 작동 | 포트 충돌, addon 미활성화 | 콘솔 로그 확인 + 수업 중 질문 유도 |
 | 과제 내용 혼란 | "로우폴리 소품을 만드는 건지, 기본 도형 배치인지" | curriculum.js vs assignment.md 불일치 → **P0 수정 필요** | 수업 중 명확히 안내 (기본 도형 배치 + MCP) |
 
 ---
@@ -105,7 +105,7 @@
 ### 검토 완료 항목
 - [x] Blender 5.0 UI 변경사항 설명 → slides.md에 Pill 탭, Workspace 통합 명시 ✅
 - [x] Apple Silicon 안내 → lecture-note 설치 섹션에 명시 ✅
-- [x] MCP 연결 오류 대응 → "콘솔 로그 확인 + Discord 질문" 안내 있음 ✅
+- [x] MCP 연결 오류 대응 → "콘솔 로그 확인 + 수업 중 질문" 안내 있음 ✅
 - [x] Emulate 설정 안내 → Preferences 표에 포함 ✅
 
 ### 추가 필요 항목
@@ -136,7 +136,7 @@
 ### P0 — 즉시 반영 필요
 
 - [x] **curriculum.js Week 2 과제 수정 (d56ebd2):** `assignment.title` → "기본 도형 배치 + MCP 테스트", checklist 5항목으로 통일. ✅
-- [x] **lecture-note.md 과제 섹션 교체 (d56ebd2):** "과제 한눈에 보기" 섹션을 Week 2 내용(기본 도형 + MCP + Discord 제출)으로 교체. ✅
+- [x] **lecture-note.md 과제 섹션 교체 (d56ebd2):** "과제 한눈에 보기" 섹션을 Week 2 내용(기본 도형 + MCP + 학생 페이지 업로드)으로 교체. ✅
 
 ### P1 — 이번 주 내 반영 권고
 

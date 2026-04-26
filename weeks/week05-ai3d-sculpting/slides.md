@@ -159,7 +159,7 @@ paginate: true
 
 ## 과제 안내 (Before/After)
 
-- **제출:** Discord #week05-assignment 채널
+- **제출:** 본인 학생 페이지
 - **형식:**
   - 이미지 2장 (AI 원본 vs Sculpt 수정 후 비교)
   - 사용한 AI 도구 이름

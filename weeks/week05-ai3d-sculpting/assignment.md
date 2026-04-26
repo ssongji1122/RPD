@@ -48,7 +48,7 @@ AI 도구로 3D 모델을 생성한 후, Blender의 Sculpt Mode를 사용하여 
 
 ## 제출 방법
 
-- **제출처:** Discord #week05-assignment 채널
+- **제출처:** 본인 학생 페이지
 - **형식:**
   - 내 무드보드에서 추출한 프롬프트 키워드 (텍스트)
   - AI 생성 원본 스크린샷 (Before)

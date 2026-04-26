@@ -27,7 +27,7 @@
 - [ ] Ctrl+A vs Modifier Apply 시점 구분 가능
 - [ ] Join(Ctrl+J) / Separate(P)로 파츠 관리 가능
 - [ ] 로봇/캐릭터 기본형(머리+몸통 수준) 완성
-- [ ] Discord #week03-assignment 제출 완료 (스크린샷 3장 + Modifier 목록 + 한줄)
+- [ ] 본인 학생 페이지에 업로드 완료 (스크린샷 3장 + Modifier 목록 + 한줄)
 
 ### 핵심 전환점 ("아하!" 모먼트)
 1. **Mirror Modifier를 켰을 때 한쪽만 작업해도 반대쪽이 자동으로 생길 때** — "이러면 작업이 절반이잖아!"

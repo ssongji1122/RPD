@@ -49,7 +49,7 @@
 
 ## 제출 방법
 
-- **제출처:** Discord #week13-assignment 채널
+- **제출처:** 본인 학생 페이지
 - **형식:**
   - 렌더 이미지 2장 (Eevee 1장, Cycles 1장) - PNG 또는 JPG
   - AI 생성 영상 1개 - MP4
