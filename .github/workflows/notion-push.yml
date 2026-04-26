@@ -1,0 +1,33 @@
+name: Notion Push (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      weeks:
+        description: 'Push할 주차 번호 (공백 구분, 비워두면 전체)'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Push canonical curriculum to Notion
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+        run: |
+          if [ -z "${{ github.event.inputs.weeks }}" ]; then
+            python3 tools/curriculum-push.py
+          else
+            python3 tools/curriculum-push.py --weeks ${{ github.event.inputs.weeks }}
+          fi

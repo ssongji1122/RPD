@@ -423,7 +423,7 @@ Set the background to pure white. Make shadows very soft."
 체크해볼 것
 
 - Poly Haven에서 HDRI 파일 다운로드 (polyhaven.com → HDRIs)
-- World Properties → Surface → Environment Texture 추가
+- World Properties → Surface → Environment Texture 추가 (Properties 패널 좌측 빨간 지구본(World) 아이콘 → Color 옆 노란 점 클릭 → Environment Texture 선택)
 - HDRI 이미지 파일 열기 (.exr 또는 .hdr 파일)
 - 다른 HDRI로 교체해서 분위기 비교 (실내/실외/석양 등)
 
@@ -456,7 +456,7 @@ Set the background to pure white. Make shadows very soft."
 
 체크해볼 것
 
-- Numpad 0으로 카메라 뷰 전환
+- Numpad 0으로 카메라 뷰 전환 (씬에 카메라가 없으면 먼저 Shift+A → Camera로 추가)
 - Ctrl+Numpad 0으로 현재 시점을 카메라로 설정 (직접 돌아다니다가 마음에 드는 앵글에서)
 - Focal Length 조절해서 원근감 비교 (35mm(넓은) vs 85mm(망원) 차이)
 
@@ -483,6 +483,7 @@ Set the background to pure white. Make shadows very soft."
 - `Numpad 0`: 카메라 뷰 전환
 - `Ctrl + Numpad 0`: 현재 시점 → 카메라
 - `N → Camera Lock to View`: 카메라 따라다니기
+- `Numpad .`: 선택 오브젝트 줌
 
 ### 과제 한눈에 보기
 
