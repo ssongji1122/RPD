@@ -45,6 +45,8 @@ CSS: `tokens.css` → `.task-link`
 |---------|-------|-----|
 | w1-t1 | blender.org 에서 다운로드 완료 | https://www.blender.org/download/ |
 | w5-t1 | Meshy 또는 Tripo에서 프롬프트 입력 후 생성 | https://www.meshy.ai/ |
+| w6-bk4 | ambientcg.com 접속 → 'Concrete' 검색 → 1K PNG 다운로드 | https://ambientcg.com/ |
+| w6-poly1 | withpoly.com 접속 → 텍스트 입력 | https://withpoly.com/browse/textures |
 | w9-t5 | Poly Haven에서 HDRI 파일 다운로드 | https://polyhaven.com/hdris |
 | w12-t4 | Mixamo.com 접속 후 FBX 파일 업로드 | https://www.mixamo.com/ |
 | w12-t7 | Mixamo Animations 탭에서 걷기/달리기/춤 골라보기 | https://www.mixamo.com/#/?page=1&type=Animation |
@@ -80,6 +82,8 @@ CSS: `tokens.css` → `.task-link`
 | Meshy AI | https://www.meshy.ai/ | AI 3D 생성 |
 | Tripo AI | https://www.tripo3d.ai/ | AI 3D 생성 (대안) |
 | Sketchfab | https://sketchfab.com/ | 3D 에셋 다운로드 |
+| AmbientCG | https://ambientcg.com/ | CC0 PBR 텍스처 무료 다운로드 |
+| WithPoly | https://withpoly.com/browse/textures | AI 생성 PBR 텍스처 (무료 2K~8K) |
 
 ---
 
