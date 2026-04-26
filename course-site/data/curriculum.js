@@ -31,8 +31,7 @@ const CURRICULUM = [
           {
             "id": "w1-t1",
             "label": "blender.org 에서 다운로드 완료",
-            "detail": "최신 LTS 버전 권장",
-            "url": "https://www.blender.org/download/"
+            "detail": "최신 LTS 버전 권장"
           },
           {
             "id": "w1-t2",
@@ -86,13 +85,11 @@ const CURRICULUM = [
     ],
     "explore": [],
     "assignment": {
-      "title": "무드보드 제작",
-      "description": "Mixboard 또는 나노바나나를 활용하여 자신의 로봇/캐릭터 무드보드를 제작한다. 무드보드 이미지 2장 + 캐릭터/로봇 컨셉 한줄 설명을 Discord #week01-assignment 채널에 제출.",
+      "title": "Blender 설치 확인 스크린샷",
+      "description": "Blender를 실행해서 Welcome Screen이 보이는 화면을 캡처해서 제출하세요.",
       "checklist": [
-        "AI 도구(Mixboard 또는 나노바나나) 사용",
-        "무드보드 이미지 2장 이상 생성",
-        "캐릭터/로봇 컨셉 한줄 설명 작성",
-        "Discord #week01-assignment 제출 완료"
+        "Blender 정상 실행 확인",
+        "버전 번호 포함된 스크린샷 제출"
       ]
     },
     "mistakes": [
@@ -415,14 +412,12 @@ const CURRICULUM = [
     ],
     "explore": [],
     "assignment": {
-      "title": "기본 도형 배치 + MCP 테스트",
-      "description": "Blender 기본 뷰 조작과 Transform 기능을 활용해 기본 도형 5개 이상을 배치하고, Blender MCP 연결을 테스트한다. Discord #week02-assignment 채널에 스크린샷 2장 + 한줄 코멘트를 제출.",
+      "title": "간단한 로우폴리 소품 만들기",
+      "description": "화면 조작과 기본 모델링 도구를 사용해 간단한 소품을 만들고 제출합니다.",
       "checklist": [
-        "기본 도형 5개 이상 배치 스크린샷",
-        "Transform(이동/회전/스케일) 적용 확인",
-        "Blender MCP 연결 테스트 스크린샷",
-        "한줄 코멘트 작성",
-        "Discord #week02-assignment 제출 완료"
+        "완성 이미지 2장 이상",
+        ".blend 파일 1개",
+        "사용한 도구 3개 이상 적기"
       ]
     },
     "mistakes": [
@@ -492,7 +487,6 @@ const CURRICULUM = [
     "steps": [
       {
         "title": "레퍼런스 이미지 설정",
-        "image": "assets/images/week03/base-form.png",
         "copy": "모델링 전에 참고할 이미지를 뷰포트에 깔아 두면 형태를 잡기가 훨씬 쉬워요. 정면·측면·후면 레퍼런스를 각 뷰에 배치해서 로봇의 비율과 구조를 미리 파악해요.",
         "goal": [
           "이미지 레퍼런스를 뷰포트에 올린다",
@@ -579,7 +573,7 @@ const CURRICULUM = [
             "detail": "Bevel은 스크롤로 세그먼트 추가"
           }
         ],
-        "image": "assets/images/week03/mirror-modifier.png",
+        "image": "assets/images/week03/base-form.png",
         "link": "https://docs.blender.org/manual/en/latest/modeling/meshes/tools/extrude_region.html",
         "showme": [
           "edit-mode-tools",
@@ -622,7 +616,7 @@ const CURRICULUM = [
             "detail": "중심선 벌어지면 S+X+0으로 정렬"
           }
         ],
-        "image": "assets/images/week03/subdivision-surface.png",
+        "image": "assets/images/week03/mirror-modifier.png",
         "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html",
         "showme": "mirror-modifier",
         "widgets": [
@@ -664,7 +658,7 @@ const CURRICULUM = [
             "detail": "두 방법의 차이를 눈으로 확인"
           }
         ],
-        "image": "assets/images/week03/array-boolean-detail.png",
+        "image": "assets/images/week03/subdivision-surface.png",
         "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/subdivision_surface.html",
         "showme": "subdivision-surface"
       },
@@ -689,7 +683,7 @@ const CURRICULUM = [
             "detail": "두께가 안쪽/양쪽/바깥쪽으로 붙는 차이 확인"
           }
         ],
-        "image": "assets/images/week03/bevel-weighted-normal.png",
+        "image": "assets/images/week03/solidify-modifier.png",
         "link": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/solidify.html",
         "showme": "solidify-modifier",
         "widgets": [
@@ -873,7 +867,6 @@ const CURRICULUM = [
       },
       {
         "title": "Collection",
-        "image": "assets/images/week03/loop-cut.png",
         "copy": "씬이 복잡해질수록 오브젝트를 묶어서 관리하는 게 중요해요. Collection은 폴더처럼 오브젝트를 그룹으로 정리해서 켜고 끄거나 한꺼번에 선택할 수 있어요.",
         "goal": [
           "Collection을 만들고 오브젝트를 정리한다",
@@ -904,7 +897,6 @@ const CURRICULUM = [
       },
       {
         "title": "Reference Image 실습",
-        "image": "assets/images/week03/inset-faces.png",
         "copy": "민트 로봇 레퍼런스 이미지를 뷰포트에 올려서 정면·측면을 각각 배치해요. 영상을 따라하면서 세팅을 완성해요.",
         "goal": [
           "레퍼런스 이미지를 뷰포트에 정확히 정렬한다"
@@ -1135,342 +1127,194 @@ const CURRICULUM = [
   {
     "week": 4,
     "status": "done",
-    "title": "기초 모델링 2 — 로봇 조립",
-    "subtitle": "몸통 · 관절 · 팔다리 · Bevel · 파츠 정리",
+    "title": "기초 모델링 2 — 디테일 & 정리",
+    "subtitle": "Bevel · Weighted Normal · Apply",
     "duration": "~3시간",
     "topics": [
-      "Cube → Subdivision으로 몸통 만들기",
-      "UV Sphere로 관절 구체 배치",
-      "Extrude + Mirror로 팔/다리 제작",
-      "Duplicate · Array로 손/발 디테일",
+      "Inset / Boolean 디테일",
       "Bevel Tool vs Bevel Modifier",
-      "Join / Separate / Apply로 파츠 정리"
+      "Weighted Normal",
+      "Join / Separate",
+      "Apply Transform vs Modifier Apply"
     ],
     "steps": [
       {
-        "title": "몸통 만들기",
-        "copy": "3주차에 만든 머리 아래에 몸통을 붙여요. Cube에 Subdivision을 걸면 둥근 로봇 몸통이 되고, Inset으로 가슴판 영역을 구분하면 나중에 색을 나눌 때도 편해요.",
+        "title": "Transform 정리와 파츠 관리",
+        "copy": "디테일을 넣기 전에 Scale과 파츠 구성을 먼저 정리해요. 수치가 꼬여 있거나 파츠가 뒤섞여 있으면 그다음 작업이 계속 불편해져요.",
         "goal": [
-          "Cube → Subdivision으로 둥근 몸통을 만든다",
-          "Inset으로 가슴판 영역을 구분한다"
+          "Transform을 정리한다",
+          "파츠를 분리하거나 합쳐 관리한다"
         ],
         "done": [
-          "머리 아래에 둥근 몸통이 배치됐다",
-          "가슴판 영역이 Inset으로 나뉘어 있다"
+          "Scale이 안정적으로 정리됐다",
+          "움직일 파츠와 고정 파츠를 구분할 수 있다"
         ],
         "tasks": [
           {
             "id": "w4-t1",
-            "label": "Cube 추가 후 S로 몸통 비율 잡기",
-            "detail": "머리보다 살짝 작거나 비슷한 폭"
+            "label": "N 패널에서 Scale 값 확인",
+            "detail": "1,1,1이 아니면 먼저 정리"
           },
           {
             "id": "w4-t2",
-            "label": "Subdivision Surface Modifier 추가",
-            "detail": "Level 2로 둥근 형태 확인"
+            "label": "Ctrl+A로 All Transforms 적용",
+            "detail": "Modifier 전에 수치 정리"
           },
           {
             "id": "w4-t3",
-            "label": "Edit Mode에서 Inset으로 가슴판 영역 만들기",
-            "detail": "앞면 선택 → I → 안쪽 면 생성"
+            "label": "P로 움직일 파츠 분리하기",
+            "detail": "안테나, 헤드셋, 손 파츠 등"
           },
           {
             "id": "w4-t4",
-            "label": "Extrude로 가슴판을 살짝 돌출시키기",
-            "detail": "로봇 외장 느낌 추가"
+            "label": "Ctrl+J로 함께 갈 파츠 묶기",
+            "detail": "고정 파츠끼리 정리"
           }
         ],
         "image": "assets/images/week04/transform-apply.png",
-        "showme": "subdivision-surface",
-        "widgets": [
-          {
-            "type": "showme",
-            "id": "inset"
-          }
-        ]
+        "showme": "transform-apply"
       },
       {
-        "title": "3D Cursor로 위치 잡기",
-        "copy": "Blender에서 오브젝트를 정확한 위치에 만들려면 3D Cursor를 먼저 옮겨야 해요. 3D Cursor가 있는 곳에 새 오브젝트가 생기거든요. 관절을 붙이고 싶은 위치에 Cursor를 먼저 놓는 연습을 해봐요.",
+        "title": "얼굴과 패널 디테일",
+        "copy": "큰 덩어리가 잡힌 상태에서 눈, 패널, 관절 라인을 추가하는 단계예요. Inset과 Boolean을 같이 쓰면 디테일을 빠르게 만들 수 있어요.",
         "goal": [
-          "3D Cursor를 원하는 위치로 옮긴다",
-          "Cursor 위치에 오브젝트를 생성한다"
+          "Inset과 Boolean으로 디테일을 추가한다"
         ],
         "done": [
-          "Shift+Right Click으로 Cursor를 이동할 수 있다",
-          "Shift+S 메뉴에서 Cursor 정렬 옵션을 써봤다"
+          "얼굴이나 가슴판에 디테일이 생겼다",
+          "구멍이나 홈이 한 곳 이상 만들어졌다"
         ],
         "tasks": [
           {
             "id": "w4-t5",
-            "label": "Shift+Right Click으로 3D Cursor 이동 연습",
-            "detail": "뷰포트에서 클릭한 곳으로 주황색 십자가 이동"
+            "label": "Inset으로 안쪽 영역 만들기",
+            "detail": "눈, 버튼, 패널 라인 시작점"
           },
           {
             "id": "w4-t6",
-            "label": "Shift+S → Cursor to Selected로 정확한 위치로",
-            "detail": "오브젝트나 Vertex를 선택한 후 실행하면 거기로 Cursor 이동"
+            "label": "Extrude로 살짝 들어가거나 나오게 만들기",
+            "detail": "작은 깊이 차이 주기"
           },
           {
             "id": "w4-t7",
-            "label": "Shift+S → Cursor to World Origin으로 원점 복귀",
-            "detail": "Cursor를 0,0,0 위치로 되돌리기"
-          },
-          {
-            "id": "w4-t8",
-            "label": "3D Cursor 위치에 UV Sphere 추가해보기",
-            "detail": "Shift+A → Mesh → UV Sphere — Cursor가 있는 곳에 생성됨"
+            "label": "Boolean Difference로 홈 또는 소켓 만들기",
+            "detail": "커터가 실제로 겹치는지 확인"
           }
         ],
         "image": "assets/images/week04/inset-panel-detail.png",
-        "showme": "origin-vs-3dcursor"
+        "showme": "boolean-modifier"
       },
       {
-        "title": "Origin 이동과 Snap 배치",
-        "copy": "Origin은 오브젝트의 기준점이에요. 회전하면 Origin을 중심으로 돌고, 좌표도 Origin 위치를 표시해요. Origin 위치를 바꾸면 회전/스케일의 축이 바뀌어요. Snap은 오브젝트를 다른 오브젝트의 꼭짓점·면·모서리에 정확히 붙이는 기능이에요.",
-        "goal": [
-          "Origin을 원하는 위치로 옮긴다",
-          "Snap으로 오브젝트를 정확히 붙인다"
-        ],
-        "done": [
-          "Origin을 3D Cursor 위치로 옮겨봤다",
-          "Snap으로 Vertex에 붙여봤다"
-        ],
-        "tasks": [
-          {
-            "id": "w4-t9",
-            "label": "Right Click → Set Origin → Origin to 3D Cursor",
-            "detail": "미리 3D Cursor를 원하는 위치에 놓고 실행"
-          },
-          {
-            "id": "w4-t10",
-            "label": "Right Click → Set Origin → Origin to Geometry",
-            "detail": "Origin을 오브젝트 중심으로 되돌리기"
-          },
-          {
-            "id": "w4-t11",
-            "label": "상단 Snap 자석 아이콘 켜기 (또는 단축키)",
-            "detail": "Snap To: Vertex로 설정하면 꼭짓점에 딱 붙음"
-          },
-          {
-            "id": "w4-t12",
-            "label": "G로 이동할 때 Ctrl 눌러 Snap 이동 연습",
-            "detail": "몸통 표면 꼭짓점에 관절이 딱 붙는 느낌 확인"
-          }
-        ],
-        "image": "assets/images/week04/bevel-modifier.png",
-        "showme": "snap",
-        "widgets": [
-          {
-            "type": "showme",
-            "id": "pivot-point"
-          }
-        ]
-      },
-      {
-        "title": "관절 구체 배치 실습",
-        "copy": "이제 배운 3D Cursor, Origin, Snap을 조합해서 로봇의 어깨·팔꿈치·무릎·발목에 관절 구체를 실제로 배치해요. 하나 만들고 복제해서 각 위치에 놓으면 돼요.",
-        "goal": [
-          "UV Sphere로 관절 구체를 만든다",
-          "3D Cursor + Snap으로 정확한 위치에 배치한다"
-        ],
-        "done": [
-          "어깨, 팔꿈치, 무릎, 발목에 관절이 배치됐다",
-          "각 관절이 파츠와 자연스럽게 연결돼 보인다"
-        ],
-        "tasks": [
-          {
-            "id": "w4-t13",
-            "label": "어깨 위치에 3D Cursor 놓고 UV Sphere 생성",
-            "detail": "Shift+Right Click으로 어깨 위치 → Shift+A → UV Sphere (Segments 16)"
-          },
-          {
-            "id": "w4-t14",
-            "label": "S로 관절 크기 조절, R로 회전 조정",
-            "detail": "관절이 파츠에 살짝 파묻히는 정도가 자연스러움"
-          },
-          {
-            "id": "w4-t15",
-            "label": "Shift+D로 복제 → 팔꿈치 위치에 Snap 배치",
-            "detail": "복제 후 G → Ctrl 누른 채 이동하면 Snap"
-          },
-          {
-            "id": "w4-t16",
-            "label": "같은 방식으로 무릎, 발목 관절도 배치",
-            "detail": "총 6~8개 관절 구체 (좌우 대칭)"
-          }
-        ],
-        "image": "assets/images/week04/weighted-normal.png",
-        "showme": "origin-vs-3dcursor"
-      },
-      {
-        "title": "팔과 다리 제작",
-        "copy": "관절 사이를 채울 팔과 다리를 만들어요. Cube나 Cylinder를 늘려서 상완/하완, 허벅지/종아리를 만들고, Mirror Modifier로 반대편도 한 번에 처리해요.",
-        "goal": [
-          "Extrude로 팔/다리 형태를 만든다",
-          "Mirror Modifier로 좌우 대칭을 처리한다"
-        ],
-        "done": [
-          "상완과 하완이 관절 사이에 들어갔다",
-          "Mirror로 반대편이 자동 생성됐다"
-        ],
-        "tasks": [
-          {
-            "id": "w4-t17",
-            "label": "Cube 추가 → S로 팔 하나 비율 잡기",
-            "detail": "관절 구체 사이에 맞는 길이로"
-          },
-          {
-            "id": "w4-t18",
-            "label": "Edit Mode에서 Loop Cut으로 팔꿈치 분절 추가",
-            "detail": "상완/하완 느낌을 구분"
-          },
-          {
-            "id": "w4-t19",
-            "label": "Mirror Modifier로 반대편 팔 생성",
-            "detail": "Origin이 몸통 중심에 있는지 확인"
-          },
-          {
-            "id": "w4-t20",
-            "label": "같은 방식으로 다리 파츠 제작",
-            "detail": "허벅지/종아리를 관절 구체 사이에 배치"
-          }
-        ],
-        "image": "assets/images/week04/array-modifier.png",
-        "showme": "extrude",
-        "widgets": [
-          {
-            "type": "showme",
-            "id": "mirror-modifier"
-          }
-        ]
-      },
-      {
-        "title": "손과 발 디테일",
-        "copy": "손가락은 작은 Cube를 복제해서 3~4개 나란히 배치하면 돼요. 발은 Cube를 Extrude해서 부츠 형태로 잡아요. 반복 파츠에는 Array Modifier를 써볼 수도 있어요.",
-        "goal": [
-          "작은 파츠 복제로 손가락을 만든다",
-          "Extrude로 발 형태를 잡는다"
-        ],
-        "done": [
-          "손에 3~4개 손가락 파츠가 달렸다",
-          "발이 바닥에 안정적으로 서는 형태다"
-        ],
-        "tasks": [
-          {
-            "id": "w4-t21",
-            "label": "Cube를 아주 작게 만들어 손가락 하나 제작",
-            "detail": "손바닥에서 약간 튀어나오는 크기"
-          },
-          {
-            "id": "w4-t22",
-            "label": "Shift+D로 3~4개 복제해 나란히 배치",
-            "detail": "또는 Array Modifier Count 3~4로 시도"
-          },
-          {
-            "id": "w4-t23",
-            "label": "발 파츠: Cube → Extrude로 부츠 형태 잡기",
-            "detail": "밑면이 평평해야 바닥에 안정적으로 서요"
-          }
-        ],
-        "image": "assets/images/week04/array-modifier.png",
-        "showme": "array-modifier"
-      },
-      {
-        "title": "Bevel로 모서리 마감",
-        "copy": "파츠를 다 만들었으면 모서리를 정리해서 완성도를 높여요. 얼굴 화면 테두리나 몸통 이음새에 Bevel을 넣으면 금속 느낌이 살아나요. 직접 깎는 Ctrl+B와 전체 적용 Modifier를 비교해보세요.",
+        "title": "Bevel 두 가지 비교",
+        "copy": "같은 '모서리 정리'라도 손으로 직접 깎는 방법과 Modifier로 전체를 정리하는 방법은 다르게 느껴져요. 둘 다 직접 비교해보는 게 가장 빠릅니다.",
         "goal": [
           "Ctrl+B와 Bevel Modifier를 구분해 쓴다"
         ],
         "done": [
-          "화면 테두리에 Bevel이 들어갔다",
-          "부분 수정과 전체 정리 차이를 알게 됐다"
+          "부분 수정과 전체 정리의 차이를 알게 됐다",
+          "모서리 느낌을 더 의도적으로 조절할 수 있다"
         ],
         "tasks": [
           {
-            "id": "w4-t24",
-            "label": "얼굴 화면 테두리 모서리에 Ctrl+B",
-            "detail": "Scroll로 Segment 수 조절"
+            "id": "w4-t8",
+            "label": "특정 모서리에 Ctrl+B 써보기",
+            "detail": "부분 디테일 직접 다듬기"
           },
           {
-            "id": "w4-t25",
-            "label": "몸통 파츠에 Bevel Modifier 적용",
-            "detail": "Width를 아주 작게 시작 (0.01~0.02)"
+            "id": "w4-t9",
+            "label": "다른 파츠에는 Bevel Modifier 넣기",
+            "detail": "Width와 Segments 비교"
           },
           {
-            "id": "w4-t26",
+            "id": "w4-t10",
             "label": "두 방식의 결과를 나란히 비교하기",
-            "detail": "부분 수정 vs 전체 정리, 어떤 게 편한지 느끼기"
+            "detail": "부분 수정 vs 전체 정리"
+          }
+        ],
+        "image": "assets/images/week04/bevel-modifier.png",
+        "showme": "bevel-modifier"
+      },
+      {
+        "title": "Weighted Normal과 음영 정리",
+        "copy": "형태는 괜찮은데 표면이 울퉁불퉁해 보일 때가 있어요. 이럴 때 음영을 정리해주는 흐름을 익혀두면 결과물이 훨씬 단정해져요.",
+        "goal": [
+          "Weighted Normal의 역할을 이해한다"
+        ],
+        "done": [
+          "평평한 외장 면이 더 깔끔하게 보인다",
+          "언제 넣는지 설명할 수 있다"
+        ],
+        "tasks": [
+          {
+            "id": "w4-t11",
+            "label": "Shade Smooth 적용하기",
+            "detail": "음영 비교 준비"
+          },
+          {
+            "id": "w4-t12",
+            "label": "Bevel Modifier 아래에 Weighted Normal 추가",
+            "detail": "순서 포함해서 확인"
+          },
+          {
+            "id": "w4-t13",
+            "label": "전후 화면 비교하기",
+            "detail": "가슴판, 팔 외장, 다리 파츠에서 확인"
           }
         ],
         "image": "assets/images/week04/weighted-normal.png",
-        "showme": "bevel-tool-vs-modifier",
+        "showme": "weighted-normal",
         "widgets": [
           {
             "type": "showme",
-            "id": "bevel-modifier"
+            "id": "edge-split-modifier"
           }
         ]
       },
       {
-        "title": "파츠 정리 & Apply",
-        "copy": "모든 파츠가 만들어졌으면 구조를 정리해요. 움직여야 할 파츠(팔, 다리, 머리)는 따로 두고, 고정 파츠끼리는 Join으로 합쳐요. Transform을 Apply해서 수치를 깔끔하게 만들면 완성이에요.",
+        "title": "Apply 시점과 최종 점검",
+        "copy": "정리 단계에서 가장 많이 헷갈리는 건 '언제 확정하느냐'예요. 수정 가능성을 남길지, 지금 확정할지를 의식적으로 나눠보면 훨씬 안정적으로 작업할 수 있어요.",
         "goal": [
-          "Join / Separate로 파츠를 정리한다",
-          "Apply Transform으로 수치를 확정한다"
+          "Apply Transform과 Modifier Apply를 구분한다"
         ],
         "done": [
-          "Outliner에서 파츠 구조가 깔끔하게 정리됐다",
-          "Scale이 전부 1,1,1로 맞춰졌다"
+          "언제 Ctrl+A를 쓰는지 안다",
+          "Modifier Apply는 마지막에만 하는 흐름을 이해한다"
         ],
         "tasks": [
           {
-            "id": "w4-t27",
-            "label": "Outliner에서 파츠 이름 정리하기",
-            "detail": "Head, Body, Arm_L, Leg_R 등 알아보기 쉽게"
+            "id": "w4-t14",
+            "label": "Modifier Stack 순서 다시 보기",
+            "detail": "수정 가능 상태 유지"
           },
           {
-            "id": "w4-t28",
-            "label": "고정 파츠끼리 Ctrl+J로 합치기",
-            "detail": "몸통+가슴판 등 항상 같이 움직일 것들"
+            "id": "w4-t15",
+            "label": "정말 확정할 파츠만 따로 저장 후 Apply 시험",
+            "detail": "Apply 전후 수정 차이 느끼기"
           },
           {
-            "id": "w4-t29",
-            "label": "Ctrl+A → All Transforms 적용",
-            "detail": "모든 파츠의 Scale을 1,1,1로 정리"
-          },
-          {
-            "id": "w4-t30",
-            "label": "최종 형태 스크린샷 저장",
-            "detail": "정면/측면 뷰로 완성 상태 기록"
+            "id": "w4-t16",
+            "label": "Transform 또는 Modifier 화면 포함해 스크린샷 저장",
+            "detail": "작업 흐름 증거 남기기"
           }
         ],
-        "image": "assets/images/week04/transform-apply.png",
+        "image": "assets/images/week04/array-modifier.png",
         "showme": "join-separate",
         "widgets": [
           {
             "type": "showme",
-            "id": "transform-apply"
+            "id": "triangulate-modifier"
+          },
+          {
+            "type": "showme",
+            "id": "weld-modifier"
           }
         ]
       }
     ],
     "shortcuts": [
       {
-        "keys": "Shift + A",
-        "action": "Add (Cube, UV Sphere 등 오브젝트 추가)"
-      },
-      {
-        "keys": "Shift + Right Click",
-        "action": "3D Cursor 이동 (클릭한 위치로)"
-      },
-      {
-        "keys": "Shift + S",
-        "action": "Snap 메뉴 (Cursor to Selected 등)"
-      },
-      {
-        "keys": "Shift + D",
-        "action": "Duplicate (선택 오브젝트 복제)"
+        "keys": "I",
+        "action": "Inset (면 안쪽에 디테일 시작점 만들기)"
       },
       {
         "keys": "Ctrl + B",
@@ -1478,7 +1322,7 @@ const CURRICULUM = [
       },
       {
         "keys": "Ctrl + A",
-        "action": "Apply All Transforms (Scale 수치 정리)"
+        "action": "Apply All Transforms (Modifier 전 수치 정리)"
       },
       {
         "keys": "P",
@@ -1491,40 +1335,38 @@ const CURRICULUM = [
     ],
     "explore": [
       {
-        "title": "몸통 디테일 추가",
-        "hint": "가슴판에 Inset → Extrude로 버튼이나 패널 라인 만들어보기"
+        "title": "얼굴 패널 디테일",
+        "hint": "Inset → Extrude 또는 Boolean으로 눈/패널 라인 만들기"
       },
       {
-        "title": "관절 변형",
-        "hint": "UV Sphere 대신 Cylinder를 써서 다른 스타일의 관절 시도"
+        "title": "관절 음영 정리",
+        "hint": "Bevel Modifier → Weighted Normal로 팔/다리 파츠 음영 비교"
       },
       {
-        "title": "Array로 반복 파츠",
-        "hint": "손가락을 Array Modifier로 만들어보고 수동 복제와 비교"
+        "title": "파츠 관리 정리",
+        "hint": "헤드셋, 안테나, 손 파츠를 분리/합치며 구조 정리"
       },
       {
-        "title": "Bevel 세기 실험",
-        "hint": "Width와 Segments를 바꿔가며 날카로운/부드러운 모서리 비교"
+        "title": "Apply 타이밍 비교",
+        "hint": "같은 파일을 복제해 Apply 전과 후의 수정 난이도 비교"
       }
     ],
     "assignment": {
-      "title": "로봇 디테일 & 음영 정리",
-      "description": "Week 03 기본형(머리/얼굴/안테나)에 얼굴·관절·패널 디테일을 추가하고 Bevel·Weighted Normal로 표면 음영을 정리하여 제출한다.",
+      "title": "로봇 디테일 정리",
+      "description": "Week 03 기본형에 디테일과 음영 정리를 더한 결과물을 제출하세요.",
       "checklist": [
-        "디테일 1곳 이상 추가 (Inset/Extrude/Boolean 중 하나)",
-        "Bevel(Ctrl+B 또는 Modifier) 1회 이상 사용",
-        "Weighted Normal 적용 또는 전후 비교",
-        "Ctrl+A Transform 정리 확인",
-        "Modifier Stack 또는 Transform 확인 화면 포함 스크린샷"
+        "디테일 1곳 이상 추가",
+        "Bevel 계열 1회 이상 사용",
+        "Weighted Normal 확인",
+        "Modifier Stack 또는 Transform 확인 스크린샷"
       ]
     },
     "mistakes": [
-      "Subdivision이 너무 높음 → Level 2면 충분, 높이면 컴퓨터가 느려짐",
-      "관절 구체가 파츠와 겹침 → 살짝 파묻히는 정도가 자연스러움",
-      "Mirror가 안 되는 방향 → Origin이 몸통 중심에 있는지 확인",
-      "Bevel이 너무 큼 → Width를 0.01부터 아주 작게 시작",
-      "Apply 전에 Mirror가 풀림 → Mirror Modifier는 마지막에 Apply",
-      "파츠 이름을 안 정리함 → Outliner에서 바로 알아볼 수 있게 이름 붙이기"
+      "Bevel이 너무 큼 → Width를 아주 작게 시작",
+      "Weighted Normal 차이가 안 보임 → Bevel과 Shade Smooth 전후 비교",
+      "Boolean이 지저분함 → 커터가 실제로 겹치는지 다시 확인",
+      "Modifier를 너무 일찍 Apply함 → 마지막에만 확정",
+      "파츠 관리가 헷갈림 → 움직일 파츠는 분리, 고정 파츠는 정리해서 묶기"
     ],
     "videos": [
       {
@@ -1534,10 +1376,6 @@ const CURRICULUM = [
     ],
     "docs": [
       {
-        "title": "Subdivision Surface",
-        "url": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/subdivision_surface.html"
-      },
-      {
         "title": "Bevel Tool",
         "url": "https://docs.blender.org/manual/en/latest/modeling/meshes/tools/bevel.html"
       },
@@ -1546,36 +1384,101 @@ const CURRICULUM = [
         "url": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/bevel.html"
       },
       {
-        "title": "Mirror Modifier",
-        "url": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html"
+        "title": "Weighted Normal",
+        "url": "https://docs.blender.org/manual/en/latest/modeling/modifiers/modify/weighted_normal.html"
       },
       {
-        "title": "Array Modifier",
-        "url": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/array.html"
+        "title": "Boolean",
+        "url": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/booleans.html"
       }
     ],
-    "summary": "3주차 머리를 바탕으로 몸통·관절·팔다리·손발을 조립해 로봇 전신을 완성합니다."
+    "summary": "지난 주 배운 흐름을 바탕으로 디테일 추가와 음영 정리를 더 안정적으로 반복합니다."
   },
   {
     "week": 5,
     "status": "done",
     "title": "AI 3D 생성 + Sculpting",
-    "subtitle": "AI 툴 활용 · Sculpt Mode 기초",
+    "subtitle": "AI 툴 활용 · Sculpt Mode 기초 · 메쉬 정리",
     "duration": "~3시간",
     "topics": [
+      "AI 3D 생성 툴 (Meshy/Tripo)",
+      "AI 메쉬 Import 및 정리",
       "Sculpt Mode 기초 브러시",
-      "Sculpt 브러시 심화 (Clay/Crease/Inflate/Snake Hook)",
-      "Dyntopo (스컬프팅 중 자동 리메시)",
-      "Addon/Extension 설치 및 활성화",
-      "LoopTools · Bool Tool 내장 애드온 활용",
-      "BlenderKit 에셋 검색 및 활용",
-      "무드보드 → AI 프롬프트 설계",
-      "AI 3D 생성 (Meshy/Tripo/Hyper3D)"
+      "Sculpt 브러시 심화 (Clay/Crease/Inflate)",
+      "Remesh와 Dyntopo",
+      "AI + Sculpt 하이브리드 워크플로우"
     ],
     "steps": [
       {
+        "title": "AI 3D 생성 체험",
+        "copy": "텍스트 몇 글자 입력하면 3D 메쉬가 뚝딱 나와요. AI가 초벌을 해주면 우리는 거기서 다듬기만 하면 돼요. 점토 조각으로 치면 AI가 큰 덩어리를 잡아준 셈이에요.",
+        "goal": [
+          "AI 생성 워크플로우를 이해한다",
+          "프롬프트 작성 요령을 안다"
+        ],
+        "done": [
+          "AI 생성 메쉬를 Blender에서 열었다",
+          "최소 2가지 프롬프트로 결과를 비교했다"
+        ],
+        "tasks": [
+          {
+            "id": "w5-t1",
+            "label": "Meshy 또는 Tripo에서 프롬프트 입력 후 생성",
+            "detail": "구체적인 형용사를 넣을수록 결과가 좋아요"
+          },
+          {
+            "id": "w5-t2",
+            "label": "다른 프롬프트로 한 번 더 생성해서 비교",
+            "detail": "같은 주제라도 문장에 따라 결과가 달라요"
+          },
+          {
+            "id": "w5-t3",
+            "label": ".glb 파일 Blender에서 Import",
+            "detail": "File → Import → glTF (.glb/.gltf)"
+          }
+        ],
+        "image": "assets/images/week05/ai-3d-generation.png"
+      },
+      {
+        "title": "AI 메쉬 정리",
+        "copy": "AI가 만든 메쉬는 대부분 폴리곤이 지나치게 많아요. 마치 해상도가 너무 높은 사진처럼요. Decimate로 적당히 줄여야 이후 작업이 편해져요.",
+        "goal": [
+          "AI 메쉬의 폴리곤 문제를 이해한다",
+          "Decimate로 메쉬를 정리한다"
+        ],
+        "done": [
+          "폴리곤 수가 절반 이하로 줄었다",
+          "형태가 크게 무너지지 않았다"
+        ],
+        "tasks": [
+          {
+            "id": "w5-t4",
+            "label": "Viewport Overlay에서 폴리곤 수 확인",
+            "detail": "Statistics 켜기"
+          },
+          {
+            "id": "w5-t5",
+            "label": "Decimate Modifier 추가 후 Ratio 조절",
+            "detail": "0.3~0.5 정도에서 형태 유지되는 지점 찾기"
+          },
+          {
+            "id": "w5-t6",
+            "label": "Ctrl+A로 Scale 정리 후 원점 확인",
+            "detail": "Import 메쉬는 크기가 제각각이에요"
+          }
+        ],
+        "image": "assets/images/week05/mesh-cleanup.png",
+        "showme": "decimate-modifier",
+        "widgets": [
+          {
+            "type": "showme",
+            "id": "mask-modifier"
+          }
+        ]
+      },
+      {
         "title": "Sculpt Mode 기초",
-        "copy": "브러시로 메쉬를 직접 주무르는 모드예요. 마우스로 칠하듯이 형태를 만들고, 점토를 빚는 것과 가장 비슷해요.",
+        "copy": "브러시로 메쉬를 직접 주무르는 모드예요. 마우스로 칠하듯이 형태를 만들어요. 점토 조각과 가장 비슷한 방식이에요.",
         "goal": [
           "Sculpt Mode 진입 방법을 안다",
           "기본 3대 브러시를 쓴다"
@@ -1626,252 +1529,55 @@ const CURRICULUM = [
           {
             "id": "w5-t12",
             "label": "Clay Strips로 점토 덧붙이듯 형태 쌓기",
-            "detail": "넓은 면 위에 층층이 쌓기 — 큰 볼륨을 올려야 할 때"
+            "detail": "넓은 면 위에 층층이 쌓기"
           },
           {
             "id": "w5-t13",
             "label": "Crease로 홈이나 주름 선 파기",
-            "detail": "관절, 눈, 입 라인에 활용 — 선이 파여야 할 때"
+            "detail": "관절, 눈, 입 라인에 활용"
           },
           {
             "id": "w5-t14",
             "label": "Inflate로 볼록하게 부풀려보기",
-            "detail": "볼이나 근육 강조에 유용 — 표면 전체를 부풀려야 할 때"
-          },
-          {
-            "id": "w5-t-snake",
-            "label": "Snake Hook으로 뿔이나 촉수 끌어내기",
-            "detail": "끝점이 따라오며 길게 늘어나요 — 뿔·안테나·꼬리를 끄집어낼 때"
-          },
-          {
-            "id": "w5-t-dyn",
-            "label": "Dyntopo 켜고 브러시가 닿는 곳만 폴리곤 생성 확인",
-            "detail": "Sculpt Mode → 헤더 Dyntopo 체크 → Detail Size 낮게 유지 (Constant Detail 권장). 디테일이 필요한 부분에서만 폴리곤이 자동으로 늘어나요"
+            "detail": "볼이나 근육 강조에 유용"
           }
         ],
-        "image": "assets/images/week05/sculpt-mode.png",
-        "showme": "sculpt-brushes"
+        "image": "assets/images/week05/sculpt-brushes.png"
       },
       {
-        "title": "Addon/Extension 설치 및 활성화",
-        "copy": "Blender는 플러그인으로 기능을 확장할 수 있어요. 내장 애드온은 켜기만 하면 되고, 외부 애드온은 .zip 파일을 설치하거나 Extension 스토어에서 원클릭 설치해요.",
+        "title": "Remesh와 마무리",
+        "copy": "Sculpt를 하다 보면 메쉬가 늘어나서 찌그러지는 곳이 생겨요. Remesh는 메쉬를 다시 고르게 나눠주는 리셋 버튼 같은 거예요.",
         "goal": [
-          "내장 애드온 활성화 방법을 안다",
-          "외부 .zip 애드온 설치 방법을 안다",
-          "Extension 스토어 사용법을 안다"
+          "Remesh의 역할을 이해한다",
+          "AI 초안 + Sculpt 마무리 흐름을 완성한다"
         ],
         "done": [
-          "LoopTools와 Bool Tool이 활성화되었다",
-          "외부 애드온 설치 과정을 이해했다"
+          "Remesh 후 메쉬가 고르게 정리됐다",
+          "AI + Sculpt 결과물 스크린샷을 저장했다"
         ],
         "tasks": [
           {
-            "id": "w5-t-addon1",
-            "label": "Edit → Preferences → Add-ons 탭 열기",
-            "detail": "모든 플러그인 관리의 시작점이에요"
+            "id": "w5-t15",
+            "label": "Sculpt Mode → Remesh 버튼 또는 Ctrl+R",
+            "detail": "Voxel Size를 조절해서 해상도 맞추기"
           },
           {
-            "id": "w5-t-addon2",
-            "label": "검색창에 'Loop' 입력 → LoopTools 체크박스 ON",
-            "detail": "내장 애드온은 이미 설치되어 있어요. 켜기만 하면 돼요"
+            "id": "w5-t16",
+            "label": "Remesh 전후 비교해보기",
+            "detail": "메쉬가 고르게 나뉘었는지 확인"
           },
           {
-            "id": "w5-t-addon3",
-            "label": "검색창에 'Bool' 입력 → Bool Tool 체크박스 ON",
-            "detail": "같은 방법으로 내장 애드온 활성화"
-          },
-          {
-            "id": "w5-t-addon4",
-            "label": "Get Extensions 탭에서 외부 애드온 검색 체험",
-            "detail": "Blender 4.2+ 부터 원클릭 설치 가능. extensions.blender.org 에 등록된 애드온만"
-          },
-          {
-            "id": "w5-t-addon5",
-            "label": ".zip 파일 수동 설치 방법 확인",
-            "detail": "Add-ons → 우측 상단 드롭다운 → Install from Disk → .zip 선택"
-          }
-        ]
-      },
-      {
-        "title": "LoopTools · Bool Tool 활용",
-        "copy": "LoopTools는 메쉬 정리의 스위스 칼이에요. 삐뚤어진 꼭짓점을 원으로 만들고, 간격을 맞추고, 엣지를 연결해요. Bool Tool은 오브젝트끼리 파내기·합치기를 빠르게 해줘요.",
-        "goal": [
-          "LoopTools의 Circle, Relax, Space, Bridge를 쓴다",
-          "Bool Tool로 Difference, Union을 실행한다"
-        ],
-        "done": [
-          "Circle로 꼭짓점을 원형으로 정렬했다",
-          "Bool Tool로 두 오브젝트를 파내기 또는 합쳤다"
-        ],
-        "tasks": [
-          {
-            "id": "w5-t-lt1",
-            "label": "Edit Mode → 버텍스 선택 → 우클릭 → LoopTools → Circle",
-            "detail": "삐뚤어진 구멍을 완벽한 원으로 정렬해요"
-          },
-          {
-            "id": "w5-t-lt2",
-            "label": "LoopTools → Relax로 울퉁불퉁한 버텍스 정리",
-            "detail": "형태를 유지하면서 간격을 부드럽게 정리해요"
-          },
-          {
-            "id": "w5-t-lt3",
-            "label": "LoopTools → Space로 버텍스 등간격 배치",
-            "detail": "선택한 버텍스를 고르게 분포시켜요"
-          },
-          {
-            "id": "w5-t-lt4",
-            "label": "LoopTools → Bridge로 두 엣지 루프 연결",
-            "detail": "떨어진 두 구멍을 면으로 이어줘요"
-          },
-          {
-            "id": "w5-t-bt1",
-            "label": "Object Mode → 두 오브젝트 선택 → Ctrl+Shift+B → Difference",
-            "detail": "활성 오브젝트로 다른 오브젝트를 파내요"
-          },
-          {
-            "id": "w5-t-bt2",
-            "label": "Bool Tool → Union으로 두 오브젝트 합치기",
-            "detail": "겹치는 부분을 합쳐서 하나로 만들어요"
-          }
-        ]
-      },
-      {
-        "title": "BlenderKit 에셋 라이브러리",
-        "copy": "BlenderKit은 3D 에셋 백화점이에요. 모델, 재질, HDRI를 검색해서 드래그만 하면 바로 씬에 들어와요. 무료 에셋만 10,000개 이상이에요.",
-        "goal": [
-          "BlenderKit 설치 및 로그인 방법을 안다",
-          "에셋을 검색하고 씬에 추가할 수 있다"
-        ],
-        "done": [
-          "BlenderKit이 설치되고 패널이 보인다",
-          "무료 에셋 1개 이상을 씬에 추가했다"
-        ],
-        "tasks": [
-          {
-            "id": "w5-t-bk1",
-            "label": "blenderkit.com에서 .zip 다운로드",
-            "detail": "Download BlenderKit 버튼 클릭",
-            "url": "https://www.blenderkit.com/get-blenderkit/"
-          },
-          {
-            "id": "w5-t-bk2",
-            "label": "Preferences → Add-ons → Install from Disk → .zip 설치",
-            "detail": "설치 후 체크박스 ON으로 활성화"
-          },
-          {
-            "id": "w5-t-bk3",
-            "label": "뷰포트 상단 BlenderKit 검색창에서 에셋 검색",
-            "detail": "키워드 입력 → 결과 클릭 → 씬에 드래그&드롭"
-          },
-          {
-            "id": "w5-t-bk4",
-            "label": "모델 카테고리에서 무료 에셋 1개 추가해보기",
-            "detail": "로그인 없이도 무료 에셋 사용 가능"
-          },
-          {
-            "id": "w5-t-bk5",
-            "label": "Material 카테고리에서 재질 1개 적용해보기",
-            "detail": "오브젝트 선택 후 재질 클릭하면 바로 적용돼요"
-          }
-        ]
-      },
-      {
-        "title": "무드보드 → AI 프롬프트 설계",
-        "copy": "1주차 무드보드를 오늘 3D로 만들기 시작해요. 프롬프트에 형태·스타일·재질감을 구체적으로 넣어야 AI가 원하는 방향으로 만들어줘요.",
-        "goal": [
-          "무드보드 이미지를 텍스트 키워드로 변환할 수 있다",
-          "AI 3D 생성용 프롬프트를 작성할 수 있다"
-        ],
-        "done": [
-          "프롬프트 초안이 노션에 기록되었다",
-          "최소 2가지 프롬프트 변형을 준비했다"
-        ],
-        "tasks": [
-          {
-            "id": "w5-t-mood1",
-            "label": "Notion에서 내 무드보드 열기",
-            "detail": "1주차에 저장한 Mixboard 링크와 이미지 확인"
-          },
-          {
-            "id": "w5-t-mood2",
-            "label": "핵심 키워드 5개 이내로 추출",
-            "detail": "형태 1~2개, 스타일 1개, 재질감 1~2개"
-          },
-          {
-            "id": "w5-t-mood3",
-            "label": "Meshy용 프롬프트 초안 작성",
-            "detail": "[형태] + [스타일] + [재질감] + 3D model 패턴으로"
-          },{
-            "id": "w5-t-prompt-compare",
-            "label": "나쁜 예 → 좋은 예 직접 고쳐보기",
-            "detail": "나쁜 예: 'cute robot' → 좋은 예: 'small companion robot, spherical head, stubby arms, matte plastic finish, 3D model' — 공식: [형태]+[스타일]+[재질감]+3D model"
-          }
-        ],
-        "showme": "ai-prompt-design"
-      },
-      {
-        "title": "본인 프로젝트 AI 러프 생성",
-        "copy": "내 아이디어의 초벌을 AI가 잡아줘요. 완벽하지 않아도 괜찮아요 — 오늘은 방향을 확인하는 게 목적이에요.",
-        "goal": [
-          "AI 생성 워크플로우를 이해한다",
-          "프롬프트 작성 요령을 안다"
-        ],
-        "done": [
-          "AI 생성 메쉬를 Blender에서 열었다",
-          "최소 2가지 프롬프트로 결과를 비교했다"
-        ],
-        "tasks": [
-          {
-            "id": "w5-t1",
-            "label": "Meshy에서 내 프롬프트로 생성",
-            "detail": "구체적인 형용사를 넣을수록 결과가 좋아요",
-            "url": "https://www.meshy.ai/"
-          },
-          {
-            "id": "w5-t2",
-            "label": "키워드 하나 바꿔서 재생성 — 어느 쪽이 내 의도에 더 가까운지 선택",
-            "detail": "같은 주제라도 문장에 따라 결과가 달라요"
-          },
-          {
-            "id": "w5-t3",
-            "label": ".glb 파일 Blender에서 Import",
-            "detail": "File → Import → glTF (.glb/.gltf)"
-          }
-        ],
-        "image": "assets/images/week05/ai-3d-generation.png",
-        "showme": "ai-3d-generation"
-      },
-      {
-        "title": "AI 메쉬 정리 실전",
-        "copy": "Mesh Cleaner와 Decimate를 AI가 만든 내 메쉬에 직접 써봐요. Import한 그대로는 폴리곤이 너무 많아서 이후 작업이 힘들어요. Week 6에서 Remesh를 본격적으로 배우기 전에 기본 정리를 먼저 해둬요.",
-        "goal": [
-          "AI 메쉬의 폴리곤 문제를 직접 해결한다"
-        ],
-        "done": [
-          "AI 생성 메쉬의 폴리곤이 원본 대비 절반 이하로 줄었다",
-          "형태가 크게 무너지지 않았다"
-        ],
-        "tasks": [
-          {
-            "id": "w5-t-clean1",
-            "label": "Import한 AI 메쉬에 Mesh Cleaner 실행",
-            "detail": "중복 버텍스, 빈 구멍, 뒤집힌 노멀 한번에 정리"
-          },
-          {
-            "id": "w5-t-clean2",
-            "label": "Decimate로 폴리곤 줄이기",
-            "detail": "Ratio 0.3~0.5, 형태 유지되는 지점 찾기"
-          },
-          {
-            "id": "w5-t6",
-            "label": "Ctrl+A로 Scale 정리 후 원점 확인",
-            "detail": "Import 메쉬는 크기가 제각각이에요"
-          },
-          {
-            "id": "w5-t-clean3",
+            "id": "w5-t17",
             "label": "최종 형태 Object Mode에서 확인 후 스크린샷",
-            "detail": "Numpad 1(앞면 고정) + Material Preview 모드에서 Before/After 동일 앵글로 촬영. 스크린샷: Ctrl+F3. After도 반드시 Numpad 1로 — 앵글 바꾸면 비교 안 돼요"
+            "detail": ""
+          }
+        ],
+        "image": "assets/images/week05/remesh.png",
+        "showme": "remesh-modifier",
+        "widgets": [
+          {
+            "type": "showme",
+            "id": "multiresolution-modifier"
           }
         ]
       }
@@ -1908,22 +1614,6 @@ const CURRICULUM = [
       {
         "keys": "X",
         "action": "Draw 브러시 빠른 선택"
-      },
-      {
-        "keys": "우클릭 → LoopTools",
-        "action": "LoopTools 메뉴 (Edit Mode)"
-      },
-      {
-        "keys": "Ctrl + Shift + B",
-        "action": "Bool Tool 빠른 실행 (Object Mode)"
-      },
-      {
-        "keys": "Numpad 1",
-        "action": "앞면 뷰 고정 (Before/After 촬영 기준)"
-      },
-      {
-        "keys": "Ctrl + F3",
-        "action": "뷰포트 스크린샷 저장"
       }
     ],
     "explore": [
@@ -1945,15 +1635,13 @@ const CURRICULUM = [
       }
     ],
     "assignment": {
-      "title": "내 프로젝트 첫 3D 러프",
-      "description": "1주차 무드보드를 바탕으로 AI 러프를 뽑고, 메쉬를 정리한 결과물을 제출해요. 완성도보다 방향이 맞는지가 중요해요.",
+      "title": "AI + 수동 하이브리드 오브젝트",
+      "description": "AI 생성 메쉬를 Sculpt로 다듬은 결과물을 제출해요. 원본과 수정 후를 비교할 수 있어야 해요.",
       "checklist": [
-        "내 무드보드에서 추출한 프롬프트 키워드 (텍스트)",
-        "AI 생성 원본 스크린샷",
-        "메쉬 정리 후 스크린샷",
-        "한 문장: '나는 앞으로 ___을 만들 예정이에요'",
-        "완성 렌더 이미지 1장 이상",
-        "완성 .blend 파일 저장 완료 — Week 6 Material 실습에서 이 파일을 씁니다"
+        "AI 생성 원본과 Sculpt 수정 후 비교 이미지",
+        "AI 생성 → Sculpt 수정 흔적 있는 .blend",
+        "사용한 브러시 3가지 이상 적기",
+        "완성 렌더 이미지 2장 이상"
       ]
     },
     "mistakes": [
@@ -1961,21 +1649,12 @@ const CURRICULUM = [
       "Sculpt가 먹히지 않음 → 폴리곤이 너무 적으면 Remesh로 늘리기",
       "브러시가 반대로 작동함 → Ctrl을 누르고 있으면 반전이에요. 떼세요",
       "형태가 너무 울퉁불퉁 → Smooth 브러시로 정리, 또는 Strength 낮추기",
-      "Import 메쉬가 너무 작거나 큼 → S로 크기 맞추고 Ctrl+A로 Scale 적용",
-      "프롬프트가 너무 짧음 → 형태+스타일+재질 키워드를 넣어야 원하는 결과가 나와요",
-      "AI 메쉬를 정리 없이 바로 작업 → Mesh Cleaner 먼저 돌리고 시작하기",
-      "LoopTools 메뉴가 안 보임 → Preferences에서 애드온 활성화 확인. Edit Mode에서 우클릭해야 나와요",
-      "Bool Tool이 작동 안 함 → 두 오브젝트가 겹쳐 있어야 해요. Object Mode에서 실행",
-      "BlenderKit 패널이 안 보임 → 설치 후 활성화 체크 확인. 뷰포트 상단 검색바 확인"
+      "Import 메쉬가 너무 작거나 큼 → S로 크기 맞추고 Ctrl+A로 Scale 적용"
     ],
     "videos": [
       {
         "title": "Blender Studio - Introduction to Sculpting",
         "url": "https://studio.blender.org/training/sculpting-in-blender/introduction/"
-      },
-      {
-        "title": "Blender Fundamentals 4.5 — Basic Sculpting (Remesh · Dyntopo 포함)",
-        "url": "https://studio.blender.org/training/blender-fundamentals-45-lts/basic-sculpting/"
       }
     ],
     "docs": [
@@ -1992,48 +1671,19 @@ const CURRICULUM = [
         "url": "https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/tool_settings/remesh.html"
       },
       {
-        "title": "Dyntopo",
-        "url": "https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/tool_settings/dyntopo.html"
-      },
-      {
         "title": "Decimate Modifier",
         "url": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/decimate.html"
-      },
-      {
-        "title": "Mesh Cleaner 2",
-        "url": "https://decoded.gumroad.com/l/meshcleaner"
-      },
-      {
-        "title": "QRemeshify",
-        "url": "https://ksami.gumroad.com/l/QRemeshify"
-      },
-      {
-        "title": "LoopTools",
-        "url": "https://extensions.blender.org/add-ons/looptools/"
-      },
-      {
-        "title": "Bool Tool",
-        "url": "https://extensions.blender.org/add-ons/bool-tool/"
-      },
-      {
-        "title": "BlenderKit",
-        "url": "https://www.blenderkit.com/get-blenderkit/"
-      },
-      {
-        "title": "Dyntopo",
-        "url": "https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/tool_settings/dyntopo.html"
       }
     ],
-    "summary": "Sculpt Mode로 유기적 형태를 만들고, 내장 애드온(LoopTools/Bool Tool)과 BlenderKit을 활용하고, AI 3D 생성 툴을 경험해요."
+    "summary": "AI 기반 3D 생성 툴을 경험하고, Sculpt Mode로 유기적인 형태를 만들어요."
   },
   {
     "week": 6,
     "status": "done",
     "title": "Material & Shader Node",
-    "subtitle": "AI 메쉬 Remesh 정리 · 재질 시스템 · Principled BSDF · 노드 편집",
+    "subtitle": "재질 시스템 · Principled BSDF · 노드 편집",
     "duration": "~3시간",
     "topics": [
-      "AI 메쉬 Remesh 정리 (Voxel/Quad/Decimate/QRemeshify/Mesh Cleaner 2)",
       "Material 슬롯 구조",
       "Principled BSDF 핵심 파라미터",
       "Shader Node Editor 기초",
@@ -2043,398 +1693,161 @@ const CURRICULUM = [
     ],
     "steps": [
       {
-        "title": "AI 메쉬 Remesh 정리 — 작업 가능 컨디션 만들기",
-        "copy": "Week 5에서 AI(Meshy/Tripo)로 뽑은 메쉬는 토폴로지가 엉망이에요. Material을 입혀도 쉐이더가 깨지거나 UV 전개가 불가능해요. 오늘 Remesh로 '작업 가능한 상태'를 먼저 만들어요.\n\nVoxel Remesh — Object Data Properties에서 Voxel Size 조절 후 Remesh. 폴리곤을 균일하게 정리해요.\n\nQuad Remesh (Ctrl+R in Sculpt Mode) — 애니메이션·머테리얼 적용에 유리한 쿼드 토폴로지로 변환해요.\n\nDecimate Modifier — 고폴리 AI 메쉬를 감량해요. Ratio 0.3~0.5에서 형태 유지되는 지점 찾기.\n\nQRemeshify — 트라이앵글 → 쿼드 자동 변환. 리그를 걸 예정이라면 필수예요.\n\nMesh Cleaner 2 — 중복 버텍스, 빈 구멍, 뒤집힌 노멀을 원클릭 정리. AI 메쉬 임포트 직후 가장 먼저 실행.\n\n✅ 오늘 수업 전 체크: Blender 5 설치 완료 / Week 5 .blend 파일 준비 / Shader Editor 워크스페이스 열어두기",
+        "title": "Material 할당",
+        "copy": "옷을 입히듯 오브젝트에 재질을 입혀요. 같은 로봇이라도 재질 하나로 장난감이 될 수도, 군용 장비가 될 수도 있어요.",
         "goal": [
-          "AI 메쉬가 Material 적용에 문제 없는 상태임을 확인한다",
-          "Voxel Remesh · Decimate · Mesh Cleaner 2의 차이를 이해한다"
+          "Material 슬롯의 구조를 안다",
+          "하나의 오브젝트에 여러 Material을 쓸 수 있다"
         ],
         "done": [
-          "Remesh 전후 폴리곤 수 비교(Statistics)를 확인했다",
-          "Material 적용에 문제 없는 .blend 파일이 준비됐다"
-        ],
-        "tasks": [
-          {
-            "id": "w6-r1",
-            "label": "Week 5 .blend 파일 열기 — Statistics 켜서 폴리곤 수 확인",
-            "detail": "Viewport Overlay → Statistics 체크. 현재 폴리곤 수 기록해두기"
-          },
-          {
-            "id": "w6-r2",
-            "label": "Mesh Cleaner 2 실행 — 중복 버텍스 · 뒤집힌 노멀 정리",
-            "detail": "Preferences에서 설치 후 one-click 정리. AI 메쉬 직후 가장 먼저 실행",
-            "url": "https://decoded.gumroad.com/l/meshcleaner"
-          },
-          {
-            "id": "w6-r3",
-            "label": "Decimate Modifier 추가 → Ratio 0.5로 폴리곤 절반 감량",
-            "detail": "Properties → Modifier → Add Modifier → Generate → Decimate. 형태 유지 지점까지 Ratio 낮추기"
-          },
-          {
-            "id": "w6-r4",
-            "label": "Sculpt Mode → Ctrl+R → Quad Remesh (Voxel Remesh 후)",
-            "detail": "애니메이션/머테리얼에 유리한 쿼드 토폴로지 확보. Voxel Size 0.02~0.05 권장"
-          },
-          {
-            "id": "w6-r5",
-            "label": "QRemeshify로 삼각형 메쉬 → 쿼드 변환 체험",
-            "detail": "트라이앵글이 많은 AI 메쉬에 특히 효과적",
-            "url": "https://ksami.gumroad.com/l/QRemeshify"
-          },
-          {
-            "id": "w6-r6",
-            "label": "Before/After 폴리곤 수 비교 스크린샷 (Statistics)",
-            "detail": "Numpad 1 고정 앵글로 Remesh 전·후 동일 앵글 촬영. Ctrl+F3으로 저장"
-          },
-          {
-            "id": "w6-r7",
-            "label": "체크: Material 적용에 문제 없는 상태인가?",
-            "detail": "Material Preview(Z)로 확인 — 쉐이더 깨짐 없음, 표면 노멀 정상"
-          }
-        ],
-        "image": "assets/images/week06/material-assign.png",
-        "showme": ["remesh-modifier", "decimate-modifier"]
-      },
-      {
-        "title": "Material 기초 + Principled BSDF",
-        "copy": "리메시로 정리된 메쉬에 옷을 입히듯 재질을 입혀요. 같은 로봇이라도 재질 하나로 장난감이 될 수도, 군용 장비가 될 수도 있어요.\n\nMaterial Properties(재질 구 아이콘) → + New → Principled BSDF 자동 생성돼요. 슬롯을 여러 개 만들면 한 오브젝트에 여러 재질을 쓸 수 있어요.\n\nPrincipled BSDF 핵심 파라미터:\n• Base Color — 재질의 기본 색상\n• Metallic — 0=비금속, 1=금속\n• Roughness — 0=반짝, 1=무광\n• Emission — 자체 발광 색상 + Strength\n• Transmission — 0=불투명, 1=투명(유리)",
-        "goal": [
-          "Material 슬롯 구조를 이해한다",
-          "Principled BSDF 핵심 파라미터 5가지를 구분한다"
-        ],
-        "done": [
-          "금속/유리/발광 재질을 각각 슬라이더로 만들었다",
+          "오브젝트 색이 바뀌었다",
           "한 오브젝트에 2가지 이상 Material을 할당했다"
         ],
         "tasks": [
           {
             "id": "w6-t1",
-            "label": "Material Properties(구 아이콘) → + New 클릭",
+            "label": "Material Properties에서 + New 클릭",
             "detail": "기본 Principled BSDF가 자동 생성돼요"
           },
           {
             "id": "w6-t2",
-            "label": "Base Color 바꿔서 색 변경 확인 (Z → Material Preview)",
-            "detail": "색상 박스 클릭 → 컬러 피커에서 원하는 색 선택"
+            "label": "Base Color 바꿔서 색 변경 확인",
+            "detail": "Z → Material Preview로 확인"
           },
           {
             "id": "w6-t3",
-            "label": "Metallic 1.0 + Roughness 0.1 → 광택 금속",
-            "detail": "Roughness를 0.8로 올리면 무광 금속으로 변해요"
-          },
-          {
-            "id": "w6-t4",
-            "label": "Transmission 1.0 + IOR 1.45 → 유리 재질",
-            "detail": "Rendered 모드에서 확인해야 제대로 보여요"
-          },
-          {
-            "id": "w6-t5",
-            "label": "Emission Color 지정 + Strength 5 → 발광 재질",
-            "detail": "로봇 눈이나 에너지 코어에 활용"
-          },
-          {
-            "id": "w6-t6",
-            "label": "Edit Mode에서 면 선택 → + 버튼으로 슬롯 추가 → Assign",
-            "detail": "눈이나 가슴판에 다른 재질 입히기"
-          }
-        ],
-        "image": "assets/images/week06/principled-bsdf.png",
-        "showme": ["material-basics", "principled-bsdf"]
-      },
-      {
-        "title": "머티리얼 소스 활용 — BlenderKit & PBR 사이트",
-        "copy": "재질을 처음부터 만들 필요 없어요. BlenderKit 라이브러리와 무료 PBR 사이트에서 전문가가 만든 재질을 바로 가져다 쓸 수 있어요. 가져온 뒤 파라미터를 읽어보면 '왜 이렇게 생겼는지' 자연스럽게 이해돼요.\n\n재질 이름은 영문+언더바로 지어두세요(robot_metal, eye_glow). 나중에 Blender MCP로 Claude가 자동으로 재질을 찾아 적용할 수 있어요.",
-        "goal": [
-          "BlenderKit에서 머티리얼을 검색해 오브젝트에 적용한다",
-          "무료 PBR 사이트에서 텍스처를 다운받는 방법을 안다"
-        ],
-        "done": [
-          "BlenderKit 머티리얼 1개 이상 적용했다",
-          "재질 이름을 영문+언더바 규칙으로 변경했다"
-        ],
-        "tasks": [
-          {
-            "id": "w6-bk1",
-            "label": "Edit → Preferences → Add-ons → BlenderKit 활성화",
-            "detail": "Blender 5에 내장되어 있어요. 검색창에 'blenderkit' 입력"
-          },
-          {
-            "id": "w6-bk2",
-            "label": "N키 → BlenderKit 탭 → 검색창에 'metal' 또는 'plastic' 입력",
-            "detail": "무료(Free) 필터 체크 후 검색"
-          },
-          {
-            "id": "w6-bk3",
-            "label": "마음에 드는 머티리얼 클릭 → 오브젝트에 드래그 앤 드롭",
-            "detail": "자동으로 Material Slot에 추가돼요"
-          },
-          {
-            "id": "w6-bk4",
-            "label": "ambientcg.com 접속 → 'Concrete' 검색 → 1K PNG 다운로드",
-            "detail": "Diffuse/Roughness/Normal 3종 세트로 다운받으면 좋아요",
-            "url": "https://ambientcg.com"
-          },
-          {
-            "id": "w6-bk5",
-            "label": "머티리얼 이름을 영문+언더바 규칙으로 변경",
-            "detail": "예: robot_aluminum, eye_glow, body_plastic — MCP 자동화에 필요해요"
+            "label": "Edit Mode에서 면 선택 → 두 번째 Material Assign",
+            "detail": "눈이나 가슴판에 다른 색 입히기"
           }
         ],
         "image": "assets/images/week06/material-assign.png",
-        "showme": ["material-basics", "blenderkit"]
+        "showme": "material-basics"
       },
       {
-        "title": "Shader Node Editor — 노드 실습 3종",
-        "copy": "노드는 레고 블록처럼 연결해서 재질을 만들어요. 선 하나로 완전히 다른 질감이 만들어지는 게 Shader Editor의 매력이에요.\n\n레시피 1 — 절차적 패턴: Noise Texture → Color Ramp → Principled BSDF\n레시피 2 — 이미지 텍스처: Image Texture → BSDF Base Color\n레시피 3 — 발광 혼합: Emission BSDF + Principled BSDF → Add Shader → Material Output",
+        "title": "Principled BSDF 탐색",
+        "copy": "숫자 하나로 금속/유리/플라스틱이 바뀌어요. Metallic을 1로 올리면 금속, Transmission을 1로 올리면 유리처럼 보여요. 옷감을 고르듯 슬라이더를 움직여보세요.",
         "goal": [
-          "Shader Editor에서 노드를 추가하고 연결한다",
-          "3가지 노드 레시피를 직접 만든다"
+          "핵심 파라미터 4가지를 구분한다",
+          "원하는 재질을 슬라이더로 만든다"
         ],
         "done": [
-          "Noise Texture가 Color Ramp를 거쳐 BSDF에 연결됐다",
-          "Add Shader 노드로 두 재질을 혼합했다"
+          "금속/유리/플라스틱 재질을 각각 흉내냈다",
+          "Roughness 차이를 눈으로 구분할 수 있다"
+        ],
+        "tasks": [
+          {
+            "id": "w6-t4",
+            "label": "Metallic 1.0으로 금속 재질 만들기",
+            "detail": "Roughness도 같이 바꿔서 광택 비교"
+          },
+          {
+            "id": "w6-t5",
+            "label": "Transmission 1.0으로 유리 재질 만들기",
+            "detail": "IOR 1.45 정도면 유리 느낌"
+          },
+          {
+            "id": "w6-t6",
+            "label": "Roughness 0 vs 0.5 vs 1 비교",
+            "detail": "반짝 → 은은 → 무광 변화 확인"
+          },
+          {
+            "id": "w6-t7",
+            "label": "Emission으로 발광 재질 만들기",
+            "detail": "로봇 눈이나 표시등에 활용"
+          }
+        ],
+        "image": "assets/images/week06/principled-bsdf.png",
+        "showme": "principled-bsdf"
+      },
+      {
+        "title": "Shader Node Editor",
+        "copy": "노드는 레고 블록처럼 연결해서 재질을 만들어요. 색을 그라데이션으로 바꾸거나 질감을 섞을 수 있어요. 선을 연결하는 것만으로 복잡한 재질이 가능해져요.",
+        "goal": [
+          "노드 기반 재질 편집 방식을 이해한다",
+          "Color Ramp 노드를 연결한다"
+        ],
+        "done": [
+          "ColorRamp를 Principled BSDF에 연결했다",
+          "노드 2개 이상을 직접 연결했다"
         ],
         "tasks": [
           {
             "id": "w6-t8",
-            "label": "Shading 워크스페이스 탭으로 전환",
-            "detail": "상단 메뉴바 Shading 탭 클릭 또는 에디터 타입에서 Shader Editor 선택"
+            "label": "Shader Editor 열기",
+            "detail": "상단 에디터 타입 메뉴 또는 워크스페이스 Shading 탭"
           },
           {
             "id": "w6-t9",
-            "label": "[레시피 1] Shift+A → Texture → Noise Texture 추가",
-            "detail": "Scale: 5, Detail: 8로 설정해보세요"
+            "label": "Shift+A → Color → Color Ramp 추가",
+            "detail": ""
           },
           {
             "id": "w6-t10",
-            "label": "[레시피 1] Shift+A → Color → Color Ramp 추가 → Noise Color 소켓 연결",
-            "detail": "Noise의 Color 출력 → Color Ramp의 Fac 입력에 드래그"
+            "label": "Color Ramp 출력 → Base Color 입력 연결",
+            "detail": "드래그로 소켓 연결"
           },
           {
             "id": "w6-t11",
-            "label": "[레시피 1] Color Ramp 출력 → Principled BSDF Base Color 연결",
-            "detail": "Color Ramp에서 흑백 포인트 색상 바꿔서 그라데이션 커스텀"
-          },
-          {
-            "id": "w6-t12",
-            "label": "[레시피 2] Shift+A → Texture → Image Texture → 이미지 파일 불러오기",
-            "detail": "Open → ambientcg에서 받은 Diffuse 파일 선택. Color Space: sRGB"
-          },
-          {
-            "id": "w6-t13",
-            "label": "[레시피 2] Image Texture Color 출력 → Base Color 연결",
-            "detail": "UV 전개가 없으면 텍스처가 깨져 보여요. Object Data → UV Maps 확인"
-          },
-          {
-            "id": "w6-t14",
-            "label": "[레시피 3] Shift+A → Shader → Emission 추가",
-            "detail": "Emission Color: 파란색, Strength: 3"
-          },
-          {
-            "id": "w6-t15",
-            "label": "[레시피 3] Shift+A → Shader → Add Shader 추가",
-            "detail": "Emission + Principled BSDF 두 출력을 Add Shader에 연결 → Material Output"
+            "label": "Color Ramp 색상 두 개 바꿔서 그라데이션 만들기",
+            "detail": "색 포인트 클릭 후 변경"
           }
         ],
         "image": "assets/images/week06/shader-editor.png",
-        "showme": ["shader-editor", "color-ramp", "noise-texture", "texture-types"]
+        "showme": "shader-editor"
       },
       {
-        "title": "Poly AI로 PBR 텍스처 만들기",
-        "copy": "withpoly.com에서 텍스트 설명만으로 PBR 텍스처 3종(Diffuse/Roughness/Normal)을 AI가 생성해줘요. 다운받은 3종을 Blender에 가져오면 Ctrl+Shift+T 단축키 하나로 자동 연결돼요.",
+        "title": "Texture 노드로 질감 추가",
+        "copy": "Noise Texture를 연결하면 표면에 얼룩이나 먼지 같은 질감이 생겨요. 실제 물건은 완전히 깨끗한 법이 없으니까, 이 한 단계가 리얼함을 크게 올려줘요.",
         "goal": [
-          "Poly AI에서 PBR 텍스처를 생성하고 다운로드한다",
-          "Ctrl+Shift+T로 3종 맵을 자동 연결한다"
+          "Noise/Musgrave 등 텍스처 노드를 연결한다"
         ],
         "done": [
-          "Diffuse/Roughness/Normal 3종이 노드로 연결됐다",
-          "렌더에서 텍스처가 오브젝트에 적용된 것이 확인됐다"
+          "표면에 패턴이나 질감이 보인다"
         ],
         "tasks": [
           {
-            "id": "w6-poly1",
-            "label": "withpoly.com 접속 → 텍스트 입력: 'rusted metal surface'",
-            "detail": "Style, Resolution(1K), Format(PNG) 선택",
-            "url": "https://withpoly.com"
+            "id": "w6-t12",
+            "label": "Shift+A → Texture → Noise Texture 추가",
+            "detail": ""
           },
           {
-            "id": "w6-poly2",
-            "label": "Generate 클릭 → Diffuse / Roughness / Normal 3종 다운로드",
-            "detail": "파일명 형식: texture_diffuse.png, texture_roughness.png, texture_normal.png"
+            "id": "w6-t13",
+            "label": "Noise → Color Ramp → Base Color 연결",
+            "detail": "Scale을 바꿔서 패턴 크기 조절"
           },
           {
-            "id": "w6-poly3",
-            "label": "Node Wrangler 애드온 활성화 (Preferences → Add-ons)",
-            "detail": "Ctrl+Shift+T 단축키는 Node Wrangler가 있어야 동작해요"
-          },
-          {
-            "id": "w6-poly4",
-            "label": "Shader Editor에서 Principled BSDF 선택 → Ctrl+Shift+T",
-            "detail": "파일 탐색기에서 3종 파일 모두 선택(Ctrl+클릭) → Open"
-          },
-          {
-            "id": "w6-poly5",
-            "label": "자동 연결 확인: Diffuse→Base Color, Roughness→Roughness, Normal→Normal Map→Normal",
-            "detail": "Normal Map 노드가 중간에 자동 삽입돼요. Color Space 자동 설정도 확인"
+            "id": "w6-t14",
+            "label": "Noise의 Roughness 출력을 Principled BSDF Roughness에 연결",
+            "detail": "표면 광택에 변화를 줘요"
           }
         ],
-        "image": "assets/images/week06/texture-node.png",
-        "showme": ["image-texture-pbr", "noise-texture"]
+        "image": "assets/images/week06/texture-node.png"
       },
       {
-        "title": "렌더링 — 라이팅과 카메라",
-        "copy": "Z 키 하나로 와이어프레임/솔리드/미리보기/렌더를 오가요. 재질이 아무리 좋아도 조명이 없으면 아무것도 안 보여요. 간단한 3점 조명으로 로봇을 돋보이게 해봐요.",
+        "title": "Viewport Shading 비교",
+        "copy": "Z 키 하나로 와이어프레임/솔리드/미리보기/렌더를 오가요. 작업 중에는 Material Preview로, 최종 확인은 Rendered로 보는 습관을 들이면 편해요.",
         "goal": [
-          "4가지 Viewport Shading 모드를 구분한다",
-          "기본 3점 조명을 설정한다"
+          "4가지 Shading 모드를 구분한다"
         ],
         "done": [
-          "Z 파이 메뉴로 모드 전환이 자연스럽다",
-          "Rendered 모드에서 조명 효과가 보인다"
+          "Z 파이 메뉴로 모드 전환이 자연스럽다"
         ],
         "tasks": [
+          {
+            "id": "w6-t15",
+            "label": "Z 파이 메뉴로 4가지 모드 각각 전환",
+            "detail": "Wireframe/Solid/Material/Rendered"
+          },
           {
             "id": "w6-t16",
-            "label": "Z 파이 메뉴로 4가지 모드 각각 전환",
-            "detail": "Wireframe / Solid / Material Preview / Rendered"
-          },
-          {
-            "id": "w6-t17",
-            "label": "Shift+A → Light → Point 추가 → 로봇 정면 45도 위 배치",
-            "detail": "에너지(Energy) 500~1000W. 메인 키 라이트"
-          },
-          {
-            "id": "w6-t18",
-            "label": "두 번째 Point Light → 로봇 반대편 옆 → 에너지 200W",
-            "detail": "그림자 채우는 필 라이트. 메인보다 약하게"
-          },
-          {
-            "id": "w6-t19",
-            "label": "Numpad 0 → 카메라 뷰 → G+Z로 높이 조절",
-            "detail": "카메라는 약간 위에서 내려다보는 앵글이 로봇에 잘 어울려요"
+            "label": "Material Preview에서 작업 후 Rendered에서 최종 확인",
+            "detail": "빛 반사가 다르게 보여요"
           }
         ],
-        "image": "assets/images/week06/shading-modes.png",
-        "showme": ["shader-editor"]
-      },
-      {
-        "title": "EEVEE Next vs Cycles — 렌더 엔진 선택",
-        "copy": "렌더 엔진 두 가지 중 어떤 걸 쓰느냐에 따라 속도와 품질이 완전히 달라져요.\n\nEEVEE Next — 실시간 렌더, 수업 중 작업에 적합. Screen Space Reflections를 켜면 반사 품질이 올라가요.\n\nCycles — 빛의 물리 경로를 시뮬레이션. 유리·금속 반사가 훨씬 정교하지만 렌더 시간이 길어요.\n\n권장: 작업 중엔 EEVEE Next, 최종 포트폴리오 렌더는 Cycles.",
-        "goal": [
-          "EEVEE Next와 Cycles의 차이를 설명한다",
-          "렌더 엔진을 상황에 맞게 전환한다"
-        ],
-        "done": [
-          "같은 장면을 두 엔진으로 렌더해서 차이를 확인했다",
-          "EEVEE Next에서 Screen Space Reflections를 활성화했다"
-        ],
-        "tasks": [
-          {
-            "id": "w6-ev1",
-            "label": "Render Properties → Render Engine → EEVEE Next 선택",
-            "detail": "Z → Rendered로 실시간 미리보기. 작업 속도가 빨라요"
-          },
-          {
-            "id": "w6-ev2",
-            "label": "EEVEE Next → Screen Space Reflections 체크",
-            "detail": "금속 재질의 반사가 더 사실적으로 보여요"
-          },
-          {
-            "id": "w6-ev3",
-            "label": "Render Engine → Cycles로 전환 후 동일 장면 렌더",
-            "detail": "F12로 렌더. 시간이 걸리지만 유리·금속 품질이 높아요"
-          },
-          {
-            "id": "w6-ev4",
-            "label": "Cycles → Device: GPU Compute로 변경 (GPU 있는 경우)",
-            "detail": "Preferences → System → Cycles Render Devices에서 GPU 활성화"
-          }
-        ],
-        "image": "assets/images/week06/shading-modes.png",
-        "showme": ["shader-editor"]
-      },
-      {
-        "title": "Claude MCP로 Blender 조작하기",
-        "copy": "MCP(Model Context Protocol)는 Claude가 Blender를 직접 조작할 수 있게 해주는 표준 프로토콜이에요. blender-mcp 애드온만 설치하면 '큐브 만들어줘', '금속 재질 적용해줘' 같은 자연어 명령으로 3D 작업을 자동화할 수 있어요.\n\n오늘 배운 Material 시스템을 Claude에게 지시해 자동 적용해보면, AI 협업 워크플로우의 가능성을 체험할 수 있어요.\n\n실습 명령어 예시:\n• '오브젝트 robot_body에 metallic 1.0, roughness 0.2 재질 적용해줘'\n• 'eye_glow 오브젝트에 파란색 발광 재질 만들어줘'\n• '전체 씬 EEVEE Next로 렌더해줘'",
-        "goal": [
-          "MCP가 무엇인지 개념을 이해한다",
-          "blender-mcp로 재질 자동 적용을 체험한다"
-        ],
-        "done": [
-          "MCP의 역할(Host ↔ Server ↔ Tool 구조)을 설명할 수 있다",
-          "(선택) blender-mcp 명령어 1개 이상 실행했다"
-        ],
-        "tasks": [
-          {
-            "id": "w6-mcp1",
-            "label": "MCP 개념 카드 학습 — Tools/Resources/Prompts 3가지 구분",
-            "detail": "MCP는 AI가 앱을 직접 조작하는 표준. USB처럼 한 번 만들면 어느 AI든 연결 가능"
-          },
-          {
-            "id": "w6-mcp2",
-            "label": "blender-mcp GitHub 가이드 읽기",
-            "detail": "Claude Desktop + blender-mcp 애드온 + claude_desktop_config.json 설정 3가지 필요",
-            "url": "https://github.com/ahuja312/blender-mcp"
-          },
-          {
-            "id": "w6-mcp3",
-            "label": "(선택) blender-mcp 설치 → N키 → MCP 탭 → Start Server",
-            "detail": "Claude Desktop에서 '큐브 만들어줘' 테스트"
-          },
-          {
-            "id": "w6-mcp4",
-            "label": "(선택) 재질 이름이 영문+언더바인지 확인 후 Claude에게 재질 적용 지시",
-            "detail": "예: 'robot_body 오브젝트에 Metallic 1.0, Roughness 0.15 재질 만들어줘'"
-          }
-        ],
-        "showme": ["mcp-concept", "blender-mcp"]
-      },
-      {
-        "title": "과제 — 로봇 파츠별 재질 완성",
-        "copy": "오늘 배운 모든 걸 로봇에 적용해서 완성해요. 파츠마다 다른 재질을 쓰면 훨씬 생동감 있어 보여요.",
-        "goal": [
-          "로봇 오브젝트에 3가지 이상 재질을 파츠별로 적용한다",
-          "EEVEE Next로 렌더링한 이미지를 저장한다"
-        ],
-        "done": [
-          "몸체/눈/관절 등 최소 3파츠에 다른 재질이 적용됐다",
-          "Ctrl+F3으로 렌더 이미지를 저장했다",
-          ".blend 파일로 저장 완료"
-        ],
-        "tasks": [
-          {
-            "id": "w6-hw1",
-            "label": "로봇 파츠별 Material Slot 분리 (최소 3개 파츠)",
-            "detail": "몸체 / 눈 / 관절·팔 등. Edit Mode에서 면 선택 후 Assign"
-          },
-          {
-            "id": "w6-hw2",
-            "label": "BlenderKit 또는 Poly AI 텍스처 최소 1개 적용",
-            "detail": "직접 만든 노드 재질 + 외부 소스 재질 혼용 OK"
-          },
-          {
-            "id": "w6-hw3",
-            "label": "EEVEE Next로 렌더 → Ctrl+F3으로 PNG 저장",
-            "detail": "해상도 1920x1080 권장. Image Editor → Image → Save As"
-          },
-          {
-            "id": "w6-hw4",
-            "label": ".blend 파일 저장 (Ctrl+S) → 노션 과제 제출 링크에 업로드",
-            "detail": "파일명: week06_yourname.blend"
-          }
-        ],
-        "showme": ["material-basics", "principled-bsdf"]
+        "image": "assets/images/week06/shading-modes.png"
       }
     ],
     "shortcuts": [
-      {
-        "keys": "Ctrl + R (Sculpt Mode)",
-        "action": "Quad Remesh 실행"
-      },
-      {
-        "keys": "Viewport Overlay → Statistics",
-        "action": "폴리곤 수 표시"
-      },
       {
         "keys": "Z",
         "action": "Shading 모드 전환 파이 메뉴"
@@ -2483,18 +1896,16 @@ const CURRICULUM = [
       }
     ],
     "assignment": {
-      "title": "로봇 재질 적용",
-      "description": "자신의 로봇/캐릭터 모델에 3가지 이상 서로 다른 재질을 적용하고 렌더 이미지를 제출해요. 금속/플라스틱/유리 또는 발광 조합으로 로봇의 컨셉을 표현하세요.",
+      "title": "재질 스타일 샘플러",
+      "description": "5가지 다른 재질로 구 5개를 만들어 나란히 배치하고 렌더해요. 금속/유리/플라스틱/발광/질감 각 1개씩.",
       "checklist": [
-        "렌더 이미지 1~2장 (Material Preview 이상)",
-        "사용한 재질 종류 설명 (파라미터 값 포함)",
-        "한줄 코멘트 (어떤 느낌을 표현했는지)"
+        "5가지 재질 구 렌더 이미지",
+        "각 재질의 핵심 파라미터 값 메모",
+        "Shader Editor 노드 연결 스크린샷 1장",
+        ".blend 파일"
       ]
     },
     "mistakes": [
-      "Remesh 후 쉐이더가 깨짐 → 노멀 방향 문제. Mesh Cleaner 2 재실행 또는 Edit Mode → Mesh → Normals → Recalculate Outside",
-      "Decimate Ratio 너무 낮추면 형태 붕괴 → 0.3~0.5에서 멈추기. Apply 전에 값 확인",
-      "Remesh 전후 비교가 어려움 → Statistics 켜고 Numpad 1 고정 앵글로 Before/After 촬영",
       "재질이 화면에서 안 보임 → Viewport Shading을 Material Preview 또는 Rendered로 변경",
       "노드 연결이 안 됨 → 소켓 색이 같은 것끼리 연결 (노란색끼리, 보라색끼리)",
       "Emission이 안 빛남 → Rendered 모드에서만 보여요. Material Preview에선 약하게 보임",
@@ -2505,53 +1916,9 @@ const CURRICULUM = [
       {
         "title": "Blender Studio - Materials and Shading",
         "url": "https://studio.blender.org/training/blender-2-8-fundamentals/materials-and-shading/"
-      },
-      {
-        "title": "Blender Studio - Shading Nodes",
-        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/shading-nodes/"
-      },
-      {
-        "title": "Blender Studio - Principled BSDF",
-        "url": "https://studio.blender.org/training/blender-2-8-fundamentals/principled-bsdf/"
-      },
-      {
-        "title": "How to use BlenderKit — Free Materials & Models",
-        "url": "https://www.youtube.com/watch?v=VxGDCCt7vQY"
-      },
-      {
-        "title": "Shader Editor Beginner Tutorial — Blender (Darrin Lile)",
-        "url": "https://www.youtube.com/watch?v=TkBBqBpVwv4"
-      },
-      {
-        "title": "PBR Texturing in Blender — Node Wrangler + Ctrl+Shift+T",
-        "url": "https://www.youtube.com/watch?v=JiSMOIhpnW0"
-      },
-      {
-        "title": "EEVEE Next vs Cycles — Which to Use?",
-        "url": "https://www.youtube.com/watch?v=aST0LcPRDO4"
-      },
-      {
-        "title": "Blender MCP — Claude AI로 Blender 조작하기",
-        "url": "https://www.youtube.com/watch?v=4o-9sJovAhA"
       }
     ],
     "docs": [
-      {
-        "title": "Remesh (Blender Manual)",
-        "url": "https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/tool_settings/remesh.html"
-      },
-      {
-        "title": "Decimate Modifier",
-        "url": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/decimate.html"
-      },
-      {
-        "title": "Mesh Cleaner 2",
-        "url": "https://decoded.gumroad.com/l/meshcleaner"
-      },
-      {
-        "title": "QRemeshify",
-        "url": "https://ksami.gumroad.com/l/QRemeshify"
-      },
       {
         "title": "Materials",
         "url": "https://docs.blender.org/manual/en/latest/render/materials/introduction.html"
@@ -2573,7 +1940,7 @@ const CURRICULUM = [
         "url": "https://docs.blender.org/manual/en/latest/render/shader_nodes/converter/color_ramp.html"
       }
     ],
-    "summary": "AI 메쉬를 Remesh로 '작업 가능한 상태'로 정리한 뒤, Material 원리와 Shader Editor를 이해하고 Principled BSDF로 다양한 재질을 표현해요."
+    "summary": "Material의 원리와 Shader Editor를 이해하고 Principled BSDF로 다양한 재질을 표현해요."
   },
   {
     "week": 7,
@@ -2592,7 +1959,7 @@ const CURRICULUM = [
     "steps": [
       {
         "title": "UV 개념 이해",
-        "copy": "옷을 만들려면 원단을 재단하잖아요. UV도 마찬가지예요. 3D 표면을 2D로 펼쳐야 이미지를 정확하게 붙일 수 있어요. Seam은 가위로 자르는 선이에요.",
+        "copy": "UV는 3D 표면을 2D 좌표로 펼쳐서 이미지가 어디에 붙을지 정하는 작업이에요. 기본 오브젝트에도 UV는 있지만, 모델링으로 형태를 바꾸면 다시 Unwrap해야 하는 경우가 많아요. Seam은 그때 자르는 선이에요.",
         "goal": [
           "UV가 왜 필요한지 이해한다",
           "Seam의 역할을 안다"
@@ -2604,7 +1971,7 @@ const CURRICULUM = [
         "tasks": [
           {
             "id": "w7-t1",
-            "label": "Edit Mode → Edge Select 모드(3) 전환",
+            "label": "Edit Mode → Edge Select 모드(2) 전환",
             "detail": ""
           },
           {
@@ -2659,7 +2026,7 @@ const CURRICULUM = [
       },
       {
         "title": "Smart UV Project로 빠른 펼침",
-        "copy": "Seam을 하나하나 그리기 귀찮을 때가 있어요. Smart UV Project는 자동으로 적당히 잘라서 펼쳐줘요. 정밀하진 않지만 초안으로 충분해요.",
+        "copy": "Seam을 하나하나 지정하기 어려운 메쉬에서는 Smart UV Project로 빠르게 초안을 만들 수 있어요. 자동으로 잘라서 펼쳐주기 때문에 시작은 빠르지만, 중요한 부분은 나중에 수동으로 다듬는 게 좋아요.",
         "goal": [
           "수동 Unwrap과 자동 Unwrap을 비교한다"
         ],
@@ -2682,7 +2049,7 @@ const CURRICULUM = [
       },
       {
         "title": "AI Texture 생성 및 적용",
-        "copy": "AI가 만든 이미지를 메쉬 표면에 붙이는 거예요. UV가 제대로 펼쳐져 있어야 이미지가 자연스럽게 입혀져요. 재단이 잘 된 옷감 위에 프린트하는 것과 같아요.",
+        "copy": "AI가 만든 이미지를 바로 붙이려면 먼저 UV가 안정적으로 펼쳐져 있어야 해요. 텍스처가 어색하게 늘어나면 이미지보다 UV 배치부터 먼저 확인하는 습관이 중요해요.",
         "goal": [
           "Image Texture 노드 사용법을 안다",
           "AI 생성 이미지를 재질에 연결한다"
@@ -2694,7 +2061,7 @@ const CURRICULUM = [
           {
             "id": "w7-t10",
             "label": "AI 텍스처 이미지 파일 저장",
-            "detail": "Adobe Firefly, Stable Diffusion 등"
+            "detail": "Meshy AI, 나노바나나 등"
           },
           {
             "id": "w7-t11",
@@ -2716,7 +2083,7 @@ const CURRICULUM = [
       },
       {
         "title": "Texture Painting 맛보기",
-        "copy": "UV가 펼쳐진 위에 직접 색을 칠할 수도 있어요. 3D 뷰에서 바로 칠하면 UV 위치가 자동으로 맞아서 편해요.",
+        "copy": "Texture Paint는 UV를 만든 뒤 표면 디테일을 얹는 단계예요. 큰 패턴은 이미지 텍스처로 잡고, 로고나 스크래치 같은 작은 요소를 나중에 덧칠하면 더 수월해요.",
         "goal": [
           "Texture Paint 모드의 존재를 안다"
         ],
@@ -2735,8 +2102,7 @@ const CURRICULUM = [
             "detail": "브러시 색과 크기 바꿔가며 실험"
           }
         ],
-        "image": "assets/images/week07/texture-paint.png",
-        "showme": "texture-painting"
+        "image": "assets/images/week07/texture-paint.png"
       }
     ],
     "shortcuts": [
@@ -2788,13 +2154,13 @@ const CURRICULUM = [
       }
     ],
     "assignment": {
-      "title": "텍스처 입힌 소품",
-      "description": "Seam → Unwrap → AI Texture 순서로 텍스처를 입힌 소품을 제출해요. UV Editor 스크린샷도 함께.",
+      "title": "텍스처 적용 로봇 렌더",
+      "description": "자신의 로봇 또는 캐릭터 모델에 Seam → Unwrap → Texture 적용을 수행하고, 렌더 이미지 2장과 UV 전개도 스크린샷 1장을 정리해 제출해요.",
       "checklist": [
-        "UV Unwrap이 완료된 .blend",
-        "AI 텍스처 이미지 포함",
+        "렌더 이미지 2장 이상",
         "UV Editor 스크린샷 1장",
-        "렌더 이미지 2장 이상"
+        "한줄 코멘트",
+        "필요하면 AI 텍스처 이미지 또는 Texture Paint 결과 함께 정리"
       ]
     },
     "mistakes": [
@@ -2802,7 +2168,7 @@ const CURRICULUM = [
       "텍스처가 뒤집혀 보임 → UV Editor에서 해당 섬 선택 후 S → Y → -1",
       "UV가 겹침 → UV Editor에서 섬이 서로 겹치지 않게 배치",
       "이미지가 흐림 → 텍스처 해상도가 너무 낮으면 1024×1024 이상으로",
-      "연결이 안 됨 → UV Map 이름이 Material과 동일한지 확인"
+      "텍스처가 안 보임 → Image Texture 노드가 Base Color에 연결됐는지, 활성 UV 맵이 맞는지 확인"
     ],
     "videos": [
       {
@@ -2962,8 +2328,7 @@ const CURRICULUM = [
           {
             "id": "w9-t5",
             "label": "Poly Haven에서 HDRI 파일 다운로드",
-            "detail": "polyhaven.com → HDRIs",
-            "url": "https://polyhaven.com/hdris"
+            "detail": "polyhaven.com → HDRIs"
           },
           {
             "id": "w9-t6",
@@ -3041,8 +2406,7 @@ const CURRICULUM = [
             "detail": "35mm(넓은) vs 85mm(망원) 차이"
           }
         ],
-        "image": "assets/images/week09/camera-setup.png",
-        "showme": ["camera-setup", "depth-of-field"]
+        "image": "assets/images/week09/camera-setup.png"
       },
       {
         "title": "분위기 연출 실험",
@@ -3226,7 +2590,7 @@ const CURRICULUM = [
             "detail": "2배로 커지는 애니메이션"
           }
         ],
-        "image": "assets/images/week10/dope-sheet.png"
+        "image": "assets/images/week10/rotation-scale.png"
       },
       {
         "title": "Dope Sheet 타이밍",
@@ -3256,8 +2620,7 @@ const CURRICULUM = [
             "detail": "반복 동작 만들기에 유용"
           }
         ],
-        "image": "assets/images/week10/dope-sheet.png",
-        "showme": "dope-sheet"
+        "image": "assets/images/week10/dope-sheet.png"
       },
       {
         "title": "Graph Editor 커브",
@@ -3692,8 +3055,7 @@ const CURRICULUM = [
           {
             "id": "w12-t4",
             "label": "Mixamo.com 접속 후 FBX 파일 업로드",
-            "detail": "Adobe 계정 필요 (무료)",
-            "url": "https://www.mixamo.com/"
+            "detail": "Adobe 계정 필요 (무료)"
           },
           {
             "id": "w12-t5",
@@ -3706,7 +3068,7 @@ const CURRICULUM = [
             "detail": ""
           }
         ],
-        "image": "assets/images/week12/mixamo-import.png"
+        "image": "assets/images/week12/mixamo-upload.png"
       },
       {
         "title": "애니메이션 선택 및 임포트",
@@ -3721,14 +3083,12 @@ const CURRICULUM = [
           {
             "id": "w12-t7",
             "label": "Mixamo Animations 탭에서 걷기/달리기/춤 골라보기",
-            "detail": "미리보기로 확인 후 다운로드",
-            "url": "https://www.mixamo.com/#/?page=1&type=Animation"
+            "detail": "미리보기로 확인 후 다운로드"
           },
           {
             "id": "w12-t8",
             "label": "FBX로 다운로드 (With Skin 옵션)",
-            "detail": "Keyframe Reduction: None 추천",
-            "url": "https://www.mixamo.com/"
+            "detail": "Keyframe Reduction: None 추천"
           },
           {
             "id": "w12-t9",
@@ -3764,8 +3124,7 @@ const CURRICULUM = [
             "detail": "Action을 NLA 스트립으로 Push Down"
           }
         ],
-        "image": "assets/images/week12/nla-editor.png",
-        "showme": "nla-editor"
+        "image": "assets/images/week12/nla-editor.png"
       }
     ],
     "shortcuts": [

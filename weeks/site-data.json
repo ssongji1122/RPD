@@ -1954,7 +1954,7 @@
     "steps": [
       {
         "title": "UV 개념 이해",
-        "copy": "옷을 만들려면 원단을 재단하잖아요. UV도 마찬가지예요. 3D 표면을 2D로 펼쳐야 이미지를 정확하게 붙일 수 있어요. Seam은 가위로 자르는 선이에요.",
+        "copy": "UV는 3D 표면을 2D 좌표로 펼쳐서 이미지가 어디에 붙을지 정하는 작업이에요. 기본 오브젝트에도 UV는 있지만, 모델링으로 형태를 바꾸면 다시 Unwrap해야 하는 경우가 많아요. Seam은 그때 자르는 선이에요.",
         "goal": [
           "UV가 왜 필요한지 이해한다",
           "Seam의 역할을 안다"
@@ -1966,7 +1966,7 @@
         "tasks": [
           {
             "id": "w7-t1",
-            "label": "Edit Mode → Edge Select 모드(3) 전환",
+            "label": "Edit Mode → Edge Select 모드(2) 전환",
             "detail": ""
           },
           {
@@ -2021,7 +2021,7 @@
       },
       {
         "title": "Smart UV Project로 빠른 펼침",
-        "copy": "Seam을 하나하나 그리기 귀찮을 때가 있어요. Smart UV Project는 자동으로 적당히 잘라서 펼쳐줘요. 정밀하진 않지만 초안으로 충분해요.",
+        "copy": "Seam을 하나하나 지정하기 어려운 메쉬에서는 Smart UV Project로 빠르게 초안을 만들 수 있어요. 자동으로 잘라서 펼쳐주기 때문에 시작은 빠르지만, 중요한 부분은 나중에 수동으로 다듬는 게 좋아요.",
         "goal": [
           "수동 Unwrap과 자동 Unwrap을 비교한다"
         ],
@@ -2044,7 +2044,7 @@
       },
       {
         "title": "AI Texture 생성 및 적용",
-        "copy": "AI가 만든 이미지를 메쉬 표면에 붙이는 거예요. UV가 제대로 펼쳐져 있어야 이미지가 자연스럽게 입혀져요. 재단이 잘 된 옷감 위에 프린트하는 것과 같아요.",
+        "copy": "AI가 만든 이미지를 바로 붙이려면 먼저 UV가 안정적으로 펼쳐져 있어야 해요. 텍스처가 어색하게 늘어나면 이미지보다 UV 배치부터 먼저 확인하는 습관이 중요해요.",
         "goal": [
           "Image Texture 노드 사용법을 안다",
           "AI 생성 이미지를 재질에 연결한다"
@@ -2056,7 +2056,7 @@
           {
             "id": "w7-t10",
             "label": "AI 텍스처 이미지 파일 저장",
-            "detail": "Adobe Firefly, Stable Diffusion 등"
+            "detail": "Meshy AI, 나노바나나 등"
           },
           {
             "id": "w7-t11",
@@ -2078,7 +2078,7 @@
       },
       {
         "title": "Texture Painting 맛보기",
-        "copy": "UV가 펼쳐진 위에 직접 색을 칠할 수도 있어요. 3D 뷰에서 바로 칠하면 UV 위치가 자동으로 맞아서 편해요.",
+        "copy": "Texture Paint는 UV를 만든 뒤 표면 디테일을 얹는 단계예요. 큰 패턴은 이미지 텍스처로 잡고, 로고나 스크래치 같은 작은 요소를 나중에 덧칠하면 더 수월해요.",
         "goal": [
           "Texture Paint 모드의 존재를 안다"
         ],
@@ -2149,13 +2149,13 @@
       }
     ],
     "assignment": {
-      "title": "텍스처 입힌 소품",
-      "description": "Seam → Unwrap → AI Texture 순서로 텍스처를 입힌 소품을 제출해요. UV Editor 스크린샷도 함께.",
+      "title": "텍스처 적용 로봇 렌더",
+      "description": "자신의 로봇 또는 캐릭터 모델에 Seam → Unwrap → Texture 적용을 수행하고, 렌더 이미지 2장과 UV 전개도 스크린샷 1장을 정리해 제출해요.",
       "checklist": [
-        "UV Unwrap이 완료된 .blend",
-        "AI 텍스처 이미지 포함",
+        "렌더 이미지 2장 이상",
         "UV Editor 스크린샷 1장",
-        "렌더 이미지 2장 이상"
+        "한줄 코멘트",
+        "필요하면 AI 텍스처 이미지 또는 Texture Paint 결과 함께 정리"
       ]
     },
     "mistakes": [
@@ -2163,7 +2163,7 @@
       "텍스처가 뒤집혀 보임 → UV Editor에서 해당 섬 선택 후 S → Y → -1",
       "UV가 겹침 → UV Editor에서 섬이 서로 겹치지 않게 배치",
       "이미지가 흐림 → 텍스처 해상도가 너무 낮으면 1024×1024 이상으로",
-      "연결이 안 됨 → UV Map 이름이 Material과 동일한지 확인"
+      "텍스처가 안 보임 → Image Texture 노드가 Base Color에 연결됐는지, 활성 UV 맵이 맞는지 확인"
     ],
     "videos": [
       {
