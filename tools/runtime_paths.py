@@ -26,6 +26,14 @@ CONTRACTS_SCHEMA_JSON = _resolve_path(
 )
 GENERATED_JSON = _resolve_path("RPD_GENERATED_JSON", COURSE_SITE / "data" / "curriculum.json")
 GENERATED_JS = _resolve_path("RPD_GENERATED_JS", COURSE_SITE / "data" / "curriculum.js")
+NOTION_JSON = _resolve_path(
+    "RPD_NOTION_JSON",
+    COURSE_SITE / "data" / "curriculum-notion.json",
+)
+OVERRIDES_JSON = _resolve_path(
+    "RPD_OVERRIDES_JSON",
+    COURSE_SITE / "data" / "overrides.json",
+)
 WEEK_UI_JSON = _resolve_path("RPD_WEEK_UI_JSON", COURSE_SITE / "data" / "week-ui.json")
 IMAGES_DIR = _resolve_path("RPD_IMAGES_DIR", COURSE_SITE / "assets" / "images")
 VIDEOS_DIR = _resolve_path("RPD_VIDEOS_DIR", COURSE_SITE / "assets" / "videos")

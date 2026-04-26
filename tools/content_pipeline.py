@@ -13,6 +13,7 @@ Generated outputs:
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import json
 import re
@@ -28,6 +29,8 @@ from runtime_paths import (
     COURSE_SITE,
     GENERATED_JS,
     GENERATED_JSON,
+    NOTION_JSON,
+    OVERRIDES_JSON,
     ROOT,
     SCHEMA_JSON,
     WEEKS_DIR,
@@ -423,6 +426,97 @@ def load_canonical_curriculum() -> list[dict[str, Any]]:
     return normalize_curriculum(_read_generated_js())
 
 
+def load_notion_snapshot() -> list[dict[str, Any]]:
+    if not NOTION_JSON.exists():
+        raise FileNotFoundError(f"Notion snapshot not found: {NOTION_JSON}")
+    return normalize_curriculum(_read_json(NOTION_JSON))
+
+
+def load_overrides() -> dict[str, Any]:
+    if not OVERRIDES_JSON.exists():
+        return {}
+    payload = _read_json(OVERRIDES_JSON)
+    return payload if isinstance(payload, dict) else {}
+
+
+def _merge_week_with_base(
+    base_week: dict[str, Any] | None,
+    notion_week: dict[str, Any],
+) -> dict[str, Any]:
+    def should_override(value: Any) -> bool:
+        if value is None:
+            return False
+        if isinstance(value, str):
+            return bool(value.strip())
+        if isinstance(value, (list, dict)):
+            return bool(value)
+        return True
+
+    if not base_week:
+        return copy.deepcopy(notion_week)
+
+    merged = copy.deepcopy(base_week)
+
+    for key, value in notion_week.items():
+        if key in {"steps", "assignment"}:
+            continue
+        if should_override(value) or key not in merged:
+            merged[key] = copy.deepcopy(value)
+
+    if "assignment" in notion_week:
+        merged_assignment = copy.deepcopy(base_week.get("assignment", {}) or {})
+        notion_assignment = notion_week.get("assignment", {}) or {}
+        if isinstance(notion_assignment, dict):
+            for key, value in notion_assignment.items():
+                if should_override(value) or key not in merged_assignment:
+                    merged_assignment[key] = copy.deepcopy(value)
+        merged["assignment"] = merged_assignment
+
+    if "steps" in notion_week:
+        base_steps = base_week.get("steps", []) or []
+        notion_steps = notion_week.get("steps", []) or []
+        step_count = max(len(base_steps), len(notion_steps))
+        merged_steps: list[dict[str, Any]] = []
+        for idx in range(step_count):
+            base_step = base_steps[idx] if idx < len(base_steps) else {}
+            notion_step = notion_steps[idx] if idx < len(notion_steps) else {}
+            merged_step = copy.deepcopy(base_step)
+            if isinstance(notion_step, dict):
+                for key, value in notion_step.items():
+                    if should_override(value) or key not in merged_step:
+                        merged_step[key] = copy.deepcopy(value)
+            if merged_step:
+                merged_steps.append(merged_step)
+        merged["steps"] = merged_steps
+
+    return merged
+
+
+def load_notion_first_curriculum_with_report() -> tuple[list[dict[str, Any]], list[int]]:
+    from notion_api import merge_curriculum
+
+    base_data = {week["week"]: week for week in load_canonical_curriculum()}
+    notion_snapshot = load_notion_snapshot()
+    notion_data: list[dict[str, Any]] = []
+    fallback_weeks: list[int] = []
+    for week in notion_snapshot:
+        week_num = int(week["week"])
+        candidate = _merge_week_with_base(base_data.get(week_num), week)
+        candidate_errors = validate_curriculum([candidate])
+        if candidate_errors and week_num in base_data:
+            notion_data.append(copy.deepcopy(base_data[week_num]))
+            fallback_weeks.append(week_num)
+            continue
+        notion_data.append(candidate)
+    overrides = load_overrides()
+    return normalize_curriculum(merge_curriculum(notion_data, overrides)), fallback_weeks
+
+
+def load_notion_first_curriculum() -> list[dict[str, Any]]:
+    curriculum, _fallback_weeks = load_notion_first_curriculum_with_report()
+    return curriculum
+
+
 def write_canonical_curriculum(data: Any) -> list[dict[str, Any]]:
     normalized = normalize_curriculum(data)
     errors = validate_curriculum(normalized)
@@ -629,6 +723,16 @@ def main() -> int:
         help="Persist merged curriculum into weeks/site-data.json and regenerate outputs",
     )
 
+    notion_sync = subparsers.add_parser(
+        "sync-from-notion",
+        help="Rebuild canonical curriculum from curriculum-notion.json + overrides.json",
+    )
+    notion_sync.add_argument(
+        "--write",
+        action="store_true",
+        help="Persist merged curriculum into weeks/site-data.json and regenerate outputs",
+    )
+
     args = parser.parse_args()
 
     if args.command == "bootstrap":
@@ -654,6 +758,34 @@ def main() -> int:
         else:
             print(
                 f"✓ Markdown import validated "
+                f"({diff['changed_count']} changed weeks, next version {diff['version_to']})"
+            )
+        return 0
+
+    if args.command == "sync-from-notion":
+        existing = load_canonical_curriculum()
+        merged, fallback_weeks = load_notion_first_curriculum_with_report()
+        errors = validate_curriculum(merged)
+        if errors:
+            return _print_errors(errors)
+
+        diff = compute_curriculum_diff(existing, merged)
+        if fallback_weeks:
+            fallback_list = ", ".join(f"Week {week:02d}" for week in fallback_weeks)
+            print(
+                "⚠ Notion snapshot is incomplete for "
+                f"{fallback_list}; kept existing canonical data for those weeks."
+            )
+        if args.write:
+            write_canonical_curriculum(merged)
+            result = write_generated_outputs(merged)
+            print(
+                f"✓ Synced canonical curriculum from Notion "
+                f"({diff['changed_count']} changed weeks, version {result['version']})"
+            )
+        else:
+            print(
+                f"✓ Notion snapshot validated "
                 f"({diff['changed_count']} changed weeks, next version {diff['version_to']})"
             )
         return 0
