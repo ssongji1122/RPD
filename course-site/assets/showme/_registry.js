@@ -86,6 +86,7 @@ const SHOWME_REGISTRY = {
   "three-point-light":      { label: "3점 조명법",               icon: "🎬", week: 9 },
   "camera-setup":           { label: "카메라 세팅 이해",           icon: "📷", week: 9 },
   "depth-of-field":         { label: "Depth of Field 이해",       icon: "🎥", week: 9 },
+  "mood-lighting":          { label: "분위기 연출 (색온도)",        icon: "🌗", week: 9 },
 
   // ── Week 10: Animation ──
   "keyframe-basics":        { label: "키프레임 기초",            icon: "⏱️", week: 10 },
