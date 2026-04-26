@@ -18,6 +18,18 @@ python3 tools/content_pipeline.py build
 python3 tools/content_pipeline.py build-public --output dist/public-site
 ```
 
+Notion에서 실제 콘텐츠를 수정하는 운영이라면 아래 흐름을 권장합니다.
+
+```bash
+NOTION_TOKEN=... python3 tools/notion-sync.py --apply
+```
+
+이 명령은 다음 순서로 동작합니다.
+
+1. Notion에서 `course-site/data/curriculum-notion.json` 스냅샷을 가져온다
+2. `course-site/data/overrides.json`과 병합한다
+3. `weeks/site-data.json`과 생성 산출물을 함께 갱신한다
+
 관리자 UI를 사용할 때도 저장 결과는 다시 `weeks/site-data.json`으로 들어갑니다.
 `sync-from-markdown`은 lecture-note의 관리 블록과 assignment.md를 읽어서 canonical JSON을 다시 세울 수 있는 복구/검증 경로입니다.
 
@@ -31,10 +43,11 @@ python3 tools/content_pipeline.py build-public --output dist/public-site
 ## Publish
 
 - Notion 스냅샷 fetch: `python3 tools/notion-sync.py --fetch-only`
+- Notion 스냅샷 적용: `python3 tools/notion-sync.py --apply`
 - Notion publish: `python3 tools/curriculum-push.py`
 - Markdown → canonical 검증: `python3 tools/content_pipeline.py sync-from-markdown`
 
 중요:
 
-- Notion은 source of truth가 아닙니다.
+- canonical 저장 위치는 여전히 `weeks/site-data.json`이지만, 일상 콘텐츠 편집은 Notion-first 흐름으로 운영할 수 있습니다.
 - 공개 배포는 `dist/public-site` 산출물만 사용합니다.

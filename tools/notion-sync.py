@@ -2,12 +2,13 @@
 """
 notion-sync.py — Notion snapshot fetcher
 ========================================
-Repo-first 운영을 위해 Notion은 읽기 전용 스냅샷으로만 유지합니다.
-공개 사이트와 canonical curriculum(`weeks/site-data.json`)은 이 스크립트가 직접 갱신하지 않습니다.
+기본 동작은 Notion 내용을 읽어서 `curriculum-notion.json` 스냅샷만 갱신합니다.
+옵션으로 Notion 스냅샷 + overrides를 canonical curriculum(`weeks/site-data.json`)에 반영할 수 있습니다.
 
 Usage:
     python3 tools/notion-sync.py              # Fetch Notion → curriculum-notion.json
     python3 tools/notion-sync.py --fetch-only # Same as default, kept for CI/backward compatibility
+    python3 tools/notion-sync.py --apply      # Fetch Notion → canonical + generated outputs 갱신
 
 Exit codes:
     0: success, changes detected
@@ -19,6 +20,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -92,6 +94,11 @@ def main() -> int:
         action="store_true",
         help="Deprecated compatibility flag. Snapshot fetch is the default behaviour.",
     )
+    parser.add_argument(
+        "--apply",
+        action="store_true",
+        help="After fetching, merge curriculum-notion.json + overrides.json into canonical/generated outputs.",
+    )
     args = parser.parse_args()
     if args.fetch_only:
         print("→ --fetch-only is now the default behaviour.")
@@ -116,11 +123,23 @@ def main() -> int:
     _write_json(NOTION_JSON, weeks)
     new_content = _file_content(NOTION_JSON)
 
+    if args.apply:
+        command = [sys.executable, str(ROOT / "tools" / "content_pipeline.py"), "sync-from-notion", "--write"]
+        completed = subprocess.run(command, cwd=ROOT)
+        if completed.returncode != 0:
+            return completed.returncode
+
     if new_content != old_content:
-        print(f"\nDone — snapshot updated ({len(weeks)} weeks).")
+        if args.apply:
+            print(f"\nDone — snapshot updated and applied ({len(weeks)} weeks).")
+        else:
+            print(f"\nDone — snapshot updated ({len(weeks)} weeks).")
         return 0
 
-    print(f"\nDone — no snapshot changes ({len(weeks)} weeks).")
+    if args.apply:
+        print(f"\nDone — no snapshot changes, apply completed ({len(weeks)} weeks).")
+    else:
+        print(f"\nDone — no snapshot changes ({len(weeks)} weeks).")
     return 2
 
 
