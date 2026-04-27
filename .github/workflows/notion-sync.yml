@@ -32,7 +32,7 @@ jobs:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
         run: |
           set +e
-          python3 tools/notion-sync.py --fetch-only
+          python3 tools/notion-sync.py --apply
           status=$?
           set -e
           if [ "$status" -ne 0 ] && [ "$status" -ne 2 ]; then
@@ -43,7 +43,7 @@ jobs:
       - name: Check for changes
         id: check
         run: |
-          if git diff --quiet course-site/data/curriculum-notion.json; then
+          if git diff --quiet weeks/site-data.json course-site/data/curriculum-notion.json; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
@@ -54,6 +54,10 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add course-site/data/curriculum-notion.json
-          git commit -m "sync: Notion snapshot $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git add course-site/data/curriculum-notion.json \
+                  weeks/site-data.json \
+                  course-site/data/curriculum.js \
+                  course-site/data/curriculum.json \
+                  weeks/week*/lecture-note.md
+          git commit -m "sync: Notion → canonical $(date -u +'%Y-%m-%d %H:%M UTC')"
           git push
