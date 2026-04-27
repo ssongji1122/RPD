@@ -230,11 +230,19 @@
 
 ### 핵심 단축키
 
-- `I`: Inset (면 안쪽에 디테일 시작점 만들기)
-- `Ctrl + B`: Bevel (특정 모서리 직접 다듬기)
-- `Ctrl + A`: Apply All Transforms (Modifier 전 수치 정리)
-- `P`: Separate (선택 파츠 분리)
+- `Shift + A`: Add (Cube, UV Sphere 등)
+- `Shift + D`: Duplicate (복제)
+- `Shift + S`: Snap 메뉴 (Cursor to Selected 등)
+- `Ctrl + G이동`: Snap 이동 (자석 켜진 상태)
+- `Ctrl + B`: Bevel (모서리 직접 다듬기)
+- `Ctrl + R`: Loop Cut (분절 추가)
+- `P`: Separate (파츠 분리)
 - `Ctrl + J`: Join (오브젝트 합치기)
+- `Ctrl + A`: Apply All Transforms
+- `N`: Properties 패널 (Scale 확인)
+- `H`: 선택 오브젝트 숨기기
+- `Alt + H`: 숨긴 오브젝트 복원
+- `Ctrl + Z`: 되돌리기
 
 ### 과제 한눈에 보기
 

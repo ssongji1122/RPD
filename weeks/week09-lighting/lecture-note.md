@@ -424,14 +424,24 @@ Set the background to pure white. Make shadows very soft."
 
 - Poly Haven에서 HDRI 파일 다운로드 (polyhaven.com → HDRIs)
 - World Properties → Surface → Environment Texture 추가 (Properties 패널 좌측 빨간 지구본(World) 아이콘 → Color 옆 노란 점 클릭 → Environment Texture 선택)
-- HDRI 이미지 파일 열기 (.exr 또는 .hdr 파일)
+- Open Image로 .exr/.hdr 파일 불러오기 (Environment Texture 노드의 Open 버튼 → 다운로드한 HDRI 선택)
 - 다른 HDRI로 교체해서 분위기 비교 (실내/실외/석양 등)
 
-#### 3. 3점 조명 세팅
+#### 3. HDRI 프로 팁 2가지 (제품 렌더 필수)
 
-프로 사진사들이 꼭 쓰는 방법이에요. Key(주), Fill(보조), Rim(윤곽) 세 개만 잘 놓으면 어떤 오브젝트도 입체감 있게 보여요.
+Tip 1 — HDRI 자체를 회전시켜 조명 방향 잡기
 
-![3점 조명 세팅](../../course-site/assets/images/week09/three-point-light.png)
+조명 방향이 어색하거나 그림자가 엉뚱한 곳에 생길 때, 오브젝트나 카메라를 움직이는 대신 HDRI를 회전시키세요. 카메라 애니메이션을 망치지 않고 조명 방향만 바꿀 수 있어요.
+
+💡 같은 HDRI도 Z 회전만으로 완전히 다른 분위기가 나와요. 렌더할 때마다 이 과정을 거쳐 최적의 조명 각도를 찾는 게 프로 루틴이에요.
+
+Tip 2 — HDRI 색상 제거 (순수 조명만 활용)
+
+석양·노란 스튜디오 HDRI를 적용하면 씬 전체가 노랗게 물드는 경우가 있어요. 빛 방향과 강도는 그대로 유지하면서 색상 영향만 제거하는 방법이에요.
+
+💡 제품 렌더에서 중립적인 조명이 필요할 때 특히 유용해요. HDRI의 빛 방향·강도는 살리면서 색상 캐스트만 제거할 수 있어요.
+
+![HDRI 프로 팁 2가지 (제품 렌더 필수)](../../course-site/assets/images/week09/three-point-light.png)
 
 배울 것
 
@@ -440,15 +450,35 @@ Set the background to pure white. Make shadows very soft."
 
 체크해볼 것
 
-- Key Light 배치 — 오브젝트 앞 45도 위 (가장 밝은 주 광원)
-- Fill Light 배치 — Key 반대편, Energy 절반 (그림자가 너무 어두운 걸 보완)
-- Rim Light 배치 — 뒤쪽에서 윤곽 강조 (배경과 오브젝트를 분리하는 효과)
+- Shader Editor 열기 → 좌상단 드롭다운을 Object에서 World로 전환
+- HDRI 텍스처 노드 선택 → Ctrl + T → Mapping Node 자동 추가됨
+- Mapping 노드 > Rotation > Z 값 드래그 → 뷰포트에서 그림자·하이라이트 방향이 실시간으로 바뀌는 걸 확인
+- Shader Editor > World 탭 (HDRI 텍스처 노드와 Background 노드 사이의 연결선 확인)
+- Shift+A > Color > Hue/Saturation/Value 노드 추가 → HDRI와 Background 사이에 연결
+- Saturation 값을 1 → 0으로 낮춤 → 색상 캐스트 완전 제거 (은은하게 남기고 싶으면 0.1~0.3 사이 조정)
 
-#### 4. 카메라 세팅
+#### 4. 3점 조명 세팅
+
+프로 사진사들이 꼭 쓰는 방법이에요. Key(주), Fill(보조), Rim(윤곽) 세 개만 잘 놓으면 어떤 오브젝트도 입체감 있게 보여요.
+
+![3점 조명 세팅](../../course-site/assets/images/week09/camera-setup.png)
+
+배울 것
+
+- 3점 조명의 원리를 이해한다
+- 직접 3점 조명을 세팅한다
+
+체크해볼 것
+
+- Key Light 배치 (오브젝트 앞 45도 위 — 가장 밝은 주 광원)
+- Fill Light 배치 (Key 반대편, Energy 절반 — 그림자가 너무 어두운 걸 보완)
+- Rim Light 배치 (뒤쪽에서 윤곽 강조 — 배경과 오브젝트를 분리하는 효과)
+
+#### 5. 카메라 세팅
 
 조명을 아무리 잘 잡아도 카메라 앵글이 안 좋으면 소용없어요. 카메라 위치와 렌즈를 조절하면 같은 씬도 완전히 다르게 보여요.
 
-![카메라 세팅](../../course-site/assets/images/week09/camera-setup.png)
+![카메라 세팅](../../course-site/assets/images/week09/mood-lighting.png)
 
 배울 것
 
@@ -458,13 +488,11 @@ Set the background to pure white. Make shadows very soft."
 
 - Numpad 0으로 카메라 뷰 전환 (씬에 카메라가 없으면 먼저 Shift+A → Camera로 추가)
 - Ctrl+Numpad 0으로 현재 시점을 카메라로 설정 (직접 돌아다니다가 마음에 드는 앵글에서)
-- Focal Length 조절해서 원근감 비교 (35mm(넓은) vs 85mm(망원) 차이)
+- Focal Length 조절해서 원근감 비교 (35mm(광각) vs 85mm(망원) 차이 — Depth of Field도 같은 패널에서 켤 수 있어요)
 
-#### 5. 분위기 연출 실험
+#### 6. 분위기 연출 실험
 
 조명 색온도(따뜻/차가움)와 세기를 바꿔서 같은 로봇으로 낮/저녁/밤 분위기를 만들어요. 같은 오브젝트인데 사진 3장이 완전히 달라 보이면 성공이에요.
-
-![분위기 연출 실험](../../course-site/assets/images/week09/mood-lighting.png)
 
 배울 것
 
@@ -474,6 +502,7 @@ Set the background to pure white. Make shadows very soft."
 
 - 따뜻한 색(주황) Key Light로 석양 분위기 만들기 (Color Temp 약 3200K 느낌)
 - 차가운 색(파랑) 한 개로 밤 분위기 만들기 (Energy 낮추고 Rim만 강하게)
+- 중성광(흰색) Key + Fill로 낮 분위기 만들기 (Color Temp 5500K 느낌, Energy 균등 — 비교군)
 
 ### 핵심 단축키
 
@@ -482,12 +511,11 @@ Set the background to pure white. Make shadows very soft."
 - `Shift + Z`: Rendered/Solid 토글
 - `Numpad 0`: 카메라 뷰 전환
 - `Ctrl + Numpad 0`: 현재 시점 → 카메라
-- `N → Camera Lock to View`: 카메라 따라다니기
-- `Numpad .`: 선택 오브젝트 줌
+- `Numpad .`: 선택 항목으로 프레이밍 (View Selected)
 
 ### 과제 한눈에 보기
 
-- 과제명: 조명 포트폴리오
+- 과제명: 본인 학생 페이지에 업로드
 - 설명: 동일한 오브젝트에 3가지 다른 조명 분위기 렌더 이미지를 제출해요.
 - 제출 체크:
   - 낮/저녁/밤 또는 다른 3가지 분위기 렌더
@@ -497,15 +525,16 @@ Set the background to pure white. Make shadows very soft."
 
 ### 자주 막히는 지점
 
-- 빛이 너무 강함 → Energy 값 줄이기 (Area Light은 100~500W 정도)
-- 그림자가 안 보임 → Rendered 모드에서만 정확히 보여요
-- HDRI가 안 보임 → World Properties에서 연결 확인, Rendered 모드 전환
-- 배경이 너무 밝음 → HDRI Strength 값 줄이기
-- 카메라 뷰가 안 바뀜 → Numpad 0이 아닌 일반 0을 누른 건 아닌지 확인
+- AgX (권장): 채도 보존, 하이라이트 자연스러움 → 컬러풀한 로봇에 적합
+- Filmic: 약간 desaturated, 색이 빠져 보일 수 있음
+- 확인: Render Properties > Color Management > View Transform
+- 방법 1: Render Properties > Film > Transparent 체크
+- 방법 2: World Properties > Settings > Ray Visibility > Camera 체크 해제
 
 ### 공식 영상 튜토리얼
 
 - [Blender Studio - Lighting Fundamentals](https://studio.blender.org/training/blender-2-8-fundamentals/lighting/)
+- [Poly Haven Add-on 사용법 (HDRI 드래그 앤 드롭)](https://docs.polyhaven.com/en/guides/blender-addon)
 
 ### 공식 문서
 

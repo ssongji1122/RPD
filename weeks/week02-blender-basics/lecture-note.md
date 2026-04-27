@@ -1042,7 +1042,7 @@ Step 6: 여유가 되면 Ctrl+J로 합치기, P로 분리하기도 시도
 
 #### 1. 프리퍼런스 세팅
 
-본인 작업에 맞게 화면 등을 설정하는 기능
+Blender를 처음 열면 옵션이 너무 많아서 압도돼요. 일단 수업과 같은 세팅으로 맞춰두면 헷갈릴 일이 줄어요.
 
 ![프리퍼런스 세팅](../../course-site/assets/images/week02/ui-overview.png)
 
@@ -1106,7 +1106,6 @@ Tab 키 하나로 '보는 모드'와 '편집 모드'를 오가요. Extrude(E)는
 
 - Tab으로 Edit Mode 진입/복귀
 - 면 선택 후 E로 Extrude 하기 (위나 아래 방향으로 뽑기)
-- I 키로 Inset 적용해보기 (면 선택 후 I → 드래그로 안쪽 면 생성)
 - Ctrl+R로 Loop Cut 추가해보기 (마우스로 위치 조정 후 클릭)
 
 #### 5. Bevel 마무리
@@ -1143,33 +1142,41 @@ Tab 키 하나로 '보는 모드'와 '편집 모드'를 오가요. Extrude(E)는
 
 ### 핵심 단축키
 
-- `MMB Drag`: Orbit (시점 회전)
-- `Shift + MMB`: Pan (시점 이동)
-- `Scroll`: Zoom (확대/축소)
-- `Numpad 1/3/7`: Front/Right/Top View
-- `Numpad 5`: Perspective ↔ Orthographic 전환
-- `Numpad 2/4/6/8`: Orbit 상/하/좌/우 회전
-- `Numpad .`: Frame Selected (선택 오브젝트 포커스)
-- `Ctrl + Numpad 1/3/7`: Back/Left/Bottom View
-- `Shift + Numpad 4/6`: Roll (뷰 좌우 기울이기)
-- `Numpad Plus`: Zoom In
-- `Numpad Minus`: Zoom Out
-- `G`: Grab (이동)
-- `R`: Rotate (회전)
-- `S`: Scale (크기 조절)
-- `G + X/Y/Z`: 축 고정 이동
+- `Middle Mouse`: 회전
+- `Shift + Middle Mouse`: 이동
+- `Scroll`: 줌
+- `Numpad 1 / 3 / 7`: 정면 / 측면 / 상면
+- `Numpad 5`: 원근 ↔ 직교
+- `Numpad 0`: 카메라 뷰
+- `Z`: Shading 모드 전환
+- `G`: 이동 (Grab)
+- `R`: 회전 (Rotate)
+- `S`: 스케일 (Scale)
+- `G/R/S + X/Y/Z`: 축 제한
+- `G/R/S + 숫자 + Enter`: 정밀 입력
+- `Ctrl + A`: Apply Transform
 - `Tab`: Object ↔ Edit Mode 전환
+- `1 / 2 / 3`: Vertex / Edge / Face 선택
+- `E`: Extrude
+- `Ctrl + R`: Loop Cut
+- `I`: Inset
+- `Ctrl + B`: Bevel
+- `M`: Merge
+- `Shift + A`: Primitive 추가
+- `F9`: 생성 옵션 조절
+- `Ctrl + Z`: 되돌리기 (Undo)
+- `Shift + N`: Normal 재계산
+- `H / Alt + H`: 숨기기 / 모두 보이기
+- `N`: 사이드바 열기
 
 ### 과제 한눈에 보기
 
-- 과제명: 기본 도형 배치 + MCP 테스트
-- 설명: Blender 기본 뷰 조작과 Transform 기능을 활용해 기본 도형 5개 이상을 배치하고, Blender MCP 연결을 테스트한다.
+- 과제명: 간단한 로우폴리 소품 만들기
+- 설명: 화면 조작과 기본 모델링 도구를 사용해 간단한 소품을 만들고 제출합니다.
 - 제출 체크:
-  - 기본 도형 5개 이상 배치 스크린샷
-  - Transform(이동/회전/스케일) 적용 확인
-  - Blender MCP 연결 테스트 스크린샷
-  - 한줄 코멘트 작성
-  - 본인 학생 페이지에 업로드 완료
+  - 완성 이미지 2장 이상
+  - .blend 파일 1개
+  - 사용한 도구 3개 이상 적기
 
 ### 자주 막히는 지점
 
@@ -1188,7 +1195,6 @@ Tab 키 하나로 '보는 모드'와 '편집 모드'를 오가요. Extrude(E)는
 - [Preferences](https://docs.blender.org/manual/en/latest/editors/preferences/introduction.html)
 - [3D Navigation](https://docs.blender.org/manual/en/latest/editors/3dview/navigate/introduction.html)
 - [Extrude Region](https://docs.blender.org/manual/en/latest/modeling/meshes/tools/extrude_region.html)
-- [Inset Faces](https://docs.blender.org/manual/en/latest/modeling/meshes/tools/inset_faces.html)
 - [Loop Cut](https://docs.blender.org/manual/en/latest/modeling/meshes/tools/loop.html)
 - [Bevel](https://docs.blender.org/manual/en/latest/modeling/meshes/tools/bevel.html)
 <!-- AUTO:CURRICULUM-SYNC:END -->
