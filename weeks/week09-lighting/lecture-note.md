@@ -131,6 +131,31 @@ Blender 5.0에서 제공하는 4가지 기본 Light 타입:
 - 생성된 이미지를 다운로드하여 Blender World에 적용
 - 원하는 환경을 텍스트로 직접 만들 수 있어 창의적 활용에 유리
 
+#### HDRI 프로 팁 2가지 (제품 렌더 필수)
+
+**Tip 1: HDRI 자체를 회전시켜 조명 방향 잡기**
+
+조명이 어색하거나 그림자 방향이 맞지 않을 때, 오브젝트나 카메라를 움직이지 말고 HDRI를 회전시키세요.
+
+1. Shader Editor 열기 (상단 메뉴 > Shader Editor)
+2. 좌상단 드롭다운을 **World**로 전환
+3. HDRI 텍스처 노드 선택 > **Ctrl + T** 로 Mapping Node 자동 추가
+4. Mapping 노드의 **Rotation > Z** 값 조절
+5. 뷰포트에서 실시간으로 그림자·하이라이트 방향이 바뀌는 걸 확인
+
+> 같은 HDRI도 Z 회전만으로 완전히 다른 분위기가 연출된다. 렌더마다 이 과정을 거쳐 최적의 조명 각도를 찾을 것.
+
+**Tip 2: HDRI 색상 제거 (순수 조명만 사용)**
+
+석양·스튜디오 HDRI를 그대로 쓰면 씬 전체가 노랗거나 파랗게 물드는 문제가 생긴다. 조명 방향·강도는 유지하면서 색상 영향만 제거하는 방법:
+
+1. Shader Editor > **World** 모드에서 HDRI 텍스처와 Background 노드 사이에
+2. **Hue/Saturation/Value** 노드 추가 (Shift+A > Color > Hue/Saturation/Value)
+3. Saturation 값을 **0**으로 낮춤 → 색상 영향 완전 제거
+4. 필요하면 0~1 사이에서 미세 조정하여 은은한 색감 유지 가능
+
+> 제품 렌더에서 중립적인 조명이 필요할 때 매우 유용하다. HDRI의 빛 방향과 강도는 그대로 살리면서 색상 캐스트만 제거할 수 있다.
+
 ### Blender 5.0 색상 관리 (Color Management)
 
 #### View Transform 비교
@@ -226,9 +251,18 @@ Blender 5.0에서 제공하는 4가지 기본 Light 타입:
    - **Environment Texture** 선택
    - **Open** 버튼 클릭 > 다운로드한 HDR 파일 선택
 5. Strength 조절: 0.5~2.0 사이에서 원하는 밝기 설정
-6. HDRI 회전: Shader Editor > World 모드에서 Mapping 노드 추가하여 Z Rotation 조절
-7. Viewport를 Material Preview 또는 Rendered로 전환하여 결과 확인
-8. 3-Point Lighting과 HDRI를 **함께** 사용하면 더욱 사실적인 결과
+6. Viewport를 Material Preview 또는 Rendered로 전환하여 결과 확인
+7. **HDRI 회전으로 조명 방향 최적화:**
+   - Shader Editor 열기 > 좌상단을 **World**로 전환
+   - HDRI 노드 선택 후 **Ctrl + T** → Mapping Node 자동 추가
+   - Mapping > Rotation > **Z** 값을 드래그하며 그림자 방향 조절
+   - Rendered 모드에서 실시간으로 결과 확인하며 최적 각도 찾기
+8. **색상 캐스트 제거 (필요시):**
+   - Shader Editor > World 탭에서 HDRI 노드와 Background 노드 사이를 클릭
+   - **Shift+A > Color > Hue/Saturation/Value** 노드 추가
+   - 두 노드 사이에 연결한 뒤 Saturation을 **0**으로 설정
+   - 색상 영향 없이 조명 방향·강도만 활용 가능
+9. 3-Point Lighting과 HDRI를 **함께** 사용하면 더욱 사실적인 결과
 
 ### Blockade Labs Skybox로 AI HDRI 생성 (15분)
 
@@ -520,5 +554,6 @@ Set the background to pure white. Make shadows very soft."
 - [Blender Manual: Lighting](https://docs.blender.org/manual/en/latest/render/lights/index.html)
 - [Poly Haven HDRI Library](https://polyhaven.com/hdris) - 무료 CC0 HDRI
 - [Blockade Labs Skybox](https://skybox.blockadelabs.com) - AI 360 HDRI 생성
+- [How to Use HDRI for Product Renders in Blender (Beginner Friendly)](https://www.youtube.com/watch?v=8l6Bgb-FpKo) - HDRI 회전·색상 중화 팁 (5분)
 - [Blender Guru: Lighting for Beginners](https://www.youtube.com/watch?v=5UCc3Z_-ibs) - 조명 기초 튜토리얼
 - [3-Point Lighting Explained](https://www.youtube.com/results?search_query=3+point+lighting+blender) - 3점 조명 해설
