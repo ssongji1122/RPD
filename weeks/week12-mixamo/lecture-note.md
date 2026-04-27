@@ -439,13 +439,13 @@ NLA Editor는 애니메이션 클립을 레이어처럼 쌓고 이어 붙이는 
 
 - `Ctrl + J`: 오브젝트 합치기 (Join)
 - `Ctrl + A → All Transforms`: Transform 적용
-- `Shift + Ctrl + M`: Merge by Distance
+- `M (Merge by Distance)`: 중복 정점 제거
 - `Space`: 애니메이션 재생/정지
 - `Shift + N`: 법선 재계산
 
 ### 과제 한눈에 보기
 
-- 과제명: AI 리깅 캐릭터 애니메이션
+- 과제명: 본인 학생 페이지에 업로드
 - 설명: Mixamo로 리깅된 캐릭터에 애니메이션 2가지 이상을 적용해요.
 - 제출 체크:
   - 리깅 과정 스크린샷 (Mixamo 마커 화면)

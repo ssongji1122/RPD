@@ -2156,7 +2156,7 @@
   },
   {
     "week": 9,
-    "title": "Lighting 기초 + 조명 연출",
+    "title": "Lighting 기초 + MCP 조명 연출",
     "subtitle": "빛의 종류 · HDRI · 3점 조명 · 카메라",
     "duration": "~3시간",
     "topics": [
@@ -2352,21 +2352,16 @@
       }
     ],
     "assignment": {
-      "title": "조명 포트폴리오",
+      "title": "본인 학생 페이지에 업로드",
       "description": "동일한 오브젝트에 3가지 다른 조명 분위기 렌더 이미지를 제출해요.",
-      "checklist": [
-        "낮/저녁/밤 또는 다른 3가지 분위기 렌더",
-        "각 렌더의 조명 구성 간단 메모",
-        "카메라 구도 의식적으로 설정",
-        ".blend 파일"
-      ]
+      "checklist": []
     },
     "mistakes": [
-      "빛이 너무 강함 → Energy 값 줄이기 (Area Light는 100~500W 정도)",
-      "그림자가 안 보임 → Rendered 모드에서만 정확히 보여요",
-      "HDRI가 안 보임 → World Properties에서 연결 확인, Rendered 모드 전환",
-      "배경이 너무 밝음 → HDRI Strength 값 줄이기",
-      "카메라 뷰가 안 바뀜 → Numpad 0이 아닌 일반 0을 누른 건 아닌지 확인"
+      "AgX (권장): 채도 보존, 하이라이트 자연스러움 → 컬러풀한 로봇에 적합",
+      "Filmic: 약간 desaturated, 색이 빠져 보일 수 있음",
+      "확인: Render Properties > Color Management > View Transform",
+      "방법 1: Render Properties > Film > Transparent 체크",
+      "방법 2: World Properties > Settings > Ray Visibility > Camera 체크 해제"
     ],
     "shortcuts": [
       {
