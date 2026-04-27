@@ -2266,7 +2266,7 @@ const CURRICULUM = [
     "week": 9,
     "status": "active",
     "title": "Lighting 기초 + 조명 연출",
-    "subtitle": "빛의 종류 · HDRI · 3점 조명 · 카메라 · 분위기 연출",
+    "subtitle": "빛의 종류 · HDRI · 3점 조명 · 카메라",
     "duration": "~3시간",
     "topics": [
       "Light 오브젝트 4종류",
@@ -2285,7 +2285,7 @@ const CURRICULUM = [
           "Energy와 Color를 조절한다"
         ],
         "done": [
-          "4가지 빛의 차이를 비교했다",
+          "4가지 Light를 각각 추가해서 차이를 느꼈다",
           "조명 색을 바꿔봤다"
         ],
         "tasks": [
@@ -2337,8 +2337,8 @@ const CURRICULUM = [
           },
           {
             "id": "w9-t7",
-            "label": "Open Image로 .exr/.hdr 파일 불러오기",
-            "detail": "Environment Texture 노드의 Open 버튼 → 다운로드한 HDRI 선택"
+            "label": "HDRI 이미지 파일 열기",
+            "detail": ".exr 또는 .hdr 파일"
           },
           {
             "id": "w9-t8",
@@ -2403,7 +2403,7 @@ const CURRICULUM = [
           {
             "id": "w9-t14",
             "label": "Focal Length 조절해서 원근감 비교",
-            "detail": "35mm(광각) vs 85mm(망원) 차이 — Depth of Field도 같은 패널에서 켤 수 있어요"
+            "detail": "35mm(넓은) vs 85mm(망원) 차이"
           }
         ],
         "image": "assets/images/week09/camera-setup.png"
@@ -2427,11 +2427,6 @@ const CURRICULUM = [
             "id": "w9-t16",
             "label": "차가운 색(파랑) 한 개로 밤 분위기 만들기",
             "detail": "Energy 낮추고 Rim만 강하게"
-          },
-          {
-            "id": "w9-t17",
-            "label": "중성광(흰색) Key + Fill로 낮 분위기 만들기",
-            "detail": "Color Temp 5500K 느낌, Energy 균등 — 비교군"
           }
         ],
         "image": "assets/images/week09/mood-lighting.png"
@@ -2464,7 +2459,7 @@ const CURRICULUM = [
       },
       {
         "keys": "Numpad .",
-        "action": "선택 항목으로 프레이밍 (View Selected)"
+        "action": "선택 오브젝트 줌"
       }
     ],
     "explore": [
@@ -2496,7 +2491,7 @@ const CURRICULUM = [
       ]
     },
     "mistakes": [
-      "빛이 너무 강함 → Energy 값 줄이기 (Area Light는 100~500W 정도)",
+      "빛이 너무 강함 → Energy 값 줄이기 (Area Light은 100~500W 정도)",
       "그림자가 안 보임 → Rendered 모드에서만 정확히 보여요",
       "HDRI가 안 보임 → World Properties에서 연결 확인, Rendered 모드 전환",
       "배경이 너무 밝음 → HDRI Strength 값 줄이기",
@@ -2526,7 +2521,7 @@ const CURRICULUM = [
         "url": "https://docs.blender.org/manual/en/latest/render/cameras.html#depth-of-field"
       }
     ],
-    "summary": "Light 4종·HDRI·3점 조명·카메라까지 다루며 같은 오브젝트로 다양한 분위기를 연출해요."
+    "summary": "Point/Sun/Area/Spot Light의 특성과 HDRI 환경 조명을 이해하고 씬 분위기를 연출해요."
   },
   {
     "week": 10,

@@ -1,59 +1,47 @@
 ---
 name: rpd-content-write
-description: "콘텐츠 작성", "curriculum 편집", "톤 교정", "보완", "다듬어줘" 요청 시 호출. weeks/site-data.json 주차 데이터 추가/수정/톤 교정. Use when editing site-data.json week data, writing step copy, or tasks.
+description: "콘텐츠 작성", "curriculum 편집", "톤 교정" 요청 시 호출. curriculum.js 주차 데이터 추가/수정/톤 교정. Use when editing curriculum.js week data, writing step copy, or tasks.
 ---
 
 # RPD Content Write
 
-## SoT 매트릭스 (이 표가 단일 진실)
-
-이 리포는 **repo-first**다. `weeks/site-data.json`이 canonical이고 Notion은 publish 대상.
-
-| 필드 | 수정 위치 | 방법 |
-|------|----------|------|
-| step title/copy/tasks/goal/done, assignment, mistakes, shortcuts, docs/videos, summary, subtitle, topics, title, status | `weeks/site-data.json` | Edit tool 또는 admin.html UI |
-| image, showme | `weeks/site-data.json`(직접) 또는 `course-site/data/overrides.json`(어드민 일시 덮어쓰기) | 정상 흐름은 site-data.json. overrides는 hotfix용 |
-| 학생 roster, Notion 페이지 ID | `tools/notion-mapping.json` | 직접 편집 |
-
-**금지**: `course-site/data/curriculum.json` / `curriculum.js`는 generated artifact — 직접 편집 금지.
-
-## 편집 → 빌드 → 배포 파이프라인
-
-```bash
-# 1. 편집 (택1)
-ADMIN_KEY=change-me ./tools/start-admin.sh   # GUI 편집 (권장)
-# 또는 weeks/site-data.json 직접 Edit
-
-# 2. 검증
-python3 tools/content_pipeline.py check
-
-# 3. 빌드 (public 데이터 생성)
-python3 tools/content_pipeline.py build
-
-# 4. 검수
-/rpd-check week N
-
-# 5. (선택) Notion 미러링 — 학생 공유용
-NOTION_TOKEN=... python3 tools/curriculum-push.py --week N
-```
-
 ## 리서치 브리프 참조
 
 작업 시작 전 `claudedocs/research/{관련-id}-brief.md` 존재 여부 확인:
-- **있으면** → 비유(§7), 실수(§6), 단축키(§3)를 브리프에서 가져와 site-data.json에 반영
+- **있으면** → 비유(§7), 실수(§6), 단축키(§3)를 브리프에서 가져와 curriculum.js에 반영
 - **없으면** → `⚠️ {id} 리서치 브리프가 없습니다. /rpd-research {id} 먼저 실행을 권장합니다.`
 
-## 데이터 스키마
+## 수정 경로
 
-스키마는 `weeks/contracts.schema.json`이 ground truth. 요약:
+콘텐츠 수정은 Notion을 통해 수행한다. curriculum.json/js는 generated file이므로 직접 수정하지 않는다.
+
+| 필드 | 수정 위치 | 방법 |
+|------|----------|------|
+| step title, copy, tasks, goal, assignment | Notion | Notion MCP (mcp__notion__update-page) |
+| shortcuts, mistakes, docs | Notion | Notion MCP |
+| image, showme, done, status | overrides.json | Edit tool |
+
+### Notion 수정 절차
+1. `tools/notion-mapping.json`에서 대상 week의 Notion page ID 확인
+2. Notion MCP로 해당 페이지의 블록 수정
+3. `python3 tools/notion-sync.py --fetch-only` 실행
+4. curriculum.json 재생성 확인
+5. `/rpd-check week {N}` 검증
+
+### 참고 파일
+- `course-site/data/curriculum.json` — 읽기 전용, 현재 상태 확인용
+- `course-site/data/overrides.json` — 코드 에셋 필드 수정용
+- `tools/notion-mapping.json` — week → Notion page ID
+
+## 데이터 스키마
 
 ```js
 {
   week: Number,           // 1-15
   status: "done|active|upcoming",
   title: String,          // 15자 이내, 행동/인지 목표 느낌
-  subtitle: String,       // step과 1:1 매핑되도록 (검수 시 step.title 개수 확인)
-  summary: String,        // 1문장 요약, overrides.json과 일치해야 함
+  subtitle: String,       // 핵심 개념 나열
+  summary: String,        // 1문장 요약
   duration: String,       // "~N시간"
   topics: String[],       // 4-6개, 이번 주 학습 주제
   steps: [{
@@ -62,19 +50,29 @@ NOTION_TOKEN=... python3 tools/curriculum-push.py --week N
     image: String,        // "assets/images/weekNN/step-N.png" (선택)
     link: String,         // 이미지 클릭 시 이동 URL (선택)
     goal: String[],       // 학습 목표
-    done: String[],       // 완료 기준 — task에서 구체적 카운트 일치 필요
+    done: String[],       // 완료 기준
     tasks: [{
-      id: String,         // "wN-tN" 형식, 주차 내 unique
-      label: String,      // 동사로 시작
+      id: String,         // "wN-tN" 형식 (예: "w3-t1")
+      label: String,      // 동사로 시작 (예: "Mirror 적용 후 대칭 확인")
       detail: String      // 힌트 또는 단축키 (선택)
     }]
   }],
-  assignment: { title, description, checklist },
+  assignment: {
+    title: String,
+    description: String,
+    checklist: String[]
+  },
   mistakes: String[],     // "증상 → 해결" 형식
-  shortcuts: [{ keys, action }],
-  explore: [{ title, hint }],
-  videos: [{ title, url }],  // 공식 Blender만
-  docs: [{ title, url }]     // 공식 문서만
+  shortcuts: [{           // 선택
+    keys: String,         // "Ctrl + R" 형식
+    action: String
+  }],
+  explore: [{             // 선택
+    title: String,
+    hint: String
+  }],
+  videos: [{ title, url }],  // 선택, 공식 Blender만
+  docs: [{ title, url }]     // 선택, 공식 문서만
 }
 ```
 
@@ -95,10 +93,6 @@ NOTION_TOKEN=... python3 tools/curriculum-push.py --week N
 - "무한한 가능성을 열어보자" → 과장
 - "이 기능은 매우 유용합니다" → ~합니다 문체
 
-### 한국어 받침 검사
-- "Light은" / "Cube은" 처럼 받침 없는 단어 + "은/이" 조사 오류 자주 발생 → "Light는", "Cube는"
-- 영문 단어 끝 자음 발음 기준이지만 일반적으로 **자음+e로 끝나면 모음 발음 → 는/가**
-
 ### 비유 패턴 (주차별)
 | 주차 | 비유 방향 |
 |------|-----------|
@@ -113,38 +107,37 @@ NOTION_TOKEN=... python3 tools/curriculum-push.py --week N
 
 ## Bloom's Taxonomy 매핑
 
-curriculum의 각 섹션이 Bloom's 단계에 대응:
-
+curriculum.js의 각 섹션이 Bloom's 단계에 대응:
 | 섹션 | Bloom's 레벨 | 동사 예시 |
 |------|-------------|-----------|
 | shortcuts | Remember | 기억하기, 찾기 |
 | step.copy | Understand | 이해하기, 설명하기 |
-| step.tasks | Apply | 적용하기, 실행하기, 만들기 |
+| step.tasks | Apply | 적용하기, 실행하기 |
 | mistakes | Analyze | 진단하기, 비교하기 |
 | topics (self-check) | Evaluate | 확인하기, 검증하기 |
 | explore | Create | 설계하기, 만들기 |
 
 **태스크 label은 Apply 동사로**: "~적용", "~만들기", "~실행", "~확인"
 
-## 일관성 검사 (자주 빠지는 항목)
+## 검증 체크리스트
 
-- [ ] `subtitle`의 항목 수가 `steps` 개수와 맞는가
-- [ ] `summary`가 `course-site/data/overrides.json`의 같은 주차 summary와 일치하는가
-- [ ] `step.done`이 "N가지" 라고 하면 `tasks` 개수가 그 카운트를 받쳐주는가
-- [ ] task `id`가 주차 내 unique이고 `wN-tN` 형식인가
-- [ ] `mistakes` 모든 항목이 "증상 → 해결" 구조인가
-- [ ] 외부 URL이 공식 Blender / Poly Haven 도메인인가
+콘텐츠 작성/수정 후:
+1. [ ] `week` 번호와 `status` 맞는지
+2. [ ] `title` 15자 이내
+3. [ ] `topics` 4-6개
+4. [ ] `steps` 마다 `tasks` 2-5개, ID 형식 `wN-tN`
+5. [ ] `copy`에 비유 또는 맥락 설명 포함
+6. [ ] `mistakes` "증상 → 해결" 형식
+7. [ ] `assignment` 필드 모두 채워짐
+8. [ ] 금지 표현 없음 (~합니다, 과장 표현)
+9. [ ] URL은 공식 Blender 문서만 사용
+10. [ ] JSON 문법 오류 없음 (trailing comma 등)
 
 ## 참고 문서
-- `weeks/contracts.schema.json` — 스키마 ground truth
-- `tools/SYNC_GUIDE.md` — repo-first 운영 모델 전체
-- `course-site/CONTENT_GUIDE.md` — 톤·구조 가이드
-- `docs/REFERENCE_RESEARCH_2026-03-15.md` — 교육학 섹션
+- `course-site/CONTENT_GUIDE.md` (마스터 레퍼런스)
+- `docs/REFERENCE_RESEARCH_2026-03-15.md` (교육학 섹션)
 
 ## Gotchas ⚠️
 > Claude가 이 스킬을 쓸 때 실수했던 것들. 새 함정 발견 시 여기에 추가.
 
-1. **Notion 페이지를 SoT로 착각하지 말 것**. SYNC_GUIDE 전환 후 SoT는 `weeks/site-data.json`. Notion은 publish 대상.
-2. **summary 충돌**: overrides.json과 site-data.json에 둘 다 summary가 있어 동기화 안 되면 site-data가 win. 수정 시 둘 다 맞춰야 안전.
-3. **subtitle ≠ step 개수**: subtitle에 "·"로 항목 나열할 때 step 개수와 자주 어긋남. 검수 시 카운트 비교.
-4. **받침 없는 영문 + 조사**: "Light은/Cube은" → "Light는/Cube는". 영문이 자주 나오는 본 코스 특성상 빈번한 함정.
+1. (아직 없음 — 사용하면서 추가)
