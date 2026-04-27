@@ -386,7 +386,7 @@ Set the background to pure white. Make shadows very soft."
 
 > 이 섹션은 `course-site/data/curriculum.js` 기준으로 자동 갱신됩니다.
 
-- 핵심 키워드: 빛의 종류 · HDRI · 3점 조명 · 카메라
+- 핵심 키워드: 빛의 종류 · HDRI · 3점 조명 · 카메라 · 분위기 연출
 - 예상 시간: ~3시간
 
 ### 실습 단계
@@ -424,7 +424,7 @@ Set the background to pure white. Make shadows very soft."
 
 - Poly Haven에서 HDRI 파일 다운로드 (polyhaven.com → HDRIs)
 - World Properties → Surface → Environment Texture 추가 (Properties 패널 좌측 빨간 지구본(World) 아이콘 → Color 옆 노란 점 클릭 → Environment Texture 선택)
-- HDRI 이미지 파일 열기 (.exr 또는 .hdr 파일)
+- Open Image로 .exr/.hdr 파일 불러오기 (Environment Texture 노드의 Open 버튼 → 다운로드한 HDRI 선택)
 - 다른 HDRI로 교체해서 분위기 비교 (실내/실외/석양 등)
 
 #### 3. 3점 조명 세팅
@@ -458,7 +458,7 @@ Set the background to pure white. Make shadows very soft."
 
 - Numpad 0으로 카메라 뷰 전환 (씬에 카메라가 없으면 먼저 Shift+A → Camera로 추가)
 - Ctrl+Numpad 0으로 현재 시점을 카메라로 설정 (직접 돌아다니다가 마음에 드는 앵글에서)
-- Focal Length 조절해서 원근감 비교 (35mm(넓은) vs 85mm(망원) 차이)
+- Focal Length 조절해서 원근감 비교 (35mm(광각) vs 85mm(망원) 차이 — Depth of Field도 같은 패널에서 켤 수 있어요)
 
 #### 5. 분위기 연출 실험
 
@@ -474,6 +474,7 @@ Set the background to pure white. Make shadows very soft."
 
 - 따뜻한 색(주황) Key Light로 석양 분위기 만들기 (Color Temp 약 3200K 느낌)
 - 차가운 색(파랑) 한 개로 밤 분위기 만들기 (Energy 낮추고 Rim만 강하게)
+- 중성광(흰색) Key + Fill로 낮 분위기 만들기 (Color Temp 5500K 느낌, Energy 균등 — 비교군)
 
 ### 핵심 단축키
 
@@ -483,7 +484,7 @@ Set the background to pure white. Make shadows very soft."
 - `Numpad 0`: 카메라 뷰 전환
 - `Ctrl + Numpad 0`: 현재 시점 → 카메라
 - `N → Camera Lock to View`: 카메라 따라다니기
-- `Numpad .`: 선택 오브젝트 줌
+- `Numpad .`: 선택 항목으로 프레이밍 (View Selected)
 
 ### 과제 한눈에 보기
 
@@ -497,7 +498,7 @@ Set the background to pure white. Make shadows very soft."
 
 ### 자주 막히는 지점
 
-- 빛이 너무 강함 → Energy 값 줄이기 (Area Light은 100~500W 정도)
+- 빛이 너무 강함 → Energy 값 줄이기 (Area Light는 100~500W 정도)
 - 그림자가 안 보임 → Rendered 모드에서만 정확히 보여요
 - HDRI가 안 보임 → World Properties에서 연결 확인, Rendered 모드 전환
 - 배경이 너무 밝음 → HDRI Strength 값 줄이기
