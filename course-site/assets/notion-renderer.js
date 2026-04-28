@@ -36,8 +36,25 @@
     var tag = 'h' + level;
     var cls = 'nb-h' + level;
     var key = 'heading_' + level;
-    var rt = (block[key] && block[key].rich_text) || [];
-    return '<' + tag + ' class="' + cls + '">' + renderRichText(rt) + '</' + tag + '>';
+    var data = block[key] || {};
+    var rt = data.rich_text || [];
+    var isToggleable = Boolean(data.is_toggleable);
+    var hasChildren = block.children && block.children.length;
+
+    if (isToggleable) {
+      var body = hasChildren
+        ? '<div class="nb-toggle-body">' + renderBlockList(block.children) + '</div>'
+        : '';
+      return '<details class="nb-toggle nb-toggle-h' + level + '">' +
+        '<summary class="' + cls + '">' + renderRichText(rt) + '</summary>' +
+        body + '</details>';
+    }
+
+    var html = '<' + tag + ' class="' + cls + '">' + renderRichText(rt) + '</' + tag + '>';
+    if (hasChildren) {
+      html += '<div class="nb-children">' + renderBlockList(block.children) + '</div>';
+    }
+    return html;
   }
 
   function renderParagraph(block) {
@@ -57,7 +74,11 @@
 
   function renderQuote(block) {
     var rt = (block.quote && block.quote.rich_text) || [];
-    return '<blockquote class="nb-quote">' + renderRichText(rt) + '</blockquote>';
+    var html = '<blockquote class="nb-quote">' + renderRichText(rt) + '</blockquote>';
+    if (block.children && block.children.length) {
+      html += '<div class="nb-children">' + renderBlockList(block.children) + '</div>';
+    }
+    return html;
   }
 
   // ---------------------------------------------------------------------------
@@ -239,6 +260,7 @@
       case 'heading_1':  return renderHeading(block, 1);
       case 'heading_2':  return renderHeading(block, 2);
       case 'heading_3':  return renderHeading(block, 3);
+      case 'heading_4':  return renderHeading(block, 4);
       case 'paragraph':  return renderParagraph(block);
       case 'bulleted_list_item': return renderBulletedListItem(block);
       case 'numbered_list_item': return renderNumberedListItem(block);

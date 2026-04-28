@@ -4,6 +4,15 @@
 .nb-h1 { font-size: var(--fs-4, 1.75rem); font-weight: 700; margin: 2rem 0 .75rem; line-height: 1.25; }
 .nb-h2 { font-size: var(--fs-3, 1.375rem); font-weight: 700; margin: 1.75rem 0 .6rem; line-height: 1.3; }
 .nb-h3 { font-size: var(--fs-2, 1.125rem); font-weight: 600; margin: 1.5rem 0 .5rem; line-height: 1.35; }
+.nb-h4 { font-size: var(--fs-1, 1rem); font-weight: 600; margin: 1.25rem 0 .4rem; line-height: 1.4; }
+
+/* Toggleable headings — summary inherits heading style, details wraps content */
+.nb-toggle-h1 > summary, .nb-toggle-h2 > summary,
+.nb-toggle-h3 > summary, .nb-toggle-h4 > summary { padding: 0; }
+.nb-toggle-h1 > summary.nb-h1 { font-size: var(--fs-4, 1.75rem); font-weight: 700; margin: 2rem 0 .75rem; }
+.nb-toggle-h2 > summary.nb-h2 { font-size: var(--fs-3, 1.375rem); font-weight: 700; margin: 1.75rem 0 .6rem; }
+.nb-toggle-h3 > summary.nb-h3 { font-size: var(--fs-2, 1.125rem); font-weight: 600; margin: 1.5rem 0 .5rem; }
+.nb-toggle-h4 > summary.nb-h4 { font-size: var(--fs-1, 1rem); font-weight: 600; margin: 1.25rem 0 .4rem; }
 
 /* ── Paragraph / Quote ─────────────────────────────────── */
 .nb-p { margin: .5rem 0; line-height: 1.75; }
