@@ -315,7 +315,7 @@
     var next = CURRICULUM.find(function (item) { return item.week === w.week + 1; });
     var prevLink = prev
       ? '<a href="week.html?week=' + prev.week + '">← Week ' + prev.week + '</a>'
-      : '<a href="inha.html?panel=weeks">홀으로</a>';
+      : '<a href="inha.html?panel=weeks">홈으로</a>';
     var nextLink = next
       ? '<a href="week.html?week=' + next.week + '">Week ' + next.week + ' →</a>'
       : '<span style="opacity:.4">마지막 주차</span>';
