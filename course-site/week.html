@@ -602,6 +602,7 @@
         .then(function(data) {
           if (!data.blocks || !data.blocks.length) throw new Error("empty blocks");
           window.renderNotionPage(data, weekData);
+          initSidebar(weekData);
           renderShowMeBrowser();
           updateShowMeBadges();
           maybeOpenRequestedShowMe();
