@@ -564,6 +564,8 @@ Tip 2 — HDRI 색상 제거 (순수 조명만 활용)
 - 확인: Render Properties > Color Management > View Transform
 - 방법 1: Render Properties > Film > Transparent 체크
 - 방법 2: World Properties > Settings > Ray Visibility > Camera 체크 해제
+- EEVEE 렌더에서 그림자나 조명이 깜빡이는 현상의 원인과 Shadow Map 해상도·Bias 설정으로 해결하는 방법을 다룹니다.
+- Compositor의 Glare 노드가 EEVEE에서 작동하지 않는 문제와 Bloom 설정 등 대안적인 방법을 설명합니다.
 
 ### 공식 영상 튜토리얼
 
