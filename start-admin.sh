@@ -1,11 +1,12 @@
 #!/bin/bash
 # RPD Admin Server 시작 스크립트 + 동기화 도구
 # 사용법:
-#   ADMIN_KEY=... ./start-admin.sh              # 관리자 서버 시작
-#   NOTION_TOKEN=... ./start-admin.sh sync-from-notion    # Notion 스냅샷 갱신
-#   NOTION_TOKEN=... ./start-admin.sh sync-to-notion      # canonical curriculum → Notion push
-#   ADMIN_KEY=... NOTION_TOKEN=... ./start-admin.sh sync-all
+#   ADMIN_KEY=... ./start-admin.sh                            # 관리자 서버 시작
+#   NOTION_TOKEN=... ./start-admin.sh sync-from-notion        # Notion 스냅샷 갱신 (Notion → repo)
+#   NOTION_TOKEN=... ./start-admin.sh sync-all                # Notion snapshot 갱신만 실행
+#   NOTION_TOKEN=... ./start-admin.sh sync-to-notion-force    # ⚠️ 위험: Notion 본문 덮어쓰기 (deprecated)
 #
+# Notion이 SoT(2026-04-06 결정). sync-to-notion은 안전상 비활성화됨.
 # 비밀번호는 반드시 환경변수로 주입하세요.
 
 set -euo pipefail
@@ -21,33 +22,24 @@ case "$1" in
     ;;
 
   sync-to-notion)
-    echo "📤 Canonical curriculum을 Notion에 push 중..."
-    python3 "$SCRIPT_DIR/tools/curriculum-push.py"
+    echo "⚠️  sync-to-notion DEPRECATED — Notion이 SoT (2026-04-06 결정)" >&2
+    echo "    이 명령은 Notion 페이지 본문을 덮어씁니다." >&2
+    echo "    정말 필요하면: ./start-admin.sh sync-to-notion-force" >&2
+    echo "    또는: python3 tools/curriculum-push.py --confirm-destructive" >&2
+    exit 3
+    ;;
+
+  sync-to-notion-force)
+    echo "🚨 DESTRUCTIVE: Notion 페이지 본문을 단순 구조로 덮어씁니다."
+    python3 "$SCRIPT_DIR/tools/curriculum-push.py" --confirm-destructive
     exit $?
     ;;
 
   sync-all)
-    echo "🔄 스냅샷 갱신 + curriculum push 시작..."
-
+    echo "🔄 Notion snapshot 갱신 (Notion → repo, 단방향)"
     echo ""
-    echo "📥 Step 1: Notion snapshot"
     python3 "$SCRIPT_DIR/tools/notion-sync.py" --fetch-only
-    SYNC_FROM_STATUS=$?
-
-    echo ""
-    echo "📤 Step 2: Canonical curriculum push"
-    python3 "$SCRIPT_DIR/tools/curriculum-push.py"
-    SYNC_TO_STATUS=$?
-
-    if [ $SYNC_FROM_STATUS -eq 0 ] && [ $SYNC_TO_STATUS -eq 0 ]; then
-      echo ""
-      echo "✓ 동기화 완료"
-      exit 0
-    else
-      echo ""
-      echo "⚠ 일부 동기화가 실패했습니다"
-      exit 1
-    fi
+    exit $?
     ;;
 
   *)
