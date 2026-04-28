@@ -2375,7 +2375,7 @@ const CURRICULUM = [
   },
   {
     "week": 9,
-    "status": "active",
+    "status": "done",
     "title": "Lighting 기초 + MCP 설치",
     "subtitle": "빛의 종류 · HDRI · 3점 조명 · 카메라",
     "duration": "~3시간",
@@ -2683,7 +2683,7 @@ const CURRICULUM = [
   },
   {
     "week": 10,
-    "status": "upcoming",
+    "status": "active",
     "title": "Animation 기초",
     "subtitle": "키프레임 · Dope Sheet · Graph Editor · 루프",
     "duration": "~3시간",
