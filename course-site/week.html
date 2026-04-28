@@ -16,6 +16,7 @@
   <link rel="stylesheet" href="assets/surface.css?v=20260318a" />
   <link rel="stylesheet" href="assets/meta.css?v=20260318a" />
   <link rel="stylesheet" href="assets/chrome.css?v=20260318a" />
+  <link rel="stylesheet" href="assets/notion-blocks.css">
 </head>
 <body data-tab="class">
   <a href="#pageContent" class="skip-link">본문으로 건너뛰기</a>
@@ -164,6 +165,7 @@
   <script src="assets/showme/_supplements.js?v=20260318c"></script>
   <script src="assets/showme/_helpers.js?v=20260318ai"></script>
   <script src="data/curriculum.js?v=20260318c"></script>
+  <script src="assets/notion-renderer.js"></script>
   <script>
     // ════════════════════════════════════════════════
     //  Week page template engine
@@ -594,10 +596,22 @@
         renderMissingWeek();
         return;
       }
-      buildPage(window.RPDI18n.localizeWeekData(weekData));
-      renderShowMeBrowser();
-      updateShowMeBadges();
-      maybeOpenRequestedShowMe();
+      var jsonPath = "data/notion-blocks/week" + String(weekNum).padStart(2, "0") + ".json";
+      fetch(jsonPath)
+        .then(function(r) { return r.ok ? r.json() : Promise.reject(new Error("not found")); })
+        .then(function(data) {
+          if (!data.blocks || !data.blocks.length) throw new Error("empty blocks");
+          window.renderNotionPage(data, weekData);
+          renderShowMeBrowser();
+          updateShowMeBadges();
+          maybeOpenRequestedShowMe();
+        })
+        .catch(function() {
+          buildPage(window.RPDI18n.localizeWeekData(weekData));
+          renderShowMeBrowser();
+          updateShowMeBadges();
+          maybeOpenRequestedShowMe();
+        });
     }
 
     window.RPDWeekUI.init({ url: "data/week-ui.json?v=20260318a" }).finally(function() {
@@ -609,17 +623,112 @@
       });
     });
 
+    function renderReferenceLink(label, url, desc) {
+      return `<a class="doc-link" href="${url}" target="_blank" rel="noopener noreferrer">
+        <span class="doc-link-main">${label} ↗</span>
+        ${desc ? `<span class="doc-link-desc">${desc}</span>` : ""}
+      </a>`;
+    }
+    function stripPracticePrefix(title) {
+      return String(title || "").replace(/^\[실습\]\s*/, "");
+    }
+
+    // Builds the reference sidebar HTML from curriculum.js week data.
+    // Called by both buildPage() and renderNotionPage().
+    function buildSidebar(w) {
+      var text = getWeekText();
+      var isKo = window.RPDI18n.getLanguage() === "ko";
+      var videos = Array.isArray(w.videos) ? w.videos : [];
+      var docs = Array.isArray(w.docs) ? w.docs : [];
+      var shortcuts = Array.isArray(w.shortcuts) ? w.shortcuts : [];
+      var explore = Array.isArray(w.explore) ? w.explore : [];
+      var mistakes = Array.isArray(w.mistakes) ? w.mistakes : [];
+      var referenceSummaryTitle = isKo ? "이번 주 참고자료" : "Week resources";
+      var practiceVideoTitle = isKo ? "실습 영상" : "Practice videos";
+      var practiceVideos = videos.filter(function(video) {
+        return /^\[실습\]/.test(String(video.title || ""));
+      });
+      var officialVideos = videos.filter(function(video) {
+        return !/^\[실습\]/.test(String(video.title || ""));
+      });
+      var refSubsections = [
+        practiceVideos.length ? `<div class="ref-group">
+          <h4 class="ref-group-title">📹 ${practiceVideoTitle}</h4>
+          <div class="ref-video-list">
+            ${practiceVideos.map(function(video) {
+              return `<a class="ref-video-item" href="${video.url}" target="_blank" rel="noopener noreferrer">
+                <span class="ref-video-title">${stripPracticePrefix(video.title)}</span>
+                ${video.description ? `<span class="ref-video-desc">${video.description}</span>` : ""}
+              </a>`;
+            }).join("")}
+          </div>
+        </div>` : "",
+        officialVideos.length ? `<div class="ref-group">
+          <h4 class="ref-group-title">📚 ${text.sectionVideos}</h4>
+          <div class="doc-links-row">
+            ${officialVideos.map(function(video) {
+              return renderReferenceLink("▶ " + video.title, video.url, video.description || "");
+            }).join("")}
+          </div>
+        </div>` : "",
+        docs.length ? `<div class="ref-group">
+          <h4 class="ref-group-title">📄 ${text.sectionDocs}</h4>
+          <div class="doc-links-row">
+            ${docs.map(function(doc) {
+              return renderReferenceLink("📄 " + doc.title, doc.url, doc.description || "");
+            }).join("")}
+          </div>
+        </div>` : "",
+        shortcuts.length ? `<div class="ref-group">
+          <h4 class="ref-group-title">⌨ ${text.sectionShortcuts}</h4>
+          <div class="shortcuts-compact">
+            ${shortcuts.map(function(shortcut) {
+              return `<div class="sc-row"><kbd class="sc-key">${shortcut.keys}</kbd><span class="sc-action">${shortcut.action}</span></div>`;
+            }).join("")}
+          </div>
+        </div>` : "",
+        explore.length ? `<div class="ref-group">
+          <h4 class="ref-group-title">💡 ${text.sectionExplore}</h4>
+          <ul class="ref-list">
+            ${explore.map(function(item) {
+              return `<li><strong>${item.title}</strong>${item.hint ? ` — <span class="ref-hint">${item.hint}</span>` : ""}</li>`;
+            }).join("")}
+          </ul>
+        </div>` : "",
+        mistakes.length ? `<div class="ref-group">
+          <h4 class="ref-group-title">⚠ ${text.sectionMistakes}</h4>
+          <ul class="ref-list">${mistakes.map(function(mistake) {
+            return `<li>${mistake}</li>`;
+          }).join("")}</ul>
+        </div>` : ""
+      ].filter(Boolean).join("");
+      var refMetaParts = [
+        practiceVideos.length ? practiceVideoTitle + " " + practiceVideos.length : "",
+        officialVideos.length ? text.sectionVideos + " " + officialVideos.length : "",
+        docs.length ? text.sectionDocs + " " + docs.length : "",
+        shortcuts.length ? text.sectionShortcuts + " " + shortcuts.length : ""
+      ].filter(Boolean).join(" · ");
+      var hasRef = refSubsections.length > 0;
+      currentWeekHasReference = hasRef;
+      if (!hasRef) return "";
+      return `
+        <section class="content-block" id="section-reference">
+          <details class="card ref-accordion">
+            <summary class="ref-summary">
+              <span class="ref-summary-title">${referenceSummaryTitle}</span>
+              <span class="ref-summary-meta">${refMetaParts}</span>
+            </summary>
+            <div class="ref-body">${refSubsections}</div>
+          </details>
+        </section>`;
+    }
+
     function buildPage(w) {
       var text = getWeekText();
       var preset = getWeekUiPreset();
       activeWeekView = w;
       var isKo = window.RPDI18n.getLanguage() === "ko";
       var topics = Array.isArray(w.topics) ? w.topics : [];
-      var videos = Array.isArray(w.videos) ? w.videos : [];
-      var docs = Array.isArray(w.docs) ? w.docs : [];
-      var shortcuts = Array.isArray(w.shortcuts) ? w.shortcuts : [];
-      var explore = Array.isArray(w.explore) ? w.explore : [];
-      var mistakes = Array.isArray(w.mistakes) ? w.mistakes : [];
       var assignment = w.assignment || { checklist: [] };
       var weekSummaryConfig = preset.weekSummary || {};
       var weekSummaryItems = buildWeekSummaryItems(w, preset);
@@ -632,9 +741,6 @@
       }).length;
       var topicSectionLabel = localizeWeekUiLabel((preset.labels || {}).summaryTitle, isKo ? "이번 주" : "This week");
       var taskSummaryLabel = isKo ? "체크리스트" : "Checklist";
-      var referenceSummaryTitle = isKo ? "이번 주 참고자료" : "Week resources";
-      var practiceVideoTitle = isKo ? "실습 영상" : "Practice videos";
-      var referenceSidebarLabel = isKo ? "참고자료" : "References";
       document.title = `Week ${w.week} — ${w.title} | Blender Archive`;
       document.getElementById("brandBadge").textContent = String(w.week).padStart(2, "0");
       document.getElementById("brandTitle").textContent = `Week ${String(w.week).padStart(2, "0")}`;
@@ -657,15 +763,6 @@
         return !tasks.length || !tasks.every(function(task) { return Boolean(savedProgressState[task.id]); });
       });
       if (initialOpenIndex === -1) initialOpenIndex = 0;
-      function renderReferenceLink(label, url, desc) {
-        return `<a class="doc-link" href="${url}" target="_blank" rel="noopener noreferrer">
-          <span class="doc-link-main">${label} ↗</span>
-          ${desc ? `<span class="doc-link-desc">${desc}</span>` : ""}
-        </a>`;
-      }
-      function stripPracticePrefix(title) {
-        return String(title || "").replace(/^\[실습\]\s*/, "");
-      }
 
       var topicHtml = topicTotal ? `
         <section class="content-block" id="section-topics">
@@ -822,81 +919,7 @@
           </article>`;
       }).join("");
 
-      var practiceVideos = videos.filter(function(video) {
-        return /^\[실습\]/.test(String(video.title || ""));
-      });
-      var officialVideos = videos.filter(function(video) {
-        return !/^\[실습\]/.test(String(video.title || ""));
-      });
-      var refSubsections = [
-        practiceVideos.length ? `<div class="ref-group">
-          <h4 class="ref-group-title">📹 ${practiceVideoTitle}</h4>
-          <div class="ref-video-list">
-            ${practiceVideos.map(function(video) {
-              return `<a class="ref-video-item" href="${video.url}" target="_blank" rel="noopener noreferrer">
-                <span class="ref-video-title">${stripPracticePrefix(video.title)}</span>
-                ${video.description ? `<span class="ref-video-desc">${video.description}</span>` : ""}
-              </a>`;
-            }).join("")}
-          </div>
-        </div>` : "",
-        officialVideos.length ? `<div class="ref-group">
-          <h4 class="ref-group-title">📚 ${text.sectionVideos}</h4>
-          <div class="doc-links-row">
-            ${officialVideos.map(function(video) {
-              return renderReferenceLink("▶ " + video.title, video.url, video.description || "");
-            }).join("")}
-          </div>
-        </div>` : "",
-        docs.length ? `<div class="ref-group">
-          <h4 class="ref-group-title">📄 ${text.sectionDocs}</h4>
-          <div class="doc-links-row">
-            ${docs.map(function(doc) {
-              return renderReferenceLink("📄 " + doc.title, doc.url, doc.description || "");
-            }).join("")}
-          </div>
-        </div>` : "",
-        shortcuts.length ? `<div class="ref-group">
-          <h4 class="ref-group-title">⌨ ${text.sectionShortcuts}</h4>
-          <div class="shortcuts-compact">
-            ${shortcuts.map(function(shortcut) {
-              return `<div class="sc-row"><kbd class="sc-key">${shortcut.keys}</kbd><span class="sc-action">${shortcut.action}</span></div>`;
-            }).join("")}
-          </div>
-        </div>` : "",
-        explore.length ? `<div class="ref-group">
-          <h4 class="ref-group-title">💡 ${text.sectionExplore}</h4>
-          <ul class="ref-list">
-            ${explore.map(function(item) {
-              return `<li><strong>${item.title}</strong>${item.hint ? ` — <span class="ref-hint">${item.hint}</span>` : ""}</li>`;
-            }).join("")}
-          </ul>
-        </div>` : "",
-        mistakes.length ? `<div class="ref-group">
-          <h4 class="ref-group-title">⚠ ${text.sectionMistakes}</h4>
-          <ul class="ref-list">${mistakes.map(function(mistake) {
-            return `<li>${mistake}</li>`;
-          }).join("")}</ul>
-        </div>` : ""
-      ].filter(Boolean).join("");
-      var refMetaParts = [
-        practiceVideos.length ? practiceVideoTitle + " " + practiceVideos.length : "",
-        officialVideos.length ? text.sectionVideos + " " + officialVideos.length : "",
-        docs.length ? text.sectionDocs + " " + docs.length : "",
-        shortcuts.length ? text.sectionShortcuts + " " + shortcuts.length : ""
-      ].filter(Boolean).join(" · ");
-      var hasRef = refSubsections.length > 0;
-      currentWeekHasReference = hasRef;
-      var refHtml = hasRef ? `
-        <section class="content-block" id="section-reference">
-          <details class="card ref-accordion">
-            <summary class="ref-summary">
-              <span class="ref-summary-title">${referenceSummaryTitle}</span>
-              <span class="ref-summary-meta">${refMetaParts}</span>
-            </summary>
-            <div class="ref-body">${refSubsections}</div>
-          </details>
-        </section>` : "";
+      var refHtml = buildSidebar(w);
 
       var assignmentChecklist = Array.isArray(assignment.checklist)
         ? assignment.checklist.map(function(item) { return `<li>${item}</li>`; }).join("")

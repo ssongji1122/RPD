@@ -39,7 +39,9 @@
           저장
         </button>
         <div id="notionGroup" style="display:none"></div>
-        <button class="btn btn-ghost" id="notionPushAllBtn" type="button" style="display:none">🚀 전체 Push</button>
+        <!-- DEPRECATED: Notion이 SoT(2026-04-06 결정). curriculum-push는 페이지 본문을 덮어쓰므로 UI에서 비활성화.
+             재활성화가 필요하면 CLI에서 `python3 tools/curriculum-push.py --confirm-destructive` 사용. -->
+        <button class="btn btn-ghost" id="notionPushAllBtn" type="button" hidden aria-hidden="true" disabled>🚀 전체 Push</button>
         <div id="adminUserMenu" style="display:none; position:relative;">
           <button class="btn btn-ghost btn--icon admin-user-btn" id="adminUserBtn" type="button" aria-label="계정 메뉴" aria-haspopup="true" aria-expanded="false">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>

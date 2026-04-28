@@ -24,6 +24,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
@@ -180,6 +181,96 @@ def get_page_blocks_recursive(
 
     walk(page_id)
     return flat_blocks
+
+
+def fetch_block_tree(page_id: str, token: str | None = None) -> list[dict]:
+    """Fetch all blocks of a Notion page preserving parent-child nesting.
+
+    Each block dict has a `children` key listing nested blocks (toggle, callout,
+    column_list contents, etc.). This is the canonical tree representation used
+    by the web mirror.
+    """
+    def walk(parent_id: str) -> list[dict]:
+        nodes: list[dict] = []
+        for block in _get_page_blocks(parent_id, token=token):
+            children: list[dict] = []
+            if block.get("has_children"):
+                children = walk(block["id"])
+            block["children"] = children
+            nodes.append(block)
+        return nodes
+
+    return walk(page_id)
+
+
+# ---------------------------------------------------------------------------
+# Image / file download for offline mirror
+# ---------------------------------------------------------------------------
+def _resolve_block_file_url(block: dict) -> tuple[str, str] | None:
+    """Return (url, source_kind) for blocks that carry an image/file payload, else None.
+
+    Notion temporary signed URLs expire ~1 hour, so we download once at sync time.
+    Only `file` (Notion-hosted) gets downloaded; `external` URLs are kept as-is.
+    """
+    btype = block.get("type", "")
+    payload = block.get(btype) or {}
+    if btype not in {"image", "file", "video", "pdf", "audio"}:
+        return None
+    file_data = payload.get("file") or {}
+    external_data = payload.get("external") or {}
+    if file_data.get("url"):
+        return file_data["url"], "file"
+    if external_data.get("url"):
+        return external_data["url"], "external"
+    return None
+
+
+def _ext_from_url(url: str, fallback: str = ".bin") -> str:
+    path = urllib.parse.urlparse(url).path
+    suffix = Path(path).suffix
+    return suffix if suffix else fallback
+
+
+def download_block_assets(
+    blocks: list[dict],
+    dest_dir: Path,
+    public_prefix: str,
+) -> int:
+    """Walk a block tree, download Notion-hosted assets to dest_dir.
+
+    Mutates each affected block to add `local_url` (web-relative) and `local_path`
+    (filesystem). External URLs are left untouched. Returns count of downloaded files.
+    """
+    dest_dir.mkdir(parents=True, exist_ok=True)
+    downloaded = 0
+
+    def visit(node_list: list[dict]) -> None:
+        nonlocal downloaded
+        for block in node_list:
+            resolved = _resolve_block_file_url(block)
+            if resolved is not None:
+                url, kind = resolved
+                if kind == "file":
+                    block_id = block.get("id", "").replace("-", "")
+                    if block_id:
+                        ext = _ext_from_url(url)
+                        target = dest_dir / f"{block_id}{ext}"
+                        if not target.exists():
+                            try:
+                                req = urllib.request.Request(url, headers={"User-Agent": "rpd-notion-sync/1.0"})
+                                with urllib.request.urlopen(req, timeout=30) as resp:
+                                    target.write_bytes(resp.read())
+                                downloaded += 1
+                            except Exception as exc:  # noqa: BLE001
+                                print(f"  ! failed to download {url[:80]}...: {exc}")
+                        block["local_url"] = f"{public_prefix.rstrip('/')}/{target.name}"
+                        block["local_path"] = str(target)
+            children = block.get("children") or []
+            if children:
+                visit(children)
+
+    visit(blocks)
+    return downloaded
 
 
 def delete_all_blocks(page_id: str, token: str | None = None) -> None:

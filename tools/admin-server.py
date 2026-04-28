@@ -174,6 +174,11 @@ def write_week_ui(data: dict) -> dict[str, str]:
 
 
 def notion_push_enabled() -> bool:
+    # DEPRECATED 2026-04-06: Notion이 SoT로 결정된 이후 push는 안전상 비활성화.
+    # 본문을 덮어쓰므로 admin UI에서는 호출 불가. CLI에서만 --confirm-destructive로 가능.
+    # 환경변수 RPD_ALLOW_NOTION_PUSH=1 로 의도적으로 다시 활성화 가능.
+    if os.environ.get("RPD_ALLOW_NOTION_PUSH") != "1":
+        return False
     return bool(NOTION_TOKEN or MOCK_NOTION_SYNC)
 
 
