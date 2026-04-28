@@ -227,25 +227,21 @@ class AdminServerE2ETest(PlaywrightFailureArtifactsMixin, unittest.TestCase):
         page.locator("#logoutBtn").click()
         page.locator("#authInput").wait_for(state="visible")
 
-    def test_admin_notion_push_all_mock_flow(self) -> None:
-        self._artifact_suffix = "notion-push-all"
+    def test_admin_notion_push_all_gate_is_disabled(self) -> None:
+        # notionPushAllBtn is intentionally hidden+disabled (Notion is SSoT, push gate active)
+        self._artifact_suffix = "notion-push-gate"
         page = self.page
         self._login(page)
-        page.locator("#notionPushAllBtn").wait_for(state="visible")
-        page.locator("#notionPushAllBtn").click()
-
-        page.locator("#pushAllOverlay").wait_for(state="visible")
-        page.wait_for_function(
-            "() => document.getElementById('pushAllLog').textContent.includes('완료:')"
+        btn = page.locator("#notionPushAllBtn")
+        btn.wait_for(state="attached")
+        self.assertTrue(
+            page.evaluate("() => document.getElementById('notionPushAllBtn').hidden"),
+            "notionPushAllBtn should be hidden (Notion SSoT push gate)",
         )
-
-        push_log = page.locator("#pushAllLog").inner_text()
-        self.assertIn(f"{self.mapping_count}/{self.mapping_count} 성공", push_log)
-        self.assertIn("Week 01", push_log)
-        self.assertNotIn("검증 실패", push_log)
-
-        page.locator("#pushAllCloseBtn").click()
-        page.locator("#pushAllOverlay").wait_for(state="hidden")
+        self.assertTrue(
+            page.evaluate("() => document.getElementById('notionPushAllBtn').disabled"),
+            "notionPushAllBtn should be disabled (Notion SSoT push gate)",
+        )
 
     def test_admin_sidebar_section_active_link_uses_text_priority_state(self) -> None:
         self._artifact_suffix = "sidebar-text-priority"
