@@ -2685,7 +2685,7 @@ const CURRICULUM = [
   },
   {
     "week": 10,
-    "status": "active",
+    "status": "done",
     "title": "Animation 기초",
     "subtitle": "키프레임 · Dope Sheet · Graph Editor · 루프",
     "duration": "~3시간",
@@ -2933,7 +2933,7 @@ const CURRICULUM = [
   },
   {
     "week": 11,
-    "status": "upcoming",
+    "status": "active",
     "title": "Rigging 기초",
     "subtitle": "Armature · 본 구조 · 웨이트 페인팅 · 포즈",
     "duration": "~3시간",
