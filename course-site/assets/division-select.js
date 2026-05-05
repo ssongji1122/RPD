@@ -159,6 +159,14 @@
     if (main) main.hidden = !isLoggedIn;
   }
 
+  /* ── auth rail-menu 표시/숨김 ────────────────────────── */
+  function updateAuthRailMenu(isLoggedIn) {
+    var guestEls  = document.querySelectorAll('.auth-guest-only');
+    var loggedEls = document.querySelectorAll('.auth-loggedin-only');
+    for (let i = 0; i < guestEls.length;  i++) guestEls[i].hidden  = isLoggedIn;
+    for (let j = 0; j < loggedEls.length; j++) loggedEls[j].hidden = !isLoggedIn;
+  }
+
   /* ── auth 이벤트 → login gate 연동 ──────────────────── */
   function bindLoginGate() {
     if (!window.SUPABASE_CONFIGURED || !window.RPDAuth) return;
@@ -178,20 +186,12 @@
 
     /* auth 상태에 따라 rail-user-menu 항목 표시/숨김 */
     window.RPDAuth.onAuthStateChange(function (event) {
-      var guestEls   = document.querySelectorAll('.auth-guest-only');
-      var loggedEls  = document.querySelectorAll('.auth-loggedin-only');
-      var isLoggedIn = (event === 'SIGNED_IN');
-      for (var i = 0; i < guestEls.length;  i++) guestEls[i].hidden  = isLoggedIn;
-      for (var i = 0; i < loggedEls.length; i++) loggedEls[i].hidden = !isLoggedIn;
+      updateAuthRailMenu(event === 'SIGNED_IN');
     });
 
     /* 초기 상태 반영 */
     window.RPDAuth.getSession().then(function (session) {
-      var isLoggedIn = !!session;
-      var guestEls  = document.querySelectorAll('.auth-guest-only');
-      var loggedEls = document.querySelectorAll('.auth-loggedin-only');
-      for (var i = 0; i < guestEls.length;  i++) guestEls[i].hidden  = isLoggedIn;
-      for (var i = 0; i < loggedEls.length; i++) loggedEls[i].hidden = !isLoggedIn;
+      updateAuthRailMenu(!!session);
     });
   }
 
