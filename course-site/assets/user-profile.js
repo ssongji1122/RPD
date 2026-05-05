@@ -3,7 +3,7 @@
 (function () {
   'use strict';
 
-  var STORAGE_KEY = 'rpd-user';
+  var STORAGE_KEY = window.RPD_KEYS.USER;
   var defaults = { name: '게스트', role: 'student', avatar: '👤' };
 
   function getUser() {

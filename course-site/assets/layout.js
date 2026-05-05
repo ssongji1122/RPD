@@ -7,15 +7,16 @@
   'use strict';
 
   /* ── Rail toggle ── */
+  var RAIL_KEY = window.RPD_KEYS.RAIL;
   var rail = document.getElementById('sideRail');
   var toggle = document.getElementById('railToggle');
   if (rail && toggle) {
     toggle.addEventListener('click', function () {
       rail.classList.toggle('is-expanded');
-      localStorage.setItem('rpd-rail', rail.classList.contains('is-expanded') ? 'open' : 'closed');
+      localStorage.setItem(RAIL_KEY, rail.classList.contains('is-expanded') ? 'open' : 'closed');
     });
     // Restore saved state (desktop only)
-    if (window.innerWidth > 720 && localStorage.getItem('rpd-rail') === 'open') {
+    if (window.innerWidth > 720 && localStorage.getItem(RAIL_KEY) === 'open') {
       rail.classList.add('is-expanded');
     }
   }

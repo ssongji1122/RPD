@@ -1,7 +1,7 @@
 (function(win) {
   "use strict";
 
-  var STORAGE_KEY = "rpd-lang";
+  var STORAGE_KEY = win.RPD_KEYS.LANG;
   var SUPPORTED_LANGS = ["ko", "en"];
 
   var COPY = {

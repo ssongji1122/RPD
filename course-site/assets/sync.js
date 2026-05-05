@@ -4,8 +4,8 @@
 (function () {
   'use strict';
 
-  var MIGRATION_KEY = 'rpd-synced-uid'; // 마이그레이션 완료 uid 저장
-  var LOCAL_KEY     = 'rpd-decks';
+  var MIGRATION_KEY = window.RPD_KEYS.SYNCED_UID;
+  var LOCAL_KEY     = window.RPD_KEYS.DECKS;
 
   window.RPDSync = {
     /**
