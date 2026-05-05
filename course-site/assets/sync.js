@@ -7,6 +7,22 @@
   var MIGRATION_KEY = 'rpd-synced-uid'; // 마이그레이션 완료 uid 저장
   var LOCAL_KEY     = 'rpd-decks';
 
+  function showSyncError(message) {
+    var el = document.createElement('div');
+    el.setAttribute('role', 'alert');
+    el.style.cssText = [
+      'position:fixed', 'bottom:1rem', 'left:50%', 'transform:translateX(-50%)',
+      'background:#c0392b', 'color:#fff', 'padding:.6rem 1.2rem',
+      'border-radius:.4rem', 'font-size:.875rem', 'z-index:9999',
+      'box-shadow:0 2px 8px rgba(0,0,0,.25)', 'pointer-events:none',
+    ].join(';');
+    el.textContent = message;
+    document.body.appendChild(el);
+    setTimeout(function () {
+      if (el.parentNode) el.parentNode.removeChild(el);
+    }, 5000);
+  }
+
   window.RPDSync = {
     /**
      * 첫 로그인 직후 호출.
@@ -44,11 +60,15 @@
       supabase.from('decks').upsert(rows, { onConflict: 'id' }).then(function (result) {
         if (result.error) {
           console.warn('[RPDSync] 마이그레이션 실패:', result.error.message);
+          showSyncError('덱 동기화에 실패했어요. 잠시 후 다시 시도해 주세요.');
           return;
         }
         localStorage.setItem(MIGRATION_KEY, userId);
         console.info('[RPDSync] 덱 ' + rows.length + '개를 Supabase로 이전했어요.');
         // 이후 DeckStore는 Supabase 모드로 전환됨 (deck-store.js 체크)
+      }).catch(function (err) {
+        console.warn('[RPDSync] 마이그레이션 오류:', err);
+        showSyncError('덱 동기화 중 오류가 발생했어요. 잠시 후 다시 시도해 주세요.');
       });
     },
 
