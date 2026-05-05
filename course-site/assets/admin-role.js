@@ -4,7 +4,8 @@
 (function () {
   'use strict';
 
-  var ADMIN_KEY = 'rpd-is-admin'; // 세션 캐시용 localStorage 키
+  var ADMIN_KEY     = window.RPD_KEYS.IS_ADMIN;  // 세션 캐시용 localStorage 키
+  var ADMIN_DEV_KEY = window.RPD_KEYS.ADMIN_DEV; // 개발용 강제 설정 키
 
   window.RPDAdminRole = {
     /**
@@ -13,8 +14,8 @@
      */
     checkIsAdmin: function () {
       if (!window.SUPABASE_CONFIGURED || !window.RPDAuth || !window.RPDAuth.supabase) {
-        // 미설정: localStorage 'rpd-admin' 값으로 fallback (개발용)
-        return Promise.resolve(localStorage.getItem('rpd-admin') === '1');
+        // 미설정: localStorage rpd-admin 값으로 fallback (개발용)
+        return Promise.resolve(localStorage.getItem(ADMIN_DEV_KEY) === '1');
       }
 
       return window.RPDAuth.getUser().then(function (user) {
