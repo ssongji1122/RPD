@@ -684,3 +684,158 @@
     @media (max-width: 720px) {
       .submission-classes { grid-template-columns: 1fr; }
     }
+
+    /* ── DataTable Controls ── */
+    .dt-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .dt-search {
+      flex: 1;
+      min-width: 160px;
+      padding: 7px 12px 7px 32px;
+      background: var(--surface-strong);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      color: var(--text);
+      font: inherit;
+      font-size: .82rem;
+      outline: none;
+      transition: border-color .14s;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23a1a1aa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: 10px center;
+    }
+    .dt-search:focus { border-color: var(--key); }
+    .dt-search::placeholder { color: var(--muted); }
+    .dt-row-count {
+      font-size: .75rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .submission-table th.sortable {
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      padding-right: 22px;
+    }
+    .submission-table th.sortable::after {
+      content: '⇅';
+      position: absolute;
+      right: 6px;
+      opacity: .35;
+      font-size: .65rem;
+    }
+    .submission-table th.sort-asc::after  { content: '↑'; opacity: .8; color: var(--key); }
+    .submission-table th.sort-desc::after { content: '↓'; opacity: .8; color: var(--key); }
+    .dt-no-results {
+      text-align: center;
+      color: var(--muted);
+      font-size: .82rem;
+      padding: 20px;
+    }
+
+    /* ── Tracing Beam Timeline ── */
+    .timeline-section {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--course-shell-radius);
+      padding: 32px 28px;
+      position: relative;
+    }
+    .timeline-list {
+      position: relative;
+      margin-top: 24px;
+      padding-left: 28px;
+    }
+    .timeline-beam-track {
+      position: absolute;
+      left: 7px;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      background: var(--line);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .timeline-beam-fill {
+      width: 100%;
+      height: 0%;
+      background: var(--key);
+      border-radius: 2px;
+      transition: height .4s ease;
+    }
+    .timeline-item {
+      position: relative;
+      padding: 12px 0 12px 16px;
+      opacity: 0;
+      transform: translateX(-6px);
+      transition: opacity .35s ease, transform .35s ease;
+    }
+    .timeline-item.is-visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .timeline-dot {
+      position: absolute;
+      left: -24px;
+      top: 18px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 2px solid var(--line);
+      background: var(--surface);
+      transition: border-color .3s, background .3s;
+    }
+    .timeline-item.is-visible .timeline-dot {
+      border-color: var(--key);
+      background: var(--key);
+    }
+    .timeline-item.is-milestone .timeline-dot {
+      width: 14px;
+      height: 14px;
+      left: -26px;
+      top: 16px;
+    }
+    .timeline-week-badge {
+      display: inline-block;
+      font-size: .68rem;
+      font-weight: var(--fw-semi);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--key);
+      background: rgba(0,191,165,.08);
+      border: 1px solid rgba(0,191,165,.2);
+      border-radius: var(--pill-radius);
+      padding: 2px 8px;
+      margin-bottom: 4px;
+    }
+    .timeline-phase-badge {
+      display: inline-block;
+      font-size: .68rem;
+      font-weight: var(--fw-semi);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: var(--overlay-white);
+      border: 1px solid var(--line);
+      border-radius: var(--pill-radius);
+      padding: 2px 8px;
+      margin-bottom: 4px;
+      margin-left: 4px;
+    }
+    .timeline-title {
+      font-size: .9rem;
+      font-weight: var(--fw-semi);
+      color: var(--text);
+      margin: 0 0 2px;
+    }
+    .timeline-desc {
+      font-size: .78rem;
+      color: var(--muted);
+      margin: 0;
+    }
+    .timeline-item.is-milestone .timeline-title { color: var(--key-soft); }
