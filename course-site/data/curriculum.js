@@ -3329,6 +3329,10 @@ const CURRICULUM = [
       {
         "title": "배경 씬에 캐릭터 배치",
         "hint": "조명/카메라 세팅된 씬에 Mixamo 캐릭터를 배치하고 렌더"
+      },
+      {
+        "title": "Follow Path — 커브 패스 애니메이션",
+        "hint": "Shift+A → Curve로 경로를 그리고, 오브젝트에 Follow Path 컨스트레인트를 추가해서 커브를 따라 이동하는 애니메이션 만들기. 카메라 플라이스루나 차량 주행 씬에 활용 가능. 주의: Animate Path 버튼을 반드시 클릭해야 움직여요."
       }
     ],
     "assignment": {
