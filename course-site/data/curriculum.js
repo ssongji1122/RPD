@@ -2867,7 +2867,7 @@ const CURRICULUM = [
       },
       {
         "keys": "↑ / ↓",
-        "action": "→ 10프레임 이동"
+        "action": "→ 다음/이전 키프레임으로 이동"
       },
       {
         "keys": "Shift + ←",
