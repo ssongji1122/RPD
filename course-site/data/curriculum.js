@@ -2842,32 +2842,72 @@ const CURRICULUM = [
     ],
     "shortcuts": [
       {
-        "keys": "I",
-        "action": "Insert Keyframe"
+        "keys": "K",
+        "action": "→ Keyframe 삽입 (Blender 4.1+)"
       },
       {
-        "keys": "Alt + I",
-        "action": "Delete Keyframe"
-      },
-      {
-        "keys": "Space",
-        "action": "재생/정지"
-      },
-      {
-        "keys": "← / →",
-        "action": "이전/다음 프레임"
-      },
-      {
-        "keys": "Shift + ← / →",
-        "action": "시작/끝 프레임으로 이동"
+        "keys": "Alt + K",
+        "action": "→ Keyframe 삭제"
       },
       {
         "keys": "T",
-        "action": "Interpolation 변경 (Bezier/Linear)"
+        "action": "→ 보간 모드 변경 (Timeline/Dope Sheet/Graph Editor)"
       },
       {
         "keys": "V",
-        "action": "핸들 타입 변경 (Free/Auto)"
+        "action": "→ 핸들 타입 변경 (Graph Editor)"
+      },
+      {
+        "keys": "Space",
+        "action": "→ 재생/일시정지"
+      },
+      {
+        "keys": "← / →",
+        "action": "→ 1프레임 이동"
+      },
+      {
+        "keys": "↑ / ↓",
+        "action": "→ 10프레임 이동"
+      },
+      {
+        "keys": "Shift + ←",
+        "action": "→ 시작 프레임으로"
+      },
+      {
+        "keys": "Shift + →",
+        "action": "→ 끝 프레임으로"
+      },
+      {
+        "keys": "A",
+        "action": "→ 전체 키프레임 선택"
+      },
+      {
+        "keys": "G",
+        "action": "→ 키프레임 이동 (타이밍 조절)"
+      },
+      {
+        "keys": "Shift + D",
+        "action": "→ 키프레임 복사"
+      },
+      {
+        "keys": "Shift + E",
+        "action": "→ Extrapolation Mode (Make Cyclic)"
+      },
+      {
+        "keys": "Home",
+        "action": "→ 전체 커브 화면에 맞추기"
+      },
+      {
+        "keys": "F12",
+        "action": "→ 현재 프레임 이미지 렌더"
+      },
+      {
+        "keys": "Ctrl + F12",
+        "action": "→ 전체 애니메이션 렌더"
+      },
+      {
+        "keys": "Esc",
+        "action": "→ 렌더 취소"
       }
     ],
     "explore": [

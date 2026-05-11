@@ -527,13 +527,23 @@ Graph Editor는 움직임의 속도 곡선을 보여줘요. 직선이면 일정 
 
 ### 핵심 단축키
 
-- `I`: Insert Keyframe
-- `Alt + I`: Delete Keyframe
-- `Space`: 재생/정지
-- `← / →`: 이전/다음 프레임
-- `Shift + ← / →`: 시작/끝 프레임으로 이동
-- `T`: Interpolation 변경 (Bezier/Linear)
-- `V`: 핸들 타입 변경 (Free/Auto)
+- `K`: → Keyframe 삽입 (Blender 4.1+)
+- `Alt + K`: → Keyframe 삭제
+- `T`: → 보간 모드 변경 (Timeline/Dope Sheet/Graph Editor)
+- `V`: → 핸들 타입 변경 (Graph Editor)
+- `Space`: → 재생/일시정지
+- `← / →`: → 1프레임 이동
+- `↑ / ↓`: → 10프레임 이동
+- `Shift + ←`: → 시작 프레임으로
+- `Shift + →`: → 끝 프레임으로
+- `A`: → 전체 키프레임 선택
+- `G`: → 키프레임 이동 (타이밍 조절)
+- `Shift + D`: → 키프레임 복사
+- `Shift + E`: → Extrapolation Mode (Make Cyclic)
+- `Home`: → 전체 커브 화면에 맞추기
+- `F12`: → 현재 프레임 이미지 렌더
+- `Ctrl + F12`: → 전체 애니메이션 렌더
+- `Esc`: → 렌더 취소
 
 ### 과제 한눈에 보기
 
