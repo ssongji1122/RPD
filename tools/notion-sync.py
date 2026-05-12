@@ -101,6 +101,46 @@ def _save_block_tree(week_num: int, page_id: str, token: str) -> int:
     return downloaded
 
 
+def _collect_subpage_ids(blocks: list[dict]) -> set[str]:
+    """Walk a block tree and return all page IDs referenced by link_to_page / child_page blocks."""
+    ids: set[str] = set()
+    for block in blocks:
+        btype = block.get("type")
+        if btype == "link_to_page":
+            ltp = block.get("link_to_page", {})
+            if ltp.get("type") == "page_id" and ltp.get("page_id"):
+                ids.add(ltp["page_id"])
+        elif btype == "child_page":
+            ids.add(block["id"])
+        # Recurse into children
+        ids |= _collect_subpage_ids(block.get("children", []))
+    return ids
+
+
+def _save_linked_pages(blocks: list[dict], token: str) -> int:
+    """Fetch and persist block trees for every linked/child page in a week's tree.
+
+    Saves to course-site/data/notion-blocks/pages/{page_id}.json.
+    Returns the count of pages saved.
+    """
+    pages_dir = BLOCKS_DIR / "pages"
+    pages_dir.mkdir(parents=True, exist_ok=True)
+
+    page_ids = _collect_subpage_ids(blocks)
+    saved = 0
+    for pid in page_ids:
+        out_path = pages_dir / f"{pid}.json"
+        try:
+            tree = fetch_block_tree(pid, token=token)
+            with open(out_path, "w", encoding="utf-8") as fh:
+                json.dump({"page_id": pid, "blocks": tree}, fh, ensure_ascii=False, indent=2)
+                fh.write("\n")
+            saved += 1
+        except Exception as exc:
+            print(f"  ⚠ subpage {pid}: {exc}", file=sys.stderr)
+    return saved
+
+
 def fetch_all_weeks(token: str, *, weeks_filter: set[int] | None, with_body: bool) -> list[dict]:
     mapping = load_notion_mapping()
     if not mapping:
@@ -129,6 +169,14 @@ def fetch_all_weeks(token: str, *, weeks_filter: set[int] | None, with_body: boo
             if with_body:
                 downloaded = _save_block_tree(week_num, page_id, token)
                 line += f" — body saved ({downloaded} new asset(s))"
+                # Persist block trees for linked/child subpages
+                week_blocks_path = BLOCKS_DIR / f"week{week_num:02d}.json"
+                if week_blocks_path.exists():
+                    with open(week_blocks_path, encoding="utf-8") as fh:
+                        week_tree = json.load(fh).get("blocks", [])
+                    sub_count = _save_linked_pages(week_tree, token)
+                    if sub_count:
+                        line += f", {sub_count} subpage(s)"
             print(line)
         except Exception as exc:
             print(f"✗ Week {week_num:02d}: {exc}", file=sys.stderr)

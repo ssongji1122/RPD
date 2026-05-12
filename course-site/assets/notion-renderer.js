@@ -244,10 +244,29 @@
     return html;
   }
 
+  function _escapeHtml(str) {
+    return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function _subpageHref(pageId) {
+    var id = (pageId || '').replace(/-/g, '');
+    return 'subpage.html?id=' + id;
+  }
+
   function renderLinkToPage(block) {
     var data = block.link_to_page || {};
-    var label = data.page_id ? '→ 페이지 링크' : '→ 데이터베이스 링크';
-    return '<p class="nb-p"><a class="nb-link-page" href="#">' + label + '</a></p>';
+    if (data.type !== 'page_id' || !data.page_id) {
+      return '<p class="nb-p"><a class="nb-link-page" href="#">→ 데이터베이스 링크</a></p>';
+    }
+    var title = (block._resolved_title || '').trim() || '관련 자료';
+    return '<p class="nb-p"><a class="nb-link-page nb-link-subpage" href="'
+      + _subpageHref(data.page_id) + '">📄 ' + _escapeHtml(title) + '</a></p>';
+  }
+
+  function renderChildPage(block) {
+    var title = ((block.child_page || {}).title || '').trim() || '하위 페이지';
+    return '<p class="nb-p"><a class="nb-link-page nb-link-subpage" href="'
+      + _subpageHref(block.id) + '">📄 ' + _escapeHtml(title) + '</a></p>';
   }
 
   // ---------------------------------------------------------------------------
@@ -275,6 +294,7 @@
       case 'quote':      return renderQuote(block);
       case 'divider':    return renderDivider();
       case 'link_to_page': return renderLinkToPage(block);
+      case 'child_page':   return renderChildPage(block);
       default:
         return '<!-- notion-block: ' + type + ' -->';
     }
