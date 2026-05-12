@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>자료 — RPD</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="assets/tokens.css" />
+  <link rel="stylesheet" href="assets/components.css" />
+  <script>/* FOUC prevention */ (function(){var t=localStorage.getItem('rpd-theme');if(t)document.documentElement.setAttribute('data-theme',t);var l=localStorage.getItem('rpd-lang');if(l){document.documentElement.lang=l;document.documentElement.setAttribute('data-lang',l);}})()</script>
+  <link rel="stylesheet" href="assets/notion-blocks.css">
+  <style>
+    body { margin: 0; background: var(--surface-bg, #fafafa); color: var(--text-primary, #111); font-family: 'Noto Sans KR', sans-serif; }
+    .sp-topbar { display: flex; align-items: center; gap: 12px; padding: 14px 24px; border-bottom: 1px solid var(--border-default, #e5e7eb); background: var(--surface-card, #fff); position: sticky; top: 0; z-index: 10; }
+    .sp-back { display: inline-flex; align-items: center; gap: 6px; font-size: .875rem; color: var(--text-secondary, #555); text-decoration: none; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border-default, #e5e7eb); }
+    .sp-back:hover { background: var(--surface-hover, #f3f4f6); }
+    .sp-title { font-size: 1rem; font-weight: 600; color: var(--text-primary, #111); }
+    .sp-body { max-width: 780px; margin: 0 auto; padding: 32px 24px 80px; }
+    .sp-page-title { font-size: 1.6rem; font-weight: 700; margin: 0 0 28px; word-break: keep-all; }
+    .sp-error { text-align: center; padding: 80px 24px; color: var(--text-secondary, #888); }
+    .sp-loading { text-align: center; padding: 80px 24px; color: var(--text-secondary, #888); }
+  </style>
+</head>
+<body>
+  <div class="sp-topbar">
+    <a class="sp-back" href="javascript:history.back()">← 뒤로</a>
+    <span class="sp-title" id="spTitle"></span>
+  </div>
+  <div class="sp-body">
+    <div class="sp-loading" id="spLoading">불러오는 중…</div>
+    <div id="spContent" style="display:none">
+      <h1 class="sp-page-title" id="spPageTitle"></h1>
+      <div id="spBlocks"></div>
+    </div>
+    <div class="sp-error" id="spError" style="display:none">
+      <p>페이지를 찾을 수 없습니다.</p>
+      <p style="font-size:.85rem">자료가 아직 동기화되지 않았거나 ID가 잘못됐어요.</p>
+    </div>
+  </div>
+
+  <script src="assets/notion-renderer.js"></script>
+  <script>
+    (function () {
+      var params = new URLSearchParams(location.search);
+      var rawId = params.get('id') || '';
+      // Normalise: accept both dashed UUID and plain 32-char hex
+      var id = rawId.replace(/-/g, '');
+
+      if (!id) { showError(); return; }
+
+      // Reconstruct dashed UUID for the JSON filename
+      function toDashedUUID(s) {
+        if (s.length !== 32) return s;
+        return s.slice(0,8)+'-'+s.slice(8,12)+'-'+s.slice(12,16)+'-'+s.slice(16,20)+'-'+s.slice(20);
+      }
+      var dashedId = toDashedUUID(id);
+
+      fetch('data/notion-blocks/pages/' + dashedId + '.json')
+        .then(function (r) {
+          if (!r.ok) throw new Error('not found');
+          return r.json();
+        })
+        .then(function (data) {
+          var blocks = data.blocks || [];
+          var title = data.title || '';
+
+          // title may be stored separately or derivable from first heading block
+          if (!title) {
+            var first = blocks[0];
+            if (first && first.type === 'heading_1') {
+              var rt = (first.heading_1 || {}).rich_text || [];
+              title = rt.map(function(s){ return s.plain_text || ''; }).join('');
+            }
+          }
+
+          document.title = (title || '자료') + ' — RPD';
+          document.getElementById('spTitle').textContent = title || '자료';
+          document.getElementById('spPageTitle').textContent = title || '';
+
+          var html = typeof window.renderBlocks === 'function' ? window.renderBlocks(blocks) : '';
+          document.getElementById('spBlocks').innerHTML = html;
+
+          document.getElementById('spLoading').style.display = 'none';
+          document.getElementById('spContent').style.display = '';
+        })
+        .catch(function () { showError(); });
+
+      function showError() {
+        document.getElementById('spLoading').style.display = 'none';
+        document.getElementById('spError').style.display = '';
+      }
+    })();
+  </script>
+</body>
+</html>

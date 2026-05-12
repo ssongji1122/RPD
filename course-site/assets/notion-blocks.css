@@ -159,3 +159,24 @@ table.nb-table thead th { background: var(--bg-2, rgba(255,255,255,.04)); font-w
 
 /* ── Children container ────────────────────────────────── */
 .nb-children { padding-left: 1.25rem; }
+
+/* ── Subpage / page link ───────────────────────────────── */
+.nb-link-subpage {
+  display: inline-flex;
+  align-items: center;
+  gap: .4em;
+  padding: .45em .9em;
+  border: 1px solid var(--border-default, #e5e7eb);
+  border-radius: 8px;
+  font-size: .9rem;
+  font-weight: 500;
+  color: var(--text-primary, #111);
+  text-decoration: none;
+  background: var(--surface-card, #fff);
+  transition: background .15s, border-color .15s;
+}
+.nb-link-subpage:hover {
+  background: var(--surface-hover, #f3f4f6);
+  border-color: var(--border-strong, #d1d5db);
+  text-decoration: none;
+}

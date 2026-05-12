@@ -183,13 +183,37 @@ def get_page_blocks_recursive(
     return flat_blocks
 
 
+def get_page_title(page_id: str, token: str | None = None) -> str:
+    """Return the plain-text title of a Notion page, or empty string on error."""
+    try:
+        result = notion_request("GET", f"/pages/{page_id}", token=token)
+        props = result.get("properties", {})
+        # Title can be under any property with type "title"
+        for prop in props.values():
+            if prop.get("type") == "title":
+                return extract_text(prop.get("title", []))
+    except Exception:
+        pass
+    return ""
+
+
 def fetch_block_tree(page_id: str, token: str | None = None) -> list[dict]:
     """Fetch all blocks of a Notion page preserving parent-child nesting.
 
     Each block dict has a `children` key listing nested blocks (toggle, callout,
     column_list contents, etc.). This is the canonical tree representation used
     by the web mirror.
+
+    For `link_to_page` blocks, injects `_resolved_title` so the renderer can
+    display a meaningful label without an extra round-trip at render time.
     """
+    title_cache: dict[str, str] = {}
+
+    def resolve_title(pid: str) -> str:
+        if pid not in title_cache:
+            title_cache[pid] = get_page_title(pid, token=token)
+        return title_cache[pid]
+
     def walk(parent_id: str) -> list[dict]:
         nodes: list[dict] = []
         for block in _get_page_blocks(parent_id, token=token):
@@ -197,6 +221,11 @@ def fetch_block_tree(page_id: str, token: str | None = None) -> list[dict]:
             if block.get("has_children"):
                 children = walk(block["id"])
             block["children"] = children
+            # Inject resolved title for link_to_page blocks
+            if block.get("type") == "link_to_page":
+                ltp = block.get("link_to_page", {})
+                if ltp.get("type") == "page_id":
+                    block["_resolved_title"] = resolve_title(ltp["page_id"])
             nodes.append(block)
         return nodes
 
