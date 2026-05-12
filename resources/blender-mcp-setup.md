@@ -1,39 +1,130 @@
-# Blender MCP + Claude 설치 및 연결 가이드
+# Blender MCP + AI 연동 가이드
+> Blender 5.1 / 4.x 기준 | 최종 업데이트: 2026-05-12
 
-## 개요
+Blender를 AI(Claude, Gemini, Cursor 등)로 **자연어 제어**하기 위한 설치 가이드.
 
-Blender MCP는 Claude AI가 Blender를 직접 제어할 수 있게 해주는 도구입니다. 텍스트 프롬프트로 3D 모델 생성, 씬 구성, 조명 설정, 렌더링 등을 자동화할 수 있습니다.
+---
 
-## 사전 준비물
+## 두 가지 설치 방법 비교
 
-- Blender 5.0 이상
-- Claude Desktop 앱
-- Python 3.10 이상
-- uv 또는 uvx 패키지
+| 항목 | 방법 A: 공식 애드온 | 방법 B: 서드파티 애드온 (권장) |
+|------|-------------------|-------------------------------|
+| 제작자 | Blender Foundation | ahujasid (커뮤니티) |
+| 지원 버전 | **5.1 이상만** | **4.x ~ 5.0 호환** |
+| 설치 파일 | `mcp-0.3.0.zip` | `addon.py` |
+| 다운로드 | [blender.org/lab/mcp-server](https://www.blender.org/lab/mcp-server/) | [github.com/ahujasid/blender-mcp](https://github.com/ahujasid/blender-mcp) |
+| 인터넷 허용 설정 | 필요 | 불필요 |
+| 안정성 | 공식 지원 (출시 초기) | 커뮤니티 유지보수, 검증됨 |
 
-## Windows 설치
+> ✅ **방법 B 권장** — 공식 애드온이 나온 지 얼마 안 돼서 호환성이 아직 불안정해요.
+> 두 방법 모두 `uvx blender-mcp` 브릿지와 포트 9876을 공유합니다.
 
-### Step 1: Python 설치
+---
 
-- python.org에서 Python 3.10+ 다운로드
-- 설치 시 "Add Python to PATH" 체크 필수
+## 0. MCP란?
 
-### Step 2: uv 설치
+**MCP(Model Context Protocol)** = AI가 외부 프로그램을 직접 제어할 수 있게 해주는 표준 규격
 
 ```
-pip install uv
+AI (Claude / Gemini / Cursor)
+        ↕ MCP JSON-RPC
+[uvx blender-mcp]  ← 브릿지
+        ↕ TCP 소켓 (localhost:9876)
+[Blender 애드온]
+        ↕ bpy API
+[Blender 씬]
 ```
 
-### Step 3: Blender MCP 애드온 설치
+한 번 설정하면 어떤 MCP 지원 AI에서든 Blender를 자연어로 제어할 수 있어요.
 
-1. GitHub에서 addon.py 다운로드 (https://github.com/ahujasid/blender-mcp)
-2. Blender > Edit > Preferences > Add-ons > Install
-3. addon.py 선택 후 체크박스 활성화
+---
 
-### Step 4: Claude Desktop 설정
+## 1. uv 설치 (공통)
 
-1. Claude Desktop > File > Settings > Developer > Edit Config
-2. `%APPDATA%\Claude\claude_desktop_config.json` 파일에 추가:
+**uv** = Python 프로그램을 빠르게 실행해주는 패키지 매니저. `blender-mcp` 실행에 필요해요.
+
+**Mac**
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+# 또는 Homebrew: brew install uv
+```
+
+**Windows (PowerShell)**
+```powershell
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+**설치 확인** (터미널 닫았다가 다시 열고)
+```bash
+uv --version
+```
+`uv 0.x.x` 같은 버전 번호가 나오면 성공.
+
+---
+
+## 2. Blender 애드온 설치
+
+### 방법 B: 서드파티 애드온 (권장, Blender 4.x ~ 5.0)
+
+**B-1. addon.py 다운로드**
+- [github.com/ahujasid/blender-mcp](https://github.com/ahujasid/blender-mcp) 접속
+- 초록색 **Code** 버튼 → **Download ZIP** → 압축 해제 → `addon.py` 파일 확인
+- 또는 직접 다운로드: [addon.py raw 파일](https://raw.githubusercontent.com/ahujasid/blender-mcp/main/addon.py)
+
+**B-2. Blender에 설치**
+1. Blender 상단 메뉴 → **Edit** → **Preferences** → **Add-ons**
+2. 우측 상단 **Install** 버튼 (Blender 4.x) 또는 **드롭다운 ▾ → Install from Disk** (Blender 5.0)
+3. `addon.py` 선택 → 설치
+4. 검색창에 `blender mcp` 입력 → **Interface: Blender MCP** 체크박스 켜기
+
+**B-3. MCP 서버 시작**
+1. 3D 뷰포트에서 **N** 키 → 우측 사이드바 표시
+2. **BlenderMCP** 탭 클릭
+3. **Start MCP Server** 버튼 클릭
+4. 포트 9876에서 서버 시작 확인
+
+---
+
+### 방법 A: 공식 애드온 (Blender 5.1 이상)
+
+**A-1. 파일 다운로드**
+[blender.org/lab/mcp-server](https://www.blender.org/lab/mcp-server/) 에서 `mcp-0.3.0.zip` 다운로드
+
+> drag & drop으로 설치할 경우 두 번 드래그 필요:
+> 첫 번째 = Blender Lab repository 세팅, 두 번째 = MCP 애드온 설치
+
+**A-2. Blender 5.1 실행 후 애드온 설치**
+1. **Edit** → **Preferences** → **Add-ons**
+2. 드롭다운 **▾** → **Install from Disk...** → `mcp-0.3.0.zip` 선택
+3. 검색창에 `mcp` 입력 → **MCP** 체크박스 켜기
+
+**A-3. 인터넷 허용 (필수)**
+1. Preferences → **System** 탭
+2. 하단 **Network** → **Allow Online Access** 체크
+3. **Save Preferences**
+
+> 이 설정 없으면 `"Online access must be enabled"` 오류 발생
+
+**A-4. 서버 확인**
+Add-ons 탭에서 MCP 항목 펼치기:
+- Host: `localhost`, Port: `9876`, Auto Start: 체크
+- Blender 하단 상태바에 `MCP server running on localhost:9876` 표시 → 성공
+
+---
+
+## 3. AI 클라이언트 연결 (공통)
+
+방법 A/B 모두 동일한 방식으로 연결.
+
+### Claude Code (터미널)
+```bash
+claude mcp add blender -s user -- uvx blender-mcp
+```
+`Added stdio MCP server blender` 메시지 → 성공
+
+### Claude Desktop
+`~/Library/Application Support/Claude/claude_desktop_config.json` (Mac)
+`%APPDATA%\Claude\claude_desktop_config.json` (Windows)
 
 ```json
 {
@@ -45,36 +136,10 @@ pip install uv
   }
 }
 ```
+Claude Desktop 재시작 → 우측 하단 망치 아이콘 확인
 
-### Step 5: 연결 확인
-
-1. Blender에서 N키 > BlenderMCP 탭 > Start MCP Server
-2. Claude Desktop 재시작
-3. Claude 우측 하단에 망치 아이콘 확인
-
-## Mac 설치
-
-### Step 1: uv 설치
-
-```
-brew install uv
-```
-
-또는
-
-```
-pip install uv
-```
-
-### Step 2: Blender MCP 애드온 설치
-
-(Windows와 동일)
-
-### Step 3: Claude Desktop 설정
-
-1. Claude Desktop > File > Settings > Developer > Edit Config
-2. `~/Library/Application Support/Claude/claude_desktop_config.json`:
-
+### Cursor / VS Code
+`.cursor/mcp.json` 또는 `.vscode/mcp.json`:
 ```json
 {
   "mcpServers": {
@@ -86,59 +151,76 @@ pip install uv
 }
 ```
 
-### Step 4: 연결 확인
+### Gemini CLI
+`~/.gemini/settings.json`:
+```json
+{
+  "mcpServers": {
+    "blender": {
+      "command": "uvx",
+      "args": ["blender-mcp"]
+    }
+  }
+}
+```
 
-(Windows와 동일)
+---
 
-## 사용 예시
+## 4. 동작 확인
 
-### 기본 오브젝트 생성
+Blender가 켜져 있고 서버가 시작된 상태에서 AI에게:
 
-> "Create a red cube at position (2, 0, 0) with size 1"
+```
+"Blender에 빨간 구체를 하나 만들어줘"
+"현재 씬에 있는 오브젝트 목록을 알려줘"
+"카메라 위치를 x=5, y=-5, z=3으로 이동해줘"
+```
 
-### 씬 구성
+AI가 Blender 화면을 직접 조작하면 성공 🎉
 
-> "Create a simple studio setup with a floor plane, 3-point lighting, and a camera pointing at the origin"
+---
 
-### 조명 연출
+## AI 클라이언트별 지원 현황
 
-> "Add warm sunset HDRI lighting to the scene and set the camera angle to 45 degrees"
+| AI | MCP 지원 | 비고 |
+|----|----------|------|
+| Claude Code | ✅ 완전 지원 | 가장 안정적 |
+| Cursor | ✅ 완전 지원 | VS Code 기반 |
+| VS Code Copilot | ✅ 지원 | GitHub Copilot 필요 |
+| Gemini CLI | ✅ 지원 | 무료 |
+| ChatGPT (웹) | ❌ 미지원 | — |
 
-### 렌더링
+---
 
-> "Render the current scene at 1920x1080 using Eevee with 64 samples"
+## 트러블슈팅
+
+| 증상 | 원인 | 해결 |
+|------|------|------|
+| `Connection refused` | Blender 꺼짐 또는 서버 미시작 | Blender 실행 + 서버 시작 확인 |
+| `Online access must be enabled` | 방법 A의 인터넷 허용 누락 | Preferences > System > Allow Online Access |
+| AI에서 툴이 안 보임 | AI 클라이언트 재시작 필요 | 새 세션 열기 |
+| `uvx` 명령 없음 | uv 미설치 또는 터미널 미재시작 | 터미널 닫았다가 다시 열기 |
+| `command not found: claude` | Claude Code 미설치 | [claude.ai/code](https://claude.ai/code) |
+| BlenderMCP 사이드바 탭 안 보임 | 애드온 활성화 안 됨 | Preferences > Add-ons 체크박스 확인 |
+
+---
 
 ## 수업 활용 가이드
 
 | 주차 | MCP 활용 내용 |
-|------|------------|
-| Week 02 | 설치 및 연결, 간단한 오브젝트 생성 테스트 |
-| Week 05 | 기본 씬 자동 구성 (바닥, 조명, 카메라) |
-| Week 09 | 다양한 조명 분위기 자동 연출 (스튜디오, 일몰, 야간 등) |
-| Week 13 | 카메라/렌더 설정 자동화 |
+|------|--------------|
+| Week 09 | MCP 설치 + 조명 자동 세팅 |
+| Week 13 | 카메라·렌더 설정 자동화 |
 
-## 트러블슈팅
-
-### 연결이 안 될 때
-
-1. Blender에서 MCP Server가 Started 상태인지 확인
-2. Claude Desktop을 완전히 종료 후 재시작
-3. config.json 파일 경로와 JSON 형식 확인
-4. uv/uvx가 정상 설치되었는지 터미널에서 `uvx --version` 실행
-
-### Claude에서 Blender 도구가 보이지 않을 때
-
-1. Claude 앱 우측 하단 망치 아이콘 확인
-2. 없으면 Claude Desktop 재시작
-3. config.json에 오타가 없는지 확인
-
-### Blender 5.0 호환성
-
-- Blender MCP 애드온은 Blender 3.0+ 호환
-- Blender 5.0에서도 정상 작동 확인됨
-- 5.0에서 UI가 변경되었지만 MCP 탭 위치(N키 사이드바)는 동일
+---
 
 ## 참고 링크
 
-- Blender MCP GitHub: https://github.com/ahujasid/blender-mcp
-- Claude Desktop: https://claude.ai/download
+- [Blender 공식 다운로드](https://www.blender.org/download/)
+- [Blender MCP Server 공식 페이지](https://www.blender.org/lab/mcp-server/)
+- [서드파티 blender-mcp (ahujasid)](https://github.com/ahujasid/blender-mcp)
+- [uv 공식 문서](https://docs.astral.sh/uv/)
+- [Model Context Protocol 공식](https://modelcontextprotocol.io/)
+- [Claude Code](https://claude.com/code)
+- [Claude 설치 + Blender MCP 설치 영상](https://www.youtube.com/watch?v=Xg20g0JgzsA)
+- [Blender MCP로 레퍼런스 이미지 재현하기 (심화 가이드)](https://www.notion.so/35e54d6549718192b2abe6e1570df3f5)
