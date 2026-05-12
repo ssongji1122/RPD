@@ -1,0 +1,4603 @@
+{
+  "page_id": "01554d65-4971-82d7-9578-014d62ff5665",
+  "blocks": [
+    {
+      "object": "block",
+      "id": "41b54d65-4971-82db-a1c9-01869f78d386",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "heading_1",
+      "heading_1": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Blender Texture Painting Guide ",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Blender Texture Painting Guide ",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "58c54d65-4971-82d6-a87b-019dc461833b",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Blender에서 텍스처 페인팅은 3D 모델에 색상과 디테일을 추가하는 강력한 방법입니다. 이 가이드는 텍스처 페인팅의 기본 개념부터 고급 기술까지 단계별로 안내합니다.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Blender에서 텍스처 페인팅은 3D 모델에 색상과 디테일을 추가하는 강력한 방법입니다. 이 가이드는 텍스처 페인팅의 기본 개념부터 고급 기술까지 단계별로 안내합니다.",
+            "href": null
+          }
+        ],
+        "icon": null,
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "7e554d65-4971-83c9-adaf-01eb001061db",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "heading_2",
+      "heading_2": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "텍스처 페인팅의 기본 개념",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "텍스처 페인팅의 기본 개념",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "2e254d65-4971-837e-83c4-01a912b8484a",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "텍스처 페인팅은 크게 세 단계로 나눌 수 있습니다:",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "텍스처 페인팅은 크게 세 단계로 나눌 수 있습니다:",
+            "href": null
+          }
+        ],
+        "icon": null,
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "8c254d65-4971-8258-95cb-814fcbfa09f8",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "모델 생성",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "모델 생성",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": " ~ 텍스처를 적용할 3D 모델을 만듭니다.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": " ~ 텍스처를 적용할 3D 모델을 만듭니다.",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "c6354d65-4971-8247-b53c-01558b9a73ba",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "모델 언랩",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "모델 언랩",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": " ~ 3D 모델을 2D 평면으로 펼쳐 UV 맵을 생성합니다.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": " ~ 3D 모델을 2D 평면으로 펼쳐 UV 맵을 생성합니다.",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "6cf54d65-4971-8211-8a38-81a669566c0c",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "페인팅",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "페인팅",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": " ~ 모델에 직접 텍스처를 그립니다.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": " ~ 모델에 직접 텍스처를 그립니다.",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "15954d65-4971-8249-a344-81e1b1723c58",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "heading_2",
+      "heading_2": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "언랩 전 준비 작업",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "언랩 전 준비 작업",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "b2054d65-4971-830d-b951-81cd1e51333a",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "텍스처 페인팅을 시작하기 전에 몇 가지 중요한 준비 작업이 필요합니다:",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "텍스처 페인팅을 시작하기 전에 몇 가지 중요한 준비 작업이 필요합니다:",
+            "href": null
+          }
+        ],
+        "icon": null,
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "8b254d65-4971-83f0-b27f-81f499ac70e3",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": true,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "스케일 확인",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "스케일 확인",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": " ~ 모델의 스케일이 1로 설정되어 있는지 확인합니다.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": " ~ 모델의 스케일이 1로 설정되어 있는지 확인합니다.",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": [
+        {
+          "object": "block",
+          "id": "69c54d65-4971-823e-8369-0158826264f9",
+          "parent": {
+            "type": "block_id",
+            "block_id": "8b254d65-4971-83f0-b27f-81f499ac70e3"
+          },
+          "created_time": "2026-03-08T11:43:00.000Z",
+          "last_edited_time": "2026-03-08T11:43:00.000Z",
+          "created_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "last_edited_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "has_children": false,
+          "in_trash": false,
+          "type": "bulleted_list_item",
+          "bulleted_list_item": {
+            "rich_text": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "'N' 키를 눌러 사이드바를 열고 'Item' 탭에서 스케일 값을 확인합니다.",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": false,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": "'N' 키를 눌러 사이드바를 열고 'Item' 탭에서 스케일 값을 확인합니다.",
+                "href": null
+              }
+            ],
+            "color": "default"
+          },
+          "archived": false,
+          "children": []
+        },
+        {
+          "object": "block",
+          "id": "da354d65-4971-835d-a363-01f202a20dc4",
+          "parent": {
+            "type": "block_id",
+            "block_id": "8b254d65-4971-83f0-b27f-81f499ac70e3"
+          },
+          "created_time": "2026-03-08T11:43:00.000Z",
+          "last_edited_time": "2026-03-08T11:43:00.000Z",
+          "created_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "last_edited_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "has_children": false,
+          "in_trash": false,
+          "type": "bulleted_list_item",
+          "bulleted_list_item": {
+            "rich_text": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "스케일이 1이 아니면 언랩 시 문제가 발생할 수 있습니다.",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": false,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": "스케일이 1이 아니면 언랩 시 문제가 발생할 수 있습니다.",
+                "href": null
+              }
+            ],
+            "color": "default"
+          },
+          "archived": false,
+          "children": []
+        }
+      ]
+    },
+    {
+      "object": "block",
+      "id": "53954d65-4971-8257-a37c-81dd5360efe3",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "스케일 적용",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "스케일 적용",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": " ~ 스케일이 1이 아닌 경우, 'Ctrl + A'를 누르고 'Scale'을 선택하여 스케일을 적용합니다.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": " ~ 스케일이 1이 아닌 경우, 'Ctrl + A'를 누르고 'Scale'을 선택하여 스케일을 적용합니다.",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "4f554d65-4971-8308-990b-81fa60d89471",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "heading_2",
+      "heading_2": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "UV 언랩 과정",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "UV 언랩 과정",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "f6b54d65-4971-822f-be14-013f6ef6f9d6",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": true,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "UV 편집 워크스페이스로 전환",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "UV 편집 워크스페이스로 전환",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": " ~ Blender 상단에서 'UV Editing' 워크스페이스를 선택합니다.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": " ~ Blender 상단에서 'UV Editing' 워크스페이스를 선택합니다.",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": [
+        {
+          "object": "block",
+          "id": "54054d65-4971-8382-b03a-01e7cd166fff",
+          "parent": {
+            "type": "block_id",
+            "block_id": "f6b54d65-4971-822f-be14-013f6ef6f9d6"
+          },
+          "created_time": "2026-03-08T11:43:00.000Z",
+          "last_edited_time": "2026-03-08T11:43:00.000Z",
+          "created_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "last_edited_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "has_children": false,
+          "in_trash": false,
+          "type": "bulleted_list_item",
+          "bulleted_list_item": {
+            "rich_text": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "화면이 3D 뷰포트(왼쪽)와 UV 에디터(오른쪽)로 분할됩니다.",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": false,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": "화면이 3D 뷰포트(왼쪽)와 UV 에디터(오른쪽)로 분할됩니다.",
+                "href": null
+              }
+            ],
+            "color": "default"
+          },
+          "archived": false,
+          "children": []
+        }
+      ]
+    },
+    {
+      "object": "block",
+      "id": "c7754d65-4971-8204-bbe5-012186f4a2b6",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "편집 모드 진입",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "편집 모드 진입",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": " ~ Tab 키를 눌러 편집 모드로 전환합니다.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": " ~ Tab 키를 눌러 편집 모드로 전환합니다.",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "20454d65-4971-824b-b936-015d47a64f2e",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "모든 면 선택",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "모든 면 선택",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": " ~ A 키를 눌러 모델의 모든 면을 선택합니다.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": " ~ A 키를 눌러 모델의 모든 면을 선택합니다.",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "80054d65-4971-829e-b16b-815d0d928492",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": true,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "언랩 방법 선택",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "언랩 방법 선택",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": " ~ U 키를 눌러 UV 언랩 메뉴를 열고 적절한 언랩 방법을 선택합니다:",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": " ~ U 키를 눌러 UV 언랩 메뉴를 열고 적절한 언랩 방법을 선택합니다:",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": [
+        {
+          "object": "block",
+          "id": "2aa54d65-4971-836a-b7ab-01ef50223530",
+          "parent": {
+            "type": "block_id",
+            "block_id": "80054d65-4971-829e-b16b-815d0d928492"
+          },
+          "created_time": "2026-03-08T11:43:00.000Z",
+          "last_edited_time": "2026-03-08T11:43:00.000Z",
+          "created_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "last_edited_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "has_children": true,
+          "in_trash": false,
+          "type": "bulleted_list_item",
+          "bulleted_list_item": {
+            "rich_text": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "Smart UV Project",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": true,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": "Smart UV Project",
+                "href": null
+              },
+              {
+                "type": "text",
+                "text": {
+                  "content": " ~ 가장 간단한 방법으로, 자동으로 모델을 언랩합니다.",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": false,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": " ~ 가장 간단한 방법으로, 자동으로 모델을 언랩합니다.",
+                "href": null
+              }
+            ],
+            "color": "default"
+          },
+          "archived": false,
+          "children": [
+            {
+              "object": "block",
+              "id": "ae754d65-4971-83a8-aec0-01295aa5d1ef",
+              "parent": {
+                "type": "block_id",
+                "block_id": "2aa54d65-4971-836a-b7ab-01ef50223530"
+              },
+              "created_time": "2026-03-08T11:43:00.000Z",
+              "last_edited_time": "2026-03-08T11:43:00.000Z",
+              "created_by": {
+                "object": "user",
+                "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+              },
+              "last_edited_by": {
+                "object": "user",
+                "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+              },
+              "has_children": false,
+              "in_trash": false,
+              "type": "bulleted_list_item",
+              "bulleted_list_item": {
+                "rich_text": [
+                  {
+                    "type": "text",
+                    "text": {
+                      "content": "'Island Margin' 값을 0.01 정도로 설정하여 텍스처 사이에 약간의 여백을 둡니다.",
+                      "link": null
+                    },
+                    "annotations": {
+                      "bold": false,
+                      "italic": false,
+                      "strikethrough": false,
+                      "underline": false,
+                      "code": false,
+                      "color": "default"
+                    },
+                    "plain_text": "'Island Margin' 값을 0.01 정도로 설정하여 텍스처 사이에 약간의 여백을 둡니다.",
+                    "href": null
+                  }
+                ],
+                "color": "default"
+              },
+              "archived": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "object": "block",
+          "id": "d2354d65-4971-83ff-a896-818bdf65edb3",
+          "parent": {
+            "type": "block_id",
+            "block_id": "80054d65-4971-829e-b16b-815d0d928492"
+          },
+          "created_time": "2026-03-08T11:43:00.000Z",
+          "last_edited_time": "2026-03-08T11:43:00.000Z",
+          "created_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "last_edited_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "has_children": true,
+          "in_trash": false,
+          "type": "bulleted_list_item",
+          "bulleted_list_item": {
+            "rich_text": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "Unwrap",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": true,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": "Unwrap",
+                "href": null
+              },
+              {
+                "type": "text",
+                "text": {
+                  "content": " ~ 미리 지정한 심(Seam)을 따라 모델을 펼칩니다.",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": false,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": " ~ 미리 지정한 심(Seam)을 따라 모델을 펼칩니다.",
+                "href": null
+              }
+            ],
+            "color": "default"
+          },
+          "archived": false,
+          "children": [
+            {
+              "object": "block",
+              "id": "a2d54d65-4971-821c-b1bb-81889e201c75",
+              "parent": {
+                "type": "block_id",
+                "block_id": "d2354d65-4971-83ff-a896-818bdf65edb3"
+              },
+              "created_time": "2026-03-08T11:43:00.000Z",
+              "last_edited_time": "2026-03-08T11:43:00.000Z",
+              "created_by": {
+                "object": "user",
+                "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+              },
+              "last_edited_by": {
+                "object": "user",
+                "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+              },
+              "has_children": false,
+              "in_trash": false,
+              "type": "bulleted_list_item",
+              "bulleted_list_item": {
+                "rich_text": [
+                  {
+                    "type": "text",
+                    "text": {
+                      "content": "복잡한 모델의 경우 먼저 심을 지정해야 합니다(Edge Select 모드에서 Ctrl+E > Mark Seam).",
+                      "link": null
+                    },
+                    "annotations": {
+                      "bold": false,
+                      "italic": false,
+                      "strikethrough": false,
+                      "underline": false,
+                      "code": false,
+                      "color": "default"
+                    },
+                    "plain_text": "복잡한 모델의 경우 먼저 심을 지정해야 합니다(Edge Select 모드에서 Ctrl+E > Mark Seam).",
+                    "href": null
+                  }
+                ],
+                "color": "default"
+              },
+              "archived": false,
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "object": "block",
+      "id": "c7e54d65-4971-83f9-a46c-01d57d84b321",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": true,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "UV 아일랜드 관리",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "UV 아일랜드 관리",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": " ~ 언랩 후 UV 에디터에 나타나는 UV 아일랜드(조각)들을 효율적으로 배치합니다.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": " ~ 언랩 후 UV 에디터에 나타나는 UV 아일랜드(조각)들을 효율적으로 배치합니다.",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": [
+        {
+          "object": "block",
+          "id": "b9b54d65-4971-8363-99de-81692ce67468",
+          "parent": {
+            "type": "block_id",
+            "block_id": "c7e54d65-4971-83f9-a46c-01d57d84b321"
+          },
+          "created_time": "2026-03-08T11:43:00.000Z",
+          "last_edited_time": "2026-03-08T11:43:00.000Z",
+          "created_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "last_edited_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "has_children": false,
+          "in_trash": false,
+          "type": "bulleted_list_item",
+          "bulleted_list_item": {
+            "rich_text": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "'UVs' 메뉴 > 'Pack Islands'를 선택하여 UV 공간을 최대한 활용하도록 배치할 수 있습니다.",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": false,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": "'UVs' 메뉴 > 'Pack Islands'를 선택하여 UV 공간을 최대한 활용하도록 배치할 수 있습니다.",
+                "href": null
+              }
+            ],
+            "color": "default"
+          },
+          "archived": false,
+          "children": []
+        }
+      ]
+    },
+    {
+      "object": "block",
+      "id": "40254d65-4971-838d-9b1a-01c568f23429",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "heading_2",
+      "heading_2": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "텍스처 생성 및 페인팅",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "텍스처 생성 및 페인팅",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "eef54d65-4971-83b5-8698-813cd8429258",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "텍스처 페인트 워크스페이스로 전환",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "텍스처 페인트 워크스페이스로 전환",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": " ~ Blender 상단에서 'Texture Paint' 워크스페이스를 선택합니다.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": " ~ Blender 상단에서 'Texture Paint' 워크스페이스를 선택합니다.",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "98c54d65-4971-8231-8ba1-81f61edd3c6d",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-04-14T02:52:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": true,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "새 ",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "새 ",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": "드롭다운 메뉴에서 '+' 버튼을 클릭하고 'Base Color'를 선택합니다.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "드롭다운 메뉴에서 '+' 버튼을 클릭하고 'Base Color'를 선택합니다.",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": [
+        {
+          "object": "block",
+          "id": "96e54d65-4971-8239-984b-0165f20a702f",
+          "parent": {
+            "type": "block_id",
+            "block_id": "98c54d65-4971-8231-8ba1-81f61edd3c6d"
+          },
+          "created_time": "2026-03-08T11:43:00.000Z",
+          "last_edited_time": "2026-03-08T11:43:00.000Z",
+          "created_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "last_edited_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "has_children": false,
+          "in_trash": false,
+          "type": "bulleted_list_item",
+          "bulleted_list_item": {
+            "rich_text": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "텍스처 해상도 설정(예: 2048x2048) - 높을수록 디테일이 좋아집니다.",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": false,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": "텍스처 해상도 설정(예: 2048x2048) - 높을수록 디테일이 좋아집니다.",
+                "href": null
+              }
+            ],
+            "color": "default"
+          },
+          "archived": false,
+          "children": []
+        },
+        {
+          "object": "block",
+          "id": "46454d65-4971-82f4-91cd-81861d016f15",
+          "parent": {
+            "type": "block_id",
+            "block_id": "98c54d65-4971-8231-8ba1-81f61edd3c6d"
+          },
+          "created_time": "2026-03-08T11:43:00.000Z",
+          "last_edited_time": "2026-03-08T11:43:00.000Z",
+          "created_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "last_edited_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "has_children": false,
+          "in_trash": false,
+          "type": "bulleted_list_item",
+          "bulleted_list_item": {
+            "rich_text": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "Alpha(투명도)는 필요하지 않다면 비활성화합니다.",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": false,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": "Alpha(투명도)는 필요하지 않다면 비활성화합니다.",
+                "href": null
+              }
+            ],
+            "color": "default"
+          },
+          "archived": false,
+          "children": []
+        },
+        {
+          "object": "block",
+          "id": "c0154d65-4971-8265-a9ca-81ef0be23802",
+          "parent": {
+            "type": "block_id",
+            "block_id": "98c54d65-4971-8231-8ba1-81f61edd3c6d"
+          },
+          "created_time": "2026-03-08T11:43:00.000Z",
+          "last_edited_time": "2026-03-08T11:43:00.000Z",
+          "created_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "last_edited_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "has_children": false,
+          "in_trash": false,
+          "type": "bulleted_list_item",
+          "bulleted_list_item": {
+            "rich_text": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "기본 색상을 설정합니다 - 보통 흰색이나 회색으로 시작합니다.",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": false,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": "기본 색상을 설정합니다 - 보통 흰색이나 회색으로 시작합니다.",
+                "href": null
+              }
+            ],
+            "color": "default"
+          },
+          "archived": false,
+          "children": []
+        }
+      ]
+    },
+    {
+      "object": "block",
+      "id": "16d54d65-4971-836c-9c77-0142373ae717",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": true,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "페인팅 환경 설정",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "페인팅 환경 설정",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": [
+        {
+          "object": "block",
+          "id": "43754d65-4971-831e-8afc-8150862d5cbd",
+          "parent": {
+            "type": "block_id",
+            "block_id": "16d54d65-4971-836c-9c77-0142373ae717"
+          },
+          "created_time": "2026-03-08T11:43:00.000Z",
+          "last_edited_time": "2026-03-08T11:43:00.000Z",
+          "created_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "last_edited_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "has_children": false,
+          "in_trash": false,
+          "type": "bulleted_list_item",
+          "bulleted_list_item": {
+            "rich_text": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "셰이딩 모드 변경",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": true,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": "셰이딩 모드 변경",
+                "href": null
+              },
+              {
+                "type": "text",
+                "text": {
+                  "content": " ~ 오른쪽 상단의 구형 아이콘 중 세 번째(Material Preview)를 선택하여 재질 미리보기 모드로 전환합니다.",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": false,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": " ~ 오른쪽 상단의 구형 아이콘 중 세 번째(Material Preview)를 선택하여 재질 미리보기 모드로 전환합니다.",
+                "href": null
+              }
+            ],
+            "color": "default"
+          },
+          "archived": false,
+          "children": []
+        },
+        {
+          "object": "block",
+          "id": "37454d65-4971-8355-9b96-819c64cb499c",
+          "parent": {
+            "type": "block_id",
+            "block_id": "16d54d65-4971-836c-9c77-0142373ae717"
+          },
+          "created_time": "2026-03-08T11:43:00.000Z",
+          "last_edited_time": "2026-03-08T11:43:00.000Z",
+          "created_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "last_edited_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "has_children": true,
+          "in_trash": false,
+          "type": "bulleted_list_item",
+          "bulleted_list_item": {
+            "rich_text": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "Bleed 설정",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": true,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": "Bleed 설정",
+                "href": null
+              },
+              {
+                "type": "text",
+                "text": {
+                  "content": " ~ 'Tool and Workspace settings'의 'Options' 아래에서 'Bleed' 값을 약 12로 설정합니다.",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": false,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": " ~ 'Tool and Workspace settings'의 'Options' 아래에서 'Bleed' 값을 약 12로 설정합니다.",
+                "href": null
+              }
+            ],
+            "color": "default"
+          },
+          "archived": false,
+          "children": [
+            {
+              "object": "block",
+              "id": "d4f54d65-4971-82bd-893b-81fba5ac3a1e",
+              "parent": {
+                "type": "block_id",
+                "block_id": "37454d65-4971-8355-9b96-819c64cb499c"
+              },
+              "created_time": "2026-03-08T11:43:00.000Z",
+              "last_edited_time": "2026-03-08T11:43:00.000Z",
+              "created_by": {
+                "object": "user",
+                "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+              },
+              "last_edited_by": {
+                "object": "user",
+                "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+              },
+              "has_children": false,
+              "in_trash": false,
+              "type": "bulleted_list_item",
+              "bulleted_list_item": {
+                "rich_text": [
+                  {
+                    "type": "text",
+                    "text": {
+                      "content": "이는 텍스처 가장자리 너머로 페인트가 번지는 거리를 설정하여 경계 부근의 아티팩트를 방지합니다.",
+                      "link": null
+                    },
+                    "annotations": {
+                      "bold": false,
+                      "italic": false,
+                      "strikethrough": false,
+                      "underline": false,
+                      "code": false,
+                      "color": "default"
+                    },
+                    "plain_text": "이는 텍스처 가장자리 너머로 페인트가 번지는 거리를 설정하여 경계 부근의 아티팩트를 방지합니다.",
+                    "href": null
+                  }
+                ],
+                "color": "default"
+              },
+              "archived": false,
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "object": "block",
+      "id": "f9654d65-4971-836a-887f-8131ba893341",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": true,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "브러시 설정 및 사용",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "브러시 설정 및 사용",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": [
+        {
+          "object": "block",
+          "id": "35354d65-4971-83ea-a652-0160ee8d89aa",
+          "parent": {
+            "type": "block_id",
+            "block_id": "f9654d65-4971-836a-887f-8131ba893341"
+          },
+          "created_time": "2026-03-08T11:43:00.000Z",
+          "last_edited_time": "2026-03-08T11:43:00.000Z",
+          "created_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "last_edited_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "has_children": false,
+          "in_trash": false,
+          "type": "bulleted_list_item",
+          "bulleted_list_item": {
+            "rich_text": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "브러시 크기 조절",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": true,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": "브러시 크기 조절",
+                "href": null
+              },
+              {
+                "type": "text",
+                "text": {
+                  "content": " ~ F 키를 누르고 마우스를 좌우로 이동하거나 상단 설정에서 'Radius' 값을 조절합니다.",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": false,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": " ~ F 키를 누르고 마우스를 좌우로 이동하거나 상단 설정에서 'Radius' 값을 조절합니다.",
+                "href": null
+              }
+            ],
+            "color": "default"
+          },
+          "archived": false,
+          "children": []
+        },
+        {
+          "object": "block",
+          "id": "00954d65-4971-8282-8e54-8110d9bedc4c",
+          "parent": {
+            "type": "block_id",
+            "block_id": "f9654d65-4971-836a-887f-8131ba893341"
+          },
+          "created_time": "2026-03-08T11:43:00.000Z",
+          "last_edited_time": "2026-03-08T11:43:00.000Z",
+          "created_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "last_edited_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "has_children": false,
+          "in_trash": false,
+          "type": "bulleted_list_item",
+          "bulleted_list_item": {
+            "rich_text": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "브러시 강도 조절",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": true,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": "브러시 강도 조절",
+                "href": null
+              },
+              {
+                "type": "text",
+                "text": {
+                  "content": " ~ Shift+F 키를 누르고 마우스를 좌우로 이동하거나 상단 설정에서 'Strength' 값을 조절합니다.",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": false,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": " ~ Shift+F 키를 누르고 마우스를 좌우로 이동하거나 상단 설정에서 'Strength' 값을 조절합니다.",
+                "href": null
+              }
+            ],
+            "color": "default"
+          },
+          "archived": false,
+          "children": []
+        },
+        {
+          "object": "block",
+          "id": "51154d65-4971-825e-9347-0196775e2d75",
+          "parent": {
+            "type": "block_id",
+            "block_id": "f9654d65-4971-836a-887f-8131ba893341"
+          },
+          "created_time": "2026-03-08T11:43:00.000Z",
+          "last_edited_time": "2026-03-08T11:43:00.000Z",
+          "created_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "last_edited_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "has_children": false,
+          "in_trash": false,
+          "type": "bulleted_list_item",
+          "bulleted_list_item": {
+            "rich_text": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "색상 선택",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": true,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": "색상 선택",
+                "href": null
+              },
+              {
+                "type": "text",
+                "text": {
+                  "content": " ~ 화면 하단 또는 상단 중앙의 Color Picker를 사용하여 페인팅할 색상을 선택합니다.",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": false,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": " ~ 화면 하단 또는 상단 중앙의 Color Picker를 사용하여 페인팅할 색상을 선택합니다.",
+                "href": null
+              }
+            ],
+            "color": "default"
+          },
+          "archived": false,
+          "children": []
+        }
+      ]
+    },
+    {
+      "object": "block",
+      "id": "dd154d65-4971-8304-bc80-018cee95b527",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "페인팅 실행",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "페인팅 실행",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": " ~ 왼쪽 마우스 버튼을 클릭하여 모델에 직접 페인트합니다.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": " ~ 왼쪽 마우스 버튼을 클릭하여 모델에 직접 페인트합니다.",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "07254d65-4971-8200-a504-01340832616f",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "heading_2",
+      "heading_2": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "고급 페인팅 기법",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "고급 페인팅 기법",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "f3f54d65-4971-83db-8926-01ffe253ccd2",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "heading_3",
+      "heading_3": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "UDIM(다중 텍스처) 사용하기",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "UDIM(다중 텍스처) 사용하기",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "c4d54d65-4971-8347-9e65-013efcc10d53",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "UDIM은 하나의 객체에 여러 텍스처를 사용하는 기술입니다:",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "UDIM은 하나의 객체에 여러 텍스처를 사용하는 기술입니다:",
+            "href": null
+          }
+        ],
+        "icon": null,
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "43f54d65-4971-83fc-9470-8115cdfb34d0",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": true,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "UDIM 설정",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "UDIM 설정",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": [
+        {
+          "object": "block",
+          "id": "bd454d65-4971-82f6-8d11-8184e1990064",
+          "parent": {
+            "type": "block_id",
+            "block_id": "43f54d65-4971-83fc-9470-8115cdfb34d0"
+          },
+          "created_time": "2026-03-08T11:43:00.000Z",
+          "last_edited_time": "2026-03-08T11:43:00.000Z",
+          "created_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "last_edited_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "has_children": false,
+          "in_trash": false,
+          "type": "bulleted_list_item",
+          "bulleted_list_item": {
+            "rich_text": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "UV 편집기에서 새 텍스처 생성 시 'Tiled' 옵션을 체크합니다.",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": false,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": "UV 편집기에서 새 텍스처 생성 시 'Tiled' 옵션을 체크합니다.",
+                "href": null
+              }
+            ],
+            "color": "default"
+          },
+          "archived": false,
+          "children": []
+        },
+        {
+          "object": "block",
+          "id": "12054d65-4971-8256-85b0-01732e15175a",
+          "parent": {
+            "type": "block_id",
+            "block_id": "43f54d65-4971-83fc-9470-8115cdfb34d0"
+          },
+          "created_time": "2026-03-08T11:43:00.000Z",
+          "last_edited_time": "2026-03-08T11:43:00.000Z",
+          "created_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "last_edited_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "has_children": false,
+          "in_trash": false,
+          "type": "bulleted_list_item",
+          "bulleted_list_item": {
+            "rich_text": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "'Image' 탭 하단의 UDIM 설정에서 필요한 타일을 추가합니다.",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": false,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": "'Image' 탭 하단의 UDIM 설정에서 필요한 타일을 추가합니다.",
+                "href": null
+              }
+            ],
+            "color": "default"
+          },
+          "archived": false,
+          "children": []
+        }
+      ]
+    },
+    {
+      "object": "block",
+      "id": "d4854d65-4971-83ac-9615-01fe23b92228",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": true,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "UV 아일랜드 배치",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "UV 아일랜드 배치",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": [
+        {
+          "object": "block",
+          "id": "24354d65-4971-8370-8561-81492bfec6c8",
+          "parent": {
+            "type": "block_id",
+            "block_id": "d4854d65-4971-83ac-9615-01fe23b92228"
+          },
+          "created_time": "2026-03-08T11:43:00.000Z",
+          "last_edited_time": "2026-03-08T11:43:00.000Z",
+          "created_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "last_edited_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "has_children": false,
+          "in_trash": false,
+          "type": "bulleted_list_item",
+          "bulleted_list_item": {
+            "rich_text": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "UV 아일랜드를 원하는 UDIM 타일로 이동시킵니다.",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": false,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": "UV 아일랜드를 원하는 UDIM 타일로 이동시킵니다.",
+                "href": null
+              }
+            ],
+            "color": "default"
+          },
+          "archived": false,
+          "children": []
+        },
+        {
+          "object": "block",
+          "id": "e9154d65-4971-8206-90b3-01c00bd34d51",
+          "parent": {
+            "type": "block_id",
+            "block_id": "d4854d65-4971-83ac-9615-01fe23b92228"
+          },
+          "created_time": "2026-03-08T11:43:00.000Z",
+          "last_edited_time": "2026-03-08T11:43:00.000Z",
+          "created_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "last_edited_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "has_children": false,
+          "in_trash": false,
+          "type": "bulleted_list_item",
+          "bulleted_list_item": {
+            "rich_text": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "'Pack Islands' 기능 사용 시 'Pack To'를 'Closest UDIM'으로 설정하면 자동 배치됩니다.",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": false,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": "'Pack Islands' 기능 사용 시 'Pack To'를 'Closest UDIM'으로 설정하면 자동 배치됩니다.",
+                "href": null
+              }
+            ],
+            "color": "default"
+          },
+          "archived": false,
+          "children": []
+        }
+      ]
+    },
+    {
+      "object": "block",
+      "id": "28854d65-4971-832e-80d8-01deab41acef",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "heading_3",
+      "heading_3": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "페인트 마스크 사용하기",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "페인트 마스크 사용하기",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "c9e54d65-4971-83bc-9724-01ca779210c4",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "특정 영역에만 페인팅을 제한하는 기능입니다:",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "특정 영역에만 페인팅을 제한하는 기능입니다:",
+            "href": null
+          }
+        ],
+        "icon": null,
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "ce654d65-4971-83b0-9492-81f09e7fa32a",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "편집 모드에서 페인팅하려는 면을 선택합니다.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "편집 모드에서 페인팅하려는 면을 선택합니다.",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "a8b54d65-4971-83e4-a2e6-0140b76a46b5",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "텍스처 페인트 모드로 돌아와 'Paint Mask' 토글을 활성화합니다.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "텍스처 페인트 모드로 돌아와 'Paint Mask' 토글을 활성화합니다.",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "67954d65-4971-825f-80e6-818b126abaed",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "이제 선택한 면에만 페인팅이 적용됩니다.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "이제 선택한 면에만 페인팅이 적용됩니다.",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "dc554d65-4971-8216-9ad9-812745669d25",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "heading_3",
+      "heading_3": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "텍스처 마스크(스텐실) 사용하기",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "텍스처 마스크(스텐실) 사용하기",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "a7154d65-4971-832b-9f98-0198eeb62d9b",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "이미지를 마스크로 사용하여 특정 패턴으로 페인팅하는 기능입니다:",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "이미지를 마스크로 사용하여 특정 패턴으로 페인팅하는 기능입니다:",
+            "href": null
+          }
+        ],
+        "icon": null,
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "72254d65-4971-82ea-972b-81fc2da9477c",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "'Draw' 브러시를 선택합니다.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "'Draw' 브러시를 선택합니다.",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "ed754d65-4971-83f5-815a-01ef1df765f0",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "'Tool Settings'의 'Texture Mask' 탭에서 새 텍스처를 생성하고 이미지를 로드합니다.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "'Tool Settings'의 'Texture Mask' 탭에서 새 텍스처를 생성하고 이미지를 로드합니다.",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "c3354d65-4971-82dc-9e86-81a2577bbd86",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "'Mapping Options'에서 'Stencil'을 선택합니다.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "'Mapping Options'에서 'Stencil'을 선택합니다.",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "b8654d65-4971-8271-9829-0141ffb94764",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": true,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "스텐실 조작:",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "스텐실 조작:",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": [
+        {
+          "object": "block",
+          "id": "6b654d65-4971-839b-867b-019296439d72",
+          "parent": {
+            "type": "block_id",
+            "block_id": "b8654d65-4971-8271-9829-0141ffb94764"
+          },
+          "created_time": "2026-03-08T11:43:00.000Z",
+          "last_edited_time": "2026-03-08T11:43:00.000Z",
+          "created_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "last_edited_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "has_children": false,
+          "in_trash": false,
+          "type": "bulleted_list_item",
+          "bulleted_list_item": {
+            "rich_text": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "이동: Alt + 오른쪽 클릭",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": false,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": "이동: Alt + 오른쪽 클릭",
+                "href": null
+              }
+            ],
+            "color": "default"
+          },
+          "archived": false,
+          "children": []
+        },
+        {
+          "object": "block",
+          "id": "64954d65-4971-8205-8f45-0174ce8cdf30",
+          "parent": {
+            "type": "block_id",
+            "block_id": "b8654d65-4971-8271-9829-0141ffb94764"
+          },
+          "created_time": "2026-03-08T11:43:00.000Z",
+          "last_edited_time": "2026-03-08T11:43:00.000Z",
+          "created_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "last_edited_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "has_children": false,
+          "in_trash": false,
+          "type": "bulleted_list_item",
+          "bulleted_list_item": {
+            "rich_text": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "크기 조절: Shift + Alt + 오른쪽 클릭",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": false,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": "크기 조절: Shift + Alt + 오른쪽 클릭",
+                "href": null
+              }
+            ],
+            "color": "default"
+          },
+          "archived": false,
+          "children": []
+        },
+        {
+          "object": "block",
+          "id": "bdf54d65-4971-83da-92b1-815c6ce138cb",
+          "parent": {
+            "type": "block_id",
+            "block_id": "b8654d65-4971-8271-9829-0141ffb94764"
+          },
+          "created_time": "2026-03-08T11:43:00.000Z",
+          "last_edited_time": "2026-03-08T11:43:00.000Z",
+          "created_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "last_edited_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "has_children": false,
+          "in_trash": false,
+          "type": "bulleted_list_item",
+          "bulleted_list_item": {
+            "rich_text": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "회전: Ctrl + Alt + 오른쪽 클릭",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": false,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": "회전: Ctrl + Alt + 오른쪽 클릭",
+                "href": null
+              }
+            ],
+            "color": "default"
+          },
+          "archived": false,
+          "children": []
+        }
+      ]
+    },
+    {
+      "object": "block",
+      "id": "2b154d65-4971-8227-b287-01092115c3eb",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "heading_2",
+      "heading_2": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "텍스처 저장과 응용",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "텍스처 저장과 응용",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "03a54d65-4971-83f8-8382-0157b9d35814",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "heading_3",
+      "heading_3": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "텍스처 저장 (매우 중요!)",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "텍스처 저장 (매우 중요!)",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "bc754d65-4971-8376-b54c-8157a4d9c2fd",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Blender는 페인팅한 텍스처를 자동으로 저장하지 않습니다",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Blender는 페인팅한 텍스처를 자동으로 저장하지 않습니다",
+            "href": null
+          }
+        ],
+        "icon": null,
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "94654d65-4971-823b-b51a-013b1cfa7274",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "UV 편집기 또는 이미지 편집기에서 'Image' 메뉴 > 'Save As'를 선택합니다.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "UV 편집기 또는 이미지 편집기에서 'Image' 메뉴 > 'Save As'를 선택합니다.",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "5e154d65-4971-8248-9c3e-018e95beeac9",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "적절한 위치와 형식으로 텍스처를 저장합니다.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "적절한 위치와 형식으로 텍스처를 저장합니다.",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "a5554d65-4971-82bc-bbf6-8137c73c8463",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "UDIM을 사용한 경우 파일 이름에 '(UDIM)'이 포함되어 있는지 확인합니다.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "UDIM을 사용한 경우 파일 이름에 '(UDIM)'이 포함되어 있는지 확인합니다.",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "3c954d65-4971-8337-b89a-0155f2836545",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "heading_3",
+      "heading_3": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "프로시저럴 텍스처 활용하기",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "프로시저럴 텍스처 활용하기",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "14254d65-4971-8308-a0fa-81875a48e22b",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "노드 기반 텍스처를 수작업으로 페인팅한 텍스처와 결합할 수 있습니다",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "노드 기반 텍스처를 수작업으로 페인팅한 텍스처와 결합할 수 있습니다",
+            "href": null
+          }
+        ],
+        "icon": null,
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "ff754d65-4971-8261-a98c-81909d3b306d",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": true,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Shader Editor에서 다음과 같은 노드들을 활용합니다:",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Shader Editor에서 다음과 같은 노드들을 활용합니다:",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": [
+        {
+          "object": "block",
+          "id": "61554d65-4971-833c-b274-8110e17f4a59",
+          "parent": {
+            "type": "block_id",
+            "block_id": "ff754d65-4971-8261-a98c-81909d3b306d"
+          },
+          "created_time": "2026-03-08T11:43:00.000Z",
+          "last_edited_time": "2026-03-08T11:43:00.000Z",
+          "created_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "last_edited_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "has_children": false,
+          "in_trash": false,
+          "type": "bulleted_list_item",
+          "bulleted_list_item": {
+            "rich_text": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "Voronoi Texture, Noise Texture: 무작위 패턴 생성",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": false,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": "Voronoi Texture, Noise Texture: 무작위 패턴 생성",
+                "href": null
+              }
+            ],
+            "color": "default"
+          },
+          "archived": false,
+          "children": []
+        },
+        {
+          "object": "block",
+          "id": "c9c54d65-4971-82b5-a684-817ff0c2013a",
+          "parent": {
+            "type": "block_id",
+            "block_id": "ff754d65-4971-8261-a98c-81909d3b306d"
+          },
+          "created_time": "2026-03-08T11:43:00.000Z",
+          "last_edited_time": "2026-03-08T11:43:00.000Z",
+          "created_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "last_edited_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "has_children": false,
+          "in_trash": false,
+          "type": "bulleted_list_item",
+          "bulleted_list_item": {
+            "rich_text": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "Color Ramp: 패턴의 대비 및 색상 조절",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": false,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": "Color Ramp: 패턴의 대비 및 색상 조절",
+                "href": null
+              }
+            ],
+            "color": "default"
+          },
+          "archived": false,
+          "children": []
+        },
+        {
+          "object": "block",
+          "id": "e9554d65-4971-839c-ad68-019e5e3eca27",
+          "parent": {
+            "type": "block_id",
+            "block_id": "ff754d65-4971-8261-a98c-81909d3b306d"
+          },
+          "created_time": "2026-03-08T11:43:00.000Z",
+          "last_edited_time": "2026-03-08T11:43:00.000Z",
+          "created_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "last_edited_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "has_children": false,
+          "in_trash": false,
+          "type": "bulleted_list_item",
+          "bulleted_list_item": {
+            "rich_text": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "Map Range: 값의 범위 조정",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": false,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": "Map Range: 값의 범위 조정",
+                "href": null
+              }
+            ],
+            "color": "default"
+          },
+          "archived": false,
+          "children": []
+        },
+        {
+          "object": "block",
+          "id": "41e54d65-4971-837f-9d70-81fc66e50efb",
+          "parent": {
+            "type": "block_id",
+            "block_id": "ff754d65-4971-8261-a98c-81909d3b306d"
+          },
+          "created_time": "2026-03-08T11:43:00.000Z",
+          "last_edited_time": "2026-03-08T11:43:00.000Z",
+          "created_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "last_edited_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "has_children": false,
+          "in_trash": false,
+          "type": "bulleted_list_item",
+          "bulleted_list_item": {
+            "rich_text": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "Bump Node: 표면 디테일 추가",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": false,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": "Bump Node: 표면 디테일 추가",
+                "href": null
+              }
+            ],
+            "color": "default"
+          },
+          "archived": false,
+          "children": []
+        }
+      ]
+    },
+    {
+      "object": "block",
+      "id": "2e054d65-4971-8384-88d0-81e8fef0896d",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "이러한 노드들을 페인팅된 Base Color 텍스처와 Mix 노드를 사용하여 결합합니다.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "이러한 노드들을 페인팅된 Base Color 텍스처와 Mix 노드를 사용하여 결합합니다.",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "2ef54d65-4971-82b5-89b0-01b07e10de97",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Bump Node와 Roughness 입력을 활용하여 표면의 질감과 반사율에 변화를 줍니다.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Bump Node와 Roughness 입력을 활용하여 표면의 질감과 반사율에 변화를 줍니다.",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "7ac54d65-4971-82aa-81b2-815331d3bd2f",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "heading_2",
+      "heading_2": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "실습 예제: 캡틴 아메리카 방패 만들기",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "실습 예제: 캡틴 아메리카 방패 만들기",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "75354d65-4971-835a-a0ad-0190c8424332",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "캡틴 아메리카 방패를 예로 들어 텍스처 페인팅 과정을 실습해 볼 수 있습니다",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "캡틴 아메리카 방패를 예로 들어 텍스처 페인팅 과정을 실습해 볼 수 있습니다",
+            "href": null
+          }
+        ],
+        "icon": null,
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "aba54d65-4971-8234-a31c-01a331a882b8",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "원형 방패 모델을 만들고 UV 언랩합니다.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "원형 방패 모델을 만들고 UV 언랩합니다.",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "c0454d65-4971-83ee-9340-01c000c0f82a",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Paint Mask를 사용하여 동심원을 따라 빨강과 흰색을 번갈아 칠합니다.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Paint Mask를 사용하여 동심원을 따라 빨강과 흰색을 번갈아 칠합니다.",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "26e54d65-4971-83e8-a26b-01c34ffdb84d",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "스텐실을 사용하여 중앙에 별 모양을 그립니다.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "스텐실을 사용하여 중앙에 별 모양을 그립니다.",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "4f354d65-4971-837b-ac3b-01cc6a8ccbdb",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "프로시저럴 텍스처를 활용하여 금속 재질과 스크래치 효과를 추가합니다.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "프로시저럴 텍스처를 활용하여 금속 재질과 스크래치 효과를 추가합니다.",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "02854d65-4971-825b-8341-81abb6c4778c",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "heading_2",
+      "heading_2": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "주의사항 및 팁",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "주의사항 및 팁",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "ea754d65-4971-820a-bf63-8192d91426d7",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "정기적으로 저장하세요",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "정기적으로 저장하세요",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": " ~ 텍스처 작업 중 정기적으로 저장하여 작업 손실을 방지하세요.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": " ~ 텍스처 작업 중 정기적으로 저장하여 작업 손실을 방지하세요.",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "c4354d65-4971-821f-9fdd-019596517d75",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "적절한 해상도 선택",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "적절한 해상도 선택",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": " ~ 너무 높은 해상도는 성능 저하를, 너무 낮은 해상도는 품질 저하를 가져옵니다.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": " ~ 너무 높은 해상도는 성능 저하를, 너무 낮은 해상도는 품질 저하를 가져옵니다.",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "54654d65-4971-835e-a067-013c7d3ae56d",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "UV 아일랜드 간격 유지",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "UV 아일랜드 간격 유지",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": " ~ UV 아일랜드 사이에 충분한 간격을 두어 텍스처 번짐을 방지하세요.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": " ~ UV 아일랜드 사이에 충분한 간격을 두어 텍스처 번짐을 방지하세요.",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "27454d65-4971-821d-a861-017a5c7feff2",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "레이어 개념 활용",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "레이어 개념 활용",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": " ~ 페인팅 시 기본 색상부터 시작하여 점차 디테일을 추가하는 방식으로 작업하세요.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": " ~ 페인팅 시 기본 색상부터 시작하여 점차 디테일을 추가하는 방식으로 작업하세요.",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "2d354d65-4971-8321-87f9-014b869d91ef",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "heading_2",
+      "heading_2": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "참고 자료",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "참고 자료",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "63f54d65-4971-8216-b22c-01232a4b0247",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "텍스처 페인팅에 대해 더 자세히 알아보려면 다음 유튜브 영상을 참고하세이 가이드를 통해 Blender에서 텍스처 페인팅의 기본을 익히고 창의적인 3D 작품을 만들어 보세요!",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "텍스처 페인팅에 대해 더 자세히 알아보려면 다음 유튜브 영상을 참고하세이 가이드를 통해 Blender에서 텍스처 페인팅의 기본을 익히고 창의적인 3D 작품을 만들어 보세요!",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "55d54d65-4971-83fe-ae81-018c5b41d169",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": true,
+      "in_trash": false,
+      "type": "synced_block",
+      "synced_block": {
+        "synced_from": {
+          "type": "block_id",
+          "block_id": "92654d65-4971-8248-8338-81ea114a9fa6"
+        }
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "01154d65-4971-82bc-aa69-01af6549bbe8",
+      "parent": {
+        "type": "page_id",
+        "page_id": "01554d65-4971-82d7-9578-014d62ff5665"
+      },
+      "created_time": "2026-03-08T11:43:00.000Z",
+      "last_edited_time": "2026-03-08T11:43:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": [],
+        "icon": null,
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    }
+  ]
+}
