@@ -47,6 +47,8 @@ const CURRICULUM = """
 CURRICULUM_FOOTER = """\
 ;
 
+// 브라우저 window 프로퍼티 등록 (notion-renderer.js 등 window.CURRICULUM 참조 대응)
+if (typeof window !== "undefined") window.CURRICULUM = CURRICULUM;
 // Node.js 환경 대응
 if (typeof module !== "undefined") module.exports = CURRICULUM;
 """
