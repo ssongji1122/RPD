@@ -80,8 +80,10 @@
           document.getElementById('spTitle').textContent = title || '자료';
           document.getElementById('spPageTitle').textContent = title || '';
 
-          var html = typeof window.renderBlocks === 'function' ? window.renderBlocks(blocks) : '';
-          document.getElementById('spBlocks').innerHTML = html;
+          var container = document.getElementById('spBlocks');
+          if (typeof window.renderBlocks === 'function') {
+            window.renderBlocks(blocks, container);
+          }
 
           document.getElementById('spLoading').style.display = 'none';
           document.getElementById('spContent').style.display = '';
