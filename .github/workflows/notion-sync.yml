@@ -43,7 +43,9 @@ jobs:
       - name: Check for changes
         id: check
         run: |
-          if git diff --quiet weeks/site-data.json course-site/data/curriculum-notion.json; then
+          if git diff --quiet weeks/site-data.json course-site/data/curriculum-notion.json && \
+             git diff --quiet -- course-site/data/notion-blocks/ course-site/assets/notion-images/ && \
+             ! git ls-files --others --exclude-standard -- course-site/data/notion-blocks/ course-site/assets/notion-images/ | grep -q .; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
@@ -58,6 +60,8 @@ jobs:
                   weeks/site-data.json \
                   course-site/data/curriculum.js \
                   course-site/data/curriculum.json \
-                  weeks/week*/lecture-note.md
+                  weeks/week*/lecture-note.md \
+                  course-site/data/notion-blocks/ \
+                  course-site/assets/notion-images/
           git commit -m "sync: Notion → canonical $(date -u +'%Y-%m-%d %H:%M UTC')"
           git push
