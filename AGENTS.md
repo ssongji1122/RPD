@@ -79,22 +79,35 @@ npx playwright test
 ## Knowledge Pointers
 
 <!-- BEGIN:WIKI -->
-_last sync: 2026-05-06_
+_last sync: 2026-05-12_
 
-- codex
+- [[agents-md-sst]] — AGENTS.md SSoT 전략 (symlink, .cursorrules deprecated) | 2026-05-06
+- [[gemini-cli-agents-md]] — Gemini CLI context.fileName 설정 | 2026-05-06
+- [[sync-wiki-pipeline]] — Obsidian→AGENTS.md 자동 주입 파이프라인 | 2026-05-06
+- [[agent-init-template]] — 프로젝트 멀티 에이전트 초기화 자동화 | 2026-05-06
+- [[gstack-ship-workflow-notes]] — /ship 워크플로우 운영 노트 (pre-commit hook, 장기 브랜치) | 2026-05-11
+- [[creative-engine-score-gate]] — Creative Engine P4-P6 점수 게이트 아키텍처·버그 이력 | 2026-05-11
+- [[ai-automation-5mode-policy]] — AI 자동화 5-mode 정책 (₩22,029 사고 후 도입) | 2026-05-11
+- [[vitest-fork-pool-pitfall]] — vitest pool:forks + jest-dom 초기화 pitfall | 2026-05-11
+- [[prompt-upgrade-8-techniques]] _(draft)_ — AI 프롬프트 8기법 + 만능 템플릿 (맥락>페르소나, FewShot, CoT) | 2026-05-11
+- [[2026-W20-lint-report]] — 2026-05-11 W20 리포트 (격차 6개, draft 4개)
 <!-- END:WIKI -->
 
 ## Recent Decisions
 
 <!-- BEGIN:DECISIONS -->
-_last sync: 2026-05-06_
+_last sync: 2026-05-12_
 
-| 2026-03-23 | Fraser 패턴을 workspace 레벨에 적용 | 프로젝트별 분리보다 cross-project 맥락 유지가 더 가치 있음. Fraser의 회사 단위 = 우리 workspace 단위 | 전체 |
-| 2026-03-23 | Notion 유지 (학생 대면), memory 시스템 강화 (운영) | Notion에 이미 수업 구조 구축됨. 학생 접근성 때문에 이전 비용 > 이익 | RPD |
 | 2026-03-23 | Obsidian vault 도입 (사람용) + memory/ 유지 (기계용) | ssonji가 직접 memory/ 파일을 편집하지 않음. Claude가 관리하는 memory/와 ssonji가 탐색하는 vault를 분리 | 전체 |
 | 2026-03-09 | 자료방 구버전을 교수자 페이지 하위로 이동 | 삭제 대신 보존. 학생 메인에서는 제거하되 참조 가능하게 | RPD |
 | 2026-03-27 | AI News Scout 에이전트 도입 | Claude Code 생태계 변화를 빠르게 캐치하여 프로젝트에 즉시 적용. Python cron 대신 기존 MCP 인프라(scheduled-tasks) 활용이 효율적. 출력: claudedocs+Obsidian+Notion 3곳 동기화. 적용 방식: 분석+가이드+PR까지 자동→ssonji 승인 후 적용 | 전체 |
 | 2026-04-12 | Advisor 패턴 도입 (모델 비용 최적화) | Anthropic Advisor Tool(2026-04-09 공개) 개념을 Claude Code + Paperclip에 적용. Sonnet을 기본 Executor로, Opus를 플래닝/리뷰 전용으로 배정. SWE-bench 기준 72.1→74.8% 성능 향상 + 비용 절감. CLAUDE.md에 모델 선택 가이드 추가 완료. | 전체 |
+| 2026-05-06 | AGENTS.md SSoT + CLAUDE.md symlink 전략 채택 | 멀티 에이전트(Claude/Codex/Gemini/Cursor) 혼용 시 컨텍스트 drift 방지. 공식 문서 크로스체크: .cursorrules deprecated, Gemini CLI는 settings.json 필요, Claude Code는 CLAUDE.md 우선. | 전체 |
+| 2026-05-06 | sync-wiki.sh SessionEnd hook 자동 실행 | 세션 종료 시 Obsidian wiki → AGENTS.md 자동 갱신. 복리학습 파이프라인 완성. | 전체 |
+| 2026-05-06 | agent-init 템플릿 ~/.dotfiles/agent-template/ 구축 | 신규 프로젝트마다 수동 설정 비용 제거. /agent-init 슬래시 커맨드로 접근. thegoodfriends의 3-way drift는 CLAUDE.md→AGENTS.md 승격 + AGENTS.paperclip.md 분리로 해결. | 전체 |
+| 2026-05-10 | AI 자동화/수동 작업 5-mode 분리 정책 확정 | ₩22,029 Gemini 사고 후 안전장치. agent-council(Codex+Gemini) 검토로 모델 이름 중심에서 권한·실행방식 축으로 재정의. ops-safe / ops-summary / manual-review / protected-review / code-exec 5단계. 무인 자동화 외부 AI fallback 금지(break-glass 포함), protected에 무료 라우터 금지. 정책 본문: reference_ai_automation_policy.md. CLAUDE.md "유료 API 사전 확인" 섹션에 요약 통합. | 전체 |
+| 2026-05-10 | crontab Paperclip heartbeat (매시간) + reset-errors (매 30분) 제거 | 5-mode 정책 적용. heartbeat는 `--source timer --trigger system`으로 무인 Coder agent invoke = 외부 Gemini API 호출 패턴 (사고 재현). reset-errors는 스크립트 파일 부재로 dead cron. 백업: ~/.claude/backups/crontab-2026-05-10-pre-policy.bak | 전체 |
+| 2026-05-10 | Hermes RPD 보고 cron job — Gemini free 현재 유지 (정책 예외) | 비용 0, Notion read-only, 주 1회, production 수정 없음, cron_mode:deny 적용으로 8개 hard rules 충족. SOUL.md 예외 목록에 명시. | 전체 |
 <!-- END:DECISIONS -->
 
 ---
