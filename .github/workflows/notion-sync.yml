@@ -12,6 +12,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   sync:
@@ -65,3 +66,9 @@ jobs:
                   course-site/assets/notion-images/
           git commit -m "sync: Notion → canonical $(date -u +'%Y-%m-%d %H:%M UTC')"
           git push
+
+      - name: Trigger deploy
+        if: steps.check.outputs.changed == 'true' || github.event.inputs.force == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run deploy-pages.yml --ref main
