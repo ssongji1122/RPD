@@ -2588,6 +2588,50 @@ const CURRICULUM = [
             "detail": "Color Temp 5500K 느낌, Energy 균등 — 비교군"
           }
         ]
+      },
+      {
+        "title": "MCP 설치 및 연결",
+        "copy": "Claude에게 텍스트로 명령하면 Blender가 직접 움직여요. 조명, 카메라, 오브젝트 배치를 말 한마디로 바꿀 수 있어요. 오늘 만든 3점 조명도 MCP로 자동 세팅해볼 수 있어요.",
+        "goal": [
+          "Blender MCP를 설치하고 Claude에 연결한다",
+          "자연어 명령으로 Blender를 제어한다"
+        ],
+        "done": [
+          "Claude 명령에 Blender가 반응했다",
+          "MCP로 조명 설정을 1가지 이상 자동 생성했다"
+        ],
+        "tasks": [
+          {
+            "id": "w9-t-mcp1",
+            "label": "uv 설치 — Mac: brew install uv / Win: PowerShell 스크립트",
+            "detail": "설치 후 터미널 재시작 → uv --version 으로 확인"
+          },
+          {
+            "id": "w9-t-mcp2",
+            "label": "addon.py 다운로드 → Blender Edit > Preferences > Add-ons > Install",
+            "detail": "github.com/ahujasid/blender-mcp 에서 addon.py 파일만 다운로드"
+          },
+          {
+            "id": "w9-t-mcp3",
+            "label": "3D 뷰포트 N 키 → BlenderMCP 탭 → Start MCP Server 클릭",
+            "detail": "포트 9876에서 서버 시작 메시지 확인"
+          },
+          {
+            "id": "w9-t-mcp4",
+            "label": "Claude Code: claude mcp add blender -s user -- uvx blender-mcp",
+            "detail": "Claude Desktop이면 Settings > Developer > Edit Config에서 JSON 추가 후 재시작"
+          },
+          {
+            "id": "w9-t-mcp5",
+            "label": "Claude에게 \"빨간 구체 하나 만들어줘\" 요청 → Blender 반응 확인",
+            "detail": "Claude 우측 하단에 망치 아이콘이 보이면 연결 성공"
+          },
+          {
+            "id": "w9-t-mcp6",
+            "label": "Claude에게 3점 조명 자동 세팅 요청",
+            "detail": "\"3점 조명 세팅해줘 — Key는 오른쪽 45도 위, Fill은 왼쪽, Rim은 뒤쪽\""
+          }
+        ]
       }
     ],
     "shortcuts": [
@@ -3568,6 +3612,40 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week13/ai-postprocess.png"
+      },
+      {
+        "title": "MCP로 카메라·렌더 자동화",
+        "copy": "설정한 장면을 Claude에게 렌더해 달라고 하면 돼요. 카메라 위치, 렌더 엔진, 해상도까지 말 한마디로 바꿀 수 있어요. 반복 작업을 MCP로 자동화하면 시간을 크게 아낄 수 있어요.",
+        "goal": [
+          "MCP로 렌더 설정과 카메라를 자동화한다",
+          "Claude와 대화하며 씬을 완성한다"
+        ],
+        "done": [
+          "MCP 명령으로 렌더가 실행됐다",
+          "카메라 위치와 각도를 MCP로 조정했다"
+        ],
+        "tasks": [
+          {
+            "id": "w13-t-mcp1",
+            "label": "Claude에게 씬 상태 확인 요청: \"현재 씬에 있는 오브젝트 목록 알려줘\"",
+            "detail": "get_scene_info 툴이 작동하는지 확인 — MCP가 연결돼 있어야 함"
+          },
+          {
+            "id": "w13-t-mcp2",
+            "label": "Claude에게 카메라 설정 요청: \"카메라를 x=5, y=-5, z=3으로 이동하고 원점을 바라봐줘\"",
+            "detail": "카메라 위치·방향 자동 설정"
+          },
+          {
+            "id": "w13-t-mcp3",
+            "label": "Claude에게 EEVEE 25% 렌더 요청: \"EEVEE 25%로 /tmp/test.png 렌더해줘\"",
+            "detail": "렌더 결과 확인 후 수정 사항을 대화로 전달"
+          },
+          {
+            "id": "w13-t-mcp4",
+            "label": "Claude에게 Cycles 최종 렌더 요청: \"Cycles GPU 50%로 최종 렌더해줘\"",
+            "detail": "GPU 자동 감지 후 렌더 실행"
+          }
+        ]
       }
     ],
     "shortcuts": [

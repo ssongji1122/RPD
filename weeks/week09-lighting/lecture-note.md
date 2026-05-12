@@ -538,6 +538,24 @@ Tip 2 — HDRI 색상 제거 (순수 조명만 활용)
 - 차가운 색(파랑) 한 개로 밤 분위기 만들기 (Energy 낮추고 Rim만 강하게)
 - 중성광(흰색) Key + Fill로 낮 분위기 만들기 (Color Temp 5500K 느낌, Energy 균등 — 비교군)
 
+#### 7. MCP 설치 및 연결
+
+Claude에게 텍스트로 명령하면 Blender가 직접 움직여요. 조명, 카메라, 오브젝트 배치를 말 한마디로 바꿀 수 있어요. 오늘 만든 3점 조명도 MCP로 자동 세팅해볼 수 있어요.
+
+배울 것
+
+- Blender MCP를 설치하고 Claude에 연결한다
+- 자연어 명령으로 Blender를 제어한다
+
+체크해볼 것
+
+- uv 설치 — Mac: brew install uv / Win: PowerShell 스크립트 (설치 후 터미널 재시작 → uv --version 으로 확인)
+- addon.py 다운로드 → Blender Edit > Preferences > Add-ons > Install (github.com/ahujasid/blender-mcp 에서 addon.py 파일만 다운로드)
+- 3D 뷰포트 N 키 → BlenderMCP 탭 → Start MCP Server 클릭 (포트 9876에서 서버 시작 메시지 확인)
+- Claude Code: claude mcp add blender -s user -- uvx blender-mcp (Claude Desktop이면 Settings > Developer > Edit Config에서 JSON 추가 후 재시작)
+- Claude에게 "빨간 구체 하나 만들어줘" 요청 → Blender 반응 확인 (Claude 우측 하단에 망치 아이콘이 보이면 연결 성공)
+- Claude에게 3점 조명 자동 세팅 요청 ("3점 조명 세팅해줘 — Key는 오른쪽 45도 위, Fill은 왼쪽, Rim은 뒤쪽")
+
 ### 핵심 단축키
 
 - `Shift + A → Light`: 조명 추가
