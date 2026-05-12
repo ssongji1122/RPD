@@ -90,6 +90,7 @@ const SHOWME_REGISTRY = {
 
   // ── Week 10: Animation ──
   "keyframe-basics":        { label: "키프레임 기초",            icon: "⏱️", week: 10 },
+  "animation-editors":      { label: "Timeline·Dopesheet·Graph 비교", icon: "🎬", week: 10 },
   "graph-editor":           { label: "Graph Editor 이해",       icon: "📈", week: 10 },
   "dope-sheet":             { label: "Dope Sheet 이해",         icon: "🎞️", week: 10 },
 
