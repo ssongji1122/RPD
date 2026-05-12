@@ -424,6 +424,249 @@ Timeline은 Blender 하단에 기본으로 표시되는 **시간 제어 패널**
 - [ ] 카메라 앵글이 동작을 잘 보여주는 위치에 설정되었는가
 - [ ] Animation Render(Ctrl+F12)로 영상 출력을 테스트해 보았는가
 
+## 🔥 MCP 활용 심화 — Blender 5.1 + Claude Code 공식 Connector
+
+> **2026-05 업데이트.** 지난 주 Claude Code가 Blender 공식 connector를 정식 출시하면서, 이제 **원클릭**으로 MCP 환경을 구성할 수 있게 되었습니다. 이전까지 사용하던 `ahujasid/blender-mcp` (커뮤니티)를 대체하는 공식 경로입니다. 이번 보충 섹션은 **MCP를 활용해 애니메이션 작업을 자동화/가속화**하는 워크플로를 다룹니다.
+
+### 📰 배경 — 무슨 일이 있었나
+
+공식 MCP가 출시되기까지 한 달간 Blender 커뮤니티에서 큰 사건이 있었습니다. 단순한 기능 출시가 아니라, **오픈소스 프로젝트가 AI 회사의 후원을 어떻게 받아야 하는가**라는 정책적 논쟁이 결합된 사례입니다.
+
+#### 1세대 — 비공식 MCP (커뮤니티, 2025-03~)
+
+- 인도 개발자 **Siddharth Ahuja (ahujasid)** 가 2025년 3월 개인 프로젝트로 [`ahujasid/blender-mcp`](https://github.com/ahujasid/blender-mcp) 공개
+- GitHub 21.4k stars로 폭발적 인기 — 사실상 Blender + Claude 연동의 표준
+- 단점: Blender Foundation과 무관한 커뮤니티 프로젝트 → 호환성 깨지면 개인이 패치, 설치 과정 번거로움 (Python addon 수동 설치)
+
+#### 2세대 — Anthropic의 Corporate Patron 시도 (2026-04-29)
+
+- Anthropic이 **Blender Development Fund에 연 €240,000 (약 3.5억 원) Corporate Patron으로 가입** 발표
+- 동시에 Claude의 Blender 공식 connector + Blender 공식 MCP 서버 출시
+- 발표 직후 커뮤니티 격렬한 반발 — 특히 핵심 컨트리뷰터들과 생성형 AI에 비판적인 아티스트 그룹
+  - "Blender가 AI 회사에 종속된다"
+  - "기부를 끊겠다"
+  - **결정 전에 컨트리뷰터들과 충분한 논의가 없었다**는 절차적 비판이 결정적
+- Hacker News, BlenderArtists 포럼, X(트위터) 전반에서 며칠간 논쟁
+
+#### 3세대 — 롤백 + 정책 정비 (2026-05)
+
+- Blender Foundation이 공식 입장 발표 — **Anthropic의 후원을 Corporate Patron 자격 박탈 후 "일회성 단일 기부(one-off single donation)"로 다운그레이드**
+- Foundation CEO Ton Roosendaal: "컨트리뷰터들과 더 충분히 대화했어야 했다" 인정
+- 향후 후원 수락 프로세스 강화 + **AI Policies 논의 착수**
+- **중요 포인트**: 후원 형태는 다운그레이드되었지만, 그 과정에서 출시된 **Claude 공식 connector와 Blender 공식 MCP 서버는 그대로 유지** — 우리가 지금 쓸 수 있는 이유
+
+> 💡 **이 사건이 시사하는 것**: 오픈소스에서 AI 기업 후원은 단순한 자금 문제가 아니라 **거버넌스 문제**입니다. Blender Foundation은 결정을 되돌리고 절차를 보강하는 방식으로 신뢰를 회복했습니다. 우리가 도구를 쓸 때도 **누가 만들었고, 어떤 권한 구조 위에 있는지**를 인식하는 습관이 필요합니다.
+
+### 🎓 알면 재밌는 — "Corporate Patron"이란 정확히 뭔데?
+
+뉴스에서 "Anthropic이 Patron이 됐다 → 박탈됐다"는 말이 반복됐는데, 이 단어가 그냥 "후원자"가 아니라 **공식 등급명**이에요. 알고 보면 오픈소스 정치학의 고전적 이슈가 깔려 있습니다.
+
+#### Blender Development Fund 후원 등급 구조
+
+Blender Foundation은 후원자를 **연간 금액에 따라 등급**으로 나눠 운영합니다:
+
+| 등급 | 금액(연) | 주요 혜택 |
+|------|---------|----------|
+| **Corporate Patron** | €120,000+ | 공식 사이트 최상단 로고, 분기별 미팅, 우선 협의권, 보도자료 협업 |
+| **Corporate Gold** | €30,000+ | Gold 섹션 로고, 정기 업데이트 |
+| **Corporate Silver** | €12,000+ | Silver 섹션 로고 |
+| **Corporate Bronze** | €6,000+ | 작은 로고 |
+| **Individual** | €5~ | 개인 후원, 이름 등재 |
+
+Anthropic이 약속한 금액은 **€240,000/년** — Patron 최저선의 **2배**, 사실상 "메가 Patron" 급이었습니다.
+
+#### Patron이 "단순 기부"와 다른 점
+
+1. **공식 파트너 지위** — Foundation 홈페이지에 "이 회사가 Blender 개발에 기여한다"고 명시
+2. **반복 후원 약정** — 1회성이 아니라 매년 갱신되는 **멤버십**
+3. **소통 채널** — 핵심 운영진과 정기 미팅 + 로드맵 협의 기회
+4. **양방향 PR** — 회사는 "오픈소스 후원" 이미지, Foundation은 안정적 자금줄
+
+> 🔑 **커뮤니티가 폭발한 진짜 이유**: "그냥 돈만 받는 거면 괜찮은데, **AI 회사가 Blender의 의사결정 구조에 가까워지는 자리**를 차지하는 게 문제"라는 비판이었습니다. 돈 자체보다 **거버넌스 접근권**이 핵심.
+
+#### "Downgrade"가 의미하는 것
+
+Foundation이 한 일을 분해하면:
+
+- **Patron 자격 박탈** → 회사 로고가 공식 파트너 목록에서 제거
+- **돈은 받되 "일회성 기부(one-off donation)"로 처리** → 정기 멤버 아님, 일회성 기부자
+- **공식 파트너 지위 없음** → 소통 채널, 로드맵 협의권 모두 회수
+
+→ **돈은 €240,000 그대로 받았지만, 거버넌스 접근권은 모두 회수**한 셈. Anthropic은 이 결정에 "지지한다(supports this decision)"는 성명을 냈고요.
+
+#### 역대 Corporate Patron들 (참고)
+
+Blender의 역사적 Patron 명단:
+
+- **Epic Games** (Unreal 개발사) — MegaGrant 일환
+- **AMD, NVIDIA, Intel** — GPU 렌더링 협업
+- **Meta, Microsoft, Apple, Google** — 시기별로 참여
+- **Adobe** — Substance 통합 시기
+
+→ 이들은 모두 **3D/그래픽 인프라 회사**로, Blender와 기술적 접점이 명확했어요. 반면 Anthropic은 **LLM/AI 어시스턴트** 회사라 "Blender 본체 개발과 직접 관련이 없는데 왜 의사결정 가까이 오는가?"라는 질문이 자연스럽게 나온 거죠.
+
+#### 한국 맥락에 비유하면
+
+비슷한 구도를 한국 IT에서 찾으면:
+
+- 카카오가 우분투 한국 커뮤니티에 **연 3억 정기 후원 + 공식 파트너 로고** 권리를 받는 셈
+- 커뮤니티: "카카오가 이제 우분투에 영향력을 행사하는 거 아닌가?"
+- 해결: "돈은 받되 공식 파트너 지위는 빼자, 그냥 일회성 기부로 처리하자"
+
+이런 **거버넌스 vs 자금 분리**가 오픈소스 정치학의 고전적 이슈입니다. 리눅스 재단, Apache 재단, Mozilla 재단 모두 비슷한 사건을 겪었어요. AI 시대에는 이게 더 자주, 더 격렬하게 나올 가능성이 높습니다.
+
+### 🛠 설치 — 원클릭 공식 경로
+
+#### Step 1. Blender 5.1 준비
+
+- **Blender 5.1 이상** 필요. 이전 버전(5.0 포함)은 공식 MCP add-on을 지원하지 않음
+- 다운로드: [blender.org/download](https://www.blender.org/download/)
+
+#### Step 2. Blender MCP Add-on 설치 (Drag & Drop)
+
+1. [Blender MCP Server 페이지](https://www.blender.org/lab/mcp-server/)에서 add-on `.zip` 다운로드
+2. Blender 5.1을 실행한 상태에서 **다운로드한 zip 파일을 Blender 창에 드래그 & 드롭**
+3. 자동 설치 완료 → Edit > Preferences > Add-ons에서 `MCP Server`가 활성화되었는지 확인
+4. Auto-start 기본 켜짐 — Blender 켜면 매번 자동 실행
+
+#### Step 3. Claude Code에서 Connector 설치
+
+1. Claude Code 우측 상단 **+** 버튼 → **Connectors** → **Manage Connectors** (또는 **Add Connector**)
+2. 검색창에 **`Blender`** 입력 → 결과에서 공식 Blender connector 선택
+3. **Install** 클릭 — 끝
+4. **Claude Code 완전 재시작** (필수)
+
+#### Step 4. 연결 테스트
+
+Blender를 켠 상태에서 Claude에게 다음 프롬프트:
+
+```
+내 Blender 씬을 정리해줘. 모든 오브젝트를 삭제해.
+```
+
+Claude가 Blender MCP를 호출해 실제로 씬을 정리하면 성공. (정리 전에 다른 작업 파일은 저장해 두세요.)
+
+### 🌐 FAL.ai MCP — 모든 AI 생성 모델을 한 곳에
+
+Blender MCP만으로도 Claude가 Blender를 조작할 수 있지만, **실제 3D/이미지 자산을 AI로 생성해서 바로 임포트**하려면 모델 API가 필요합니다. 모델마다 따로 가입/결제하면 관리가 번거롭기 때문에, **FAL.ai**를 통해 한 번에 해결하는 방식을 권장합니다.
+
+#### FAL.ai란?
+
+- AI 모델 API **어그리게이터(aggregator)**. 한 계정/한 API key로 거의 모든 프런티어 모델 호출 가능
+- 지원 모델 (2026-05 기준 일부):
+  - **이미지/PBR**: FLUX, FAL Patina (PBR 머티리얼 자동 생성), Imagen
+  - **3D 생성**: Hunyuan 3D, Trellis 2, Tripo P1, Rodin
+  - 신규 모델은 **출시 당일 또는 며칠 안에** API로 추가됨
+- 사이트보다 API가 메인 — Claude/Cursor 같은 AI 도구와 궁합이 좋음
+
+> ⚠️ **유료 API 주의**: FAL.ai는 사용량 과금입니다. 학생용 실습 시 **하루 cap을 미리 걸어두세요** (FAL.ai 대시보드 > Billing > Daily limit). 모델별 단가는 [fal.ai/pricing](https://fal.ai/pricing) 참조.
+
+#### FAL.ai MCP 설치 (Claude Code)
+
+1. [fal.ai](https://fal.ai/) 가입 → Dashboard > **API Keys**에서 키 발급
+2. Claude Code 터미널에서 한 줄로 설치:
+   ```bash
+   claude mcp add fal-ai -- npx -y @fal-ai/mcp-server --api-key YOUR_FAL_KEY
+   ```
+3. (또는 Claude Desktop 사용 시) `~/Library/Application Support/Claude/claude_desktop_config.json` 의 `mcpServers`에 다음 추가:
+   ```json
+   {
+     "mcpServers": {
+       "fal-ai": {
+         "command": "npx",
+         "args": ["-y", "@fal-ai/mcp-server"],
+         "env": { "FAL_KEY": "YOUR_FAL_KEY" }
+       }
+     }
+   }
+   ```
+4. Claude 재시작 → **+ Connectors**에 `fal-ai`가 떠 있으면 성공
+
+### 🎬 MCP × 애니메이션 활용 사례
+
+이번 주 핵심: **MCP는 Keyframe 노가다를 줄이고 창의적 의사결정에 시간을 쓰게 한다**. 단순히 "AI가 만들어줌"이 아니라, **반복 작업 자동화 + 셋업 가속화**가 본질입니다.
+
+#### 사례 1. 절차적 분포 애니메이션 (Geometry Nodes 자동 생성)
+
+씬에 식물 4종과 지형이 있을 때:
+
+```
+지형 위에 4종 식물을 Geometry Nodes로 분포시켜줘.
+density 파라미터로 조절 가능하게 만들고,
+서로 겹치지 않게 distribute해.
+```
+
+Claude가 Geometry Nodes 트리를 직접 작성 → 결과 modifier에 **density 슬라이더**가 노출되어 즉시 조절 가능. 수동으로 노드 30~50개 연결할 작업을 1분 안에.
+
+#### 사례 2. 키 분리 + Wave Drop 애니메이션
+
+키보드 메쉬(키캡 66개가 하나로 합쳐진 상태)에서:
+
+```
+이 키보드의 각 키를 별도 오브젝트로 분리한 후,
+위에서 떨어지면서 wave 형태로 도착하는 애니메이션을 만들어줘.
+도착 시 약간의 bounce를 줘.
+```
+
+Claude의 작업:
+1. Edit Mode 진입 → Loose geometry로 키 66개 분리 (`P > By Loose Parts`)
+2. 각 키에 Location keyframe 자동 삽입 (Z축 낙하 + offset)
+3. Bounce easing 적용 (Graph Editor에서 Bounce interpolation)
+
+수업에서 배운 Keyframe/Graph Editor 개념이 그대로 Claude의 출력에 매핑됩니다. **결과물을 검토하고 미세조정하는 것이 우리의 역할**.
+
+#### 사례 3. 베이크 자동화 (Normal/AO Map)
+
+캐릭터의 High-poly와 Low-poly가 준비된 상태에서:
+
+```
+이 두 메쉬로 Normal Map과 Ambient Occlusion Map을 베이크해서
+Low-poly의 shader에 자동 연결해줘.
+```
+
+이전엔 Bake settings, Selected to Active, Image Texture 노드 연결 등 단계별 클릭이 많았던 작업이 1프롬프트로 완료됩니다. 동일 패턴을 **여러 오브젝트에 일괄 적용**할 수도 있어 게임 에셋 파이프라인에 강력.
+
+#### 사례 4. LOD 일괄 생성 + 텍스처 리사이즈
+
+```
+이 오브젝트의 LOD0(원본), LOD1(1K 텍스처), LOD2(512 텍스처)를 만들어줘.
+mesh도 각각 decimate해.
+```
+
+→ 메쉬 데시메이트 + 이미지 텍스처 리사이즈를 한 번에. 게임/웹 배포용 최적화 단계가 자동화.
+
+#### 사례 5. 절차적 셰이더 (Toon, Pearl Chameleon 등)
+
+```
+이 자동차 바디에 펄 카멜레온 페인트 셰이더를 만들어줘.
+viewing angle에 따라 보라→청록으로 변하는 느낌.
+```
+
+Color Ramp + Layer Weight + Mix Shader 조합을 Claude가 자동으로 노드 트리로 생성. 셰이더 노드 학습 중인 학생에게 **"어떻게 만들었는지 설명해줘"** 라고 물어보면 학습 보조 도구로도 활용 가능.
+
+### 🧠 학습 관점에서의 활용 원칙
+
+MCP는 강력하지만 **이번 주 핵심 학습목표(Keyframe, Timeline, Graph Editor 이징)를 직접 손으로 익히는 것을 대체하지 않습니다.** 다음 원칙을 권장합니다:
+
+1. **첫 실습(공 바운스 + 로봇)은 반드시 수동으로** — MCP 사용 금지. 단축키와 개념을 손에 새기는 단계
+2. **응용 단계에서 MCP 보조 사용 OK** — 위 사례 1~5 중 1개 이상을 시도하고 과제에 포함
+3. **AI 출력은 반드시 Graph Editor에서 검토** — Claude가 만든 키프레임/이징을 그래프로 열어보고 어떻게 작동하는지 이해할 것. 블랙박스로 두지 말 것
+4. **프롬프트도 학습 대상** — 잘 안 되면 Claude에게 "어떻게 프롬프트를 개선하면 좋을지" 직접 물어보세요
+
+### 📚 참고 링크
+
+- [Blender 공식 MCP Server (blender.org/lab)](https://www.blender.org/lab/mcp-server/) — add-on 다운로드
+- [ahujasid/blender-mcp (1세대 커뮤니티 MCP)](https://github.com/ahujasid/blender-mcp) — 역사적 맥락 참고용
+- [Anthropic joins the Blender Development Fund (원문, archived)](https://www.blender.org/archive/anthropic-joins-the-blender-development-fund-as-corporate-patron/)
+- [Blender 공식: Development Fund + AI Policies 업데이트](https://www.blender.org/news/upcoming-blender-development-fund-and-ai-policies/) — 롤백 공식 입장
+- [CG Channel: Anthropic patronage downgraded to one-off donation](https://www.cgchannel.com/2026/05/anthropics-patronage-of-blender-downgraded-to-one-off-donation/)
+- [80.lv: Blender CEO on the funding — "This is not AI takeover"](https://80.lv/articles/blender-ceo-on-anthropic-funding-this-is-not-ai-takeover)
+- [GameFromScratch: Blender x Anthropic — The Fallout](https://gamefromscratch.com/blender-x-anthropic-the-fallout/)
+- [FAL.ai 공식 사이트](https://fal.ai/) · [Pricing](https://fal.ai/pricing) · [Models](https://fal.ai/models)
+- 영상 출처: [YouTube — Claude + Blender Is Insane Now (Full Free Setup)](https://www.youtube.com/watch?v=wSY1kHXSap0)
+
+> **다음 단계 예고**: Week 13 "AI 영상/사운드 + 렌더링 + MCP"에서는 이 setup을 활용해 **카메라 워크 자동 생성 + 렌더 큐 자동화 + AI BGM/효과음 합성**까지 다룹니다. 이번 주에 MCP 환경을 안정화시켜 두세요.
+
 ## 다음 주 예고
 
 **Week 11: Camera + 렌더링 기초**
