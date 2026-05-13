@@ -7,7 +7,7 @@
 
   var DIVISIONS = ['1분반', '2분반', '3분반', '4분반'];
   var MODAL_ID  = 'divisionModal';
-  var LOCAL_DIV_KEY = 'rpd-division'; // 게스트 폴백용
+  var LOCAL_DIV_KEY = window.RPD_KEYS.DIVISION; // 게스트 폴백용
 
   /* ── DOM 빌드 ──────────────────────────────────────────── */
   function buildModal() {
