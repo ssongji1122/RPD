@@ -168,8 +168,14 @@ body {
   white-space: nowrap;
 }
 .step-menu {
+  grid-column: 2;
   color: var(--muted-strong);
   font-size: .85rem;
+  word-break: keep-all;
+}
+.step-item kbd + .step-menu {
+  /* When kbd present, menu should sit next to it instead of below */
+  grid-column: auto;
 }
 .step-note {
   display: block;
@@ -177,6 +183,7 @@ body {
   color: var(--muted);
   font-size: .82rem;
   margin-top: 4px;
+  word-break: keep-all;
 }
 .step-screenshot {
   grid-column: 2;
