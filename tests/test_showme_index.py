@@ -45,3 +45,37 @@ def test_catalog_groups_by_category():
     catalog = json.loads(build_catalog_json(cards))
     assert catalog["categoryMap"]["modifier"] == ["array-modifier", "mirror"]
     assert catalog["categoryMap"]["edit-mode"] == ["extrude"]
+
+
+def test_registry_merges_legacy_entries(tmp_path):
+    """DB에 없는 기존 카드 항목은 _registry.js에 보존되어야 한다."""
+    from tools.showme_lib.index import build_registry_js_merged
+
+    legacy_path = tmp_path / "legacy.js"
+    legacy_path.write_text(
+        'const SHOWME_REGISTRY = {\n  "array-modifier": { label: "Array", icon: "x", week: 3 }\n};\n'
+    )
+    cards = [_card("new-card", "New", "y", [1])]
+    js = build_registry_js_merged(cards, legacy_path=legacy_path)
+    assert '"array-modifier"' in js
+    assert '"new-card"' in js
+
+
+def test_catalog_merges_legacy_entries(tmp_path):
+    """DB에 없는 기존 카테고리 매핑은 _catalog.json에 보존되어야 한다."""
+    import json as _json
+    from tools.showme_lib.index import build_catalog_json_merged
+
+    legacy_path = tmp_path / "legacy.json"
+    legacy_path.write_text(_json.dumps({
+        "categoryMap": {
+            "modifier": ["array-modifier", "boolean"],
+            "edit-mode": ["extrude"],
+        }
+    }))
+    cards = [_card("new-card", "New", "y", [1], category="object")]
+    result = _json.loads(build_catalog_json_merged(cards, legacy_path=legacy_path))
+    assert "new-card" in result["categoryMap"]["object"]
+    assert "array-modifier" in result["categoryMap"]["modifier"]
+    assert "boolean" in result["categoryMap"]["modifier"]
+    assert "extrude" in result["categoryMap"]["edit-mode"]

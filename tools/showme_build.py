@@ -20,7 +20,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 from notion_api import NOTION_API, get_notion_token  # noqa: E402
 
-from showme_lib.index import build_catalog_json, build_registry_js  # noqa: E402
+from showme_lib.index import build_catalog_json_merged, build_registry_js_merged  # noqa: E402
 from showme_lib.notion_cards import normalize_card_page  # noqa: E402
 from showme_lib.renderer import render_card_html  # noqa: E402
 from showme_lib.types import Video  # noqa: E402
@@ -129,8 +129,8 @@ def main() -> int:
         path = write_card_html(card, template)
         print(f"  wrote {path.relative_to(ROOT)}")
 
-    REGISTRY_PATH.write_text(build_registry_js(all_cards), encoding="utf-8")
-    CATALOG_PATH.write_text(build_catalog_json(all_cards), encoding="utf-8")
+    REGISTRY_PATH.write_text(build_registry_js_merged(all_cards, REGISTRY_PATH), encoding="utf-8")
+    CATALOG_PATH.write_text(build_catalog_json_merged(all_cards, CATALOG_PATH), encoding="utf-8")
     print(f"\nregenerated {REGISTRY_PATH.relative_to(ROOT)}")
     print(f"regenerated {CATALOG_PATH.relative_to(ROOT)}")
     print(f"total: {len(targets)} card(s)")
