@@ -494,7 +494,7 @@ const CURRICULUM = [
   {
     "week": 3,
     "status": "done",
-    "title": "기초 모델링 1 - Modifier",
+    "title": "기초 모델링 1 — Edit + Modifier",
     "subtitle": "기본형 · 대칭 · 곡면 · 반복",
     "duration": "~3시간",
     "topics": [
@@ -2376,7 +2376,7 @@ const CURRICULUM = [
   {
     "week": 9,
     "status": "done",
-    "title": "Lighting 기초 + MCP 설치",
+    "title": "Lighting 기초 + MCP 조명 연출",
     "subtitle": "빛의 종류 · HDRI · 3점 조명 · 카메라",
     "duration": "~3시간",
     "topics": [
