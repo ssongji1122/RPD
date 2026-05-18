@@ -19,15 +19,21 @@ def _published(cards: list[Card]) -> list[Card]:
     return [c for c in cards if c.status != "deprecated"]
 
 
+def _format_week_literal(weeks: list[int]) -> str:
+    """Emit scalar for single week (legacy-compatible), array for multi-week."""
+    if len(weeks) == 1:
+        return str(weeks[0])
+    return "[" + ", ".join(str(w) for w in weeks) + "]"
+
+
 def build_registry_js(cards: list[Card]) -> str:
     entries = []
     for c in _published(cards):
-        weeks = ", ".join(str(w) for w in c.weeks)
         entry = (
             f'  "{c.card_id}": {{ '
             f'label: "{c.label}", '
             f'icon: "{c.icon}", '
-            f'week: [{weeks}], '
+            f'week: {_format_week_literal(c.weeks)}, '
             f'category: "{c.category}" '
             f'}}'
         )
@@ -37,12 +43,11 @@ def build_registry_js(cards: list[Card]) -> str:
 
 
 def build_catalog_json(cards: list[Card]) -> str:
-    category_map: dict[str, list[str]] = {}
+    """Emit catalog in legacy shape: top-level `manualSectionMap: {card_id: category}`."""
+    section_map: dict[str, str] = {}
     for c in _published(cards):
-        category_map.setdefault(c.category, []).append(c.card_id)
-    for ids in category_map.values():
-        ids.sort()
-    return json.dumps({"categoryMap": category_map}, ensure_ascii=False, indent=2)
+        section_map[c.card_id] = c.category
+    return json.dumps({"manualSectionMap": section_map}, ensure_ascii=False, indent=2)
 
 
 _LEGACY_ENTRY = re.compile(r'"([a-z0-9-]+)":\s*\{[^}]+\}', re.DOTALL)
@@ -62,12 +67,11 @@ def build_registry_js_merged(cards: list[Card], legacy_path: Path) -> str:
 
     entries: list[str] = []
     for c in _published(cards):
-        weeks = ", ".join(str(w) for w in c.weeks)
         entries.append(
             f'  "{c.card_id}": {{ '
             f'label: "{c.label}", '
             f'icon: "{c.icon}", '
-            f'week: [{weeks}], '
+            f'week: {_format_week_literal(c.weeks)}, '
             f'category: "{c.category}" '
             f'}}'
         )
@@ -80,20 +84,25 @@ def build_registry_js_merged(cards: list[Card], legacy_path: Path) -> str:
 
 
 def build_catalog_json_merged(cards: list[Card], legacy_path: Path) -> str:
-    legacy_catalog: dict[str, list[str]] = {}
+    """Merge new card categorizations into legacy catalog, preserving all top-level keys.
+
+    Legacy shape (real file): {
+      "categoryOrder": [...],
+      "manualSectionOrder": [...],
+      "manualSectionMap": {card_id: section_name},
+      "categoryDefaults": {...},
+      "cardOverrides": {...}
+    }
+    We only update `manualSectionMap`. Other keys pass through unchanged.
+    """
+    legacy: dict = {}
     if legacy_path.exists():
-        legacy_catalog = json.loads(legacy_path.read_text()).get("categoryMap", {})
+        legacy = json.loads(legacy_path.read_text())
 
-    db_ids = {c.card_id for c in _published(cards)}
-    category_map: dict[str, list[str]] = {}
+    section_map = dict(legacy.get("manualSectionMap", {}))
     for c in _published(cards):
-        category_map.setdefault(c.category, []).append(c.card_id)
+        section_map[c.card_id] = c.category
 
-    for cat, ids in legacy_catalog.items():
-        for legacy_id in ids:
-            if legacy_id not in db_ids:
-                category_map.setdefault(cat, []).append(legacy_id)
-
-    for ids in category_map.values():
-        ids.sort()
-    return json.dumps({"categoryMap": category_map}, ensure_ascii=False, indent=2)
+    merged = dict(legacy)
+    merged["manualSectionMap"] = section_map
+    return json.dumps(merged, ensure_ascii=False, indent=2)

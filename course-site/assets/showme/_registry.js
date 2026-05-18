@@ -4,7 +4,7 @@
 // ============================================================
 
 const SHOWME_REGISTRY = {
-  "collection-outliner": { label: "Collection 과 Outliner 이해", icon: "folder-tree", week: [3], category: "object" },
+  "collection-outliner": { label: "Collection 과 Outliner 이해", icon: "folder-tree", week: 3, category: "object" },
   "image-reference":        { label: "이미지 레퍼런스 설정",      icon: "🖼️", week: 3 },
   "blender-preferences":    { label: "Preferences 설정",        icon: "⚙️", week: 2 },
   "viewport-navigation":    { label: "화면 조작 원리",          icon: "🧭", week: 2 },
