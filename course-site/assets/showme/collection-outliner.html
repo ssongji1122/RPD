@@ -86,7 +86,184 @@ body {
 .panel.is-active,
 .panel.active { display: block; }
 
-/* ── Concept Cards ── */
+/* ── Card SSoT render classes (Notion DB → HTML) ── */
+.card-concept,
+.card-usage,
+.card-pitfall {
+  max-width: 780px;
+  margin: 0 auto;
+}
+.card-concept p,
+.card-usage p,
+.card-pitfall p {
+  color: var(--text);
+  font-size: .95rem;
+  line-height: 1.85;
+  margin: 0 0 14px;
+  word-break: keep-all;
+}
+.card-concept strong,
+.card-usage strong,
+.card-pitfall strong {
+  color: var(--key-soft);
+  font-weight: 600;
+}
+.card-usage,
+.card-pitfall {
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+.card-usage h3,
+.card-pitfall h3 {
+  margin: 0 0 10px;
+  font-size: .95rem;
+  font-weight: 600;
+  color: var(--muted-strong);
+}
+.card-pitfall h3 {
+  color: var(--warn-soft);
+}
+
+/* ── Steps list (Blender step-by-step) ── */
+.steps-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.step-item {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  align-items: baseline;
+  gap: 10px 14px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.step-n {
+  font-weight: 700;
+  color: var(--key-soft);
+  font-variant-numeric: tabular-nums;
+  font-size: 1.05rem;
+}
+.step-action {
+  color: var(--text);
+  font-size: .95rem;
+  line-height: 1.6;
+  word-break: keep-all;
+}
+.step-item kbd {
+  display: inline-block;
+  padding: 3px 8px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: .82rem;
+  color: var(--text);
+  background: var(--surface-strong);
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  white-space: nowrap;
+}
+.step-menu {
+  color: var(--muted-strong);
+  font-size: .85rem;
+}
+.step-note {
+  display: block;
+  grid-column: 2;
+  color: var(--muted);
+  font-size: .82rem;
+  margin-top: 4px;
+}
+.step-screenshot {
+  grid-column: 2;
+  margin-top: 8px;
+  max-width: 100%;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+}
+
+/* ── Videos list ── */
+.videos-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.video-item {
+  padding: 16px 18px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.video-item a {
+  color: var(--key-soft);
+  font-weight: 600;
+  text-decoration: none;
+  font-size: .98rem;
+}
+.video-item a:hover {
+  text-decoration: underline;
+}
+.video-meta {
+  color: var(--muted);
+  font-size: .82rem;
+  margin-top: 6px;
+  font-variant-numeric: tabular-nums;
+}
+.video-reason {
+  color: var(--muted-strong);
+  font-size: .88rem;
+  margin-top: 6px;
+  word-break: keep-all;
+}
+.badge-official {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 8px;
+  font-size: .72rem;
+  font-weight: 600;
+  color: var(--success);
+  background: rgba(16, 185, 129, .12);
+  border-radius: 4px;
+}
+
+/* ── Widget mount placeholder (filled by widget JS) ── */
+.widget-mount {
+  min-height: 280px;
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--line);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: .85rem;
+}
+
+/* ── Doc ref footer ── */
+.doc-ref-footer {
+  padding: 16px;
+  text-align: center;
+  border-top: 1px solid var(--line);
+  margin-top: 24px;
+}
+.doc-ref-footer .doc-ref {
+  color: var(--muted-strong);
+  font-size: .82rem;
+  text-decoration: none;
+}
+.doc-ref-footer .doc-ref:hover {
+  color: var(--key-soft);
+  text-decoration: underline;
+}
+
+/* ── Legacy: Concept Cards (kept for 79 legacy HTML files) ── */
 .concept-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));

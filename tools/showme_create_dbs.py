@@ -96,17 +96,33 @@ def create_db(parent_id: str, title: str, properties: dict, token: str) -> str:
 
 
 def add_relations(cards_db_id: str, videos_db_id: str, token: str) -> None:
-    """카드 → 비디오 / 카드 → 카드 self relation 추가 (생성 후 patch)."""
+    """카드 → 비디오 / 카드 → 카드 self relation 추가 (생성 후 patch).
+
+    dual_property로 추가해 N:M + 역방향 조회 가능. Notion이 inverse 컬럼명을
+    자동 생성: recommended_for_cards (Videos), prerequisite_of, related_inverse.
+    """
     patch_body = {
         "properties": {
             "videos_relation": {
-                "relation": {"database_id": videos_db_id, "type": "single_property", "single_property": {}}
+                "relation": {
+                    "database_id": videos_db_id,
+                    "type": "dual_property",
+                    "dual_property": {"synced_property_name": "recommended_for_cards"},
+                }
             },
             "prerequisites": {
-                "relation": {"database_id": cards_db_id, "type": "single_property", "single_property": {}}
+                "relation": {
+                    "database_id": cards_db_id,
+                    "type": "dual_property",
+                    "dual_property": {"synced_property_name": "prerequisite_of"},
+                }
             },
             "related": {
-                "relation": {"database_id": cards_db_id, "type": "single_property", "single_property": {}}
+                "relation": {
+                    "database_id": cards_db_id,
+                    "type": "dual_property",
+                    "dual_property": {"synced_property_name": "related_inverse"},
+                }
             },
         }
     }
