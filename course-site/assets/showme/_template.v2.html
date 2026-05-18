@@ -75,14 +75,16 @@ body {
   font-family: inherit;
 }
 .tab:hover { color: var(--muted-strong); }
-.tab.is-active {
+.tab.is-active,
+.tab.active {
   color: var(--key-soft);
   border-bottom-color: var(--key);
 }
 
 /* ── Tab Panels ── */
 .panel { display: none; padding: 20px 16px; }
-.panel.is-active { display: block; }
+.panel.is-active,
+.panel.active { display: block; }
 
 /* ── Concept Cards ── */
 .concept-grid {
