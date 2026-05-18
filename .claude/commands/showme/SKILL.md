@@ -6,6 +6,12 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash(python3 -m http.server:*), Ba
 
 > **품질 철학**: 이 스킬은 반드시 Opus 4.6 모델로 실행합니다. 표면적 정의가 아닌, Blender를 실제로 쓸 때 학생이 겪는 혼란과 깨달음을 관통하는 카드를 만드세요. 품질 기준은 `references/card-quality.md`를 참조.
 
+## 단축키 빨간색 규칙
+
+ShowMe 카드 HTML에서 키 입력 표기: `<kbd class="rpd-key">Shift+A</kbd>` (CSS로 red). 메뉴 경로 텍스트는 색 없음.
+
+상세: `course-site/CONTENT_GUIDE.md` §4-A.
+
 ## Blender 버전 변수
 
 카드 작성 직전 `~/.claude/projects/-Users-ssongji-Developer-Workspace-RPD/memory/user_blender_version.md` Read → `BLENDER_VERSION` 추출 (SoT). UI 참조(메뉴 경로·패널 이름·단축키)는 해당 버전 기준. 버전 하드코딩 금지.

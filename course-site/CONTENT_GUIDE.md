@@ -164,6 +164,50 @@ showme: ["extrude", "loop-cut", "inset"]
 
 ---
 
+## 4-A. 단축키 표기 규칙 (실제 키 입력 = 빨간색)
+
+학생이 **실제로 키를 누르는 동작**은 본문에서 빨간색으로 강조. 메뉴 클릭(마우스 동작)은 색 없음.
+
+### Notion 본문 (inline)
+
+```
+<span color="red">Shift+A</span> > Armature > Single Bone
+<span color="red">Ctrl+P</span> > With Automatic Weights
+<span color="red">Tab</span>으로 Edit Mode 진입
+<span color="red">R</span> 회전, <span color="red">G</span> 이동
+```
+
+색 적용 대상:
+- 키 조합: `Shift+A`, `Ctrl+P`, `Ctrl+Tab`, `Alt+R`, `Ctrl+Shift+LMB`
+- 단일 액션 키: `Tab`, `E`, `G`, `R`, `S`, `A`, `I`, `Space`
+- F-키: `F12`, `Ctrl+F12`
+
+색 비적용 (그대로):
+- 메뉴 경로: `> Armature > Single Bone`, `Properties > Bone`
+- 옵션 이름: `Automatic Weights`, `With Empty Groups`
+- UI 위치 설명
+
+### 코드 블록 (```plain text ...```)
+
+코드 블록 안에서는 `<span>` 태그가 그대로 텍스트로 보이므로 **색 적용 안 함**. 기존대로 plain text 유지.
+
+```plain text
+Shift+A > Armature > Single Bone   ← 코드블록 안: 색 없음
+E (Tail 선택 후)                    ← 코드블록 안: 색 없음
+```
+
+### ShowMe HTML 카드
+
+`<kbd class="rpd-key">Shift+A</kbd>` 사용 (CSS로 red 처리). `assets/notion-blocks.css` 또는 `kbd` 기본 스타일에서 색 정의.
+
+### Why
+
+- 학생이 본문 읽다가 "어디서 키를 눌러야 하는지" 즉시 시각 식별
+- 마우스 동작과 키보드 동작 구분이 명확해서 막힘 감소
+- 색 일관성 = 학습 부담 감소
+
+---
+
 ## 5. Mistakes 작성 규칙
 
 실제로 수업 중 학생이 막히는 상황을 "증상 → 해결" 형식으로.
