@@ -1653,7 +1653,7 @@
             "block_id": "bbd604ab-9f51-45b3-95e3-43a5fbbe9775"
           },
           "created_time": "2026-02-26T14:26:00.000Z",
-          "last_edited_time": "2026-02-26T14:26:00.000Z",
+          "last_edited_time": "2026-05-18T15:49:00.000Z",
           "created_by": {
             "object": "user",
             "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
@@ -1712,8 +1712,8 @@
                   "italic": false,
                   "strikethrough": false,
                   "underline": false,
-                  "code": true,
-                  "color": "default"
+                  "code": false,
+                  "color": "red"
                 },
                 "plain_text": "Ctrl+J",
                 "href": null
@@ -2848,8 +2848,8 @@
               "italic": false,
               "strikethrough": false,
               "underline": false,
-              "code": true,
-              "color": "default"
+              "code": false,
+              "color": "red"
             },
             "plain_text": "Ctrl+A",
             "href": null
@@ -4571,7 +4571,7 @@
         "page_id": "31354d65-4971-8174-bb74-c528a6913fc0"
       },
       "created_time": "2026-02-26T14:26:00.000Z",
-      "last_edited_time": "2026-02-27T13:54:00.000Z",
+      "last_edited_time": "2026-05-18T15:07:00.000Z",
       "created_by": {
         "object": "user",
         "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
@@ -4588,7 +4588,7 @@
           {
             "type": "text",
             "text": {
-              "content": "🟢 Step 5: NLA Editor로 애니메이션 조합",
+              "content": "🟢 Step 5: Weight Paint 부분 보정 (선택)",
               "link": null
             },
             "annotations": {
@@ -4599,7 +4599,969 @@
               "code": false,
               "color": "default"
             },
-            "plain_text": "🟢 Step 5: NLA Editor로 애니메이션 조합",
+            "plain_text": "🟢 Step 5: Weight Paint 부분 보정 (선택)",
+            "href": null
+          }
+        ],
+        "is_toggleable": false,
+        "color": "green_background"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "42e88c04-d101-4dd5-a252-87819a4a747f",
+      "parent": {
+        "type": "page_id",
+        "page_id": "31354d65-4971-8174-bb74-c528a6913fc0"
+      },
+      "created_time": "2026-05-18T15:07:00.000Z",
+      "last_edited_time": "2026-05-18T15:07:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "callout",
+      "callout": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "AI 자동 리깅은 대부분 잘 되지만, 가끔 어색한 부위가 남아요. 팔을 올렸는데 머리가 같이 당겨온다면 Weight Paint로 영향 범위를 수동 조정해요. 로봇은 파츠 단위라 보정이 드물지만, 캐릭터 형태에서는 자주 필요해요.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "AI 자동 리깅은 대부분 잘 되지만, 가끔 어색한 부위가 남아요. 팔을 올렸는데 머리가 같이 당겨온다면 Weight Paint로 영향 범위를 수동 조정해요. 로봇은 파츠 단위라 보정이 드물지만, 캐릭터 형태에서는 자주 필요해요.",
+            "href": null
+          }
+        ],
+        "icon": {
+          "type": "emoji",
+          "emoji": "🎯"
+        },
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "79360d89-dd4d-4de6-8772-6fdf7754a64a",
+      "parent": {
+        "type": "page_id",
+        "page_id": "31354d65-4971-8174-bb74-c528a6913fc0"
+      },
+      "created_time": "2026-05-18T15:07:00.000Z",
+      "last_edited_time": "2026-05-18T15:07:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "확인 단계:",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "확인 단계:",
+            "href": null
+          }
+        ],
+        "icon": null,
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "920fc887-afad-4a0f-a5ee-f818f987f172",
+      "parent": {
+        "type": "page_id",
+        "page_id": "31354d65-4971-8174-bb74-c528a6913fc0"
+      },
+      "created_time": "2026-05-18T15:07:00.000Z",
+      "last_edited_time": "2026-05-18T15:49:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Armature 선택 → ",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Armature 선택 → ",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": "Ctrl+Tab",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "red"
+            },
+            "plain_text": "Ctrl+Tab",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": " → Pose Mode",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": " → Pose Mode",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "a3e63766-c5d9-45bb-a3d1-3437705ece16",
+      "parent": {
+        "type": "page_id",
+        "page_id": "31354d65-4971-8174-bb74-c528a6913fc0"
+      },
+      "created_time": "2026-05-18T15:07:00.000Z",
+      "last_edited_time": "2026-05-18T15:07:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "의심 가는 본(예: 팔, 어깨) 회전시켜 보기",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "의심 가는 본(예: 팔, 어깨) 회전시켜 보기",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "67dbd88a-d695-4752-8575-74573c60bf0b",
+      "parent": {
+        "type": "page_id",
+        "page_id": "31354d65-4971-8174-bb74-c528a6913fc0"
+      },
+      "created_time": "2026-05-18T15:07:00.000Z",
+      "last_edited_time": "2026-05-18T15:07:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "numbered_list_item",
+      "numbered_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "메쉬가 잡 따라오면 OK, 다른 부위까지 딸려오면 보정 필요",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "메쉬가 잡 따라오면 OK, 다른 부위까지 딸려오면 보정 필요",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "cb172f94-2944-42a5-8dd7-9b1fd51f5a78",
+      "parent": {
+        "type": "page_id",
+        "page_id": "31354d65-4971-8174-bb74-c528a6913fc0"
+      },
+      "created_time": "2026-05-18T15:07:00.000Z",
+      "last_edited_time": "2026-05-18T15:07:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "보정 작업:",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "보정 작업:",
+            "href": null
+          }
+        ],
+        "icon": null,
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "d3f9f05e-1666-4566-926c-94c8b1a8e168",
+      "parent": {
+        "type": "page_id",
+        "page_id": "31354d65-4971-8174-bb74-c528a6913fc0"
+      },
+      "created_time": "2026-05-18T15:07:00.000Z",
+      "last_edited_time": "2026-05-18T15:07:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "code",
+      "code": {
+        "caption": [],
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "1. 메쉬 선택 → Ctrl+Tab → Weight Paint\n2. Properties > Vertex Groups에서 해당 본 그룹 선택\n3. 브러시 설정:\n   Weight:    조정할 값 (0.0 ~ 1.0)\n   Radius:    F + 드래그\n   Strength:  Shift+F + 드래그\n4. 칠하기:\n   좌클릭:        Add (지정 Weight 더하기)\n   Ctrl+좌클릭:   Subtract (빼기)\n   Shift+좌클릭:  Blur (부드럽게 섞기)\n5. Front Faces Only 체크 → 반대쪽 관통 안됨\n6. Pose Mode 돌아가서 결과 확인 → 반복",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "1. 메쉬 선택 → Ctrl+Tab → Weight Paint\n2. Properties > Vertex Groups에서 해당 본 그룹 선택\n3. 브러시 설정:\n   Weight:    조정할 값 (0.0 ~ 1.0)\n   Radius:    F + 드래그\n   Strength:  Shift+F + 드래그\n4. 칠하기:\n   좌클릭:        Add (지정 Weight 더하기)\n   Ctrl+좌클릭:   Subtract (빼기)\n   Shift+좌클릭:  Blur (부드럽게 섞기)\n5. Front Faces Only 체크 → 반대쪽 관통 안됨\n6. Pose Mode 돌아가서 결과 확인 → 반복",
+            "href": null
+          }
+        ],
+        "language": "plain text"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "0aa842a3-b709-4580-9bcf-6e34d7c85559",
+      "parent": {
+        "type": "page_id",
+        "page_id": "31354d65-4971-8174-bb74-c528a6913fc0"
+      },
+      "created_time": "2026-05-18T15:07:00.000Z",
+      "last_edited_time": "2026-05-18T15:07:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": true,
+      "in_trash": false,
+      "type": "callout",
+      "callout": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Blender 4.0+ 단축키 변경",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Blender 4.0+ 단축키 변경",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": ": Weight Paint 모드에서 본 선택은 ",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": ": Weight Paint 모드에서 본 선택은 ",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": "Ctrl+Shift+좌클릭",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "red"
+            },
+            "plain_text": "Ctrl+Shift+좌클릭",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": "이에요 (이전 버전 ",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "이에요 (이전 버전 ",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": "Ctrl+좌클릭",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "red"
+            },
+            "plain_text": "Ctrl+좌클릭",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": "에서 변경).",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "에서 변경).",
+            "href": null
+          }
+        ],
+        "icon": {
+          "type": "emoji",
+          "emoji": "⚠️"
+        },
+        "color": "default"
+      },
+      "archived": false,
+      "children": [
+        {
+          "object": "block",
+          "id": "29253b17-ddec-4cb9-90ff-dcf25eefcf23",
+          "parent": {
+            "type": "block_id",
+            "block_id": "0aa842a3-b709-4580-9bcf-6e34d7c85559"
+          },
+          "created_time": "2026-05-18T15:07:00.000Z",
+          "last_edited_time": "2026-05-18T15:07:00.000Z",
+          "created_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "last_edited_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "has_children": false,
+          "in_trash": false,
+          "type": "paragraph",
+          "paragraph": {
+            "rich_text": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "왜?",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": true,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": "왜?",
+                "href": null
+              },
+              {
+                "type": "text",
+                "text": {
+                  "content": " Blender 4.0 이후 본 선택 제스처가 통일되면서, Ctrl+클릭이 Subtract 브러시와 중복되는 문제를 해결했어요.",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": false,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": " Blender 4.0 이후 본 선택 제스처가 통일되면서, Ctrl+클릭이 Subtract 브러시와 중복되는 문제를 해결했어요.",
+                "href": null
+              }
+            ],
+            "icon": null,
+            "color": "default"
+          },
+          "archived": false,
+          "children": []
+        }
+      ]
+    },
+    {
+      "object": "block",
+      "id": "1153acf8-2066-4675-8672-011174cd414e",
+      "parent": {
+        "type": "page_id",
+        "page_id": "31354d65-4971-8174-bb74-c528a6913fc0"
+      },
+      "created_time": "2026-05-18T15:07:00.000Z",
+      "last_edited_time": "2026-05-18T15:07:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": true,
+      "in_trash": false,
+      "type": "callout",
+      "callout": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "Auto Normalize",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "Auto Normalize",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": ": 활성화하면 칠할 때마다 모든 본의 Weight 합이 1.0이 되도록 자동 조정돼요. 한 본에 Weight를 더하면 다른 본에서 자동으로 빠져요. 직관적이지만 다른 그룹도 같이 바뀌니 주의하세요.",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": ": 활성화하면 칠할 때마다 모든 본의 Weight 합이 1.0이 되도록 자동 조정돼요. 한 본에 Weight를 더하면 다른 본에서 자동으로 빠져요. 직관적이지만 다른 그룹도 같이 바뀌니 주의하세요.",
+            "href": null
+          }
+        ],
+        "icon": {
+          "type": "emoji",
+          "emoji": "💡"
+        },
+        "color": "default"
+      },
+      "archived": false,
+      "children": [
+        {
+          "object": "block",
+          "id": "6fcf60b9-e505-4007-ab76-2c3482f1d8f6",
+          "parent": {
+            "type": "block_id",
+            "block_id": "1153acf8-2066-4675-8672-011174cd414e"
+          },
+          "created_time": "2026-05-18T15:07:00.000Z",
+          "last_edited_time": "2026-05-18T15:07:00.000Z",
+          "created_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "last_edited_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "has_children": false,
+          "in_trash": false,
+          "type": "paragraph",
+          "paragraph": {
+            "rich_text": [
+              {
+                "type": "text",
+                "text": {
+                  "content": "왜?",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": true,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": "왜?",
+                "href": null
+              },
+              {
+                "type": "text",
+                "text": {
+                  "content": " 한 버텍스에 여러 본의 Weight 합이 1.0을 초과하면 메쉬가 늘어나거나 찢어져요. Auto Normalize는 이를 자동 방지해주죠.",
+                  "link": null
+                },
+                "annotations": {
+                  "bold": false,
+                  "italic": false,
+                  "strikethrough": false,
+                  "underline": false,
+                  "code": false,
+                  "color": "default"
+                },
+                "plain_text": " 한 버텍스에 여러 본의 Weight 합이 1.0을 초과하면 메쉬가 늘어나거나 찢어져요. Auto Normalize는 이를 자동 방지해주죠.",
+                "href": null
+              }
+            ],
+            "icon": null,
+            "color": "default"
+          },
+          "archived": false,
+          "children": []
+        }
+      ]
+    },
+    {
+      "object": "block",
+      "id": "baadfc57-5a25-4df7-99f7-4a4d19327799",
+      "parent": {
+        "type": "page_id",
+        "page_id": "31354d65-4971-8174-bb74-c528a6913fc0"
+      },
+      "created_time": "2026-05-18T15:07:00.000Z",
+      "last_edited_time": "2026-05-18T15:07:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "paragraph",
+      "paragraph": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "색 의미 복습:",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "색 의미 복습:",
+            "href": null
+          }
+        ],
+        "icon": null,
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "28fc1eb0-186b-4516-bf5f-54c755bf8716",
+      "parent": {
+        "type": "page_id",
+        "page_id": "31354d65-4971-8174-bb74-c528a6913fc0"
+      },
+      "created_time": "2026-05-18T15:07:00.000Z",
+      "last_edited_time": "2026-05-18T15:07:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "빨강 (1.0)",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "빨강 (1.0)",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": ": 본의 영향 100% → 본 따라 완전히 움직임",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": ": 본의 영향 100% → 본 따라 완전히 움직임",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "eba75af8-d801-4e51-8ec8-407248b7ac82",
+      "parent": {
+        "type": "page_id",
+        "page_id": "31354d65-4971-8174-bb74-c528a6913fc0"
+      },
+      "created_time": "2026-05-18T15:07:00.000Z",
+      "last_edited_time": "2026-05-18T15:07:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "노랑/초록 (0.5)",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "노랑/초록 (0.5)",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": ": 부분 영향",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": ": 부분 영향",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "97c32100-d5f2-45f5-a2ab-97e0f4ade9cc",
+      "parent": {
+        "type": "page_id",
+        "page_id": "31354d65-4971-8174-bb74-c528a6913fc0"
+      },
+      "created_time": "2026-05-18T15:07:00.000Z",
+      "last_edited_time": "2026-05-18T15:07:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "bulleted_list_item",
+      "bulleted_list_item": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "파랑 (0.0)",
+              "link": null
+            },
+            "annotations": {
+              "bold": true,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "파랑 (0.0)",
+            "href": null
+          },
+          {
+            "type": "text",
+            "text": {
+              "content": ": 영향 없음 → 본 움직여도 안 따라옴",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": ": 영향 없음 → 본 움직여도 안 따라옴",
+            "href": null
+          }
+        ],
+        "color": "default"
+      },
+      "archived": false,
+      "children": []
+    },
+    {
+      "object": "block",
+      "id": "81409239-41e6-49e0-9c2b-49c8c223faab",
+      "parent": {
+        "type": "page_id",
+        "page_id": "31354d65-4971-8174-bb74-c528a6913fc0"
+      },
+      "created_time": "2026-05-18T15:07:00.000Z",
+      "last_edited_time": "2026-05-18T15:07:00.000Z",
+      "created_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "last_edited_by": {
+        "object": "user",
+        "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+      },
+      "has_children": false,
+      "in_trash": false,
+      "type": "heading_3",
+      "heading_3": {
+        "rich_text": [
+          {
+            "type": "text",
+            "text": {
+              "content": "🟢 Step 6: NLA Editor로 애니메이션 조합",
+              "link": null
+            },
+            "annotations": {
+              "bold": false,
+              "italic": false,
+              "strikethrough": false,
+              "underline": false,
+              "code": false,
+              "color": "default"
+            },
+            "plain_text": "🟢 Step 6: NLA Editor로 애니메이션 조합",
             "href": null
           }
         ],
@@ -4937,7 +5899,7 @@
         "page_id": "31354d65-4971-8174-bb74-c528a6913fc0"
       },
       "created_time": "2026-02-26T14:26:00.000Z",
-      "last_edited_time": "2026-03-14T04:08:00.000Z",
+      "last_edited_time": "2026-05-18T15:07:00.000Z",
       "created_by": {
         "object": "user",
         "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
@@ -4954,7 +5916,7 @@
           {
             "type": "text",
             "text": {
-              "content": "🟢 Step 6: 렌더 테스트",
+              "content": "🟢 Step 7: 렌더 테스트",
               "link": null
             },
             "annotations": {
@@ -4965,7 +5927,7 @@
               "code": false,
               "color": "default"
             },
-            "plain_text": "🟢 Step 6: 렌더 테스트",
+            "plain_text": "🟢 Step 7: 렌더 테스트",
             "href": null
           }
         ],
@@ -5073,7 +6035,7 @@
         "page_id": "31354d65-4971-8174-bb74-c528a6913fc0"
       },
       "created_time": "2026-02-26T14:26:00.000Z",
-      "last_edited_time": "2026-02-26T14:26:00.000Z",
+      "last_edited_time": "2026-05-18T15:49:00.000Z",
       "created_by": {
         "object": "user",
         "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
@@ -5098,8 +6060,8 @@
               "italic": false,
               "strikethrough": false,
               "underline": false,
-              "code": true,
-              "color": "default"
+              "code": false,
+              "color": "red"
             },
             "plain_text": "Ctrl+F12",
             "href": null
@@ -5364,7 +6326,7 @@
             "block_id": "462eefe0-0a7a-42e2-ad22-b8582a4c8582"
           },
           "created_time": "2026-02-27T06:02:00.000Z",
-          "last_edited_time": "2026-02-27T06:02:00.000Z",
+          "last_edited_time": "2026-05-18T15:49:00.000Z",
           "created_by": {
             "object": "user",
             "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
@@ -5406,8 +6368,8 @@
                   "italic": false,
                   "strikethrough": false,
                   "underline": false,
-                  "code": true,
-                  "color": "default"
+                  "code": false,
+                  "color": "red"
                 },
                 "plain_text": "Ctrl+A",
                 "href": null
@@ -5557,7 +6519,7 @@
             "block_id": "22943ce4-d195-4eaa-8dad-a224d65849fa"
           },
           "created_time": "2026-02-27T06:02:00.000Z",
-          "last_edited_time": "2026-02-27T06:02:00.000Z",
+          "last_edited_time": "2026-05-18T15:49:00.000Z",
           "created_by": {
             "object": "user",
             "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
@@ -5599,8 +6561,8 @@
                   "italic": false,
                   "strikethrough": false,
                   "underline": false,
-                  "code": true,
-                  "color": "default"
+                  "code": false,
+                  "color": "red"
                 },
                 "plain_text": "Ctrl+J",
                 "href": null
@@ -5750,7 +6712,7 @@
             "block_id": "1faa255e-38fe-487e-9d08-302a309769e4"
           },
           "created_time": "2026-02-27T06:02:00.000Z",
-          "last_edited_time": "2026-02-27T06:02:00.000Z",
+          "last_edited_time": "2026-05-18T15:49:00.000Z",
           "created_by": {
             "object": "user",
             "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
@@ -5826,8 +6788,8 @@
                   "italic": false,
                   "strikethrough": false,
                   "underline": false,
-                  "code": true,
-                  "color": "default"
+                  "code": false,
+                  "color": "red"
                 },
                 "plain_text": "Ctrl+A",
                 "href": null
@@ -6528,6 +7490,136 @@
                     "color": "default"
                   },
                   "plain_text": "여러 애니메이션을 블렌딩/시퀀싱",
+                  "href": null
+                }
+              ]
+            ]
+          },
+          "archived": false,
+          "children": []
+        },
+        {
+          "object": "block",
+          "id": "b167621d-314e-4037-8f20-85993d27c475",
+          "parent": {
+            "type": "block_id",
+            "block_id": "21cd7e65-253c-4949-8ecf-cb5e3c437702"
+          },
+          "created_time": "2026-05-18T15:07:00.000Z",
+          "last_edited_time": "2026-05-18T15:07:00.000Z",
+          "created_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "last_edited_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "has_children": false,
+          "in_trash": false,
+          "type": "table_row",
+          "table_row": {
+            "cells": [
+              [
+                {
+                  "type": "text",
+                  "text": {
+                    "content": "Weight Paint 보정",
+                    "link": null
+                  },
+                  "annotations": {
+                    "bold": false,
+                    "italic": false,
+                    "strikethrough": false,
+                    "underline": false,
+                    "code": false,
+                    "color": "default"
+                  },
+                  "plain_text": "Weight Paint 보정",
+                  "href": null
+                }
+              ],
+              [
+                {
+                  "type": "text",
+                  "text": {
+                    "content": "AI 리깅 결과 어색한 부위만 부분 수정. Front Faces Only 필수",
+                    "link": null
+                  },
+                  "annotations": {
+                    "bold": false,
+                    "italic": false,
+                    "strikethrough": false,
+                    "underline": false,
+                    "code": false,
+                    "color": "default"
+                  },
+                  "plain_text": "AI 리깅 결과 어색한 부위만 부분 수정. Front Faces Only 필수",
+                  "href": null
+                }
+              ]
+            ]
+          },
+          "archived": false,
+          "children": []
+        },
+        {
+          "object": "block",
+          "id": "01acb413-8037-446e-b735-773e44422a78",
+          "parent": {
+            "type": "block_id",
+            "block_id": "21cd7e65-253c-4949-8ecf-cb5e3c437702"
+          },
+          "created_time": "2026-05-18T15:07:00.000Z",
+          "last_edited_time": "2026-05-18T15:07:00.000Z",
+          "created_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "last_edited_by": {
+            "object": "user",
+            "id": "77ae4545-eafb-4d07-8a64-0fe5f6bd9270"
+          },
+          "has_children": false,
+          "in_trash": false,
+          "type": "table_row",
+          "table_row": {
+            "cells": [
+              [
+                {
+                  "type": "text",
+                  "text": {
+                    "content": "AI 도구 선택",
+                    "link": null
+                  },
+                  "annotations": {
+                    "bold": false,
+                    "italic": false,
+                    "strikethrough": false,
+                    "underline": false,
+                    "code": false,
+                    "color": "default"
+                  },
+                  "plain_text": "AI 도구 선택",
+                  "href": null
+                }
+              ],
+              [
+                {
+                  "type": "text",
+                  "text": {
+                    "content": "인체형=AccuRIG, 애니메이션=Mixamo, Blender내=Rigify",
+                    "link": null
+                  },
+                  "annotations": {
+                    "bold": false,
+                    "italic": false,
+                    "strikethrough": false,
+                    "underline": false,
+                    "code": false,
+                    "color": "default"
+                  },
+                  "plain_text": "인체형=AccuRIG, 애니메이션=Mixamo, Blender내=Rigify",
                   "href": null
                 }
               ]
