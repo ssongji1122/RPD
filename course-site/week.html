@@ -163,6 +163,7 @@
   <script src="assets/showme/_registry.js?v=20260318f"></script>
   <script src="assets/showme/_catalog.js?v=20260318c"></script>
   <script src="assets/showme/_supplements.js?v=20260318c"></script>
+  <script src="assets/showme/_showme_icons.js?v=20260519a"></script>
   <script src="assets/showme/_helpers.js?v=20260318ai"></script>
   <script src="data/curriculum.js?v=20260318c"></script>
   <script src="assets/notion-renderer.js"></script>
@@ -318,6 +319,11 @@
         ? "showme-icon-badge--browser"
         : (variant === "pill" ? "showme-icon-badge--pill" : (variant === "title" ? "showme-icon-badge--title" : "showme-icon-badge--card"));
       var rootClass = (variant === "card" ? "btn-showme-icon " : "") + "showme-icon-badge " + sizeClass;
+      // Phase 2+ Lucide name support (static author-controlled SVG bundle).
+      var iconName = meta && meta.icon;
+      if (window.SHOWME_ICONS && window.SHOWME_ICONS.has && window.SHOWME_ICONS.has(iconName)) {
+        return '<span class="' + rootClass + ' is-lucide" aria-hidden="true">' + window.SHOWME_ICONS.htmlString(iconName) + '</span>';
+      }
       var iconAssetPath = meta && meta.iconKey ? getShowMeToolIconAssetPath(meta.iconKey) : "";
       var iconSvg = meta && meta.iconKey ? getShowMeToolIconSvg(meta.iconKey) : "";
       var iconFallback = iconSvg

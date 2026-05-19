@@ -39,7 +39,11 @@ def build_registry_js(cards: list[Card]) -> str:
         )
         entries.append(entry)
     body = ",\n".join(entries)
-    return f"{_HEADER}\nconst SHOWME_REGISTRY = {{\n{body}\n}};\n"
+    return (
+        f"{_HEADER}\n"
+        f"var SHOWME_REGISTRY = {{\n{body}\n}};\n"
+        f"if (typeof window !== \"undefined\") window.SHOWME_REGISTRY = SHOWME_REGISTRY;\n"
+    )
 
 
 def build_catalog_json(cards: list[Card]) -> str:
@@ -80,7 +84,11 @@ def build_registry_js_merged(cards: list[Card], legacy_path: Path) -> str:
             entries.append(f"  {literal}")
 
     body = ",\n".join(entries)
-    return f"{_HEADER}\nconst SHOWME_REGISTRY = {{\n{body}\n}};\n"
+    return (
+        f"{_HEADER}\n"
+        f"var SHOWME_REGISTRY = {{\n{body}\n}};\n"
+        f"if (typeof window !== \"undefined\") window.SHOWME_REGISTRY = SHOWME_REGISTRY;\n"
+    )
 
 
 def build_catalog_json_merged(cards: list[Card], legacy_path: Path) -> str:

@@ -19,7 +19,8 @@ def test_registry_emits_js_object():
         _card("mirror", "Mirror Modifier", "flip-horizontal", [3]),
     ]
     js = build_registry_js(cards)
-    assert "const SHOWME_REGISTRY" in js
+    assert "SHOWME_REGISTRY" in js
+    assert "window.SHOWME_REGISTRY" in js  # ensures window-scope attachment for getRegistry()
     assert '"array-modifier"' in js
     assert '"Array Modifier 이해"' in js
     assert '"repeat-2"' in js

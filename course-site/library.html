@@ -117,6 +117,7 @@
   <script src="assets/showme/_catalog.js?v=20260318c"></script>
   <script src="assets/topbar-search.js"></script>
   <script src="assets/showme/_supplements.js?v=20260318c"></script>
+  <script src="assets/showme/_showme_icons.js?v=20260519a"></script>
   <script src="assets/showme/_helpers.js?v=20260318ai"></script>
 <script>
 var activeLetter = "all";
@@ -701,7 +702,12 @@ function createShowMeBrowserItem(entry) {
 
   var icon = document.createElement("span");
   icon.className = "showme-browser-item-icon";
-  icon.textContent = card.icon || (card.meta && card.meta.icon) || "📖";
+  var iconVal = card.icon || (card.meta && card.meta.icon) || "📖";
+  if (window.SHOWME_ICONS && window.SHOWME_ICONS.apply) {
+    window.SHOWME_ICONS.apply(icon, iconVal);
+  } else {
+    icon.textContent = iconVal;
+  }
   button.appendChild(icon);
 
   var copy = document.createElement("span");
@@ -1222,7 +1228,12 @@ function openShowMe(widgetId) {
   showMeLastTrigger = document.querySelector('.lib-card[data-showme-id="' + widgetId + '"]') || showMeLastTrigger;
   title.textContent = meta.localizedLabel;
   titleMeta.textContent = getShowMeMetaLine(meta) || text.modalCurrentCardFallbackMeta;
-  titleIcon.textContent = meta.icon || (meta.meta && meta.meta.icon) || "📖";
+  var titleIconVal = meta.icon || (meta.meta && meta.meta.icon) || "📖";
+  if (window.SHOWME_ICONS && window.SHOWME_ICONS.apply) {
+    window.SHOWME_ICONS.apply(titleIcon, titleIconVal);
+  } else {
+    titleIcon.textContent = titleIconVal;
+  }
   renderShowMeBrowser();
   setShowMeBrowserOpen(showMeBrowserOpen);
   iframe.onload = function() {
