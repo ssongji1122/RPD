@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Show Me — Collection 과 Outliner 이해</title>
+<title>Show Me — Shade Smooth &amp; Auto Smooth</title>
 <style>
 /* ══════════════════════════════════════════════════
    Show Me Widget — Standalone Dark Theme
@@ -620,12 +620,12 @@ body {
 </nav>
 
 <section class="panel active" data-panel="concept">
-  <div class="card-concept"><p>Collection은 <strong>폴더</strong>처럼 오브젝트를 묶는 단위예요. Outliner는 그 폴더 구조를 보여주는 트리.</p>
-<p>로봇처럼 파츠가 많은 모델은 머리/몸통/팔/다리를 Collection으로 분리하면 가시성, 선택 잠금, 일괄 조작이 한결 쉬워져요. 책상 위에 부품을 통 안에 나눠 담는 것과 같아요.</p></div>
+  <div class="card-concept"><p>같은 메쉬도 <strong>빛이 부드럽게 흐르는지 / 면마다 뚝뚝 끊기는지</strong> 셰이딩 모드로 바뀌어요. <strong>Flat</strong>은 모든 면을 각진 그대로, <strong>Shade Smooth</strong>는 전체를 부드럽게 보간해요.</p>
+<p><strong>Auto Smooth by Angle</strong>은 절충안 — 각도가 작은 모서리는 부드럽게, 큰 모서리(예: 30° 초과)는 날카롭게 유지해요. 로봇처럼 모서리와 곡면이 섞인 모델에 가장 자주 써요.</p></div>
 </section>
 
 <section class="panel" data-panel="steps">
-  <ol class="steps-list"><li class="step-item"><span class="step-n">1</span> <span class="step-action">Outliner 빈 공간 우클릭 → New Collection</span> <span class="step-menu">Outliner &gt; New Collection</span></li><li class="step-item"><span class="step-n">2</span> <span class="step-action">오브젝트 선택 후 Collection으로 이동</span> <kbd>M</kbd> <span class="step-menu">Move to Collection</span></li><li class="step-item"><span class="step-n">3</span> <span class="step-action">뷰포트에서 Collection 숨기기/보이기</span> <span class="step-menu">눈 아이콘 클릭</span> <span class="step-note">H로도 토글 가능</span></li><li class="step-item"><span class="step-n">4</span> <span class="step-action">Collection 선택 잠금</span> <span class="step-menu">화살표(필터) 아이콘 클릭</span> <span class="step-note">실수로 움직이는 것 방지</span></li></ol>
+  <ol class="steps-list"><li class="step-item"><span class="step-n">1</span> <span class="step-action">Object Mode에서 메쉬 우클릭</span> <span class="step-menu">Object Context Menu</span></li><li class="step-item"><span class="step-n">2</span> <span class="step-action">Shade Smooth 선택</span> <span class="step-menu">Shade Smooth</span> <span class="step-note">전체 매끄럽게</span></li><li class="step-item"><span class="step-n">3</span> <span class="step-action">Properties &gt; Object Data (역삼각형) &gt; Normals</span> <span class="step-menu">Object Data Properties</span> <span class="step-note">Blender 5.0 위치</span></li><li class="step-item"><span class="step-n">4</span> <span class="step-action">Auto Smooth 토글 → Angle 입력</span> <span class="step-note">보통 30°로 시작</span></li></ol>
 </section>
 
 <section class="panel" data-panel="interaction">
@@ -633,8 +633,8 @@ body {
 </section>
 
 <section class="panel" data-panel="usage">
-  <div class="card-usage"><h3>언제 쓰나요</h3><p>파츠 수가 많아질 때, 좌우 대칭 작업 중 한쪽만 숨기고 싶을 때, 렌더에서 일부만 제외하고 싶을 때.</p></div>
-  <div class="card-pitfall"><h3>흔한 실수</h3><p>Outliner 옆 두 아이콘은 역할이 달라요. <strong>눈 아이콘 = 뷰포트 가시성</strong>, <strong>모니터(카메라) 아이콘 = 렌더 가시성</strong>. 렌더에서만 사라지는 파츠가 있다면 모니터 아이콘이 꺼져 있는 거예요.</p></div>
+  <div class="card-usage"><h3>언제 쓰나요</h3><p>원기둥·구·캐릭터 등 부드러워야 할 모델에는 Shade Smooth. 로봇·도구처럼 일부 모서리가 살아야 하는 모델에는 Auto Smooth by Angle (30~45°).</p></div>
+  <div class="card-pitfall"><h3>흔한 실수</h3><p>Shade Smooth만 켜면 <strong>모서리까지 다 뭉개져요.</strong> Auto Smooth 각도가 너무 작으면(예: 10°) 부드러워야 할 곳도 끊겨 보이고, 너무 크면(예: 80°) 뭉개져요. <strong>30° 근처에서 시작</strong>해서 모델 보면서 조정하세요. Blender 5.0에서는 Object Data Properties → Normals → Auto Smooth 토글로 들어가요.</p></div>
 </section>
 
 <section class="panel" data-panel="videos">
@@ -677,7 +677,7 @@ window.addEventListener("load", function() {
   }
 });
 </script>
-<footer class="doc-ref-footer"><a class="doc-ref" href="https://docs.blender.org/manual/en/latest/scene_layout/collections/index.html" target="_blank" rel="noopener">Blender Docs</a></footer>
+<footer class="doc-ref-footer"><a class="doc-ref" href="https://docs.blender.org/manual/en/latest/modeling/meshes/editing/mesh/normals.html#shade-smooth-flat" target="_blank" rel="noopener">Blender Docs</a></footer>
 
 </body>
 </html>

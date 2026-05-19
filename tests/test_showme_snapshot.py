@@ -87,6 +87,41 @@ def test_end_to_end_pilot_renders_expected_substrings():
     assert ".steps-list" in html
 
 
+import json as _json
+import pytest
+
+FIXTURES_DIR = Path(__file__).parent / "fixtures" / "showme" / "cards"
+
+
+@pytest.mark.parametrize("card_id", [
+    "collection-outliner",
+    "modifier-stack-order",
+    "shade-smooth-auto-smooth",
+    "merge-by-distance",
+    "bridge-edge-loops",
+    "duplicate-vs-linked-duplicate",
+    "face-orientation-normals",
+    "apply-modifier-vs-keep-procedural",
+])
+def test_phase2_card_renders(card_id):
+    fixture_path = FIXTURES_DIR / f"{card_id}.json"
+    page = _json.loads(fixture_path.read_text())
+    card = normalize_card_page(page, video_pages_by_id={})
+    template = TEMPLATE.read_text()
+    html = render_card_html(card, template)
+
+    # Label appears in title (HTML-escaped)
+    import html as _html_mod
+    assert f"<title>Show Me — {_html_mod.escape(card.label)}</title>" in html
+    # has-steps flag (all P2 cards have steps)
+    assert "has-steps" in html.split("<body")[1].split(">")[0]
+    # No quiz code
+    assert "initQuiz" not in html
+    assert "showme-quiz-complete" not in html
+    # Doc-ref injected
+    assert "Blender Docs" in html
+
+
 def test_end_to_end_widget_present_when_widget_id_set():
     page = {**PILOT_PAGE, "properties": {**PILOT_PAGE["properties"]}}
     page["properties"] = dict(PILOT_PAGE["properties"])

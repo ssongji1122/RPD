@@ -1,0 +1,102 @@
+{
+  "object": "page",
+  "id": "36554d65-4971-816e-90b6-fb5035e90b65",
+  "properties": {
+    "card_id": {
+      "title": [
+        {
+          "plain_text": "apply-modifier-vs-keep-procedural"
+        }
+      ]
+    },
+    "label": {
+      "rich_text": [
+        {
+          "plain_text": "Apply Modifier vs 비파괴 유지"
+        }
+      ]
+    },
+    "icon": {
+      "rich_text": [
+        {
+          "plain_text": "🔒"
+        }
+      ]
+    },
+    "category": {
+      "select": {
+        "name": "modifier"
+      }
+    },
+    "week": {
+      "multi_select": [
+        {
+          "name": "3"
+        },
+        {
+          "name": "4"
+        }
+      ]
+    },
+    "priority": {
+      "select": {
+        "name": "P1"
+      }
+    },
+    "status": {
+      "select": {
+        "name": "draft"
+      }
+    },
+    "concept_md": {
+      "rich_text": [
+        {
+          "plain_text": "Modifier는 **투명한 효과 필름**이에요. 값을 바꾸거나 끄거나 지우면 원본 메쉬는 그대로 남아요 — 이게 **비파괴(Non-destructive)**.\n\n**Apply**는 그 필름을 원본에 도장 찍어버리는 작업. 한 번 Apply하면 더 이상 값을 못 바꿔요. 사진 보정에서 RAW를 JPEG으로 굳히는 것과 비슷. 보정 정보가 사라지면 되돌릴 수 없죠."
+        }
+      ]
+    },
+    "usage_md": {
+      "rich_text": [
+        {
+          "plain_text": "**보통은 Apply 하지 마세요.** Apply가 필요한 시점은 (1) 다음 Modifier가 Apply된 결과를 입력으로 받아야 할 때, (2) 외부로 export할 때(FBX/GLTF), (3) Edit Mode에서 수동으로 다듬어야 할 때."
+        }
+      ]
+    },
+    "pitfall_md": {
+      "rich_text": [
+        {
+          "plain_text": "**Apply Transform (`Ctrl+A`)과 Apply Modifier는 달라요.** Ctrl+A는 Object의 위치/회전/크기를 수치적으로 정리하는 거고, Modifier Apply는 효과를 메쉬에 굳히는 거예요. Modifier Apply는 거의 항상 **맨 마지막에만** 합니다. Mirror를 너무 일찍 Apply하면 좌우 비대칭으로 다듬기 어려워져요."
+        }
+      ]
+    },
+    "steps_json": {
+      "rich_text": [
+        {
+          "plain_text": "{\"blender_version\": \"5.0\", \"platform_note\": null, \"steps\": [{\"n\": 1, \"action\": \"Modifier 우상단 ▾ 메뉴 열기\", \"hotkey\": null, \"menu\": \"Modifier > ▾\", \"screenshot\": null, \"note\": null}, {\"n\": 2, \"action\": \"Apply 선택\", \"hotkey\": null, \"menu\": \"Apply\", \"screenshot\": null, \"note\": \"되돌리기 어려움\"}, {\"n\": 3, \"action\": \"Apply 대신 Visibility 토글로 임시 확인\", \"hotkey\": null, \"menu\": \"Modifier 패널 눈/모니터 아이콘\", \"screenshot\": null, \"note\": \"비파괴 유지\"}, {\"n\": 4, \"action\": \"여러 Modifier 일괄 적용은 Object Convert\", \"hotkey\": null, \"menu\": \"Object > Convert > Mesh\", \"screenshot\": null, \"note\": \"스택 전체를 Mesh로 굳힘\"}]}"
+        }
+      ]
+    },
+    "widget_id": {
+      "rich_text": []
+    },
+    "blender_version": {
+      "rich_text": [
+        {
+          "plain_text": "5.0"
+        }
+      ]
+    },
+    "official_docs": {
+      "url": "https://docs.blender.org/manual/en/latest/modeling/modifiers/introduction.html#applying"
+    },
+    "prerequisites": {
+      "relation": []
+    },
+    "related": {
+      "relation": []
+    },
+    "videos_relation": {
+      "relation": []
+    }
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "object": "page",
+  "id": "36554d65-4971-81a6-9dda-c7f8402b36ed",
+  "properties": {
+    "card_id": {
+      "title": [
+        {
+          "plain_text": "modifier-stack-order"
+        }
+      ]
+    },
+    "label": {
+      "rich_text": [
+        {
+          "plain_text": "Modifier Stack 순서"
+        }
+      ]
+    },
+    "icon": {
+      "rich_text": [
+        {
+          "plain_text": "📚"
+        }
+      ]
+    },
+    "category": {
+      "select": {
+        "name": "modifier"
+      }
+    },
+    "week": {
+      "multi_select": [
+        {
+          "name": "3"
+        }
+      ]
+    },
+    "priority": {
+      "select": {
+        "name": "P0"
+      }
+    },
+    "status": {
+      "select": {
+        "name": "draft"
+      }
+    },
+    "concept_md": {
+      "rich_text": [
+        {
+          "plain_text": "Modifier는 **요리 레시피**처럼 위에서 아래로 순서대로 계산돼요. **같은 재료라도 넣는 순서가 다르면 결과가 달라져요.**\n\n가장 안전한 시작 순서는 **Mirror → Boolean → Subdivision Surface → Bevel → Weighted Normal**. Mirror로 좌우 대칭을 먼저 잡고, Boolean으로 구멍을 뚫고, 마지막에 Subdivision으로 부드럽게 만드는 흐름이에요."
+        }
+      ]
+    },
+    "usage_md": {
+      "rich_text": [
+        {
+          "plain_text": "여러 Modifier를 같이 쓸 때 결과가 의도와 다르게 보이면 가장 먼저 순서를 점검해요. Stack 핸들(::)을 드래그하거나 화살표 아이콘으로 위/아래로 옮길 수 있어요."
+        }
+      ]
+    },
+    "pitfall_md": {
+      "rich_text": [
+        {
+          "plain_text": "**Subdivision Surface를 먼저 넣고 Boolean을 하면** 곡면이 깨져서 결과가 지저분해져요. Subdivision은 거의 항상 마지막 또는 끝에서 두 번째로 두는 게 안전해요. Weighted Normal은 Bevel 이후에 와야 음영 정리가 의도대로 됩니다."
+        }
+      ]
+    },
+    "steps_json": {
+      "rich_text": [
+        {
+          "plain_text": "{\"blender_version\": \"5.0\", \"platform_note\": null, \"steps\": [{\"n\": 1, \"action\": \"Properties 패널 > 렌치 아이콘(Modifier Properties) 열기\", \"hotkey\": null, \"menu\": \"Properties > 🔧\", \"screenshot\": null, \"note\": null}, {\"n\": 2, \"action\": \"Modifier 항목 좌측의 핸들(::) 잡기\", \"hotkey\": null, \"menu\": null, \"screenshot\": null, \"note\": \"드래그해서 위/아래로 이동\"}, {\"n\": 3, \"action\": \"메뉴에서 Move Up / Move Down 선택\", \"hotkey\": null, \"menu\": \"Modifier 우상단 ▾ > Move Up/Down\", \"screenshot\": null, \"note\": null}, {\"n\": 4, \"action\": \"권장 순서: Mirror → Boolean → Subdivision → Bevel → Weighted Normal\", \"hotkey\": null, \"menu\": null, \"screenshot\": null, \"note\": \"Apply 타이밍은 가장 마지막\"}]}"
+        }
+      ]
+    },
+    "widget_id": {
+      "rich_text": []
+    },
+    "blender_version": {
+      "rich_text": [
+        {
+          "plain_text": "5.0"
+        }
+      ]
+    },
+    "official_docs": {
+      "url": "https://docs.blender.org/manual/en/latest/modeling/modifiers/introduction.html#the-modifier-stack"
+    },
+    "prerequisites": {
+      "relation": []
+    },
+    "related": {
+      "relation": []
+    },
+    "videos_relation": {
+      "relation": []
+    }
+  }
+}

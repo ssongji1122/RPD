@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Show Me — Collection 과 Outliner 이해</title>
+<title>Show Me — Bridge Edge Loops (열린 루프 연결)</title>
 <style>
 /* ══════════════════════════════════════════════════
    Show Me Widget — Standalone Dark Theme
@@ -620,12 +620,12 @@ body {
 </nav>
 
 <section class="panel active" data-panel="concept">
-  <div class="card-concept"><p>Collection은 <strong>폴더</strong>처럼 오브젝트를 묶는 단위예요. Outliner는 그 폴더 구조를 보여주는 트리.</p>
-<p>로봇처럼 파츠가 많은 모델은 머리/몸통/팔/다리를 Collection으로 분리하면 가시성, 선택 잠금, 일괄 조작이 한결 쉬워져요. 책상 위에 부품을 통 안에 나눠 담는 것과 같아요.</p></div>
+  <div class="card-concept"><p>모자와 머리를 따로 만들었는데 둘이 안 붙어 있다면 <strong>두 열린 루프를 다리(bridge)로 연결</strong>해야 해요. Bridge Edge Loops는 두 Edge 루프 사이에 면을 자동으로 만들어줘요.</p>
+<p>휴지심 두 개를 마주 보게 놓고 사이에 종이를 감아 붙이는 것과 비슷해요. 빈 공간을 면으로 메워주는 도구.</p></div>
 </section>
 
 <section class="panel" data-panel="steps">
-  <ol class="steps-list"><li class="step-item"><span class="step-n">1</span> <span class="step-action">Outliner 빈 공간 우클릭 → New Collection</span> <span class="step-menu">Outliner &gt; New Collection</span></li><li class="step-item"><span class="step-n">2</span> <span class="step-action">오브젝트 선택 후 Collection으로 이동</span> <kbd>M</kbd> <span class="step-menu">Move to Collection</span></li><li class="step-item"><span class="step-n">3</span> <span class="step-action">뷰포트에서 Collection 숨기기/보이기</span> <span class="step-menu">눈 아이콘 클릭</span> <span class="step-note">H로도 토글 가능</span></li><li class="step-item"><span class="step-n">4</span> <span class="step-action">Collection 선택 잠금</span> <span class="step-menu">화살표(필터) 아이콘 클릭</span> <span class="step-note">실수로 움직이는 것 방지</span></li></ol>
+  <ol class="steps-list"><li class="step-item"><span class="step-n">1</span> <span class="step-action">두 루프가 다른 오브젝트면 Join</span> <kbd>Ctrl + J</kbd> <span class="step-note">Object Mode에서</span></li><li class="step-item"><span class="step-n">2</span> <span class="step-action">Edit Mode 진입 + Edge 모드</span> <kbd>Tab → 2</kbd></li><li class="step-item"><span class="step-n">3</span> <span class="step-action">두 루프 선택 (Alt+클릭으로 루프 단위 선택, Shift+Alt+클릭으로 추가)</span></li><li class="step-item"><span class="step-n">4</span> <span class="step-action">Bridge Edge Loops 실행</span> <span class="step-menu">Edge &gt; Bridge Edge Loops</span></li></ol>
 </section>
 
 <section class="panel" data-panel="interaction">
@@ -633,8 +633,8 @@ body {
 </section>
 
 <section class="panel" data-panel="usage">
-  <div class="card-usage"><h3>언제 쓰나요</h3><p>파츠 수가 많아질 때, 좌우 대칭 작업 중 한쪽만 숨기고 싶을 때, 렌더에서 일부만 제외하고 싶을 때.</p></div>
-  <div class="card-pitfall"><h3>흔한 실수</h3><p>Outliner 옆 두 아이콘은 역할이 달라요. <strong>눈 아이콘 = 뷰포트 가시성</strong>, <strong>모니터(카메라) 아이콘 = 렌더 가시성</strong>. 렌더에서만 사라지는 파츠가 있다면 모니터 아이콘이 꺼져 있는 거예요.</p></div>
+  <div class="card-usage"><h3>언제 쓰나요</h3><p>파츠를 따로 만든 뒤 하나의 메쉬로 합쳐야 할 때, 구멍(Delete Face로 만든)을 다른 메쉬 루프와 연결할 때, 캐릭터 모자·후드·옷깃처럼 두 표면을 잇는 형태를 만들 때.</p></div>
+  <div class="card-pitfall"><h3>흔한 실수</h3><p><strong>두 루프의 버텍스 개수가 다르면</strong> 결과 토폴로지가 지저분해져요. 비슷한 개수로 맞춘 뒤 Bridge 하거나, 한쪽을 Loop Cut으로 분할해 개수를 맞춰요. <strong>두 루프가 같은 메쉬에 있어야</strong> 동작해요 — 다른 오브젝트면 먼저 `Ctrl + J`로 Join.</p></div>
 </section>
 
 <section class="panel" data-panel="videos">
@@ -677,7 +677,7 @@ window.addEventListener("load", function() {
   }
 });
 </script>
-<footer class="doc-ref-footer"><a class="doc-ref" href="https://docs.blender.org/manual/en/latest/scene_layout/collections/index.html" target="_blank" rel="noopener">Blender Docs</a></footer>
+<footer class="doc-ref-footer"><a class="doc-ref" href="https://docs.blender.org/manual/en/latest/modeling/meshes/editing/edge/bridge_edge_loops.html" target="_blank" rel="noopener">Blender Docs</a></footer>
 
 </body>
 </html>

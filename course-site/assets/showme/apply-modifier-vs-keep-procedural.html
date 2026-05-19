@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Show Me — Collection 과 Outliner 이해</title>
+<title>Show Me — Apply Modifier vs 비파괴 유지</title>
 <style>
 /* ══════════════════════════════════════════════════
    Show Me Widget — Standalone Dark Theme
@@ -620,12 +620,12 @@ body {
 </nav>
 
 <section class="panel active" data-panel="concept">
-  <div class="card-concept"><p>Collection은 <strong>폴더</strong>처럼 오브젝트를 묶는 단위예요. Outliner는 그 폴더 구조를 보여주는 트리.</p>
-<p>로봇처럼 파츠가 많은 모델은 머리/몸통/팔/다리를 Collection으로 분리하면 가시성, 선택 잠금, 일괄 조작이 한결 쉬워져요. 책상 위에 부품을 통 안에 나눠 담는 것과 같아요.</p></div>
+  <div class="card-concept"><p>Modifier는 <strong>투명한 효과 필름</strong>이에요. 값을 바꾸거나 끄거나 지우면 원본 메쉬는 그대로 남아요 — 이게 <strong>비파괴(Non-destructive)</strong>.</p>
+<p><strong>Apply</strong>는 그 필름을 원본에 도장 찍어버리는 작업. 한 번 Apply하면 더 이상 값을 못 바꿔요. 사진 보정에서 RAW를 JPEG으로 굳히는 것과 비슷. 보정 정보가 사라지면 되돌릴 수 없죠.</p></div>
 </section>
 
 <section class="panel" data-panel="steps">
-  <ol class="steps-list"><li class="step-item"><span class="step-n">1</span> <span class="step-action">Outliner 빈 공간 우클릭 → New Collection</span> <span class="step-menu">Outliner &gt; New Collection</span></li><li class="step-item"><span class="step-n">2</span> <span class="step-action">오브젝트 선택 후 Collection으로 이동</span> <kbd>M</kbd> <span class="step-menu">Move to Collection</span></li><li class="step-item"><span class="step-n">3</span> <span class="step-action">뷰포트에서 Collection 숨기기/보이기</span> <span class="step-menu">눈 아이콘 클릭</span> <span class="step-note">H로도 토글 가능</span></li><li class="step-item"><span class="step-n">4</span> <span class="step-action">Collection 선택 잠금</span> <span class="step-menu">화살표(필터) 아이콘 클릭</span> <span class="step-note">실수로 움직이는 것 방지</span></li></ol>
+  <ol class="steps-list"><li class="step-item"><span class="step-n">1</span> <span class="step-action">Modifier 우상단 ▾ 메뉴 열기</span> <span class="step-menu">Modifier &gt; ▾</span></li><li class="step-item"><span class="step-n">2</span> <span class="step-action">Apply 선택</span> <span class="step-menu">Apply</span> <span class="step-note">되돌리기 어려움</span></li><li class="step-item"><span class="step-n">3</span> <span class="step-action">Apply 대신 Visibility 토글로 임시 확인</span> <span class="step-menu">Modifier 패널 눈/모니터 아이콘</span> <span class="step-note">비파괴 유지</span></li><li class="step-item"><span class="step-n">4</span> <span class="step-action">여러 Modifier 일괄 적용은 Object Convert</span> <span class="step-menu">Object &gt; Convert &gt; Mesh</span> <span class="step-note">스택 전체를 Mesh로 굳힘</span></li></ol>
 </section>
 
 <section class="panel" data-panel="interaction">
@@ -633,8 +633,8 @@ body {
 </section>
 
 <section class="panel" data-panel="usage">
-  <div class="card-usage"><h3>언제 쓰나요</h3><p>파츠 수가 많아질 때, 좌우 대칭 작업 중 한쪽만 숨기고 싶을 때, 렌더에서 일부만 제외하고 싶을 때.</p></div>
-  <div class="card-pitfall"><h3>흔한 실수</h3><p>Outliner 옆 두 아이콘은 역할이 달라요. <strong>눈 아이콘 = 뷰포트 가시성</strong>, <strong>모니터(카메라) 아이콘 = 렌더 가시성</strong>. 렌더에서만 사라지는 파츠가 있다면 모니터 아이콘이 꺼져 있는 거예요.</p></div>
+  <div class="card-usage"><h3>언제 쓰나요</h3><p><strong>보통은 Apply 하지 마세요.</strong> Apply가 필요한 시점은 (1) 다음 Modifier가 Apply된 결과를 입력으로 받아야 할 때, (2) 외부로 export할 때(FBX/GLTF), (3) Edit Mode에서 수동으로 다듬어야 할 때.</p></div>
+  <div class="card-pitfall"><h3>흔한 실수</h3><p><strong>Apply Transform (`Ctrl+A`)과 Apply Modifier는 달라요.</strong> Ctrl+A는 Object의 위치/회전/크기를 수치적으로 정리하는 거고, Modifier Apply는 효과를 메쉬에 굳히는 거예요. Modifier Apply는 거의 항상 <strong>맨 마지막에만</strong> 합니다. Mirror를 너무 일찍 Apply하면 좌우 비대칭으로 다듬기 어려워져요.</p></div>
 </section>
 
 <section class="panel" data-panel="videos">
@@ -677,7 +677,7 @@ window.addEventListener("load", function() {
   }
 });
 </script>
-<footer class="doc-ref-footer"><a class="doc-ref" href="https://docs.blender.org/manual/en/latest/scene_layout/collections/index.html" target="_blank" rel="noopener">Blender Docs</a></footer>
+<footer class="doc-ref-footer"><a class="doc-ref" href="https://docs.blender.org/manual/en/latest/modeling/modifiers/introduction.html#applying" target="_blank" rel="noopener">Blender Docs</a></footer>
 
 </body>
 </html>

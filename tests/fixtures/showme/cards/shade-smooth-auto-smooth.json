@@ -1,0 +1,102 @@
+{
+  "object": "page",
+  "id": "36554d65-4971-81a2-af13-c94666c69e98",
+  "properties": {
+    "card_id": {
+      "title": [
+        {
+          "plain_text": "shade-smooth-auto-smooth"
+        }
+      ]
+    },
+    "label": {
+      "rich_text": [
+        {
+          "plain_text": "Shade Smooth & Auto Smooth"
+        }
+      ]
+    },
+    "icon": {
+      "rich_text": [
+        {
+          "plain_text": "✨"
+        }
+      ]
+    },
+    "category": {
+      "select": {
+        "name": "modeling"
+      }
+    },
+    "week": {
+      "multi_select": [
+        {
+          "name": "3"
+        },
+        {
+          "name": "4"
+        }
+      ]
+    },
+    "priority": {
+      "select": {
+        "name": "P0"
+      }
+    },
+    "status": {
+      "select": {
+        "name": "draft"
+      }
+    },
+    "concept_md": {
+      "rich_text": [
+        {
+          "plain_text": "같은 메쉬도 **빛이 부드럽게 흐르는지 / 면마다 뚝뚝 끊기는지** 셰이딩 모드로 바뀌어요. **Flat**은 모든 면을 각진 그대로, **Shade Smooth**는 전체를 부드럽게 보간해요.\n\n**Auto Smooth by Angle**은 절충안 — 각도가 작은 모서리는 부드럽게, 큰 모서리(예: 30° 초과)는 날카롭게 유지해요. 로봇처럼 모서리와 곡면이 섞인 모델에 가장 자주 써요."
+        }
+      ]
+    },
+    "usage_md": {
+      "rich_text": [
+        {
+          "plain_text": "원기둥·구·캐릭터 등 부드러워야 할 모델에는 Shade Smooth. 로봇·도구처럼 일부 모서리가 살아야 하는 모델에는 Auto Smooth by Angle (30~45°)."
+        }
+      ]
+    },
+    "pitfall_md": {
+      "rich_text": [
+        {
+          "plain_text": "Shade Smooth만 켜면 **모서리까지 다 뭉개져요.** Auto Smooth 각도가 너무 작으면(예: 10°) 부드러워야 할 곳도 끊겨 보이고, 너무 크면(예: 80°) 뭉개져요. **30° 근처에서 시작**해서 모델 보면서 조정하세요. Blender 5.0에서는 Object Data Properties → Normals → Auto Smooth 토글로 들어가요."
+        }
+      ]
+    },
+    "steps_json": {
+      "rich_text": [
+        {
+          "plain_text": "{\"blender_version\": \"5.0\", \"platform_note\": null, \"steps\": [{\"n\": 1, \"action\": \"Object Mode에서 메쉬 우클릭\", \"hotkey\": null, \"menu\": \"Object Context Menu\", \"screenshot\": null, \"note\": null}, {\"n\": 2, \"action\": \"Shade Smooth 선택\", \"hotkey\": null, \"menu\": \"Shade Smooth\", \"screenshot\": null, \"note\": \"전체 매끄럽게\"}, {\"n\": 3, \"action\": \"Properties > Object Data (역삼각형) > Normals\", \"hotkey\": null, \"menu\": \"Object Data Properties\", \"screenshot\": null, \"note\": \"Blender 5.0 위치\"}, {\"n\": 4, \"action\": \"Auto Smooth 토글 → Angle 입력\", \"hotkey\": null, \"menu\": null, \"screenshot\": null, \"note\": \"보통 30°로 시작\"}]}"
+        }
+      ]
+    },
+    "widget_id": {
+      "rich_text": []
+    },
+    "blender_version": {
+      "rich_text": [
+        {
+          "plain_text": "5.0"
+        }
+      ]
+    },
+    "official_docs": {
+      "url": "https://docs.blender.org/manual/en/latest/modeling/meshes/editing/mesh/normals.html#shade-smooth-flat"
+    },
+    "prerequisites": {
+      "relation": []
+    },
+    "related": {
+      "relation": []
+    },
+    "videos_relation": {
+      "relation": []
+    }
+  }
+}

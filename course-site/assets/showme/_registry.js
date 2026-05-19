@@ -4,7 +4,14 @@
 // ============================================================
 
 const SHOWME_REGISTRY = {
-  "collection-outliner": { label: "Collection 과 Outliner 이해", icon: "folder-tree", week: 3, category: "object" },
+  "collection-outliner": { label: "Collection 과 Outliner 이해", icon: "🗂️", week: 3, category: "object" },
+  "modifier-stack-order": { label: "Modifier Stack 순서", icon: "📚", week: 3, category: "modifier" },
+  "shade-smooth-auto-smooth": { label: "Shade Smooth & Auto Smooth", icon: "✨", week: [3, 4], category: "modeling" },
+  "merge-by-distance": { label: "Merge by Distance (겹친 버텍스 정리)", icon: "🧹", week: [3, 4], category: "edit-mode" },
+  "bridge-edge-loops": { label: "Bridge Edge Loops (열린 루프 연결)", icon: "🌉", week: 4, category: "edit-mode" },
+  "duplicate-vs-linked-duplicate": { label: "Duplicate vs Linked Duplicate", icon: "🔗", week: 4, category: "object" },
+  "face-orientation-normals": { label: "Face Orientation & Normals", icon: "🧭", week: [3, 4, 6], category: "edit-mode" },
+  "apply-modifier-vs-keep-procedural": { label: "Apply Modifier vs 비파괴 유지", icon: "🔒", week: [3, 4], category: "modifier" },
   "image-reference":        { label: "이미지 레퍼런스 설정",      icon: "🖼️", week: 3 },
   "blender-preferences":    { label: "Preferences 설정",        icon: "⚙️", week: 2 },
   "viewport-navigation":    { label: "화면 조작 원리",          icon: "🧭", week: 2 },

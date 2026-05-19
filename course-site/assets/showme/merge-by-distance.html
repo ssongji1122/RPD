@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Show Me — Collection 과 Outliner 이해</title>
+<title>Show Me — Merge by Distance (겹친 버텍스 정리)</title>
 <style>
 /* ══════════════════════════════════════════════════
    Show Me Widget — Standalone Dark Theme
@@ -620,12 +620,12 @@ body {
 </nav>
 
 <section class="panel active" data-panel="concept">
-  <div class="card-concept"><p>Collection은 <strong>폴더</strong>처럼 오브젝트를 묶는 단위예요. Outliner는 그 폴더 구조를 보여주는 트리.</p>
-<p>로봇처럼 파츠가 많은 모델은 머리/몸통/팔/다리를 Collection으로 분리하면 가시성, 선택 잠금, 일괄 조작이 한결 쉬워져요. 책상 위에 부품을 통 안에 나눠 담는 것과 같아요.</p></div>
+  <div class="card-concept"><p>Boolean이나 Extrude를 잘못 누르면 <strong>같은 자리에 버텍스가 두 개씩 쌓여요</strong>. 눈에는 멀쩡해 보여도 메쉬가 끊어진 상태라 Subdivision이 깨지거나 Smooth가 이상하게 적용돼요.</p>
+<p><strong>Merge by Distance</strong>는 설정한 거리 안에 있는 버텍스를 하나로 합쳐주는 청소 도구예요. 빨래 짤 때 물기 빼듯, 메쉬에서 중복 정보를 짜내는 작업.</p></div>
 </section>
 
 <section class="panel" data-panel="steps">
-  <ol class="steps-list"><li class="step-item"><span class="step-n">1</span> <span class="step-action">Outliner 빈 공간 우클릭 → New Collection</span> <span class="step-menu">Outliner &gt; New Collection</span></li><li class="step-item"><span class="step-n">2</span> <span class="step-action">오브젝트 선택 후 Collection으로 이동</span> <kbd>M</kbd> <span class="step-menu">Move to Collection</span></li><li class="step-item"><span class="step-n">3</span> <span class="step-action">뷰포트에서 Collection 숨기기/보이기</span> <span class="step-menu">눈 아이콘 클릭</span> <span class="step-note">H로도 토글 가능</span></li><li class="step-item"><span class="step-n">4</span> <span class="step-action">Collection 선택 잠금</span> <span class="step-menu">화살표(필터) 아이콘 클릭</span> <span class="step-note">실수로 움직이는 것 방지</span></li></ol>
+  <ol class="steps-list"><li class="step-item"><span class="step-n">1</span> <span class="step-action">Edit Mode 진입</span> <kbd>Tab</kbd></li><li class="step-item"><span class="step-n">2</span> <span class="step-action">전체 선택</span> <kbd>A</kbd></li><li class="step-item"><span class="step-n">3</span> <span class="step-action">Merge 메뉴 열기</span> <kbd>M</kbd> <span class="step-menu">Mesh &gt; Merge</span></li><li class="step-item"><span class="step-n">4</span> <span class="step-action">By Distance 선택</span> <span class="step-menu">By Distance</span></li><li class="step-item"><span class="step-n">5</span> <span class="step-action">좌하단 패널에서 거리 조정</span> <span class="step-menu">Merge Distance</span> <span class="step-note">0.0001m → 0.001m 순으로</span></li></ol>
 </section>
 
 <section class="panel" data-panel="interaction">
@@ -633,8 +633,8 @@ body {
 </section>
 
 <section class="panel" data-panel="usage">
-  <div class="card-usage"><h3>언제 쓰나요</h3><p>파츠 수가 많아질 때, 좌우 대칭 작업 중 한쪽만 숨기고 싶을 때, 렌더에서 일부만 제외하고 싶을 때.</p></div>
-  <div class="card-pitfall"><h3>흔한 실수</h3><p>Outliner 옆 두 아이콘은 역할이 달라요. <strong>눈 아이콘 = 뷰포트 가시성</strong>, <strong>모니터(카메라) 아이콘 = 렌더 가시성</strong>. 렌더에서만 사라지는 파츠가 있다면 모니터 아이콘이 꺼져 있는 거예요.</p></div>
+  <div class="card-usage"><h3>언제 쓰나요</h3><p>Boolean 직후, Mirror에 Clipping 없이 작업한 직후, 외부 메쉬(AI 생성·STL import)를 받았을 때 가장 먼저 돌려요. Subdivision이 갑자기 이상해지면 십중팔구 중복 버텍스가 원인.</p></div>
+  <div class="card-pitfall"><h3>흔한 실수</h3><p>거리가 너무 크면(예: 1m) <strong>분리되어 있어야 할 버텍스까지 합쳐져</strong> 메쉬가 뭉개져요. 기본값 <strong>0.0001m</strong>부터 시작하고, 안 합쳐지면 단계적으로 키워요. 작업 후에는 합쳐진 개수가 화면 하단에 표시돼요 — &#x27;Removed 12 vertices&#x27; 같은 메시지.</p></div>
 </section>
 
 <section class="panel" data-panel="videos">
@@ -677,7 +677,7 @@ window.addEventListener("load", function() {
   }
 });
 </script>
-<footer class="doc-ref-footer"><a class="doc-ref" href="https://docs.blender.org/manual/en/latest/scene_layout/collections/index.html" target="_blank" rel="noopener">Blender Docs</a></footer>
+<footer class="doc-ref-footer"><a class="doc-ref" href="https://docs.blender.org/manual/en/latest/modeling/meshes/editing/mesh/merge.html#by-distance" target="_blank" rel="noopener">Blender Docs</a></footer>
 
 </body>
 </html>
