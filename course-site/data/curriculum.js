@@ -3017,7 +3017,7 @@ const CURRICULUM = [
   },
   {
     "week": 11,
-    "status": "active",
+    "status": "done",
     "title": "Rigging 기초",
     "subtitle": "Armature · 본 구조 · 웨이트 페인팅 · 포즈",
     "duration": "~3시간",
@@ -3252,7 +3252,7 @@ const CURRICULUM = [
   },
   {
     "week": 12,
-    "status": "upcoming",
+    "status": "active",
     "title": "AI 활용 리깅 (Mixamo)",
     "subtitle": "Mixamo 자동 리깅 · FBX 워크플로우 · NLA",
     "duration": "~3시간",
