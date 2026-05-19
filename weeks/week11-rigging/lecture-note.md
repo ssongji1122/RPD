@@ -490,8 +490,9 @@ Blender 5.0에서는 리깅 워크플로우에 몇 가지 개선이 있습니다
 
 ### 공식 문서
 
-- [Armatures](https://docs.blender.org/manual/en/latest/animation/armatures/index.html)
-- [Skinning](https://docs.blender.org/manual/en/latest/animation/armatures/skinning/index.html)
-- [Weight Paint](https://docs.blender.org/manual/en/latest/sculpt_paint/weight_paint/index.html)
-- [Pose Mode](https://docs.blender.org/manual/en/latest/animation/armatures/posing/index.html)
+- [Blender Manual — Armatures](https://docs.blender.org/manual/en/latest/animation/armatures/index.html)
+- [Blender Manual — Armature Deform Parent](https://docs.blender.org/manual/en/latest/animation/armatures/skinning/parenting.html)
+- [Blender Manual — Weight Paint](https://docs.blender.org/manual/en/latest/sculpt_paint/weight_paint/index.html)
+- [Blender Manual — Inverse Kinematics](https://docs.blender.org/manual/en/latest/animation/armatures/posing/bone_constraints/inverse_kinematics/introduction.html)
+- [Blender Manual — Rigify](https://docs.blender.org/manual/en/latest/addons/rigging/rigify/index.html)
 <!-- AUTO:CURRICULUM-SYNC:END -->
