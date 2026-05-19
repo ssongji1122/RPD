@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — IK vs FK 이해</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --danger-soft:   #fca5a5;
+  --warn-soft:     #fbbf24;
+  --warn-medium:   #fcd34d;
+  --accent-soft:   #FFB347;
+  --secondary-soft:#a5b4fc;
+  --secondary-mid: #c4b5fd;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --muted-mid:     #94a3b8;
+  --muted-soft:    #cbd5e1;
+  --muted-dim:     #64748b;
+  --info-soft:     #67e8f9;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+  --shortcut-red:  #ff5d5d;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  word-break: keep-all;
+}
+
+/* ── Tab Navigation ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+
+/* ── Tab Panels ── */
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+
+/* ── Concept Cards ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card h3 {
+  margin: 0 0 8px; font-size: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.concept-card p {
+  margin: 0; color: var(--muted-strong);
+  font-size: .88rem; line-height: 1.7;
+}
+.concept-card ul {
+  margin: 8px 0 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
+}
+
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: .72rem; font-weight: 600;
+}
+.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: var(--warn-soft); }
+.badge-purple{ background: rgba(168,85,247,.15);  color: var(--secondary-mid); }
+
+/* ── Keyboard Shortcut ── */
+.kbd {
+  display: inline-block;
+  padding: 3px 8px; border-radius: 6px;
+  background: rgba(255,93,93,.10);
+  border: 1px solid rgba(255,93,93,.32);
+  color: var(--shortcut-red);
+  font-size: .82rem; font-weight: 600;
+  font-family: var(--font);
+}
+.shortcut { color: var(--shortcut-red); font-weight: 600; }
+
+/* ── Canvas / Demo ── */
+.demo-wrap {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+  margin: 14px 0;
+}
+.demo-wrap svg {
+  display: block; width: 100%;
+  background: #17181a;
+  touch-action: none;
+}
+.demo-controls {
+  display: flex; gap: 8px; padding: 12px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.demo-hint {
+  font-size: .78rem; color: var(--muted);
+  text-align: center; padding: 6px 0 0;
+}
+.demo-btn {
+  padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .82rem;
+  cursor: pointer;
+  transition: background .14s, color .14s;
+}
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active {
+  background: rgba(10,132,255,.14);
+  color: var(--key-soft);
+  border-color: rgba(10,132,255,.3);
+}
+
+/* ── FK Sliders Panel ── */
+.fk-panel {
+  display: none;
+  padding: 12px 14px;
+  border-top: 1px solid var(--line);
+  background: rgba(255,255,255,.025);
+  gap: 12px;
+  flex-direction: column;
+}
+.fk-panel.is-active { display: flex; }
+.fk-row {
+  display: grid;
+  grid-template-columns: 96px 1fr 48px;
+  gap: 10px;
+  align-items: center;
+}
+.fk-row label {
+  font-size: .8rem;
+  color: var(--muted-strong);
+  font-weight: 500;
+}
+.fk-row input[type="range"] {
+  width: 100%;
+  accent-color: var(--key);
+}
+.fk-row .fk-val {
+  font-size: .78rem;
+  color: var(--key-soft);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Usage Grid ── */
+.usage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.usage-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 16px;
+}
+.usage-card h4 {
+  margin: 0 0 8px; font-size: .92rem;
+  color: var(--key-soft);
+}
+.usage-card ul {
+  margin: 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem;
+  line-height: 1.8;
+}
+
+/* ── Tip Box ── */
+.tip-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(10,132,255,.2);
+  background: rgba(10,132,255,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+}
+.tip-box + .tip-box { margin-top: 10px; }
+.tip-box strong { color: var(--key-soft); }
+
+/* ── Shortcut Reference ── */
+.shortcut-list {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.shortcut-list h4 {
+  margin: 0 0 10px;
+  font-size: .9rem;
+  color: var(--text);
+}
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: .84rem;
+  color: var(--muted-strong);
+}
+.shortcut-row + .shortcut-row {
+  border-top: 1px solid var(--line);
+}
+.shortcut-keys { flex-shrink: 0; }
+.analogy {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(245,158,11,.06);
+  border: 1px solid rgba(245,158,11,.15);
+  font-size: .82rem;
+  color: var(--warn-soft);
+  font-style: italic;
+}
+
+/* ── Comparison Table ── */
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 14px;
+  font-size: .84rem;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.compare-table thead { background: rgba(10,132,255,.06); }
+.compare-table th {
+  padding: 10px 14px; text-align: left;
+  color: var(--muted-strong); font-weight: 600;
+  font-size: .76rem; letter-spacing: .03em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--line-strong);
+}
+.compare-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted-strong); line-height: 1.55;
+  vertical-align: top;
+}
+.compare-table tr:last-child td { border-bottom: none; }
+.compare-table td.label-col {
+  font-weight: 600;
+  color: var(--text);
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  width: 100px;
+  background: rgba(255,255,255,.02);
+}
+.compare-table td.fk-col { background: rgba(245,158,11,.04); }
+.compare-table td.ik-col { background: rgba(16,185,129,.04); }
+
+/* ── Section Divider ── */
+.section-divider {
+  margin: 22px 0 12px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--line);
+  font-size: .92rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* ── Flow steps (Constraint setup) ── */
+.flow-steps {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.flow-step {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: rgba(255,255,255,.03);
+  border: 1px solid var(--line);
+  font-size: .82rem;
+  color: var(--muted-strong);
+  line-height: 1.55;
+}
+.flow-step .step-num {
+  flex-shrink: 0;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: rgba(10,132,255,.18);
+  color: var(--key-soft);
+  font-weight: 700;
+  font-size: .76rem;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ── Mini Note Grid ── */
+.mini-note-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+.mini-note-card {
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.03);
+  padding: 12px;
+}
+.mini-note-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: .7rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.mini-note-value {
+  font-size: .84rem;
+  color: var(--muted-strong);
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+/* ── Quiz ── */
+.quiz-progress {
+  font-size: .78rem; color: var(--muted);
+  margin-bottom: 12px;
+}
+.quiz-question {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.quiz-question h4 {
+  margin: 0 0 12px; font-size: .94rem;
+}
+.quiz-option {
+  display: block; width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.025);
+  color: var(--text);
+  font: inherit; font-size: .86rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background .14s, border-color .14s;
+}
+.quiz-option:hover {
+  background: rgba(255,255,255,.06);
+  border-color: var(--line-strong);
+}
+.quiz-option.correct {
+  background: rgba(16,185,129,.12);
+  border-color: rgba(16,185,129,.4);
+  color: var(--success-soft);
+}
+.quiz-option.wrong {
+  background: rgba(239,68,68,.1);
+  border-color: rgba(239,68,68,.3);
+  color: var(--danger-soft);
+}
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback {
+  margin-top: 8px; padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: .84rem;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: var(--danger-soft); }
+
+.quiz-score {
+  text-align: center; padding: 20px;
+  font-size: 1.1rem; font-weight: 600;
+}
+.quiz-retry {
+  display: block; margin: 12px auto;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--key);
+  background: rgba(10,132,255,.12);
+  color: var(--key-soft);
+  font: inherit; font-size: .88rem;
+  cursor: pointer;
+  transition: background .14s;
+}
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+
+/* ── Official Doc Reference ── */
+.doc-ref {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(10,132,255,.15);
+  background: rgba(10,132,255,.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-ref a {
+  color: var(--key-soft);
+  font-size: .84rem;
+  text-decoration: none;
+  line-height: 1.5;
+}
+.doc-ref a:hover { text-decoration: underline; }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid { grid-template-columns: 1fr; }
+  .mini-note-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+  .compare-table { font-size: .78rem; }
+  .compare-table th, .compare-table td { padding: 8px 10px; }
+  .compare-table td.label-col { width: 76px; }
+  .fk-row { grid-template-columns: 78px 1fr 42px; gap: 8px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Tab Bar -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">interaction</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+</nav>
+
+<!-- TAB 1: 개념 이해 -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <p style="font-size:.9rem; color:var(--muted-strong); margin:0 0 14px;">
+    FK와 IK는 같은 팔을 움직이는 두 가지 조작 방향이에요. 어디부터 잡고 움직이는지가 다르고, 그 차이가 작업 속도와 표현을 가른답니다.
+  </p>
+
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3><span class="badge badge-amber">FK</span> Forward Kinematics</h3>
+      <p>부모부터 자식 방향으로 <strong>한 단계씩 회전</strong>시키는 방식이에요. 어깨를 돌리면 팔꿈치·손목이 차례로 따라오는, 우리가 익숙한 그 움직임이에요. Pose Mode 기본 동작이라서 별도 설정도 필요 없어요.</p>
+      <div class="analogy">로봇 팔에 명령하듯, 각 관절 각도를 직접 정해 주는 거예요</div>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-green">IK</span> Inverse Kinematics</h3>
+      <p>끝(손)을 <strong>잡아끌면</strong> 팔꿈치와 어깨가 알아서 굽혀지는 방식이에요. 컴퓨터가 각도를 역으로 계산해 줘요. 대신 Bone Constraint로 IK 설정을 한 번 해 두어야 작동해요.</p>
+      <div class="analogy">손가락을 잡아당기면 팔이 자연스럽게 따라오는 것처럼요</div>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">왜 둘 다 필요?</span> 표현이 달라요</h3>
+      <p>FK는 "<strong>각도</strong>를 정확히 정하는" 표현(흔드는 꼬리, 인사하는 손)에 강해요. IK는 "<strong>위치</strong>를 정확히 정하는" 표현(바닥을 디딘 발, 잔을 잡는 손)에 강해요. 같은 다리라도 동작에 따라 둘을 바꿔 가며 써요.</p>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-purple">전환</span> 본질은 같은 뼈대</h3>
+      <p>FK든 IK든 결국 같은 Armature를 조작해요. IK는 "<strong>끝을 끌면 부모를 어떤 각도로 돌릴까?</strong>"를 자동으로 풀어 주는 보조 장치일 뿐이에요. 그래서 한 캐릭터에 두 방식이 공존할 수 있어요.</p>
+    </div>
+  </div>
+
+  <div class="section-divider">FK vs IK 한 눈에 비교</div>
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th></th>
+        <th>FK</th>
+        <th>IK</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="label-col">조작 방향</td>
+        <td class="fk-col">부모 → 자식 (어깨부터 손끝)</td>
+        <td class="ik-col">자식 → 부모 (손끝이 어깨를 끌어당김)</td>
+      </tr>
+      <tr>
+        <td class="label-col">장점</td>
+        <td class="fk-col">각도를 정확히 제어, 설정 불필요, 호 모양 동작 자연스러움</td>
+        <td class="ik-col">위치 잡기 쉬움, 발·손 고정 표현, 빠른 포즈 작업</td>
+      </tr>
+      <tr>
+        <td class="label-col">단점</td>
+        <td class="fk-col">손 위치 맞추기 어려움, 매 관절 회전을 일일이 조정</td>
+        <td class="ik-col">Constraint 설정 필요, 굴절 방향이 엉뚱해질 수 있음</td>
+      </tr>
+      <tr>
+        <td class="label-col">추천</td>
+        <td class="fk-col">꼬리, 안테나, 머리, 손가락, 흔드는 팔</td>
+        <td class="ik-col">바닥 디딘 다리, 물건 잡은 손, 칼을 든 팔</td>
+      </tr>
+      <tr>
+        <td class="label-col">설정</td>
+        <td class="fk-col">없음 (Pose Mode 기본)</td>
+        <td class="ik-col">Bone Constraints → Inverse Kinematics 추가</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="shortcut-list">
+    <h4>자주 쓰는 단축키</h4>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">Tab</span></span>
+      <span>Armature를 Pose Mode로 전환 (포즈 조작 시작)</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">R</span></span>
+      <span>선택한 Bone 회전 — FK 작업의 기본</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">G</span></span>
+      <span>IK 체인의 끝 Bone을 이동 (위치로 조작)</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Alt</span> + <span class="kbd">R</span></span>
+      <span>현재 Bone의 회전을 초기 자세로 리셋</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Shift</span> + <span class="kbd">I</span></span>
+      <span>선택한 Bone에 IK Constraint 빠르게 추가</span>
+    </div>
+  </div>
+
+  <div class="section-divider">IK Constraint 설정 흐름</div>
+  <div class="flow-steps">
+    <div class="flow-step">
+      <span class="step-num">1</span>
+      <span><span class="shortcut">Ctrl+Tab</span>으로 Armature를 Pose Mode로 전환해요. IK는 Pose Mode 안에서만 의미가 있어요.</span>
+    </div>
+    <div class="flow-step">
+      <span class="step-num">2</span>
+      <span>IK 체인의 <strong>마지막 Bone</strong>(예: 손목, 발목)을 선택해요. 끝을 잡아끌고 싶은 그 뼈예요.</span>
+    </div>
+    <div class="flow-step">
+      <span class="step-num">3</span>
+      <span>Properties &gt; Bone Constraints 탭 &gt; Add Bone Constraint &gt; <strong>Inverse Kinematics</strong>를 추가해요.</span>
+    </div>
+    <div class="flow-step">
+      <span class="step-num">4</span>
+      <span><strong>Chain Length</strong>를 설정해요. 2면 위 2개 뼈만, 0이면 루트까지 모두 영향을 받아요.</span>
+    </div>
+    <div class="flow-step">
+      <span class="step-num">5</span>
+      <span>필요하면 <strong>Pole Target</strong>으로 굴절 방향을 정해요(팔꿈치가 앞으로 꺾이는지 옆으로 꺾이는지).</span>
+    </div>
+    <div class="flow-step">
+      <span class="step-num">6</span>
+      <span>이제 끝 Bone을 <span class="shortcut">G</span>로 끌어 보세요. 부모들이 자동으로 따라와요.</span>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/animation/armatures/posing/bone_constraints/inverse_kinematics/introduction.html" target="_blank" rel="noopener">
+      Blender 공식 문서 — Inverse Kinematics
+    </a>
+  </div>
+</section>
+
+<!-- TAB 2: interaction -->
+<section class="panel" id="panel-visual" role="tabpanel">
+  <p style="font-size:.86rem; color:var(--muted-strong); margin:0 0 12px;">
+    같은 3단 팔(어깨–팔꿈치–손목–손)을 FK 모드와 IK 모드로 번갈아 조작해 보세요. 같은 결과를 만드는 데 드는 노력이 어떻게 다른지 직접 비교할 수 있어요.
+  </p>
+
+  <div class="demo-wrap">
+    <svg id="armSvg" viewBox="0 0 680 320" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+          <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,.04)" stroke-width="1"/>
+        </pattern>
+      </defs>
+      <rect width="680" height="320" fill="url(#grid)"/>
+      <!-- shoulder anchor marker -->
+      <circle id="anchorMark" cx="160" cy="160" r="5" fill="rgba(255,255,255,.35)"/>
+      <text x="160" y="148" fill="rgba(255,255,255,.4)" font-size="10" text-anchor="middle">Shoulder</text>
+      <!-- Bones -->
+      <g id="bones">
+        <line id="boneUpper" stroke="rgba(245,158,11,.9)" stroke-width="6" stroke-linecap="round"/>
+        <line id="boneFore"  stroke="rgba(16,185,129,.9)" stroke-width="6" stroke-linecap="round"/>
+        <line id="boneHand"  stroke="rgba(168,85,247,.9)" stroke-width="6" stroke-linecap="round"/>
+      </g>
+      <!-- Joints -->
+      <circle id="jointElbow" r="6" fill="rgba(245,158,11,1)" stroke="#fff" stroke-width="1.5"/>
+      <circle id="jointWrist" r="6" fill="rgba(16,185,129,1)" stroke="#fff" stroke-width="1.5"/>
+      <circle id="jointTip"   r="9" fill="rgba(168,85,247,1)" stroke="#fff" stroke-width="2" style="cursor:grab"/>
+      <!-- Labels -->
+      <text id="labelMode" x="14" y="22" fill="rgba(16,185,129,.85)" font-size="12" font-weight="700">FK Mode — 회전 슬라이더로 조작</text>
+      <text id="labelHint" x="666" y="22" fill="rgba(255,255,255,.35)" font-size="11" text-anchor="end">팔: 어깨 → 팔꿈치 → 손목 → 손</text>
+    </svg>
+    <div class="demo-controls">
+      <button class="demo-btn is-active" id="btnFK">FK 모드</button>
+      <button class="demo-btn" id="btnIK">IK 모드</button>
+      <button class="demo-btn" id="btnReset">초기화</button>
+    </div>
+    <div class="fk-panel is-active" id="fkPanel">
+      <div class="fk-row">
+        <label>Shoulder</label>
+        <input type="range" id="rShoulder" min="-120" max="120" value="20" step="1">
+        <span class="fk-val" id="vShoulder">20°</span>
+      </div>
+      <div class="fk-row">
+        <label>Elbow</label>
+        <input type="range" id="rElbow" min="-150" max="0" value="-60" step="1">
+        <span class="fk-val" id="vElbow">-60°</span>
+      </div>
+      <div class="fk-row">
+        <label>Wrist</label>
+        <input type="range" id="rWrist" min="-90" max="90" value="20" step="1">
+        <span class="fk-val" id="vWrist">20°</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mini-note-grid">
+    <div class="mini-note-card">
+      <span class="mini-note-label">FK 핵심</span>
+      <strong class="mini-note-value">슬라이더 3개로 관절 각도를 직접 지정해요. 부모 슬라이더를 움직이면 자식도 따라와요.</strong>
+    </div>
+    <div class="mini-note-card">
+      <span class="mini-note-label">IK 핵심</span>
+      <strong class="mini-note-value">손 끝 보라색 원을 드래그하세요. 팔꿈치가 자동으로 굴절하면서 끝점을 따라가요.</strong>
+    </div>
+    <div class="mini-note-card">
+      <span class="mini-note-label">감 잡기</span>
+      <strong class="mini-note-value">"손이 컵에 닿게" 같은 위치 표현은 IK가 한 동작, FK는 슬라이더 3개를 조정해야 해요.</strong>
+    </div>
+  </div>
+  <p class="demo-hint">FK 모드: 슬라이더 조작 · IK 모드: 손 끝(보라 원) 드래그</p>
+</section>
+
+<!-- TAB 3: 언제 쓰나요? -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>FK 추천 — 각도 표현 우선</h4>
+      <ul>
+        <li>꼬리, 안테나 — S자 흐름을 직접 조각</li>
+        <li>머리 끄덕임, 인사 — 호(arc) 모양 자연스럽게</li>
+        <li>손가락 — 마디마다 각도가 명확</li>
+        <li>흔드는 팔, 권총 든 팔 — 어깨가 먼저 움직이는 동작</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>IK 추천 — 위치 표현 우선</h4>
+      <ul>
+        <li>걷는 다리 — 발이 바닥에 고정</li>
+        <li>물건 잡은 손 — 손이 컵·검·문손잡이에 고정</li>
+        <li>벽을 짚은 팔 — 끝점이 한 점에 멈춰야 할 때</li>
+        <li>점프 착지 — 발 위치를 먼저 정하고 무릎 굽힘은 자동</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>일반적인 게임 캐릭터 설정:</strong> 팔=FK + 다리=IK가 표준이에요. 팔은 휘두르는 동작이 많아 각도 제어가 좋고, 다리는 발이 바닥에 닿아야 미끄러지지 않아 위치 제어가 좋아요. 단, 칼을 두 손으로 쥐거나 벽을 짚는 컷에서는 팔도 IK로 임시 전환해요.
+  </div>
+
+  <div class="tip-box">
+    <strong>Pole Target으로 굴절 방향 강제하기:</strong> IK만 걸어두면 팔꿈치가 가끔 엉뚱한 방향으로 꺾여요. 팔꿈치 뒤쪽에 Empty 하나를 두고 IK Constraint의 <strong>Pole Target</strong>으로 지정하면, 팔꿈치가 항상 그 방향을 보고 굽혀요. 다리에는 무릎 앞쪽에 Empty를 두는 게 보통이에요.
+  </div>
+
+  <div class="tip-box">
+    <strong>Chain Length 의미:</strong> 0(기본)이면 IK 영향이 <strong>루트까지</strong> 전달돼서 척추까지 흔들려요. 보통 팔이면 2(상박+전완), 다리면 2(허벅지+종아리)로 끊어요. 끊지 않으면 손을 끌었더니 캐릭터 몸통이 따라오는 사고가 납니다.
+  </div>
+
+  <div class="section-divider">FK ↔ IK 전환을 만드는 두 가지 길</div>
+  <div class="flow-steps">
+    <div class="flow-step">
+      <span class="step-num">A</span>
+      <span><strong>IK Influence 슬라이더</strong>: Constraint 패널의 Influence 0~1을 키프레임으로 애니메이션해서 한 동작 안에서 부드럽게 전환해요(가장 간단).</span>
+    </div>
+    <div class="flow-step">
+      <span class="step-num">B</span>
+      <span><strong>IK/FK Snap 리그</strong>: 본격 캐릭터 리그는 별도 컨트롤러 두 세트를 만들고 스냅 스크립트로 자세를 맞춘 뒤 전환해요(상용 리그 방식).</span>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/animation/armatures/posing/bone_constraints/inverse_kinematics/index.html" target="_blank" rel="noopener">
+      Blender 공식 문서 — Inverse Kinematics Constraint
+    </a>
+  </div>
+</section>
+
+<!-- TAB 4: 퀴즈 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+// ── Tab Switching ──────────────────────────────
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(t) {
+      t.classList.remove("is-active");
+      t.setAttribute("aria-selected", "false");
+    });
+    document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("is-active"); });
+    tab.classList.add("is-active");
+    tab.setAttribute("aria-selected", "true");
+    document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+  });
+});
+
+// ── Quiz Engine (Safe DOM methods) ────────────
+function initQuiz(questions) {
+  var container = document.getElementById("quizArea");
+  var score = 0, answered = 0;
+  var scoreDiv = null;
+
+  var progress = document.createElement("div");
+  progress.className = "quiz-progress";
+  progress.textContent = "문제 0 / " + questions.length + " · 점수 0점";
+  container.appendChild(progress);
+
+  questions.forEach(function(q, qi) {
+    var div = document.createElement("div");
+    div.className = "quiz-question";
+
+    var heading = document.createElement("h4");
+    heading.textContent = "Q" + (qi + 1) + ". " + q.question;
+    div.appendChild(heading);
+
+    var fb = document.createElement("div");
+    fb.className = "quiz-feedback";
+
+    q.options.forEach(function(opt, oi) {
+      var btn = document.createElement("button");
+      btn.className = "quiz-option";
+      btn.textContent = opt;
+      btn.addEventListener("click", function() {
+        if (btn.disabled) return;
+        div.querySelectorAll(".quiz-option").forEach(function(b) { b.disabled = true; });
+        answered++;
+        if (oi === q.answer) {
+          btn.classList.add("correct");
+          fb.className = "quiz-feedback show correct-fb";
+          fb.textContent = "✅ " + q.explanation;
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
+          fb.className = "quiz-feedback show wrong-fb";
+          fb.textContent = "❌ " + q.explanation;
+
+          var retryBtn = document.createElement("button");
+          retryBtn.className = "quiz-retry";
+          retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
+          retryBtn.textContent = "다시 풀기";
+          retryBtn.addEventListener("click", function() {
+            answered--;
+            div.querySelectorAll(".quiz-option").forEach(function(b) {
+              b.disabled = false;
+              b.classList.remove("wrong", "correct");
+            });
+            fb.className = "quiz-feedback";
+            fb.textContent = "";
+            retryBtn.remove();
+            if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+            progress.textContent = "문제 " + answered + " / " + questions.length + " · 점수 " + score + "점";
+          });
+          fb.appendChild(retryBtn);
+        }
+        progress.textContent = "문제 " + answered + " / " + questions.length + " · 점수 " + score + "점";
+        if (answered === questions.length) showScore();
+      });
+      div.appendChild(btn);
+    });
+
+    div.appendChild(fb);
+    container.appendChild(div);
+  });
+
+  function showScore() {
+    if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+
+    scoreDiv = document.createElement("div");
+    scoreDiv.className = "quiz-score";
+
+    var emoji = document.createElement("div");
+    emoji.style.cssText = "font-size:36px;margin-bottom:8px";
+    emoji.textContent = score === questions.length ? "🎉" : score >= Math.ceil(questions.length / 2) ? "👍" : "📚";
+    scoreDiv.appendChild(emoji);
+
+    var result = document.createElement("div");
+    result.style.cssText = "font-size:18px;font-weight:500;margin-bottom:6px";
+    result.textContent = score + " / " + questions.length + " 정답";
+    scoreDiv.appendChild(result);
+
+    var msg = document.createElement("div");
+    msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
+    msg.textContent = score === questions.length ? "완벽합니다!" : "조금 더 연습하면 완벽해질 거예요!";
+    scoreDiv.appendChild(msg);
+
+    var saveBtn = document.createElement("button");
+    saveBtn.className = "quiz-retry";
+    saveBtn.style.cssText = "background:rgba(10,132,255,.18);border-color:var(--key);margin-bottom:8px";
+    saveBtn.textContent = "기록 저장하기";
+    saveBtn.addEventListener("click", function() {
+      try {
+        var wid = new URLSearchParams(location.search).get("wid")
+               || location.pathname.split("/").pop().replace(".html", "");
+        window.parent.postMessage({
+          type: "showme-quiz-complete",
+          widgetId: wid,
+          score: score,
+          total: questions.length,
+          pass: score >= Math.ceil(questions.length * 0.75)
+        }, "*");
+      } catch(e) {}
+      saveBtn.textContent = "저장 완료!";
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = ".5";
+    });
+    scoreDiv.appendChild(saveBtn);
+
+    var retry = document.createElement("button");
+    retry.className = "quiz-retry";
+    retry.textContent = "처음부터 다시";
+    retry.addEventListener("click", function() { location.reload(); });
+    scoreDiv.appendChild(retry);
+
+    container.appendChild(scoreDiv);
+  }
+}
+
+// ── Interactive Arm: FK / IK ──────────────────
+(function() {
+  var svg = document.getElementById("armSvg");
+  var boneUpper = document.getElementById("boneUpper");
+  var boneFore  = document.getElementById("boneFore");
+  var boneHand  = document.getElementById("boneHand");
+  var jointElbow = document.getElementById("jointElbow");
+  var jointWrist = document.getElementById("jointWrist");
+  var jointTip   = document.getElementById("jointTip");
+  var labelMode  = document.getElementById("labelMode");
+  var rShoulder = document.getElementById("rShoulder");
+  var rElbow    = document.getElementById("rElbow");
+  var rWrist    = document.getElementById("rWrist");
+  var vShoulder = document.getElementById("vShoulder");
+  var vElbow    = document.getElementById("vElbow");
+  var vWrist    = document.getElementById("vWrist");
+  var btnFK = document.getElementById("btnFK");
+  var btnIK = document.getElementById("btnIK");
+  var btnReset = document.getElementById("btnReset");
+  var fkPanel = document.getElementById("fkPanel");
+
+  var SHOULDER = { x: 160, y: 160 };
+  var L1 = 120; // upper arm
+  var L2 = 100; // forearm
+  var L3 = 50;  // hand
+
+  // State (angles in degrees, world-space orientation of each bone)
+  var angles = { shoulder: 20, elbow: -60, wrist: 20 }; // FK source of truth
+  var mode = "FK";
+
+  function deg2rad(d) { return d * Math.PI / 180; }
+  function rad2deg(r) { return r * 180 / Math.PI; }
+
+  function computeFromAngles() {
+    // FK: each bone's world angle = parent world angle + local angle
+    var aShoulder = deg2rad(angles.shoulder);
+    var aElbow    = deg2rad(angles.shoulder + angles.elbow);
+    var aWrist    = deg2rad(angles.shoulder + angles.elbow + angles.wrist);
+
+    var elbow = {
+      x: SHOULDER.x + Math.cos(aShoulder) * L1,
+      y: SHOULDER.y + Math.sin(aShoulder) * L1
+    };
+    var wrist = {
+      x: elbow.x + Math.cos(aElbow) * L2,
+      y: elbow.y + Math.sin(aElbow) * L2
+    };
+    var tip = {
+      x: wrist.x + Math.cos(aWrist) * L3,
+      y: wrist.y + Math.sin(aWrist) * L3
+    };
+    return { elbow: elbow, wrist: wrist, tip: tip };
+  }
+
+  function render() {
+    var p = computeFromAngles();
+
+    boneUpper.setAttribute("x1", SHOULDER.x);
+    boneUpper.setAttribute("y1", SHOULDER.y);
+    boneUpper.setAttribute("x2", p.elbow.x);
+    boneUpper.setAttribute("y2", p.elbow.y);
+
+    boneFore.setAttribute("x1", p.elbow.x);
+    boneFore.setAttribute("y1", p.elbow.y);
+    boneFore.setAttribute("x2", p.wrist.x);
+    boneFore.setAttribute("y2", p.wrist.y);
+
+    boneHand.setAttribute("x1", p.wrist.x);
+    boneHand.setAttribute("y1", p.wrist.y);
+    boneHand.setAttribute("x2", p.tip.x);
+    boneHand.setAttribute("y2", p.tip.y);
+
+    jointElbow.setAttribute("cx", p.elbow.x);
+    jointElbow.setAttribute("cy", p.elbow.y);
+    jointWrist.setAttribute("cx", p.wrist.x);
+    jointWrist.setAttribute("cy", p.wrist.y);
+    jointTip.setAttribute("cx", p.tip.x);
+    jointTip.setAttribute("cy", p.tip.y);
+
+    vShoulder.textContent = Math.round(angles.shoulder) + "°";
+    vElbow.textContent    = Math.round(angles.elbow) + "°";
+    vWrist.textContent    = Math.round(angles.wrist) + "°";
+
+    rShoulder.value = angles.shoulder;
+    rElbow.value    = angles.elbow;
+    rWrist.value    = angles.wrist;
+  }
+
+  // ── IK Solver (2-link analytic + carry-on hand bone) ──
+  function ikSolve(targetX, targetY) {
+    // Treat shoulder -> wrist as 2-link IK (L1, L2). Hand bone preserves
+    // its current world orientation relative to the wrist so the hand still
+    // points outward.
+    var dx = targetX - SHOULDER.x;
+    var dy = targetY - SHOULDER.y;
+    var dist = Math.sqrt(dx * dx + dy * dy);
+
+    // Clamp to reachable range, keep a tiny margin so we don't fully extend
+    var maxReach = L1 + L2 - 0.5;
+    var minReach = Math.abs(L1 - L2) + 0.5;
+    if (dist > maxReach) dist = maxReach;
+    if (dist < minReach) dist = minReach;
+
+    // Law of cosines for elbow interior angle
+    var cosElbow = (L1 * L1 + L2 * L2 - dist * dist) / (2 * L1 * L2);
+    cosElbow = Math.max(-1, Math.min(1, cosElbow));
+    var elbowInterior = Math.acos(cosElbow); // 0..PI
+
+    // Convert to local elbow angle (relative to upper arm direction).
+    // When fully straight: interior = PI, local elbow = 0.
+    // Bent: interior < PI, local elbow = -(PI - interior)  (negative = bend "up")
+    var localElbow = -(Math.PI - elbowInterior);
+
+    // Shoulder world angle
+    var targetAngle = Math.atan2(dy, dx);
+    var cosShoulderOffset = (L1 * L1 + dist * dist - L2 * L2) / (2 * L1 * dist);
+    cosShoulderOffset = Math.max(-1, Math.min(1, cosShoulderOffset));
+    var shoulderOffset = Math.acos(cosShoulderOffset);
+    // Choose elbow-up solution (offset subtracted) to keep elbow above the line
+    var aShoulder = targetAngle - shoulderOffset * Math.sign(localElbow === 0 ? -1 : -localElbow / Math.abs(localElbow));
+    // Simpler & stable: pick negative offset (elbow bends "up" / above) to match human arm
+    aShoulder = targetAngle + shoulderOffset; // elbow below; flip below if needed
+
+    // Force elbow-up (negative local elbow) for a more natural arm pose
+    // By construction with +shoulderOffset, elbow bends one way; localElbow is negative.
+    angles.shoulder = rad2deg(aShoulder);
+    angles.elbow    = rad2deg(localElbow);
+    // Preserve previous hand orientation by keeping wrist local angle unchanged.
+  }
+
+  function setMode(next) {
+    mode = next;
+    if (mode === "FK") {
+      btnFK.classList.add("is-active");
+      btnIK.classList.remove("is-active");
+      fkPanel.classList.add("is-active");
+      labelMode.setAttribute("fill", "rgba(245,158,11,.85)");
+      labelMode.textContent = "FK Mode — 회전 슬라이더로 조작";
+      jointTip.style.cursor = "default";
+    } else {
+      btnIK.classList.add("is-active");
+      btnFK.classList.remove("is-active");
+      fkPanel.classList.remove("is-active");
+      labelMode.setAttribute("fill", "rgba(16,185,129,.85)");
+      labelMode.textContent = "IK Mode — 손 끝(보라 원)을 드래그";
+      jointTip.style.cursor = "grab";
+    }
+    render();
+  }
+
+  function reset() {
+    angles = { shoulder: 20, elbow: -60, wrist: 20 };
+    render();
+  }
+
+  // FK slider events
+  rShoulder.addEventListener("input", function() {
+    angles.shoulder = parseFloat(rShoulder.value); render();
+  });
+  rElbow.addEventListener("input", function() {
+    angles.elbow = parseFloat(rElbow.value); render();
+  });
+  rWrist.addEventListener("input", function() {
+    angles.wrist = parseFloat(rWrist.value); render();
+  });
+
+  // Mode buttons
+  btnFK.addEventListener("click", function() { setMode("FK"); });
+  btnIK.addEventListener("click", function() { setMode("IK"); });
+  btnReset.addEventListener("click", reset);
+
+  // IK drag on tip joint
+  var dragging = false;
+
+  function getSvgPoint(evt) {
+    var rect = svg.getBoundingClientRect();
+    var scaleX = 680 / rect.width;
+    var scaleY = 320 / rect.height;
+    var cx, cy;
+    if (evt.touches && evt.touches.length > 0) {
+      cx = evt.touches[0].clientX; cy = evt.touches[0].clientY;
+    } else {
+      cx = evt.clientX; cy = evt.clientY;
+    }
+    return { x: (cx - rect.left) * scaleX, y: (cy - rect.top) * scaleY };
+  }
+
+  function onDown(e) {
+    if (mode !== "IK") return;
+    e.preventDefault();
+    dragging = true;
+    jointTip.style.cursor = "grabbing";
+    onMove(e);
+  }
+  function onMove(e) {
+    if (!dragging || mode !== "IK") return;
+    e.preventDefault();
+    var pt = getSvgPoint(e);
+    // IK target is the wrist position (subtract hand bone direction).
+    // For simplicity treat tip as target and solve for shoulder/elbow toward
+    // a point slightly inward (so hand bone extends past).
+    // Approach: target wrist = tip - hand_vector. Use current wrist world angle.
+    var aWristCurrent = deg2rad(angles.shoulder + angles.elbow + angles.wrist);
+    var tx = pt.x - Math.cos(aWristCurrent) * L3;
+    var ty = pt.y - Math.sin(aWristCurrent) * L3;
+    ikSolve(tx, ty);
+    render();
+  }
+  function onUp() {
+    if (dragging) {
+      dragging = false;
+      jointTip.style.cursor = mode === "IK" ? "grab" : "default";
+    }
+  }
+
+  jointTip.addEventListener("mousedown", onDown);
+  jointTip.addEventListener("touchstart", onDown, { passive: false });
+  window.addEventListener("mousemove", onMove);
+  window.addEventListener("touchmove", onMove, { passive: false });
+  window.addEventListener("mouseup", onUp);
+  window.addEventListener("touchend", onUp);
+  window.addEventListener("touchcancel", onUp);
+
+  // Init
+  setMode("FK");
+})();
+
+// ── Quiz Data ─────────────────────────────────
+initQuiz([
+  {
+    question: "걷는 캐릭터의 다리를 리깅한다면, 보통 어떤 방식을 쓰나요?",
+    options: [
+      "FK — 허벅지부터 발끝까지 각도를 직접 정한다",
+      "IK — 발 위치를 정하면 무릎이 자동으로 굽혀진다",
+      "둘 다 안 쓰고 Shape Key로 처리한다",
+      "Object Mode에서 직접 회전한다"
+    ],
+    answer: 1,
+    explanation: "걷기는 발이 바닥에 닿아 미끄러지지 않아야 해서 IK가 표준이에요. 발 위치를 키프레임하고 무릎은 컴퓨터가 풀어 줘요."
+  },
+  {
+    question: "꼬리를 정밀하게 S자로 흔드는 애니메이션을 만들려고 해요. 어떤 방식이 더 잘 맞을까요?",
+    options: [
+      "IK — 꼬리 끝을 끌면 자동으로 휘어진다",
+      "FK — 마디마다 각도를 직접 정해서 흐름을 조각한다",
+      "Shape Key로만 처리한다",
+      "Modifier만으로 충분하다"
+    ],
+    answer: 1,
+    explanation: "꼬리는 \"위치\"가 아니라 \"각도의 흐름\"이 중요해요. FK로 마디별 각도를 직접 잡아야 S자 곡선을 의도대로 조각할 수 있어요."
+  },
+  {
+    question: "팔에 IK Constraint를 걸고 Chain Length를 2로 설정했어요. 손 끝을 끌면 어디까지 영향을 받나요?",
+    options: [
+      "체인 끝의 손 Bone만 영향을 받는다",
+      "위로 2단계, 즉 전완과 상박만 영향을 받는다",
+      "Armature 전체가 따라온다",
+      "Chain Length는 메뉴 위치 설정이라 동작과 무관하다"
+    ],
+    answer: 1,
+    explanation: "Chain Length는 IK가 위로 거슬러 올라가며 영향을 줄 Bone 개수예요. 2면 상박+전완까지만, 0이면 루트까지 전부 영향을 받아요."
+  },
+  {
+    question: "IK를 걸어 둔 팔의 팔꿈치가 가끔 엉뚱한 방향(앞이 아니라 옆)으로 꺾여요. 가장 표준적인 해결책은?",
+    options: [
+      "Chain Length를 0으로 늘린다",
+      "Pole Target에 Empty를 지정해 굴절 방향을 강제한다",
+      "Armature를 새로 만든다",
+      "IK Constraint를 두 개 추가한다"
+    ],
+    answer: 1,
+    explanation: "Pole Target은 팔꿈치/무릎이 \"어느 방향을 보고 굽힐지\" 지정하는 보조 타깃이에요. Empty를 팔꿈치 뒤쪽에 두고 Pole Target으로 지정하면 굴절 방향이 안정돼요."
+  },
+  {
+    question: "같은 컷 안에서 팔이 \"자유롭게 흔들다가 → 마지막에 벽을 짚어 멈춰야\" 해요. 가장 매끄럽게 처리하는 방법은?",
+    options: [
+      "FK만 사용하고 마지막 프레임에서 일일이 각도를 맞춘다",
+      "IK만 사용해서 흔드는 동작도 손 끝 위치로 키프레임한다",
+      "IK Constraint의 Influence를 0에서 1로 키프레임 애니메이션해서 FK→IK로 전환한다",
+      "Armature를 두 개 만들어 컷마다 교체한다"
+    ],
+    answer: 2,
+    explanation: "Influence(0~1)에 키프레임을 찍으면 한 동작 안에서 FK 느낌(0)에서 IK 고정(1)으로 부드럽게 넘어갈 수 있어요. 본격 리그에서는 IK/FK Snap을 별도로 만들기도 해요."
+  }
+]);
+</script>
+
+<script src="./_helpers.js?v=20260318ai"></script>
+<script>
+window.addEventListener("load", function() {
+  if (window.normalizeStandaloneShowMeLayout) {
+    window.normalizeStandaloneShowMeLayout(document);
+  }
+});
+</script>
+</body>
+</html>

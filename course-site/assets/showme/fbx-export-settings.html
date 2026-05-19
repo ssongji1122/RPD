@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — FBX Export 설정</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --warn-soft:     #fbbf24;
+  --danger:        #ef4444;
+  --danger-soft:   #fca5a5;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --muted-mid:     #94a3b8;
+  --muted-soft:    #cbd5e1;
+  --muted-dim:     #64748b;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 0; font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; word-break: keep-all; }
+.tabs { display: flex; gap: 0; border-bottom: 1px solid var(--line); padding: 0 16px; background: var(--bg-soft); overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { padding: 12px 16px; font-size: .84rem; font-weight: 500; color: var(--muted); cursor: pointer; border: none; border-bottom: 2px solid transparent; white-space: nowrap; transition: color .14s, border-color .14s; background: none; font-family: inherit; }
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active { color: var(--key-soft); border-bottom-color: var(--key); }
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+.concept-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.concept-card { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); padding: 18px; }
+.concept-card h3 { margin: 0 0 8px; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+.concept-card p { margin: 0; color: var(--muted-strong); font-size: .88rem; line-height: 1.7; }
+.concept-card ul { margin: 8px 0 0; padding-left: 16px; color: var(--muted-strong); font-size: .85rem; line-height: 1.8; }
+.badge { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: .72rem; font-weight: 600; }
+.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: var(--warn-soft); }
+.badge-red   { background: rgba(239,68,68,.15);   color: var(--danger-soft); }
+
+/* 단축키 키캡 — 실제 키 입력 빨간색 (CONTENT_GUIDE §4-A) */
+.kbd { display: inline-block; padding: 3px 8px; border-radius: 6px; background: rgba(239,68,68,.12); border: 1px solid rgba(239,68,68,.3); color: var(--danger-soft); font-size: .82rem; font-weight: 600; font-family: var(--font); }
+
+.analogy { margin-top: 8px; padding: 10px 14px; border-radius: var(--radius-sm); background: rgba(245,158,11,.06); border: 1px solid rgba(245,158,11,.15); font-size: .82rem; color: var(--warn-soft); font-style: italic; }
+
+/* Export Panel Visual */
+.demo-wrap { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); overflow: hidden; margin: 14px 0; }
+.demo-controls { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--line); flex-wrap: wrap; }
+.demo-btn { padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line-strong); background: rgba(255,255,255,.04); color: var(--muted-strong); font: inherit; font-size: .82rem; cursor: pointer; transition: background .14s, color .14s; }
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active { background: rgba(10,132,255,.14); color: var(--key-soft); border-color: rgba(10,132,255,.3); }
+.demo-hint { font-size: .78rem; color: var(--muted); text-align: center; padding: 6px 12px 10px; margin: 0; }
+
+/* Blender Export Panel Replica */
+.bl-panel { padding: 14px 16px; background: #1c1d20; border-bottom: 1px solid var(--line); }
+.bl-panel-title { font-size: .78rem; font-weight: 600; color: var(--muted-strong); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+.bl-panel-title::before { content: "▼"; font-size: .6rem; color: var(--muted); }
+.bl-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-size: .82rem; color: var(--muted-strong); border-bottom: 1px solid rgba(255,255,255,.03); cursor: help; transition: background .12s; }
+.bl-row:last-child { border-bottom: none; }
+.bl-row:hover { background: rgba(10,132,255,.04); }
+.bl-row .bl-label { flex: 0 0 auto; min-width: 130px; color: var(--muted); }
+.bl-row .bl-value { font-weight: 500; color: var(--text); font-family: ui-monospace, monospace; font-size: .8rem; padding: 2px 8px; border-radius: 4px; background: rgba(255,255,255,.04); border: 1px solid var(--line); }
+.bl-row .bl-value.is-good { color: var(--success-soft); border-color: rgba(16,185,129,.25); background: rgba(16,185,129,.06); }
+.bl-row .bl-value.is-bad  { color: var(--danger-soft); border-color: rgba(239,68,68,.25); background: rgba(239,68,68,.06); }
+.bl-checkbox { display: inline-flex; align-items: center; gap: 6px; }
+.bl-check-box { width: 14px; height: 14px; border-radius: 3px; border: 1px solid var(--line-strong); background: rgba(255,255,255,.04); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.bl-check-box.is-checked { background: var(--key); border-color: var(--key); color: white; font-size: .7rem; }
+.bl-tooltip { display: none; margin: 4px 0 4px 130px; padding: 8px 12px; background: rgba(10,132,255,.06); border-left: 2px solid var(--key); border-radius: 4px; font-size: .76rem; color: var(--muted-soft); line-height: 1.6; }
+.bl-row.is-open + .bl-tooltip { display: block; }
+
+/* Compare Toggle */
+.compare-toggle { display: flex; gap: 0; margin: 14px 0 0; border-radius: var(--radius-sm); border: 1px solid var(--line-strong); overflow: hidden; }
+.compare-toggle button { flex: 1; padding: 8px 14px; border: none; background: rgba(255,255,255,.03); color: var(--muted); font: inherit; font-size: .82rem; cursor: pointer; transition: background .14s, color .14s; }
+.compare-toggle button:not(:last-child) { border-right: 1px solid var(--line); }
+.compare-toggle button.is-active { background: rgba(10,132,255,.14); color: var(--key-soft); }
+
+/* Simulation result */
+.sim-result { padding: 14px 16px; border-top: 1px solid var(--line); background: rgba(255,255,255,.02); }
+.sim-result h5 { margin: 0 0 8px; font-size: .82rem; color: var(--text); display: flex; align-items: center; gap: 8px; }
+.sim-result p { margin: 0; font-size: .82rem; color: var(--muted-strong); line-height: 1.7; }
+.sim-result.is-bad h5 { color: var(--danger-soft); }
+.sim-result.is-good h5 { color: var(--success-soft); }
+
+.usage-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.usage-card { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); padding: 16px; }
+.usage-card h4 { margin: 0 0 8px; font-size: .92rem; color: var(--key-soft); }
+.usage-card ul { margin: 0; padding-left: 16px; color: var(--muted-strong); font-size: .85rem; line-height: 1.8; }
+.tip-box { border-radius: var(--radius-md); border: 1px solid rgba(10,132,255,.2); background: rgba(10,132,255,.06); padding: 14px 16px; margin-top: 14px; font-size: .86rem; color: var(--muted-strong); }
+.tip-box strong { color: var(--key-soft); }
+
+.combo-section { margin-top: 18px; }
+.combo-section h4 { margin: 0 0 10px; font-size: .92rem; color: var(--text); }
+.combo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.combo-card { border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--surface); padding: 12px 14px; }
+.combo-card .combo-name { font-size: .86rem; font-weight: 600; color: var(--key-soft); margin-bottom: 4px; }
+.combo-card .combo-desc { font-size: .8rem; color: var(--muted); line-height: 1.5; }
+
+.shortcut-list { margin-top: 16px; padding: 14px 16px; border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); }
+.shortcut-list h4 { margin: 0 0 10px; font-size: .9rem; color: var(--text); }
+.shortcut-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-size: .84rem; color: var(--muted-strong); }
+.shortcut-row + .shortcut-row { border-top: 1px solid var(--line); }
+.shortcut-keys { flex-shrink: 0; min-width: 80px; }
+
+.quiz-progress { font-size: .78rem; color: var(--muted); margin-bottom: 12px; }
+.quiz-question { margin-bottom: 20px; padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); }
+.quiz-question h4 { margin: 0 0 12px; font-size: .94rem; }
+.quiz-option { display: block; width: 100%; padding: 10px 14px; margin-bottom: 6px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: rgba(255,255,255,.025); color: var(--text); font: inherit; font-size: .86rem; cursor: pointer; text-align: left; transition: background .14s, border-color .14s; }
+.quiz-option:hover { background: rgba(255,255,255,.06); border-color: var(--line-strong); }
+.quiz-option.correct { background: rgba(16,185,129,.12); border-color: rgba(16,185,129,.4); color: var(--success-soft); }
+.quiz-option.wrong { background: rgba(239,68,68,.1); border-color: rgba(239,68,68,.3); color: var(--danger-soft); }
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback { margin-top: 8px; padding: 10px 14px; border-radius: var(--radius-sm); font-size: .84rem; display: none; }
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: var(--danger-soft); }
+.quiz-score { text-align: center; padding: 20px; font-size: 1.1rem; font-weight: 600; }
+.quiz-retry { display: block; margin: 12px auto; padding: 10px 24px; border-radius: 999px; border: 1px solid var(--key); background: rgba(10,132,255,.12); color: var(--key-soft); font: inherit; font-size: .88rem; cursor: pointer; transition: background .14s; }
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+
+.doc-ref { margin-top: 16px; padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid rgba(10,132,255,.15); background: rgba(10,132,255,.04); display: flex; align-items: center; gap: 8px; }
+.doc-ref a { color: var(--key-soft); font-size: .84rem; text-decoration: none; line-height: 1.5; }
+.doc-ref a:hover { text-decoration: underline; }
+
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+  .bl-row { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .bl-row .bl-label { min-width: 0; }
+  .bl-tooltip { margin-left: 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Tabs ── -->
+<div class="tabs" role="tablist">
+  <button class="tab is-active" role="tab" data-tab="concept" onclick="switchTab(this,'concept')">개념 이해</button>
+  <button class="tab" role="tab" data-tab="interaction" onclick="switchTab(this,'interaction')">interaction</button>
+  <button class="tab" role="tab" data-tab="usage" onclick="switchTab(this,'usage')">언제 쓰나요?</button>
+  <button class="tab" role="tab" data-tab="quiz" onclick="switchTab(this,'quiz')">퀴즈</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     Tab 1 — 개념 이해
+     ══════════════════════════════════════════════════ -->
+<div id="panel-concept" class="panel is-active">
+
+  <p style="font-size:.9rem; color:var(--muted-strong); margin:0 0 14px;">
+    FBX는 Blender 모델을 Mixamo·AccuRIG·Unity·Unreal로 보내는 표준 포맷이에요. 내보내기 직전 단계와 옵션을 정확히 맞춰야 외부 도구에서 크기·축이 틀어지지 않습니다.
+  </p>
+
+  <div class="concept-grid">
+
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">FBX (Filmbox)</span></h3>
+      <p>3D 데이터 교환 표준 포맷이에요. Mesh, Material, Armature, Animation을 <strong>하나의 파일에 묶어서</strong> 다른 소프트웨어로 옮길 수 있어요.</p>
+      <div class="analogy">서로 다른 회사의 3D 도구가 통신할 수 있는 공용 컨테이너 — 박스에 메쉬·뼈·재질·애니메이션을 함께 담아 보내는 격이에요.</div>
+    </div>
+
+    <div class="concept-card">
+      <h3><span class="badge badge-green">왜 표준인가</span></h3>
+      <p>Blender → <strong>Mixamo / AccuRIG</strong> 자동 리깅, Blender → <strong>Unity / Unreal</strong> 게임 엔진 전송에서 가장 안정적으로 동작하는 포맷이라 사실상 표준으로 굳어졌어요.</p>
+      <ul>
+        <li>Mixamo: FBX만 업로드 허용</li>
+        <li>Unity·Unreal: FBX 임포트가 1순위 워크플로</li>
+      </ul>
+    </div>
+
+    <div class="concept-card">
+      <h3><span class="badge badge-amber">사전 준비 3가지</span></h3>
+      <p>Export 전에 모델을 <strong>정리해 두지 않으면</strong> 받는 쪽에서 크기·뼈가 어긋나요. 다음 세 가지는 무조건 끝내고 나가세요.</p>
+      <ul>
+        <li><kbd class="kbd">Ctrl+J</kbd> 로 모든 파츠를 단일 메쉬로 합치기</li>
+        <li><kbd class="kbd">Ctrl+A</kbd> &gt; All Transforms 적용 (Scale 정상화)</li>
+        <li>Mixamo 업로드 시: 기존 Armature 제거 (자동 리깅이 새로 생성)</li>
+      </ul>
+    </div>
+
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">Export 핵심 옵션</span></h3>
+      <p><strong>File &gt; Export &gt; FBX (.fbx)</strong> 진입 후, 우측 패널에서 다음 값을 맞춰야 Mixamo·AccuRIG가 모델을 똑바로 인식해요.</p>
+      <ul>
+        <li>Transform &gt; <strong>Apply Scalings: All Local</strong></li>
+        <li>Forward: <strong>-Z Forward</strong></li>
+        <li>Up: <strong>Y Up</strong></li>
+        <li>Geometry &gt; <strong>Apply Modifiers</strong> 체크</li>
+      </ul>
+    </div>
+
+    <div class="concept-card">
+      <h3><span class="badge badge-red">흔한 실수</span></h3>
+      <p><kbd class="kbd">Ctrl+A</kbd> &gt; All Transforms를 <strong>안 하면</strong> Blender상으로는 정상으로 보여도, Mixamo에서 캐릭터가 1cm로 작아지거나 100m로 거대해져요. Scale 1.0을 강제로 적용된 상태로 만드는 게 핵심.</p>
+      <div class="analogy">"100% 확대해 둔 사진"과 "원본 크기 100% 사진"은 외형은 같아도 정보가 달라요. 외부 도구는 원본 크기를 기준 삼기 때문에 적용을 안 하면 비율이 깨져요.</div>
+    </div>
+
+    <div class="concept-card">
+      <h3><span class="badge badge-green">축 방향 (Forward / Up)</span></h3>
+      <p>각 소프트웨어마다 "앞쪽"과 "위쪽" 축이 달라요. Blender의 기본 축을 Mixamo가 기대하는 축으로 <strong>변환해서 내보내야</strong> T-Pose가 똑바로 섭니다.</p>
+      <ul>
+        <li>Mixamo / AccuRIG: <strong>-Z Forward, Y Up</strong></li>
+        <li>축이 틀리면 캐릭터가 누워서 임포트됨</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="shortcut-list">
+    <h4>Export 직전 단축키</h4>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><kbd class="kbd">Ctrl+J</kbd></span>
+      <span>선택된 오브젝트들을 활성 오브젝트로 합치기 (Join)</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><kbd class="kbd">Ctrl+A</kbd></span>
+      <span>Apply 메뉴 — All Transforms / Scale / Rotation 선택</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><kbd class="kbd">N</kbd></span>
+      <span>사이드바 열어 현재 Scale·Rotation 수치 확인</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><kbd class="kbd">A</kbd></span>
+      <span>전체 선택 — Join 전에 모든 파츠 잡을 때</span>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--key-soft);flex-shrink:0"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+    <a href="https://docs.blender.org/manual/en/latest/addons/import_export/scene_fbx.html" target="_blank" rel="noopener">Blender 공식 문서 — FBX I/O</a>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     Tab 2 — Interaction (Blender Export Panel Replica)
+     ══════════════════════════════════════════════════ -->
+<div id="panel-interaction" class="panel">
+
+  <p style="font-size:.86rem; color:var(--muted-strong); margin:0 0 12px;">
+    Blender FBX Export 패널을 그대로 재현했어요. <strong>각 옵션을 클릭</strong>하면 설명이 펼쳐지고, 상단 토글로 "올바른 설정"과 "잘못된 설정"을 비교할 수 있어요.
+  </p>
+
+  <div class="compare-toggle" role="tablist">
+    <button class="is-active" data-mode="good" onclick="switchMode(this,'good')">올바른 설정 (Mixamo 호환)</button>
+    <button data-mode="bad" onclick="switchMode(this,'bad')">잘못된 설정</button>
+  </div>
+
+  <div class="demo-wrap">
+    <div id="exportPanel">
+      <!-- 패널은 JS로 채워짐 -->
+    </div>
+    <div class="sim-result" id="simResult">
+      <h5 id="simTitle"></h5>
+      <p id="simDesc"></p>
+    </div>
+  </div>
+
+  <p class="demo-hint">각 행을 클릭하면 옵션 의미와 주의점이 펼쳐져요. 모드 토글로 잘못된 설정 시 어떤 일이 벌어지는지도 확인해 보세요.</p>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     Tab 3 — 언제 쓰나요?
+     ══════════════════════════════════════════════════ -->
+<div id="panel-usage" class="panel">
+
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>Mixamo 자동 리깅 업로드</h4>
+      <ul>
+        <li>T-Pose 자세로 셀프 정리 후 Export</li>
+        <li>단일 메쉬(<kbd class="kbd">Ctrl+J</kbd>)로 합쳐서 업로드</li>
+        <li><kbd class="kbd">Ctrl+A</kbd> &gt; All Transforms 필수</li>
+        <li>기존 Armature는 미리 삭제</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>AccuRIG (Reallusion) 자동 리깅</h4>
+      <ul>
+        <li>Mixamo와 동일한 사전 준비</li>
+        <li>T-Pose + 단일 메쉬 + Apply Transform</li>
+        <li>축은 -Z Forward / Y Up 권장</li>
+        <li>얼굴 디테일이 있으면 ARP 호환성 체크</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>Unity / Unreal 게임 엔진</h4>
+      <ul>
+        <li>Armature 포함, Animation 포함 옵션 켜기</li>
+        <li>Geometry &gt; Apply Modifiers 체크</li>
+        <li>Path Mode: Copy + Embed Textures로 텍스처도 같이 전송</li>
+        <li>Unreal은 Skeleton 호환을 위해 별도 옵션 확인</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>다른 3D 소프트웨어 데이터 교환</h4>
+      <ul>
+        <li>Maya · 3ds Max · Cinema 4D와 Mesh 주고받기</li>
+        <li>Substance Painter로 텍스처링 보내기 전</li>
+        <li>Marvelous Designer 의상 시뮬레이션 송수신</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>Export 시 선택지</strong><br>
+    같은 FBX라도 무엇을 함께 보내느냐에 따라 옵션이 달라요.<br><br>
+    • <strong>Mesh-only</strong>: 모양만. 정적 prop, 환경 오브젝트<br>
+    • <strong>Mesh + Armature</strong>: T-Pose 캐릭터. Mixamo·AccuRIG 자동 리깅용<br>
+    • <strong>Mesh + Armature + Animation</strong>: 모션까지. 게임 엔진 임포트용<br><br>
+    애니메이션을 함께 내보낼 때는 <strong>Bake Animation</strong> 옵션을 켜서, 컨스트레인트나 드라이버로 만든 동작도 키프레임으로 굽혀줘야 외부 도구에서 정상 재생돼요. Material 텍스처는 Embed 안 하면 별도 이미지 파일로 같이 묶어 보내야 합니다.
+  </div>
+
+  <div class="combo-section">
+    <h4>Mixamo 업로드 워크플로</h4>
+    <div class="combo-grid">
+      <div class="combo-card">
+        <div class="combo-name">① 모델 정리</div>
+        <div class="combo-desc"><kbd class="kbd">A</kbd>로 전체 선택 → <kbd class="kbd">Ctrl+J</kbd>로 단일 메쉬화. 기존 Armature 삭제.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">② Transform Apply</div>
+        <div class="combo-desc"><kbd class="kbd">Ctrl+A</kbd> &gt; All Transforms로 Scale·Rotation 강제 적용.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">③ FBX Export</div>
+        <div class="combo-desc">File &gt; Export &gt; FBX → Apply Scalings: All Local, -Z Forward, Y Up.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">④ Mixamo 업로드</div>
+        <div class="combo-desc">mixamo.com에 .fbx 드래그 → 관절 마커 배치 → 자동 리깅 완료.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     Tab 4 — 퀴즈
+     ══════════════════════════════════════════════════ -->
+<div id="panel-quiz" class="panel">
+  <div id="quizArea"></div>
+</div>
+
+<script>
+/* ── Tab switching ── */
+function switchTab(btn, id) {
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('is-active'); });
+  document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('is-active'); });
+  btn.classList.add('is-active');
+  document.getElementById('panel-' + id).classList.add('is-active');
+  if (id === 'interaction' && !panelRendered) { renderExportPanel('good'); panelRendered = true; }
+  if (id === 'quiz' && !quizInitialized) { initQuiz(questions); quizInitialized = true; }
+}
+
+/* ══════════════════════════════════════════════════
+   Tab 2 — Export Panel Replica
+   ══════════════════════════════════════════════════ */
+var panelRendered = false;
+var currentMode = 'good';
+
+/* 설정 데이터: 옵션 라벨, 값, 설명, good/bad 분기 */
+var PANEL_DATA = {
+  good: {
+    sim: {
+      ok: true,
+      title: 'Mixamo / AccuRIG 호환 OK',
+      desc: '단일 메쉬 + Transform Apply 완료 + 축·스케일 정확. 업로드 시 캐릭터가 정상 크기, 정상 방향(T-Pose)으로 인식돼요.'
+    },
+    sections: [
+      {
+        title: 'Include',
+        rows: [
+          { label: 'Limit to Selected Objects', value: 'checked', kind: 'checkbox', good: true,
+            tip: '선택한 메쉬만 내보내요. 작업 중인 캐릭터만 깔끔하게 추출할 때 켭니다. 카메라·라이트·미사용 컬렉션이 같이 포함되는 사고를 막아줘요.' },
+          { label: 'Object Types', value: 'Armature, Mesh', kind: 'value', good: true,
+            tip: 'Mixamo·AccuRIG는 Mesh만, 게임 엔진 임포트는 Armature까지. 카메라·라이트는 제외해야 임포트 후 불필요한 노드가 안 생겨요.' }
+        ]
+      },
+      {
+        title: 'Transform',
+        rows: [
+          { label: 'Scale', value: '1.00', kind: 'value', good: true,
+            tip: 'Object 자체의 Scale. Apply Transform을 미리 했다면 1.00이 정상이에요. 1.00이 아니면 Apply가 안 된 상태라는 신호.' },
+          { label: 'Apply Scalings', value: 'All Local', kind: 'value', good: true,
+            tip: '핵심 옵션! All Local로 두면 Blender·외부 도구 양쪽 모두에서 스케일이 1.0으로 정합돼요. FBX 단위 환산 문제를 해소합니다.' },
+          { label: 'Forward', value: '-Z Forward', kind: 'value', good: true,
+            tip: 'Mixamo·AccuRIG가 기대하는 앞쪽 축. 잘못 두면 캐릭터가 옆이나 뒤를 보고 임포트돼요.' },
+          { label: 'Up', value: 'Y Up', kind: 'value', good: true,
+            tip: '위쪽 축. -Z Forward와 Y Up 조합이 사실상의 업계 표준이에요.' },
+          { label: 'Apply Unit', value: 'checked', kind: 'checkbox', good: true,
+            tip: 'Blender의 단위(미터)를 FBX 단위로 변환해서 내보내요. 외부 도구의 단위와 어긋나는 사고를 줄여줍니다.' }
+        ]
+      },
+      {
+        title: 'Geometry',
+        rows: [
+          { label: 'Apply Modifiers', value: 'checked', kind: 'checkbox', good: true,
+            tip: 'Subdivision Surface, Mirror, Solidify 등 모든 모디파이어를 실제 지오메트리로 굽혀서 내보내요. 끄면 외부 도구에서 평평한 저폴리만 보입니다.' },
+          { label: 'Smoothing', value: 'Face', kind: 'value', good: true,
+            tip: '면 단위 스무딩 정보 포함. Mixamo는 무관하지만 게임 엔진에서 셰이딩 끊김을 막아줘요.' }
+        ]
+      },
+      {
+        title: 'Armature',
+        rows: [
+          { label: 'Add Leaf Bones', value: 'unchecked', kind: 'checkbox', good: true,
+            tip: 'Mixamo·AccuRIG에서는 끄는 게 안전해요. 켜면 손끝·발끝에 더미 본이 추가돼서 자동 리깅이 혼란을 겪을 수 있어요.' },
+          { label: 'Primary Bone Axis', value: 'Y Axis', kind: 'value', good: true,
+            tip: '본의 길이 방향. 기본값 Y로 둡니다. 변경하면 Mixamo 본 구조와 어긋나요.' }
+        ]
+      }
+    ]
+  },
+  bad: {
+    sim: {
+      ok: false,
+      title: 'Mixamo 업로드 실패 가능성 높음',
+      desc: 'Apply Transform 누락 + 축 잘못 설정 → 캐릭터가 1cm로 줄거나 100m로 거대해지고, 누워서 임포트돼요. mixamo.com이 "skeleton 인식 실패" 에러를 띄울 가능성이 높아요.'
+    },
+    sections: [
+      {
+        title: 'Include',
+        rows: [
+          { label: 'Limit to Selected Objects', value: 'unchecked', kind: 'checkbox', good: false,
+            tip: '체크 안 하면 씬의 카메라·라이트·미사용 메쉬까지 통째로 export돼요. Mixamo는 Mesh만 원하는데 잡다한 게 섞여 들어가면 자동 리깅 실패.' },
+          { label: 'Object Types', value: '전체 (All)', kind: 'value', good: false,
+            tip: 'Camera, Lamp, Empty까지 포함됨. Mixamo는 Mesh를 못 찾거나 잘못된 오브젝트에 본을 박으려고 해요.' }
+        ]
+      },
+      {
+        title: 'Transform',
+        rows: [
+          { label: 'Scale', value: '0.01', kind: 'value', good: false,
+            tip: 'Apply Transform을 안 한 상태. Object Scale이 0.01이면 Mixamo에서 캐릭터가 1cm짜리로 보여요. Ctrl+A > All Transforms 필수.' },
+          { label: 'Apply Scalings', value: 'FBX All', kind: 'value', good: false,
+            tip: 'All Local이 아니라 FBX All을 쓰면 외부 도구에서 단위 환산이 한 번 더 적용돼서 크기가 100배 어긋날 수 있어요.' },
+          { label: 'Forward', value: 'Y Forward', kind: 'value', good: false,
+            tip: 'Blender 기본값을 그대로 두면 안 돼요. Mixamo는 -Z Forward 기대 → 캐릭터가 옆을 보고 임포트돼요.' },
+          { label: 'Up', value: 'Z Up', kind: 'value', good: false,
+            tip: 'Z Up은 Blender 내부 표준이지만 Mixamo는 Y Up 기대. 캐릭터가 누워서 임포트되는 원인.' },
+          { label: 'Apply Unit', value: 'unchecked', kind: 'checkbox', good: false,
+            tip: '단위 변환을 끄면 Blender의 1m가 외부 도구에서 1단위로 그대로 해석돼요. 도구가 cm 기준이면 100배 작아짐.' }
+        ]
+      },
+      {
+        title: 'Geometry',
+        rows: [
+          { label: 'Apply Modifiers', value: 'unchecked', kind: 'checkbox', good: false,
+            tip: 'Subdivision Surface가 적용 안 된 저폴리 메쉬로 export돼요. Blender에서 본 모양과 외부에서 본 모양이 완전히 달라요.' },
+          { label: 'Smoothing', value: 'Normals Only', kind: 'value', good: false,
+            tip: '셰이딩이 외부에서 깨질 수 있어요. Face 또는 Edge로 두는 게 안전.' }
+        ]
+      },
+      {
+        title: 'Armature',
+        rows: [
+          { label: 'Add Leaf Bones', value: 'checked', kind: 'checkbox', good: false,
+            tip: 'Mixamo는 손끝·발끝에 추가 본이 있으면 본 구조를 다르게 해석해서 자동 리깅을 실패시킬 수 있어요. 끄는 게 안전.' },
+          { label: 'Primary Bone Axis', value: '-X Axis', kind: 'value', good: false,
+            tip: '기본값 Y에서 변경하면 본 회전축이 어긋나서 애니메이션이 비틀어집니다.' }
+        ]
+      }
+    ]
+  }
+};
+
+function renderExportPanel(mode) {
+  currentMode = mode;
+  var data = PANEL_DATA[mode];
+  var host = document.getElementById('exportPanel');
+  while (host.firstChild) host.removeChild(host.firstChild);
+
+  data.sections.forEach(function(section) {
+    var sec = document.createElement('div');
+    sec.className = 'bl-panel';
+
+    var title = document.createElement('div');
+    title.className = 'bl-panel-title';
+    title.textContent = section.title;
+    sec.appendChild(title);
+
+    section.rows.forEach(function(row) {
+      var rowEl = document.createElement('div');
+      rowEl.className = 'bl-row';
+
+      var label = document.createElement('span');
+      label.className = 'bl-label';
+      label.textContent = row.label;
+      rowEl.appendChild(label);
+
+      if (row.kind === 'checkbox') {
+        var box = document.createElement('span');
+        box.className = 'bl-checkbox';
+        var inner = document.createElement('span');
+        inner.className = 'bl-check-box' + (row.value === 'checked' ? ' is-checked' : '');
+        if (row.value === 'checked') inner.textContent = '✓';
+        box.appendChild(inner);
+        var txt = document.createElement('span');
+        txt.style.cssText = 'font-size:.78rem;color:' + (row.value === 'checked' ? 'var(--success-soft)' : 'var(--muted-dim)');
+        txt.textContent = row.value === 'checked' ? 'On' : 'Off';
+        box.appendChild(txt);
+        rowEl.appendChild(box);
+      } else {
+        var val = document.createElement('span');
+        val.className = 'bl-value ' + (row.good ? 'is-good' : 'is-bad');
+        val.textContent = row.value;
+        rowEl.appendChild(val);
+      }
+
+      var tooltip = document.createElement('div');
+      tooltip.className = 'bl-tooltip';
+      tooltip.textContent = row.tip;
+
+      rowEl.addEventListener('click', function() {
+        rowEl.classList.toggle('is-open');
+      });
+
+      sec.appendChild(rowEl);
+      sec.appendChild(tooltip);
+    });
+
+    host.appendChild(sec);
+  });
+
+  /* Sim result */
+  var simEl = document.getElementById('simResult');
+  simEl.className = 'sim-result ' + (data.sim.ok ? 'is-good' : 'is-bad');
+  document.getElementById('simTitle').textContent = (data.sim.ok ? '✓ ' : '✕ ') + data.sim.title;
+  document.getElementById('simDesc').textContent = data.sim.desc;
+}
+
+function switchMode(btn, mode) {
+  document.querySelectorAll('.compare-toggle button').forEach(function(b) { b.classList.remove('is-active'); });
+  btn.classList.add('is-active');
+  renderExportPanel(mode);
+}
+
+/* ══════════════════════════════════════════════════
+   Tab 4 — Quiz
+   ══════════════════════════════════════════════════ */
+var quizInitialized = false;
+
+var questions = [
+  {
+    question: 'Mixamo에 업로드하기 전에 모델 정리 단계로 가장 먼저 해야 할 것은?',
+    options: [
+      'Bake Animation으로 키프레임을 모두 굽기',
+      'Apply Modifiers를 해제해 원본 메쉬 유지',
+      'Ctrl+A > All Transforms로 Scale·Rotation 강제 적용',
+      'Subdivision Surface 모디파이어를 추가해 폴리곤 늘리기'
+    ],
+    answer: 2,
+    explanation: 'Apply Transform이 빠지면 Blender에서는 정상이어도 Mixamo에서 캐릭터가 1cm로 줄거나 100m로 거대해져요. Ctrl+A > All Transforms로 Scale 1.0을 강제로 적용한 상태로 만들어야 합니다.'
+  },
+  {
+    question: '여러 파츠로 나뉜 캐릭터(머리·몸·옷)를 Mixamo 업로드용 단일 메쉬로 합치는 단축키는?',
+    options: [
+      'Ctrl+P',
+      'Ctrl+J',
+      'Ctrl+L',
+      'Ctrl+G'
+    ],
+    answer: 1,
+    explanation: 'Ctrl+J는 선택된 오브젝트들을 활성 오브젝트로 Join(병합)해요. Mixamo는 단일 메쉬만 안정적으로 처리하므로 업로드 전에 모든 파츠를 합쳐야 합니다. Ctrl+P는 Parent, Ctrl+L은 Link, Ctrl+G는 Group이에요.'
+  },
+  {
+    question: 'Mixamo / AccuRIG 호환을 위한 FBX Export의 Forward 축 설정은?',
+    options: [
+      'Y Forward',
+      'Z Forward',
+      '-Z Forward',
+      '-X Forward'
+    ],
+    answer: 2,
+    explanation: '-Z Forward + Y Up이 Mixamo·AccuRIG·Unity 등이 기대하는 표준 축이에요. 잘못 두면 캐릭터가 옆을 보거나 누워서 임포트되고, 자동 리깅 알고리즘이 T-Pose를 인식 못 합니다.'
+  },
+  {
+    question: 'FBX Export 패널의 Transform 섹션에서 권장되는 Apply Scalings 옵션은?',
+    options: [
+      'FBX All',
+      'FBX Units Scale',
+      'All Local',
+      'None'
+    ],
+    answer: 2,
+    explanation: 'All Local로 두면 Blender와 외부 도구 양쪽 모두에서 스케일이 1.0으로 정합돼요. FBX All이나 FBX Units Scale은 단위 환산이 한 번 더 적용되어 크기가 100배 어긋날 수 있습니다.'
+  },
+  {
+    question: 'Blender의 캐릭터가 Subdivision Surface로 부드럽게 보였는데, FBX로 내보내 Unity에서 열어보니 거친 저폴리로 보입니다. 원인은?',
+    options: [
+      'Forward 축이 -Z Forward로 되어 있어서',
+      'Geometry > Apply Modifiers 옵션을 체크하지 않아서',
+      'Apply Scalings를 All Local로 둬서',
+      'Ctrl+J로 메쉬를 합쳤기 때문에'
+    ],
+    answer: 1,
+    explanation: 'Apply Modifiers를 켜야 Subdivision Surface, Mirror, Solidify 같은 모디파이어가 실제 지오메트리로 굽혀져서 내보내져요. 끄면 모디파이어가 무시되고 원본 저폴리만 export됩니다.'
+  }
+];
+
+function initQuiz(questions) {
+  var container = document.getElementById('quizArea');
+  while (container.firstChild) { container.removeChild(container.firstChild); }
+
+  var score = 0;
+  var answered = 0;
+  var total = questions.length;
+  var passMark = Math.ceil(total * 0.75);
+  var scoreDiv = null;
+
+  var progress = document.createElement('div');
+  progress.className = 'quiz-progress';
+  progress.textContent = '총 ' + total + '문제 · 75% 이상 정답 시 통과';
+  container.appendChild(progress);
+
+  questions.forEach(function(q, qi) {
+    var div = document.createElement('div');
+    div.className = 'quiz-question';
+    div.id = 'qq-' + qi;
+
+    var heading = document.createElement('h4');
+    heading.textContent = (qi + 1) + '. ' + q.question;
+    div.appendChild(heading);
+
+    var fb = document.createElement('div');
+    fb.className = 'quiz-feedback';
+
+    q.options.forEach(function(opt, oi) {
+      var btn = document.createElement('button');
+      btn.className = 'quiz-option';
+      btn.textContent = opt;
+      btn.addEventListener('click', function() {
+        if (btn.disabled) return;
+        div.querySelectorAll('.quiz-option').forEach(function(b) { b.disabled = true; });
+        answered++;
+        if (oi === q.answer) {
+          btn.classList.add('correct');
+          fb.className = 'quiz-feedback show correct-fb';
+          fb.textContent = '정답! ' + q.explanation;
+          score++;
+        } else {
+          btn.classList.add('wrong');
+          div.querySelectorAll('.quiz-option')[q.answer].classList.add('correct');
+          fb.className = 'quiz-feedback show wrong-fb';
+          fb.textContent = '오답. ' + q.explanation;
+        }
+        progress.textContent = answered + ' / ' + total + ' 답변 완료 · 현재 ' + score + '점';
+        if (answered === total) { showScore(); }
+      });
+      div.appendChild(btn);
+    });
+
+    div.appendChild(fb);
+    container.appendChild(div);
+  });
+
+  function showScore() {
+    if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+
+    var pass = score >= passMark;
+
+    scoreDiv = document.createElement('div');
+    scoreDiv.className = 'quiz-score';
+
+    var resultEl = document.createElement('div');
+    resultEl.style.cssText = 'font-size:1.1rem;font-weight:600;margin-bottom:6px;color:' +
+      (pass ? 'var(--success-soft)' : 'var(--warn-soft)');
+    resultEl.textContent = score + ' / ' + total + ' 정답 — ' + (pass ? '통과!' : '한 번 더 공부해 봐요');
+    scoreDiv.appendChild(resultEl);
+
+    var retryBtn = document.createElement('button');
+    retryBtn.className = 'quiz-retry';
+    retryBtn.textContent = '다시 풀기';
+    retryBtn.addEventListener('click', function() {
+      quizInitialized = false;
+      initQuiz(questions);
+      quizInitialized = true;
+    });
+    scoreDiv.appendChild(retryBtn);
+
+    container.appendChild(scoreDiv);
+
+    try {
+      window.parent.postMessage({
+        type: 'showme-quiz-complete',
+        widgetId: new URLSearchParams(location.search).get('wid') || 'fbx-export-settings',
+        score: score,
+        total: questions.length,
+        pass: pass
+      }, '*');
+    } catch (e) {}
+  }
+}
+</script>
+
+<script src="./_helpers.js?v=20260318ai"></script>
+<script>
+window.addEventListener('load', function() {
+  if (window.normalizeStandaloneShowMeLayout) {
+    window.normalizeStandaloneShowMeLayout(document);
+  }
+});
+</script>
+</body>
+</html>

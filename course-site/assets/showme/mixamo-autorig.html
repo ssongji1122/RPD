@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — Mixamo 자동 리깅</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Mixamo Auto-Rig
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --warn-soft:     #fbbf24;
+  --danger:        #ef4444;
+  --danger-soft:   #fca5a5;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --muted-soft:    #cbd5e1;
+  --info-soft:     #67e8f9;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 0; font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+/* ── Tabs ── */
+.tabs { display: flex; gap: 0; border-bottom: 1px solid var(--line); padding: 0 16px; background: var(--bg-soft); overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { padding: 12px 16px; font-size: .84rem; font-weight: 500; color: var(--muted); cursor: pointer; border: none; border-bottom: 2px solid transparent; white-space: nowrap; transition: color .14s, border-color .14s; background: none; font-family: inherit; }
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active { color: var(--key-soft); border-bottom-color: var(--key); }
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+
+/* ── Concept Cards ── */
+.concept-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.concept-card { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); padding: 18px; }
+.concept-card h3 { margin: 0 0 8px; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+.concept-card p { margin: 0; color: var(--muted-strong); font-size: .88rem; line-height: 1.7; }
+.concept-card ul { margin: 8px 0 0; padding-left: 16px; color: var(--muted-strong); font-size: .85rem; line-height: 1.8; }
+.analogy { margin-top: 8px; padding: 10px 14px; border-radius: var(--radius-sm); background: rgba(245,158,11,.06); border: 1px solid rgba(245,158,11,.15); font-size: .82rem; color: var(--warn-soft); font-style: italic; }
+
+/* ── Badges ── */
+.badge { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: .72rem; font-weight: 600; }
+.badge-blue   { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green  { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber  { background: rgba(245,158,11,.15);  color: var(--warn-soft); }
+.badge-purple { background: rgba(196,181,253,.15); color: #c4b5fd; }
+
+/* ── Shortcut keys ── */
+.kbd { display: inline-block; padding: 3px 8px; border-radius: 6px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); color: var(--key-soft); font-size: .82rem; font-weight: 600; font-family: var(--font); }
+/* CONTENT_GUIDE §4-A: 실제 키 입력은 빨간색 */
+.kbd.rpd-key { color: var(--danger-soft); background: rgba(239,68,68,.12); border-color: rgba(239,68,68,.25); }
+
+/* ── Workflow stepper (Tab 2) ── */
+.demo-wrap { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); padding: 16px; margin-bottom: 14px; }
+.stepper { display: flex; gap: 0; align-items: stretch; margin-bottom: 14px; flex-wrap: wrap; }
+.step-pill { flex: 1 1 110px; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 6px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: rgba(255,255,255,.025); color: var(--muted); font-size: .78rem; cursor: pointer; transition: background .14s, color .14s, border-color .14s; min-width: 0; }
+.step-pill:hover { background: rgba(255,255,255,.05); color: var(--muted-strong); }
+.step-pill.is-active { background: rgba(10,132,255,.14); border-color: rgba(10,132,255,.35); color: var(--key-soft); }
+.step-pill .step-num { width: 24px; height: 24px; border-radius: 50%; background: rgba(255,255,255,.06); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: .78rem; }
+.step-pill.is-active .step-num { background: var(--key); color: white; }
+.step-pill .step-label { text-align: center; line-height: 1.3; }
+.step-detail { border-radius: var(--radius-sm); border: 1px solid var(--line); background: rgba(255,255,255,.02); padding: 14px 16px; font-size: .86rem; color: var(--muted-strong); line-height: 1.7; }
+.step-detail h4 { margin: 0 0 8px; font-size: .92rem; color: var(--key-soft); }
+.step-detail ul { margin: 6px 0 0; padding-left: 18px; }
+.step-detail li { margin-bottom: 4px; }
+
+/* ── Marker SVG (Tab 2) ── */
+.marker-wrap { margin-top: 14px; border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); padding: 14px; }
+.marker-wrap h4 { margin: 0 0 8px; font-size: .92rem; color: var(--text); }
+.marker-hint { font-size: .8rem; color: var(--muted); margin: 0 0 10px; }
+.marker-svg-wrap { display: flex; gap: 14px; align-items: stretch; flex-wrap: wrap; }
+.marker-svg-wrap svg { flex: 0 0 auto; background: #0e0f11; border-radius: var(--radius-sm); border: 1px solid var(--line); display: block; }
+.marker-legend { flex: 1 1 180px; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.marker-row { display: flex; align-items: center; gap: 10px; padding: 6px 10px; border-radius: 10px; border: 1px solid var(--line); background: rgba(255,255,255,.025); font-size: .82rem; color: var(--muted-strong); cursor: pointer; transition: background .14s, border-color .14s; }
+.marker-row:hover { background: rgba(255,255,255,.05); }
+.marker-row.is-active { background: rgba(10,132,255,.12); border-color: rgba(10,132,255,.35); color: var(--key-soft); }
+.marker-row.is-placed { background: rgba(16,185,129,.1); border-color: rgba(16,185,129,.3); color: var(--success-soft); }
+.marker-dot-mini { width: 12px; height: 12px; border-radius: 50%; background: var(--danger); flex-shrink: 0; box-shadow: 0 0 0 2px rgba(239,68,68,.2); }
+.marker-row.is-placed .marker-dot-mini { background: var(--success); box-shadow: 0 0 0 2px rgba(16,185,129,.2); }
+.marker-row.is-active .marker-dot-mini { background: var(--key); box-shadow: 0 0 0 2px rgba(10,132,255,.25); }
+.marker-progress { margin-top: 10px; font-size: .8rem; color: var(--muted); text-align: right; }
+.marker-reset { margin-top: 10px; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line-strong); background: rgba(255,255,255,.04); color: var(--muted-strong); font: inherit; font-size: .8rem; cursor: pointer; }
+.marker-reset:hover { background: rgba(255,255,255,.09); color: var(--text); }
+
+/* ── Mini note grid ── */
+.mini-note-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
+.mini-note-card { border-radius: 12px; border: 1px solid var(--line); background: rgba(255,255,255,.03); padding: 12px; }
+.mini-note-label { display: block; margin-bottom: 6px; font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.mini-note-value { font-size: .86rem; color: var(--muted-strong); font-weight: 600; }
+
+/* ── Usage Grid (Tab 3) ── */
+.usage-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.usage-card { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); padding: 16px; }
+.usage-card h4 { margin: 0 0 8px; font-size: .92rem; color: var(--key-soft); }
+.usage-card ul { margin: 0; padding-left: 16px; color: var(--muted-strong); font-size: .85rem; line-height: 1.8; }
+.usage-card.warn h4 { color: var(--warn-soft); }
+.usage-card.warn { border-color: rgba(245,158,11,.2); background: rgba(245,158,11,.03); }
+.tip-box { border-radius: var(--radius-md); border: 1px solid rgba(10,132,255,.2); background: rgba(10,132,255,.06); padding: 14px 16px; margin-top: 14px; font-size: .86rem; color: var(--muted-strong); }
+.tip-box strong { color: var(--key-soft); }
+
+/* ── Compare table (AccuRIG) ── */
+.compare-table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: .84rem; }
+.compare-table thead { background: rgba(10,132,255,.06); }
+.compare-table th { padding: 10px 14px; text-align: left; color: var(--muted-strong); font-weight: 600; font-size: .76rem; letter-spacing: .03em; text-transform: uppercase; border-bottom: 1px solid var(--line-strong); }
+.compare-table td { padding: 9px 14px; border-bottom: 1px solid var(--line); color: var(--muted-strong); line-height: 1.6; vertical-align: top; }
+.compare-table tr:last-child td { border-bottom: none; }
+.compare-table tr:hover td { background: rgba(255,255,255,.02); }
+
+/* ── Quiz ── */
+.quiz-progress { font-size: .78rem; color: var(--muted); margin-bottom: 12px; }
+.quiz-question { margin-bottom: 20px; padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); }
+.quiz-question h4 { margin: 0 0 12px; font-size: .94rem; }
+.quiz-option { display: block; width: 100%; padding: 10px 14px; margin-bottom: 6px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: rgba(255,255,255,.025); color: var(--text); font: inherit; font-size: .86rem; cursor: pointer; text-align: left; transition: background .14s, border-color .14s; }
+.quiz-option:hover { background: rgba(255,255,255,.06); border-color: var(--line-strong); }
+.quiz-option.correct { background: rgba(16,185,129,.12); border-color: rgba(16,185,129,.4); color: var(--success-soft); }
+.quiz-option.wrong { background: rgba(239,68,68,.1); border-color: rgba(239,68,68,.3); color: var(--danger-soft); }
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback { margin-top: 8px; padding: 10px 14px; border-radius: var(--radius-sm); font-size: .84rem; display: none; }
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb { background: rgba(239,68,68,.06); color: var(--danger-soft); }
+.quiz-score { text-align: center; padding: 20px; font-size: 1.1rem; font-weight: 600; }
+.quiz-retry { display: block; margin: 12px auto; padding: 10px 24px; border-radius: 999px; border: 1px solid var(--key); background: rgba(10,132,255,.12); color: var(--key-soft); font: inherit; font-size: .88rem; cursor: pointer; transition: background .14s; }
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+
+/* ── Doc ref ── */
+.doc-ref { margin-top: 16px; padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid rgba(10,132,255,.15); background: rgba(10,132,255,.04); display: flex; align-items: center; gap: 8px; }
+.doc-ref a { color: var(--key-soft); font-size: .84rem; text-decoration: none; line-height: 1.5; }
+.doc-ref a:hover { text-decoration: underline; }
+.doc-ref-list { margin-top: 16px; display: flex; flex-direction: column; gap: 6px; }
+.doc-ref-list .doc-ref { margin-top: 0; }
+
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid { grid-template-columns: 1fr; }
+  .mini-note-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+  .compare-table { font-size: .78rem; }
+  .compare-table th, .compare-table td { padding: 7px 10px; }
+  .marker-svg-wrap { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Tabs ── -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" role="tab" data-tab="concept" onclick="switchTab(this,'concept')">개념 이해</button>
+  <button class="tab" role="tab" data-tab="interaction" onclick="switchTab(this,'interaction')">interaction</button>
+  <button class="tab" role="tab" data-tab="usage" onclick="switchTab(this,'usage')">언제 쓰나요?</button>
+  <button class="tab" role="tab" data-tab="quiz" onclick="switchTab(this,'quiz')">퀴즈</button>
+</nav>
+
+<!-- ══════════════════════════════════════════════════
+     Tab 1 — 개념 이해
+     ══════════════════════════════════════════════════ -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+
+  <p style="font-size:.9rem; color:var(--muted-strong); margin:0 0 14px;">
+    Mixamo는 Adobe가 무료로 운영하는 웹 서비스예요. 캐릭터를 업로드하면 AI가 자동으로 뼈대를 심어주고, 2500개 넘는 모션 라이브러리를 바로 입혀줍니다.
+  </p>
+
+  <div class="concept-grid">
+
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">Mixamo</span></h3>
+      <p>Adobe가 운영하는 <strong>무료 웹 서비스</strong>(mixamo.com)예요. 두 가지 일을 합니다 — <strong>자동 리깅</strong>과 <strong>모션 라이브러리 제공</strong>.</p>
+      <div class="analogy">철사를 직접 굽혀 뼈대를 만드는 대신, AI가 인형 안에 뼈대를 끼워주는 거예요.</div>
+    </div>
+
+    <div class="concept-card">
+      <h3><span class="badge badge-green">자동 리깅</span></h3>
+      <p>업로드한 메쉬 위에 <strong>5개 마커만 찍으면</strong> AI가 뼈대 위치를 계산해 자동으로 Armature와 Weight를 만들어줍니다.</p>
+      <ul>
+        <li>수동 본 배치·웨이트 페인트 생략</li>
+        <li>10~30초면 결과 다운로드 가능</li>
+      </ul>
+    </div>
+
+    <div class="concept-card">
+      <h3><span class="badge badge-amber">모션 라이브러리</span></h3>
+      <p>걷기·달리기·점프·댄스·전투 등 <strong>2500개 이상의 모션</strong>이 준비돼 있어요. 리깅된 캐릭터에 즉시 입혀 미리보기·다운로드 가능합니다.</p>
+      <ul>
+        <li>Walk, Run, Idle, Jump, Combat, Dance 카테고리</li>
+        <li>모션 길이·속도·트림 조정 가능</li>
+      </ul>
+    </div>
+
+    <div class="concept-card">
+      <h3><span class="badge badge-purple">전체 워크플로</span></h3>
+      <p>Blender와 Mixamo를 오가는 <strong>5단계 흐름</strong>이에요. FBX 한 장으로 캐릭터를 보내고, 다시 FBX로 받아옵니다.</p>
+      <ul>
+        <li>① Blender → FBX export</li>
+        <li>② Mixamo 업로드</li>
+        <li>③ 마커 5개 배치</li>
+        <li>④ 자동 리깅 + 다운로드</li>
+        <li>⑤ Blender 재import</li>
+      </ul>
+    </div>
+
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">5개 마커</span></h3>
+      <p>Mixamo가 뼈대 위치를 계산하려면 <strong>다섯 관절점</strong>의 좌표가 필요해요. 캐릭터 외형 위에 점을 찍어주면 됩니다.</p>
+      <ul>
+        <li>Chin — 턱 끝</li>
+        <li>Wrists — 양 손목</li>
+        <li>Elbows — 양 팔꿈치</li>
+        <li>Knees — 양 무릎</li>
+        <li>Groin — 사타구니(골반 중심)</li>
+      </ul>
+    </div>
+
+    <div class="concept-card">
+      <h3><span class="badge badge-amber">업로드 요구사항</span></h3>
+      <p>업로드 전에 캐릭터가 갖춰야 할 조건들이에요. 어긋나면 리깅 실패하거나 결과가 이상해집니다.</p>
+      <ul>
+        <li><strong>T-Pose</strong> — 팔을 좌우로 펼친 자세</li>
+        <li><strong>단일 메쉬</strong> — <kbd class="kbd rpd-key">Ctrl+J</kbd>로 합치기</li>
+        <li><strong>사지 분리</strong> — 팔과 몸이 붙어있으면 안 됨</li>
+        <li><strong>10만 폴리곤 이하</strong></li>
+        <li><strong>깨끗한 메쉬</strong> — 노멀 정리, 중첩 버텍스 제거</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="doc-ref-list">
+    <div class="doc-ref">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--key-soft);flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      <a href="https://www.mixamo.com/" target="_blank" rel="noopener">Mixamo 공식 사이트 — mixamo.com</a>
+    </div>
+    <div class="doc-ref">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--key-soft);flex-shrink:0"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      <a href="https://helpx.adobe.com/creative-cloud/help/mixamo-faq.html" target="_blank" rel="noopener">Adobe Mixamo FAQ — helpx.adobe.com</a>
+    </div>
+  </div>
+
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     Tab 2 — Interaction
+     ══════════════════════════════════════════════════ -->
+<section class="panel" id="panel-interaction" role="tabpanel">
+
+  <div class="demo-wrap">
+    <div class="stepper" id="stepper"></div>
+    <div class="step-detail" id="stepDetail"></div>
+  </div>
+
+  <div class="marker-wrap">
+    <h4>마커 5개 직접 배치해 보기</h4>
+    <p class="marker-hint">우측 목록에서 마커를 고른 다음, 캐릭터 위 해당 위치를 클릭하세요. 정확한 점이 아니라 위치 감각만 익히면 됩니다.</p>
+    <div class="marker-svg-wrap">
+      <svg id="markerSvg" width="220" height="320" viewBox="0 0 220 320"></svg>
+      <div class="marker-legend" id="markerLegend"></div>
+    </div>
+    <div class="marker-progress" id="markerProgress">0 / 5 배치 완료</div>
+    <button class="marker-reset" onclick="resetMarkers()">초기화</button>
+  </div>
+
+  <div class="mini-note-grid">
+    <div class="mini-note-card">
+      <span class="mini-note-label">필수 자세</span>
+      <strong class="mini-note-value">T-Pose (팔 좌우)</strong>
+    </div>
+    <div class="mini-note-card">
+      <span class="mini-note-label">마커 수</span>
+      <strong class="mini-note-value">정확히 5개</strong>
+    </div>
+    <div class="mini-note-card">
+      <span class="mini-note-label">처리 시간</span>
+      <strong class="mini-note-value">10~30초</strong>
+    </div>
+  </div>
+
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     Tab 3 — 언제 쓰나요?
+     ══════════════════════════════════════════════════ -->
+<section class="panel" id="panel-usage" role="tabpanel">
+
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>이럴 때 쓰면 좋아요</h4>
+      <ul>
+        <li>빠른 캐릭터 애니메이션이 필요한 프로젝트</li>
+        <li>인체형 캐릭터 + 즉시 사용 가능한 모션 라이브러리</li>
+        <li>Blender에서 직접 본 배치·웨이트 페인트가 부담스러울 때</li>
+        <li>게임 프로토타입, 학습용 캐릭터, 데모 영상</li>
+      </ul>
+    </div>
+    <div class="usage-card warn">
+      <h4>이럴 때는 피해야 해요</h4>
+      <ul>
+        <li>4족 동물·로봇·비인체형 캐릭터 — 거의 실패</li>
+        <li>손가락 개별 컨트롤이 꼭 필요한 작품 (옵션 미지원)</li>
+        <li>Adobe 계정을 만들 수 없는 환경</li>
+        <li>오리지널 모션이 핵심인 시네마틱 — 라이브러리만으로는 한계</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>현장에서 자주 막히는 지점</strong><br>
+    캐릭터 자세가 <strong>A-Pose</strong>거나 손이 가슴에 붙어 있으면 마커가 안 잡혀요. <strong>T-Pose</strong>로 다시 잡고 올리세요. 메쉬가 여러 파츠면 업로드 전에 <kbd class="kbd rpd-key">Ctrl+J</kbd>로 단일 오브젝트로 합쳐야 합니다.<br><br>
+    Blender로 받아온 다음에는 Armature가 보이지 않을 수 있어요. Outliner에서 Armature 오브젝트를 펼쳐 <strong>Display As → Stick</strong> 또는 <strong>Octahedral</strong>로 바꾸면 뼈대가 보입니다.
+  </div>
+
+  <div style="margin-top:20px;">
+    <h4 style="margin:0 0 6px; font-size:.92rem; color:var(--text);">대안 — AccuRIG</h4>
+    <p style="margin:0 0 6px; font-size:.84rem; color:var(--muted);">정확도가 더 필요하거나 사족 캐릭터를 다룬다면 Reallusion AccuRIG도 무료로 사용 가능해요.</p>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>항목</th>
+          <th>Mixamo</th>
+          <th>AccuRIG</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>가격</td><td>무료(Adobe 계정 필요)</td><td>무료(Reallusion 계정)</td></tr>
+        <tr><td>리깅 정확도</td><td>보통</td><td>높음</td></tr>
+        <tr><td>지원 형태</td><td>인체형만</td><td>인체형 + 사족</td></tr>
+        <tr><td>모션 라이브러리</td><td>2500개 이상</td><td>없음(별도 ActorCore 유료)</td></tr>
+        <tr><td>마커 배치</td><td>5개</td><td>자동 추론</td></tr>
+        <tr><td>실행 환경</td><td>웹 브라우저</td><td>데스크톱 앱</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     Tab 4 — 퀴즈
+     ══════════════════════════════════════════════════ -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+/* ── Tab switching ── */
+function switchTab(btn, id) {
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('is-active'); });
+  document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('is-active'); });
+  btn.classList.add('is-active');
+  document.getElementById('panel-' + id).classList.add('is-active');
+  if (id === 'interaction') { initStepper(); initMarkers(); }
+  if (id === 'quiz' && !quizInitialized) { initQuiz(questions); quizInitialized = true; }
+}
+
+/* ══════════════════════════════════════════════════
+   Workflow Stepper
+   ══════════════════════════════════════════════════ */
+var WORKFLOW_STEPS = [
+  {
+    label: 'Blender에서\nFBX export',
+    title: '① Blender → FBX export',
+    body: 'T-Pose로 자세를 잡고, 메쉬 파츠가 여러 개면 Ctrl+J로 합쳐주세요. File > Export > FBX(.fbx)로 내보냅니다.',
+    bullets: [
+      '자세를 T-Pose로 정리',
+      '여러 메쉬는 Ctrl+J로 단일 오브젝트로 합치기',
+      'Apply All Transforms로 회전·스케일 정리',
+      'Export > FBX, Selected Objects 체크'
+    ]
+  },
+  {
+    label: 'mixamo.com\n업로드',
+    title: '② Mixamo 웹사이트 업로드',
+    body: 'mixamo.com에 Adobe 계정으로 로그인하고, Upload Character 버튼으로 방금 내보낸 FBX를 올리세요.',
+    bullets: [
+      'Adobe 계정 로그인 필요(무료)',
+      'Upload Character > 파일 선택',
+      '업로드 후 자세·방향 미리보기 확인',
+      '캐릭터가 비스듬하면 Next 누르고 회전 조정'
+    ]
+  },
+  {
+    label: '마커 5개\n배치',
+    title: '③ 5개 마커 배치',
+    body: '캐릭터 외형 위에 턱·양 손목·양 팔꿈치·양 무릎·사타구니에 점을 찍습니다. 정확한 관절 위치에 가깝게 둘수록 결과가 좋아져요.',
+    bullets: [
+      'Chin — 턱 끝',
+      'Wrists — 양 손목 안쪽',
+      'Elbows — 양 팔꿈치 중심',
+      'Knees — 양 무릎 중앙',
+      'Groin — 사타구니(골반 중심)'
+    ]
+  },
+  {
+    label: '자동 리깅 +\nFBX 다운로드',
+    title: '④ 자동 리깅 + 다운로드',
+    body: 'Next를 누르면 10~30초 안에 AI가 뼈대를 생성합니다. 결과를 확인하고 Download로 FBX를 받습니다.',
+    bullets: [
+      'Skeleton LOD: 65 본(권장)',
+      'Format: FBX Binary',
+      'Pose: T-Pose 유지',
+      'With Skin — 메쉬 포함된 FBX',
+      '원하는 애니메이션도 같은 화면에서 선택 가능'
+    ]
+  },
+  {
+    label: 'Blender\n재import',
+    title: '⑤ Blender에 다시 import',
+    body: 'File > Import > FBX(.fbx)로 받은 파일을 가져옵니다. Armature가 자동 연결돼 바로 포즈를 잡을 수 있어요.',
+    bullets: [
+      'Import 후 Pose Mode 진입',
+      'Armature 안 보이면 Display As → Stick',
+      '본 이름은 mixamorig_* 형식',
+      '추가 Mixamo 모션은 NLA Editor에서 결합'
+    ]
+  }
+];
+
+var activeStepIdx = 0;
+
+function initStepper() {
+  var stepper = document.getElementById('stepper');
+  if (stepper.dataset.ready === '1') return;
+  while (stepper.firstChild) { stepper.removeChild(stepper.firstChild); }
+
+  WORKFLOW_STEPS.forEach(function(s, i) {
+    var pill = document.createElement('button');
+    pill.className = 'step-pill' + (i === activeStepIdx ? ' is-active' : '');
+    pill.type = 'button';
+
+    var num = document.createElement('span');
+    num.className = 'step-num';
+    num.textContent = (i + 1);
+    pill.appendChild(num);
+
+    var label = document.createElement('span');
+    label.className = 'step-label';
+    s.label.split('\n').forEach(function(line, li) {
+      if (li > 0) label.appendChild(document.createElement('br'));
+      label.appendChild(document.createTextNode(line));
+    });
+    pill.appendChild(label);
+
+    pill.addEventListener('click', function() {
+      activeStepIdx = i;
+      document.querySelectorAll('#stepper .step-pill').forEach(function(p, pi) {
+        p.classList.toggle('is-active', pi === i);
+      });
+      renderStepDetail();
+    });
+    stepper.appendChild(pill);
+  });
+
+  stepper.dataset.ready = '1';
+  renderStepDetail();
+}
+
+function renderStepDetail() {
+  var detail = document.getElementById('stepDetail');
+  while (detail.firstChild) { detail.removeChild(detail.firstChild); }
+
+  var s = WORKFLOW_STEPS[activeStepIdx];
+
+  var h = document.createElement('h4');
+  h.textContent = s.title;
+  detail.appendChild(h);
+
+  var p = document.createElement('p');
+  p.style.margin = '0 0 8px';
+  p.textContent = s.body;
+  detail.appendChild(p);
+
+  var ul = document.createElement('ul');
+  s.bullets.forEach(function(b) {
+    var li = document.createElement('li');
+    li.textContent = b;
+    ul.appendChild(li);
+  });
+  detail.appendChild(ul);
+}
+
+/* ══════════════════════════════════════════════════
+   Marker placement (SVG)
+   ══════════════════════════════════════════════════ */
+var MARKERS = [
+  { id: 'chin',    name: 'Chin (턱)',         target: { x: 110, y:  62 }, tol: 30 },
+  { id: 'wrists',  name: 'Wrists (양 손목)',   target: { x:  30, y: 168 }, tol: 32, mirrorX: 190 },
+  { id: 'elbows',  name: 'Elbows (양 팔꿈치)', target: { x:  60, y: 150 }, tol: 28, mirrorX: 160 },
+  { id: 'knees',   name: 'Knees (양 무릎)',    target: { x:  92, y: 232 }, tol: 26, mirrorX: 128 },
+  { id: 'groin',   name: 'Groin (사타구니)',   target: { x: 110, y: 192 }, tol: 24 }
+];
+var activeMarkerIdx = 0;
+var placedMarkers = {};
+
+function initMarkers() {
+  var svg = document.getElementById('markerSvg');
+  if (svg.dataset.ready === '1') { renderLegend(); return; }
+  svg.dataset.ready = '1';
+
+  var NS = 'http://www.w3.org/2000/svg';
+  while (svg.firstChild) { svg.removeChild(svg.firstChild); }
+
+  /* Character silhouette (simple T-Pose) */
+  function rect(x, y, w, h, fill) {
+    var r = document.createElementNS(NS, 'rect');
+    r.setAttribute('x', x); r.setAttribute('y', y);
+    r.setAttribute('width', w); r.setAttribute('height', h);
+    r.setAttribute('rx', 6); r.setAttribute('fill', fill);
+    svg.appendChild(r);
+  }
+  function circle(cx, cy, r, fill) {
+    var c = document.createElementNS(NS, 'circle');
+    c.setAttribute('cx', cx); c.setAttribute('cy', cy);
+    c.setAttribute('r', r); c.setAttribute('fill', fill);
+    svg.appendChild(c);
+  }
+
+  /* Body */
+  var bodyFill = '#2a2c33';
+  /* head */
+  circle(110, 50, 22, bodyFill);
+  /* neck */
+  rect(102, 70, 16, 14, bodyFill);
+  /* torso */
+  rect(82, 82, 56, 110, bodyFill);
+  /* arms (T-Pose, horizontal) */
+  rect(18, 100, 64, 22, bodyFill);    /* left arm */
+  rect(138, 100, 64, 22, bodyFill);   /* right arm */
+  /* hips */
+  rect(82, 188, 56, 14, bodyFill);
+  /* legs */
+  rect(85, 200, 22, 100, bodyFill);   /* left leg */
+  rect(113, 200, 22, 100, bodyFill);  /* right leg */
+  /* feet */
+  rect(82, 296, 28, 10, bodyFill);
+  rect(110, 296, 28, 10, bodyFill);
+
+  /* Center guideline (T-Pose hint) */
+  var line = document.createElementNS(NS, 'line');
+  line.setAttribute('x1', 110); line.setAttribute('y1', 30);
+  line.setAttribute('x2', 110); line.setAttribute('y2', 310);
+  line.setAttribute('stroke', 'rgba(255,255,255,.06)');
+  line.setAttribute('stroke-dasharray', '3 4');
+  svg.appendChild(line);
+
+  /* Click area */
+  svg.style.cursor = 'crosshair';
+  svg.addEventListener('click', function(e) {
+    var rect = svg.getBoundingClientRect();
+    var scaleX = 220 / rect.width;
+    var scaleY = 320 / rect.height;
+    var x = (e.clientX - rect.left) * scaleX;
+    var y = (e.clientY - rect.top) * scaleY;
+    handleClick(x, y);
+  });
+
+  renderLegend();
+}
+
+function handleClick(x, y) {
+  var m = MARKERS[activeMarkerIdx];
+  if (!m) return;
+  if (placedMarkers[m.id]) {
+    /* advance to next unplaced */
+    advanceMarker();
+    return;
+  }
+
+  /* Pick nearer side for mirrored markers */
+  var targets = [m.target];
+  if (m.mirrorX != null) targets.push({ x: m.mirrorX, y: m.target.y });
+
+  /* For mirrored: place a dot near the click, snapping to the closer side */
+  var chosen;
+  var minDist = Infinity;
+  targets.forEach(function(t) {
+    var d = Math.hypot(x - t.x, y - t.y);
+    if (d < minDist) { minDist = d; chosen = t; }
+  });
+
+  placedMarkers[m.id] = { x: chosen.x, y: chosen.y, ok: minDist <= m.tol };
+
+  drawDot(chosen.x, chosen.y, placedMarkers[m.id].ok);
+  if (m.mirrorX != null) {
+    /* mirror: also place on the other side */
+    var other = (chosen.x === m.target.x) ? { x: m.mirrorX, y: m.target.y } : m.target;
+    placedMarkers[m.id].x2 = other.x;
+    placedMarkers[m.id].y2 = other.y;
+    drawDot(other.x, other.y, placedMarkers[m.id].ok);
+  }
+
+  advanceMarker();
+  renderLegend();
+  updateProgress();
+}
+
+function drawDot(x, y, ok) {
+  var NS = 'http://www.w3.org/2000/svg';
+  var svg = document.getElementById('markerSvg');
+  var dot = document.createElementNS(NS, 'circle');
+  dot.setAttribute('cx', x);
+  dot.setAttribute('cy', y);
+  dot.setAttribute('r', 6);
+  dot.setAttribute('fill', ok ? '#10b981' : '#f59e0b');
+  dot.setAttribute('stroke', 'white');
+  dot.setAttribute('stroke-width', '1.5');
+  dot.dataset.role = 'placed';
+  svg.appendChild(dot);
+}
+
+function advanceMarker() {
+  for (var i = 0; i < MARKERS.length; i++) {
+    if (!placedMarkers[MARKERS[i].id]) { activeMarkerIdx = i; return; }
+  }
+  activeMarkerIdx = -1; /* all done */
+}
+
+function renderLegend() {
+  var legend = document.getElementById('markerLegend');
+  while (legend.firstChild) { legend.removeChild(legend.firstChild); }
+
+  MARKERS.forEach(function(m, i) {
+    var row = document.createElement('button');
+    row.type = 'button';
+    var placed = !!placedMarkers[m.id];
+    var classes = 'marker-row';
+    if (placed) classes += ' is-placed';
+    else if (i === activeMarkerIdx) classes += ' is-active';
+    row.className = classes;
+
+    var dot = document.createElement('span');
+    dot.className = 'marker-dot-mini';
+    row.appendChild(dot);
+
+    var label = document.createElement('span');
+    label.textContent = m.name;
+    row.appendChild(label);
+
+    row.addEventListener('click', function() {
+      if (!placed) {
+        activeMarkerIdx = i;
+        renderLegend();
+      }
+    });
+
+    legend.appendChild(row);
+  });
+}
+
+function updateProgress() {
+  var count = Object.keys(placedMarkers).length;
+  document.getElementById('markerProgress').textContent = count + ' / 5 배치 완료' + (count === 5 ? ' — 다음 단계로 진행!' : '');
+}
+
+function resetMarkers() {
+  placedMarkers = {};
+  activeMarkerIdx = 0;
+  /* Remove placed dots */
+  var svg = document.getElementById('markerSvg');
+  var placed = svg.querySelectorAll('circle[data-role="placed"]');
+  placed.forEach(function(d) { d.remove(); });
+  renderLegend();
+  updateProgress();
+}
+
+/* ══════════════════════════════════════════════════
+   Quiz
+   ══════════════════════════════════════════════════ */
+var quizInitialized = false;
+
+var questions = [
+  {
+    question: 'Mixamo에 캐릭터를 업로드하기 전, 자세는 어떻게 잡아야 하나요?',
+    options: [
+      'A-Pose (팔이 자연스럽게 내려간 자세)',
+      'T-Pose (양팔을 좌우로 펼친 자세)',
+      'Sitting Pose (앉은 자세)',
+      '아무 자세나 상관없음'
+    ],
+    answer: 1,
+    explanation: 'T-Pose가 표준이에요. 팔이 가슴에 붙어 있거나 자연스럽게 내려가 있으면 5개 마커가 잘 잡히지 않고 리깅이 실패합니다.'
+  },
+  {
+    question: 'Mixamo의 5개 마커가 아닌 것은?',
+    options: [
+      'Chin (턱)',
+      'Wrists (양 손목)',
+      'Shoulders (양 어깨)',
+      'Groin (사타구니)'
+    ],
+    answer: 2,
+    explanation: '5개 마커는 Chin, Wrists, Elbows, Knees, Groin이에요. 어깨는 Mixamo가 다른 마커 위치로부터 자동 추론합니다.'
+  },
+  {
+    question: '캐릭터가 머리·몸·팔 등 여러 메쉬로 나뉘어 있어요. 업로드 전에 어떻게 해야 하나요?',
+    options: [
+      '그대로 업로드하면 Mixamo가 알아서 합쳐줌',
+      '각 파츠를 개별 FBX로 따로 업로드',
+      'Ctrl+J로 단일 오브젝트로 합치기',
+      'Modifier로 Boolean Union 적용'
+    ],
+    answer: 2,
+    explanation: 'Mixamo는 단일 메쉬만 지원해요. Object Mode에서 모든 메쉬를 선택한 뒤 Ctrl+J로 하나의 오브젝트로 합쳐서 업로드하세요.'
+  },
+  {
+    question: 'Mixamo에서 다운로드할 때 "With Skin" 옵션은 무엇을 의미하나요?',
+    options: [
+      '텍스처(skin material)만 포함',
+      'Armature(뼈대)만 포함된 FBX',
+      '메쉬가 함께 포함된 FBX',
+      '애니메이션 키프레임만 포함'
+    ],
+    answer: 2,
+    explanation: 'With Skin은 캐릭터 메쉬가 Armature와 함께 들어 있는 FBX예요. 다른 모션을 적용해서 받을 때는 메쉬를 한 번만 들고 오고, 추가 모션은 Without Skin으로 받아 NLA에서 결합하면 됩니다.'
+  }
+];
+
+function initQuiz(qs) {
+  var container = document.getElementById('quizArea');
+  while (container.firstChild) { container.removeChild(container.firstChild); }
+
+  var score = 0;
+  var answered = 0;
+  var total = qs.length;
+  var passMark = Math.ceil(total * 0.75);
+  var scoreDiv = null;
+
+  var progress = document.createElement('div');
+  progress.className = 'quiz-progress';
+  progress.textContent = '총 ' + total + '문제 · 75% 이상 정답 시 통과';
+  container.appendChild(progress);
+
+  qs.forEach(function(q, qi) {
+    var div = document.createElement('div');
+    div.className = 'quiz-question';
+    div.id = 'qq-' + qi;
+
+    var heading = document.createElement('h4');
+    heading.textContent = (qi + 1) + '. ' + q.question;
+    div.appendChild(heading);
+
+    var fb = document.createElement('div');
+    fb.className = 'quiz-feedback';
+
+    q.options.forEach(function(opt, oi) {
+      var btn = document.createElement('button');
+      btn.className = 'quiz-option';
+      btn.textContent = opt;
+      btn.addEventListener('click', function() {
+        if (btn.disabled) return;
+        div.querySelectorAll('.quiz-option').forEach(function(b) { b.disabled = true; });
+        answered++;
+        if (oi === q.answer) {
+          btn.classList.add('correct');
+          fb.className = 'quiz-feedback show correct-fb';
+          fb.textContent = '정답! ' + q.explanation;
+          score++;
+        } else {
+          btn.classList.add('wrong');
+          div.querySelectorAll('.quiz-option')[q.answer].classList.add('correct');
+          fb.className = 'quiz-feedback show wrong-fb';
+          fb.textContent = '오답. ' + q.explanation;
+        }
+        progress.textContent = answered + ' / ' + total + ' 답변 완료 · 현재 ' + score + '점';
+        if (answered === total) { showScore(); }
+      });
+      div.appendChild(btn);
+    });
+
+    div.appendChild(fb);
+    container.appendChild(div);
+  });
+
+  function showScore() {
+    if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+
+    var pass = score >= passMark;
+
+    scoreDiv = document.createElement('div');
+    scoreDiv.className = 'quiz-score';
+
+    var emojiEl = document.createElement('div');
+    emojiEl.style.cssText = 'font-size:2rem;margin-bottom:8px';
+    emojiEl.textContent = pass ? '🎉' : '📚';
+    scoreDiv.appendChild(emojiEl);
+
+    var resultEl = document.createElement('div');
+    resultEl.style.cssText = 'font-size:1.1rem;font-weight:600;margin-bottom:6px;color:' +
+      (pass ? 'var(--success-soft)' : 'var(--warn-soft)');
+    resultEl.textContent = score + ' / ' + total + ' 정답 — ' + (pass ? '통과!' : '한 번 더 공부해 봐요');
+    scoreDiv.appendChild(resultEl);
+
+    var retryBtn = document.createElement('button');
+    retryBtn.className = 'quiz-retry';
+    retryBtn.textContent = '다시 풀기';
+    retryBtn.addEventListener('click', function() {
+      quizInitialized = false;
+      initQuiz(qs);
+      quizInitialized = true;
+    });
+    scoreDiv.appendChild(retryBtn);
+
+    container.appendChild(scoreDiv);
+
+    try {
+      window.parent.postMessage({
+        type: 'showme-quiz-complete',
+        widgetId: new URLSearchParams(location.search).get('wid')
+                || location.pathname.split('/').pop().replace('.html', ''),
+        score: score,
+        total: qs.length,
+        pass: pass
+      }, '*');
+    } catch (e) {}
+  }
+}
+</script>
+
+<script src="./_helpers.js?v=20260318ai"></script>
+<script>
+window.addEventListener('load', function() {
+  if (window.normalizeStandaloneShowMeLayout) {
+    window.normalizeStandaloneShowMeLayout(document);
+  }
+});
+</script>
+</body>
+</html>

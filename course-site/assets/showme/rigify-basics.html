@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — Rigify 자동 리깅</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --danger-soft:   #fca5a5;
+  --warn-soft:     #fbbf24;
+  --warn-medium:   #fcd34d;
+  --accent-soft:   #FFB347;
+  --secondary-soft:#a5b4fc;
+  --secondary-mid: #c4b5fd;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --muted-mid:     #94a3b8;
+  --muted-soft:    #cbd5e1;
+  --muted-dim:     #64748b;
+  --info-soft:     #67e8f9;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  word-break: keep-all;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Tab Navigation ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+
+/* ── Tab Panels ── */
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+
+/* ── Concept Cards ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card h3 {
+  margin: 0 0 8px; font-size: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.concept-card p {
+  margin: 0; color: var(--muted-strong);
+  font-size: .88rem; line-height: 1.7;
+}
+.concept-card ul {
+  margin: 8px 0 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
+}
+
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: .72rem; font-weight: 600;
+}
+.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: var(--warn-soft); }
+.badge-purple{ background: rgba(168,85,247,.15);  color: var(--secondary-mid); }
+
+/* ── Keyboard Shortcut (red, per CONTENT_GUIDE §4-A) ── */
+.kbd, .rpd-key {
+  display: inline-block;
+  padding: 3px 8px; border-radius: 6px;
+  background: rgba(239,68,68,.10);
+  border: 1px solid rgba(239,68,68,.30);
+  color: var(--danger-soft);
+  font-size: .82rem; font-weight: 600;
+  font-family: var(--font);
+}
+
+/* ── Analogy ── */
+.analogy {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(245,158,11,.06);
+  border: 1px solid rgba(245,158,11,.15);
+  font-size: .82rem;
+  color: var(--warn-soft);
+  font-style: italic;
+}
+
+/* ── Shortcut list ── */
+.shortcut-list {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.shortcut-list h4 {
+  margin: 0 0 10px;
+  font-size: .9rem;
+  color: var(--text);
+}
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: .84rem;
+  color: var(--muted-strong);
+}
+.shortcut-row + .shortcut-row {
+  border-top: 1px solid var(--line);
+}
+
+/* ── Interaction: Step Stages ── */
+.stage-nav {
+  display: flex; gap: 6px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.stage-btn {
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .82rem;
+  cursor: pointer;
+  transition: background .14s, color .14s, border-color .14s;
+}
+.stage-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.stage-btn.is-active {
+  background: rgba(10,132,255,.14);
+  color: var(--key-soft);
+  border-color: rgba(10,132,255,.3);
+}
+.stage-step {
+  display: none;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+}
+.stage-step.is-active { display: block; }
+.stage-step header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(255,255,255,.02);
+  display: flex; align-items: center; gap: 10px;
+}
+.stage-step header .num {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: rgba(10,132,255,.18);
+  color: var(--key-soft);
+  font-size: .76rem; font-weight: 700;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.stage-step header .title {
+  font-size: .92rem; font-weight: 600; color: var(--text);
+}
+.stage-step .body {
+  padding: 14px 16px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+  line-height: 1.7;
+}
+.stage-step .body p { margin: 0 0 8px; }
+.stage-step .body p:last-child { margin-bottom: 0; }
+
+/* ── Mock Blender UI mini ── */
+.mock-ui {
+  margin-top: 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: #1a1b1e;
+  overflow: hidden;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: .78rem;
+}
+.mock-ui .titlebar {
+  padding: 6px 10px;
+  background: #25272b;
+  color: var(--muted);
+  border-bottom: 1px solid var(--line);
+  font-size: .72rem;
+}
+.mock-ui .row {
+  display: flex; align-items: center;
+  padding: 6px 10px;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  gap: 8px;
+}
+.mock-ui .row:last-child { border-bottom: none; }
+.mock-ui .row .check {
+  width: 14px; height: 14px;
+  border-radius: 3px;
+  border: 1px solid rgba(255,255,255,.25);
+  background: rgba(10,132,255,.8);
+  position: relative;
+}
+.mock-ui .row .check::after {
+  content: "\2713";
+  position: absolute;
+  left: 1px; top: -3px;
+  font-size: 11px; color: #fff;
+}
+.mock-ui .row .name { color: var(--text); }
+.mock-ui .row .tag {
+  margin-left: auto;
+  font-size: .68rem;
+  color: var(--key-soft);
+}
+.mock-ui .menu-path {
+  padding: 8px 10px;
+  background: #15171a;
+  color: var(--muted-strong);
+}
+.mock-ui .menu-path strong { color: var(--key-soft); font-weight: 500; }
+.mock-ui .btn-row {
+  padding: 8px 10px;
+  display: flex; gap: 6px; flex-wrap: wrap;
+}
+.mock-ui .ui-btn {
+  padding: 5px 10px;
+  border-radius: 4px;
+  background: #3a3d44;
+  color: var(--text);
+  font-size: .76rem;
+}
+.mock-ui .ui-btn.primary {
+  background: rgba(10,132,255,.8);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* ── Bone color guide ── */
+.bone-guide {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+}
+.bone-chip {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  cursor: pointer;
+  transition: background .14s, border-color .14s, transform .14s;
+  font-family: inherit;
+  text-align: left;
+}
+.bone-chip:hover {
+  background: rgba(255,255,255,.04);
+  border-color: var(--line-strong);
+  transform: translateY(-1px);
+}
+.bone-chip.is-active {
+  border-color: var(--key);
+  background: rgba(10,132,255,.07);
+}
+.bone-chip .swatch {
+  width: 18px; height: 18px;
+  border-radius: 5px;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.08) inset;
+}
+.bone-chip .meta { line-height: 1.2; }
+.bone-chip .lbl {
+  display: block;
+  font-size: .84rem; font-weight: 600;
+  color: var(--text);
+}
+.bone-chip .role {
+  display: block;
+  font-size: .72rem; color: var(--muted);
+  margin-top: 2px;
+}
+.bone-detail {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.03);
+  font-size: .84rem;
+  color: var(--muted-strong);
+  line-height: 1.7;
+  min-height: 64px;
+}
+.bone-detail strong { color: var(--text); }
+
+/* ── Mini result canvas ── */
+.result-canvas-wrap {
+  margin-top: 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+}
+.result-canvas-wrap canvas {
+  display: block; width: 100%;
+}
+.result-caption {
+  padding: 8px 12px;
+  border-top: 1px solid var(--line);
+  font-size: .76rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* ── Usage Grid ── */
+.usage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.usage-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 16px;
+}
+.usage-card h4 {
+  margin: 0 0 8px; font-size: .92rem;
+  color: var(--key-soft);
+}
+.usage-card ul {
+  margin: 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem;
+  line-height: 1.8;
+}
+.usage-card.warn h4 { color: var(--warn-soft); }
+.usage-card.warn { border-color: rgba(245,158,11,.2); background: rgba(245,158,11,.04); }
+
+/* ── Tip Box ── */
+.tip-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(10,132,255,.2);
+  background: rgba(10,132,255,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+}
+.tip-box strong { color: var(--key-soft); }
+
+/* ── Comparison Table ── */
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 14px;
+  font-size: .82rem;
+}
+.compare-table thead { background: rgba(10,132,255,.06); }
+.compare-table th {
+  padding: 10px 12px; text-align: left;
+  color: var(--muted-strong); font-weight: 600;
+  font-size: .76rem; letter-spacing: .03em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--line-strong);
+}
+.compare-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted-strong); line-height: 1.6;
+  vertical-align: top;
+}
+.compare-table tr:last-child td { border-bottom: none; }
+.compare-table tr:hover td { background: rgba(255,255,255,.02); }
+.compare-table td:first-child { font-weight: 600; color: var(--text); }
+
+/* ── Section Divider ── */
+.section-divider {
+  margin: 20px 0 12px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--line);
+  font-size: .92rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* ── Quiz ── */
+.quiz-progress {
+  font-size: .78rem; color: var(--muted);
+  margin-bottom: 12px;
+}
+.quiz-question {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.quiz-question h4 {
+  margin: 0 0 12px; font-size: .94rem;
+}
+.quiz-option {
+  display: block; width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.025);
+  color: var(--text);
+  font: inherit; font-size: .86rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background .14s, border-color .14s;
+}
+.quiz-option:hover {
+  background: rgba(255,255,255,.06);
+  border-color: var(--line-strong);
+}
+.quiz-option.correct {
+  background: rgba(16,185,129,.12);
+  border-color: rgba(16,185,129,.4);
+  color: var(--success-soft);
+}
+.quiz-option.wrong {
+  background: rgba(239,68,68,.1);
+  border-color: rgba(239,68,68,.3);
+  color: var(--danger-soft);
+}
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback {
+  margin-top: 8px; padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: .84rem;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: var(--danger-soft); }
+.quiz-score {
+  text-align: center; padding: 20px;
+  font-size: 1.1rem; font-weight: 600;
+}
+.quiz-retry {
+  display: block; margin: 12px auto;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--key);
+  background: rgba(10,132,255,.12);
+  color: var(--key-soft);
+  font: inherit; font-size: .88rem;
+  cursor: pointer;
+  transition: background .14s;
+}
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+
+/* ── Doc Ref ── */
+.doc-ref {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(10,132,255,.15);
+  background: rgba(10,132,255,.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-ref a {
+  color: var(--key-soft);
+  font-size: .84rem;
+  text-decoration: none;
+  line-height: 1.5;
+}
+.doc-ref a:hover { text-decoration: underline; }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+  .compare-table { font-size: .76rem; }
+  .compare-table th, .compare-table td { padding: 6px 8px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Tab Bar -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">interaction</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+</nav>
+
+<!-- TAB 1: 개념 이해 -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <p style="font-size:.9rem; color:var(--muted-strong); margin:0 0 14px;">
+    Rigify는 Blender에 내장된 자동 리깅 애드온이에요. AI가 아니라 미리 정해 놓은 본 템플릿(메타리그)을 가지고 IK·FK 같은 컨트롤 본을 통째로 만들어 줘요.
+  </p>
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">Core</span> Rigify란?</h3>
+      <p>Blender 안에 들어 있는 자동 리깅 도구예요. 사람·동물 같은 흔한 캐릭터의 뼈 구조를 템플릿으로 갖고 있어서, 비율만 맞추면 컨트롤 본까지 한 번에 만들어 줘요.</p>
+      <div class="analogy">옷 패턴지를 골라서 내 몸에 맞게 줄이고 늘리는 거예요. 처음부터 재단할 필요가 없어요.</div>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-green">구조</span> 두 단계 워크플로</h3>
+      <p>Meta-Rig 배치 → Generate Rig 두 단계로 끝나요. 메타리그는 비율 맞추기용 본, Generate Rig 버튼이 컨트롤 본까지 풀세트로 만들어 줘요.</p>
+      <ul>
+        <li>Meta-Rig: 캐릭터 비율 맞추는 본 템플릿</li>
+        <li>Generate Rig: IK·FK·Pole·Tweak 본 자동 생성</li>
+      </ul>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-amber">템플릿</span> Meta-Rig 종류</h3>
+      <p>Human이 가장 자주 쓰여요. Basic은 단순한 팔다리만 있는 가벼운 버전이고, Animals 카테고리에는 Cat·Wolf·Bird 같은 사족·조류 템플릿이 들어 있어요.</p>
+      <ul>
+        <li>Human (Meta-Rig): 사람형 표준</li>
+        <li>Basic: 팔/다리/꼬리 단순 버전</li>
+        <li>Animals: Cat, Wolf, Bird 등</li>
+      </ul>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-purple">결과</span> Generate Rig가 만드는 것</h3>
+      <p>버튼 하나로 컨트롤 본(빨강 IK, 초록 FK, 파랑 Tweak)이 한꺼번에 만들어져요. 학생이 직접 만들면 며칠 걸리는 리그가 몇 초면 끝나요.</p>
+      <div class="analogy">레고 세트의 완성품 박스를 받는 느낌이에요. 부품만 있던 게 갑자기 조립품으로 바뀌어요.</div>
+    </div>
+  </div>
+
+  <div class="shortcut-list">
+    <h4>주요 단축키 · 경로</h4>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Shift</span> + <span class="kbd">A</span></span>
+      <span>Add &rarr; Armature &rarr; Rigify Meta Rigs &rarr; Human</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Tab</span></span>
+      <span>Edit Mode 진입 (메타리그 비율 맞추기)</span>
+    </div>
+    <div class="shortcut-row">
+      <span>(클릭) Properties &gt; Armature &gt; Rigify Buttons &gt; <strong style="color:var(--key-soft)">Generate Rig</strong></span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Ctrl</span> + <span class="kbd">P</span></span>
+      <span>메쉬 &rarr; Rig 순으로 선택 후 &rarr; With Automatic Weights</span>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/addons/rigging/rigify/index.html" target="_blank" rel="noopener">
+      Blender 공식 문서 — Rigify Add-on
+    </a>
+  </div>
+</section>
+
+<!-- TAB 2: interaction -->
+<section class="panel" id="panel-visual" role="tabpanel">
+  <p style="font-size:.86rem; color:var(--muted-strong); margin:0 0 12px;">
+    실제 작업 순서를 5단계로 나눠 봤어요. 위쪽 단계 버튼을 눌러서 넘기거나, 아래쪽 본 색상 칩을 눌러 어떤 본이 어떤 역할인지 확인해 보세요.
+  </p>
+
+  <div class="stage-nav" id="stageNav">
+    <button class="stage-btn is-active" data-stage="1">1. Add-on 활성화</button>
+    <button class="stage-btn" data-stage="2">2. Meta-Rig 추가</button>
+    <button class="stage-btn" data-stage="3">3. 비율 맞춤</button>
+    <button class="stage-btn" data-stage="4">4. Generate Rig</button>
+    <button class="stage-btn" data-stage="5">5. 결과 리그</button>
+  </div>
+
+  <!-- Stage 1 -->
+  <div class="stage-step is-active" data-stage-panel="1">
+    <header>
+      <span class="num">1</span>
+      <span class="title">Rigify Add-on 켜기</span>
+    </header>
+    <div class="body">
+      <p>Rigify는 기본 내장이지만 처음엔 꺼져 있어요. Edit &gt; Preferences &gt; Add-ons에서 "Rigify"를 검색해서 체크박스를 켜주세요. 한 번만 켜면 다음부터는 자동으로 적용돼요.</p>
+      <div class="mock-ui">
+        <div class="titlebar">Edit &gt; Preferences &gt; Add-ons</div>
+        <div class="row">
+          <span style="color:var(--muted-dim)">Search:</span>
+          <span style="color:var(--text); font-weight:600">rigify</span>
+        </div>
+        <div class="row">
+          <span class="check"></span>
+          <span class="name">Rigify</span>
+          <span class="tag">Enabled</span>
+        </div>
+        <div class="row" style="color:var(--muted); font-size:.72rem; padding-top:4px;">
+          Generate and edit advanced rigs (humanoid, quadrupeds...)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stage 2 -->
+  <div class="stage-step" data-stage-panel="2">
+    <header>
+      <span class="num">2</span>
+      <span class="title">Meta-Rig 추가하기</span>
+    </header>
+    <div class="body">
+      <p>Object Mode에서 <span class="kbd">Shift</span>+<span class="kbd">A</span>로 추가 메뉴를 열고 Armature 아래에서 Rigify Meta Rigs를 따라가요. 사람 캐릭터면 Human이에요.</p>
+      <div class="mock-ui">
+        <div class="menu-path">
+          Add &rarr; Armature &rarr; Rigify Meta Rigs &rarr; <strong>Human (Meta-Rig)</strong>
+        </div>
+        <div style="padding:8px 10px; color:var(--muted); font-size:.72rem;">
+          그 외 옵션: Basic Human / Basic Quadruped / Cat / Wolf / Bird ...
+        </div>
+      </div>
+      <p style="margin-top:10px; font-size:.82rem; color:var(--muted);">메타리그가 씬에 추가되면 보통 캐릭터 메쉬 옆에 사람 비율의 본 묶음이 보여요.</p>
+    </div>
+  </div>
+
+  <!-- Stage 3 -->
+  <div class="stage-step" data-stage-panel="3">
+    <header>
+      <span class="num">3</span>
+      <span class="title">캐릭터 비율에 맞추기</span>
+    </header>
+    <div class="body">
+      <p><span class="kbd">Tab</span>으로 Edit Mode 진입한 다음, 각 본의 Head·Tail을 잡고 캐릭터 관절 위치로 옮겨요. 골반·무릎·팔꿈치·손목 같은 관절이 캐릭터 메쉬 안에 정확히 들어가게 맞추는 게 핵심이에요.</p>
+      <div class="mock-ui">
+        <div class="titlebar">Header &mdash; Mode</div>
+        <div class="btn-row">
+          <span class="ui-btn">Object Mode</span>
+          <span class="ui-btn primary">Edit Mode</span>
+          <span class="ui-btn">Pose Mode</span>
+        </div>
+        <div style="padding:8px 10px; color:var(--muted); font-size:.72rem; border-top:1px solid var(--line);">
+          관절 위치 정밀도가 변형 품질을 결정해요. 어긋나면 Generate Rig 결과도 어긋나요.
+        </div>
+      </div>
+      <p style="margin-top:10px; font-size:.82rem; color:var(--warn-soft);">팁: 좌우 대칭은 X-Axis Mirror 옵션을 켜면 한쪽만 만져도 반대쪽이 따라와요.</p>
+    </div>
+  </div>
+
+  <!-- Stage 4 -->
+  <div class="stage-step" data-stage-panel="4">
+    <header>
+      <span class="num">4</span>
+      <span class="title">Generate Rig 클릭</span>
+    </header>
+    <div class="body">
+      <p>Object Mode로 돌아와서 메타리그가 선택된 상태에서 Properties &gt; Armature 탭으로 가요. Rigify Buttons 패널 안의 <strong style="color:var(--key-soft)">Generate Rig</strong> 버튼을 누르면 끝이에요.</p>
+      <div class="mock-ui">
+        <div class="titlebar">Properties &gt; Armature Data</div>
+        <div class="row" style="color:var(--muted-strong);">
+          <span>Rigify Buttons</span>
+        </div>
+        <div class="btn-row">
+          <span class="ui-btn primary" style="font-size:.84rem; padding:8px 14px;">Generate Rig</span>
+        </div>
+        <div style="padding:8px 10px; color:var(--muted); font-size:.72rem; border-top:1px solid var(--line);">
+          누르면 별도의 새 아마추어 오브젝트(보통 "rig")가 생성돼요. 메타리그는 그대로 남아 있어요.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stage 5 -->
+  <div class="stage-step" data-stage-panel="5">
+    <header>
+      <span class="num">5</span>
+      <span class="title">결과 리그 확인 + 메쉬 연결</span>
+    </header>
+    <div class="body">
+      <p>완성된 리그는 색상별로 역할이 달라요. 빨강은 IK, 초록은 FK, 파랑은 Tweak 본이에요. 메쉬에 적용하려면 메쉬를 먼저 선택하고 <span class="kbd">Shift</span>+클릭으로 리그를 추가 선택한 뒤 <span class="kbd">Ctrl</span>+<span class="kbd">P</span> &rarr; With Automatic Weights를 골라요.</p>
+      <div class="result-canvas-wrap">
+        <canvas id="rigCanvas" width="680" height="280"></canvas>
+        <div class="result-caption">Generate Rig 결과 — 컨트롤 본이 색상별로 표시돼요</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider" style="margin-top:22px;">본 색상 가이드 (생성된 리그 기준)</div>
+  <p style="font-size:.82rem; color:var(--muted); margin:0 0 10px;">칩을 눌러서 어떤 역할인지 확인해 보세요.</p>
+  <div class="bone-guide" id="boneGuide"></div>
+  <div class="bone-detail" id="boneDetail">왼쪽 칩을 눌러 본 색상별 역할을 확인하세요.</div>
+</section>
+
+<!-- TAB 3: 언제 쓰나요? -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>Rigify가 잘 맞는 경우</h4>
+      <ul>
+        <li>인체형 캐릭터 (1순위)</li>
+        <li>사족 동물 (Cat / Wolf 메타리그)</li>
+        <li>새 (Bird 메타리그)</li>
+        <li>IK/FK 전환이 필요한 캐릭터 애니메이션</li>
+      </ul>
+    </div>
+    <div class="usage-card warn">
+      <h4>Rigify를 피해야 하는 경우</h4>
+      <ul>
+        <li>로봇·기계처럼 관절 구조가 특이한 모델</li>
+        <li>사물·식물 같은 비생물체</li>
+        <li>표준 인체 비율을 크게 벗어난 캐릭터</li>
+        <li>이런 경우는 수동 리깅이 더 깔끔해요</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-divider">다른 자동 리깅 도구와 비교</div>
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>항목</th>
+        <th>Rigify</th>
+        <th>Mixamo</th>
+        <th>AccuRIG</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>실행 위치</td>
+        <td>Blender 내장</td>
+        <td>웹 업로드</td>
+        <td>별도 앱 설치</td>
+      </tr>
+      <tr>
+        <td>속도</td>
+        <td>비율 맞추는 시간 필요</td>
+        <td>빠름 (자동 본 마커)</td>
+        <td>가장 빠름</td>
+      </tr>
+      <tr>
+        <td>컨트롤 본</td>
+        <td>풍부 (IK/FK/Pole/Tweak)</td>
+        <td>표준 본만</td>
+        <td>표준 + 손가락/얼굴</td>
+      </tr>
+      <tr>
+        <td>애니메이션 라이브러리</td>
+        <td>없음 (직접 제작)</td>
+        <td>제공 (모션 캡쳐)</td>
+        <td>일부 제공</td>
+      </tr>
+      <tr>
+        <td>비인체형 지원</td>
+        <td>일부 (동물 템플릿)</td>
+        <td>인체형 중심</td>
+        <td>인체형 중심</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="tip-box">
+    <strong>팁:</strong> Generate Rig를 누르기 전에 메타리그의 비율을 꼼꼼히 맞춰 두세요. 비율이 어긋난 채 Generate하면 결과 리그를 손보는 게 처음부터 다시 만드는 것보다 더 오래 걸려요.
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/addons/rigging/rigify/basics.html" target="_blank" rel="noopener">
+      Blender 공식 문서 — Rigify Basics
+    </a>
+  </div>
+</section>
+
+<!-- TAB 4: 퀴즈 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+// ── Tab Switching ──────────────────────────────
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(t) {
+      t.classList.remove("is-active");
+      t.setAttribute("aria-selected", "false");
+    });
+    document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("is-active"); });
+    tab.classList.add("is-active");
+    tab.setAttribute("aria-selected", "true");
+    document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+  });
+});
+
+// ── Stage Switching (interaction tab) ──────────
+document.querySelectorAll("#stageNav .stage-btn").forEach(function(btn) {
+  btn.addEventListener("click", function() {
+    var key = btn.dataset.stage;
+    document.querySelectorAll("#stageNav .stage-btn").forEach(function(b) { b.classList.remove("is-active"); });
+    document.querySelectorAll(".stage-step").forEach(function(p) { p.classList.remove("is-active"); });
+    btn.classList.add("is-active");
+    document.querySelector('.stage-step[data-stage-panel="' + key + '"]').classList.add("is-active");
+  });
+});
+
+// ── Bone Color Guide ───────────────────────────
+var boneRoles = [
+  { key: "root",   color: "#a855f7", label: "보라", role: "Root",      desc: "캐릭터 전체를 한꺼번에 이동·회전할 때 쓰는 최상위 본이에요. 씬에서 캐릭터 위치를 옮길 때 만지는 본이에요." },
+  { key: "ik",     color: "#ef4444", label: "빨강", role: "IK",        desc: "Inverse Kinematics 컨트롤이에요. 손·발끝 위치를 지정하면 위쪽 팔·다리 본이 자동으로 계산돼요. 발을 땅에 고정한 채 몸을 움직일 때 핵심이에요." },
+  { key: "fk",     color: "#10b981", label: "초록", role: "FK",        desc: "Forward Kinematics 컨트롤이에요. 어깨 → 팔꿈치 → 손목 순서대로 회전을 쌓는 방식이라 자연스러운 호(arc) 모션에 좋아요." },
+  { key: "tweak",  color: "#0a84ff", label: "파랑", role: "Tweak",     desc: "세부 보정용 본이에요. 메인 IK/FK가 잡은 포즈 위에 미세하게 위치를 조정할 때 써요. 비활성화해도 캐릭터는 움직여요." },
+  { key: "spine",  color: "#fcd34d", label: "노랑", role: "Spine",     desc: "척추 체인의 컨트롤이에요. 굽히기·비틀기 같은 몸통 움직임을 담당해요. 인체형 메타리그의 중심 축이에요." },
+  { key: "finger", color: "#fb923c", label: "주황", role: "Fingers",   desc: "손가락 컨트롤이에요. Rigify는 손가락마다 별도 컨트롤 본을 만들어 줘서 그립이나 제스처 표현이 쉬워요." }
+];
+
+function setBoneDetail(b) {
+  var detail = document.getElementById("boneDetail");
+  while (detail.firstChild) { detail.removeChild(detail.firstChild); }
+  var strong = document.createElement("strong");
+  strong.textContent = b.role + " (" + b.label + ")";
+  detail.appendChild(strong);
+  detail.appendChild(document.createTextNode(" — " + b.desc));
+}
+
+(function buildBoneGuide() {
+  var wrap = document.getElementById("boneGuide");
+  boneRoles.forEach(function(b, i) {
+    var chip = document.createElement("button");
+    chip.className = "bone-chip" + (i === 0 ? " is-active" : "");
+    chip.dataset.key = b.key;
+    chip.type = "button";
+
+    var sw = document.createElement("span");
+    sw.className = "swatch";
+    sw.style.background = b.color;
+    chip.appendChild(sw);
+
+    var meta = document.createElement("span");
+    meta.className = "meta";
+    var lbl = document.createElement("span");
+    lbl.className = "lbl";
+    lbl.textContent = b.role;
+    var role = document.createElement("span");
+    role.className = "role";
+    role.textContent = b.label;
+    meta.appendChild(lbl);
+    meta.appendChild(role);
+    chip.appendChild(meta);
+
+    chip.addEventListener("click", function() {
+      document.querySelectorAll(".bone-chip").forEach(function(c) { c.classList.remove("is-active"); });
+      chip.classList.add("is-active");
+      setBoneDetail(b);
+    });
+
+    wrap.appendChild(chip);
+  });
+  setBoneDetail(boneRoles[0]);
+})();
+
+// ── Result Canvas: stylized rigify-style stick figure ──
+(function() {
+  var canvas = document.getElementById("rigCanvas");
+  if (!canvas) return;
+  var ctx = canvas.getContext("2d");
+
+  function drawBone(p1, p2, color, thickness) {
+    var dx = p2.x - p1.x, dy = p2.y - p1.y;
+    var ang = Math.atan2(dy, dx);
+    var midX = (p1.x + p2.x) / 2;
+    var midY = (p1.y + p2.y) / 2;
+    var t = thickness || 7;
+    var perpX = -Math.sin(ang) * t;
+    var perpY = Math.cos(ang) * t;
+
+    ctx.beginPath();
+    ctx.moveTo(p1.x, p1.y);
+    ctx.lineTo(midX + perpX, midY + perpY);
+    ctx.lineTo(p2.x, p2.y);
+    ctx.lineTo(midX - perpX, midY - perpY);
+    ctx.closePath();
+    ctx.fillStyle = color + "44";
+    ctx.fill();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.6;
+    ctx.stroke();
+  }
+
+  function drawCtrl(x, y, color, r) {
+    ctx.beginPath();
+    ctx.arc(x, y, r || 8, 0, Math.PI * 2);
+    ctx.fillStyle = color + "33";
+    ctx.fill();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.8;
+    ctx.stroke();
+  }
+
+  function drawSquare(x, y, color, s) {
+    s = s || 10;
+    ctx.beginPath();
+    ctx.rect(x - s/2, y - s/2, s, s);
+    ctx.fillStyle = color + "33";
+    ctx.fill();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.8;
+    ctx.stroke();
+  }
+
+  function draw() {
+    var w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = "#17181a";
+    ctx.fillRect(0, 0, w, h);
+
+    // soft grid
+    ctx.strokeStyle = "rgba(255,255,255,.035)";
+    ctx.lineWidth = 1;
+    for (var gx = 40; gx < w; gx += 40) {
+      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
+    }
+    for (var gy = 40; gy < h; gy += 40) {
+      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
+    }
+
+    var ROOT = "#a855f7";
+    var SPINE = "#fcd34d";
+    var FK = "#10b981";
+    var IK = "#ef4444";
+    var TW = "#0a84ff";
+    var FINGER = "#fb923c";
+
+    var cx = w / 2;
+    drawSquare(cx, h - 30, ROOT, 22);
+    ctx.fillStyle = ROOT;
+    ctx.font = "bold 10px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Root", cx, h - 18);
+
+    var pelvis = { x: cx, y: h - 90 };
+    var chest = { x: cx, y: h - 170 };
+    var neck = { x: cx, y: h - 200 };
+    drawBone(pelvis, chest, SPINE, 9);
+    drawBone(chest, neck, SPINE, 7);
+
+    // head outline
+    ctx.beginPath();
+    ctx.arc(cx, h - 225, 18, 0, Math.PI * 2);
+    ctx.fillStyle = SPINE + "33";
+    ctx.fill();
+    ctx.strokeStyle = SPINE;
+    ctx.lineWidth = 1.6;
+    ctx.stroke();
+
+    var shoulderL = { x: cx - 30, y: h - 175 };
+    var elbowL = { x: cx - 80, y: h - 130 };
+    var wristL = { x: cx - 110, y: h - 80 };
+    drawBone(shoulderL, elbowL, FK, 6);
+    drawBone(elbowL, wristL, FK, 6);
+
+    var shoulderR = { x: cx + 30, y: h - 175 };
+    var elbowR = { x: cx + 80, y: h - 130 };
+    var wristR = { x: cx + 110, y: h - 80 };
+    drawBone(shoulderR, elbowR, FK, 6);
+    drawBone(elbowR, wristR, FK, 6);
+
+    drawSquare(wristL.x, wristL.y, IK, 14);
+    drawSquare(wristR.x, wristR.y, IK, 14);
+
+    drawCtrl(cx - 130, h - 130, IK, 6);
+    drawCtrl(cx + 130, h - 130, IK, 6);
+
+    for (var i = 0; i < 4; i++) {
+      drawCtrl(wristL.x - 8 - i * 6, wristL.y + 14, FINGER, 4);
+      drawCtrl(wristR.x + 8 + i * 6, wristR.y + 14, FINGER, 4);
+    }
+
+    var hipL = { x: cx - 20, y: pelvis.y };
+    var kneeL = { x: cx - 30, y: h - 50 };
+    var footL = { x: cx - 30, y: h - 20 };
+    drawBone(hipL, kneeL, FK, 7);
+    drawBone(kneeL, footL, FK, 7);
+
+    var hipR = { x: cx + 20, y: pelvis.y };
+    var kneeR = { x: cx + 30, y: h - 50 };
+    var footR = { x: cx + 30, y: h - 20 };
+    drawBone(hipR, kneeR, FK, 7);
+    drawBone(kneeR, footR, FK, 7);
+
+    drawSquare(footL.x, footL.y, IK, 16);
+    drawSquare(footR.x, footR.y, IK, 16);
+
+    drawCtrl(cx, h - 130, TW, 5);
+    drawCtrl((shoulderL.x + elbowL.x)/2, (shoulderL.y + elbowL.y)/2, TW, 5);
+    drawCtrl((shoulderR.x + elbowR.x)/2, (shoulderR.y + elbowR.y)/2, TW, 5);
+    drawCtrl((hipL.x + kneeL.x)/2, (hipL.y + kneeL.y)/2, TW, 5);
+    drawCtrl((hipR.x + kneeR.x)/2, (hipR.y + kneeR.y)/2, TW, 5);
+
+    var legend = [
+      { color: ROOT,   text: "Root" },
+      { color: SPINE,  text: "Spine" },
+      { color: FK,     text: "FK" },
+      { color: IK,     text: "IK" },
+      { color: TW,     text: "Tweak" },
+      { color: FINGER, text: "Fingers" }
+    ];
+    ctx.font = "bold 11px sans-serif";
+    ctx.textAlign = "left";
+    var lx = 16, ly = 22;
+    legend.forEach(function(item) {
+      ctx.fillStyle = item.color;
+      ctx.fillRect(lx, ly - 8, 10, 10);
+      ctx.fillStyle = "rgba(255,255,255,.78)";
+      ctx.fillText(item.text, lx + 16, ly);
+      lx += ctx.measureText(item.text).width + 38;
+    });
+  }
+
+  draw();
+})();
+
+// ── Quiz Engine (safe DOM) ─────────────────────
+function initQuiz(questions) {
+  var container = document.getElementById("quizArea");
+  var score = 0, answered = 0;
+  var scoreDiv = null;
+
+  var progress = document.createElement("div");
+  progress.className = "quiz-progress";
+  progress.textContent = "문제 0 / " + questions.length + " · 점수 0점";
+  container.appendChild(progress);
+
+  questions.forEach(function(q, qi) {
+    var div = document.createElement("div");
+    div.className = "quiz-question";
+
+    var heading = document.createElement("h4");
+    heading.textContent = "Q" + (qi + 1) + ". " + q.question;
+    div.appendChild(heading);
+
+    var fb = document.createElement("div");
+    fb.className = "quiz-feedback";
+
+    q.options.forEach(function(opt, oi) {
+      var btn = document.createElement("button");
+      btn.className = "quiz-option";
+      btn.textContent = opt;
+      btn.addEventListener("click", function() {
+        if (btn.disabled) return;
+        div.querySelectorAll(".quiz-option").forEach(function(b) { b.disabled = true; });
+        answered++;
+        if (oi === q.answer) {
+          btn.classList.add("correct");
+          fb.className = "quiz-feedback show correct-fb";
+          fb.textContent = "✅ " + q.explanation;
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
+          fb.className = "quiz-feedback show wrong-fb";
+          fb.textContent = "❌ " + q.explanation;
+
+          var retryBtn = document.createElement("button");
+          retryBtn.className = "quiz-retry";
+          retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
+          retryBtn.textContent = "다시 풀기";
+          retryBtn.addEventListener("click", function() {
+            answered--;
+            div.querySelectorAll(".quiz-option").forEach(function(b) {
+              b.disabled = false;
+              b.classList.remove("wrong", "correct");
+            });
+            fb.className = "quiz-feedback";
+            fb.textContent = "";
+            retryBtn.remove();
+            if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+            progress.textContent = "문제 " + answered + " / " + questions.length + " · 점수 " + score + "점";
+          });
+          fb.appendChild(retryBtn);
+        }
+        progress.textContent = "문제 " + answered + " / " + questions.length + " · 점수 " + score + "점";
+        if (answered === questions.length) showScore();
+      });
+      div.appendChild(btn);
+    });
+
+    div.appendChild(fb);
+    container.appendChild(div);
+  });
+
+  function showScore() {
+    if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+    scoreDiv = document.createElement("div");
+    scoreDiv.className = "quiz-score";
+
+    var emoji = document.createElement("div");
+    emoji.style.cssText = "font-size:36px;margin-bottom:8px";
+    emoji.textContent = score === questions.length ? "🎉" : score >= Math.ceil(questions.length / 2) ? "👍" : "📚";
+    scoreDiv.appendChild(emoji);
+
+    var result = document.createElement("div");
+    result.style.cssText = "font-size:18px;font-weight:500;margin-bottom:6px";
+    result.textContent = score + " / " + questions.length + " 정답";
+    scoreDiv.appendChild(result);
+
+    var msg = document.createElement("div");
+    msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
+    msg.textContent = score === questions.length ? "완벽합니다!" : "조금 더 연습하면 완벽해질 거예요!";
+    scoreDiv.appendChild(msg);
+
+    var saveBtn = document.createElement("button");
+    saveBtn.className = "quiz-retry";
+    saveBtn.style.cssText = "background:rgba(10,132,255,.18);border-color:var(--key);margin-bottom:8px";
+    saveBtn.textContent = "기록 저장하기";
+    saveBtn.addEventListener("click", function() {
+      try {
+        var wid = new URLSearchParams(location.search).get("wid")
+               || location.pathname.split("/").pop().replace(".html", "");
+        window.parent.postMessage({
+          type: "showme-quiz-complete",
+          widgetId: wid,
+          score: score,
+          total: questions.length,
+          pass: score >= Math.ceil(questions.length * 0.75)
+        }, "*");
+      } catch(e) {}
+      saveBtn.textContent = "저장 완료!";
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = ".5";
+    });
+    scoreDiv.appendChild(saveBtn);
+
+    var retry = document.createElement("button");
+    retry.className = "quiz-retry";
+    retry.textContent = "처음부터 다시";
+    retry.addEventListener("click", function() { location.reload(); });
+    scoreDiv.appendChild(retry);
+
+    container.appendChild(scoreDiv);
+  }
+}
+
+// ── Quiz Data ─────────────────────────────────
+initQuiz([
+  {
+    question: "Generate Rig 버튼을 누르면 무엇이 만들어지나요?",
+    options: [
+      "메타리그 하나만 생성돼요",
+      "메타리그 + IK/FK/Tweak 컨트롤이 포함된 새 리그가 만들어져요",
+      "메쉬가 자동으로 추가돼요",
+      "애니메이션 키프레임이 자동으로 만들어져요"
+    ],
+    answer: 1,
+    explanation: "Generate Rig는 메타리그를 기반으로 IK·FK·Pole·Tweak 같은 컨트롤 본까지 포함된 별도의 새 아마추어(보통 \"rig\")를 만들어 줘요. 메타리그는 그대로 남아 있어요."
+  },
+  {
+    question: "관절이 특이한 로봇 캐릭터에 Rigify Human 메타리그를 그대로 쓰려고 해요. 어떻게 하는 게 좋을까요?",
+    options: [
+      "그냥 Human 메타리그를 쓰고 비율만 맞추면 돼요",
+      "Rigify는 표준 인체 구조용이라 로봇은 수동 리깅이 더 깔끔해요",
+      "Mixamo로 자동 처리하면 무조건 돼요",
+      "Generate Rig를 여러 번 누르면 해결돼요"
+    ],
+    answer: 1,
+    explanation: "Rigify는 미리 정해진 인체·동물 템플릿을 가정해요. 관절 구조가 특이한 로봇·기계는 템플릿이 안 맞아서, 수동으로 본을 짜는 게 결과가 더 깔끔하고 디버깅도 쉬워요."
+  },
+  {
+    question: "생성된 리그에서 보라색 본의 역할은?",
+    options: [
+      "손가락 컨트롤",
+      "IK 컨트롤",
+      "Root — 캐릭터 전체를 이동·회전하는 최상위 본",
+      "FK 회전 체인"
+    ],
+    answer: 2,
+    explanation: "보라색은 Root 본이에요. 씬에서 캐릭터 전체 위치를 옮길 때 쓰는 최상위 컨트롤이에요. 빨강은 IK, 초록은 FK, 파랑은 Tweak, 주황은 손가락이에요."
+  },
+  {
+    question: "Generate Rig로 만든 리그를 캐릭터 메쉬에 적용하는 가장 빠른 방법은?",
+    options: [
+      "리그를 먼저 선택 → 메쉬를 Shift+클릭 → Ctrl+P → With Automatic Weights",
+      "메쉬를 먼저 선택 → 리그를 Shift+클릭 → Ctrl+P → With Automatic Weights",
+      "Edit Mode에서 본을 메쉬 안에 넣기만 하면 자동 연결돼요",
+      "Modifier 탭에서 Rigify 모디파이어를 추가하면 돼요"
+    ],
+    answer: 1,
+    explanation: "메쉬를 먼저 선택하고 Shift+클릭으로 리그를 추가 선택(리그가 Active)한 뒤 Ctrl+P → With Automatic Weights를 골라요. 선택 순서를 바꾸면 부모-자식 관계가 거꾸로 만들어져요."
+  },
+  {
+    question: "Meta-Rig와 Generated Rig의 관계로 맞는 것은?",
+    options: [
+      "둘은 같은 오브젝트예요",
+      "Meta-Rig는 비율 잡는 템플릿이고, Generated Rig는 그것을 기반으로 만든 컨트롤 본이 포함된 별도 아마추어예요",
+      "Generated Rig를 만들면 Meta-Rig가 자동으로 삭제돼요",
+      "Meta-Rig는 애니메이션용, Generated Rig는 모델링용이에요"
+    ],
+    answer: 1,
+    explanation: "Meta-Rig는 캐릭터 비율 맞추는 용도의 본 템플릿이에요. Generate Rig를 누르면 이 메타리그를 바탕으로 컨트롤 본까지 풀세트인 새 아마추어(Generated Rig)가 추가로 생성돼요. 메타리그는 보통 숨겨두거나 보관용으로 남겨요."
+  }
+]);
+</script>
+
+<script src="./_helpers.js?v=20260318ai"></script>
+<script>
+window.addEventListener("load", function() {
+  if (window.normalizeStandaloneShowMeLayout) {
+    window.normalizeStandaloneShowMeLayout(document);
+  }
+});
+</script>
+</body>
+</html>

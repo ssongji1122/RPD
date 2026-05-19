@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — Bone Parent 종류 (Connected vs Free)</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --danger-soft:   #fca5a5;
+  --warn-soft:     #fbbf24;
+  --warn-medium:   #fcd34d;
+  --accent-soft:   #FFB347;
+  --secondary-soft:#a5b4fc;
+  --secondary-mid: #c4b5fd;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --muted-mid:     #94a3b8;
+  --muted-soft:    #cbd5e1;
+  --muted-dim:     #64748b;
+  --info-soft:     #67e8f9;
+  --rpd-key:       #ef4444;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Tab Navigation ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+
+/* ── Tab Panels ── */
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+
+/* ── Concept Cards ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card h3 {
+  margin: 0 0 8px; font-size: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.concept-card p {
+  margin: 0; color: var(--muted-strong);
+  font-size: .88rem; line-height: 1.7;
+}
+.concept-card ul {
+  margin: 8px 0 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
+}
+
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: .72rem; font-weight: 600;
+}
+.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: var(--warn-soft); }
+.badge-purple{ background: rgba(168,85,247,.15);  color: var(--secondary-mid); }
+
+/* ── Keyboard Shortcut ── */
+.kbd {
+  display: inline-block;
+  padding: 3px 8px; border-radius: 6px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  color: var(--key-soft);
+  font-size: .82rem; font-weight: 600;
+  font-family: var(--font);
+}
+/* 실제 키 입력 표시 — CONTENT_GUIDE §4-A: 빨간색 */
+.rpd-key {
+  display: inline-block;
+  padding: 3px 8px; border-radius: 6px;
+  background: rgba(239,68,68,.10);
+  border: 1px solid rgba(239,68,68,.30);
+  color: var(--rpd-key);
+  font-size: .82rem; font-weight: 700;
+  font-family: var(--font);
+}
+
+/* ── Analogy ── */
+.analogy {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(245,158,11,.06);
+  border: 1px solid rgba(245,158,11,.15);
+  font-size: .82rem;
+  color: var(--warn-soft);
+  font-style: italic;
+}
+.why {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(10,132,255,.06);
+  border: 1px solid rgba(10,132,255,.18);
+  font-size: .82rem;
+  color: var(--key-soft);
+}
+.why strong { color: var(--text); }
+
+/* ── Compare Table ── */
+.compare-section { margin-top: 18px; }
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: .84rem;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+.compare-table thead { background: rgba(10,132,255,.06); }
+.compare-table th {
+  padding: 10px 14px; text-align: left;
+  color: var(--muted-strong); font-weight: 600;
+  font-size: .78rem; letter-spacing: .03em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--line-strong);
+}
+.compare-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted-strong); line-height: 1.6;
+  vertical-align: top;
+}
+.compare-table tr:last-child td { border-bottom: none; }
+.compare-table tr:hover td { background: rgba(255,255,255,.02); }
+.compare-table .col-key { color: var(--key-soft); font-weight: 600; width: 22%; }
+
+/* ── Shortcut Reference ── */
+.shortcut-list {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.shortcut-list h4 {
+  margin: 0 0 10px;
+  font-size: .9rem;
+  color: var(--text);
+}
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0;
+  font-size: .84rem;
+  color: var(--muted-strong);
+  flex-wrap: wrap;
+}
+.shortcut-row + .shortcut-row { border-top: 1px solid var(--line); }
+.shortcut-keys { flex-shrink: 0; }
+
+/* ── Demo / Visualization ── */
+.demo-wrap {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+  margin: 14px 0;
+}
+.demo-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #17181a;
+}
+.demo-controls {
+  display: flex; gap: 8px; padding: 12px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+  align-items: center;
+}
+.demo-hint {
+  font-size: .78rem; color: var(--muted);
+  text-align: center; padding: 6px 0 0;
+}
+.demo-btn {
+  padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .82rem;
+  cursor: pointer;
+  transition: background .14s, color .14s;
+}
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active {
+  background: rgba(10,132,255,.14);
+  color: var(--key-soft);
+  border-color: rgba(10,132,255,.3);
+}
+.demo-slider-group {
+  display: flex; align-items: center; gap: 10px;
+  flex: 1; min-width: 220px;
+}
+.demo-slider-group label {
+  font-size: .8rem; color: var(--muted);
+  white-space: nowrap;
+}
+.demo-slider-group input[type="range"] {
+  flex: 1;
+  accent-color: var(--key);
+}
+.demo-slider-group .val {
+  font-size: .8rem; color: var(--key-soft);
+  font-weight: 600;
+  min-width: 42px; text-align: right;
+}
+
+.mini-note-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+.mini-note-card {
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.03);
+  padding: 12px;
+}
+.mini-note-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: .7rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.mini-note-value {
+  font-size: .84rem;
+  color: var(--muted-strong);
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+/* ── Usage Grid ── */
+.usage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.usage-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 16px;
+}
+.usage-card h4 {
+  margin: 0 0 8px; font-size: .92rem;
+  color: var(--key-soft);
+  display: flex; align-items: center; gap: 8px;
+}
+.usage-card ul {
+  margin: 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem;
+  line-height: 1.85;
+}
+
+/* ── Tip Box ── */
+.tip-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(10,132,255,.2);
+  background: rgba(10,132,255,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+}
+.tip-box strong { color: var(--key-soft); }
+
+.warn-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(239,68,68,.22);
+  background: rgba(239,68,68,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+}
+.warn-box strong { color: var(--danger-soft); }
+
+/* ── Quiz ── */
+.quiz-progress {
+  font-size: .78rem; color: var(--muted);
+  margin-bottom: 12px;
+}
+.quiz-question {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.quiz-question h4 {
+  margin: 0 0 12px; font-size: .94rem;
+}
+.quiz-option {
+  display: block; width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.025);
+  color: var(--text);
+  font: inherit; font-size: .86rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background .14s, border-color .14s;
+}
+.quiz-option:hover {
+  background: rgba(255,255,255,.06);
+  border-color: var(--line-strong);
+}
+.quiz-option.correct {
+  background: rgba(16,185,129,.12);
+  border-color: rgba(16,185,129,.4);
+  color: var(--success-soft);
+}
+.quiz-option.wrong {
+  background: rgba(239,68,68,.1);
+  border-color: rgba(239,68,68,.3);
+  color: var(--danger-soft);
+}
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback {
+  margin-top: 8px; padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: .84rem;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: var(--danger-soft); }
+
+.quiz-score {
+  text-align: center; padding: 20px;
+  font-size: 1.1rem; font-weight: 600;
+}
+.quiz-retry {
+  display: block; margin: 12px auto;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--key);
+  background: rgba(10,132,255,.12);
+  color: var(--key-soft);
+  font: inherit; font-size: .88rem;
+  cursor: pointer;
+  transition: background .14s;
+}
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+
+/* ── Official Doc Reference ── */
+.doc-ref {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(10,132,255,.15);
+  background: rgba(10,132,255,.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-ref a {
+  color: var(--key-soft);
+  font-size: .84rem;
+  text-decoration: none;
+  line-height: 1.5;
+}
+.doc-ref a:hover { text-decoration: underline; }
+
+/* ── Section Divider ── */
+.section-divider {
+  margin: 20px 0 12px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--line);
+  font-size: .92rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* ── Preset row ── */
+.preset-row {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin-top: 4px;
+}
+.preset-btn {
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .8rem;
+  cursor: pointer;
+}
+.preset-btn:hover { background: rgba(255,255,255,.08); color: var(--text); }
+.preset-note {
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(168,85,247,.18);
+  background: rgba(168,85,247,.06);
+  color: var(--secondary-mid);
+  font-size: .82rem;
+  line-height: 1.55;
+}
+.preset-note .preset-title { color: var(--text); font-weight: 700; margin-right: 4px; }
+.preset-note .preset-emph { color: var(--text); font-weight: 700; }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid { grid-template-columns: 1fr; }
+  .mini-note-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+  .compare-table { font-size: .78rem; }
+  .compare-table th, .compare-table td { padding: 8px 10px; }
+  .demo-slider-group { flex-basis: 100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- Tab Bar -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">interaction</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+</nav>
+
+<!-- TAB 1: 개념 이해 -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <p style="font-size:.9rem; color:var(--muted-strong); margin:0 0 14px;">
+    Bone끼리 부모-자식을 맺을 때 <strong style="color:var(--text)">두 가지 종류</strong>가 있어요.
+    어떤 걸 고르느냐에 따라 본의 위치와 회전 방식이 달라져요.
+  </p>
+
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">Connected</span> 체인처럼 붙이기</h3>
+      <p>자식 본의 <strong style="color:var(--text)">Head</strong>가 부모 본의 <strong style="color:var(--text)">Tail</strong>에 강제로 붙어요. 두 본이 한 줄로 이어진 체인을 만들어요.</p>
+      <div class="analogy">소시지 두 개를 끈으로 매듭지어 이은 거예요. 매듭이 풀리지 않아요.</div>
+      <div class="why"><strong>왜:</strong> 팔, 척추, 손가락처럼 관절이 항상 붙어 있는 부위는 분리되면 안 되니까요.</div>
+    </div>
+
+    <div class="concept-card">
+      <h3><span class="badge badge-amber">Free (Keep Offset)</span> 자유롭게 떨어뜨리기</h3>
+      <p>계층 관계는 유지하지만, 자식 본의 위치는 <strong style="color:var(--text)">원래 자리 그대로</strong>예요. 부모와 자식 사이에 빈틈이 있어도 괜찮아요.</p>
+      <div class="analogy">엄마 손을 잡고 걷는 아이처럼, 떨어져 있어도 같이 따라가요.</div>
+      <div class="why"><strong>왜:</strong> 쇄골과 상완처럼 회전축이 어긋난 부위, 또는 컨트롤 본은 위치를 자유롭게 둬야 해요.</div>
+    </div>
+
+    <div class="concept-card">
+      <h3><span class="badge badge-green">언제 뭐 쓰나</span> 한 줄 판단</h3>
+      <p>두 본이 한 직선 체인을 이루고, 관절이 항상 붙어 있어야 한다면 <strong style="color:var(--key-soft)">Connected</strong>. 떨어져 있어야 자연스러우면 <strong style="color:var(--accent-soft)">Free</strong>예요.</p>
+      <ul>
+        <li>팔, 척추, 손가락, 꼬리 &rarr; Connected</li>
+        <li>쇄골-상완, 골반-허벅지, 컨트롤 본 &rarr; Free</li>
+        <li>로봇 파츠처럼 독립 회전이 목적 &rarr; Free</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="compare-section">
+    <div class="section-divider">한눈에 비교</div>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>항목</th>
+          <th>Connected</th>
+          <th>Free (Keep Offset)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="col-key">Head 위치</td>
+          <td>부모의 Tail에 강제로 붙음</td>
+          <td>원래 자리 유지 (자유)</td>
+        </tr>
+        <tr>
+          <td class="col-key">자식 이동(G)</td>
+          <td>잠김 — Head를 따로 못 옮김</td>
+          <td>가능 — 부모와 떨어뜨리기 OK</td>
+        </tr>
+        <tr>
+          <td class="col-key">부모 Tail 이동</td>
+          <td>자식 Head도 같이 끌려옴</td>
+          <td>자식은 그 자리 그대로</td>
+        </tr>
+        <tr>
+          <td class="col-key">부모 회전</td>
+          <td>자식 같이 회전 (체인처럼)</td>
+          <td>자식 같이 회전 (offset 유지)</td>
+        </tr>
+        <tr>
+          <td class="col-key">대표 예시</td>
+          <td>Upper Arm &rarr; Forearm &rarr; Hand</td>
+          <td>Spine &rarr; Clavicle, Hip &rarr; Thigh</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="shortcut-list">
+    <h4>주요 단축키 (Edit Mode 기준)</h4>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="rpd-key">Ctrl+P</span></span>
+      <span>&rarr; <strong style="color:var(--key-soft)">Connected</strong>: 자식 본의 Head가 부모 Tail로 강제 이동</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="rpd-key">Ctrl+P</span></span>
+      <span>&rarr; <strong style="color:var(--accent-soft)">Keep Offset</strong>: 부모-자식만 묶고 위치는 그대로</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="rpd-key">Alt+P</span></span>
+      <span>&rarr; <strong style="color:var(--danger-soft)">Clear Parent</strong>: 부모-자식 관계 완전 해제</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="rpd-key">Alt+P</span></span>
+      <span>&rarr; <strong>Disconnect Bone</strong>: 부모 관계는 유지, Connected만 해제 (붙어 있던 Head를 떼어냄)</span>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>핵심:</strong> 먼저 자식 본을 선택하고, 마지막에 부모 본을 <span class="rpd-key">Shift</span> 추가 선택해요. 그 다음 <span class="rpd-key">Ctrl+P</span>를 눌러요. 순서가 바뀌면 부모-자식이 거꾸로 잡혀요.
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/animation/armatures/bones/editing/parenting.html" target="_blank" rel="noopener">
+      Blender 공식 문서 — Bone Parenting
+    </a>
+  </div>
+</section>
+
+<!-- TAB 2: interaction -->
+<section class="panel" id="panel-visual" role="tabpanel">
+  <p style="font-size:.86rem; color:var(--muted-strong); margin:0 0 10px;">
+    상완(A)과 하완(B)이에요. 모드를 바꾸고 회전 슬라이더를 움직여서 차이를 비교해 보세요.
+  </p>
+
+  <div class="demo-wrap">
+    <svg class="demo-svg" id="boneSvg" viewBox="0 0 680 320" xmlns="http://www.w3.org/2000/svg" aria-label="Connected vs Free bone parent demo"></svg>
+    <div class="demo-controls">
+      <button class="demo-btn is-active" id="btnConnected">Connected</button>
+      <button class="demo-btn" id="btnFree">Free (Keep Offset)</button>
+      <button class="demo-btn" id="btnReset">초기화</button>
+    </div>
+    <div class="demo-controls" style="border-top:none; padding-top:0;">
+      <div class="demo-slider-group">
+        <label>부모 회전</label>
+        <input type="range" id="parentRot" min="-90" max="90" value="0" step="1">
+        <span class="val" id="parentRotVal">0°</span>
+      </div>
+      <div class="demo-slider-group">
+        <label>자식 회전</label>
+        <input type="range" id="childRot" min="-90" max="90" value="0" step="1">
+        <span class="val" id="childRotVal">0°</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mini-note-grid">
+    <div class="mini-note-card">
+      <span class="mini-note-label">Connected</span>
+      <strong class="mini-note-value">자식 Head가 부모 Tail에 딱 붙어요. 빈틈이 없어요.</strong>
+    </div>
+    <div class="mini-note-card">
+      <span class="mini-note-label">Free</span>
+      <strong class="mini-note-value">자식이 떨어져 있어도 부모를 따라 같이 돌아요.</strong>
+    </div>
+    <div class="mini-note-card">
+      <span class="mini-note-label">공통</span>
+      <strong class="mini-note-value">부모를 회전하면 자식도 함께 회전해요 (계층은 유지).</strong>
+    </div>
+  </div>
+
+  <div class="section-divider" style="margin-top:18px;">상황 프리셋</div>
+  <div class="preset-row">
+    <button class="preset-btn" data-preset="arm">팔 (Upper &rarr; Forearm)</button>
+    <button class="preset-btn" data-preset="clavicle">쇄골 + 상완</button>
+    <button class="preset-btn" data-preset="ctrl">컨트롤 본</button>
+  </div>
+  <div class="preset-note" id="presetNote">
+    프리셋 버튼을 누르면 추천 설정과 이유를 보여줘요.
+  </div>
+
+  <p class="demo-hint">슬라이더를 움직이면 부모/자식 본이 같이 회전해요. Connected와 Free 모드의 가장 큰 차이는 "자식 Head 위치"예요.</p>
+</section>
+
+<!-- TAB 3: 언제 쓰나요? -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4><span class="badge badge-blue">Connected</span> 추천</h4>
+      <ul>
+        <li>팔 체인 (Upper Arm &rarr; Forearm &rarr; Hand)</li>
+        <li>척추 (Spine.001 &rarr; Spine.002 &rarr; Spine.003)</li>
+        <li>손가락 마디 (Finger.01 &rarr; .02 &rarr; .03)</li>
+        <li>꼬리, 안테나, 머리카락 가닥</li>
+        <li>관절이 절대 떨어지면 안 되는 부위</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4><span class="badge badge-amber">Free</span> 추천</h4>
+      <ul>
+        <li>쇄골 &rarr; 상완 (회전축이 어긋남)</li>
+        <li>골반 &rarr; 허벅지 (좌우로 벌어진 시작점)</li>
+        <li>척추 &rarr; 쇄골 / 머리</li>
+        <li>IK Target, Pole Target 같은 컨트롤 본</li>
+        <li>로봇 파츠처럼 독립적으로 움직이는 부위</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>로봇 리깅 팁:</strong> 로봇은 파츠가 독립적으로 회전하는 게 자연스러워요. 대부분 <span class="rpd-key">Ctrl+P</span> &rarr; Keep Offset으로 묶고, "계층 정확성"만 신경 쓰면 돼요. Connected는 한 직선 체인일 때만 써요.
+  </div>
+
+  <div class="warn-box">
+    <strong>자주 하는 실수:</strong> 쇄골을 상완 부모로 만들 때 Connected를 골라버리는 거예요. 그러면 상완 Head가 쇄골 Tail로 끌려가서 어깨 위치가 망가져요. 이럴 땐 무조건 <strong>Keep Offset</strong>이에요.
+  </div>
+
+  <div class="section-divider" style="margin-top:18px;">실수 회피 체크리스트</div>
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>리깅 직전에 확인</h4>
+      <ul>
+        <li>자식 본을 먼저 선택했나? (마지막이 부모)</li>
+        <li>두 본이 한 직선 체인인가? &rarr; Connected</li>
+        <li>두 본의 Head가 떨어져 있는가? &rarr; Free</li>
+        <li>모드는 <span class="rpd-key">Edit Mode</span>인가? (Object Mode 아님)</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>잘못 연결됐을 때</h4>
+      <ul>
+        <li>완전 해제: <span class="rpd-key">Alt+P</span> &rarr; Clear Parent</li>
+        <li>관계는 두고 떼기만: <span class="rpd-key">Alt+P</span> &rarr; Disconnect Bone</li>
+        <li>다시 묶기: 자식 &rarr; 부모 순서로 선택 후 <span class="rpd-key">Ctrl+P</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/animation/armatures/bones/editing/parenting.html" target="_blank" rel="noopener">
+      Blender 공식 문서 — Bone Parenting (Connected / Keep Offset)
+    </a>
+  </div>
+</section>
+
+<!-- TAB 4: 퀴즈 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+// ── Tab Switching ──────────────────────────────
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(t) {
+      t.classList.remove("is-active");
+      t.setAttribute("aria-selected", "false");
+    });
+    document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("is-active"); });
+    tab.classList.add("is-active");
+    tab.setAttribute("aria-selected", "true");
+    document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+  });
+});
+
+// ── Quiz Engine ───────────────────────────────
+function initQuiz(questions) {
+  var container = document.getElementById("quizArea");
+  var score = 0, answered = 0;
+  var scoreDiv = null;
+
+  var progress = document.createElement("div");
+  progress.className = "quiz-progress";
+  progress.textContent = "문제 0 / " + questions.length + " · 점수 0점";
+  container.appendChild(progress);
+
+  questions.forEach(function(q, qi) {
+    var div = document.createElement("div");
+    div.className = "quiz-question";
+
+    var heading = document.createElement("h4");
+    heading.textContent = "Q" + (qi + 1) + ". " + q.question;
+    div.appendChild(heading);
+
+    var fb = document.createElement("div");
+    fb.className = "quiz-feedback";
+
+    q.options.forEach(function(opt, oi) {
+      var btn = document.createElement("button");
+      btn.className = "quiz-option";
+      btn.textContent = opt;
+      btn.addEventListener("click", function() {
+        if (btn.disabled) return;
+        div.querySelectorAll(".quiz-option").forEach(function(b) { b.disabled = true; });
+        answered++;
+        if (oi === q.answer) {
+          btn.classList.add("correct");
+          fb.className = "quiz-feedback show correct-fb";
+          fb.textContent = "✅ " + q.explanation;
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
+          fb.className = "quiz-feedback show wrong-fb";
+          fb.textContent = "❌ " + q.explanation;
+
+          var retryBtn = document.createElement("button");
+          retryBtn.className = "quiz-retry";
+          retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
+          retryBtn.textContent = "다시 풀기";
+          retryBtn.addEventListener("click", function() {
+            answered--;
+            div.querySelectorAll(".quiz-option").forEach(function(b) {
+              b.disabled = false;
+              b.classList.remove("wrong", "correct");
+            });
+            fb.className = "quiz-feedback";
+            fb.textContent = "";
+            retryBtn.remove();
+            if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+            progress.textContent = "문제 " + answered + " / " + questions.length + " · 점수 " + score + "점";
+          });
+          fb.appendChild(retryBtn);
+        }
+        progress.textContent = "문제 " + answered + " / " + questions.length + " · 점수 " + score + "점";
+        if (answered === questions.length) showScore();
+      });
+      div.appendChild(btn);
+    });
+
+    div.appendChild(fb);
+    container.appendChild(div);
+  });
+
+  function showScore() {
+    if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+
+    scoreDiv = document.createElement("div");
+    scoreDiv.className = "quiz-score";
+
+    var emoji = document.createElement("div");
+    emoji.style.cssText = "font-size:36px;margin-bottom:8px";
+    emoji.textContent = score === questions.length ? "🎉" : score >= Math.ceil(questions.length / 2) ? "👍" : "📚";
+    scoreDiv.appendChild(emoji);
+
+    var result = document.createElement("div");
+    result.style.cssText = "font-size:18px;font-weight:500;margin-bottom:6px";
+    result.textContent = score + " / " + questions.length + " 정답";
+    scoreDiv.appendChild(result);
+
+    var msg = document.createElement("div");
+    msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
+    msg.textContent = score === questions.length ? "완벽합니다!" : "조금 더 연습하면 완벽해질 거예요!";
+    scoreDiv.appendChild(msg);
+
+    var saveBtn = document.createElement("button");
+    saveBtn.className = "quiz-retry";
+    saveBtn.style.cssText = "background:rgba(10,132,255,.18);border-color:var(--key);margin-bottom:8px";
+    saveBtn.textContent = "기록 저장하기";
+    saveBtn.addEventListener("click", function() {
+      try {
+        var wid = new URLSearchParams(location.search).get("wid")
+               || location.pathname.split("/").pop().replace(".html", "");
+        window.parent.postMessage({
+          type: "showme-quiz-complete",
+          widgetId: wid,
+          score: score,
+          total: questions.length,
+          pass: score >= Math.ceil(questions.length * 0.75)
+        }, "*");
+      } catch(e) {}
+      saveBtn.textContent = "저장 완료!";
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = ".5";
+    });
+    scoreDiv.appendChild(saveBtn);
+
+    var retry = document.createElement("button");
+    retry.className = "quiz-retry";
+    retry.textContent = "처음부터 다시";
+    retry.addEventListener("click", function() { location.reload(); });
+    scoreDiv.appendChild(retry);
+
+    container.appendChild(scoreDiv);
+  }
+}
+
+// ── SVG Bone Demo ──────────────────────────────
+(function() {
+  var svg = document.getElementById("boneSvg");
+  var SVG_NS = "http://www.w3.org/2000/svg";
+
+  // State
+  var mode = "connected"; // 'connected' | 'free'
+  var parentAngle = 0;    // degrees
+  var childAngle = 0;     // degrees additional to parent
+
+  // Rest positions (in viewBox space)
+  var REST = {
+    parent: { hx: 320, hy: 110, tx: 320, ty: 220 },
+    childConnected: { hx: 320, hy: 220, tx: 420, ty: 280 },
+    childFree:      { hx: 360, hy: 240, tx: 470, ty: 295 }
+  };
+
+  function deg2rad(d) { return d * Math.PI / 180; }
+
+  function rotatePoint(px, py, cx, cy, angleDeg) {
+    var a = deg2rad(angleDeg);
+    var cos = Math.cos(a), sin = Math.sin(a);
+    var dx = px - cx, dy = py - cy;
+    return {
+      x: cx + dx * cos - dy * sin,
+      y: cy + dx * sin + dy * cos
+    };
+  }
+
+  function computeBones() {
+    var pHead = { x: REST.parent.hx, y: REST.parent.hy };
+    var pTailRot = rotatePoint(REST.parent.tx, REST.parent.ty, pHead.x, pHead.y, parentAngle);
+    var parent = { hx: pHead.x, hy: pHead.y, tx: pTailRot.x, ty: pTailRot.y };
+
+    var childRest = (mode === "connected") ? REST.childConnected : REST.childFree;
+    var child;
+
+    if (mode === "connected") {
+      var restParentTail = { x: REST.parent.tx, y: REST.parent.ty };
+      var childTailAfterParent = rotatePoint(childRest.tx, childRest.ty, restParentTail.x, restParentTail.y, parentAngle);
+      var childHeadAfterParent = rotatePoint(childRest.hx, childRest.hy, restParentTail.x, restParentTail.y, parentAngle);
+      var childTailFinal = rotatePoint(childTailAfterParent.x, childTailAfterParent.y, childHeadAfterParent.x, childHeadAfterParent.y, childAngle);
+      child = { hx: parent.tx, hy: parent.ty, tx: childTailFinal.x, ty: childTailFinal.y };
+    } else {
+      var restParentTail2 = { x: REST.parent.tx, y: REST.parent.ty };
+      var childHeadAfter = rotatePoint(childRest.hx, childRest.hy, restParentTail2.x, restParentTail2.y, parentAngle);
+      var childTailAfter = rotatePoint(childRest.tx, childRest.ty, restParentTail2.x, restParentTail2.y, parentAngle);
+      var childTailFinal2 = rotatePoint(childTailAfter.x, childTailAfter.y, childHeadAfter.x, childHeadAfter.y, childAngle);
+      child = { hx: childHeadAfter.x, hy: childHeadAfter.y, tx: childTailFinal2.x, ty: childTailFinal2.y };
+    }
+
+    return { parent: parent, child: child };
+  }
+
+  function drawBone(head, tail, color, fillColor, labelText, labelOffset) {
+    var dx = tail.x - head.x, dy = tail.y - head.y;
+    var angle = Math.atan2(dy, dx);
+    var midX = (head.x + tail.x) / 2;
+    var midY = (head.y + tail.y) / 2;
+    var perpX = -Math.sin(angle) * 11;
+    var perpY = Math.cos(angle) * 11;
+
+    var poly = document.createElementNS(SVG_NS, "polygon");
+    poly.setAttribute("points",
+      head.x + "," + head.y + " " +
+      (midX + perpX) + "," + (midY + perpY) + " " +
+      tail.x + "," + tail.y + " " +
+      (midX - perpX) + "," + (midY - perpY)
+    );
+    poly.setAttribute("fill", fillColor);
+    poly.setAttribute("stroke", color);
+    poly.setAttribute("stroke-width", "2");
+    poly.setAttribute("stroke-linejoin", "round");
+    svg.appendChild(poly);
+
+    var hc = document.createElementNS(SVG_NS, "circle");
+    hc.setAttribute("cx", head.x);
+    hc.setAttribute("cy", head.y);
+    hc.setAttribute("r", "5");
+    hc.setAttribute("fill", color);
+    svg.appendChild(hc);
+
+    var tc = document.createElementNS(SVG_NS, "circle");
+    tc.setAttribute("cx", tail.x);
+    tc.setAttribute("cy", tail.y);
+    tc.setAttribute("r", "7");
+    tc.setAttribute("fill", color);
+    tc.setAttribute("stroke", "#fff");
+    tc.setAttribute("stroke-width", "1.5");
+    svg.appendChild(tc);
+
+    if (labelText) {
+      var t = document.createElementNS(SVG_NS, "text");
+      t.setAttribute("x", midX + (labelOffset ? labelOffset.x : 14));
+      t.setAttribute("y", midY + (labelOffset ? labelOffset.y : -4));
+      t.setAttribute("fill", color);
+      t.setAttribute("font-size", "12");
+      t.setAttribute("font-weight", "700");
+      t.setAttribute("font-family", "sans-serif");
+      t.textContent = labelText;
+      svg.appendChild(t);
+    }
+  }
+
+  function drawDashedLine(p1, p2, color) {
+    var line = document.createElementNS(SVG_NS, "line");
+    line.setAttribute("x1", p1.x);
+    line.setAttribute("y1", p1.y);
+    line.setAttribute("x2", p2.x);
+    line.setAttribute("y2", p2.y);
+    line.setAttribute("stroke", color);
+    line.setAttribute("stroke-width", "1.5");
+    line.setAttribute("stroke-dasharray", "4 4");
+    svg.appendChild(line);
+  }
+
+  function clearSvg() {
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+  }
+
+  function drawGrid() {
+    var w = 680, h = 320;
+    for (var gx = 40; gx < w; gx += 40) {
+      var v = document.createElementNS(SVG_NS, "line");
+      v.setAttribute("x1", gx); v.setAttribute("y1", 0);
+      v.setAttribute("x2", gx); v.setAttribute("y2", h);
+      v.setAttribute("stroke", "rgba(255,255,255,.04)");
+      v.setAttribute("stroke-width", "1");
+      svg.appendChild(v);
+    }
+    for (var gy = 40; gy < h; gy += 40) {
+      var hl = document.createElementNS(SVG_NS, "line");
+      hl.setAttribute("x1", 0); hl.setAttribute("y1", gy);
+      hl.setAttribute("x2", w); hl.setAttribute("y2", gy);
+      hl.setAttribute("stroke", "rgba(255,255,255,.04)");
+      hl.setAttribute("stroke-width", "1");
+      svg.appendChild(hl);
+    }
+  }
+
+  function drawModeLabel() {
+    var label = document.createElementNS(SVG_NS, "text");
+    label.setAttribute("x", 14);
+    label.setAttribute("y", 22);
+    label.setAttribute("font-size", "12");
+    label.setAttribute("font-weight", "700");
+    label.setAttribute("font-family", "sans-serif");
+    label.setAttribute("fill", mode === "connected" ? "#8ec5ff" : "#FFB347");
+    label.textContent = mode === "connected" ? "Mode: Connected" : "Mode: Free (Keep Offset)";
+    svg.appendChild(label);
+
+    var hint = document.createElementNS(SVG_NS, "text");
+    hint.setAttribute("x", 14);
+    hint.setAttribute("y", 40);
+    hint.setAttribute("font-size", "11");
+    hint.setAttribute("font-family", "sans-serif");
+    hint.setAttribute("fill", "rgba(255,255,255,.4)");
+    hint.textContent = mode === "connected"
+      ? "자식 Head가 부모 Tail에 강제로 붙어 있어요."
+      : "자식 Head가 떨어져 있어도 부모를 따라 회전해요.";
+    svg.appendChild(hint);
+  }
+
+  function render() {
+    clearSvg();
+    drawGrid();
+
+    var bones = computeBones();
+    var parentColor = "rgba(10,132,255,.95)";
+    var parentFill  = "rgba(10,132,255,.22)";
+    var childColor  = mode === "connected" ? "rgba(16,185,129,.95)" : "rgba(245,158,11,.95)";
+    var childFill   = mode === "connected" ? "rgba(16,185,129,.22)" : "rgba(245,158,11,.22)";
+
+    if (mode === "free") {
+      drawDashedLine(
+        { x: bones.parent.tx, y: bones.parent.ty },
+        { x: bones.child.hx,  y: bones.child.hy  },
+        "rgba(168,85,247,.55)"
+      );
+      var hlbl = document.createElementNS(SVG_NS, "text");
+      var mx = (bones.parent.tx + bones.child.hx) / 2 + 6;
+      var my = (bones.parent.ty + bones.child.hy) / 2 - 6;
+      hlbl.setAttribute("x", mx);
+      hlbl.setAttribute("y", my);
+      hlbl.setAttribute("font-size", "10");
+      hlbl.setAttribute("font-family", "sans-serif");
+      hlbl.setAttribute("fill", "rgba(168,85,247,.85)");
+      hlbl.textContent = "parent link (offset)";
+      svg.appendChild(hlbl);
+    }
+
+    drawBone(
+      { x: bones.parent.hx, y: bones.parent.hy },
+      { x: bones.parent.tx, y: bones.parent.ty },
+      parentColor, parentFill, "A: 상완 (Parent)", { x: 12, y: -6 }
+    );
+    drawBone(
+      { x: bones.child.hx, y: bones.child.hy },
+      { x: bones.child.tx, y: bones.child.ty },
+      childColor, childFill, "B: 하완 (Child)", { x: 10, y: 16 }
+    );
+
+    drawModeLabel();
+  }
+
+  // ── Controls ──
+  document.getElementById("btnConnected").addEventListener("click", function() {
+    mode = "connected";
+    this.classList.add("is-active");
+    document.getElementById("btnFree").classList.remove("is-active");
+    render();
+    renderPresetNote(null);
+  });
+  document.getElementById("btnFree").addEventListener("click", function() {
+    mode = "free";
+    this.classList.add("is-active");
+    document.getElementById("btnConnected").classList.remove("is-active");
+    render();
+    renderPresetNote(null);
+  });
+  document.getElementById("btnReset").addEventListener("click", function() {
+    parentAngle = 0; childAngle = 0;
+    document.getElementById("parentRot").value = 0;
+    document.getElementById("childRot").value = 0;
+    document.getElementById("parentRotVal").textContent = "0°";
+    document.getElementById("childRotVal").textContent = "0°";
+    render();
+  });
+
+  document.getElementById("parentRot").addEventListener("input", function(e) {
+    parentAngle = parseFloat(e.target.value);
+    document.getElementById("parentRotVal").textContent = parentAngle + "°";
+    render();
+  });
+  document.getElementById("childRot").addEventListener("input", function(e) {
+    childAngle = parseFloat(e.target.value);
+    document.getElementById("childRotVal").textContent = childAngle + "°";
+    render();
+  });
+
+  // ── Presets ──
+  // Each preset stores plain text segments. The emphasized term is rendered with bold via DOM (no innerHTML).
+  var presets = {
+    arm: {
+      mode: "connected",
+      parent: 25, child: -30,
+      title: "팔 (Upper Arm → Forearm)",
+      pre: "직선 체인이라 ",
+      emph: "Connected",
+      post: "가 맞아요. 팔꿈치가 절대 떨어지면 안 되니까요."
+    },
+    clavicle: {
+      mode: "free",
+      parent: 15, child: -15,
+      title: "쇄골 → 상완",
+      pre: "두 본의 시작점이 어긋나 있어서 ",
+      emph: "Keep Offset",
+      post: "이에요. Connected를 고르면 상완이 쇄골 끝으로 끌려가 어깨가 망가져요."
+    },
+    ctrl: {
+      mode: "free",
+      parent: 0, child: 0,
+      title: "컨트롤 본 (IK Target 등)",
+      pre: "위치를 자유롭게 떨어뜨려야 하니 ",
+      emph: "Keep Offset",
+      post: "이에요. 회전 안 해도 계층만 살려두면 돼요."
+    }
+  };
+
+  function renderPresetNote(p) {
+    var noteEl = document.getElementById("presetNote");
+    // Clear safely
+    while (noteEl.firstChild) noteEl.removeChild(noteEl.firstChild);
+
+    if (!p) {
+      noteEl.appendChild(document.createTextNode("프리셋 버튼을 누르면 추천 설정과 이유를 보여줘요."));
+      return;
+    }
+
+    var title = document.createElement("span");
+    title.className = "preset-title";
+    title.textContent = p.title + " — ";
+    noteEl.appendChild(title);
+
+    noteEl.appendChild(document.createTextNode(p.pre));
+
+    var emph = document.createElement("span");
+    emph.className = "preset-emph";
+    emph.textContent = p.emph;
+    noteEl.appendChild(emph);
+
+    noteEl.appendChild(document.createTextNode(p.post));
+  }
+
+  document.querySelectorAll(".preset-btn").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      var p = presets[btn.dataset.preset];
+      if (!p) return;
+      mode = p.mode;
+      parentAngle = p.parent;
+      childAngle = p.child;
+      if (mode === "connected") {
+        document.getElementById("btnConnected").classList.add("is-active");
+        document.getElementById("btnFree").classList.remove("is-active");
+      } else {
+        document.getElementById("btnFree").classList.add("is-active");
+        document.getElementById("btnConnected").classList.remove("is-active");
+      }
+      document.getElementById("parentRot").value = parentAngle;
+      document.getElementById("childRot").value = childAngle;
+      document.getElementById("parentRotVal").textContent = parentAngle + "°";
+      document.getElementById("childRotVal").textContent = childAngle + "°";
+      renderPresetNote(p);
+      render();
+    });
+  });
+
+  render();
+})();
+
+// ── Quiz Data ─────────────────────────────────
+initQuiz([
+  {
+    question: "팔꿈치에서 상완과 하완을 자연스러운 한 체인으로 만들고 싶어요. 어떤 옵션을 골라야 하나요?",
+    options: [
+      "Ctrl+P → Keep Offset",
+      "Ctrl+P → Connected",
+      "Alt+P → Clear Parent",
+      "Object Mode에서 Parent 메뉴"
+    ],
+    answer: 1,
+    explanation: "팔 체인처럼 두 본이 직선으로 이어지고 관절이 떨어지면 안 되는 경우엔 Connected를 골라요. 자식 Head가 부모 Tail에 강제로 붙어요."
+  },
+  {
+    question: "쇄골을 상완의 부모로 만들려고 해요. 두 본의 시작점은 서로 떨어져 있어요. 어떤 옵션이 맞나요?",
+    options: [
+      "Connected — 어떤 경우든 Connected가 안전해요",
+      "Keep Offset — 두 본이 떨어져 있으면 항상 이걸 써요",
+      "Clear Parent — 부모를 먼저 해제하고 다시 묶어요",
+      "Disconnect Bone — 관계를 끊는 옵션이에요"
+    ],
+    answer: 1,
+    explanation: "쇄골과 상완은 시작점이 어긋나 있어서 Keep Offset이 맞아요. Connected를 고르면 상완 Head가 쇄골 Tail로 강제 이동해 어깨 위치가 망가져요."
+  },
+  {
+    question: "리깅 도중 부모-자식 관계 자체를 완전히 해제하고, 자식 본의 위치는 그대로 두고 싶어요. 어떤 단축키를 써야 하나요?",
+    options: [
+      "Ctrl+P → Connected",
+      "Ctrl+P → Keep Offset",
+      "Alt+P → Clear Parent (Keep Transform)",
+      "Ctrl+Z 로 되돌리기"
+    ],
+    answer: 2,
+    explanation: "Alt+P → Clear Parent를 누르면 부모-자식 관계가 해제돼요. 자식 본의 현재 위치를 유지하는 옵션을 골라야 위치가 안 바뀌어요."
+  },
+  {
+    question: "로봇 팔 리깅이에요. 각 파츠가 독립적으로 회전해야 하고, 파츠 사이엔 약간 빈틈도 있어요. 어떤 전략이 맞나요?",
+    options: [
+      "모든 본을 Connected로 묶어서 한 체인으로 만든다",
+      "대부분 Keep Offset으로 묶고, 계층 정확성만 신경 쓴다",
+      "Parent 자체를 안 쓰고 각 본을 독립으로 둔다",
+      "Connected + Disconnect Bone 조합으로 묶었다 풀었다 한다"
+    ],
+    answer: 1,
+    explanation: "로봇은 파츠가 떨어져 있고 독립적으로 회전해요. Connected는 한 직선 체인일 때만 쓰고, 나머지는 Keep Offset으로 묶은 뒤 계층만 정확히 잡으면 돼요."
+  },
+  {
+    question: "Connected로 묶은 자식 본의 Head 위치를 따로 옮기려고 G를 눌렀는데 안 움직여요. 가장 가능성 높은 원인은?",
+    options: [
+      "Edit Mode가 아니라서",
+      "Connected는 자식 Head가 부모 Tail에 잠겨 있어서",
+      "본이 숨겨져 있어서 (H로 hide)",
+      "Pose Mode에서 G가 작동하지 않아서"
+    ],
+    answer: 1,
+    explanation: "Connected 상태에서는 자식 Head가 부모 Tail에 강제로 잠겨 있어 따로 못 옮겨요. Head 위치를 자유롭게 바꾸려면 먼저 Alt+P → Disconnect Bone으로 떼야 해요."
+  }
+]);
+</script>
+
+<script src="./_helpers.js?v=20260318ai"></script>
+<script>
+window.addEventListener("load", function() {
+  if (window.normalizeStandaloneShowMeLayout) {
+    window.normalizeStandaloneShowMeLayout(document);
+  }
+});
+</script>
+</body>
+</html>

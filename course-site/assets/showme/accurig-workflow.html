@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — AccuRIG 자동 리깅</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — AccuRIG Workflow (Reallusion + Blender)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --warn-soft:     #fbbf24;
+  --danger:        #ef4444;
+  --danger-soft:   #fca5a5;
+  --accent-soft:   #FFB347;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; padding: 0; font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+/* Tabs */
+.tabs { display: flex; gap: 0; border-bottom: 1px solid var(--line); padding: 0 16px; background: var(--bg-soft); overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab { padding: 12px 16px; font-size: .84rem; font-weight: 500; color: var(--muted); cursor: pointer; border: none; border-bottom: 2px solid transparent; white-space: nowrap; transition: color .14s, border-color .14s; background: none; font-family: inherit; }
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active { color: var(--key-soft); border-bottom-color: var(--key); }
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+
+/* Concept cards */
+.concept-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.concept-card { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); padding: 18px; }
+.concept-card h3 { margin: 0 0 8px; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+.concept-card p { margin: 0; color: var(--muted-strong); font-size: .88rem; line-height: 1.7; }
+.concept-card ul { margin: 8px 0 0; padding-left: 16px; color: var(--muted-strong); font-size: .85rem; line-height: 1.8; }
+
+/* Badges */
+.badge { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: .72rem; font-weight: 600; }
+.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: var(--warn-soft); }
+.badge-pink  { background: rgba(239,68,68,.12);   color: var(--danger-soft); }
+
+/* Keyboard shortcut (default blue) + red variant per CONTENT_GUIDE §4-A */
+.kbd { display: inline-block; padding: 3px 8px; border-radius: 6px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); color: var(--key-soft); font-size: .82rem; font-weight: 600; font-family: var(--font); }
+.kbd.rpd-key { color: var(--danger-soft); background: rgba(239,68,68,.12); border-color: rgba(239,68,68,.3); }
+
+/* Analogy */
+.analogy { margin-top: 8px; padding: 10px 14px; border-radius: var(--radius-sm); background: rgba(245,158,11,.06); border: 1px solid rgba(245,158,11,.15); font-size: .82rem; color: var(--warn-soft); font-style: italic; }
+
+/* Demo wrap */
+.demo-wrap { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); overflow: hidden; margin: 14px 0; }
+.demo-controls { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--line); flex-wrap: wrap; align-items: center; justify-content: space-between; }
+.demo-hint { font-size: .78rem; color: var(--muted); text-align: center; padding: 10px 12px 0; }
+.demo-btn { padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line-strong); background: rgba(255,255,255,.04); color: var(--muted-strong); font: inherit; font-size: .82rem; cursor: pointer; transition: background .14s, color .14s; }
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active { background: rgba(10,132,255,.14); color: var(--key-soft); border-color: rgba(10,132,255,.3); }
+.demo-progress { display: flex; align-items: center; gap: 8px; font-size: .78rem; color: var(--muted); }
+.demo-progress strong { color: var(--key-soft); font-weight: 600; }
+
+/* Step pipeline (Tab 2 visual) */
+.pipeline { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 14px 14px 0; }
+.pipeline-step { padding: 10px 8px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: rgba(255,255,255,.025); text-align: center; cursor: pointer; transition: background .14s, border-color .14s; font-family: inherit; }
+.pipeline-step:hover { background: rgba(255,255,255,.06); }
+.pipeline-step.is-active { background: rgba(10,132,255,.14); border-color: rgba(10,132,255,.4); }
+.pipeline-step-num { display: inline-block; width: 22px; height: 22px; line-height: 22px; border-radius: 50%; background: rgba(255,255,255,.08); color: var(--muted-strong); font-size: .72rem; font-weight: 700; margin-bottom: 6px; }
+.pipeline-step.is-active .pipeline-step-num { background: var(--key); color: white; }
+.pipeline-step-name { display: block; font-size: .76rem; font-weight: 600; color: var(--muted-strong); line-height: 1.3; }
+.pipeline-step.is-active .pipeline-step-name { color: var(--key-soft); }
+
+/* Mock screen (per step) */
+.mock-screen { margin: 14px; padding: 0; border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--bg-soft); overflow: hidden; min-height: 220px; display: flex; flex-direction: column; }
+.mock-header { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--line); background: rgba(255,255,255,.03); font-size: .78rem; color: var(--muted-strong); font-weight: 600; }
+.mock-header .dot { width: 10px; height: 10px; border-radius: 50%; }
+.mock-header .dot.r { background: #ff5f57; }
+.mock-header .dot.y { background: #febc2e; }
+.mock-header .dot.g { background: #28c840; }
+.mock-header .mock-title { margin-left: auto; font-size: .76rem; color: var(--muted); font-weight: 500; }
+.mock-body { padding: 14px 16px; flex: 1; color: var(--muted-strong); font-size: .85rem; line-height: 1.65; }
+.mock-body h5 { margin: 0 0 8px; font-size: .92rem; color: var(--text); }
+.mock-row { display: flex; gap: 10px; align-items: center; padding: 6px 0; border-bottom: 1px dashed var(--line); font-size: .82rem; }
+.mock-row:last-child { border-bottom: none; }
+.mock-key { color: var(--muted); flex-shrink: 0; min-width: 110px; }
+.mock-val { color: var(--text); font-family: ui-monospace, monospace; font-size: .78rem; }
+
+/* Detail card */
+.detail-card { margin: 0 14px 14px; padding: 14px 16px; border-radius: var(--radius-sm); border: 1px solid rgba(10,132,255,.18); background: rgba(10,132,255,.05); font-size: .84rem; color: var(--muted-strong); }
+.detail-card strong { color: var(--key-soft); }
+.detail-card ul { margin: 6px 0 0; padding-left: 18px; }
+.detail-card li { margin-bottom: 4px; line-height: 1.6; }
+.detail-card li em { font-style: normal; color: var(--text); font-weight: 600; }
+
+/* Usage grid */
+.usage-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.usage-card { border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); padding: 16px; }
+.usage-card h4 { margin: 0 0 8px; font-size: .92rem; color: var(--key-soft); }
+.usage-card.warn h4 { color: var(--warn-soft); }
+.usage-card ul { margin: 0; padding-left: 16px; color: var(--muted-strong); font-size: .85rem; line-height: 1.8; }
+.usage-card li strong { color: var(--text); }
+
+.compare-table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: .84rem; }
+.compare-table thead { background: rgba(10,132,255,.06); }
+.compare-table th { padding: 10px 14px; text-align: left; color: var(--muted-strong); font-weight: 600; font-size: .76rem; letter-spacing: .03em; text-transform: uppercase; border-bottom: 1px solid var(--line-strong); }
+.compare-table td { padding: 9px 14px; border-bottom: 1px solid var(--line); color: var(--muted-strong); line-height: 1.55; vertical-align: top; }
+.compare-table tr:last-child td { border-bottom: none; }
+.compare-table tr:hover td { background: rgba(255,255,255,.02); }
+
+.tip-box { border-radius: var(--radius-md); border: 1px solid rgba(10,132,255,.2); background: rgba(10,132,255,.06); padding: 14px 16px; margin-top: 14px; font-size: .86rem; color: var(--muted-strong); }
+.tip-box strong { color: var(--key-soft); }
+
+/* Doc ref */
+.doc-ref { margin-top: 16px; padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid rgba(10,132,255,.15); background: rgba(10,132,255,.04); display: flex; align-items: center; gap: 8px; }
+.doc-ref a { color: var(--key-soft); font-size: .84rem; text-decoration: none; line-height: 1.5; }
+.doc-ref a:hover { text-decoration: underline; }
+.doc-ref-list { margin-top: 16px; display: flex; flex-direction: column; gap: 6px; }
+.doc-ref-list .doc-ref { margin-top: 0; }
+
+/* Quiz */
+.quiz-progress { font-size: .78rem; color: var(--muted); margin-bottom: 12px; }
+.quiz-question { margin-bottom: 20px; padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface); }
+.quiz-question h4 { margin: 0 0 12px; font-size: .94rem; }
+.quiz-option { display: block; width: 100%; padding: 10px 14px; margin-bottom: 6px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: rgba(255,255,255,.025); color: var(--text); font: inherit; font-size: .86rem; cursor: pointer; text-align: left; transition: background .14s, border-color .14s; }
+.quiz-option:hover { background: rgba(255,255,255,.06); border-color: var(--line-strong); }
+.quiz-option.correct { background: rgba(16,185,129,.12); border-color: rgba(16,185,129,.4); color: var(--success-soft); }
+.quiz-option.wrong { background: rgba(239,68,68,.1); border-color: rgba(239,68,68,.3); color: var(--danger-soft); }
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback { margin-top: 8px; padding: 10px 14px; border-radius: var(--radius-sm); font-size: .84rem; display: none; }
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb { background: rgba(239,68,68,.06); color: var(--danger-soft); }
+.quiz-score { text-align: center; padding: 20px; font-size: 1.1rem; font-weight: 600; }
+.quiz-retry { display: block; margin: 12px auto; padding: 10px 24px; border-radius: 999px; border: 1px solid var(--key); background: rgba(10,132,255,.12); color: var(--key-soft); font: inherit; font-size: .88rem; cursor: pointer; transition: background .14s; }
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid { grid-template-columns: 1fr; }
+  .pipeline { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+  .compare-table { font-size: .78rem; }
+  .compare-table th, .compare-table td { padding: 6px 10px; }
+  .mock-key { min-width: 88px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Tabs -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab">개념 이해</button>
+  <button class="tab" data-tab="interaction" role="tab">interaction</button>
+  <button class="tab" data-tab="when" role="tab">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab">퀴즈</button>
+</nav>
+
+<!-- ══════════════════════════════════════════════════
+     Tab 1 — 개념 이해
+     ══════════════════════════════════════════════════ -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <p style="font-size:.9rem; color:var(--muted-strong); margin:0 0 14px;">
+    AccuRIG 2.0은 Reallusion이 2025년 7월에 출시한 무료 standalone 자동 리깅 앱이에요.
+    Blender로 만든 캐릭터를 1분 안에 손가락·얼굴까지 자동 리깅해서 ActorCore 모션이나 Rigify로 변환해 쓸 수 있어요.
+  </p>
+
+  <div class="concept-grid">
+
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">AccuRIG 2.0</span></h3>
+      <p>Reallusion이 2025년 7월에 출시한 <strong>완전 무료 standalone 자동 리깅 앱</strong>이에요. 캐릭터 메쉬만 있으면 약 1분 만에 본·웨이트가 들어간 리그를 만들어 줍니다.</p>
+      <div class="analogy">Blender의 Rigify를 외부 앱으로 빼서 더 정확하고 더 빠르게 만든 버전 — 본 박는 작업을 AI에게 위임한다고 생각하면 돼요.</div>
+    </div>
+
+    <div class="concept-card">
+      <h3><span class="badge badge-green">손가락 + 얼굴 자동</span></h3>
+      <p>Mixamo와의 가장 큰 차이. AccuRIG는 손가락 관절과 얼굴 본까지 <strong>자동으로 잡아 줘요</strong>. 손 동작이나 표정 애니메이션이 필요한 캐릭터에 바로 써먹을 수 있습니다.</p>
+      <ul>
+        <li>손가락 15본 자동 배치</li>
+        <li>얼굴 본은 ActorCore 모션과 호환</li>
+      </ul>
+    </div>
+
+    <div class="concept-card">
+      <h3><span class="badge badge-amber">사족(Quadruped) 지원</span></h3>
+      <p>인체형뿐 아니라 <strong>네 발 짐승, 새, beastmen</strong>까지 자동 리깅이 가능해요. Mixamo는 인체형만 지원하기 때문에, 동물 변형 캐릭터가 있다면 AccuRIG가 거의 유일한 자동 옵션입니다.</p>
+      <div class="analogy">캐릭터 종류 메뉴에서 "Human / Quadruped / Bird"를 고르듯 골격 템플릿을 선택하는 구조예요.</div>
+    </div>
+
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">ActorCore 모션 라이브러리</span></h3>
+      <p>Reallusion이 자체적으로 운영하는 <strong>모션 캡처 애니메이션 라이브러리</strong>예요. AccuRIG로 리깅한 캐릭터에 바로 적용할 수 있게 골격이 호환됩니다.</p>
+      <ul>
+        <li>걷기·달리기·격투 등 수천 개 클립</li>
+        <li>일부 무료, 고품질은 유료</li>
+      </ul>
+    </div>
+
+    <div class="concept-card">
+      <h3><span class="badge badge-green">Blender Rigify 변환</span></h3>
+      <p>Reallusion이 공식 배포하는 <strong>무료 Blender 애드온</strong>으로, AccuRIG 본 구조를 Blender Rigify rig로 변환할 수 있어요. 변환 후에는 Rigify 컨트롤러로 자유롭게 포즈를 잡을 수 있습니다.</p>
+      <ul>
+        <li>FBX import 후 한 번 클릭으로 변환</li>
+        <li>Rigify의 IK / FK 스위치 그대로 활용</li>
+      </ul>
+    </div>
+
+    <div class="concept-card">
+      <h3><span class="badge badge-pink">기본 워크플로</span></h3>
+      <p>
+        <strong>Blender 작업 → FBX export → AccuRIG 업로드 → 마커 조정 → Auto Rig → FBX export → Blender import</strong>의 다섯 단계를 거쳐요. 메쉬는 Blender에서, 리깅만 AccuRIG에서 처리하는 구조입니다.
+      </p>
+      <ul>
+        <li>메쉬는 T-pose 또는 A-pose가 가장 정확</li>
+        <li>스케일은 미터 단위로 export</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>항목</th>
+        <th>AccuRIG 2.0</th>
+        <th>Mixamo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>설치 방식</td>
+        <td>Standalone 앱 (별도 설치)</td>
+        <td>웹 브라우저</td>
+      </tr>
+      <tr>
+        <td>가격</td>
+        <td>완전 무료</td>
+        <td>완전 무료 (Adobe 계정)</td>
+      </tr>
+      <tr>
+        <td>손가락 자동</td>
+        <td>포함</td>
+        <td>제한적 (Skin 옵션)</td>
+      </tr>
+      <tr>
+        <td>얼굴 본</td>
+        <td>지원</td>
+        <td>미지원</td>
+      </tr>
+      <tr>
+        <td>사족·새</td>
+        <td>지원</td>
+        <td>미지원 (인체형 전용)</td>
+      </tr>
+      <tr>
+        <td>전용 모션</td>
+        <td>ActorCore</td>
+        <td>Mixamo 모션 라이브러리</td>
+      </tr>
+      <tr>
+        <td>Blender 연동</td>
+        <td>Rigify 변환 애드온 (무료)</td>
+        <td>Better FBX 등 서드파티</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="doc-ref-list">
+    <div class="doc-ref">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--key-soft);flex-shrink:0"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <a href="https://actorcore.reallusion.com/auto-rig" target="_blank" rel="noopener">Reallusion 공식 — AccuRIG 소개</a>
+    </div>
+    <div class="doc-ref">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--key-soft);flex-shrink:0"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <a href="https://actorcore.reallusion.com/auto-rig/blender" target="_blank" rel="noopener">Reallusion 공식 — Blender Rigify 변환 애드온</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     Tab 2 — Interaction (step pipeline)
+     ══════════════════════════════════════════════════ -->
+<section class="panel" id="panel-interaction" role="tabpanel">
+
+  <div class="demo-wrap">
+    <div class="pipeline" id="pipeline">
+      <button class="pipeline-step is-active" data-step="0">
+        <span class="pipeline-step-num">1</span>
+        <span class="pipeline-step-name">FBX export</span>
+      </button>
+      <button class="pipeline-step" data-step="1">
+        <span class="pipeline-step-num">2</span>
+        <span class="pipeline-step-name">업로드</span>
+      </button>
+      <button class="pipeline-step" data-step="2">
+        <span class="pipeline-step-num">3</span>
+        <span class="pipeline-step-name">마커 조정</span>
+      </button>
+      <button class="pipeline-step" data-step="3">
+        <span class="pipeline-step-num">4</span>
+        <span class="pipeline-step-name">Auto Rig + export</span>
+      </button>
+    </div>
+
+    <div class="mock-screen" id="mockScreen"></div>
+    <div class="detail-card" id="detailCard"></div>
+
+    <div class="demo-controls">
+      <button class="demo-btn" id="btnPrev">이전 단계</button>
+      <div class="demo-progress"><strong id="stepLabel">1</strong> / 4 단계</div>
+      <button class="demo-btn" id="btnNext">다음 단계</button>
+    </div>
+    <p class="demo-hint">단계 버튼을 눌러 워크플로 각 화면이 어떻게 생겼는지 확인해 보세요.</p>
+  </div>
+
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     Tab 3 — 언제 쓰나요?
+     ══════════════════════════════════════════════════ -->
+<section class="panel" id="panel-when" role="tabpanel">
+
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>이럴 때 AccuRIG가 정답</h4>
+      <ul>
+        <li>인체형 캐릭터에 <strong>정확한 자동 리깅</strong>이 필요할 때</li>
+        <li>Mixamo보다 <strong>손가락 / 얼굴 본까지 자동</strong>으로 원할 때</li>
+        <li>ActorCore 모션 캡처 라이브러리와 함께 작업할 때</li>
+        <li>사족 동물·새·beastmen 같은 <strong>비인체형 골격</strong>이 필요할 때</li>
+        <li>리깅 후 Blender Rigify 컨트롤러로 포즈 잡고 싶을 때</li>
+        <li>Reallusion 계정을 만들 수 있는 환경일 때</li>
+      </ul>
+    </div>
+    <div class="usage-card warn">
+      <h4>다른 도구가 나은 경우</h4>
+      <ul>
+        <li>차량·식물·건축처럼 <strong>비유기체 오브젝트</strong>는 자동 리깅 불가 — 수동 Armature가 답</li>
+        <li>인터넷 / 계정 / 앱 설치가 막히는 환경 (학교·회사 PC) — Mixamo 웹이 낫다</li>
+        <li>아주 단순한 박스 캐릭터 — Rigify 또는 수동 본이 더 빠를 수 있음</li>
+        <li>비표준 골격 (여러 팔·촉수·변형 생물) — 자동 감지 실패율 높음</li>
+        <li>오프라인 작업이 필수일 때 — 클라우드 변환은 인터넷 필요</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>학생이 가장 많이 막히는 지점</strong><br>
+    1. <strong>스케일</strong> — Blender 미터 단위로 export 안 하면 AccuRIG에서 캐릭터가 점처럼 작게 보여요. <kbd class="kbd rpd-key">Ctrl+A</kbd> > Apply > Scale 후 export하세요.<br>
+    2. <strong>포즈</strong> — 메쉬가 T-pose 또는 A-pose 상태여야 마커가 정확히 잡혀요. 다른 포즈면 Auto Rig 실패율이 올라갑니다.<br>
+    3. <strong>계정</strong> — Reallusion 계정이 있어야 앱 실행 가능. 수업 전 미리 가입해 두는 게 좋아요.
+  </div>
+
+  <div class="doc-ref">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--key-soft);flex-shrink:0"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    <a href="https://actorcore.reallusion.com/auto-rig/tutorial" target="_blank" rel="noopener">Reallusion 공식 — AccuRIG 튜토리얼</a>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════
+     Tab 4 — 퀴즈
+     ══════════════════════════════════════════════════ -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+/* ── Tab switching ────────────────────────────── */
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(t) { t.classList.remove("is-active"); });
+    document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("is-active"); });
+    tab.classList.add("is-active");
+    document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+    if (tab.dataset.tab === "quiz" && !quizInitialized) { initQuiz(quizQuestions); quizInitialized = true; }
+    if (tab.dataset.tab === "interaction") renderStep(currentStep);
+  });
+});
+
+/* ══════════════════════════════════════════════════
+   Interaction — 4-step AccuRIG pipeline
+   ══════════════════════════════════════════════════ */
+var currentStep = 0;
+
+/* point structure: { text: "...", em: ["highlight A", ...] }
+   em entries are matched literally and rendered in <em> tags via safe DOM. */
+var steps = [
+  {
+    title: "Blender — FBX export",
+    mockTitle: "blender.exe — Export FBX",
+    sections: [
+      { h: "Export FBX 설정", rows: [
+        { k: "Path Mode", v: "Copy + Embed Textures" },
+        { k: "Scale", v: "1.00 (미터 단위)" },
+        { k: "Apply Scalings", v: "FBX All" },
+        { k: "Forward / Up", v: "-Z Forward / Y Up" },
+        { k: "Object Types", v: "Mesh, Armature 체크" },
+        { k: "Apply Modifiers", v: "ON (Mirror 등)" }
+      ]}
+    ],
+    detailTitle: "이 단계의 핵심",
+    detailPoints: [
+      { text: "메쉬는 T-pose 또는 A-pose로 고정 — 다른 포즈면 마커 자동 감지가 거의 실패해요.",
+        em: ["T-pose 또는 A-pose"] },
+      { text: "Ctrl+A > Apply > Scale & Rotation 먼저 적용. Object 스케일이 1이 아니면 AccuRIG에서 캐릭터가 점만 하게 보입니다.",
+        em: ["Ctrl+A > Apply > Scale & Rotation"] },
+      { text: "텍스처를 함께 보내려면 Path Mode = Copy + Embed로 설정.",
+        em: ["Copy + Embed"] }
+    ]
+  },
+  {
+    title: "AccuRIG — 캐릭터 업로드",
+    mockTitle: "AccuRIG 2.0 — Import Character",
+    sections: [
+      { h: "AccuRIG 메인 화면", rows: [
+        { k: "1. 캐릭터 타입", v: "Human / Quadruped / Bird" },
+        { k: "2. FBX 드래그", v: "viewport 가운데로 드롭" },
+        { k: "3. 자동 인식", v: "메쉬 → 회색 실루엣 표시" },
+        { k: "4. 회전 확인", v: "정면 + 머리 위쪽 향함" },
+        { k: "5. 다음", v: "[ Detect Bones ] 클릭" }
+      ]}
+    ],
+    detailTitle: "이 단계의 핵심",
+    detailPoints: [
+      { text: "캐릭터 타입을 먼저 선택해야 골격 템플릿이 맞춰져요. 사족이면 반드시 Quadruped로 바꿔야 합니다.",
+        em: ["캐릭터 타입을 먼저 선택"] },
+      { text: "드롭한 메쉬가 옆으로 누워 있다면 Rotate로 똑바로 세워 주세요. Auto Rig는 +Y가 정면, +Z가 위쪽이라고 가정합니다.",
+        em: ["+Y가 정면, +Z가 위쪽"] },
+      { text: "회색 실루엣이 정상적으로 보이면 OK — 메쉬 손상 없이 import 성공한 거예요.",
+        em: ["회색 실루엣"] }
+    ]
+  },
+  {
+    title: "마커 자동 감지 + 수동 조정",
+    mockTitle: "AccuRIG 2.0 — Marker Adjust",
+    sections: [
+      { h: "관절 마커 위치 점검", rows: [
+        { k: "어깨 마커", v: "쇄골 끝 ~ 어깨 관절 중심" },
+        { k: "팔꿈치 마커", v: "팔 굽힘선 정중앙" },
+        { k: "손목 마커", v: "손목 안쪽 주름선" },
+        { k: "엉덩이 마커", v: "골반 중앙, 척추 끝" },
+        { k: "무릎 마커", v: "무릎뼈 중앙" },
+        { k: "수동 조정", v: "마커 드래그로 미세 조정" }
+      ]}
+    ],
+    detailTitle: "이 단계의 핵심",
+    detailPoints: [
+      { text: "AccuRIG가 먼저 마커를 자동 배치해 줍니다 — 보통 80~90%는 그대로 써도 OK.",
+        em: ["자동 배치"] },
+      { text: "캐릭터가 마른 체형 / 두꺼운 옷 / 비표준 비례라면 어깨·골반 마커가 어긋날 수 있어요. 드래그로 직접 보정하세요.",
+        em: ["드래그로 직접 보정"] },
+      { text: "마커 위치가 어긋난 채로 진행하면 Auto Rig 결과가 어색해집니다 — 본이 메쉬 밖으로 튀거나 웨이트가 이상해요.",
+        em: ["본이 메쉬 밖으로 튀거나"] }
+    ]
+  },
+  {
+    title: "Auto Rig → FBX export → Blender",
+    mockTitle: "AccuRIG 2.0 — Rig + Export",
+    sections: [
+      { h: "Auto Rig 결과 확인", rows: [
+        { k: "1. Auto Rig 실행", v: "약 30~60초 대기" },
+        { k: "2. 웨이트 확인", v: "팔 / 다리 / 손가락 회전 테스트" },
+        { k: "3. ActorCore 모션", v: "원하면 모션 클립 적용" },
+        { k: "4. Export FBX", v: "Skin + Skeleton 옵션" },
+        { k: "5. Blender import", v: "FBX import" },
+        { k: "6. Rigify 변환", v: "전용 애드온 (옵션)" }
+      ]}
+    ],
+    detailTitle: "이 단계의 핵심",
+    detailPoints: [
+      { text: "Auto Rig 후 각 관절을 회전시켜 웨이트가 깨지지 않는지 먼저 확인하세요 — 어색하면 마커 단계로 돌아가 보정.",
+        em: ["각 관절을 회전"] },
+      { text: "Blender로 다시 가져올 때는 FBX의 Armature가 그대로 import됩니다. 메쉬에 Armature Modifier도 자동 연결돼요.",
+        em: ["Armature가 그대로 import"] },
+      { text: "Rigify 컨트롤러를 쓰고 싶으면 Reallusion이 제공하는 무료 변환 애드온으로 한 번에 변환 — IK / FK 스위치까지 그대로 활용할 수 있어요.",
+        em: ["무료 변환 애드온"] }
+    ]
+  }
+];
+
+/* Build a paragraph with em-highlighted substrings using only safe DOM ops. */
+function appendHighlightedText(parent, text, emList) {
+  if (!emList || emList.length === 0) {
+    parent.appendChild(document.createTextNode(text));
+    return;
+  }
+  var remaining = text;
+  emList.forEach(function(needle) {
+    var idx = remaining.indexOf(needle);
+    if (idx === -1) {
+      return;
+    }
+    if (idx > 0) {
+      parent.appendChild(document.createTextNode(remaining.substring(0, idx)));
+    }
+    var emEl = document.createElement("em");
+    emEl.textContent = needle;
+    parent.appendChild(emEl);
+    remaining = remaining.substring(idx + needle.length);
+  });
+  if (remaining.length > 0) {
+    parent.appendChild(document.createTextNode(remaining));
+  }
+}
+
+function renderStep(idx) {
+  currentStep = idx;
+  document.querySelectorAll(".pipeline-step").forEach(function(b, i) {
+    b.classList.toggle("is-active", i === idx);
+  });
+  document.getElementById("stepLabel").textContent = String(idx + 1);
+
+  var step = steps[idx];
+  var mock = document.getElementById("mockScreen");
+  while (mock.firstChild) mock.removeChild(mock.firstChild);
+
+  var header = document.createElement("div");
+  header.className = "mock-header";
+  ["r", "y", "g"].forEach(function(col) {
+    var d = document.createElement("span");
+    d.className = "dot " + col;
+    header.appendChild(d);
+  });
+  var title = document.createElement("span");
+  title.className = "mock-title";
+  title.textContent = step.mockTitle;
+  header.appendChild(title);
+  mock.appendChild(header);
+
+  var body = document.createElement("div");
+  body.className = "mock-body";
+  step.sections.forEach(function(section) {
+    var h = document.createElement("h5");
+    h.textContent = section.h;
+    body.appendChild(h);
+    section.rows.forEach(function(row) {
+      var rowEl = document.createElement("div");
+      rowEl.className = "mock-row";
+      var k = document.createElement("span"); k.className = "mock-key"; k.textContent = row.k;
+      var v = document.createElement("span"); v.className = "mock-val"; v.textContent = row.v;
+      rowEl.appendChild(k); rowEl.appendChild(v);
+      body.appendChild(rowEl);
+    });
+  });
+  mock.appendChild(body);
+
+  var detail = document.getElementById("detailCard");
+  while (detail.firstChild) detail.removeChild(detail.firstChild);
+
+  var dTitle = document.createElement("strong");
+  dTitle.textContent = step.detailTitle;
+  detail.appendChild(dTitle);
+
+  var ul = document.createElement("ul");
+  step.detailPoints.forEach(function(pt) {
+    var li = document.createElement("li");
+    appendHighlightedText(li, pt.text, pt.em);
+    ul.appendChild(li);
+  });
+  detail.appendChild(ul);
+}
+
+document.querySelectorAll(".pipeline-step").forEach(function(btn) {
+  btn.addEventListener("click", function() {
+    renderStep(parseInt(btn.dataset.step, 10));
+  });
+});
+document.getElementById("btnPrev").addEventListener("click", function() {
+  renderStep((currentStep - 1 + steps.length) % steps.length);
+});
+document.getElementById("btnNext").addEventListener("click", function() {
+  renderStep((currentStep + 1) % steps.length);
+});
+
+renderStep(0);
+
+/* ══════════════════════════════════════════════════
+   Quiz
+   ══════════════════════════════════════════════════ */
+var quizInitialized = false;
+
+var quizQuestions = [
+  {
+    question: "Mixamo와 비교했을 때 AccuRIG의 가장 큰 차별점은 무엇인가요?",
+    options: [
+      "웹 브라우저에서 바로 쓸 수 있어 설치가 필요 없다",
+      "손가락·얼굴 본까지 자동으로 잡아 주고, ActorCore 모션과 호환된다",
+      "Adobe 계정만 있으면 누구나 쓸 수 있다",
+      "결과 파일이 .blend 포맷이라 Blender에서 그대로 열 수 있다"
+    ],
+    answer: 1,
+    explanation: "AccuRIG는 손가락 15본과 얼굴 본까지 자동 배치하고, Reallusion 자체 모션 라이브러리인 ActorCore와 호환돼요. Mixamo는 손가락이 제한적이고 얼굴 본은 지원하지 않습니다."
+  },
+  {
+    question: "강아지 캐릭터를 자동 리깅하려고 합니다. AccuRIG에서 가장 먼저 해야 할 일은?",
+    options: [
+      "Human 템플릿으로 업로드한 다음 다리만 손으로 보정한다",
+      "캐릭터 타입을 Quadruped로 먼저 선택한 다음 메쉬를 import한다",
+      "AccuRIG는 인체형만 지원하므로 Mixamo를 써야 한다",
+      "사족은 자동 리깅이 불가능하므로 Blender에서 수동 Armature를 짠다"
+    ],
+    answer: 1,
+    explanation: "AccuRIG는 Quadruped(사족), Bird, Human 골격 템플릿을 모두 지원해요. 강아지·새·beastmen 같은 비인체형도 처음에 캐릭터 타입만 정확히 골라 주면 자동 리깅이 가능합니다."
+  },
+  {
+    question: "AccuRIG로 리깅한 캐릭터를 Blender의 Rigify 컨트롤러로 다루고 싶어요. 어떻게 해야 하나요?",
+    options: [
+      "Rigify로의 변환은 불가능하므로 처음부터 Rigify로 다시 본을 짠다",
+      "Reallusion이 배포하는 무료 Blender 애드온으로 한 번에 변환할 수 있다",
+      "FBX를 수동으로 열어 본 이름을 Rigify 규칙대로 일일이 바꿔야 한다",
+      "유료 변환 서비스를 Reallusion에서 결제해야 한다"
+    ],
+    answer: 1,
+    explanation: "Reallusion이 무료로 공식 배포하는 Blender 애드온이 있어요. FBX import 후 한 번 클릭으로 AccuRIG rig → Rigify rig 변환이 되며, IK/FK 스위치까지 그대로 활용할 수 있습니다."
+  },
+  {
+    question: "Blender에서 캐릭터를 FBX로 export해 AccuRIG에 올렸는데, viewport에서 캐릭터가 점처럼 작게 보입니다. 가장 가능성 높은 원인은?",
+    options: [
+      "Reallusion 계정이 만료됐기 때문이다",
+      "Object Scale을 Apply하지 않고 export해서 단위가 어긋난 것",
+      "AccuRIG가 인체형 메쉬만 인식하기 때문이다",
+      "Mirror Modifier가 적용되지 않아서다"
+    ],
+    answer: 1,
+    explanation: "Blender Object Scale이 1이 아닌 상태에서 export하면 AccuRIG에서 캐릭터가 점만 하게 보입니다. Ctrl+A > Apply > Scale을 먼저 한 다음 미터 단위로 다시 export하면 정상 크기로 들어와요."
+  },
+  {
+    question: "자동차 모델을 AccuRIG에 올려 자동 리깅을 시도했는데 결과가 이상합니다. 왜 그런가요?",
+    options: [
+      "차량 모델은 폴리곤이 너무 많아서 처리에 실패한다",
+      "AccuRIG는 유기체(인체·사족·새) 골격만 지원 — 자동차 같은 비유기체는 자동 리깅 대상이 아니다",
+      "차량은 ActorCore 모션과 호환되지 않기 때문이다",
+      "Reallusion 무료 계정으로는 차량 리깅이 막혀 있다"
+    ],
+    answer: 1,
+    explanation: "AccuRIG는 인체·사족·새 같은 유기체 골격 템플릿에 맞게 본을 자동 배치하는 도구예요. 자동차·식물·건축처럼 비유기체 오브젝트는 자동 리깅 대상이 아니라서 Blender에서 수동 Armature로 짜야 합니다."
+  }
+];
+
+function initQuiz(questions) {
+  var container = document.getElementById("quizArea");
+  while (container.firstChild) { container.removeChild(container.firstChild); }
+
+  var score = 0;
+  var answered = 0;
+  var total = questions.length;
+  var passMark = Math.ceil(total * 0.75);
+  var scoreDiv = null;
+
+  var progress = document.createElement("div");
+  progress.className = "quiz-progress";
+  progress.textContent = "총 " + total + "문제 · 75% 이상 정답 시 통과";
+  container.appendChild(progress);
+
+  questions.forEach(function(q, qi) {
+    var div = document.createElement("div");
+    div.className = "quiz-question";
+
+    var heading = document.createElement("h4");
+    heading.textContent = (qi + 1) + ". " + q.question;
+    div.appendChild(heading);
+
+    var fb = document.createElement("div");
+    fb.className = "quiz-feedback";
+
+    q.options.forEach(function(opt, oi) {
+      var btn = document.createElement("button");
+      btn.className = "quiz-option";
+      btn.textContent = opt;
+      btn.addEventListener("click", function() {
+        if (btn.disabled) return;
+        div.querySelectorAll(".quiz-option").forEach(function(b) { b.disabled = true; });
+        answered++;
+        if (oi === q.answer) {
+          btn.classList.add("correct");
+          fb.className = "quiz-feedback show correct-fb";
+          fb.textContent = "정답! " + q.explanation;
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
+          fb.className = "quiz-feedback show wrong-fb";
+          fb.textContent = "오답. " + q.explanation;
+        }
+        progress.textContent = answered + " / " + total + " 답변 완료 · 현재 " + score + "점";
+        if (answered === total) { showScore(); }
+      });
+      div.appendChild(btn);
+    });
+
+    div.appendChild(fb);
+    container.appendChild(div);
+  });
+
+  function showScore() {
+    if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+
+    var pass = score >= passMark;
+
+    scoreDiv = document.createElement("div");
+    scoreDiv.className = "quiz-score";
+
+    var emojiEl = document.createElement("div");
+    emojiEl.style.cssText = "font-size:2rem;margin-bottom:8px";
+    emojiEl.textContent = pass ? "🎉" : "📚";
+    scoreDiv.appendChild(emojiEl);
+
+    var resultEl = document.createElement("div");
+    resultEl.style.cssText = "font-size:1.1rem;font-weight:600;margin-bottom:6px;color:" + (pass ? "var(--success-soft)" : "var(--warn-soft)");
+    resultEl.textContent = score + " / " + total + " 정답 — " + (pass ? "통과!" : "한 번 더 공부해 봐요");
+    scoreDiv.appendChild(resultEl);
+
+    var retryBtn = document.createElement("button");
+    retryBtn.className = "quiz-retry";
+    retryBtn.textContent = "다시 풀기";
+    retryBtn.addEventListener("click", function() {
+      quizInitialized = false;
+      initQuiz(questions);
+      quizInitialized = true;
+    });
+    scoreDiv.appendChild(retryBtn);
+
+    container.appendChild(scoreDiv);
+
+    try {
+      window.parent.postMessage({
+        type: "showme-quiz-complete",
+        widgetId: new URLSearchParams(location.search).get("wid") || "accurig-workflow",
+        score: score,
+        total: total,
+        pass: pass
+      }, "*");
+    } catch (e) {}
+  }
+}
+</script>
+
+<script src="./_helpers.js?v=20260318ai"></script>
+<script>
+window.addEventListener("load", function() {
+  if (window.normalizeStandaloneShowMeLayout) {
+    window.normalizeStandaloneShowMeLayout(document);
+  }
+});
+</script>
+</body>
+</html>
