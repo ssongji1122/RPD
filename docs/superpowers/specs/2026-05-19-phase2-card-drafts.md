@@ -313,7 +313,7 @@ Linked Duplicate를 만든 뒤 한쪽을 따로 수정하고 싶어졌다면 `U 
 |---|---|
 | `card_id` | `face-orientation-normals` |
 | `label` | Face Orientation & Normals |
-| `icon` | flip-horizontal |
+| `icon` | flip-horizontal-2 |
 | `category` | `edit-mode` |
 | `week` | `["3", "4", "6"]` |
 | `priority` | `P1` |
