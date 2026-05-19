@@ -199,9 +199,9 @@ body { margin: 0; padding: 0; font-family: var(--font); background: var(--bg); c
     </div>
 
     <div class="concept-card">
-      <h3><span class="badge badge-amber">사족(Quadruped) 지원</span></h3>
-      <p>인체형뿐 아니라 <strong>네 발 짐승, 새, beastmen</strong>까지 자동 리깅이 가능해요. Mixamo는 인체형만 지원하기 때문에, 동물 변형 캐릭터가 있다면 AccuRIG가 거의 유일한 자동 옵션입니다.</p>
-      <div class="analogy">캐릭터 종류 메뉴에서 "Human / Quadruped / Bird"를 고르듯 골격 템플릿을 선택하는 구조예요.</div>
+      <h3><span class="badge badge-amber">인체형 + 판타지 이족 지원</span></h3>
+      <p>기본은 <strong>인체형(휴머노이드)</strong>이지만, beastmen·미노타우르스·새 같은 <strong>다리가 휘어진 판타지 이족</strong>도 AI가 인식해서 자동 리깅해요. Mixamo는 표준 인체형만 받기 때문에, 판타지 변형 캐릭터에는 AccuRIG가 더 유리해요.</p>
+      <div class="analogy">강아지·고양이 같은 진짜 사족 동물은 공식 지원이 아니에요 — Blender에서 수동 리깅이 안전합니다.</div>
     </div>
 
     <div class="concept-card">
@@ -265,9 +265,9 @@ body { margin: 0; padding: 0; font-family: var(--font); background: var(--bg); c
         <td>미지원</td>
       </tr>
       <tr>
-        <td>사족·새</td>
+        <td>판타지 이족 (beastmen·새 등)</td>
         <td>지원</td>
-        <td>미지원 (인체형 전용)</td>
+        <td>미지원 (표준 인체형 전용)</td>
       </tr>
       <tr>
         <td>전용 모션</td>
@@ -344,7 +344,7 @@ body { margin: 0; padding: 0; font-family: var(--font); background: var(--bg); c
         <li>인체형 캐릭터에 <strong>정확한 자동 리깅</strong>이 필요할 때</li>
         <li>Mixamo보다 <strong>손가락 / 얼굴 본까지 자동</strong>으로 원할 때</li>
         <li>ActorCore 모션 캡처 라이브러리와 함께 작업할 때</li>
-        <li>사족 동물·새·beastmen 같은 <strong>비인체형 골격</strong>이 필요할 때</li>
+        <li>beastmen·미노타우르스·새 같은 <strong>판타지 이족 골격</strong>이 필요할 때 (진짜 사족은 수동)</li>
         <li>리깅 후 Blender Rigify 컨트롤러로 포즈 잡고 싶을 때</li>
         <li>Reallusion 계정을 만들 수 있는 환경일 때</li>
       </ul>
@@ -430,17 +430,16 @@ var steps = [
     mockTitle: "AccuRIG 2.0 — Import Character",
     sections: [
       { h: "AccuRIG 메인 화면", rows: [
-        { k: "1. 캐릭터 타입", v: "Human / Quadruped / Bird" },
-        { k: "2. FBX 드래그", v: "viewport 가운데로 드롭" },
-        { k: "3. 자동 인식", v: "메쉬 → 회색 실루엣 표시" },
-        { k: "4. 회전 확인", v: "정면 + 머리 위쪽 향함" },
-        { k: "5. 다음", v: "[ Detect Bones ] 클릭" }
+        { k: "1. FBX 드래그", v: "viewport 가운데로 드롭" },
+        { k: "2. 자동 인식", v: "메쉬 → 회색 실루엣 표시" },
+        { k: "3. 회전 확인", v: "정면 + 머리 위쪽 향함" },
+        { k: "4. 다음", v: "[ Detect Bones ] 클릭" }
       ]}
     ],
     detailTitle: "이 단계의 핵심",
     detailPoints: [
-      { text: "캐릭터 타입을 먼저 선택해야 골격 템플릿이 맞춰져요. 사족이면 반드시 Quadruped로 바꿔야 합니다.",
-        em: ["캐릭터 타입을 먼저 선택"] },
+      { text: "AccuRIG는 인체형 + 판타지 이족(beastmen, 새 등)이 기본이에요. 강아지·고양이 같은 진짜 사족은 공식 지원이 아니라 수동 리깅을 권장해요.",
+        em: ["인체형 + 판타지 이족"] },
       { text: "드롭한 메쉬가 옆으로 누워 있다면 Rotate로 똑바로 세워 주세요. Auto Rig는 +Y가 정면, +Z가 위쪽이라고 가정합니다.",
         em: ["+Y가 정면, +Z가 위쪽"] },
       { text: "회색 실루엣이 정상적으로 보이면 OK — 메쉬 손상 없이 import 성공한 거예요.",
@@ -609,15 +608,15 @@ var quizQuestions = [
     explanation: "AccuRIG는 손가락 15본과 얼굴 본까지 자동 배치하고, Reallusion 자체 모션 라이브러리인 ActorCore와 호환돼요. Mixamo는 손가락이 제한적이고 얼굴 본은 지원하지 않습니다."
   },
   {
-    question: "강아지 캐릭터를 자동 리깅하려고 합니다. AccuRIG에서 가장 먼저 해야 할 일은?",
+    question: "진짜 사족 동물(강아지·고양이) 캐릭터를 AccuRIG에 올리면 어떤 결과가 나올까요?",
     options: [
-      "Human 템플릿으로 업로드한 다음 다리만 손으로 보정한다",
-      "캐릭터 타입을 Quadruped로 먼저 선택한 다음 메쉬를 import한다",
-      "AccuRIG는 인체형만 지원하므로 Mixamo를 써야 한다",
-      "사족은 자동 리깅이 불가능하므로 Blender에서 수동 Armature를 짠다"
+      "Quadruped 템플릿이 있어서 자동 리깅이 완벽하게 된다",
+      "AccuRIG는 인체형 + 판타지 이족 중심이라 진짜 사족은 공식 지원이 아니에요. Blender에서 수동 리깅이 안전합니다",
+      "강아지는 Bird 템플릿으로 처리해야 한다",
+      "Reallusion 유료 결제만 하면 사족도 자동 리깅된다"
     ],
     answer: 1,
-    explanation: "AccuRIG는 Quadruped(사족), Bird, Human 골격 템플릿을 모두 지원해요. 강아지·새·beastmen 같은 비인체형도 처음에 캐릭터 타입만 정확히 골라 주면 자동 리깅이 가능합니다."
+    explanation: "AccuRIG 2.0은 인체형(휴머노이드)과 beastmen·미노타우르스·새처럼 다리가 휘어진 판타지 이족까지는 자동 인식하지만, 강아지·고양이 같은 진짜 사족 동물용 전용 템플릿은 없어요. 사족 동물은 Blender에서 수동으로 Armature를 짜거나, Rigify의 cat/wolf 메타리그를 쓰는 게 안전해요."
   },
   {
     question: "AccuRIG로 리깅한 캐릭터를 Blender의 Rigify 컨트롤러로 다루고 싶어요. 어떻게 해야 하나요?",
@@ -645,12 +644,12 @@ var quizQuestions = [
     question: "자동차 모델을 AccuRIG에 올려 자동 리깅을 시도했는데 결과가 이상합니다. 왜 그런가요?",
     options: [
       "차량 모델은 폴리곤이 너무 많아서 처리에 실패한다",
-      "AccuRIG는 유기체(인체·사족·새) 골격만 지원 — 자동차 같은 비유기체는 자동 리깅 대상이 아니다",
+      "AccuRIG는 인체형 + 판타지 이족 골격만 지원 — 자동차 같은 비유기체는 자동 리깅 대상이 아니다",
       "차량은 ActorCore 모션과 호환되지 않기 때문이다",
       "Reallusion 무료 계정으로는 차량 리깅이 막혀 있다"
     ],
     answer: 1,
-    explanation: "AccuRIG는 인체·사족·새 같은 유기체 골격 템플릿에 맞게 본을 자동 배치하는 도구예요. 자동차·식물·건축처럼 비유기체 오브젝트는 자동 리깅 대상이 아니라서 Blender에서 수동 Armature로 짜야 합니다."
+    explanation: "AccuRIG는 인체형 + 판타지 이족(beastmen, 새 등) 골격 템플릿에 맞춰 본을 자동 배치하는 도구예요. 자동차·식물·건축처럼 비유기체 오브젝트는 자동 리깅 대상이 아니라서 Blender에서 수동 Armature로 짜야 합니다."
   }
 ];
 

@@ -403,7 +403,7 @@ var PANEL_DATA = {
           { label: 'Scale', value: '1.00', kind: 'value', good: true,
             tip: 'Object 자체의 Scale. Apply Transform을 미리 했다면 1.00이 정상이에요. 1.00이 아니면 Apply가 안 된 상태라는 신호.' },
           { label: 'Apply Scalings', value: 'All Local', kind: 'value', good: true,
-            tip: '핵심 옵션! All Local로 두면 Blender·외부 도구 양쪽 모두에서 스케일이 1.0으로 정합돼요. FBX 단위 환산 문제를 해소합니다.' },
+            tip: 'Mixamo·AccuRIG로 보낼 땐 All Local이 안전한 기본값이에요. Unity로 보낼 땐 Unity Import 설정과 맞춰 FBX Units Scale을 쓰기도 해요. 결과 크기를 한 번 확인하세요.' },
           { label: 'Forward', value: '-Z Forward', kind: 'value', good: true,
             tip: 'Mixamo·AccuRIG가 기대하는 앞쪽 축. 잘못 두면 캐릭터가 옆이나 뒤를 보고 임포트돼요.' },
           { label: 'Up', value: 'Y Up', kind: 'value', good: true,
@@ -454,7 +454,7 @@ var PANEL_DATA = {
           { label: 'Scale', value: '0.01', kind: 'value', good: false,
             tip: 'Apply Transform을 안 한 상태. Object Scale이 0.01이면 Mixamo에서 캐릭터가 1cm짜리로 보여요. Ctrl+A > All Transforms 필수.' },
           { label: 'Apply Scalings', value: 'FBX All', kind: 'value', good: false,
-            tip: 'All Local이 아니라 FBX All을 쓰면 외부 도구에서 단위 환산이 한 번 더 적용돼서 크기가 100배 어긋날 수 있어요.' },
+            tip: 'Mixamo·AccuRIG 기본은 All Local. FBX All은 외부 도구별로 단위 환산이 다시 적용돼서 크기가 어긋날 수 있어요.' },
           { label: 'Forward', value: 'Y Forward', kind: 'value', good: false,
             tip: 'Blender 기본값을 그대로 두면 안 돼요. Mixamo는 -Z Forward 기대 → 캐릭터가 옆을 보고 임포트돼요.' },
           { label: 'Up', value: 'Z Up', kind: 'value', good: false,
@@ -596,15 +596,15 @@ var questions = [
     explanation: '-Z Forward + Y Up이 Mixamo·AccuRIG·Unity 등이 기대하는 표준 축이에요. 잘못 두면 캐릭터가 옆을 보거나 누워서 임포트되고, 자동 리깅 알고리즘이 T-Pose를 인식 못 합니다.'
   },
   {
-    question: 'FBX Export 패널의 Transform 섹션에서 권장되는 Apply Scalings 옵션은?',
+    question: 'Mixamo / AccuRIG로 보낼 때 Transform 섹션의 Apply Scalings는 어떻게 설정하나요?',
     options: [
-      'FBX All',
-      'FBX Units Scale',
-      'All Local',
-      'None'
+      'FBX All — Blender·외부 도구의 단위를 모두 강제 변환',
+      'FBX Units Scale — Unity 전용 표준 단위 변환',
+      'All Local — Blender 내부 스케일을 그대로 전달 (Mixamo/AccuRIG 기본 권장)',
+      'None — 어떤 변환도 적용하지 않음'
     ],
     answer: 2,
-    explanation: 'All Local로 두면 Blender와 외부 도구 양쪽 모두에서 스케일이 1.0으로 정합돼요. FBX All이나 FBX Units Scale은 단위 환산이 한 번 더 적용되어 크기가 100배 어긋날 수 있습니다.'
+    explanation: 'Mixamo·AccuRIG는 Blender의 1 unit = 1 m 설정을 그대로 받으므로 All Local이 안전한 기본값이에요. Unity로 보낼 땐 Unity Import 설정과 맞춰 FBX Units Scale을 쓰기도 해요 — 도구별로 다르니 결과 크기를 한 번 확인하세요.'
   },
   {
     question: 'Blender의 캐릭터가 Subdivision Surface로 부드럽게 보였는데, FBX로 내보내 Unity에서 열어보니 거친 저폴리로 보입니다. 원인은?',
