@@ -117,7 +117,7 @@ CARDS = [
         category="modifier",
         weeks=["3"],
         priority="P0",
-        status="draft",
+        status="published",
         concept=(
             "Modifier는 **요리 레시피**처럼 위에서 아래로 순서대로 계산돼요. **같은 재료라도 넣는 순서가 다르면 결과가 달라져요.**\n\n"
             "가장 안전한 시작 순서는 **Mirror → Boolean → Subdivision Surface → Bevel → Weighted Normal**. "
@@ -139,7 +139,7 @@ CARDS = [
                 {"n": 4, "action": "권장 순서: Mirror → Boolean → Subdivision → Bevel → Weighted Normal", "hotkey": None, "menu": None, "screenshot": None, "note": "Apply 타이밍은 가장 마지막"},
             ],
         }, ensure_ascii=False),
-        widget_id="",
+        widget_id="modifier-stack-order",
         official_docs="https://docs.blender.org/manual/en/latest/modeling/modifiers/introduction.html#the-modifier-stack",
     ),
     _make_page(
@@ -150,7 +150,7 @@ CARDS = [
         category="modeling",
         weeks=["3", "4"],
         priority="P0",
-        status="draft",
+        status="published",
         concept=(
             "같은 메쉬도 **빛이 부드럽게 흐르는지 / 면마다 뚝뚝 끊기는지** 셰이딩 모드로 바뀌어요. "
             "**Flat**은 모든 면을 각진 그대로, **Shade Smooth**는 전체를 부드럽게 보간해요.\n\n"
@@ -173,7 +173,7 @@ CARDS = [
                 {"n": 4, "action": "Auto Smooth 토글 → Angle 입력", "hotkey": None, "menu": None, "screenshot": None, "note": "보통 30°로 시작"},
             ],
         }, ensure_ascii=False),
-        widget_id="",
+        widget_id="shade-smooth-auto-smooth",
         official_docs="https://docs.blender.org/manual/en/latest/modeling/meshes/editing/mesh/normals.html#shade-smooth-flat",
     ),
     _make_page(
@@ -184,7 +184,7 @@ CARDS = [
         category="edit-mode",
         weeks=["3", "4"],
         priority="P0",
-        status="draft",
+        status="published",
         concept=(
             "Boolean이나 Extrude를 잘못 누르면 **같은 자리에 버텍스가 두 개씩 쌓여요**. "
             "눈에는 멀쩡해 보여도 메쉬가 끊어진 상태라 Subdivision이 깨지거나 Smooth가 이상하게 적용돼요.\n\n"
@@ -219,7 +219,7 @@ CARDS = [
         category="edit-mode",
         weeks=["4"],
         priority="P0",
-        status="draft",
+        status="published",
         concept=(
             "모자와 머리를 따로 만들었는데 둘이 안 붙어 있다면 **두 열린 루프를 다리(bridge)로 연결**해야 해요. "
             "Bridge Edge Loops는 두 Edge 루프 사이에 면을 자동으로 만들어줘요.\n\n"
@@ -252,7 +252,7 @@ CARDS = [
         category="object",
         weeks=["4"],
         priority="P1",
-        status="draft",
+        status="published",
         concept=(
             "**Duplicate (Shift+D)**는 완전 복사 — 원본과 무관한 별개 오브젝트가 생겨요. 한쪽을 수정해도 다른 쪽엔 영향 없어요.\n\n"
             "**Linked Duplicate (Alt+D)**는 **같은 메쉬 데이터를 공유하는 인스턴스**. "
@@ -284,7 +284,7 @@ CARDS = [
         category="edit-mode",
         weeks=["3", "4", "6"],
         priority="P1",
-        status="draft",
+        status="published",
         concept=(
             "모든 면에는 **앞면/뒷면 방향(Normal)**이 있어요. Blender는 앞면을 파란색, 뒷면을 빨간색으로 표시할 수 있어요 — "
             "**Viewport Overlays > Face Orientation**.\n\n"
@@ -317,7 +317,7 @@ CARDS = [
         category="modifier",
         weeks=["3", "4"],
         priority="P1",
-        status="draft",
+        status="published",
         concept=(
             "Modifier는 **투명한 효과 필름**이에요. 값을 바꾸거나 끄거나 지우면 원본 메쉬는 그대로 남아요 — "
             "이게 **비파괴(Non-destructive)**.\n\n"
