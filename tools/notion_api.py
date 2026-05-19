@@ -139,7 +139,9 @@ def _extract_link(rich_text_list: list) -> dict | None:
     for item in rich_text_list:
         url = item.get("href") or ""
         if not url:
-            url = item.get("text", {}).get("link", {}).get("url", "")
+            text_field = item.get("text") or {}
+            link_field = text_field.get("link") or {}
+            url = link_field.get("url", "")
         if url:
             break
 
