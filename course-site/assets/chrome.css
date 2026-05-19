@@ -273,7 +273,18 @@
 .rpd-page-main {
   min-width: 0;
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 20px;
+}
+
+/* Prevent intrinsic content (code blocks, tables, images) from blowing out the grid */
+.rpd-page-main pre,
+.rpd-page-main table,
+.rpd-page-main img,
+.rpd-page-main figure,
+.rpd-page-main .nb-table-wrap,
+.rpd-page-main .nb-code-wrap {
+  max-width: 100%;
 }
 
 .rpd-page-toolbar {
