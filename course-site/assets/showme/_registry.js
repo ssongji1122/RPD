@@ -1,114 +1,90 @@
 // ============================================================
-// Show Me 위젯 레지스트리
-// 위젯 ID → 메타데이터 매핑
-// week.html에서 버튼 라벨/아이콘 조회에 사용
+// Show Me 위젯 레지스트리 — DO NOT EDIT BY HAND
+// Generated from Notion Card DB by tools/showme_build.py
 // ============================================================
 
-const SHOWME_REGISTRY = {
-  // ── Week 3: Reference Setup ──
-  "image-reference":        { label: "이미지 레퍼런스 설정",      icon: "🖼️", week: 3 },
-
-  // ── Week 2: Interface & Fundamentals ──
-  "blender-preferences":    { label: "Preferences 설정",        icon: "⚙️", week: 2 },
-  "viewport-navigation":    { label: "화면 조작 원리",          icon: "🧭", week: 2 },
-  "transform-grs":          { label: "G/R/S 변형 이해",         icon: "↔️", week: 2 },
-  "transform-orientation":  { label: "Transform Orientation 이해", icon: "🧭", week: 2 },
-  "pivot-point":            { label: "Pivot Point 이해",        icon: "🎯", week: 2 },
-  "snap":                   { label: "Snapping 이해",           icon: "🧲", week: 2 },
-  "viewport-shading":       { label: "Viewport Shading 이해",   icon: "💡", week: 2 },
-  "xray-opacity":           { label: "X-Ray 투명도 조절",        icon: "🔍", week: 2 },
-  "edit-mode":              { label: "Edit Mode 이해",          icon: "✏️", week: 2, toolName: "Edit Mode", iconKey: "edit-mode" },
-
-  // ── Edit Mode Tools (기능별 라이브러리) ──
-  "edit-mode-tools":        { label: "Edit Mode 도구 전체",     icon: "🛠️", week: 3, toolName: "Toolset", iconKey: "edit-mode" },
-  "extrude":                { label: "Extrude 작동 원리",       icon: "📐", week: 3, toolName: "Extrude", iconKey: "extrude" },
-  "loop-cut":               { label: "Loop Cut 이해",           icon: "🔪", week: 3, toolName: "Loop Cut", iconKey: "loop-cut" },
-  "inset":                  { label: "Inset 작동 원리",         icon: "⬜", week: 3, toolName: "Inset", iconKey: "inset" },
-  "bevel-tool":             { label: "Bevel Tool 이해",         icon: "🔧", week: 3, toolName: "Bevel", iconKey: "bevel" },
-
-  // ── Generate Modifiers (기능별 라이브러리) ──
-  "array-modifier":         { label: "Array Modifier 이해",     icon: "🔁", week: 3 },
-  "bevel-modifier":         { label: "Bevel Modifier 이해",     icon: "🔶", week: 3 },
-  "boolean-modifier":       { label: "Boolean 작동 원리",       icon: "✂️", week: 3 },
-  "build-modifier":         { label: "Build Modifier 이해",     icon: "🏗️", week: 4 },
-  "curve-to-tube":          { label: "Curve to Tube 이해",      icon: "🔄", week: 4 },
-  "decimate-modifier":      { label: "Decimate 이해",           icon: "📉", week: 4 },
-  "edge-split-modifier":    { label: "Edge Split 이해",         icon: "🔀", week: 4 },
-  "mask-modifier":          { label: "Mask Modifier 이해",      icon: "🎭", week: 4 },
-  "mirror-modifier":        { label: "Mirror Modifier 이해",    icon: "🪞", week: 3 },
-  "mirror-workflow":        { label: "Mirror 작업 흐름",        icon: "🔄", week: 3 },
-  "mirror-origin-mode":     { label: "Mirror·Origin·모드 이해", icon: "🔀", week: 3 },
-  "multiresolution-modifier": { label: "Multiresolution 이해",  icon: "🔍", week: 4 },
-  "remesh-modifier":        { label: "Remesh 이해",             icon: "🔲", week: 4 },
-  "scatter-on-surface":     { label: "Scatter on Surface 이해", icon: "🌿", week: 4 },
-  "screw-modifier":         { label: "Screw Modifier 이해",     icon: "🌀", week: 4 },
-  "skin-modifier":          { label: "Skin Modifier 이해",      icon: "🦠", week: 4 },
-  "solidify-modifier":      { label: "Solidify 이해",           icon: "📦", week: 3 },
-  "subdivision-surface":    { label: "Subdivision Surface 이해", icon: "🫧", week: 3 },
-  "triangulate-modifier":   { label: "Triangulate 이해",        icon: "🔺", week: 4 },
-  "volume-to-mesh":         { label: "Volume to Mesh 이해",     icon: "💨", week: 4 },
-  "weld-modifier":          { label: "Weld Modifier 이해",      icon: "⚡", week: 4 },
-  "wireframe-modifier":     { label: "Wireframe 이해",          icon: "🕸️", week: 4 },
-
-  // ── Normals ──
-  "weighted-normal":        { label: "Weighted Normal 이해",    icon: "💡", week: 3 },
-
-  // ── Week 3–4: Transform & Cleanup ──
-  "proportional-editing":   { label: "Proportional Editing 이해", icon: "〰️", week: 3 },
-  "transform-apply":        { label: "Apply Transform 이해",    icon: "✅", week: 3 },
-  "simple-deform":          { label: "Simple Deform 이해",      icon: "🌀", week: 3 },
-  "bevel-tool-vs-modifier": { label: "Bevel 비교",              icon: "⚖️", week: 0 },
-  "join-separate":          { label: "Join/Separate 이해",      icon: "🔗", week: 3 },
-
-  // ── Week 5: Sculpting ──
-  "sculpt-basics":          { label: "Sculpt Mode 기초",        icon: "🎨", week: 5 },
-  "sculpt-brushes":         { label: "Sculpt 브러시 선택 기준",  icon: "🖌️", week: 5 },
-  "ai-prompt-design":       { label: "AI 프롬프트 설계법",       icon: "✍️", week: 5 },
-  "ai-3d-generation":       { label: "AI 3D 생성 워크플로우",    icon: "🤖", week: 5 },
-
-  // ── Week 6: Material & Shader ──
-  "material-basics":        { label: "Material 시스템 기초",     icon: "🎨", week: 6 },
-  "principled-bsdf":        { label: "Principled BSDF 이해",    icon: "🎭", week: 6 },
-  "shader-editor":          { label: "Shader Editor 이해",      icon: "🔌", week: 6 },
-  "color-ramp":             { label: "Color Ramp 이해",         icon: "🌈", week: 6 },
-  "noise-texture":          { label: "Noise Texture 이해",      icon: "🌫️", week: 6 },
-  "texture-types":          { label: "Procedural vs Image",     icon: "🔀", week: 6 },
-  "image-texture-pbr":      { label: "Image Texture + PBR",     icon: "🖼️", week: 6 },
-
-  // ── Week 7: UV ──
-  "uv-unwrapping":          { label: "UV Unwrapping 이해",      icon: "📐", week: 7 },
-  "uv-editor":              { label: "UV Editor 조작",          icon: "🗺️", week: 7 },
-  "texture-painting":       { label: "Texture Painting 기초",   icon: "🖌️", week: 7 },
-
-  // ── Week 9: Lighting ──
-  "light-types":            { label: "4가지 Light 종류",         icon: "💡", week: 9 },
-  "hdri-lighting":          { label: "HDRI 환경 조명",           icon: "🌅", week: 9 },
-  "three-point-light":      { label: "3점 조명법",               icon: "🎬", week: 9 },
-  "camera-setup":           { label: "카메라 세팅 이해",           icon: "📷", week: 9 },
-  "depth-of-field":         { label: "Depth of Field 이해",       icon: "🎥", week: 9 },
-  "mood-lighting":          { label: "분위기 연출 (색온도)",        icon: "🌗", week: 9 },
-
-  // ── Week 10: Animation ──
-  "keyframe-basics":        { label: "키프레임 기초",            icon: "⏱️", week: 10 },
-  "graph-editor":           { label: "Graph Editor 이해",       icon: "📈", week: 10 },
-  "dope-sheet":             { label: "Dope Sheet 이해",         icon: "🎞️", week: 10 },
-
-  // ── Week 11: Rigging ──
-  "armature-basics":        { label: "Armature 이해",           icon: "🦴", week: 11 },
-  "weight-paint":           { label: "Weight Paint 이해",       icon: "🖌️", week: 11 },
-
-  // ── Week 12: NLA ──
-  "nla-editor":             { label: "NLA Editor 이해",         icon: "🎬", week: 12 },
-
-  // ── Week 13: Rendering ──
-  "render-settings":        { label: "Cycles vs EEVEE",         icon: "🖥️", week: 13 },
-  "compositing-basics":     { label: "컴포지팅 기초",            icon: "🎞️", week: 13 },
-
-  // ── Concepts ──
-  "origin-vs-3dcursor":     { label: "Origin vs 3D Cursor",    icon: "🎯", week: 0 },
-  "poly-circle":            { label: "다각형으로 원 만들기",       icon: "⭕", week: 0, toolName: "Poly Circle", iconKey: "poly-circle" },
-  "box-rounding":           { label: "박스 모서리 라운딩",          icon: "📦", week: 0 },
+var SHOWME_REGISTRY = {
+  "collection-outliner": { label: "Collection 과 Outliner 이해", icon: "folder-tree", week: 3, category: "object" },
+  "modifier-stack-order": { label: "Modifier Stack 순서", icon: "layers", week: 3, category: "modifier" },
+  "shade-smooth-auto-smooth": { label: "Shade Smooth & Auto Smooth", icon: "sparkles", week: [3, 4], category: "modeling" },
+  "merge-by-distance": { label: "Merge by Distance (겹친 버텍스 정리)", icon: "combine", week: [3, 4], category: "edit-mode" },
+  "bridge-edge-loops": { label: "Bridge Edge Loops (열린 루프 연결)", icon: "git-merge", week: 4, category: "edit-mode" },
+  "duplicate-vs-linked-duplicate": { label: "Duplicate vs Linked Duplicate", icon: "copy-plus", week: 4, category: "object" },
+  "face-orientation-normals": { label: "Face Orientation & Normals", icon: "flip-horizontal-2", week: [3, 4, 6], category: "edit-mode" },
+  "apply-modifier-vs-keep-procedural": { label: "Apply Modifier vs 비파괴 유지", icon: "archive-restore", week: [3, 4], category: "modifier" },
+  "image-reference":        { label: "이미지 레퍼런스 설정",      icon: "image", week: 3 },
+  "blender-preferences":    { label: "Preferences 설정",        icon: "settings", week: 2 },
+  "viewport-navigation":    { label: "화면 조작 원리",          icon: "compass", week: 2 },
+  "transform-grs":          { label: "G/R/S 변형 이해",         icon: "move-horizontal", week: 2 },
+  "transform-orientation":  { label: "Transform Orientation 이해", icon: "compass", week: 2 },
+  "pivot-point":            { label: "Pivot Point 이해",        icon: "target", week: 2 },
+  "snap":                   { label: "Snapping 이해",           icon: "magnet", week: 2 },
+  "viewport-shading":       { label: "Viewport Shading 이해",   icon: "lightbulb", week: 2 },
+  "xray-opacity":           { label: "X-Ray 투명도 조절",        icon: "search", week: 2 },
+  "edit-mode":              { label: "Edit Mode 이해",          icon: "pencil", week: 2, toolName: "Edit Mode", iconKey: "edit-mode" },
+  "edit-mode-tools":        { label: "Edit Mode 도구 전체",     icon: "wrench", week: 3, toolName: "Toolset", iconKey: "edit-mode" },
+  "extrude":                { label: "Extrude 작동 원리",       icon: "ruler", week: 3, toolName: "Extrude", iconKey: "extrude" },
+  "loop-cut":               { label: "Loop Cut 이해",           icon: "scissors", week: 3, toolName: "Loop Cut", iconKey: "loop-cut" },
+  "inset":                  { label: "Inset 작동 원리",         icon: "square", week: 3, toolName: "Inset", iconKey: "inset" },
+  "bevel-tool":             { label: "Bevel Tool 이해",         icon: "wrench", week: 3, toolName: "Bevel", iconKey: "bevel" },
+  "array-modifier":         { label: "Array Modifier 이해",     icon: "repeat-2", week: 3 },
+  "bevel-modifier":         { label: "Bevel Modifier 이해",     icon: "diamond", week: 3 },
+  "boolean-modifier":       { label: "Boolean 작동 원리",       icon: "scissors", week: 3 },
+  "build-modifier":         { label: "Build Modifier 이해",     icon: "construction", week: 4 },
+  "curve-to-tube":          { label: "Curve to Tube 이해",      icon: "refresh-cw", week: 4 },
+  "decimate-modifier":      { label: "Decimate 이해",           icon: "trending-down", week: 4 },
+  "edge-split-modifier":    { label: "Edge Split 이해",         icon: "shuffle", week: 4 },
+  "mask-modifier":          { label: "Mask Modifier 이해",      icon: "users", week: 4 },
+  "mirror-modifier":        { label: "Mirror Modifier 이해",    icon: "copy", week: 3 },
+  "mirror-workflow":        { label: "Mirror 작업 흐름",        icon: "refresh-cw", week: 3 },
+  "mirror-origin-mode":     { label: "Mirror·Origin·모드 이해", icon: "shuffle", week: 3 },
+  "multiresolution-modifier": { label: "Multiresolution 이해",  icon: "search", week: 4 },
+  "remesh-modifier":        { label: "Remesh 이해",             icon: "square-dashed", week: 4 },
+  "scatter-on-surface":     { label: "Scatter on Surface 이해", icon: "leaf", week: 4 },
+  "screw-modifier":         { label: "Screw Modifier 이해",     icon: "wind", week: 4 },
+  "skin-modifier":          { label: "Skin Modifier 이해",      icon: "bug", week: 4 },
+  "solidify-modifier":      { label: "Solidify 이해",           icon: "box", week: 3 },
+  "subdivision-surface":    { label: "Subdivision Surface 이해", icon: "droplets", week: 3 },
+  "triangulate-modifier":   { label: "Triangulate 이해",        icon: "triangle", week: 4 },
+  "volume-to-mesh":         { label: "Volume to Mesh 이해",     icon: "wind", week: 4 },
+  "weld-modifier":          { label: "Weld Modifier 이해",      icon: "zap", week: 4 },
+  "wireframe-modifier":     { label: "Wireframe 이해",          icon: "spline", week: 4 },
+  "weighted-normal":        { label: "Weighted Normal 이해",    icon: "lightbulb", week: 3 },
+  "proportional-editing":   { label: "Proportional Editing 이해", icon: "audio-waveform", week: 3 },
+  "transform-apply":        { label: "Apply Transform 이해",    icon: "check", week: 3 },
+  "simple-deform":          { label: "Simple Deform 이해",      icon: "wind", week: 3 },
+  "bevel-tool-vs-modifier": { label: "Bevel 비교",              icon: "scale", week: 0 },
+  "join-separate":          { label: "Join/Separate 이해",      icon: "link", week: 3 },
+  "sculpt-basics":          { label: "Sculpt Mode 기초",        icon: "palette", week: 5 },
+  "sculpt-brushes":         { label: "Sculpt 브러시 선택 기준",  icon: "brush", week: 5 },
+  "ai-prompt-design":       { label: "AI 프롬프트 설계법",       icon: "pencil", week: 5 },
+  "ai-3d-generation":       { label: "AI 3D 생성 워크플로우",    icon: "bot", week: 5 },
+  "material-basics":        { label: "Material 시스템 기초",     icon: "palette", week: 6 },
+  "principled-bsdf":        { label: "Principled BSDF 이해",    icon: "users", week: 6 },
+  "shader-editor":          { label: "Shader Editor 이해",      icon: "plug", week: 6 },
+  "color-ramp":             { label: "Color Ramp 이해",         icon: "palette", week: 6 },
+  "noise-texture":          { label: "Noise Texture 이해",      icon: "cloud", week: 6 },
+  "texture-types":          { label: "Procedural vs Image",     icon: "shuffle", week: 6 },
+  "image-texture-pbr":      { label: "Image Texture + PBR",     icon: "image", week: 6 },
+  "uv-unwrapping":          { label: "UV Unwrapping 이해",      icon: "ruler", week: 7 },
+  "uv-editor":              { label: "UV Editor 조작",          icon: "map", week: 7 },
+  "texture-painting":       { label: "Texture Painting 기초",   icon: "brush", week: 7 },
+  "light-types":            { label: "4가지 Light 종류",         icon: "lightbulb", week: 9 },
+  "hdri-lighting":          { label: "HDRI 환경 조명",           icon: "sunrise", week: 9 },
+  "three-point-light":      { label: "3점 조명법",               icon: "clapperboard", week: 9 },
+  "camera-setup":           { label: "카메라 세팅 이해",           icon: "camera", week: 9 },
+  "depth-of-field":         { label: "Depth of Field 이해",       icon: "video", week: 9 },
+  "mood-lighting":          { label: "분위기 연출 (색온도)",        icon: "moon", week: 9 },
+  "keyframe-basics":        { label: "키프레임 기초",            icon: "timer", week: 10 },
+  "graph-editor":           { label: "Graph Editor 이해",       icon: "trending-up", week: 10 },
+  "dope-sheet":             { label: "Dope Sheet 이해",         icon: "film", week: 10 },
+  "armature-basics":        { label: "Armature 이해",           icon: "bone", week: 11 },
+  "weight-paint":           { label: "Weight Paint 이해",       icon: "brush", week: 11 },
+  "nla-editor":             { label: "NLA Editor 이해",         icon: "clapperboard", week: 12 },
+  "render-settings":        { label: "Cycles vs EEVEE",         icon: "monitor", week: 13 },
+  "compositing-basics":     { label: "컴포지팅 기초",            icon: "film", week: 13 },
+  "origin-vs-3dcursor":     { label: "Origin vs 3D Cursor",    icon: "target", week: 0 },
+  "poly-circle":            { label: "다각형으로 원 만들기",       icon: "circle", week: 0, toolName: "Poly Circle", iconKey: "poly-circle" },
+  "box-rounding":           { label: "박스 모서리 라운딩",          icon: "box", week: 0 }
 };
-
 if (typeof window !== "undefined") window.SHOWME_REGISTRY = SHOWME_REGISTRY;
-if (typeof globalThis !== "undefined") globalThis.SHOWME_REGISTRY = SHOWME_REGISTRY;

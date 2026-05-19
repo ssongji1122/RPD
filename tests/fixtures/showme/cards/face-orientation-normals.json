@@ -1,0 +1,105 @@
+{
+  "object": "page",
+  "id": "36554d65-4971-81e7-969e-f783bac8aad7",
+  "properties": {
+    "card_id": {
+      "title": [
+        {
+          "plain_text": "face-orientation-normals"
+        }
+      ]
+    },
+    "label": {
+      "rich_text": [
+        {
+          "plain_text": "Face Orientation & Normals"
+        }
+      ]
+    },
+    "icon": {
+      "rich_text": [
+        {
+          "plain_text": "flip-horizontal-2"
+        }
+      ]
+    },
+    "category": {
+      "select": {
+        "name": "edit-mode"
+      }
+    },
+    "week": {
+      "multi_select": [
+        {
+          "name": "3"
+        },
+        {
+          "name": "4"
+        },
+        {
+          "name": "6"
+        }
+      ]
+    },
+    "priority": {
+      "select": {
+        "name": "P1"
+      }
+    },
+    "status": {
+      "select": {
+        "name": "draft"
+      }
+    },
+    "concept_md": {
+      "rich_text": [
+        {
+          "plain_text": "모든 면에는 **앞면/뒷면 방향(Normal)**이 있어요. Blender는 앞면을 파란색, 뒷면을 빨간색으로 표시할 수 있어요 — **Viewport Overlays > Face Orientation**.\n\n쿠키 모양 틀이 뒤집힌 채로 반죽을 누르면 모양이 거꾸로 나오죠? Normal이 뒤집힌 면도 마찬가지로 셰이딩·렌더·Boolean에서 이상한 결과를 만들어요."
+        }
+      ]
+    },
+    "usage_md": {
+      "rich_text": [
+        {
+          "plain_text": "Boolean 결과가 이상할 때, Auto Smooth가 한쪽만 어색할 때, 렌더에 검은 얼룩이 보일 때 가장 먼저 Face Orientation 오버레이를 켜고 확인."
+        }
+      ]
+    },
+    "pitfall_md": {
+      "rich_text": [
+        {
+          "plain_text": "빨간 면을 발견하면 `Mesh > Normals > Recalculate Outside` (`Shift+N`)로 일괄 정리. 일부만 뒤집고 싶으면 면 선택 후 `Alt+N > Flip`. **AI로 생성한 메쉬는 Normal이 일관성 없게 들어오는 경우가 많아** 항상 한 번 점검하세요."
+        }
+      ]
+    },
+    "steps_json": {
+      "rich_text": [
+        {
+          "plain_text": "{\"blender_version\": \"5.0\", \"platform_note\": null, \"steps\": [{\"n\": 1, \"action\": \"Viewport Overlays 메뉴 열기\", \"hotkey\": null, \"menu\": \"뷰포트 우상단 두 원 겹친 아이콘\", \"screenshot\": null, \"note\": null}, {\"n\": 2, \"action\": \"Face Orientation 토글\", \"hotkey\": null, \"menu\": \"Geometry > Face Orientation\", \"screenshot\": null, \"note\": \"파랑=앞, 빨강=뒤\"}, {\"n\": 3, \"action\": \"Edit Mode에서 일괄 재계산\", \"hotkey\": \"Shift + N\", \"menu\": \"Mesh > Normals > Recalculate Outside\", \"screenshot\": null, \"note\": null}, {\"n\": 4, \"action\": \"특정 면만 뒤집기\", \"hotkey\": \"Alt + N\", \"menu\": \"Mesh > Normals > Flip\", \"screenshot\": null, \"note\": \"Flip 선택\"}]}"
+        }
+      ]
+    },
+    "widget_id": {
+      "rich_text": []
+    },
+    "blender_version": {
+      "rich_text": [
+        {
+          "plain_text": "5.0"
+        }
+      ]
+    },
+    "official_docs": {
+      "url": "https://docs.blender.org/manual/en/latest/modeling/meshes/editing/mesh/normals.html"
+    },
+    "prerequisites": {
+      "relation": []
+    },
+    "related": {
+      "relation": []
+    },
+    "videos_relation": {
+      "relation": []
+    }
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "object": "page",
+  "id": "36554d65-4971-8117-8aa6-f6297514e709",
+  "properties": {
+    "card_id": {
+      "title": [
+        {
+          "plain_text": "bridge-edge-loops"
+        }
+      ]
+    },
+    "label": {
+      "rich_text": [
+        {
+          "plain_text": "Bridge Edge Loops (열린 루프 연결)"
+        }
+      ]
+    },
+    "icon": {
+      "rich_text": [
+        {
+          "plain_text": "git-merge"
+        }
+      ]
+    },
+    "category": {
+      "select": {
+        "name": "edit-mode"
+      }
+    },
+    "week": {
+      "multi_select": [
+        {
+          "name": "4"
+        }
+      ]
+    },
+    "priority": {
+      "select": {
+        "name": "P0"
+      }
+    },
+    "status": {
+      "select": {
+        "name": "draft"
+      }
+    },
+    "concept_md": {
+      "rich_text": [
+        {
+          "plain_text": "모자와 머리를 따로 만들었는데 둘이 안 붙어 있다면 **두 열린 루프를 다리(bridge)로 연결**해야 해요. Bridge Edge Loops는 두 Edge 루프 사이에 면을 자동으로 만들어줘요.\n\n휴지심 두 개를 마주 보게 놓고 사이에 종이를 감아 붙이는 것과 비슷해요. 빈 공간을 면으로 메워주는 도구."
+        }
+      ]
+    },
+    "usage_md": {
+      "rich_text": [
+        {
+          "plain_text": "파츠를 따로 만든 뒤 하나의 메쉬로 합쳐야 할 때, 구멍(Delete Face로 만든)을 다른 메쉬 루프와 연결할 때, 캐릭터 모자·후드·옷깃처럼 두 표면을 잇는 형태를 만들 때."
+        }
+      ]
+    },
+    "pitfall_md": {
+      "rich_text": [
+        {
+          "plain_text": "**두 루프의 버텍스 개수가 다르면** 결과 토폴로지가 지저분해져요. 비슷한 개수로 맞춘 뒤 Bridge 하거나, 한쪽을 Loop Cut으로 분할해 개수를 맞춰요. **두 루프가 같은 메쉬에 있어야** 동작해요 — 다른 오브젝트면 먼저 `Ctrl + J`로 Join."
+        }
+      ]
+    },
+    "steps_json": {
+      "rich_text": [
+        {
+          "plain_text": "{\"blender_version\": \"5.0\", \"platform_note\": null, \"steps\": [{\"n\": 1, \"action\": \"두 루프가 다른 오브젝트면 Join\", \"hotkey\": \"Ctrl + J\", \"menu\": null, \"screenshot\": null, \"note\": \"Object Mode에서\"}, {\"n\": 2, \"action\": \"Edit Mode 진입 + Edge 모드\", \"hotkey\": \"Tab → 2\", \"menu\": null, \"screenshot\": null, \"note\": null}, {\"n\": 3, \"action\": \"두 루프 선택 (Alt+클릭으로 루프 단위 선택, Shift+Alt+클릭으로 추가)\", \"hotkey\": null, \"menu\": null, \"screenshot\": null, \"note\": null}, {\"n\": 4, \"action\": \"Bridge Edge Loops 실행\", \"hotkey\": null, \"menu\": \"Edge > Bridge Edge Loops\", \"screenshot\": null, \"note\": null}]}"
+        }
+      ]
+    },
+    "widget_id": {
+      "rich_text": []
+    },
+    "blender_version": {
+      "rich_text": [
+        {
+          "plain_text": "5.0"
+        }
+      ]
+    },
+    "official_docs": {
+      "url": "https://docs.blender.org/manual/en/latest/modeling/meshes/editing/edge/bridge_edge_loops.html"
+    },
+    "prerequisites": {
+      "relation": []
+    },
+    "related": {
+      "relation": []
+    },
+    "videos_relation": {
+      "relation": []
+    }
+  }
+}
