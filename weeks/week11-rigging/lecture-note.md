@@ -469,7 +469,11 @@ Blender 5.0에서는 리깅 워크플로우에 몇 가지 개선이 있습니다
 ### 과제 한눈에 보기
 
 - 과제명: 본인 학생 페이지에 업로드
-- 설명: 간단한 캐릭터 메쉬에 Armature를 연결하고 포즈 3가지를 스크린샷으로 제출해요.
+- 설명: 현재 과제는 유지해도 좋지만, Rigify를 넣는다면 필수 조건에 바로 포함하지 않는 것이 좋습니다.
+
+Rigify는 선택 보너스 또는 탐색 항목으로만 둡니다.
+
+이유:
 - 제출 체크:
   - 뼈대 구조 스크린샷 1장 (Edit Mode)
   - 포즈 3가지 스크린샷
@@ -490,8 +494,9 @@ Blender 5.0에서는 리깅 워크플로우에 몇 가지 개선이 있습니다
 
 ### 공식 문서
 
-- [Armatures](https://docs.blender.org/manual/en/latest/animation/armatures/index.html)
-- [Skinning](https://docs.blender.org/manual/en/latest/animation/armatures/skinning/index.html)
-- [Weight Paint](https://docs.blender.org/manual/en/latest/sculpt_paint/weight_paint/index.html)
-- [Pose Mode](https://docs.blender.org/manual/en/latest/animation/armatures/posing/index.html)
+- [Blender Manual — Armatures](https://docs.blender.org/manual/en/latest/animation/armatures/index.html)
+- [Blender Manual — Armature Deform Parent](https://docs.blender.org/manual/en/latest/animation/armatures/skinning/parenting.html)
+- [Blender Manual — Weight Paint](https://docs.blender.org/manual/en/latest/sculpt_paint/weight_paint/index.html)
+- [Blender Manual — Inverse Kinematics](https://docs.blender.org/manual/en/latest/animation/armatures/posing/bone_constraints/inverse_kinematics/introduction.html)
+- [Blender Manual — Rigify](https://docs.blender.org/manual/en/latest/addons/rigging/rigify/index.html)
 <!-- AUTO:CURRICULUM-SYNC:END -->
