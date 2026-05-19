@@ -77,6 +77,46 @@ def _file_content(path: Path) -> str:
     return path.read_text(encoding="utf-8")
 
 
+# Headings whose appearance marks the start of教수자용 보완제안서 / 운영 메모.
+# Any block at or after the first match is excluded from the public block tree.
+INTERNAL_HEADING_PATTERNS = (
+    "보완제안서",
+    "반영 상태",
+    "진행 원칙",
+    "현재 페이지 진단",
+    "권장 수정 방식",
+    "제안 구조",
+    "삭제 또는 축소 후보",
+    "토글 전환 후보",
+    "ShowMe 카드 연결 후보",
+    "시각자료 추가 후보",
+    "공식 문서 팩트체크 후보",
+    "Rigify 추가 제안",
+)
+
+
+def _heading_text(block: dict) -> str:
+    btype = block.get("type", "")
+    if btype not in ("heading_1", "heading_2", "heading_3"):
+        return ""
+    rich = block.get(btype, {}).get("rich_text", []) or []
+    return "".join((rt.get("plain_text") or "") for rt in rich)
+
+
+def _trim_internal_blocks(tree: list[dict]) -> list[dict]:
+    """Truncate block tree at the first heading matching INTERNAL_HEADING_PATTERNS.
+
+    Planning/proposal content kept in Notion (SoT) but hidden from public site.
+    """
+    out: list[dict] = []
+    for block in tree:
+        text = _heading_text(block)
+        if text and any(pat in text for pat in INTERNAL_HEADING_PATTERNS):
+            break
+        out.append(block)
+    return out
+
+
 def _save_block_tree(week_num: int, page_id: str, token: str) -> int:
     """Fetch the full block tree for a week, download Notion-hosted images,
     and persist to course-site/data/notion-blocks/week{N}.json.
@@ -87,6 +127,7 @@ def _save_block_tree(week_num: int, page_id: str, token: str) -> int:
     public_prefix = f"assets/notion-images/week{week_num:02d}"
 
     tree = fetch_block_tree(page_id, token=token)
+    tree = _trim_internal_blocks(tree)
     downloaded = download_block_assets(tree, week_image_dir, public_prefix)
 
     out_path = BLOCKS_DIR / f"week{week_num:02d}.json"
