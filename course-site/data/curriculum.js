@@ -3228,20 +3228,24 @@ const CURRICULUM = [
     ],
     "docs": [
       {
-        "title": "Armatures",
+        "title": "Blender Manual — Armatures",
         "url": "https://docs.blender.org/manual/en/latest/animation/armatures/index.html"
       },
       {
-        "title": "Skinning",
-        "url": "https://docs.blender.org/manual/en/latest/animation/armatures/skinning/index.html"
+        "title": "Blender Manual — Armature Deform Parent",
+        "url": "https://docs.blender.org/manual/en/latest/animation/armatures/skinning/parenting.html"
       },
       {
-        "title": "Weight Paint",
+        "title": "Blender Manual — Weight Paint",
         "url": "https://docs.blender.org/manual/en/latest/sculpt_paint/weight_paint/index.html"
       },
       {
-        "title": "Pose Mode",
-        "url": "https://docs.blender.org/manual/en/latest/animation/armatures/posing/index.html"
+        "title": "Blender Manual — Inverse Kinematics",
+        "url": "https://docs.blender.org/manual/en/latest/animation/armatures/posing/bone_constraints/inverse_kinematics/introduction.html"
+      },
+      {
+        "title": "Blender Manual — Rigify",
+        "url": "https://docs.blender.org/manual/en/latest/addons/rigging/rigify/index.html"
       }
     ],
     "summary": "Armature(뼈대)를 세팅하고 메쉬에 연결해 캐릭터를 움직여요. 마리오네트 인형에 줄을 매다는 거예요."
