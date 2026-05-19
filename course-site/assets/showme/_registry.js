@@ -96,9 +96,15 @@ const SHOWME_REGISTRY = {
   // ── Week 11: Rigging ──
   "armature-basics":        { label: "Armature 이해",           icon: "🦴", week: 11 },
   "weight-paint":           { label: "Weight Paint 이해",       icon: "🖌️", week: 11 },
+  "bone-parent-types":      { label: "Bone Parent 종류",       icon: "🔗", week: 11 },
+  "ik-fk":                  { label: "IK vs FK 이해",          icon: "🦾", week: 11 },
+  "rigify-basics":          { label: "Rigify 자동 리깅",        icon: "🤖", week: 11 },
 
-  // ── Week 12: NLA ──
+  // ── Week 12: NLA & Mixamo ──
   "nla-editor":             { label: "NLA Editor 이해",         icon: "🎬", week: 12 },
+  "mixamo-autorig":         { label: "Mixamo 자동 리깅",        icon: "🎭", week: 12 },
+  "accurig-workflow":       { label: "AccuRIG 자동 리깅",       icon: "⚡", week: 12 },
+  "fbx-export-settings":    { label: "FBX Export 설정",        icon: "📦", week: 12 },
 
   // ── Week 13: Rendering ──
   "render-settings":        { label: "Cycles vs EEVEE",         icon: "🖥️", week: 13 },

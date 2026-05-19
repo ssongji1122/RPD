@@ -3092,7 +3092,8 @@ const CURRICULUM = [
             "detail": "본이 파란색이면 Pose Mode"
           }
         ],
-        "image": "assets/images/week11/mesh-skinning.png"
+        "image": "assets/images/week11/mesh-skinning.png",
+        "showme": "bone-parent-types"
       },
       {
         "title": "Pose Mode로 포즈 잡기",
@@ -3122,7 +3123,11 @@ const CURRICULUM = [
             "detail": "전체 리셋은 A → Alt+R"
           }
         ],
-        "image": "assets/images/week11/pose-mode.png"
+        "image": "assets/images/week11/pose-mode.png",
+        "showme": [
+          "ik-fk",
+          "rigify-basics"
+        ]
       },
       {
         "title": "Weight Paint 수정",
@@ -3291,7 +3296,8 @@ const CURRICULUM = [
             "detail": "Apply Scalings: FBX All"
           }
         ],
-        "image": "assets/images/week12/export-prep.png"
+        "image": "assets/images/week12/export-prep.png",
+        "showme": "fbx-export-settings"
       },
       {
         "title": "Mixamo 자동 리깅",
@@ -3320,7 +3326,11 @@ const CURRICULUM = [
             "detail": ""
           }
         ],
-        "image": "assets/images/week12/mixamo-upload.png"
+        "image": "assets/images/week12/mixamo-upload.png",
+        "showme": [
+          "mixamo-autorig",
+          "accurig-workflow"
+        ]
       },
       {
         "title": "애니메이션 선택 및 임포트",
