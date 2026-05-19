@@ -1,0 +1,99 @@
+{
+  "object": "page",
+  "id": "36454d65-4971-817e-a665-c900d9960073",
+  "properties": {
+    "card_id": {
+      "title": [
+        {
+          "plain_text": "collection-outliner"
+        }
+      ]
+    },
+    "label": {
+      "rich_text": [
+        {
+          "plain_text": "Collection 과 Outliner 이해"
+        }
+      ]
+    },
+    "icon": {
+      "rich_text": [
+        {
+          "plain_text": "folder-tree"
+        }
+      ]
+    },
+    "category": {
+      "select": {
+        "name": "object"
+      }
+    },
+    "week": {
+      "multi_select": [
+        {
+          "name": "3"
+        }
+      ]
+    },
+    "priority": {
+      "select": {
+        "name": "P0"
+      }
+    },
+    "status": {
+      "select": {
+        "name": "published"
+      }
+    },
+    "concept_md": {
+      "rich_text": [
+        {
+          "plain_text": "Collection은 **폴더**처럼 오브젝트를 묶는 단위예요. Outliner는 그 폴더 구조를 보여주는 트리.\n\n로봇처럼 파츠가 많은 모델은 머리/몸통/팔/다리를 Collection으로 분리하면 가시성, 선택 잠금, 일괄 조작이 한결 쉬워져요. 책상 위에 부품을 통 안에 나눠 담는 것과 같아요."
+        }
+      ]
+    },
+    "usage_md": {
+      "rich_text": [
+        {
+          "plain_text": "파츠 수가 많아질 때, 좌우 대칭 작업 중 한쪽만 숨기고 싶을 때, 렌더에서 일부만 제외하고 싶을 때."
+        }
+      ]
+    },
+    "pitfall_md": {
+      "rich_text": [
+        {
+          "plain_text": "Outliner 옆 두 아이콘은 역할이 달라요. **눈 아이콘 = 뷰포트 가시성**, **모니터(카메라) 아이콘 = 렌더 가시성**. 렌더에서만 사라지는 파츠가 있다면 모니터 아이콘이 꺼져 있는 거예요."
+        }
+      ]
+    },
+    "steps_json": {
+      "rich_text": [
+        {
+          "plain_text": "{\"blender_version\": \"5.0\", \"platform_note\": null, \"steps\": [{\"n\": 1, \"action\": \"Outliner 빈 공간 우클릭 → New Collection\", \"hotkey\": null, \"menu\": \"Outliner > New Collection\", \"screenshot\": null, \"note\": null}, {\"n\": 2, \"action\": \"오브젝트 선택 후 Collection으로 이동\", \"hotkey\": \"M\", \"menu\": \"Move to Collection\", \"screenshot\": null, \"note\": null}, {\"n\": 3, \"action\": \"뷰포트에서 Collection 숨기기/보이기\", \"hotkey\": null, \"menu\": \"눈 아이콘 클릭\", \"screenshot\": null, \"note\": \"H로도 토글 가능\"}, {\"n\": 4, \"action\": \"Collection 선택 잠금\", \"hotkey\": null, \"menu\": \"화살표(필터) 아이콘 클릭\", \"screenshot\": null, \"note\": \"실수로 움직이는 것 방지\"}]}"
+        }
+      ]
+    },
+    "widget_id": {
+      "rich_text": []
+    },
+    "blender_version": {
+      "rich_text": [
+        {
+          "plain_text": "5.0"
+        }
+      ]
+    },
+    "official_docs": {
+      "url": "https://docs.blender.org/manual/en/latest/scene_layout/collections/index.html"
+    },
+    "prerequisites": {
+      "relation": []
+    },
+    "related": {
+      "relation": []
+    },
+    "videos_relation": {
+      "relation": []
+    }
+  }
+}

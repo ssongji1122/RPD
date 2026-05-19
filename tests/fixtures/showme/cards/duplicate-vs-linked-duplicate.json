@@ -1,0 +1,99 @@
+{
+  "object": "page",
+  "id": "36554d65-4971-8197-945a-ccd77cc4e56e",
+  "properties": {
+    "card_id": {
+      "title": [
+        {
+          "plain_text": "duplicate-vs-linked-duplicate"
+        }
+      ]
+    },
+    "label": {
+      "rich_text": [
+        {
+          "plain_text": "Duplicate vs Linked Duplicate"
+        }
+      ]
+    },
+    "icon": {
+      "rich_text": [
+        {
+          "plain_text": "copy-plus"
+        }
+      ]
+    },
+    "category": {
+      "select": {
+        "name": "object"
+      }
+    },
+    "week": {
+      "multi_select": [
+        {
+          "name": "4"
+        }
+      ]
+    },
+    "priority": {
+      "select": {
+        "name": "P1"
+      }
+    },
+    "status": {
+      "select": {
+        "name": "draft"
+      }
+    },
+    "concept_md": {
+      "rich_text": [
+        {
+          "plain_text": "**Duplicate (Shift+D)**는 완전 복사 — 원본과 무관한 별개 오브젝트가 생겨요. 한쪽을 수정해도 다른 쪽엔 영향 없어요.\n\n**Linked Duplicate (Alt+D)**는 **같은 메쉬 데이터를 공유하는 인스턴스**. 한쪽 Edit Mode에서 수정하면 모든 복제본이 동시에 변해요. 한 손가락을 만들면 다섯 손가락이 동시에 갱신되는 식."
+        }
+      ]
+    },
+    "usage_md": {
+      "rich_text": [
+        {
+          "plain_text": "같은 모양 부품을 여러 개 배치하면서 **나중에 한 번에 수정**하고 싶으면 Linked Duplicate. 복사 후 **개별적으로 다르게** 변형할 거면 일반 Duplicate."
+        }
+      ]
+    },
+    "pitfall_md": {
+      "rich_text": [
+        {
+          "plain_text": "Linked Duplicate를 만든 뒤 한쪽을 따로 수정하고 싶어졌다면 `U > Object & Data`로 메쉬 데이터 연결을 끊을 수 있어요. 거꾸로 Linked로 만들었는지 알려면 Outliner에서 오브젝트 아래 메쉬 아이콘 옆 숫자(예: `2`)를 확인하세요."
+        }
+      ]
+    },
+    "steps_json": {
+      "rich_text": [
+        {
+          "plain_text": "{\"blender_version\": \"5.0\", \"platform_note\": null, \"steps\": [{\"n\": 1, \"action\": \"오브젝트 선택\", \"hotkey\": null, \"menu\": null, \"screenshot\": null, \"note\": null}, {\"n\": 2, \"action\": \"일반 복제 (독립)\", \"hotkey\": \"Shift + D\", \"menu\": \"Object > Duplicate Objects\", \"screenshot\": null, \"note\": null}, {\"n\": 3, \"action\": \"연결 복제 (메쉬 공유)\", \"hotkey\": \"Alt + D\", \"menu\": \"Object > Duplicate Linked\", \"screenshot\": null, \"note\": null}, {\"n\": 4, \"action\": \"연결 끊기 (필요 시)\", \"hotkey\": \"U\", \"menu\": \"Object > Make Single User > Object & Data\", \"screenshot\": null, \"note\": null}]}"
+        }
+      ]
+    },
+    "widget_id": {
+      "rich_text": []
+    },
+    "blender_version": {
+      "rich_text": [
+        {
+          "plain_text": "5.0"
+        }
+      ]
+    },
+    "official_docs": {
+      "url": "https://docs.blender.org/manual/en/latest/scene_layout/object/editing/duplicate.html"
+    },
+    "prerequisites": {
+      "relation": []
+    },
+    "related": {
+      "relation": []
+    },
+    "videos_relation": {
+      "relation": []
+    }
+  }
+}

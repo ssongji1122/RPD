@@ -91,7 +91,15 @@
     "keyframe-basics": "animation-rigging",
     "graph-editor": "animation-rigging",
     "armature-basics": "animation-rigging",
-    "weight-paint": "animation-rigging"
+    "weight-paint": "animation-rigging",
+    "collection-outliner": "object",
+    "modifier-stack-order": "modifier",
+    "shade-smooth-auto-smooth": "modeling",
+    "merge-by-distance": "edit-mode",
+    "bridge-edge-loops": "edit-mode",
+    "duplicate-vs-linked-duplicate": "object",
+    "face-orientation-normals": "edit-mode",
+    "apply-modifier-vs-keep-procedural": "modifier"
   },
   "categoryMap": {
     "image-reference": "기타",
@@ -250,7 +258,13 @@
       "stageLabel": "레퍼런스 세팅",
       "supplementPriority": "high",
       "visualPattern": "before-after",
-      "keywords": ["reference", "front", "side", "opacity", "background image"],
+      "keywords": [
+        "reference",
+        "front",
+        "side",
+        "opacity",
+        "background image"
+      ],
       "audienceNeed": "정면·측면 레퍼런스가 자꾸 어긋날 때"
     },
     "blender-preferences": {
@@ -259,7 +273,12 @@
       "stageLabel": "환경 설정",
       "supplementPriority": "medium",
       "visualPattern": "comparison",
-      "keywords": ["preferences", "input", "interface", "save startup"],
+      "keywords": [
+        "preferences",
+        "input",
+        "interface",
+        "save startup"
+      ],
       "audienceNeed": "처음 세팅을 왜 바꾸는지 감이 안 올 때"
     },
     "viewport-navigation": {
@@ -273,7 +292,13 @@
           "url": "https://studio.blender.org/training/blender-2-8-fundamentals/interface-overview/"
         }
       ],
-      "keywords": ["orbit", "pan", "zoom", "numpad", "camera control"],
+      "keywords": [
+        "orbit",
+        "pan",
+        "zoom",
+        "numpad",
+        "camera control"
+      ],
       "audienceNeed": "카메라를 움직이는 건지 오브젝트를 움직이는 건지 헷갈릴 때"
     },
     "transform-grs": {
@@ -284,32 +309,64 @@
           "url": "https://studio.blender.org/training/blender-2-8-fundamentals/select-transform/"
         }
       ],
-      "keywords": ["grab", "rotate", "scale", "axis", "transform"],
+      "keywords": [
+        "grab",
+        "rotate",
+        "scale",
+        "axis",
+        "transform"
+      ],
       "audienceNeed": "G/R/S는 외웠는데 언제 어떤 축으로 움직여야 할지 헷갈릴 때"
     },
     "transform-orientation": {
       "confusionLabel": "축 기준",
-      "keywords": ["global", "local", "normal", "orientation"],
+      "keywords": [
+        "global",
+        "local",
+        "normal",
+        "orientation"
+      ],
       "audienceNeed": "왜 같은 이동인데 축 방향이 달라지는지 헷갈릴 때"
     },
     "pivot-point": {
       "confusionLabel": "회전 기준점",
-      "keywords": ["pivot", "median point", "individual origins", "3d cursor"],
+      "keywords": [
+        "pivot",
+        "median point",
+        "individual origins",
+        "3d cursor"
+      ],
       "audienceNeed": "회전 중심이 왜 자꾸 바뀌는지 이해가 안 될 때"
     },
     "snap": {
       "confusionLabel": "정렬 기준",
-      "keywords": ["snap", "increment", "vertex", "face", "magnet"],
+      "keywords": [
+        "snap",
+        "increment",
+        "vertex",
+        "face",
+        "magnet"
+      ],
       "audienceNeed": "스냅이 켜져 있는데 어디에 붙는지 모를 때"
     },
     "viewport-shading": {
       "confusionLabel": "표시 모드",
-      "keywords": ["wireframe", "solid", "material preview", "rendered"],
+      "keywords": [
+        "wireframe",
+        "solid",
+        "material preview",
+        "rendered"
+      ],
       "audienceNeed": "같은 모델인데 보기 모드마다 왜 다르게 보이는지 헷갈릴 때"
     },
     "xray-opacity": {
       "confusionLabel": "가시성과 선택",
-      "keywords": ["x-ray", "opacity", "through", "selection"],
+      "keywords": [
+        "x-ray",
+        "opacity",
+        "through",
+        "selection"
+      ],
       "audienceNeed": "가려진 면을 선택해야 하는데 화면이 너무 복잡할 때"
     },
     "edit-mode": {
@@ -324,8 +381,15 @@
           "url": "https://studio.blender.org/training/blender-2-8-fundamentals/mesh-selection-mode/"
         }
       ],
-      "keywords": ["object mode", "vertex", "edge", "face"],
-      "prerequisites": ["viewport-navigation"],
+      "keywords": [
+        "object mode",
+        "vertex",
+        "edge",
+        "face"
+      ],
+      "prerequisites": [
+        "viewport-navigation"
+      ],
       "audienceNeed": "같은 큐브인데 어떤 때는 통째로, 어떤 때는 점으로 잡히는지 헷갈릴 때"
     },
     "edit-mode-tools": {
@@ -344,8 +408,15 @@
           "url": "https://studio.blender.org/training/blender-2-8-fundamentals/mesh-selection-mode/"
         }
       ],
-      "keywords": ["extrude", "loop cut", "inset", "bevel"],
-      "prerequisites": ["edit-mode"],
+      "keywords": [
+        "extrude",
+        "loop cut",
+        "inset",
+        "bevel"
+      ],
+      "prerequisites": [
+        "edit-mode"
+      ],
       "audienceNeed": "어떤 편집 도구를 먼저 써야 하는지 감이 안 잡힐 때"
     },
     "extrude": {
@@ -356,8 +427,15 @@
           "url": "https://studio.blender.org/training/blender-2-8-fundamentals/extrude/"
         }
       ],
-      "keywords": ["extrude", "connected geometry", "along normals", "manifold"],
-      "prerequisites": ["edit-mode"],
+      "keywords": [
+        "extrude",
+        "connected geometry",
+        "along normals",
+        "manifold"
+      ],
+      "prerequisites": [
+        "edit-mode"
+      ],
       "audienceNeed": "새 오브젝트를 만드는 건지 기존 메시를 늘리는 건지 헷갈릴 때"
     },
     "loop-cut": {
@@ -368,14 +446,28 @@
           "url": "https://studio.blender.org/training/blender-2-8-fundamentals/loop-cut/"
         }
       ],
-      "keywords": ["loop cut", "ctrl+r", "edge flow", "segments"],
-      "prerequisites": ["edit-mode"],
+      "keywords": [
+        "loop cut",
+        "ctrl+r",
+        "edge flow",
+        "segments"
+      ],
+      "prerequisites": [
+        "edit-mode"
+      ],
       "audienceNeed": "선 하나 추가하는데 왜 형태가 더 잘 잡히는지 감이 안 올 때"
     },
     "inset": {
       "confusionLabel": "안쪽 오프셋",
-      "keywords": ["inset", "face border", "panel", "offset"],
-      "prerequisites": ["extrude"],
+      "keywords": [
+        "inset",
+        "face border",
+        "panel",
+        "offset"
+      ],
+      "prerequisites": [
+        "extrude"
+      ],
       "audienceNeed": "안쪽 패널을 만들고 싶은데 계속 전체 크기만 줄어들 때"
     },
     "bevel-tool": {
@@ -386,8 +478,15 @@
           "url": "https://studio.blender.org/training/blender-2-8-fundamentals/bevel-tool/"
         }
       ],
-      "keywords": ["bevel tool", "width", "segments", "corner"],
-      "prerequisites": ["edit-mode"],
+      "keywords": [
+        "bevel tool",
+        "width",
+        "segments",
+        "corner"
+      ],
+      "prerequisites": [
+        "edit-mode"
+      ],
       "audienceNeed": "모서리를 둥글리는 건 알겠는데 왜 세그먼트 수가 중요한지 헷갈릴 때"
     },
     "mirror-modifier": {
@@ -398,8 +497,15 @@
           "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modifiers/"
         }
       ],
-      "keywords": ["mirror", "origin", "axis", "clipping"],
-      "prerequisites": ["origin-vs-3dcursor"],
+      "keywords": [
+        "mirror",
+        "origin",
+        "axis",
+        "clipping"
+      ],
+      "prerequisites": [
+        "origin-vs-3dcursor"
+      ],
       "audienceNeed": "한쪽만 고쳤는데 반대쪽이 따라오지 않거나 위치가 어긋날 때"
     },
     "mirror-workflow": {
@@ -411,8 +517,15 @@
           "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modifiers/"
         }
       ],
-      "keywords": ["mirror workflow", "apply", "clipping", "symmetry"],
-      "prerequisites": ["mirror-modifier"],
+      "keywords": [
+        "mirror workflow",
+        "apply",
+        "clipping",
+        "symmetry"
+      ],
+      "prerequisites": [
+        "mirror-modifier"
+      ],
       "audienceNeed": "Mirror는 켰는데 모델링 순서를 어떻게 가져가야 할지 막막할 때"
     },
     "mirror-origin-mode": {
@@ -423,8 +536,16 @@
           "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modifiers/"
         }
       ],
-      "keywords": ["mirror", "origin", "object mode", "edit mode"],
-      "prerequisites": ["mirror-modifier", "origin-vs-3dcursor"],
+      "keywords": [
+        "mirror",
+        "origin",
+        "object mode",
+        "edit mode"
+      ],
+      "prerequisites": [
+        "mirror-modifier",
+        "origin-vs-3dcursor"
+      ],
       "audienceNeed": "Mirror 문제인지 Origin 문제인지 모드 문제인지 구분이 안 될 때"
     },
     "subdivision-surface": {
@@ -435,8 +556,15 @@
           "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modifiers/"
         }
       ],
-      "keywords": ["subdivision", "support loop", "smooth", "cage"],
-      "prerequisites": ["loop-cut"],
+      "keywords": [
+        "subdivision",
+        "support loop",
+        "smooth",
+        "cage"
+      ],
+      "prerequisites": [
+        "loop-cut"
+      ],
       "audienceNeed": "부드럽게 만들었는데 왜 모서리가 다 죽는지 이해가 안 될 때"
     },
     "boolean-modifier": {
@@ -447,27 +575,55 @@
           "url": "https://studio.blender.org/training/blender-2-8-fundamentals/modifiers/"
         }
       ],
-      "keywords": ["boolean", "difference", "union", "intersect"],
-      "prerequisites": ["transform-apply"],
+      "keywords": [
+        "boolean",
+        "difference",
+        "union",
+        "intersect"
+      ],
+      "prerequisites": [
+        "transform-apply"
+      ],
       "audienceNeed": "컷은 되는데 메시가 지저분해지는 이유를 알고 싶을 때"
     },
     "weighted-normal": {
       "confusionLabel": "셰이딩 보정",
       "visualPattern": "comparison",
-      "keywords": ["weighted normal", "shading", "normal", "hard surface"],
-      "prerequisites": ["bevel-modifier"],
+      "keywords": [
+        "weighted normal",
+        "shading",
+        "normal",
+        "hard surface"
+      ],
+      "prerequisites": [
+        "bevel-modifier"
+      ],
       "audienceNeed": "모델은 멀쩡한데 빛이 이상하게 깨져 보일 때"
     },
     "transform-apply": {
       "confusionLabel": "겉보기와 실제 데이터",
-      "keywords": ["apply scale", "rotation", "data", "ctrl+a"],
-      "prerequisites": ["transform-grs"],
+      "keywords": [
+        "apply scale",
+        "rotation",
+        "data",
+        "ctrl+a"
+      ],
+      "prerequisites": [
+        "transform-grs"
+      ],
       "audienceNeed": "눈에 보이는 크기는 맞는데 modifier나 physics가 이상하게 먹을 때"
     },
     "simple-deform": {
       "confusionLabel": "축과 영향 범위",
-      "keywords": ["bend", "twist", "taper", "simple deform"],
-      "prerequisites": ["transform-apply"],
+      "keywords": [
+        "bend",
+        "twist",
+        "taper",
+        "simple deform"
+      ],
+      "prerequisites": [
+        "transform-apply"
+      ],
       "audienceNeed": "휘어야 할 축을 바꿨는데 결과가 계속 뒤틀릴 때"
     },
     "origin-vs-3dcursor": {
@@ -476,7 +632,12 @@
       "stageLabel": "기준점 이해",
       "supplementPriority": "high",
       "visualPattern": "interactive-canvas",
-      "keywords": ["origin", "3d cursor", "pivot", "spawn point"],
+      "keywords": [
+        "origin",
+        "3d cursor",
+        "pivot",
+        "spawn point"
+      ],
       "audienceNeed": "오브젝트 기준점과 커서 기준점을 같은 걸로 느끼고 있을 때"
     },
     "material-basics": {
@@ -486,43 +647,93 @@
           "url": "https://studio.blender.org/training/blender-2-8-fundamentals/materials-and-shading/"
         }
       ],
-      "keywords": ["material slot", "base color", "viewport material"],
+      "keywords": [
+        "material slot",
+        "base color",
+        "viewport material"
+      ],
       "audienceNeed": "색을 바꿨는데 왜 오브젝트 전체에 안 들어가거나 렌더와 다를 때"
     },
     "principled-bsdf": {
       "confusionLabel": "입력과 결과",
-      "keywords": ["principled", "roughness", "metallic", "specular"],
-      "prerequisites": ["material-basics"],
+      "keywords": [
+        "principled",
+        "roughness",
+        "metallic",
+        "specular"
+      ],
+      "prerequisites": [
+        "material-basics"
+      ],
       "audienceNeed": "값을 바꾸면 어떤 질감이 바뀌는지 감이 안 잡힐 때"
     },
     "shader-editor": {
       "confusionLabel": "노드 연결",
-      "keywords": ["shader editor", "node", "socket", "link"],
-      "prerequisites": ["material-basics"],
+      "keywords": [
+        "shader editor",
+        "node",
+        "socket",
+        "link"
+      ],
+      "prerequisites": [
+        "material-basics"
+      ],
       "audienceNeed": "노드가 많은데 어디서부터 읽어야 할지 막막할 때"
     },
     "color-ramp": {
       "confusionLabel": "색상 매핑",
-      "keywords": ["color ramp", "gradient", "interpolation", "color stop"],
-      "prerequisites": ["shader-editor"],
+      "keywords": [
+        "color ramp",
+        "gradient",
+        "interpolation",
+        "color stop"
+      ],
+      "prerequisites": [
+        "shader-editor"
+      ],
       "audienceNeed": "흑백 데이터를 원하는 색상 그라데이션으로 바꾸고 싶을 때"
     },
     "noise-texture": {
       "confusionLabel": "절차적 패턴",
-      "keywords": ["noise", "procedural", "scale", "detail", "perlin"],
-      "prerequisites": ["shader-editor"],
+      "keywords": [
+        "noise",
+        "procedural",
+        "scale",
+        "detail",
+        "perlin"
+      ],
+      "prerequisites": [
+        "shader-editor"
+      ],
       "audienceNeed": "이미지 파일 없이 자연스러운 무늬를 만들고 싶을 때"
     },
     "texture-types": {
       "confusionLabel": "텍스처 구분",
-      "keywords": ["procedural", "image texture", "texture types", "pbr"],
-      "prerequisites": ["shader-editor"],
+      "keywords": [
+        "procedural",
+        "image texture",
+        "texture types",
+        "pbr"
+      ],
+      "prerequisites": [
+        "shader-editor"
+      ],
       "audienceNeed": "Procedural과 Image Texture 중 뭘 써야 할지 모를 때"
     },
     "image-texture-pbr": {
       "confusionLabel": "PBR 연결",
-      "keywords": ["image texture", "pbr", "normal map", "roughness map", "diffuse", "non-color"],
-      "prerequisites": ["shader-editor", "texture-types"],
+      "keywords": [
+        "image texture",
+        "pbr",
+        "normal map",
+        "roughness map",
+        "diffuse",
+        "non-color"
+      ],
+      "prerequisites": [
+        "shader-editor",
+        "texture-types"
+      ],
       "audienceNeed": "PBR 맵 3종을 Shader Editor에서 어떻게 연결하는지 모를 때"
     },
     "uv-unwrapping": {
@@ -533,13 +744,25 @@
           "url": "https://studio.blender.org/training/blender-2-8-fundamentals/uv-unwrapping/"
         }
       ],
-      "keywords": ["uv", "unwrap", "seam", "island"],
+      "keywords": [
+        "uv",
+        "unwrap",
+        "seam",
+        "island"
+      ],
       "audienceNeed": "3D 표면을 왜 먼저 자르고 펼쳐야 하는지 이해가 안 될 때"
     },
     "uv-editor": {
       "confusionLabel": "섬 선택과 배치",
-      "keywords": ["uv editor", "island", "pack islands", "scale"],
-      "prerequisites": ["uv-unwrapping"],
+      "keywords": [
+        "uv editor",
+        "island",
+        "pack islands",
+        "scale"
+      ],
+      "prerequisites": [
+        "uv-unwrapping"
+      ],
       "audienceNeed": "UV는 펼쳤는데 이제 어디를 어떻게 만져야 하는지 헷갈릴 때"
     },
     "light-types": {
@@ -550,7 +773,12 @@
           "url": "https://studio.blender.org/training/blender-2-8-fundamentals/lighting/"
         }
       ],
-      "keywords": ["point", "sun", "spot", "area light"],
+      "keywords": [
+        "point",
+        "sun",
+        "spot",
+        "area light"
+      ],
       "audienceNeed": "빛을 추가했는데 종류별로 결과가 왜 달라지는지 감이 안 올 때"
     },
     "hdri-lighting": {
@@ -561,8 +789,15 @@
           "url": "https://studio.blender.org/training/blender-2-8-fundamentals/lighting/"
         }
       ],
-      "keywords": ["hdri", "world", "environment texture", "lighting"],
-      "prerequisites": ["light-types"],
+      "keywords": [
+        "hdri",
+        "world",
+        "environment texture",
+        "lighting"
+      ],
+      "prerequisites": [
+        "light-types"
+      ],
       "audienceNeed": "램프를 안 놔도 왜 장면이 밝아지는지 헷갈릴 때"
     },
     "three-point-light": {
@@ -573,8 +808,15 @@
           "url": "https://studio.blender.org/training/blender-2-8-fundamentals/lighting/"
         }
       ],
-      "keywords": ["key light", "fill light", "rim light", "portrait lighting"],
-      "prerequisites": ["light-types"],
+      "keywords": [
+        "key light",
+        "fill light",
+        "rim light",
+        "portrait lighting"
+      ],
+      "prerequisites": [
+        "light-types"
+      ],
       "audienceNeed": "조명이 세 개인 건 알겠는데 각각 무슨 역할인지 헷갈릴 때"
     },
     "mood-lighting": {
@@ -585,8 +827,16 @@
           "url": "https://studio.blender.org/training/blender-2-8-fundamentals/lighting/"
         }
       ],
-      "keywords": ["color temperature", "mood", "warm light", "cool light", "kelvin"],
-      "prerequisites": ["three-point-light"],
+      "keywords": [
+        "color temperature",
+        "mood",
+        "warm light",
+        "cool light",
+        "kelvin"
+      ],
+      "prerequisites": [
+        "three-point-light"
+      ],
       "audienceNeed": "조명을 켰는데 분위기가 의도대로 안 잡히고 어떤 색을 써야 할지 막막할 때"
     },
     "keyframe-basics": {
@@ -597,7 +847,12 @@
           "url": "https://studio.blender.org/training/blender-2-8-fundamentals/animation/"
         }
       ],
-      "keywords": ["keyframe", "timeline", "insert keyframe", "auto key"],
+      "keywords": [
+        "keyframe",
+        "timeline",
+        "insert keyframe",
+        "auto key"
+      ],
       "audienceNeed": "움직임을 그리는 게 아니라 상태를 찍는다는 감각이 없을 때"
     },
     "graph-editor": {
@@ -608,8 +863,15 @@
           "url": "https://studio.blender.org/training/blender-2-8-fundamentals/animation/"
         }
       ],
-      "keywords": ["graph editor", "f-curve", "ease in", "ease out"],
-      "prerequisites": ["keyframe-basics"],
+      "keywords": [
+        "graph editor",
+        "f-curve",
+        "ease in",
+        "ease out"
+      ],
+      "prerequisites": [
+        "keyframe-basics"
+      ],
       "audienceNeed": "애니메이션은 들어갔는데 왜 움직임이 딱딱한지 모르겠을 때"
     },
     "armature-basics": {
@@ -620,7 +882,12 @@
           "url": "https://studio.blender.org/training/blender-2-8-fundamentals/armature-and-rigging/"
         }
       ],
-      "keywords": ["armature", "bone", "parent", "pose mode"],
+      "keywords": [
+        "armature",
+        "bone",
+        "parent",
+        "pose mode"
+      ],
       "audienceNeed": "본을 움직이는데 메시가 왜 안 따라오는지 헷갈릴 때"
     },
     "weight-paint": {
@@ -631,8 +898,15 @@
           "url": "https://studio.blender.org/training/blender-2-8-fundamentals/armature-and-rigging/"
         }
       ],
-      "keywords": ["weight paint", "deform", "vertex group", "influence"],
-      "prerequisites": ["armature-basics"],
+      "keywords": [
+        "weight paint",
+        "deform",
+        "vertex group",
+        "influence"
+      ],
+      "prerequisites": [
+        "armature-basics"
+      ],
       "audienceNeed": "메시는 따라오는데 이상하게 찢어지거나 같이 말려 들어갈 때"
     },
     "render-settings": {
@@ -643,7 +917,12 @@
           "url": "https://studio.blender.org/training/blender-2-8-fundamentals/rendering/"
         }
       ],
-      "keywords": ["cycles", "eevee", "samples", "render settings"],
+      "keywords": [
+        "cycles",
+        "eevee",
+        "samples",
+        "render settings"
+      ],
       "audienceNeed": "같은 씬인데 렌더 엔진마다 왜 분위기가 달라지는지 헷갈릴 때"
     },
     "compositing-basics": {
@@ -654,8 +933,15 @@
           "url": "https://studio.blender.org/training/blender-2-8-fundamentals/rendering/"
         }
       ],
-      "keywords": ["compositing", "glare", "color balance", "nodes"],
-      "prerequisites": ["render-settings"],
+      "keywords": [
+        "compositing",
+        "glare",
+        "color balance",
+        "nodes"
+      ],
+      "prerequisites": [
+        "render-settings"
+      ],
       "audienceNeed": "렌더 후에 또 왜 노드를 만지는지 이해가 안 될 때"
     },
     "sculpt-basics": {
@@ -665,7 +951,12 @@
           "url": "https://studio.blender.org/training/sculpting-in-blender/introduction/"
         }
       ],
-      "keywords": ["sculpt", "brush", "dyntopo", "voxel remesh"],
+      "keywords": [
+        "sculpt",
+        "brush",
+        "dyntopo",
+        "voxel remesh"
+      ],
       "audienceNeed": "브러시로 만지는 감각이 아직 낯설고 어디서부터 시작해야 할지 막막할 때"
     },
     "sculpt-brushes": {
@@ -675,16 +966,37 @@
           "url": "https://studio.blender.org/training/sculpting-in-blender/brushes/"
         }
       ],
-      "keywords": ["clay strips", "crease", "inflate", "snake hook", "brush comparison"],
-      "prerequisites": ["sculpt-basics"],
+      "keywords": [
+        "clay strips",
+        "crease",
+        "inflate",
+        "snake hook",
+        "brush comparison"
+      ],
+      "prerequisites": [
+        "sculpt-basics"
+      ],
       "audienceNeed": "기본 3개는 써봤는데 다른 브러시들은 뭐가 다른 건지 감이 안 올 때"
     },
     "ai-prompt-design": {
-      "keywords": ["prompt", "AI", "keyword", "moodboard", "text to 3d"],
+      "keywords": [
+        "prompt",
+        "AI",
+        "keyword",
+        "moodboard",
+        "text to 3d"
+      ],
       "audienceNeed": "AI한테 뭘 어떻게 써야 내가 원하는 모양이 나오는지 모르겠을 때"
     },
     "ai-3d-generation": {
-      "keywords": ["meshy", "tripo", "AI 3D", "glb", "import", "mesh cleaner"],
+      "keywords": [
+        "meshy",
+        "tripo",
+        "AI 3D",
+        "glb",
+        "import",
+        "mesh cleaner"
+      ],
       "audienceNeed": "Meshy/Tripo에서 만들고 Blender로 가져오는 흐름이 안 잡힐 때"
     },
     "array-modifier": {
@@ -817,7 +1129,12 @@
     },
     "bevel-tool-vs-modifier": {
       "confusionLabel": "직접 편집과 비파괴",
-      "keywords": ["bevel tool", "bevel modifier", "destructive", "non-destructive"],
+      "keywords": [
+        "bevel tool",
+        "bevel modifier",
+        "destructive",
+        "non-destructive"
+      ],
       "audienceNeed": "같은 베벨인데 툴과 모디파이어를 언제 나눠 써야 할지 헷갈릴 때"
     },
     "poly-circle": {
@@ -825,7 +1142,12 @@
       "confusionLabel": "저폴리 원",
       "stageLabel": "기초 형태",
       "supplementPriority": "medium",
-      "keywords": ["circle", "cylinder", "low poly", "segments"],
+      "keywords": [
+        "circle",
+        "cylinder",
+        "low poly",
+        "segments"
+      ],
       "audienceNeed": "원을 꼭 매끈하게만 만들 필요가 없는 이유를 이해하고 싶을 때"
     },
     "box-rounding": {
@@ -833,7 +1155,12 @@
       "confusionLabel": "모서리 라운딩",
       "stageLabel": "하드서피스 기초",
       "supplementPriority": "medium",
-      "keywords": ["box rounding", "bevel", "support loop", "corner"],
+      "keywords": [
+        "box rounding",
+        "bevel",
+        "support loop",
+        "corner"
+      ],
       "audienceNeed": "딱딱한 박스를 제품처럼 보이게 만드는 핵심이 뭔지 감이 안 올 때"
     }
   }
