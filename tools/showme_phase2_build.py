@@ -139,7 +139,7 @@ CARDS = [
                 {"n": 4, "action": "권장 순서: Mirror → Boolean → Subdivision → Bevel → Weighted Normal", "hotkey": None, "menu": None, "screenshot": None, "note": "Apply 타이밍은 가장 마지막"},
             ],
         }, ensure_ascii=False),
-        widget_id="",
+        widget_id="modifier-stack-order",
         official_docs="https://docs.blender.org/manual/en/latest/modeling/modifiers/introduction.html#the-modifier-stack",
     ),
     _make_page(
@@ -173,7 +173,7 @@ CARDS = [
                 {"n": 4, "action": "Auto Smooth 토글 → Angle 입력", "hotkey": None, "menu": None, "screenshot": None, "note": "보통 30°로 시작"},
             ],
         }, ensure_ascii=False),
-        widget_id="",
+        widget_id="shade-smooth-auto-smooth",
         official_docs="https://docs.blender.org/manual/en/latest/modeling/meshes/editing/mesh/normals.html#shade-smooth-flat",
     ),
     _make_page(
