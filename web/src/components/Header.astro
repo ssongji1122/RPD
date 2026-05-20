@@ -1,0 +1,75 @@
+---
+const pathname = Astro.url.pathname;
+const isActive = (href: string) =>
+  href === '/' ? pathname === '/' : pathname.startsWith(href);
+
+const links = [
+  { href: '/syllabus', label: 'syllabus' },
+  { href: '/modules', label: 'modules' },
+  { href: '/resources', label: 'resources' },
+];
+---
+
+<header>
+  <div class="wrap header-inner">
+    <a href="/" class="brand">
+      <span class="brand-main">rpd</span>
+      <span class="brand-sub">a studio.soluta series</span>
+    </a>
+    <nav>
+      {links.map((l) => (
+        <a href={l.href} class:list={[{ active: isActive(l.href) }]}>
+          {l.label}
+        </a>
+      ))}
+    </nav>
+  </div>
+</header>
+
+<style>
+  header {
+    border-bottom: 1px solid var(--c-line);
+    background: var(--c-bg);
+    position: sticky;
+    top: 0;
+    z-index: var(--z-sticky);
+  }
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+  }
+  .brand {
+    display: flex;
+    align-items: baseline;
+    gap: var(--s-2);
+  }
+  .brand-main {
+    font-family: var(--f-mono);
+    font-size: var(--fs-sm);
+    font-weight: var(--w-medium);
+    color: var(--c-ink);
+    letter-spacing: 0.02em;
+  }
+  .brand-sub {
+    font-family: var(--f-mono);
+    font-size: var(--fs-2xs);
+    color: var(--c-ink-3);
+    letter-spacing: var(--ls-mono);
+  }
+  nav { display: flex; gap: var(--s-4); }
+  nav a {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    color: var(--c-ink-2);
+    transition: color var(--t) var(--ease);
+  }
+  nav a:hover { color: var(--c-ink); opacity: 1; }
+  nav a.active { color: var(--c-ink); }
+  @media (max-width: 560px) {
+    .brand-sub { display: none; }
+    nav { gap: var(--s-3); }
+  }
+</style>
