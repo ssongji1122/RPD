@@ -22,7 +22,8 @@
 
 ```
 RPD/
-├── course-site/      # GitHub Pages 학습 허브
+├── course-site/      # GitHub Pages 학습 허브 (바닐라 HTML, 현행)
+├── web/              # Astro 후속 사이트 (rpd.soluta.studio, course-site 대체 예정)
 ├── 2026_RPD_01/      # 1학기 운영 자료
 ├── 2026_RPD_02/      # (예비)
 ├── Blender_2026/     # Blender 실습 파일
@@ -45,6 +46,11 @@ RPD/
 npx playwright test
 
 # (course-site는 GitHub Pages 자동 배포)
+
+# Astro 후속 사이트 (web/)
+cd web && npm install && npm run dev    # localhost:4321
+cd web && npm run build                  # dist/ 생성
+# 배포: rpd.soluta.studio, GitHub Actions wiring 필요 (현재 미연결)
 ```
 
 ## Design System
@@ -79,24 +85,30 @@ npx playwright test
 ## Knowledge Pointers
 
 <!-- BEGIN:WIKI -->
-_last sync: 2026-05-12_
+_last sync: 2026-05-20_
 
 - [[agents-md-sst]] — AGENTS.md SSoT 전략 (symlink, .cursorrules deprecated) | 2026-05-06
 - [[gemini-cli-agents-md]] — Gemini CLI context.fileName 설정 | 2026-05-06
 - [[sync-wiki-pipeline]] — Obsidian→AGENTS.md 자동 주입 파이프라인 | 2026-05-06
 - [[agent-init-template]] — 프로젝트 멀티 에이전트 초기화 자동화 | 2026-05-06
-- [[gstack-ship-workflow-notes]] — /ship 워크플로우 운영 노트 (pre-commit hook, 장기 브랜치) | 2026-05-11
-- [[creative-engine-score-gate]] — Creative Engine P4-P6 점수 게이트 아키텍처·버그 이력 | 2026-05-11
+- [[http-status-codes]] — HTTP 상태 코드 레퍼런스 (2xx~5xx, 실무 처리 패턴) | 2026-05-12
 - [[ai-automation-5mode-policy]] — AI 자동화 5-mode 정책 (₩22,029 사고 후 도입) | 2026-05-11
-- [[vitest-fork-pool-pitfall]] — vitest pool:forks + jest-dom 초기화 pitfall | 2026-05-11
-- [[prompt-upgrade-8-techniques]] _(draft)_ — AI 프롬프트 8기법 + 만능 템플릿 (맥락>페르소나, FewShot, CoT) | 2026-05-11
+- [[gstack-ship-workflow-notes]] — /ship 워크플로우 운영 노트 (pre-commit hook, 장기 브랜치) | 2026-05-11
+- [[karpathy-llm-wiki-pattern]] — Karpathy LLM Wiki 패턴 + 1인 사업가 필터 (5도메인 재설계 출처) | 2026-05-13
 - [[2026-W20-lint-report]] — 2026-05-11 W20 리포트 (격차 6개, draft 4개)
+- [[creative-engine-score-gate]] — Creative Engine P4-P6 점수 게이트 아키텍처·버그 이력 | 2026-05-11
+- [[vitest-fork-pool-pitfall]] — vitest pool:forks + jest-dom 초기화 pitfall (`frontend/v0-friendspick`) | 2026-05-11
+- [[prompt-upgrade-8-techniques]] — AI 프롬프트 8기법 + 만능 템플릿 (CGAFC 5요소, 8개 복사 가능 템플릿) | M2 | 2026-05-13
+- 2026-05-13: **도메인 재설계** — Karpathy LLM Wiki 패턴 + ssonji 1인 사업가 필터. wiki/concepts + wiki/tools → wiki/00_meta로 흡수. 5개 도메인 분할 + 도메인별 `_schema.md` 작성. SCHEMA.md에 도메인 라우팅 트리 추가. wiki-promote.sh 도메인 인식.
+- 2026-05-12: wiki/concepts/http-status-codes 추가
+- 2026-05-11: W20 lint 리포트, concepts/tools 4개 ingest
+- 2026-05-06: vault bootstrap (SCHEMA.md, _index.md, log.md, tools 4개)
 <!-- END:WIKI -->
 
 ## Recent Decisions
 
 <!-- BEGIN:DECISIONS -->
-_last sync: 2026-05-12_
+_last sync: 2026-05-20_
 
 | 2026-03-23 | Obsidian vault 도입 (사람용) + memory/ 유지 (기계용) | ssonji가 직접 memory/ 파일을 편집하지 않음. Claude가 관리하는 memory/와 ssonji가 탐색하는 vault를 분리 | 전체 |
 | 2026-03-09 | 자료방 구버전을 교수자 페이지 하위로 이동 | 삭제 대신 보존. 학생 메인에서는 제거하되 참조 가능하게 | RPD |

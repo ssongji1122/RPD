@@ -1,0 +1,79 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { syllabus } from '../data/syllabus';
+import { modules } from '../data/modules';
+
+const typeLabel = {
+  lecture: '강의',
+  workshop: '실습',
+  review: '리뷰',
+  project: '프로젝트',
+} as const;
+---
+
+<Layout title="강의 일정 — rpd" description="rpd 15주 강의 일정">
+  <section class="wrap section">
+    <h1>강의 일정</h1>
+    <p class="lead">2026학년도 · 15주 · 인하대학교</p>
+
+    <ul class="syllabus-list">
+      {syllabus.map((w) => {
+        const mod = w.module ? modules.find((m) => m.id === w.module) : null;
+        return (
+          <li class={`week-item type-${w.type}`}>
+            <span class="week-no meta">{w.week}</span>
+            <div class="week-body">
+              <div class="week-head">
+                <strong class="week-title">{w.title}</strong>
+                <span class="type-badge eyebrow">{typeLabel[w.type]}</span>
+              </div>
+              <p class="week-desc">{w.description}</p>
+              {mod && (
+                <a href={`/modules/${mod.id}`} class="module-link meta">
+                  {mod.label} — {mod.title} →
+                </a>
+              )}
+            </div>
+          </li>
+        );
+      })}
+    </ul>
+  </section>
+</Layout>
+
+<style>
+  h1 { margin-bottom: var(--s-2); }
+  .lead { color: var(--c-ink-2); margin-bottom: var(--s-6); }
+
+  .syllabus-list { border-top: var(--border); }
+  .week-item {
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    gap: var(--s-4);
+    padding-block: var(--s-4);
+    border-bottom: var(--border);
+  }
+  .week-no { padding-top: 2px; }
+  .week-head {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    margin-bottom: var(--s-1);
+    flex-wrap: wrap;
+  }
+  .week-title { font-size: var(--fs-base); font-weight: var(--w-medium); }
+  .week-desc { font-size: var(--fs-sm); color: var(--c-ink-2); }
+  .module-link {
+    display: inline-block;
+    margin-top: var(--s-2);
+    color: var(--c-accent);
+    letter-spacing: var(--ls-mono);
+  }
+  .type-badge {
+    padding: 2px var(--s-2);
+    background: var(--c-bg-2);
+    border-radius: var(--r-pill);
+  }
+  .type-review .type-badge,
+  .type-project .type-badge { background: color-mix(in srgb, var(--c-accent) 12%, transparent); }
+</style>
