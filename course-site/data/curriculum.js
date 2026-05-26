@@ -3253,7 +3253,7 @@ const CURRICULUM = [
   {
     "week": 12,
     "status": "done",
-    "title": "AI 활용 리깅 (Mixamo)",
+    "title": "Week 12: AI 활용 리깅 (Mixamo)",
     "subtitle": "Mixamo 자동 리깅 · FBX 워크플로우 · NLA",
     "duration": "~3시간",
     "topics": [
