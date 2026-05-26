@@ -2951,9 +2951,15 @@
       }
     ],
     "assignment": {
-      "title": "본인 학생 페이지에 업로드",
-      "description": "Mixamo로 리깅된 캐릭터에 애니메이션 2가지 이상을 적용해요.",
-      "checklist": []
+      "title": "NLA의 “클립 조립” 감각을 빨리 잡을 수 있어요.",
+      "description": "조합 예시:\n\n본인 학생 페이지에 업로드",
+      "checklist": [
+        "Action 이름을 Idle / Walk / Run / Wave처럼 명확히 바꿨는가?",
+        "Push Down으로 모두 Strip화했는가?",
+        "전환이 어색하면 Blend In/Out을 5~10프레임 범위에서 조정했는가?",
+        "“끝난 뒤에도 포즈가 남는 느낌”이면 Extrapolation을 Nothing으로 바꿔봤는가?",
+        "겹침/레이어링이 필요하면 Track을 분리했는가?"
+      ]
     },
     "mistakes": [
       "FBX 임포트가 회전됨 → Import 설정에서 Manual Orientation, Forward: -Z, Up: Y",
