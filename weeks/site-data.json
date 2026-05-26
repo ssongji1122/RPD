@@ -3426,11 +3426,22 @@
       ]
     },
     "mistakes": [
-      "FBX 임포트가 회전됨 → Import 설정에서 Manual Orientation, Forward: -Z, Up: Y",
-      "메쉬가 너무 큼/작음 → Import 시 Scale 조절 또는 Ctrl+A",
-      "Mixamo 업로드 실패 → 메쉬에 구멍이나 뒤집힌 법선 확인 (Shift+N)",
-      "애니메이션이 슬로우 모션 → Frame Rate가 24fps와 맞는지 확인",
-      "관절이 이상하게 꺾임 → Mixamo 마커 위치를 더 정확히 맞추고 재시도"
+      "Adobe ID 무료 가입만 하면 사용 가능(신용카드/학생 인증 불필요)",
+      "상업 프로젝트에 “결과물로 포함”은 가능하다고 안내되는 편이지만, FBX 원본을 에셋팩 형태로 재배포/재판매는 금지 쪽으로 안내되는 경우가 많음",
+      "T-Pose로 맞추기(팔과 몸통이 겹치지 않게)",
+      "팔/다리/머리가 몸통에서 명확히 분리되어 보이게 모델 정리",
+      "파츠가 여러 개면 Ctrl+J로 단일 Mesh 권장",
+      "구멍/Non-Manifold, Normals 문제 정리 후 재-export",
+      "Blender에서 Ctrl+A → All Transforms 적용 후 FBX Export",
+      "(참고) FBX는 단위/스케일 해석이 달라서 크기 이슈가 흔함",
+      "Import 시 Automatic Bone Orientation 체크",
+      "스케일이 튀면 스케일 조정 후 Ctrl+A → Scale로 정리",
+      "Mixamo 다운로드 시 In Place 옵션을 통일(추천: In Place 켜고 통일)",
+      "전환이 필요하면 Strip 겹침 + Blend In/Out로 부드럽게 처리",
+      "Normals 뒤집힘: Edit Mode → 전체 선택 → Shift+N",
+      "텍스처/머티리얼 누락: Shading에서 이미지 재연결",
+      "Hold: 끝난 뒤에도 마지막 포즈/값이 남아있을 수 있음",
+      "Nothing: strip 구간 밖 영향 없음. “유령 스트립”처럼 남는 느낌이면 우선 Nothing으로"
     ],
     "videos": [
       {
