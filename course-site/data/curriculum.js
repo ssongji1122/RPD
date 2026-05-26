@@ -3252,7 +3252,7 @@ const CURRICULUM = [
   },
   {
     "week": 12,
-    "status": "active",
+    "status": "done",
     "title": "AI 활용 리깅 (Mixamo)",
     "subtitle": "Mixamo 자동 리깅 · FBX 워크플로우 · NLA",
     "duration": "~3시간",
@@ -3472,7 +3472,7 @@ const CURRICULUM = [
   },
   {
     "week": 13,
-    "status": "upcoming",
+    "status": "active",
     "title": "AI 영상/사운드 + 렌더링 + MCP",
     "subtitle": "Cycles vs EEVEE · 출력 설정 · Compositing · AI 후처리",
     "duration": "~3시간",
