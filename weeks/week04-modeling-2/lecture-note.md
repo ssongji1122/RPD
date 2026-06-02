@@ -146,87 +146,218 @@
 
 ### 실습 단계
 
-#### 1. Transform 정리와 파츠 관리
+#### 1. 몸통 만들기
 
-디테일을 넣기 전에 Scale과 파츠 구성을 먼저 정리해요. 수치가 꼬여 있거나 파츠가 뒤섞여 있으면 그다음 작업이 계속 불편해져요.
+3주차에 만든 머리 아래에 몸통을 붙여요. Cube에 Subdivision을 걸면 둥근 로봇 몸통이 되고, Inset으로 가슴판 영역을 구분하면 나중에 색을 나눌 때도 편해요.
 
-![Transform 정리와 파츠 관리](../../course-site/assets/images/week04/transform-apply.png)
+몸통 기본 형태:
 
-배울 것
+가슴판 영역 구분:
 
-- Transform을 정리한다
-- 파츠를 분리하거나 합쳐 관리한다
+Subdivision Level은 2면 충분해요. 높이면 컴퓨터가 느려지고, 디테일 작업도 어려워집니다. 필요하면 나중에 올릴 수 있어요.
 
-체크해볼 것
+체크리스트:
 
-- N 패널에서 Scale 값 확인 (1,1,1이 아니면 먼저 정리)
-- Ctrl+A로 All Transforms 적용 (Modifier 전에 수치 정리)
-- P로 움직일 파츠 분리하기 (안테나, 헤드셋, 손 파츠 등)
-- Ctrl+J로 함께 갈 파츠 묶기 (고정 파츠끼리 정리)
-
-#### 2. 얼굴과 패널 디테일
-
-큰 덩어리가 잡힌 상태에서 눈, 패널, 관절 라인을 추가하는 단계예요. Inset과 Boolean을 같이 쓰면 디테일을 빠르게 만들 수 있어요.
-
-![얼굴과 패널 디테일](../../course-site/assets/images/week04/inset-panel-detail.png)
-
-배울 것
-
-- Inset과 Boolean으로 디테일을 추가한다
+![몸통 만들기](../../course-site/assets/images/week04/transform-apply.png)
 
 체크해볼 것
 
-- Inset으로 안쪽 영역 만들기 (눈, 버튼, 패널 라인 시작점)
-- Extrude로 살짝 들어가거나 나오게 만들기 (작은 깊이 차이 주기)
-- Boolean Difference로 홈 또는 소켓 만들기 (커터가 실제로 겹치는지 확인)
+- Shift + A → Mesh → Cube 추가
+- S로 몸통 비율 잡기 (머리보다 살짝 작거나 비슷한 폭)
+- Subdivision Surface Modifier 추가 (Level 2)
+- G + Z로 머리 아래에 배치
+- Tab → Edit Mode 진입
+- 앞면 Face 선택
+- I → Inset으로 안쪽 영역 생성
+- E → Extrude로 살짝 돌출 (로봇 외장 느낌)
+- Cube 추가 후 S로 몸통 비율 잡기 (머리보다 살짝 작거나 비슷한 폭)
+- Subdivision Surface Modifier 추가 (Level 2로 둥근 형태 확인)
+- Edit Mode에서 Inset으로 가슴판 영역 만들기 (앞면 선택 → I → 안쪽 면 생성)
+- Extrude로 가슴판을 살짝 돌출시키기 (로봇 외장 느낌 추가)
 
-#### 3. Bevel 두 가지 비교
+#### 2. 3D Cursor로 위치 잡기
 
-같은 '모서리 정리'라도 손으로 직접 깎는 방법과 Modifier로 전체를 정리하는 방법은 다르게 느껴져요. 둘 다 직접 비교해보는 게 가장 빠릅니다.
+Blender에서 오브젝트를 정확한 위치에 만들려면 3D Cursor를 먼저 옮겨야 해요. 3D Cursor가 있는 곳에 새 오브젝트가 생기거든요. 관절을 붙이고 싶은 위치에 Cursor를 먼저 놓는 연습을 해봐요.
 
-![Bevel 두 가지 비교](../../course-site/assets/images/week04/bevel-modifier.png)
+3D Cursor 이동 방법:
 
-배울 것
+Cursor 위치에 오브젝트 생성:
 
-- Ctrl+B와 Bevel Modifier를 구분해 쓴다
+3D Cursor는 주황색 십자가 표시예요. 뷰포트에서 위치를 확인하세요. 엉뚝한 곳에 가면 Shift+S → Cursor to World Origin으로 원점으로 되돌릴 수 있어요.
 
-체크해볼 것
+체크리스트:
 
-- 특정 모서리에 Ctrl+B 써보기 (부분 디테일 직접 다듬기)
-- 다른 파츠에는 Bevel Modifier 넣기 (Width와 Segments 비교)
-- 두 방식의 결과를 나란히 비교하기 (부분 수정 vs 전체 정리)
-
-#### 4. Weighted Normal과 음영 정리
-
-형태는 괜찮은데 표면이 울퉁불퉁해 보일 때가 있어요. 이럴 때 음영을 정리해주는 흐름을 익혀두면 결과물이 훨씬 단정해져요.
-
-![Weighted Normal과 음영 정리](../../course-site/assets/images/week04/weighted-normal.png)
-
-배울 것
-
-- Weighted Normal의 역할을 이해한다
+![3D Cursor로 위치 잡기](../../course-site/assets/images/week04/inset-panel-detail.png)
 
 체크해볼 것
 
-- Shade Smooth 적용하기 (음영 비교 준비)
-- Bevel Modifier 아래에 Weighted Normal 추가 (순서 포함해서 확인)
-- 전후 화면 비교하기 (가슴판, 팔 외장, 다리 파츠에서 확인)
+- Shift + Right Click으로 어깨 위치에 Cursor 놓기
+- Shift + A → Mesh → UV Sphere
+- Cursor가 있는 어깨 위치에 바로 생성됨!
+- Shift+Right Click으로 3D Cursor 이동 연습 (뷰포트에서 클릭한 곳으로 주황색 십자가 이동)
+- Shift+S → Cursor to Selected로 정확한 위치로 (오브젝트나 Vertex를 선택한 후 실행)
+- Shift+S → Cursor to World Origin으로 원점 복귀 (Cursor를 0,0,0으로 되돌리기)
+- 3D Cursor 위치에 UV Sphere 추가해보기 (Shift+A → Mesh → UV Sphere)
 
-#### 5. Apply 시점과 최종 점검
+#### 3. Origin 이동과 Snap 배치
 
-정리 단계에서 가장 많이 헷갈리는 건 '언제 확정하느냐'예요. 수정 가능성을 남길지, 지금 확정할지를 의식적으로 나눠보면 훨씬 안정적으로 작업할 수 있어요.
+Origin은 오브젝트의 기준점이에요. 회전하면 Origin을 중심으로 돌고, 좌표도 Origin 위치를 표시해요. Snap은 오브젝트를 다른 오브젝트의 꼭짓점·면·모서리에 정확히 붙이는 기능이에요.
 
-![Apply 시점과 최종 점검](../../course-site/assets/images/week04/array-modifier.png)
+Origin 이동:
+
+Snap 배치:
+
+Origin과 3D Cursor는 다른 것이에요!
+
+둘 다 자유롭게 옮길 수 있지만, 역할이 다릅니다.
+
+체크리스트:
+
+![Origin 이동과 Snap 배치](../../course-site/assets/images/week04/bevel-modifier.png)
 
 배울 것
 
-- Apply Transform과 Modifier Apply를 구분한다
+- 3D Cursor: 새 오브젝트가 생성될 위치 (주황색 십자가)
+- Origin: 오브젝트의 기준점 (주황색 점)
 
 체크해볼 것
 
-- Modifier Stack 순서 다시 보기 (수정 가능 상태 유지)
-- 정말 확정할 파츠만 따로 저장 후 Apply 시험 (Apply 전후 수정 차이 느끼기)
-- Transform 또는 Modifier 화면 포함해 스크린샷 저장 (작업 흐름 증거 남기기)
+- 상단 자석 아이콘 켜기
+- Snap To: Vertex로 설정 (꼭짓점에 딱 붙음)
+- G로 이동할 때 Ctrl 누르면 Snap 동작
+- Right Click → Set Origin → Origin to 3D Cursor (미리 3D Cursor를 원하는 위치에 놓고 실행)
+- Right Click → Set Origin → Origin to Geometry (Origin을 오브젝트 중심으로 되돌리기)
+- 상단 Snap 자석 아이콘 켜고 Snap To: Vertex 설정 (꼭짓점에 딱 붙음)
+- G로 이동할 때 Ctrl 눌러 Snap 이동 연습 (몸통 표면 꼭짓점에 관절이 딱 붙는 느낌 확인)
+
+#### 4. 관절 구체 배치 실습
+
+이제 배운 3D Cursor, Origin, Snap을 조합해서 로봇의 어깨·팔꿈치·무릎·발목에 관절 구체를 실제로 배치해요. 하나 만들고 복제해서 각 위치에 놓으면 돼요.
+
+관절 배치 워크플로우:
+
+관절 구체는 파츠와 살짝 파묻히는 정도가 자연스러워요. 완전히 떨어져 있으면 분리된 느낌이 나고, 너무 깊이 들어가면 안 보여요.
+
+체크리스트:
+
+![관절 구체 배치 실습](../../course-site/assets/images/week04/weighted-normal.png)
+
+체크해볼 것
+
+- Shift + Right Click → 어깨 위치에 3D Cursor 놓기
+- Shift + A → UV Sphere (Segments 16) → Cursor 위치에 생성
+- S로 관절 크기 조절, R로 회전 조정
+- Shift + D → 복제
+- G + Ctrl → Snap으로 팔꿈치 위치에 배치
+- 반복: 무릎, 발목도 같은 방식
+- 어깨 위치에 3D Cursor 놓고 UV Sphere 생성 (Shift+Right Click → Shift+A → UV Sphere (Segments 16))
+- S로 관절 크기 조절, R로 회전 조정 (관절이 파츠에 살짝 파묻히는 정도가 자연스러움)
+- Shift+D로 복제 → 팔꿈치 위치에 Snap 배치 (복제 후 G → Ctrl 누른 채 이동하면 Snap)
+- 같은 방식으로 무릎, 발목 관절도 배치 (총 6~8개 관절 구체 (좌우 대칭))
+
+#### 5. 팔과 다리 제작
+
+관절 사이를 채울 팔과 다리를 만들어요. Cube나 Cylinder를 늘려서 상완/하완, 허벅지/종아리를 만들고, Mirror Modifier로 반대편도 한 번에 처리해요.
+
+팔 파츠 제작:
+
+Mirror로 좌우 대칭:
+
+Mirror가 이상한 방향으로 되면? Origin이 몸통 중심에 있는지 확인하세요. Origin이 파츠 자체에 있으면 그 자리에서 미러됩니다. Right-click → Set Origin → Origin to 3D Cursor (3D Cursor를 중심에 먼저 놓고)
+
+체크리스트:
+
+![팔과 다리 제작](../../course-site/assets/images/week04/array-modifier.png)
+
+체크해볼 것
+
+- Shift + A → Cube 추가
+- S로 팔 하나 비율 잡기 (관절 구체 사이 길이)
+- Tab → Edit Mode → Ctrl + R → Loop Cut으로 분절 추가
+- G로 관절 사이에 배치
+- 팔 파츠 선택
+- Modifier → Mirror Modifier 추가
+- Mirror Object: 몸통 (또는 Empty)
+- Origin이 몸통 중심에 있는지 확인!
+- Cube 추가 → S로 팔 하나 비율 잡기 (관절 구체 사이에 맞는 길이로)
+- Edit Mode에서 Loop Cut으로 팔꿈치 분절 추가 (상완/하완 느낌을 구분)
+- Mirror Modifier로 반대편 팔 생성 (Origin이 몸통 중심에 있는지 확인)
+- 같은 방식으로 다리 파츠 제작 (허벅지/종아리를 관절 구체 사이에 배치)
+
+#### 6. 손과 발 디테일
+
+손가락은 작은 Cube를 복제해서 3~4개 나란히 배치하면 돼요. 발은 Cube를 Extrude해서 부츠 형태로 잡아요. 반복 파츠에는 Array Modifier를 써볼 수도 있어요.
+
+손가락 만들기 (Loop Cut + Inset + Extrude):
+
+발 만들기:
+
+Array vs 수동 복제: Array Modifier는 간격이 균일해서 깔끔하지만, 수동 복제(Shift+D)는 각 손가락 크기를 다르게 할 수 있어요. 둘 다 시도해보세요!
+
+체크리스트:
+
+체크해볼 것
+
+- Shift + A → Cube → S로 손바닥 형태 잡기
+- Tab → Edit Mode 진입
+- Ctrl + R → Loop Cut으로 손가락 갯수만큼 분할 (3~4줄)
+- 나뉜 앞면(Face)에서 I → Inset으로 손가락 뽑을 위치 조정
+- E → Extrude로 손가락 한 마디 뽑기
+- R로 꺾어서 관절 느낌 주기
+- 다시 E → Extrude로 다음 마디 뽑기
+- 각 손가락마다 4~6번 반복
+- Shift + A → Cube
+- Tab → Edit Mode
+- 앞쪽 Face 선택 → E → Extrude로 발끝 형태 잡기
+- 밑면이 평평해야 바닥에 안정적으로 서요
+- Cube를 손바닥 형태로 만들기 (S로 비율 잡은 뒤 Edit Mode 진입)
+- Ctrl+R Loop Cut으로 손가락 갯수만큼 분할 (3~4줄로 나누기)
+- Inset → Extrude → 꺾기를 반복해 손가락 제작 (마디마다 E로 뽑고 R로 꺾기)
+- 발 파츠: Cube → Extrude로 부츠 형태 잡기 (밑면이 평평해야 바닥에 안정적으로 서요)
+
+#### 7. Bevel로 모서리 마감
+
+파츠를 다 만들었으면 모서리를 정리해서 완성도를 높여요. 얼굴 화면 테두리나 몸통 이음새에 Bevel을 넣으면 금속 느낌이 살아나요. 직접 깎는 Ctrl+B와 전체 적용 Modifier를 비교해보세요.
+
+방법 1: Bevel Tool (부분 수정)
+
+방법 2: Bevel Modifier (전체 정리)
+
+체크리스트:
+
+배울 것
+
+- 특정 모서리만 선택적으로 다듬을 때 사용
+- 적용 즉시 메쉬에 반영 (되돌리기: Ctrl+Z)
+- 전체 오브젝트의 모서리를 균일하게 정리
+- 비파괴적: 언제든 Width, Segments 조절 가능
+
+체크해볼 것
+
+- 얼굴 화면 테두리 모서리에 Ctrl+B (Scroll로 Segment 수 조절)
+- 몸통 파츠에 Bevel Modifier 적용 (Width를 아주 작게 시작 (0.01~0.02))
+- 두 방식의 결과를 나란히 비교하기 (부분 수정 vs 전체 정리, 어떤 게 편한지 느끼기)
+
+#### 8. 파츠 정리 & Apply
+
+모든 파츠가 만들어졌으면 구조를 정리해요. 움직여야 할 파츠(팔, 다리, 머리)는 따로 두고, 고정 파츠끼리는 Join으로 합쳐요. Transform을 Apply해서 수치를 깔끔하게 만들면 완성이에요.
+
+파츠 이름 정리:
+
+파츠 합치기/분리:
+
+Transform 정리:
+
+Mirror Modifier는 Apply 전에 확인! Mirror Modifier가 남아 있으면 Apply 순서를 잘 지켜야 해요. Mirror를 먼저 Apply하고, 그다음 다른 Modifier를 정리하세요.
+
+체크리스트:
+
+체크해볼 것
+
+- Outliner에서 파츠 이름 정리하기 (Head, Body, Arm_L, Leg_R 등 알아보기 쉽게)
+- 고정 파츠끼리 Ctrl+J로 합치기 (몸통+가슴판 등 항상 같이 움직일 것들)
+- Ctrl+A → All Transforms 적용 (모든 파츠의 Scale을 1,1,1로 정리)
+- 최종 형태 스크린샷 저장 (정면/측면 뷰로 완성 상태 기록)
 
 ### 핵심 단축키
 

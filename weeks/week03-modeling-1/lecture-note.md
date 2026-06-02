@@ -802,11 +802,9 @@ Modifier는 위에서 아래로 순서대로 적용돼요. Mirror → Subdivisio
 - 과제명: 직접 해볼 수 있는 추가 실험이에요. 정답은 없고, 결과를 캡처해서 공유하면 좋아요.
 - 설명: Edit Mode와 Modifier를 함께 써서 기본형과 디테일이 보이는 형태를 만들어요. 스크린샷 3장 + Modifier 목록 + 한줄 코멘트를 제출해요.
 - 제출 체크:
-  - Edit Mode 도구 3가지 이상 사용
-  - Modifier 2가지 이상 사용
-  - 필수 추가 Modifier 1개 확인
-  - Join/Separate 또는 Apply 타이밍 확인
-  - Modifier 스택이 보이는 스크린샷
+  - 로봇 몸체 만들기 — Cube → Edit Mode로 기본형 → Mirror → Subdivision으로 부드럽게
+  - 패널 구조 만들기 — Plane → Solidify → Boolean으로 홈 추가
+  - 반복 파츠 만들기 — Cube/Cylinder → Array로 6~10개 반복
 
 ### 자주 막히는 지점
 
