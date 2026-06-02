@@ -206,9 +206,11 @@
 
   function renderVideo(block) {
     var data = block.video || {};
-    var src = '';
-    if (data.type === 'external' && data.external) src = data.external.url || '';
-    else if (data.type === 'file' && data.file) src = data.file.url || '';
+    var src = block.local_url || '';
+    if (!src) {
+      if (data.type === 'external' && data.external) src = data.external.url || '';
+      else if (data.type === 'file' && data.file) src = data.file.url || '';
+    }
     if (!src) return '<!-- notion-block: video (no src) -->';
     var ytMatch = src.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([A-Za-z0-9_-]{11})/);
     if (ytMatch) {
