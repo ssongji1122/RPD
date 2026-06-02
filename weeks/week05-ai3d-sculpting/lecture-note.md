@@ -332,7 +332,7 @@ Sculpt를 하다 보면 메쉬가 늘어나서 찌그러지는 곳이 생겨요.
 
 ### 공식 영상 튜토리얼
 
-- [Blender Studio - Introduction to Sculpting](https://studio.blender.org/training/sculpting-in-blender/introduction/)
+- [Blender Studio - Introduction to Sculpting](https://studio.blender.org/training/blender-fundamentals-45-lts/sculpting_introduction/)
 
 ### 공식 문서
 
