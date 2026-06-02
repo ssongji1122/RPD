@@ -1,43 +1,83 @@
 {
-  "timestamp": "2026-03-31T00:00:00+09:00",
-  "mode": "full",
+  "timestamp": "2026-06-02T01:18:00Z",
+  "mode": "all + 영상 파이프라인 — Notion SSoT → canonical → web 정렬·푸시·영상 검증",
+  "scope": "1~15주 전체",
+  "note": "이전 리포트(2026-03-31)는 step.image 누락을 critical 20건으로 분류했으나, 그 사이 week.html이 notion-blocks 우선 렌더로 전환되어 step.image는 fallback 전용이 됨. 따라서 동일 항목을 warning으로 재분류함.",
+  "pipeline": {
+    "hop1_notion_to_canonical": {
+      "status": "aligned-as-of-last-sync (2026-06-01T23:46Z)",
+      "primary_evidence": [
+        "notion-sync.yml 30분 cron 자동화, 마지막 run 2026-06-01T23:46Z success",
+        "content_pipeline.py check: Curriculum valid (15 weeks)",
+        "notion-mapping.json 15주 전체 page ID 매핑"
+      ],
+      "currency_limitation": "NOTION_TOKEN 로컬 부재 + raw Notion API 401 → last_edited_time 직접 대조 불가. 정직한 주장: '마지막 sync(23:46Z) 시점 정렬, 최대 staleness = cron 간격'."
+    },
+    "hop2_canonical_to_remote": { "status": "pushed", "ahead": 0, "behind": 0, "evidence": "git fetch 후 0/0, HEAD=53b6c56" },
+    "hop3_canonical_to_web": {
+      "status": "deployed-and-observed",
+      "url": "https://ssongji1122.github.io/RPD/",
+      "git_identity_proof": "deploy 마지막 run 2026-06-01T23:57Z success가 HEAD(53b6c56)에서 실행. build_public_site는 copytree로 verbatim 복사 → 배포==repo.",
+      "web_render_observed": "Playwright(cached chromium)로 배포 week13 실제 렌더: title/H1 정상, notion-blocks 콘텐츠(MCP 16·렌더링 16·사운드 5), 이미지 5개 렌더, 로그인 게이트 없음, JS 에러 0."
+    }
+  },
+  "video_pipeline": {
+    "youtube_external": "정상 — external URL을 iframe embed로 렌더, 만료 없음. week02(13)·06(10)·07(8)·09(7)·05(4)·10(3)·12(3)·11(9) 등.",
+    "notion_uploaded_file_mov": "FAIL(현재) — file 타입 영상 16개가 S3 presigned URL(Expires=3600s) 그대로 저장. notion-sync.py는 이미지만 notion-images/로 미러(영상 0개). 매 sync마다 URL 갱신+재배포되므로 정상 주기(30분)면 작동하나, sync 지연 시 1시간 후 만료.",
+    "mechanism": "presigned URL이 매 fetch(sync)마다 rotate → notion-blocks(영상 주차)가 매 sync diff → commit+deploy. 따라서 텍스트 변경 없어도 영상 주차는 매 sync 재배포됨. 정상 작동 조건 = sync 주기 < 1시간.",
+    "live_evidence": "curl 라이브 week13.json .mov file.url → HTTP 403 <Code>AccessDenied</Code><Message>Request has expired</Message>, X-Amz-Date=20260601T235701Z, Expires=2026-06-02T00:57:01Z, ServerTime=2026-06-02T01:16:41Z (19분째 만료)",
+    "affected_weeks_file_video": {"week02":2,"week03":2,"week05":3,"week09":1,"week11":4,"week12":2,"week13":2},
+    "root_asymmetry": "이미지=로컬 미러(영구 안전) vs 영상=presigned 의존(만료 리스크)"
+  },
+  "render_logic_confirmed": "week.html renderWeekPage(): notion-blocks/week{NN}.json fetch → data.blocks 있으면 renderNotionPage(), 실패 시에만 buildPage()가 step.image 사용 (notion-blocks 우선, step.image fallback 전용)",
   "issues": [
-    { "severity": "critical", "category": "image", "week": 5, "step": "AI 메쉬 정리", "message": "이미지 누락: assets/images/week05/mesh-cleanup.png", "path": "assets/images/week05/mesh-cleanup.png" },
-    { "severity": "critical", "category": "image", "week": 5, "step": "Sculpt 브러시 심화", "message": "이미지 누락: assets/images/week05/sculpt-brushes.png", "path": "assets/images/week05/sculpt-brushes.png" },
-    { "severity": "critical", "category": "image", "week": 5, "step": "Remesh와 마무리", "message": "이미지 누락: assets/images/week05/remesh.png", "path": "assets/images/week05/remesh.png" },
-    { "severity": "critical", "category": "image", "week": 6, "step": "Texture 노드로 질감 추가", "message": "이미지 누락: assets/images/week06/texture-node.png", "path": "assets/images/week06/texture-node.png" },
-    { "severity": "critical", "category": "image", "week": 6, "step": "Viewport Shading 비교", "message": "이미지 누락: assets/images/week06/shading-modes.png", "path": "assets/images/week06/shading-modes.png" },
-    { "severity": "critical", "category": "image", "week": 7, "step": "Smart UV Project로 빠른 펼침", "message": "이미지 누락: assets/images/week07/smart-uv.png", "path": "assets/images/week07/smart-uv.png" },
-    { "severity": "critical", "category": "image", "week": 7, "step": "Texture Painting 맛보기", "message": "이미지 누락: assets/images/week07/texture-paint.png", "path": "assets/images/week07/texture-paint.png" },
-    { "severity": "critical", "category": "image", "week": 9, "step": "카메라 세팅", "message": "이미지 누락: assets/images/week09/camera-setup.png", "path": "assets/images/week09/camera-setup.png" },
-    { "severity": "critical", "category": "image", "week": 9, "step": "분위기 연출 실험", "message": "이미지 누락: assets/images/week09/mood-lighting.png", "path": "assets/images/week09/mood-lighting.png" },
-    { "severity": "critical", "category": "image", "week": 10, "step": "회전/크기 애니메이션", "message": "이미지 누락: assets/images/week10/rotation-scale.png", "path": "assets/images/week10/rotation-scale.png" },
-    { "severity": "critical", "category": "image", "week": 10, "step": "Graph Editor 커브", "message": "이미지 누락: assets/images/week10/graph-editor.png", "path": "assets/images/week10/graph-editor.png" },
-    { "severity": "critical", "category": "image", "week": 10, "step": "루프 애니메이션", "message": "이미지 누락: assets/images/week10/loop-animation.png", "path": "assets/images/week10/loop-animation.png" },
-    { "severity": "critical", "category": "image", "week": 11, "step": "Pose Mode로 포즈 잡기", "message": "이미지 누락: assets/images/week11/pose-mode.png", "path": "assets/images/week11/pose-mode.png" },
-    { "severity": "critical", "category": "image", "week": 11, "step": "Weight Paint 수정", "message": "이미지 누락: assets/images/week11/weight-paint.png", "path": "assets/images/week11/weight-paint.png" },
-    { "severity": "critical", "category": "image", "week": 12, "step": "익스포트 준비", "message": "이미지 누락: assets/images/week12/export-prep.png", "path": "assets/images/week12/export-prep.png" },
-    { "severity": "critical", "category": "image", "week": 12, "step": "NLA Editor로 애니메이션 관리", "message": "이미지 누락: assets/images/week12/nla-editor.png", "path": "assets/images/week12/nla-editor.png" },
-    { "severity": "critical", "category": "image", "week": 13, "step": "Compositing 기초", "message": "이미지 누락: assets/images/week13/compositing.png", "path": "assets/images/week13/compositing.png" },
-    { "severity": "critical", "category": "image", "week": 13, "step": "애니메이션 렌더링", "message": "이미지 누락: assets/images/week13/animation-render.png", "path": "assets/images/week13/animation-render.png" },
-    { "severity": "critical", "category": "image", "week": 13, "step": "AI 후처리 체험", "message": "이미지 누락: assets/images/week13/ai-postprocess.png", "path": "assets/images/week13/ai-postprocess.png" },
-    { "severity": "critical", "category": "link", "week": 8, "step": "docs", "message": "잘못된 URL: ../../resources/blender-shortcuts.md (https:// 아님)", "path": "../../resources/blender-shortcuts.md" },
-    { "severity": "warning", "category": "image-size", "week": 5, "step": "AI 3D 생성 체험", "message": "의심스럽게 작은 이미지 (5.1KB): assets/images/week05/ai-3d-generation.png", "path": "assets/images/week05/ai-3d-generation.png" },
-    { "severity": "warning", "category": "image-size", "week": 5, "step": "Sculpt Mode 기초", "message": "의심스럽게 작은 이미지 (7.4KB): assets/images/week05/sculpt-mode.png", "path": "assets/images/week05/sculpt-mode.png" },
-    { "severity": "warning", "category": "image-size", "week": 7, "step": "-", "message": "의심스럽게 작은 이미지 (4.9KB): assets/images/week07/ai-texture.png", "path": "assets/images/week07/ai-texture.png" },
-    { "severity": "warning", "category": "image-size", "week": 7, "step": "-", "message": "의심스럽게 작은 이미지 (7.6KB): assets/images/week07/uv-seam.png", "path": "assets/images/week07/uv-seam.png" },
-    { "severity": "warning", "category": "image-size", "week": 11, "step": "-", "message": "의심스럽게 작은 이미지 (7.4KB): assets/images/week11/armature-structure.png", "path": "assets/images/week11/armature-structure.png" },
-    { "severity": "warning", "category": "image-size", "week": 11, "step": "-", "message": "의심스럽게 작은 이미지 (7.1KB): assets/images/week11/mesh-skinning.png", "path": "assets/images/week11/mesh-skinning.png" },
-    { "severity": "warning", "category": "image-size", "week": 12, "step": "-", "message": "의심스럽게 작은 이미지 (4.2KB): assets/images/week12/mixamo-upload.png", "path": "assets/images/week12/mixamo-upload.png" },
-    { "severity": "warning", "category": "image-size", "week": 13, "step": "-", "message": "의심스럽게 작은 이미지 (7.3KB): assets/images/week13/cycles-eevee.png", "path": "assets/images/week13/cycles-eevee.png" },
-    { "severity": "warning", "category": "image-size", "week": 13, "step": "-", "message": "의심스럽게 작은 이미지 (7.9KB): assets/images/week13/render-output.png", "path": "assets/images/week13/render-output.png" },
-    { "severity": "warning", "category": "task-id", "week": 2, "step": "-", "message": "Task ID 패턴 불일치: w2-t13-2", "path": null },
-    { "severity": "warning", "category": "task-id", "week": 3, "step": "-", "message": "Task ID 패턴 불일치: w3-ref1, w3-ref2, w3-ref3, w3-ref4, w3-ref-a, w3-ref-b, w3-ref-c, w3-ref-d", "path": null },
-    { "severity": "warning", "category": "task-id", "week": 3, "step": "-", "message": "Task ID 패턴 불일치: w3-col1, w3-col2, w3-col3", "path": null },
-    { "severity": "warning", "category": "showme-supplement", "week": null, "step": null, "message": "ShowMe supplement 누락 (36건): armature-basics, array-modifier, bevel-tool, bevel-tool-vs-modifier, blender-preferences, box-rounding, compositing-basics, edit-mode-tools, graph-editor, hdri-lighting, image-reference, inset, keyframe-basics, light-types, loop-cut, material-basics, mirror-modifier, mirror-origin-mode, mirror-workflow, pivot-point, poly-circle, principled-bsdf, proportional-editing, render-settings, shader-editor, simple-deform, snap, solidify-modifier, three-point-light, transform-grs, transform-orientation, uv-editor, uv-unwrapping, viewport-shading, weight-paint, xray-opacity", "path": null },
-    { "severity": "info", "category": "showme-catalog", "week": null, "step": null, "message": "ShowMe catalog 미분류 (5건): camera-setup, depth-of-field, dope-sheet, nla-editor, texture-painting", "path": null },
-    { "severity": "info", "category": "orphan-image", "week": 3, "step": null, "message": "Orphan 이미지 (5건): week03/bevel-weighted-normal.png, week03/decimate.png, week03/inset-faces.png, week03/loop-cut.png, week03/simple-deform.png", "path": null },
-    { "severity": "info", "category": "orphan-supplement", "week": null, "step": null, "message": "Orphan supplement (9건, *-core 패턴): animation-core, mirror-core, precision-modeling-core, reference-image-core, rigging-core, surface-detail-core, transform-core, uv-core, viewport-visibility-core", "path": null }
+    {
+      "severity": "critical",
+      "category": "영상(Notion업로드)",
+      "title": "Notion 업로드 영상(.mov) 16개 — presigned S3 URL 만료로 현재 라이브 재생 불가",
+      "detail": "이미지는 notion-images/로 로컬 미러(영구)되나 file 타입 영상은 미러 안 되고 S3 presigned URL(Expires=3600s)을 그대로 저장. 매 sync마다 URL 갱신+재배포되어 정상 주기(30분)면 작동하지만 sync 지연 시 만료. 라이브 week13 .mov → HTTP 403 'Request has expired' 확인. 영향: week02·03·05·09·11·12·13. YouTube external 영상은 무관(정상).",
+      "live_evidence": "X-Amz-Date=20260601T235701Z, Expires=00:57:01Z, ServerTime=01:16:41Z, HTTP 403 AccessDenied"
+    },
+    {
+      "severity": "warning",
+      "category": "이미지(fallback)",
+      "title": "curriculum.json step.image 로컬 파일 15개 누락",
+      "detail": "week05~13의 fallback 이미지 경로. notion-blocks 우선 렌더라 현재 웹 무해(week13 렌더에서 이미지 정상 확인). notion-blocks fetch 실패 시에만 깨짐(잠재 리스크).",
+      "items": ["assets/images/week05/mesh-cleanup.png","assets/images/week06/texture-node.png","assets/images/week06/shading-modes.png","assets/images/week07/smart-uv.png","assets/images/week07/texture-paint.png","assets/images/week10/rotation-scale.png","assets/images/week10/graph-editor.png","assets/images/week10/loop-animation.png","assets/images/week11/pose-mode.png","assets/images/week11/weight-paint.png","assets/images/week12/export-prep.png","assets/images/week12/nla-editor.png","assets/images/week13/compositing.png","assets/images/week13/animation-render.png","assets/images/week13/ai-postprocess.png"]
+    },
+    {
+      "severity": "warning",
+      "category": "렌더러(embed/bookmark)",
+      "title": "notion-renderer.js가 embed·bookmark 블록 미처리",
+      "detail": "dispatcher switch에 embed/bookmark case 없음 → default(HTML 주석)로 본문에서 누락. 영상 아님(showme embed·외부 참고링크). week06 embed 6, week09 bookmark 3·embed 1, week05/10 bookmark 1 등."
+    },
+    {
+      "severity": "warning",
+      "category": "ShowMe",
+      "title": "ShowMe supplement 누락 21개",
+      "detail": "_supplements.json에 보충설명 없는 ShowMe 참조. .html·registry는 모두 존재(체인 정상). Notion→web 정렬과는 별개 시스템.",
+      "items": ["armature-basics","bevel-tool","blender-preferences","compositing-basics","edit-mode-tools","graph-editor","hdri-lighting","image-reference","keyframe-basics","light-types","material-basics","mirror-modifier","mood-lighting","principled-bsdf","render-settings","shader-editor","three-point-light","transform-grs","uv-editor","uv-unwrapping","weight-paint"]
+    },
+    {
+      "severity": "info",
+      "category": "동기화",
+      "title": "6/2 들어 sync run 미실행 → 영상 만료 유발",
+      "detail": "마지막 sync 6/1 23:46Z. 현재 01:16Z까지 6/2 cron 미실행(GitHub Actions schedule 지연). 이 지연이 presigned 영상 URL 만료(00:57Z)의 직접 원인."
+    },
+    {
+      "severity": "info",
+      "category": "구조",
+      "title": "curriculum*.json 5/26 이후 변경 정지",
+      "detail": "notion-blocks가 렌더 SSoT가 된 후 curriculum.json은 구조 메타만 담당. 정상."
+    },
+    {
+      "severity": "info",
+      "category": "주차",
+      "title": "week04·08·14·15 notion-blocks 4/28 이후 정지",
+      "detail": "시험/실습 안내 주차라 Notion 본문 미변경(영상도 0개). frozen 정상."
+    }
   ],
-  "summary": { "critical": 20, "warning": 48, "info": 19 }
+  "summary": { "critical": 1, "warning": 3, "info": 4 },
+  "verdict": "텍스트·이미지·구조·푸시·배포는 PASS(웹 렌더까지 관찰 입증). 영상은 부분 FAIL: YouTube(external) 영상은 정상이나 Notion 업로드 영상(.mov) 16개는 presigned S3 URL 만료로 현재 라이브 재생 불가(관찰 확정). sync가 30분 주기로 정상 작동하면 영상도 보이지만, 현재 6/2 cron 지연으로 깨진 상태.",
+  "verdict_label_per_skill_rubric": "FAIL (1 critical / 3 warning / 4 info)"
 }
