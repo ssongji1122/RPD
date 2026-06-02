@@ -365,7 +365,9 @@ def validate_curriculum(data: Any) -> list[str]:
         if not week["topics"]:
             errors.append(f"{prefix}: topics must contain at least one item")
         if not week["steps"]:
-            errors.append(f"{prefix}: steps must contain at least one item")
+            # 실습 섹션을 의도적으로 비운 주차(이론/가이드 중심) 허용 — error 아닌 경고.
+            # 사이트 렌더러는 steps 0개를 안전하게 처리한다(week.html / index.html: steps || []).
+            print(f"⚠ {prefix}: 실습 steps 0개 (실습 없는 주차)", file=sys.stderr)
 
         lecture_note = _find_lecture_note(week_num)
         if lecture_note is None:

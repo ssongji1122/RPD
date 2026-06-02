@@ -785,7 +785,9 @@ def parse_blocks_to_curriculum(
             if text:
                 assignment_checklist.append(text)
 
-    if "steps" in seen_sections and steps:
+    if "steps" in seen_sections:
+        # 빈 리스트도 명시적으로 반영한다(실습 섹션을 의도적으로 비운 주차).
+        # `and steps`를 붙이면 실습이 0개일 때 이전 stale steps가 남는다.
         result["steps"] = steps
     if shortcuts:
         result["shortcuts"] = shortcuts
