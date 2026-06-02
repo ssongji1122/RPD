@@ -751,6 +751,10 @@
         {
           "title": "Blender Studio - Rendering",
           "url": "https://studio.blender.org/training/blender-2-8-fundamentals/rendering/"
+        },
+        {
+          "title": "Blender 공식 YouTube 채널",
+          "url": "https://www.youtube.com/@BlenderOfficial"
         }
       ],
       "explore": [
@@ -769,42 +773,99 @@
         {
           "title": "AI로 스타일 변형",
           "hint": "같은 렌더를 3가지 다른 AI 스타일(사이버펑크/수채화/픽셀아트)로 변형해보기"
+        },
+        {
+          "title": "Veo 3 영상+오디오 동시 생성",
+          "hint": "Google AI Studio(aistudio.google.com)에서 Veo 3.1을 무료로 테스트 — 영상 안에 BGM·효과음이 함께 생성돼서 Step 6/7을 한 번에 처리"
+        },
+        {
+          "title": "Higgsfield Soul ID 캐릭터 일관성",
+          "hint": "Higgsfield free tier로 같은 로봇이 여러 장면에 등장하는 시네마틱 영상 실험 (워터마크 720p 한계 감안)"
         }
       ],
       "steps": {
         "0": {
-          "image": "assets/images/week13/cycles-eevee.png",
           "done": [
-            "같은 씬을 두 엔진으로 렌더해서 비교했다"
+            "카메라를 배치하고 Focal Length·DOF를 설정했다",
+            "Numpad 0으로 구도를 확인했다"
+          ]
+        },
+        "1": {
+          "done": [
+            "Eevee로 빠르게 테스트 렌더를 완료했다"
           ],
           "showme": "render-settings"
         },
-        "1": {
-          "image": "assets/images/week13/render-output.png",
+        "2": {
           "done": [
-            "의도한 해상도와 파일 형식으로 렌더가 저장됐다"
+            "Cycles로 렌더해서 Eevee와 품질 차이를 비교했다"
           ]
         },
-        "2": {
-          "image": "assets/images/week13/compositing.png",
-          "done": [
-            "Glare나 Color Balance 효과를 적용했다"
-          ],
-          "showme": "compositing-basics"
-        },
         "3": {
-          "image": "assets/images/week13/animation-render.png",
           "done": [
-            "5초 이상 애니메이션 영상 파일이 생성됐다"
+            "MCP 명령으로 카메라·렌더를 자동 실행했다"
           ]
         },
         "4": {
-          "image": "assets/images/week13/ai-postprocess.png",
           "done": [
-            "렌더 이미지를 AI로 변형해봤다"
+            "렌더 이미지로 AI 영상을 만들었다"
           ]
+        },
+        "5": {
+          "done": [
+            "AI로 BGM을 생성했다"
+          ]
+        },
+        "6": {
+          "done": [
+            "AI 영상과 BGM을 하나로 합쳐 프로모션 영상을 만들었다"
+          ],
+          "showme": "compositing-basics"
         }
-      }
+      },
+      "docs": [
+        {
+          "title": "Camera (Blender)",
+          "url": "https://docs.blender.org/manual/en/latest/render/cameras.html"
+        },
+        {
+          "title": "Cycles (Blender)",
+          "url": "https://docs.blender.org/manual/en/latest/render/cycles/index.html"
+        },
+        {
+          "title": "EEVEE (Blender)",
+          "url": "https://docs.blender.org/manual/en/latest/render/eevee/index.html"
+        },
+        {
+          "title": "Compositing (Blender)",
+          "url": "https://docs.blender.org/manual/en/latest/compositing/index.html"
+        },
+        {
+          "title": "Video Editing (Blender)",
+          "url": "https://docs.blender.org/manual/en/latest/video_editing/introduction.html"
+        },
+        {
+          "title": "Kling AI (영상 생성)",
+          "url": "https://www.klingai.com/"
+        },
+        {
+          "title": "Suno AI (BGM 생성)",
+          "url": "https://suno.com/"
+        },
+        {
+          "title": "Google Flow Music (Lyria 3, BGM)",
+          "url": "https://www.flowmusic.app/"
+        },
+        {
+          "title": "Google Veo (영상+오디오)",
+          "url": "https://deepmind.google/models/veo/"
+        },
+        {
+          "title": "ElevenLabs (효과음/음악)",
+          "url": "https://elevenlabs.io/"
+        }
+      ],
+      "subtitle": "Cycles vs EEVEE · 출력 설정 · AI 영상/음악 · VSE 편집"
     },
     "14": {
       "status": "active",

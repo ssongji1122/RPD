@@ -49,8 +49,11 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash(python3:*), Bash(ls:*), Bash(
 })()
 ```
 
-6. 캡처 후 curriculum.js의 해당 step에 `image` 필드 자동 업데이트
-7. 결과 리포트: 성공/실패/스킵 수
+6. 결과 리포트: 성공/실패/스킵 수
+
+> 🔴 **SSoT 주의**: 캡처는 **이미지 파일만** 생성한다. `curriculum.js`(generated file)를 직접 수정하지 않는다. step↔이미지 연결은 **Notion(정석, MCP로 image 블록 추가 → sync)** 또는 `overrides.json`(임시)에서 한다. `--write-curriculum`은 비권장(SSoT 우회).
+>
+> ⚠️ **렌더링 경로**: `week.html`은 `notion-blocks/week{N}.json`이 있으면 그걸 렌더하므로, 그 주차는 `overrides.image`가 무효다. 이미지를 사이트에 띄우려면 **Notion에 업로드 → sync** 해야 한다.
 
 ---
 
