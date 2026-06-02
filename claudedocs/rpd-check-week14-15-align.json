@@ -1,0 +1,76 @@
+{
+  "timestamp": "2026-06-02",
+  "mode": "week:14,15 — Notion SSoT alignment verify (read-only)",
+  "live_notion_status": {
+    "verified_at": "2026-06-02",
+    "method": "직접 Notion API 호출 (메인 repo .env 토큰, RPD Quiz Tracker integration). 공식 API MCP(401)·보조 커넥터(04-05 캐시)는 우회.",
+    "token": "유효",
+    "connection": "RPD Quiz Tracker가 week14·15 페이지에 연결됨 (blocks 조회 성공, 404 아님)",
+    "result": "현재 live Notion week14 선행주차 표기 = 04-28 스냅샷과 동일(Week 02~03 / 03~04 / 05~06 내부 혼재). 04-28 이후 14/15 본문 변동 없음 → 앞선 04-28 기준 검증이 현재에도 유효.",
+    "note": "백그라운드 Bash는 DNS 실패/hang 반복 → foreground 직접 API로만 성공. notion-sync.py 전체 fetch는 백그라운드 hang으로 미완(curriculum-notion.json 파일 갱신은 안 했고, 비교는 직접 API로 대체)."
+  },
+  "scope": [
+    "course-site/data/curriculum.json",
+    "course-site/data/curriculum-notion.json",
+    "course-site/data/overrides.json",
+    "course-site/data/notion-blocks/week14.json (04-28)",
+    "course-site/data/notion-blocks/week15.json (04-28)",
+    "Notion live (hosted connector, 04-05 캐시) week14/15",
+    "weeks/week14-final-project/lecture-note.md",
+    "weeks/week15-final/lecture-note.md",
+    "syllabus.md"
+  ],
+  "pass": [
+    "사이트 데이터 정합: curriculum.json = curriculum-notion.json + overrides. drift 없음.",
+    "구조/분량: Notion 원본도 callout('왜?' 설명 등) 포함해 풍부함. lecture-note와 헤딩 구조 거의 일치. 초기 '50% 빈약' 인상은 plain_text 추출 방식 차이였음(철회 유지).",
+    "2026-03-31 full 스캔에서 14/15 0건."
+  ],
+  "issues": [
+    {
+      "severity": "info",
+      "category": "content-drift-prereq-weeks",
+      "week": "14",
+      "detail": "선행 주차 cross-ref 불일치(필수 제출물의 '~주차에 배운 기법' 괄호 주석). Notion: 모델링 'Week 02~03', 텍스처 'Week 05~06'. lecture-note: 모델링 'Week 03~05', 텍스처 'Week 06~07'. 두 범위 다 대략 맞고 stakes 낮음. syllabus 기준 lecture-note가 근접. 단 Notion 자체가 내부 비일관(02~03 AND 03~04 혼재)이라 'Notion이 틀린 값 보유'로 단정 불가.",
+      "direction": "어느 쪽을 canonical로 두고 무엇을 바꿀지는 사용자 판단. 파이프라인 규칙상 Notion=SSoT, lecture-note=수동 파생물이므로 '정렬'의 정의상 lecture-note가 deviant. 현재 live Notion(이미 수정됐을 수 있음)을 보고 결정하는 게 정확 — 토큰 재발급 후 재확인 권장."
+    },
+    {
+      "severity": "warning",
+      "category": "notion-internal-inconsistency",
+      "week": "14",
+      "detail": "04-28 스냅샷 내부에 'Week 02~03'(2), 'Week 03~04'(2), 'Week 05~06'(2)가 혼재. Notion 페이지 자체가 한 문서 안에서 선행주차를 비일관되게 표기."
+    },
+    {
+      "severity": "warning",
+      "category": "stale-doc",
+      "week": "all (14 포함)",
+      "detail": "syllabus.md 최종 수정 2026-03-14(6주 묵음). w14 과제명 옛 표현 '최종 프로젝트 중간 체크 제출' vs 현행 curriculum/Notion '최종 프로젝트 사전 제출'."
+    },
+    {
+      "severity": "info",
+      "category": "title-emoji",
+      "week": "15",
+      "detail": "Notion week15 페이지 제목이 '⭐ Week 15: 기말고사...'로 별표 이모지 포함. AGENTS.md 이모지 금지(특히 Notion title) 위반."
+    },
+    {
+      "severity": "info",
+      "category": "ai-tool-list-diff",
+      "week": "15",
+      "detail": "AI 도구 목록 차이 — Notion: '나노바나나, Meshy AI, Mixamo, Kling AI, Suno AI, MCP'. lecture-note: '나노바나나' 누락(Meshy AI부터 나열). 미세."
+    },
+    {
+      "severity": "info",
+      "category": "minor-content-gap",
+      "week": "14",
+      "detail": "lecture-note FAQ '12 Principles of Animation' 한 줄이 Notion FAQ엔 없음. trivial."
+    },
+    {
+      "severity": "info",
+      "category": "card-density",
+      "week": "14,15",
+      "detail": "curriculum 카드에서 14/15는 steps=1 (week8 시험주차 패턴). 구조상 일관."
+    }
+  ],
+  "summary": { "critical": 0, "warning": 1, "info": 5, "blocker": "live Notion 미검증(토큰 무효)" },
+  "verdict": "live 확인 완료(2026-06-02) — 대체로 정렬됨. 현재 Notion 14/15 = 04-28 스냅샷과 동일(변동 없음). 마이너 불일치: 선행주차 cross-ref(현재 Notion도 02~03/03~04/05~06 내부 비일관, lecture-note는 03~05/06~07), 과제명 stale(syllabus), week15 title 이모지.",
+  "next": "토큰·연결 확인됨(RPD Quiz Tracker). 남은 건 taste 결정: 선행주차 cross-ref를 어느 쪽(Notion vs lecture-note 03~05/06~07)으로 통일할지 — 규칙상 Notion=SSoT라 사람이 Notion에서 수정해야 사이트 반영(AI push 금지). VSE 참고 팁 초안(week13-14-vse-notion-patch.md)도 동일하게 사람이 Notion 반영."
+}
