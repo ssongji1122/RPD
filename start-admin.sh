@@ -13,6 +13,18 @@ set -euo pipefail
 
 SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 
+# .env 자동 로드 (있으면). NOTION_TOKEN 등을 sync 명령에 전달한다.
+# 우선순위: 스크립트 위치의 .env → (git worktree면) 메인 repo의 .env.
+# 이미 export된 환경변수가 있으면 .env가 덮어쓰므로, 일회성 토큰은 인라인 대신 .env를 사용할 것.
+if [ -f "$SCRIPT_DIR/.env" ]; then
+  set -a; source "$SCRIPT_DIR/.env"; set +a
+else
+  _MAIN_ENV="$(git -C "$SCRIPT_DIR" rev-parse --git-common-dir 2>/dev/null | sed 's|/\.git/*$||')/.env"
+  if [ -f "$_MAIN_ENV" ]; then
+    set -a; source "$_MAIN_ENV"; set +a
+  fi
+fi
+
 # 동기화 명령 처리
 case "$1" in
   sync-from-notion)

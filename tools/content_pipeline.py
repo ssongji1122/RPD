@@ -365,7 +365,9 @@ def validate_curriculum(data: Any) -> list[str]:
         if not week["topics"]:
             errors.append(f"{prefix}: topics must contain at least one item")
         if not week["steps"]:
-            errors.append(f"{prefix}: steps must contain at least one item")
+            # 실습 섹션을 의도적으로 비운 주차(이론/가이드 중심) 허용 — error 아닌 경고.
+            # 사이트 렌더러는 steps 0개를 안전하게 처리한다(week.html / index.html: steps || []).
+            print(f"⚠ {prefix}: 실습 steps 0개 (실습 없는 주차)", file=sys.stderr)
 
         lecture_note = _find_lecture_note(week_num)
         if lecture_note is None:
@@ -477,18 +479,36 @@ def _merge_week_with_base(
     if "steps" in notion_week:
         base_steps = base_week.get("steps", []) or []
         notion_steps = notion_week.get("steps", []) or []
+
+        def _norm_title(step: Any) -> str:
+            if not isinstance(step, dict):
+                return ""
+            return (step.get("title") or "").strip().casefold()
+
         step_count = max(len(base_steps), len(notion_steps))
         merged_steps: list[dict[str, Any]] = []
         for idx in range(step_count):
             base_step = base_steps[idx] if idx < len(base_steps) else {}
             notion_step = notion_steps[idx] if idx < len(notion_steps) else {}
-            merged_step = copy.deepcopy(base_step)
-            if isinstance(notion_step, dict):
-                for key, value in notion_step.items():
-                    if should_override(value) or key not in merged_step:
-                        merged_step[key] = copy.deepcopy(value)
+
+            base_title = _norm_title(base_step)
+            notion_title = _norm_title(notion_step)
+
+            if notion_title and base_title and notion_title != base_title:
+                # Different step at this index — base data (copy/goal/done) would
+                # be semantically wrong if grafted onto the new step. Use Notion only.
+                merged_step = copy.deepcopy(notion_step)
+            else:
+                # Same title (or one side is empty) — preserve base, augment with notion.
+                merged_step = copy.deepcopy(base_step)
+                if isinstance(notion_step, dict):
+                    for key, value in notion_step.items():
+                        if should_override(value) or key not in merged_step:
+                            merged_step[key] = copy.deepcopy(value)
+
             if merged_step:
                 merged_steps.append(merged_step)
+
         merged["steps"] = merged_steps
 
     return merged
