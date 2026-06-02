@@ -568,8 +568,6 @@ Set render engine to Eevee with bloom enabled and render each camera view.
 
 3D 작업에도 사진 촬영처럼 카메라가 있어야 결과물이 나와요. Focal Length는 렌즈 종류, Depth of Field는 조리개라고 생각하면 돼요. 50mm 표준 렌즈로 시작해서 로봇 정면 45도 각도부터 잡아봐요.
 
-![Camera 배치](../../course-site/assets/images/week13/camera-setup.png)
-
 체크해볼 것
 
 - 로봇 모델 씬 열기
@@ -581,8 +579,6 @@ Set render engine to Eevee with bloom enabled and render each camera view.
 #### 2. Eevee 렌더 테스트 (Blender 5.0 기준)
 
 Cycles는 사진 인화처럼 정밀하고 느리고, Eevee는 빠른 반복 작업에 유리합니다. (단, 5.0 기준 Eevee는 구버전 튜토리얼의 AO/SSR/Bloom 체크박스 대신 Raytracing/Light Probe 중심으로 품질을 올리는 경우가 많습니다.)
-
-![Eevee 렌더 테스트 (Blender 5.0 기준)](../../course-site/assets/images/week13/eevee-render.png)
 
 체크해볼 것
 
@@ -596,8 +592,6 @@ Cycles는 사진 인화처럼 정밀하고 느리고, Eevee는 빠른 반복 작
 #### 3. Cycles 렌더 비교
 
 Cycles는 빛 한 줄기씩 일일이 계산해요. 그래서 느리지만 사진처럼 정확해요. Denoising만 켜면 절반 샘플로도 깨끗하게 나와서 시간이 크게 줄어요.
-
-![Cycles 렌더 비교](../../course-site/assets/images/week13/cycles-render.png)
 
 체크해볼 것
 
@@ -638,13 +632,24 @@ Suno AI에 분위기를 한 줄로 적으면 30초 BGM이 두 곡 나와요. 무
 
 한 걸음 더: Blender의 Compositor를 활용하면 렌더링 후 포토샵 없이도 색보정, 글로우, 비네팅 등을 적용할 수 있습니다. Compositing 탭에서 "Use Nodes"를 체크하고, Render Layers → Glare(글로우) → Color Balance(색보정) → Composite 순으로 노드를 연결해보세요. 한 번 설정해두면 모든 렌더에 자동 적용되어 일관된 후처리가 가능합니다. 이것은 영화 VFX 업계에서 "LUT를 태운다"고 부르는 작업과 같은 원리입니다.
 
-![영상 조합](../../course-site/assets/images/week13/video-sequencer.png)
-
 체크해볼 것
 
 - Blender Video Sequencer 또는 CapCut 열기 (둘 다 무료로 사용 가능)
 - Add > Movie로 AI 영상, Add > Sound로 BGM 트랙 배치
 - 영상과 음악 길이를 Strip 끝 드래그로 맞추고 Ctrl + F12 (또는 Export)로 MP4 저장
+
+#### 8. Antigravity 랜딩페이지 (선택/가산점)
+
+Blender 렌더와 AI 영상·음악을 한 페이지로 묶어 프로젝트 소개 사이트를 만들어요. Part 8의 Antigravity를 그대로 활용해 최종 발표 자료로 확장해요.
+
+한 걸음 더: Blender의 Compositor를 활용하면 렌더링 후 포토샵 없이도 색보정, 글로우, 비네팅 등을 적용할 수 있습니다. Blender 5.0 기준으로는 Compositing 탭에서 New로 노드 트리를 만든 뒤, View Layer → Glare(글로우) → Color Balance(색보정) → Group Output 순으로 연결해보세요. 한 번 설정해두면 모든 렌더에 자동 적용되어 일관된 후처리가 가능합니다. 이것은 영화 VFX 업계에서 “후반 색보정/컴포지팅을 태운다”는 작업과 같은 원리입니다.
+
+체크해볼 것
+
+- 새 폴더(예: robot-landing-page)를 만들고 Antigravity에서 열기
+- 렌더 이미지·AI 영상·BGM을 assets 폴더에 넣기
+- AI 에이전트에게 랜딩페이지 제작 요청 후 미리보기로 다듬기
+- 완성 페이지를 캴처하거나 프로젝트로 제출
 
 ### 핵심 단축키
 
@@ -663,7 +668,7 @@ Suno AI에 분위기를 한 줄로 적으면 30초 BGM이 두 곡 나와요. 무
   - 자신의 로봇을 다양한 각도와 조명으로 렌더링하여 이미지 3장 이상 제출
   - Kling AI로 AI 영상 1개 생성하여 제출
   - Suno AI로 AI BGM 1개 생성하여 제출
-  - (선택/가산점) 영상+BGM을 조합한 프로모션 영상 제출
+  - (선택/가산점) 영상+BGM을 조합한 프로모션 영상, 또는 Antigravity로 만든 프로젝트 랜딩페이지 제출
 
 ### 자주 막히는 지점
 

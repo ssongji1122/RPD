@@ -3515,8 +3515,6 @@
             "detail": ""
           }
         ],
-        "image": "assets/images/week13/camera-setup.png",
-        "link": "https://docs.blender.org/manual/en/latest/render/cameras.html",
         "showme": "render-settings"
       },
       {
@@ -3558,8 +3556,6 @@
             "detail": ""
           }
         ],
-        "image": "assets/images/week13/eevee-render.png",
-        "link": "https://docs.blender.org/manual/en/latest/render/eevee/introduction.html",
         "showme": "render-settings"
       },
       {
@@ -3586,8 +3582,6 @@
             "detail": ""
           }
         ],
-        "image": "assets/images/week13/cycles-render.png",
-        "link": "https://docs.blender.org/manual/en/latest/render/cycles/introduction.html",
         "showme": "compositing-basics"
       },
       {
@@ -3684,9 +3678,35 @@
             "detail": ""
           }
         ],
-        "image": "assets/images/week13/video-sequencer.png",
-        "link": "https://docs.blender.org/manual/en/latest/video_editing/introduction.html",
         "showme": "compositing-basics"
+      },
+      {
+        "title": "Antigravity 랜딩페이지 (선택/가산점)",
+        "copy": "Blender 렌더와 AI 영상·음악을 한 페이지로 묶어 프로젝트 소개 사이트를 만들어요. Part 8의 Antigravity를 그대로 활용해 최종 발표 자료로 확장해요.\n\n한 걸음 더: Blender의 Compositor를 활용하면 렌더링 후 포토샵 없이도 색보정, 글로우, 비네팅 등을 적용할 수 있습니다. Blender 5.0 기준으로는 Compositing 탭에서 New로 노드 트리를 만든 뒤, View Layer → Glare(글로우) → Color Balance(색보정) → Group Output 순으로 연결해보세요. 한 번 설정해두면 모든 렌더에 자동 적용되어 일관된 후처리가 가능합니다. 이것은 영화 VFX 업계에서 “후반 색보정/컴포지팅을 태운다”는 작업과 같은 원리입니다.",
+        "goal": [],
+        "done": [],
+        "tasks": [
+          {
+            "id": "w13-t23-2",
+            "label": "새 폴더(예: robot-landing-page)를 만들고 Antigravity에서 열기",
+            "detail": ""
+          },
+          {
+            "id": "w13-t24-2",
+            "label": "렌더 이미지·AI 영상·BGM을 assets 폴더에 넣기",
+            "detail": ""
+          },
+          {
+            "id": "w13-t25-2",
+            "label": "AI 에이전트에게 랜딩페이지 제작 요청 후 미리보기로 다듬기",
+            "detail": ""
+          },
+          {
+            "id": "w13-t26",
+            "label": "완성 페이지를 캴처하거나 프로젝트로 제출",
+            "detail": ""
+          }
+        ]
       }
     ],
     "shortcuts": [
@@ -3748,7 +3768,7 @@
         "자신의 로봇을 다양한 각도와 조명으로 렌더링하여 이미지 3장 이상 제출",
         "Kling AI로 AI 영상 1개 생성하여 제출",
         "Suno AI로 AI BGM 1개 생성하여 제출",
-        "(선택/가산점) 영상+BGM을 조합한 프로모션 영상 제출"
+        "(선택/가산점) 영상+BGM을 조합한 프로모션 영상, 또는 Antigravity로 만든 프로젝트 랜딩페이지 제출"
       ]
     },
     "mistakes": [
