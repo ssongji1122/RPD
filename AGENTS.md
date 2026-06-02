@@ -85,7 +85,7 @@ cd web && npm run build                  # dist/ 생성
 ## Knowledge Pointers
 
 <!-- BEGIN:WIKI -->
-_last sync: 2026-05-20_
+_last sync: 2026-06-02_
 
 - [[agents-md-sst]] — AGENTS.md SSoT 전략 (symlink, .cursorrules deprecated) | 2026-05-06
 - [[gemini-cli-agents-md]] — Gemini CLI context.fileName 설정 | 2026-05-06
@@ -108,18 +108,18 @@ _last sync: 2026-05-20_
 ## Recent Decisions
 
 <!-- BEGIN:DECISIONS -->
-_last sync: 2026-05-20_
+_last sync: 2026-06-02_
 
-| 2026-03-23 | Obsidian vault 도입 (사람용) + memory/ 유지 (기계용) | ssonji가 직접 memory/ 파일을 편집하지 않음. Claude가 관리하는 memory/와 ssonji가 탐색하는 vault를 분리 | 전체 |
-| 2026-03-09 | 자료방 구버전을 교수자 페이지 하위로 이동 | 삭제 대신 보존. 학생 메인에서는 제거하되 참조 가능하게 | RPD |
-| 2026-03-27 | AI News Scout 에이전트 도입 | Claude Code 생태계 변화를 빠르게 캐치하여 프로젝트에 즉시 적용. Python cron 대신 기존 MCP 인프라(scheduled-tasks) 활용이 효율적. 출력: claudedocs+Obsidian+Notion 3곳 동기화. 적용 방식: 분석+가이드+PR까지 자동→ssonji 승인 후 적용 | 전체 |
-| 2026-04-12 | Advisor 패턴 도입 (모델 비용 최적화) | Anthropic Advisor Tool(2026-04-09 공개) 개념을 Claude Code + Paperclip에 적용. Sonnet을 기본 Executor로, Opus를 플래닝/리뷰 전용으로 배정. SWE-bench 기준 72.1→74.8% 성능 향상 + 비용 절감. CLAUDE.md에 모델 선택 가이드 추가 완료. | 전체 |
 | 2026-05-06 | AGENTS.md SSoT + CLAUDE.md symlink 전략 채택 | 멀티 에이전트(Claude/Codex/Gemini/Cursor) 혼용 시 컨텍스트 drift 방지. 공식 문서 크로스체크: .cursorrules deprecated, Gemini CLI는 settings.json 필요, Claude Code는 CLAUDE.md 우선. | 전체 |
 | 2026-05-06 | sync-wiki.sh SessionEnd hook 자동 실행 | 세션 종료 시 Obsidian wiki → AGENTS.md 자동 갱신. 복리학습 파이프라인 완성. | 전체 |
 | 2026-05-06 | agent-init 템플릿 ~/.dotfiles/agent-template/ 구축 | 신규 프로젝트마다 수동 설정 비용 제거. /agent-init 슬래시 커맨드로 접근. thegoodfriends의 3-way drift는 CLAUDE.md→AGENTS.md 승격 + AGENTS.paperclip.md 분리로 해결. | 전체 |
 | 2026-05-10 | AI 자동화/수동 작업 5-mode 분리 정책 확정 | ₩22,029 Gemini 사고 후 안전장치. agent-council(Codex+Gemini) 검토로 모델 이름 중심에서 권한·실행방식 축으로 재정의. ops-safe / ops-summary / manual-review / protected-review / code-exec 5단계. 무인 자동화 외부 AI fallback 금지(break-glass 포함), protected에 무료 라우터 금지. 정책 본문: reference_ai_automation_policy.md. CLAUDE.md "유료 API 사전 확인" 섹션에 요약 통합. | 전체 |
 | 2026-05-10 | crontab Paperclip heartbeat (매시간) + reset-errors (매 30분) 제거 | 5-mode 정책 적용. heartbeat는 `--source timer --trigger system`으로 무인 Coder agent invoke = 외부 Gemini API 호출 패턴 (사고 재현). reset-errors는 스크립트 파일 부재로 dead cron. 백업: ~/.claude/backups/crontab-2026-05-10-pre-policy.bak | 전체 |
 | 2026-05-10 | Hermes RPD 보고 cron job — Gemini free 현재 유지 (정책 예외) | 비용 0, Notion read-only, 주 1회, production 수정 없음, cron_mode:deny 적용으로 8개 hard rules 충족. SOUL.md 예외 목록에 명시. | 전체 |
+| 2026-05-20 | Multi-tool routing 표를 ~/AGENTS.md 글로벌로 격상 (R-global) | AGENTS.routing.md는 프로젝트별 drift 위험. routing 의사결정은 도구 무관 공통이므로 글로벌 SSoT(~/AGENTS.md)로 이동. DEPRECATED: ~/.dotfiles/agent-template/AGENTS.routing.md (히스토리 보존), agent-init.sh의 routing append 라인 주석화. 모든 도구(Codex/Gemini/OpenCode symlink, Claude @import)가 자동 import. | 전체 |
+| 2026-05-20 | AGENTS.md 표준 골격 11-section 확정 + agent-init 본문 풍부화 | ~/.dotfiles/agent-template/AGENTS.base.md를 빈 placeholder에서 11-section 골격으로 재작성 (Project Overview, Stack, Dev Servers, Commands, Quality Gates, Protected Files, Conventions, Design System, Karpathy 4원칙, Knowledge Pointers, Recent Decisions). 신규 프로젝트가 /agent-init 한 방으로 thegoodfriends 수준 골격 확보. 기존 4개 프로젝트는 audit 후 실제 갭만 보완 (scrave 골격 추가, studio.soluta Quality Gates). | 전체 |
+| 2026-05-20 | busywork 회피 원칙 확립 — 표준화 ≠ 동질화 | audit 결과(grep substring 매트릭스)를 무비판 실행 계획으로 전환 금지. thegoodfriends(404줄) 처럼 이미 풍부한 AGENTS.md는 명칭이 표준과 달라도 정보가 더 풍부하면 그대로 유지. Karpathy 외과적 변경 원칙과 일치. 다음 표준화 작업 시 "실제로 빈 곳만 채움" 가이드. | 전체 |
+| 2026-05-20 | friendspick/ rpd-web/ 외부 폴더 정리 — 단일 SoT | friendspick(브랜드명, 빈 폴더) → thegoodfriends(법인명, 실코드)로 흡수. rpd-web(scaffold만, no remote)→ RPD/web/ 흡수. studio.soluta workspace에 떠있던 외딴 디렉토리 제거. 단일 git repo SSoT 유지. | thegoodfriends, RPD |
 <!-- END:DECISIONS -->
 
 ---
