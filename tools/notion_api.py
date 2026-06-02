@@ -24,6 +24,8 @@ from __future__ import annotations
 import json
 import os
 import re
+import subprocess
+import tempfile
 import urllib.parse
 import urllib.request
 from pathlib import Path
@@ -260,6 +262,41 @@ def _ext_from_url(url: str, fallback: str = ".bin") -> str:
     return suffix if suffix else fallback
 
 
+def _download_and_transcode_video(url: str, target: Path, req: urllib.request.Request) -> None:
+    """Download a Notion-hosted video to a temp file, transcode to a compressed mp4 at target.
+
+    Notion signed URLs expire ~1 hour, so we download once at sync time. Raw uploads
+    (.mov screen recordings) are large, so we compress with ffmpeg to keep the repo small —
+    matching the existing `clips/` "small compressed mp4" policy. On any download or
+    transcode failure, raise so the caller leaves no `local_url` (renderer falls back to the
+    remote URL rather than pointing at a missing/partial file).
+    """
+    suffix = _ext_from_url(url, ".mov")
+    tmp_dir = Path(tempfile.mkdtemp(prefix="rpd-video-"))
+    tmp_path = tmp_dir / f"src{suffix}"
+    try:
+        with urllib.request.urlopen(req, timeout=120) as resp:
+            tmp_path.write_bytes(resp.read())
+        cmd = [
+            "ffmpeg", "-y", "-i", str(tmp_path),
+            "-vcodec", "libx264", "-crf", "28", "-preset", "fast",
+            "-vf", "scale='min(1280,iw)':-2",
+            "-acodec", "aac", "-b:a", "128k",
+            "-movflags", "+faststart",
+            str(target),
+        ]
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
+        if result.returncode != 0:
+            target.unlink(missing_ok=True)
+            raise RuntimeError(f"ffmpeg failed (rc={result.returncode}): {result.stderr[-200:]}")
+    finally:
+        tmp_path.unlink(missing_ok=True)
+        try:
+            tmp_dir.rmdir()
+        except OSError:
+            pass
+
+
 def download_block_assets(
     blocks: list[dict],
     dest_dir: Path,
@@ -282,18 +319,27 @@ def download_block_assets(
                 if kind == "file":
                     block_id = block.get("id", "").replace("-", "")
                     if block_id:
-                        ext = _ext_from_url(url)
+                        is_video = block.get("type") == "video"
+                        # 영상은 압축 mp4로 변환해 저장(repo 비대 방지 — clips/ 정책과 동일).
+                        ext = ".mp4" if is_video else _ext_from_url(url)
                         target = dest_dir / f"{block_id}{ext}"
                         if not target.exists():
                             try:
                                 req = urllib.request.Request(url, headers={"User-Agent": "rpd-notion-sync/1.0"})
-                                with urllib.request.urlopen(req, timeout=30) as resp:
-                                    target.write_bytes(resp.read())
+                                if is_video:
+                                    _download_and_transcode_video(url, target, req)
+                                else:
+                                    with urllib.request.urlopen(req, timeout=30) as resp:
+                                        target.write_bytes(resp.read())
                                 downloaded += 1
                             except Exception as exc:  # noqa: BLE001
                                 print(f"  ! failed to download {url[:80]}...: {exc}")
-                        block["local_url"] = f"{public_prefix.rstrip('/')}/{target.name}"
-                        block["local_path"] = str(target)
+                        # 파일이 존재하면(캐시 또는 방금 생성) local_url을 설정한다.
+                        # 다운로드/변환 실패 시 target이 없으므로 local_url 미설정 →
+                        # 렌더러가 원격 URL로 fallback(만료 전까지 동작, 깨진 로컬 경로 방지).
+                        if target.exists():
+                            block["local_url"] = f"{public_prefix.rstrip('/')}/{target.name}"
+                            block["local_path"] = str(target)
             children = block.get("children") or []
             if children:
                 visit(children)

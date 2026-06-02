@@ -923,7 +923,7 @@ const SHOWME_CATALOG = {
       "officialVideos": [
         {
           "label": "Blender Studio - Introduction to Sculpting",
-          "url": "https://studio.blender.org/training/sculpting-in-blender/introduction/"
+          "url": "https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/index.html"
         }
       ],
       "keywords": [
@@ -938,7 +938,7 @@ const SHOWME_CATALOG = {
       "officialVideos": [
         {
           "label": "Blender Studio - Sculpting Brushes",
-          "url": "https://studio.blender.org/training/sculpting-in-blender/brushes/"
+          "url": "https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/tools/index.html"
         }
       ],
       "keywords": [

@@ -1707,7 +1707,7 @@ const CURRICULUM = [
     "videos": [
       {
         "title": "Blender Studio - Introduction to Sculpting",
-        "url": "https://studio.blender.org/training/sculpting-in-blender/introduction/"
+        "url": "https://studio.blender.org/training/blender-fundamentals-45-lts/sculpting_introduction/"
       }
     ],
     "docs": [
@@ -3472,7 +3472,7 @@ const CURRICULUM = [
   },
   {
     "week": 13,
-    "status": "active",
+    "status": "done",
     "title": "AI 영상/사운드 + 렌더링 + MCP",
     "subtitle": "Cycles vs EEVEE · 출력 설정 · AI 영상/음악 · VSE 편집",
     "duration": "~3시간",
@@ -3610,7 +3610,7 @@ const CURRICULUM = [
   },
   {
     "week": 14,
-    "status": "upcoming",
+    "status": "active",
     "title": "최종 프로젝트 제작",
     "subtitle": "개인 프로젝트 집중 작업",
     "duration": "수업 전체 작업 + 피드백",
