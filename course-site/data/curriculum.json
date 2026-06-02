@@ -3481,182 +3481,212 @@
     ],
     "steps": [
       {
-        "title": "렌더 엔진 비교",
-        "copy": "Cycles는 사진 인화처럼 정밀하고 느리고, EEVEE는 게임 엔진처럼 빠르지만 덜 사실적이에요. 수정 중엔 EEVEE, 최종 제출엔 Cycles를 써요. 용도에 따라 골라 쓰면 돼요.",
-        "goal": [
-          "두 엔진의 차이를 안다",
-          "각각 어떤 상황에 쓰는지 판단한다"
-        ],
+        "title": "Camera 배치",
+        "copy": "3D 작업에도 사진 촬영처럼 카메라가 있어야 결과물이 나와요. Focal Length는 렌즈 종류, Depth of Field는 조리개라고 생각하면 돼요. 50mm 표준 렌즈로 시작해서 로봇 정면 45도 각도부터 잡아봐요.",
+        "goal": [],
         "done": [
-          "같은 씬을 두 엔진으로 렌더해서 비교했다"
+          "카메라를 배치하고 Focal Length·DOF를 설정했다",
+          "Numpad 0으로 구도를 확인했다"
         ],
         "tasks": [
           {
             "id": "w13-t1",
-            "label": "Render Properties → Engine → Cycles로 전환 후 F12",
-            "detail": "렌더 시간 기록해두기"
+            "label": "로봇 모델 씬 열기",
+            "detail": ""
           },
           {
             "id": "w13-t2",
-            "label": "EEVEE로 전환 후 같은 씬 F12 → 속도와 품질 비교",
-            "detail": "그림자, 반사, 유리 차이 주목"
+            "label": "Location: (4, -4, 3)",
+            "detail": ""
           },
           {
             "id": "w13-t3",
-            "label": "Cycles Samples를 128 → 512로 바꿔서 노이즈 비교",
-            "detail": "높을수록 깨끗하지만 느림"
-          }
-        ],
-        "image": "assets/images/week13/cycles-eevee.png",
-        "showme": "render-settings",
-        "widgets": [
-          {
-            "type": "showme",
-            "id": "volume-to-mesh"
-          }
-        ]
-      },
-      {
-        "title": "렌더 출력 설정",
-        "copy": "해상도, 파일 형식, 저장 경로를 설정하고 F12로 렌더해요. 한 번 설정해두면 계속 쓸 수 있어요. 포트폴리오용이면 1920×1080 이상이 좋아요.",
-        "goal": [
-          "Output Properties를 자유롭게 설정한다"
-        ],
-        "done": [
-          "의도한 해상도와 파일 형식으로 렌더가 저장됐다"
-        ],
-        "tasks": [
+            "label": "Numpad 0 으로 Camera 뷰 확인",
+            "detail": ""
+          },
           {
             "id": "w13-t4",
-            "label": "Output Properties → Resolution 1920×1080 설정",
-            "detail": "% 스케일로 미리보기 가능 (50%로 빠른 테스트)"
+            "label": "Focal Length: 50mm",
+            "detail": ""
           },
           {
             "id": "w13-t5",
-            "label": "Output Format → PNG (이미지) 또는 FFmpeg (영상) 선택",
+            "label": "DOF 체크",
             "detail": ""
-          },
-          {
-            "id": "w13-t6",
-            "label": "파일 출력 경로 설정 후 F12로 렌더",
-            "detail": "Image → Save As로 원하는 위치에 저장"
           }
         ],
-        "image": "assets/images/week13/render-output.png"
+        "image": "assets/images/week13/camera-setup.png",
+        "link": "https://docs.blender.org/manual/en/latest/render/cameras.html",
+        "showme": "render-settings"
       },
       {
-        "title": "Compositing 기초",
-        "copy": "사진 찍고 나서 보정하듯, 렌더 후에 밝기, 색감, 글로우 효과를 추가할 수 있어요. Compositing 노드로 후처리를 하면 렌더를 다시 안 해도 돼요.",
-        "goal": [
-          "Compositing 노드의 기본 흐름을 이해한다"
-        ],
+        "title": "Eevee 렌더 테스트 (Blender 5.0 기준)",
+        "copy": "Cycles는 사진 인화처럼 정밀하고 느리고, Eevee는 빠른 반복 작업에 유리합니다. (단, 5.0 기준 Eevee는 구버전 튜토리얼의 AO/SSR/Bloom 체크박스 대신 Raytracing/Light Probe 중심으로 품질을 올리는 경우가 많습니다.)",
+        "goal": [],
         "done": [
-          "Glare나 Color Balance 효과를 적용했다"
+          "Eevee로 빠르게 테스트 렌더를 완료했다"
         ],
         "tasks": [
           {
+            "id": "w13-t6",
+            "label": "Render Engine: Eevee",
+            "detail": ""
+          },
+          {
             "id": "w13-t7",
-            "label": "Compositing 워크스페이스로 전환, Use Nodes 켜기",
-            "detail": "Render Layers → Composite 기본 연결 확인"
+            "label": "Render > Raytracing:",
+            "detail": ""
           },
           {
             "id": "w13-t8",
-            "label": "Shift+A → Filter → Glare 추가해서 빛 번짐 효과",
-            "detail": "Emission 재질이 있으면 효과가 잘 보여요"
+            "label": "Bloom 느낌이 필요하면:",
+            "detail": ""
           },
           {
             "id": "w13-t9",
-            "label": "Color Balance 노드로 색감 조정",
-            "detail": "Lift/Gamma/Gain으로 분위기 바꾸기"
-          }
-        ],
-        "image": "assets/images/week13/compositing.png",
-        "showme": "compositing-basics"
-      },
-      {
-        "title": "애니메이션 렌더링",
-        "copy": "프레임을 하나씩 렌더해서 영상으로 만드는 거예요. Ctrl+F12 하나로 시작돼요. 시간이 오래 걸리니까 범위와 해상도를 먼저 확인하세요.",
-        "goal": [
-          "애니메이션 렌더 파이프라인을 이해한다"
-        ],
-        "done": [
-          "5초 이상 애니메이션 영상 파일이 생성됐다"
-        ],
-        "tasks": [
+            "label": "View Transform: AgX",
+            "detail": ""
+          },
           {
             "id": "w13-t10",
-            "label": "Frame Range 확인 (Start/End Frame)",
-            "detail": "24fps 기준 5초 = 120프레임"
+            "label": "Resolution: 1920x1080",
+            "detail": ""
           },
           {
             "id": "w13-t11",
-            "label": "Output Format → FFmpeg → MPEG-4 설정",
-            "detail": ".mp4 파일로 출력"
-          },
-          {
-            "id": "w13-t12",
-            "label": "EEVEE로 먼저 테스트 렌더 후 Cycles로 최종 렌더",
-            "detail": "Ctrl+F12로 시작"
-          }
-        ],
-        "image": "assets/images/week13/animation-render.png"
-      },
-      {
-        "title": "AI 후처리 체험",
-        "copy": "렌더 이미지를 AI 이미지 생성 툴에 넣으면 스타일을 바꾸거나 디테일을 추가할 수 있어요. 3D + AI의 하이브리드 워크플로우예요.",
-        "goal": [
-          "AI 후처리의 가능성을 이해한다"
-        ],
-        "done": [
-          "렌더 이미지를 AI로 변형해봤다"
-        ],
-        "tasks": [
-          {
-            "id": "w13-t13",
-            "label": "렌더 이미지를 AI 이미지 툴에 업로드 (img2img)",
-            "detail": "스타일 변형이나 디테일 추가"
-          },
-          {
-            "id": "w13-t14",
-            "label": "원본 렌더와 AI 후처리 결과 나란히 비교",
+            "label": "F12 렌더 > F3 저장",
             "detail": ""
           }
         ],
-        "image": "assets/images/week13/ai-postprocess.png"
+        "image": "assets/images/week13/eevee-render.png",
+        "link": "https://docs.blender.org/manual/en/latest/render/eevee/introduction.html",
+        "showme": "render-settings"
       },
       {
-        "title": "MCP로 카메라·렌더 자동화",
-        "copy": "설정한 장면을 Claude에게 렌더해 달라고 하면 돼요. 카메라 위치, 렌더 엔진, 해상도까지 말 한마디로 바꿀 수 있어요. 반복 작업을 MCP로 자동화하면 시간을 크게 아낄 수 있어요.",
-        "goal": [
-          "MCP로 렌더 설정과 카메라를 자동화한다",
-          "Claude와 대화하며 씬을 완성한다"
-        ],
+        "title": "Cycles 렌더 비교",
+        "copy": "Cycles는 빛 한 줄기씩 일일이 계산해요. 그래서 느리지만 사진처럼 정확해요. Denoising만 켜면 절반 샘플로도 깨끗하게 나와서 시간이 크게 줄어요.",
+        "goal": [],
         "done": [
-          "MCP 명령으로 렌더가 실행됐다",
-          "카메라 위치와 각도를 MCP로 조정했다"
+          "Cycles로 렌더해서 Eevee와 품질 차이를 비교했다"
         ],
         "tasks": [
           {
-            "id": "w13-t-mcp1",
-            "label": "Claude에게 씬 상태 확인 요청: \"현재 씬에 있는 오브젝트 목록 알려줘\"",
-            "detail": "get_scene_info 툴이 작동하는지 확인 — MCP가 연결돼 있어야 함"
+            "id": "w13-t12",
+            "label": "Render Engine: Cycles",
+            "detail": ""
           },
           {
-            "id": "w13-t-mcp2",
-            "label": "Claude에게 카메라 설정 요청: \"카메라를 x=5, y=-5, z=3으로 이동하고 원점을 바라봐줘\"",
-            "detail": "카메라 위치·방향 자동 설정"
+            "id": "w13-t13",
+            "label": "Render Samples: 128",
+            "detail": ""
           },
           {
-            "id": "w13-t-mcp3",
-            "label": "Claude에게 EEVEE 25% 렌더 요청: \"EEVEE 25%로 /tmp/test.png 렌더해줘\"",
-            "detail": "렌더 결과 확인 후 수정 사항을 대화로 전달"
+            "id": "w13-t14",
+            "label": "F12 렌더 > Eevee와 비교",
+            "detail": ""
+          }
+        ],
+        "image": "assets/images/week13/cycles-render.png",
+        "link": "https://docs.blender.org/manual/en/latest/render/cycles/introduction.html",
+        "showme": "compositing-basics"
+      },
+      {
+        "title": "MCP 카메라 자동화",
+        "copy": "Claude한테 \"정면 45도로 카메라 둬\"라고 말하면 그대로 해줘요. 좌표 입력을 한 줄 명령으로 대체할 수 있어요. 여러 앵글을 한 번에 만들 때 가장 효율이 좋아요.",
+        "goal": [],
+        "done": [
+          "MCP 명령으로 카메라·렌더를 자동 실행했다"
+        ],
+        "tasks": [
+          {
+            "id": "w13-t15",
+            "label": "Claude Desktop에서 3가지 카메라 앵글 자동 설정",
+            "detail": ""
           },
           {
-            "id": "w13-t-mcp4",
-            "label": "Claude에게 Cycles 최종 렌더 요청: \"Cycles GPU 50%로 최종 렌더해줘\"",
-            "detail": "GPU 자동 감지 후 렌더 실행"
+            "id": "w13-t16",
+            "label": "각 카메라 뷰 확인 > 마음에 드는 앵글로 렌더",
+            "detail": ""
           }
         ]
+      },
+      {
+        "title": "AI 영상 생성",
+        "copy": "렌더 이미지 한 장이면 Kling AI가 5초 영상으로 만들어줘요. 매일 무료 크레딧(약 66개)으로 5~6개 테스트 가능해요. Google Veo 3(Gemini Pro 구독자)나 Higgsfield(시네마틱 카메라 컨트롤, free tier는 워터마크)도 옵션이지만, 한국 학생이 무료로 가장 편하게 쓰는 건 Kling이에요.",
+        "goal": [],
+        "done": [
+          "렌더 이미지로 AI 영상을 만들었다"
+        ],
+        "tasks": [
+          {
+            "id": "w13-t17",
+            "label": "렌더 이미지 1장 선택",
+            "detail": ""
+          },
+          {
+            "id": "w13-t18",
+            "label": "klingai.com > Image to Video > 프롬프트 입력",
+            "detail": ""
+          },
+          {
+            "id": "w13-t19",
+            "label": "5초 영상 생성 > 다운로드",
+            "detail": ""
+          }
+        ]
+      },
+      {
+        "title": "AI BGM 생성",
+        "copy": "Suno AI에 분위기를 한 줄로 적으면 30초 BGM이 두 곡 나와요. 무료 50 크레딧으로 하루 10곡 정도 가능해요. Google Flow Music(Lyria 3, 무료)도 좋은 대안이고, 효과음은 ElevenLabs Music에서 따로 받을 수 있어요. 포트폴리오에 게시할 거면 라이선스를 확인하세요 — 무료 plan은 비상업 한정이에요.",
+        "goal": [],
+        "done": [
+          "AI로 BGM을 생성했다"
+        ],
+        "tasks": [
+          {
+            "id": "w13-t20",
+            "label": "suno.com > Create > 프롬프트 입력",
+            "detail": ""
+          },
+          {
+            "id": "w13-t21",
+            "label": "2곡 생성 후 선택 > MP3 다운로드",
+            "detail": ""
+          },
+          {
+            "id": "w13-t22",
+            "label": "(선택) ElevenLabs에서 효과음도 생성",
+            "detail": ""
+          }
+        ]
+      },
+      {
+        "title": "영상 조합",
+        "copy": "한 걸음 더: Blender의 Compositor를 활용하면 렌더링 후 포토샵 없이도 색보정, 글로우, 비네팅 등을 적용할 수 있습니다. Compositing 탭에서 \"Use Nodes\"를 체크하고, Render Layers → Glare(글로우) → Color Balance(색보정) → Composite 순으로 노드를 연결해보세요. 한 번 설정해두면 모든 렌더에 자동 적용되어 일관된 후처리가 가능합니다. 이것은 영화 VFX 업계에서 \"LUT를 태운다\"고 부르는 작업과 같은 원리입니다.",
+        "goal": [],
+        "done": [
+          "AI 영상과 BGM을 하나로 합쳐 프로모션 영상을 만들었다"
+        ],
+        "tasks": [
+          {
+            "id": "w13-t23",
+            "label": "Blender Video Sequencer 또는 CapCut 열기",
+            "detail": "둘 다 무료로 사용 가능"
+          },
+          {
+            "id": "w13-t24",
+            "label": "Add > Movie로 AI 영상, Add > Sound로 BGM 트랙 배치",
+            "detail": ""
+          },
+          {
+            "id": "w13-t25",
+            "label": "영상과 음악 길이를 Strip 끝 드래그로 맞추고 Ctrl + F12 (또는 Export)로 MP4 저장",
+            "detail": ""
+          }
+        ],
+        "image": "assets/images/week13/video-sequencer.png",
+        "link": "https://docs.blender.org/manual/en/latest/video_editing/introduction.html",
+        "showme": "compositing-basics"
       }
     ],
     "shortcuts": [
@@ -3701,16 +3731,24 @@
       {
         "title": "AI로 스타일 변형",
         "hint": "같은 렌더를 3가지 다른 AI 스타일(사이버펑크/수채화/픽셀아트)로 변형해보기"
+      },
+      {
+        "title": "Veo 3 영상+오디오 동시 생성",
+        "hint": "Google AI Studio(aistudio.google.com)에서 Veo 3.1을 무료로 테스트 — 영상 안에 BGM·효과음이 함께 생성돼서 Step 6/7을 한 번에 처리"
+      },
+      {
+        "title": "Higgsfield Soul ID 캐릭터 일관성",
+        "hint": "Higgsfield free tier로 같은 로봇이 여러 장면에 등장하는 시네마틱 영상 실험 (워터마크 720p 한계 감안)"
       }
     ],
     "assignment": {
-      "title": "렌더링 포트폴리오",
+      "title": "렌더 이미지 3장 이상 + AI 영상 1개 + AI BGM 1개 제출",
       "description": "EEVEE와 Cycles로 동일한 씬을 렌더한 비교 이미지와 최종 고품질 렌더를 제출해요.",
       "checklist": [
-        "EEVEE vs Cycles 비교 이미지 (같은 앵글)",
-        "Compositing 후처리 적용된 최종 렌더",
-        "애니메이션 영상 파일 (5초 이상)",
-        "AI 후처리 비교 이미지 (선택)"
+        "자신의 로봇을 다양한 각도와 조명으로 렌더링하여 이미지 3장 이상 제출",
+        "Kling AI로 AI 영상 1개 생성하여 제출",
+        "Suno AI로 AI BGM 1개 생성하여 제출",
+        "(선택/가산점) 영상+BGM을 조합한 프로모션 영상 제출"
       ]
     },
     "mistakes": [
@@ -3724,28 +3762,52 @@
       {
         "title": "Blender Studio - Rendering",
         "url": "https://studio.blender.org/training/blender-2-8-fundamentals/rendering/"
+      },
+      {
+        "title": "Blender 공식 YouTube 채널",
+        "url": "https://www.youtube.com/@BlenderOfficial"
       }
     ],
     "docs": [
       {
-        "title": "Cycles",
+        "title": "Camera (Blender)",
+        "url": "https://docs.blender.org/manual/en/latest/render/cameras.html"
+      },
+      {
+        "title": "Cycles (Blender)",
         "url": "https://docs.blender.org/manual/en/latest/render/cycles/index.html"
       },
       {
-        "title": "EEVEE",
+        "title": "EEVEE (Blender)",
         "url": "https://docs.blender.org/manual/en/latest/render/eevee/index.html"
       },
       {
-        "title": "Render Output",
-        "url": "https://docs.blender.org/manual/en/latest/render/output/index.html"
-      },
-      {
-        "title": "Compositing",
+        "title": "Compositing (Blender)",
         "url": "https://docs.blender.org/manual/en/latest/compositing/index.html"
       },
       {
-        "title": "Denoising",
-        "url": "https://docs.blender.org/manual/en/latest/render/cycles/render_settings/sampling.html"
+        "title": "Video Editing (Blender)",
+        "url": "https://docs.blender.org/manual/en/latest/video_editing/introduction.html"
+      },
+      {
+        "title": "Kling AI (영상 생성)",
+        "url": "https://www.klingai.com/"
+      },
+      {
+        "title": "Suno AI (BGM 생성)",
+        "url": "https://suno.com/"
+      },
+      {
+        "title": "Google Flow Music (Lyria 3, BGM)",
+        "url": "https://www.flowmusic.app/"
+      },
+      {
+        "title": "Google Veo (영상+오디오)",
+        "url": "https://deepmind.google/models/veo/"
+      },
+      {
+        "title": "ElevenLabs (효과음/음악)",
+        "url": "https://elevenlabs.io/"
       }
     ],
     "summary": "Cycles와 EEVEE의 차이를 이해하고 렌더 설정을 최적화해요. 카메라 감독처럼 최종 출력을 결정하는 단계예요."

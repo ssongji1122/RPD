@@ -564,101 +564,87 @@ Set render engine to Eevee with bloom enabled and render each camera view.
 
 ### 실습 단계
 
-#### 1. 렌더 엔진 비교
+#### 1. Camera 배치
 
-Cycles는 사진 인화처럼 정밀하고 느리고, EEVEE는 게임 엔진처럼 빠르지만 덜 사실적이에요. 수정 중엔 EEVEE, 최종 제출엔 Cycles를 써요. 용도에 따라 골라 쓰면 돼요.
+3D 작업에도 사진 촬영처럼 카메라가 있어야 결과물이 나와요. Focal Length는 렌즈 종류, Depth of Field는 조리개라고 생각하면 돼요. 50mm 표준 렌즈로 시작해서 로봇 정면 45도 각도부터 잡아봐요.
 
-![렌더 엔진 비교](../../course-site/assets/images/week13/cycles-eevee.png)
-
-배울 것
-
-- 두 엔진의 차이를 안다
-- 각각 어떤 상황에 쓰는지 판단한다
+![Camera 배치](../../course-site/assets/images/week13/camera-setup.png)
 
 체크해볼 것
 
-- Render Properties → Engine → Cycles로 전환 후 F12 (렌더 시간 기록해두기)
-- EEVEE로 전환 후 같은 씬 F12 → 속도와 품질 비교 (그림자, 반사, 유리 차이 주목)
-- Cycles Samples를 128 → 512로 바꿔서 노이즈 비교 (높을수록 깨끗하지만 느림)
+- 로봇 모델 씬 열기
+- Location: (4, -4, 3)
+- Numpad 0 으로 Camera 뷰 확인
+- Focal Length: 50mm
+- DOF 체크
 
-#### 2. 렌더 출력 설정
+#### 2. Eevee 렌더 테스트 (Blender 5.0 기준)
 
-해상도, 파일 형식, 저장 경로를 설정하고 F12로 렌더해요. 한 번 설정해두면 계속 쓸 수 있어요. 포트폴리오용이면 1920×1080 이상이 좋아요.
+Cycles는 사진 인화처럼 정밀하고 느리고, Eevee는 빠른 반복 작업에 유리합니다. (단, 5.0 기준 Eevee는 구버전 튜토리얼의 AO/SSR/Bloom 체크박스 대신 Raytracing/Light Probe 중심으로 품질을 올리는 경우가 많습니다.)
 
-![렌더 출력 설정](../../course-site/assets/images/week13/render-output.png)
-
-배울 것
-
-- Output Properties를 자유롭게 설정한다
+![Eevee 렌더 테스트 (Blender 5.0 기준)](../../course-site/assets/images/week13/eevee-render.png)
 
 체크해볼 것
 
-- Output Properties → Resolution 1920×1080 설정 (% 스케일로 미리보기 가능 (50%로 빠른 테스트))
-- Output Format → PNG (이미지) 또는 FFmpeg (영상) 선택
-- 파일 출력 경로 설정 후 F12로 렌더 (Image → Save As로 원하는 위치에 저장)
+- Render Engine: Eevee
+- Render > Raytracing:
+- Bloom 느낌이 필요하면:
+- View Transform: AgX
+- Resolution: 1920x1080
+- F12 렌더 > F3 저장
 
-#### 3. Compositing 기초
+#### 3. Cycles 렌더 비교
 
-사진 찍고 나서 보정하듯, 렌더 후에 밝기, 색감, 글로우 효과를 추가할 수 있어요. Compositing 노드로 후처리를 하면 렌더를 다시 안 해도 돼요.
+Cycles는 빛 한 줄기씩 일일이 계산해요. 그래서 느리지만 사진처럼 정확해요. Denoising만 켜면 절반 샘플로도 깨끗하게 나와서 시간이 크게 줄어요.
 
-![Compositing 기초](../../course-site/assets/images/week13/compositing.png)
-
-배울 것
-
-- Compositing 노드의 기본 흐름을 이해한다
-
-체크해볼 것
-
-- Compositing 워크스페이스로 전환, Use Nodes 켜기 (Render Layers → Composite 기본 연결 확인)
-- Shift+A → Filter → Glare 추가해서 빛 번짐 효과 (Emission 재질이 있으면 효과가 잘 보여요)
-- Color Balance 노드로 색감 조정 (Lift/Gamma/Gain으로 분위기 바꾸기)
-
-#### 4. 애니메이션 렌더링
-
-프레임을 하나씩 렌더해서 영상으로 만드는 거예요. Ctrl+F12 하나로 시작돼요. 시간이 오래 걸리니까 범위와 해상도를 먼저 확인하세요.
-
-![애니메이션 렌더링](../../course-site/assets/images/week13/animation-render.png)
-
-배울 것
-
-- 애니메이션 렌더 파이프라인을 이해한다
+![Cycles 렌더 비교](../../course-site/assets/images/week13/cycles-render.png)
 
 체크해볼 것
 
-- Frame Range 확인 (Start/End Frame) (24fps 기준 5초 = 120프레임)
-- Output Format → FFmpeg → MPEG-4 설정 (.mp4 파일로 출력)
-- EEVEE로 먼저 테스트 렌더 후 Cycles로 최종 렌더 (Ctrl+F12로 시작)
+- Render Engine: Cycles
+- Render Samples: 128
+- F12 렌더 > Eevee와 비교
 
-#### 5. AI 후처리 체험
+#### 4. MCP 카메라 자동화
 
-렌더 이미지를 AI 이미지 생성 툴에 넣으면 스타일을 바꾸거나 디테일을 추가할 수 있어요. 3D + AI의 하이브리드 워크플로우예요.
-
-![AI 후처리 체험](../../course-site/assets/images/week13/ai-postprocess.png)
-
-배울 것
-
-- AI 후처리의 가능성을 이해한다
+Claude한테 "정면 45도로 카메라 둬"라고 말하면 그대로 해줘요. 좌표 입력을 한 줄 명령으로 대체할 수 있어요. 여러 앵글을 한 번에 만들 때 가장 효율이 좋아요.
 
 체크해볼 것
 
-- 렌더 이미지를 AI 이미지 툴에 업로드 (img2img) (스타일 변형이나 디테일 추가)
-- 원본 렌더와 AI 후처리 결과 나란히 비교
+- Claude Desktop에서 3가지 카메라 앵글 자동 설정
+- 각 카메라 뷰 확인 > 마음에 드는 앵글로 렌더
 
-#### 6. MCP로 카메라·렌더 자동화
+#### 5. AI 영상 생성
 
-설정한 장면을 Claude에게 렌더해 달라고 하면 돼요. 카메라 위치, 렌더 엔진, 해상도까지 말 한마디로 바꿀 수 있어요. 반복 작업을 MCP로 자동화하면 시간을 크게 아낄 수 있어요.
-
-배울 것
-
-- MCP로 렌더 설정과 카메라를 자동화한다
-- Claude와 대화하며 씬을 완성한다
+렌더 이미지 한 장이면 Kling AI가 5초 영상으로 만들어줘요. 매일 무료 크레딧(약 66개)으로 5~6개 테스트 가능해요. Google Veo 3(Gemini Pro 구독자)나 Higgsfield(시네마틱 카메라 컨트롤, free tier는 워터마크)도 옵션이지만, 한국 학생이 무료로 가장 편하게 쓰는 건 Kling이에요.
 
 체크해볼 것
 
-- Claude에게 씬 상태 확인 요청: "현재 씬에 있는 오브젝트 목록 알려줘" (get_scene_info 툴이 작동하는지 확인 — MCP가 연결돼 있어야 함)
-- Claude에게 카메라 설정 요청: "카메라를 x=5, y=-5, z=3으로 이동하고 원점을 바라봐줘" (카메라 위치·방향 자동 설정)
-- Claude에게 EEVEE 25% 렌더 요청: "EEVEE 25%로 /tmp/test.png 렌더해줘" (렌더 결과 확인 후 수정 사항을 대화로 전달)
-- Claude에게 Cycles 최종 렌더 요청: "Cycles GPU 50%로 최종 렌더해줘" (GPU 자동 감지 후 렌더 실행)
+- 렌더 이미지 1장 선택
+- klingai.com > Image to Video > 프롬프트 입력
+- 5초 영상 생성 > 다운로드
+
+#### 6. AI BGM 생성
+
+Suno AI에 분위기를 한 줄로 적으면 30초 BGM이 두 곡 나와요. 무료 50 크레딧으로 하루 10곡 정도 가능해요. Google Flow Music(Lyria 3, 무료)도 좋은 대안이고, 효과음은 ElevenLabs Music에서 따로 받을 수 있어요. 포트폴리오에 게시할 거면 라이선스를 확인하세요 — 무료 plan은 비상업 한정이에요.
+
+체크해볼 것
+
+- suno.com > Create > 프롬프트 입력
+- 2곡 생성 후 선택 > MP3 다운로드
+- (선택) ElevenLabs에서 효과음도 생성
+
+#### 7. 영상 조합
+
+한 걸음 더: Blender의 Compositor를 활용하면 렌더링 후 포토샵 없이도 색보정, 글로우, 비네팅 등을 적용할 수 있습니다. Compositing 탭에서 "Use Nodes"를 체크하고, Render Layers → Glare(글로우) → Color Balance(색보정) → Composite 순으로 노드를 연결해보세요. 한 번 설정해두면 모든 렌더에 자동 적용되어 일관된 후처리가 가능합니다. 이것은 영화 VFX 업계에서 "LUT를 태운다"고 부르는 작업과 같은 원리입니다.
+
+![영상 조합](../../course-site/assets/images/week13/video-sequencer.png)
+
+체크해볼 것
+
+- Blender Video Sequencer 또는 CapCut 열기 (둘 다 무료로 사용 가능)
+- Add > Movie로 AI 영상, Add > Sound로 BGM 트랙 배치
+- 영상과 음악 길이를 Strip 끝 드래그로 맞추고 Ctrl + F12 (또는 Export)로 MP4 저장
 
 ### 핵심 단축키
 
@@ -671,13 +657,13 @@ Cycles는 사진 인화처럼 정밀하고 느리고, EEVEE는 게임 엔진처�
 
 ### 과제 한눈에 보기
 
-- 과제명: 렌더링 포트폴리오
+- 과제명: 렌더 이미지 3장 이상 + AI 영상 1개 + AI BGM 1개 제출
 - 설명: EEVEE와 Cycles로 동일한 씬을 렌더한 비교 이미지와 최종 고품질 렌더를 제출해요.
 - 제출 체크:
-  - EEVEE vs Cycles 비교 이미지 (같은 앵글)
-  - Compositing 후처리 적용된 최종 렌더
-  - 애니메이션 영상 파일 (5초 이상)
-  - AI 후처리 비교 이미지 (선택)
+  - 자신의 로봇을 다양한 각도와 조명으로 렌더링하여 이미지 3장 이상 제출
+  - Kling AI로 AI 영상 1개 생성하여 제출
+  - Suno AI로 AI BGM 1개 생성하여 제출
+  - (선택/가산점) 영상+BGM을 조합한 프로모션 영상 제출
 
 ### 자주 막히는 지점
 
@@ -690,14 +676,20 @@ Cycles는 사진 인화처럼 정밀하고 느리고, EEVEE는 게임 엔진처�
 ### 공식 영상 튜토리얼
 
 - [Blender Studio - Rendering](https://studio.blender.org/training/blender-2-8-fundamentals/rendering/)
+- [Blender 공식 YouTube 채널](https://www.youtube.com/@BlenderOfficial)
 
 ### 공식 문서
 
-- [Cycles](https://docs.blender.org/manual/en/latest/render/cycles/index.html)
-- [EEVEE](https://docs.blender.org/manual/en/latest/render/eevee/index.html)
-- [Render Output](https://docs.blender.org/manual/en/latest/render/output/index.html)
-- [Compositing](https://docs.blender.org/manual/en/latest/compositing/index.html)
-- [Denoising](https://docs.blender.org/manual/en/latest/render/cycles/render_settings/sampling.html)
+- [Camera (Blender)](https://docs.blender.org/manual/en/latest/render/cameras.html)
+- [Cycles (Blender)](https://docs.blender.org/manual/en/latest/render/cycles/index.html)
+- [EEVEE (Blender)](https://docs.blender.org/manual/en/latest/render/eevee/index.html)
+- [Compositing (Blender)](https://docs.blender.org/manual/en/latest/compositing/index.html)
+- [Video Editing (Blender)](https://docs.blender.org/manual/en/latest/video_editing/introduction.html)
+- [Kling AI (영상 생성)](https://www.klingai.com/)
+- [Suno AI (BGM 생성)](https://suno.com/)
+- [Google Flow Music (Lyria 3, BGM)](https://www.flowmusic.app/)
+- [Google Veo (영상+오디오)](https://deepmind.google/models/veo/)
+- [ElevenLabs (효과음/음악)](https://elevenlabs.io/)
 <!-- AUTO:CURRICULUM-SYNC:END -->
 
 ## Notion 참고 자료
