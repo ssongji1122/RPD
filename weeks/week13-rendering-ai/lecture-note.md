@@ -559,7 +559,7 @@ Set render engine to Eevee with bloom enabled and render each camera view.
 
 > 이 섹션은 `course-site/data/curriculum.js` 기준으로 자동 갱신됩니다.
 
-- 핵심 키워드: Cycles vs EEVEE · 출력 설정 · Compositing · AI 후처리
+- 핵심 키워드: Cycles vs EEVEE · 출력 설정 · AI 영상/음악 · VSE 편집
 - 예상 시간: ~3시간
 
 ### 핵심 단축키
