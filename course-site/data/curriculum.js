@@ -3474,7 +3474,7 @@ const CURRICULUM = [
     "week": 13,
     "status": "active",
     "title": "AI 영상/사운드 + 렌더링 + MCP",
-    "subtitle": "Cycles vs EEVEE · 출력 설정 · Compositing · AI 후처리",
+    "subtitle": "Cycles vs EEVEE · 출력 설정 · AI 영상/음악 · VSE 편집",
     "duration": "~3시간",
     "topics": [
       "Cycles vs EEVEE 비교",
