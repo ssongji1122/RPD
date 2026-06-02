@@ -1707,7 +1707,7 @@ const CURRICULUM = [
     "videos": [
       {
         "title": "Blender Studio - Introduction to Sculpting",
-        "url": "https://studio.blender.org/training/sculpting-in-blender/introduction/"
+        "url": "https://studio.blender.org/training/blender-fundamentals-45-lts/sculpting_introduction/"
       }
     ],
     "docs": [
