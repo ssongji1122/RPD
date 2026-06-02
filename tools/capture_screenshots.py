@@ -86,9 +86,15 @@ STEP_MAP = {
     (12, 0): ("mixamo-upload",       None),
     (12, 1): ("mixamo-import",       "https://docs.blender.org/manual/en/latest/files/import_export/index.html"),
 
-    # Week 13: 렌더링
-    (13, 0): ("cycles-eevee",        "https://docs.blender.org/manual/en/latest/render/cycles/index.html"),
-    (13, 1): ("render-output",       "https://docs.blender.org/manual/en/latest/render/output/index.html"),
+    # Week 13: 최종 렌더링 + AI 영상/사운드 + MCP (7-step)
+    #   AI 도구(Step 5,6)와 MCP(Step 4)는 Blender 공식 docs가 없어 None → step.link로 안내
+    (13, 0): ("camera-setup",        "https://docs.blender.org/manual/en/latest/render/cameras.html"),
+    (13, 1): ("eevee-render",        "https://docs.blender.org/manual/en/latest/render/eevee/introduction.html"),
+    (13, 2): ("cycles-render",       "https://docs.blender.org/manual/en/latest/render/cycles/introduction.html"),
+    (13, 3): ("mcp-camera",          None),
+    (13, 4): ("ai-video",            None),
+    (13, 5): ("ai-bgm",              None),
+    (13, 6): ("video-sequencer",     "https://docs.blender.org/manual/en/latest/video_editing/introduction.html"),
 }
 
 # JS: 사이드바 숨기고 콘텐츠 영역 정리
@@ -240,7 +246,12 @@ def main():
     parser = argparse.ArgumentParser(description="Blender docs screenshot bot")
     parser.add_argument("--week", type=int, default=None, help="특정 주차만 실행 (기본: 전체)")
     parser.add_argument("--dry-run", action="store_true", help="URL 목록만 출력, 실제 실행 안 함")
-    parser.add_argument("--skip-curriculum", action="store_true", help="curriculum.js 업데이트 건너뜀")
+    parser.add_argument(
+        "--write-curriculum",
+        action="store_true",
+        help="(비권장) curriculum.js에 image 필드 직접 기입. SSoT=Notion이므로 평시 금지. "
+             "이미지 연결은 Notion(정석) 또는 overrides.json(임시)에서.",
+    )
     args = parser.parse_args()
 
     root = Path(__file__).parent.parent
@@ -279,14 +290,17 @@ def main():
 
             print(f"W{w:02d} step{s} — {fname}")
             ok = take_screenshot(page, url, out_path)
-            if ok and not args.skip_curriculum:
+            if ok and args.write_curriculum:
                 update_curriculum_image(curriculum_path, w, s, image_field)
+                print("  ⚠ curriculum.js 직접 수정 — generated file. SSoT(Notion) 우회 주의.")
             if ok:
                 success += 1
 
         browser.close()
 
     print(f"\n완료: {success}/{len(targets)} 성공")
+    if not args.write_curriculum:
+        print("이미지 파일만 저장됨. step 연결은 Notion(정석) 또는 overrides.json(임시)에서.")
 
 
 if __name__ == "__main__":
