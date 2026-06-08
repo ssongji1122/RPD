@@ -73,6 +73,10 @@
     return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }
 
+  function colorFor(i, n) {
+    return 'hsl(' + Math.round(i * 360 / Math.max(n, 1)) + ', 70%, 62%)'; // 참가자별 고유색
+  }
+
   function buildLadderSVG(ladder) {
     var w = GEO.padX * 2 + (ladder.n - 1) * GEO.colGap;
     var h = GEO.padY * 2 + (ladder.rows + 1) * GEO.gapY;
@@ -115,10 +119,11 @@
 
   function svgEl() { return el('board').querySelector('svg'); }
 
-  function drawPath(svg, result, animate) {
+  function drawPath(svg, result, animate, color) {
     var pl = document.createElementNS(NS, 'polyline');
     pl.setAttribute('class', 'ladder-path');
     pl.setAttribute('points', pathPoints(result));
+    if (color) pl.style.stroke = color;
     svg.appendChild(pl);
     if (animate && !reducedMotion()) {
       var len = pl.getTotalLength();
@@ -182,7 +187,7 @@
     board.hidden = false;
   }
 
-  function renderResults(list) {
+  function renderResults(list, color) {
     list = list || state.results;
     var box = el('results');
     var existing = {};
@@ -193,9 +198,11 @@
       if (existing[r.endCol]) return; // 누적 공개 (endCol 키 — 문자열 정렬 회피)
       var row = document.createElement('div'); row.className = 'result-row';
       row.setAttribute('data-slot', r.endCol);
+      var dot = document.createElement('span'); dot.className = 'result-dot';
+      dot.style.background = color || colorFor(r.startCol, state.ladder.n);
       var slot = document.createElement('span'); slot.className = 'result-slot'; slot.textContent = r.outcome;
       var name = document.createElement('span'); name.className = 'result-name'; name.textContent = r.name;
-      row.appendChild(slot); row.appendChild(name);
+      row.appendChild(dot); row.appendChild(slot); row.appendChild(name);
       box.appendChild(row);
     });
     box.hidden = false;
@@ -208,12 +215,13 @@
 
   // 경로를 그리고, 내려가는 애니메이션이 끝나면(=도착) 순번 강조 + 결과 등장
   function revealResult(r) {
-    var pl = drawPath(svgEl(), r, true);
+    var color = colorFor(r.startCol, state.ladder.n);
+    var pl = drawPath(svgEl(), r, true, color);
     var arrived = false;
     var onArrive = function () {
       if (arrived) return; arrived = true;
       highlightSlot(r.endCol);
-      renderResults([r]);
+      renderResults([r], color);
     };
     if (reducedMotion() || !pl) { onArrive(); return; } // 모션 off → 즉시
     pl.addEventListener('transitionend', onArrive);
