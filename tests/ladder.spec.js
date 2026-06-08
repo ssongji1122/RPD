@@ -203,3 +203,17 @@ test('25 long names: labels do not overlap, ladder rendered at natural width', a
   expect(m.overlaps).toBe(0); // 인접 이름 라벨이 겹치지 않아야
   expect(m.svgW).toBeGreaterThanOrEqual(25 * 60); // 자연 폭(축소 금지): 최소 줄간격 * N
 });
+
+test('each participant path has a distinct color', async ({ page }) => {
+  await page.goto('/ladder.html');
+  await page.fill('#names', 'A\nB\nC\nD\nE');
+  await page.click('#buildBtn');
+  await page.click('#drawAllBtn');
+  const colors = await page.evaluate(() => {
+    return Array.from(document.querySelectorAll('.ladder-path')).map(function (p) {
+      return p.style.stroke || getComputedStyle(p).stroke;
+    });
+  });
+  expect(colors.length).toBe(5);
+  expect(new Set(colors).size).toBe(5); // 5색 고유
+});
