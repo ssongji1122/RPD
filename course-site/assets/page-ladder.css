@@ -64,6 +64,7 @@
 .ladder-name:hover { color: var(--key-soft); background: var(--surface); }
 .ladder-name:focus-visible { outline: 2px solid var(--key-border); }
 .ladder-slot { color: var(--muted-strong); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ladder-slot.is-hidden { color: var(--muted); }
 
 .ladder-svg { width: 100%; height: auto; display: block; }
 .ladder-col, .ladder-rung { stroke: var(--line-strong); stroke-width: 2; }

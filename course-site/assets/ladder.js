@@ -174,8 +174,8 @@
     // 하단 순번 1..N — 같은 colX 기준
     var bot = document.createElement('div'); bot.className = 'ladder-bottoms';
     for (var k = 0; k < state.ladder.n; k++) {
-      var b = document.createElement('span'); b.className = 'ladder-slot'; b.textContent = (k + 1) + '번';
-      b.style.left = pct(k);
+      var b = document.createElement('span'); b.className = 'ladder-slot is-hidden';
+      b.textContent = '?'; b.style.left = pct(k); // 도착 전 가림
       bot.appendChild(b);
     }
     inner.appendChild(top);
@@ -208,9 +208,14 @@
     box.hidden = false;
   }
 
-  function highlightSlot(col) {
+  // 도착 시 해당 칸 가림 해제 + outcome 표시 + pop
+  function revealSlot(col) {
     var slots = el('board').querySelectorAll('.ladder-slot');
-    if (slots[col]) slots[col].classList.add('is-hit');
+    var s = slots[col];
+    if (!s) return;
+    s.textContent = state.outcomes[col];
+    s.classList.remove('is-hidden');
+    s.classList.add('is-hit');
   }
 
   // 경로를 그리고, 내려가는 애니메이션이 끝나면(=도착) 순번 강조 + 결과 등장
@@ -220,7 +225,7 @@
     var arrived = false;
     var onArrive = function () {
       if (arrived) return; arrived = true;
-      highlightSlot(r.endCol);
+      revealSlot(r.endCol);
       renderResults([r], color);
     };
     if (reducedMotion() || !pl) { onArrive(); return; } // 모션 off → 즉시

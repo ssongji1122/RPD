@@ -217,3 +217,17 @@ test('each participant path has a distinct color', async ({ page }) => {
   expect(colors.length).toBe(5);
   expect(new Set(colors).size).toBe(5); // 5색 고유
 });
+
+test('outcomes hidden until arrival, then revealed', async ({ page }) => {
+  await page.goto('/ladder.html');
+  await page.fill('#names', 'A\nB\nC');
+  await page.click('#buildBtn');
+  // 빌드 직후 하단 슬롯은 ? 로 가림
+  const hidden = await page.locator('.ladder-slot').allInnerTexts();
+  expect(hidden.every(t => t.trim() === '?')).toBe(true);
+  // 전체 공개 후엔 ? 가 사라지고 outcome 표시
+  await page.click('#drawAllBtn');
+  await expect(page.locator('.ladder-slot.is-hidden')).toHaveCount(0);
+  const shown = await page.locator('.ladder-slot').allInnerTexts();
+  expect(shown.some(t => t.trim() === '?')).toBe(false);
+});
