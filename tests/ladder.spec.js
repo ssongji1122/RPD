@@ -125,3 +125,23 @@ test('large group (24) still bijection via UI', async ({ page }) => {
   const slots = await page.locator('.result-row .result-slot').allInnerTexts();
   expect(new Set(slots).size).toBe(24);
 });
+
+test('25 long names: labels do not overlap, ladder rendered at natural width', async ({ page }) => {
+  await page.goto('/ladder.html');
+  const names = Array.from({ length: 25 }, (_, i) => '학생' + (i + 1) + ' (122424' + String(i + 1).padStart(2, '0') + ')').join('\n');
+  await page.fill('#names', names);
+  await page.click('#buildBtn');
+  const m = await page.evaluate(() => {
+    var nm = document.querySelectorAll('.ladder-name');
+    var overlaps = 0;
+    for (var k = 0; k < nm.length - 1; k++) {
+      var a = nm[k].getBoundingClientRect(), b = nm[k + 1].getBoundingClientRect();
+      if (b.left < a.right - 0.5) overlaps++;
+    }
+    var svg = document.querySelector('.ladder-svg').getBoundingClientRect();
+    return { overlaps: overlaps, svgW: Math.round(svg.width), n: nm.length };
+  });
+  expect(m.n).toBe(25);
+  expect(m.overlaps).toBe(0); // 인접 이름 라벨이 겹치지 않아야
+  expect(m.svgW).toBeGreaterThanOrEqual(25 * 60); // 자연 폭(축소 금지): 최소 줄간격 * N
+});

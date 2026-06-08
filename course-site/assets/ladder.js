@@ -17,7 +17,7 @@
 
   // rungs[r] = [i, ...] : row r 에서 col i 와 col i+1 사이 가로줄
   Ladder.generateLadder = function (n, rows) {
-    rows = rows || Math.max(n * 2, 6);
+    rows = rows || Math.min(Math.max(n * 2, 6), 24); // 가로줄 상한 — 과밀/세로 과길이 방지
     var rungs = [];
     for (var r = 0; r < rows; r++) {
       var row = [];
@@ -61,7 +61,7 @@
   /* ── 렌더 / UI ─────────────────────────────────────── */
 
   var NS = 'http://www.w3.org/2000/svg';
-  var GEO = { padX: 28, padY: 28, gapY: 22, colGap: 64 }; // SVG 좌표 상수
+  var GEO = { padX: 44, padY: 28, gapY: 22, colGap: 88 }; // colGap: 라벨 폭 수용 / padX: 끝 라벨 반폭 수용
   var state = null; // { names, ladder, results }
 
   function el(id) { return document.getElementById(id); }
@@ -138,6 +138,12 @@
     board.textContent = '';
     var built = buildLadderSVG(state.ladder);
     var pct = function (c) { return (colX(c) / built.w * 100) + '%'; }; // 라벨↔줄 정렬 핵심
+
+    // 자연 폭 inner — 축소하지 않고, 넘치면 board가 가로 스크롤
+    var inner = document.createElement('div');
+    inner.className = 'ladder-inner';
+    inner.style.width = built.w + 'px';
+
     // 상단 이름 라벨 — colX 기준 절대위치(중앙정렬은 CSS translateX). textContent=XSS 안전
     var top = document.createElement('div'); top.className = 'ladder-tops';
     state.names.forEach(function (name, idx) {
@@ -158,11 +164,12 @@
       b.style.left = pct(k);
       bot.appendChild(b);
     }
-    board.appendChild(top);
-    board.appendChild(built.svg);
-    board.appendChild(bot);
+    inner.appendChild(top);
+    inner.appendChild(built.svg);
+    inner.appendChild(bot);
+
+    board.appendChild(inner);
     board.appendChild(drawControls());
-    board.classList.toggle('is-dense', state.ladder.n > 20); // 대규모 → 가로 스크롤
     board.hidden = false;
   }
 
