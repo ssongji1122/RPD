@@ -25,6 +25,8 @@
       <div class="ladder-setup" id="setup">
         <label class="ladder-label" for="names">참가자 (한 줄에 한 명)</label>
         <textarea id="names" class="ladder-input" rows="6" placeholder="홍길동&#10;김철수&#10;이영희"></textarea>
+        <button type="button" class="ladder-toggle" id="resultToggle" aria-expanded="false">결과 직접 입력 (벌칙·역할 등, 비우면 발표순서)</button>
+        <textarea id="results-input" class="ladder-input" rows="4" hidden placeholder="치킨&#10;꽝&#10;커피"></textarea>
         <div class="ladder-actions">
           <button type="button" class="btn-primary" id="buildBtn">사다리 만들기</button>
           <button type="button" class="btn-ghost" id="resetBtn" hidden>처음부터</button>

@@ -38,18 +38,51 @@ test('generateLadder shape: rungs per row, no adjacent collision', async ({ page
   expect(ok).toBe(true);
 });
 
-test('tracePath + computeResults: bijection (no duplicate slot)', async ({ page }) => {
+test('tracePath + computeResults: bijection + default outcomes', async ({ page }) => {
   await page.goto('/ladder.html');
   const r = await page.evaluate(() => {
     var names = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
     var L = window.Ladder.generateLadder(names.length);
-    var res = window.Ladder.computeResults(L, names);
-    var slots = res.map(function (x) { return x.slot; }).sort(function (a, b) { return a - b; });
-    var expected = names.map(function (_, i) { return i + 1; }); // [1..7]
-    return { slots: slots, expected: expected, count: res.length };
+    var outcomes = names.map(function (_, i) { return (i + 1) + '번'; });
+    var res = window.Ladder.computeResults(L, names, outcomes);
+    var uniq = {}; res.forEach(function (x) { uniq[x.endCol] = 1; });
+    return { uniqCount: Object.keys(uniq).length, count: res.length, sampleOutcome: res[0].outcome };
   });
   expect(r.count).toBe(7);
-  expect(r.slots).toEqual(r.expected); // 1..N 정확히 한 번씩 → 일대일
+  expect(r.uniqCount).toBe(7); // endCol 일대일 → bijection
+  expect(typeof r.sampleOutcome).toBe('string'); // outcome 라벨
+});
+
+test('custom outcomes appear in results', async ({ page }) => {
+  await page.goto('/ladder.html');
+  await page.fill('#names', 'A\nB\nC');
+  await page.click('#resultToggle');
+  await page.fill('#results-input', '치킨\n꽝\n커피');
+  await page.click('#buildBtn');
+  await page.click('#drawAllBtn');
+  await expect(page.locator('.result-row')).toHaveCount(3);
+  const outs = await page.locator('.result-row .result-slot').allInnerTexts();
+  expect(outs.map(s => s.trim()).sort()).toEqual(['꽝', '치킨', '커피']);
+});
+
+test('mismatched outcome count blocks build with hint', async ({ page }) => {
+  await page.goto('/ladder.html');
+  await page.fill('#names', 'A\nB\nC');
+  await page.click('#resultToggle');
+  await page.fill('#results-input', '치킨\n꽝');
+  await page.click('#buildBtn');
+  await expect(page.locator('#hint')).toHaveText(/결과를 3개/);
+  await expect(page.locator('#board')).toBeHidden();
+});
+
+test('empty results defaults to presentation order', async ({ page }) => {
+  await page.goto('/ladder.html');
+  await page.fill('#names', 'A\nB\nC');
+  await page.click('#buildBtn');
+  await page.click('#drawAllBtn');
+  await expect(page.locator('.result-row')).toHaveCount(3); // 경로 애니 후 등장 대기
+  const outs = await page.locator('.result-row .result-slot').allInnerTexts();
+  expect(new Set(outs.map(s => s.trim())).size).toBe(3); // 1번/2번/3번 유니크
 });
 
 test('tracePath path starts at start col, ends within bounds', async ({ page }) => {

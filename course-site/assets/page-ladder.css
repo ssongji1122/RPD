@@ -32,6 +32,12 @@
 }
 .ladder-input:focus { outline: none; border-color: var(--key-border); }
 .ladder-actions { display: flex; gap: var(--sp-3); margin-top: var(--sp-4); }
+.ladder-toggle {
+  display: inline-block; margin-top: var(--sp-3);
+  background: none; border: none; color: var(--muted);
+  font-size: .8rem; cursor: pointer; padding: var(--sp-1) 0; text-align: left;
+}
+.ladder-toggle:hover, .ladder-toggle.is-open { color: var(--key-soft); }
 .ladder-draw { margin-top: var(--sp-6); justify-content: center; }
 .ladder-hint { color: var(--warn); font-size: .8rem; min-height: 1.2em; margin-top: var(--sp-2); }
 
@@ -73,7 +79,6 @@
   font-variant-numeric: tabular-nums; font-weight: 700; color: var(--key-soft);
   min-width: 2.2em;
 }
-.result-slot::after { content: '번'; font-weight: 400; color: var(--muted); font-size: .8rem; margin-left: 2px; }
 .result-name { color: var(--text); font-weight: 500; }
 
 @media (max-width: 720px) {
