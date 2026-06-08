@@ -97,3 +97,31 @@ test('clicking a name reveals only that participant result', async ({ page }) =>
   await page.locator('.ladder-name', { hasText: 'A' }).click();
   await expect(page.locator('#stage svg .ladder-path')).toHaveCount(1);
 });
+
+test('under 2 names shows hint, no board', async ({ page }) => {
+  await page.goto('/ladder.html');
+  await page.fill('#names', 'A');
+  await page.click('#buildBtn');
+  await expect(page.locator('#hint')).toHaveText(/최소 2명/);
+  await expect(page.locator('#board')).toBeHidden();
+});
+
+test('reset clears board and results', async ({ page }) => {
+  await page.goto('/ladder.html');
+  await page.fill('#names', 'A\nB\nC');
+  await page.click('#buildBtn');
+  await page.click('#drawAllBtn');
+  await page.click('#resetBtn');
+  await expect(page.locator('#board')).toBeHidden();
+  await expect(page.locator('#results')).toBeHidden();
+});
+
+test('large group (24) still bijection via UI', async ({ page }) => {
+  await page.goto('/ladder.html');
+  const names = Array.from({ length: 24 }, (_, i) => 'S' + (i + 1)).join('\n');
+  await page.fill('#names', names);
+  await page.click('#buildBtn');
+  await page.click('#drawAllBtn');
+  const slots = await page.locator('.result-row .result-slot').allInnerTexts();
+  expect(new Set(slots).size).toBe(24);
+});

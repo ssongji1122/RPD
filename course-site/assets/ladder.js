@@ -162,6 +162,7 @@
     board.appendChild(built.svg);
     board.appendChild(bot);
     board.appendChild(drawControls());
+    board.classList.toggle('is-dense', state.ladder.n > 20); // 대규모 → 가로 스크롤
     board.hidden = false;
   }
 
