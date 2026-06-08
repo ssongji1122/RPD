@@ -63,3 +63,37 @@ test('tracePath path starts at start col, ends within bounds', async ({ page }) 
   expect(r.endCol).toBeGreaterThanOrEqual(0);
   expect(r.endCol).toBeLessThan(r.n);
 });
+
+test('build ladder renders SVG with N vertical lines', async ({ page }) => {
+  await page.goto('/ladder.html');
+  await page.fill('#names', 'A\nB\nC\nD');
+  await page.click('#buildBtn');
+  const cols = await page.locator('#stage svg .ladder-col').count();
+  expect(cols).toBe(4);
+});
+
+test('draw reveals N result rows, no duplicate slots', async ({ page }) => {
+  await page.goto('/ladder.html');
+  await page.fill('#names', 'A\nB\nC\nD');
+  await page.click('#buildBtn');
+  await page.click('#drawAllBtn');
+  const slots = await page.locator('.result-row .result-slot').allInnerTexts();
+  expect(slots.length).toBe(4);
+  expect(new Set(slots).size).toBe(4); // 중복 없음
+});
+
+test('reveal draws a highlight path polyline per participant', async ({ page }) => {
+  await page.goto('/ladder.html');
+  await page.fill('#names', 'A\nB\nC');
+  await page.click('#buildBtn');
+  await page.click('#drawAllBtn');
+  await expect(page.locator('#stage svg .ladder-path')).toHaveCount(3);
+});
+
+test('clicking a name reveals only that participant result', async ({ page }) => {
+  await page.goto('/ladder.html');
+  await page.fill('#names', 'A\nB\nC');
+  await page.click('#buildBtn');
+  await page.locator('.ladder-name', { hasText: 'A' }).click();
+  await expect(page.locator('#stage svg .ladder-path')).toHaveCount(1);
+});
