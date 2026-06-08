@@ -77,6 +77,7 @@ test('draw reveals N result rows, no duplicate slots', async ({ page }) => {
   await page.fill('#names', 'A\nB\nC\nD');
   await page.click('#buildBtn');
   await page.click('#drawAllBtn');
+  await expect(page.locator('.result-row')).toHaveCount(4); // 경로 애니 후 결과 등장
   const slots = await page.locator('.result-row .result-slot').allInnerTexts();
   expect(slots.length).toBe(4);
   expect(new Set(slots).size).toBe(4); // 중복 없음
@@ -96,6 +97,7 @@ test('clicking a name reveals only that participant result', async ({ page }) =>
   await page.click('#buildBtn');
   await page.locator('.ladder-name', { hasText: 'A' }).click();
   await expect(page.locator('#stage svg .ladder-path')).toHaveCount(1);
+  await expect(page.locator('.result-row')).toHaveCount(1); // 경로 애니 후 결과 등장
 });
 
 test('under 2 names shows hint, no board', async ({ page }) => {
@@ -122,6 +124,7 @@ test('large group (24) still bijection via UI', async ({ page }) => {
   await page.fill('#names', names);
   await page.click('#buildBtn');
   await page.click('#drawAllBtn');
+  await expect(page.locator('.result-row')).toHaveCount(24); // 경로 애니 후 결과 등장
   const slots = await page.locator('.result-row .result-slot').allInnerTexts();
   expect(new Set(slots).size).toBe(24);
 });

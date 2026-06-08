@@ -200,16 +200,27 @@
     box.hidden = false;
   }
 
-  function revealOne(result) {
-    drawPath(svgEl(), result, true);
-    renderResults([result]);
+  function highlightSlot(col) {
+    var slots = el('board').querySelectorAll('.ladder-slot');
+    if (slots[col]) slots[col].classList.add('is-hit');
   }
 
-  function revealAll() {
-    var svg = svgEl();
-    state.results.forEach(function (r) { drawPath(svg, r, true); });
-    renderResults(state.results);
+  // 경로를 그리고, 내려가는 애니메이션이 끝나면(=도착) 순번 강조 + 결과 등장
+  function revealResult(r) {
+    var pl = drawPath(svgEl(), r, true);
+    var arrived = false;
+    var onArrive = function () {
+      if (arrived) return; arrived = true;
+      highlightSlot(r.endCol);
+      renderResults([r]);
+    };
+    if (reducedMotion() || !pl) { onArrive(); return; } // 모션 off → 즉시
+    pl.addEventListener('transitionend', onArrive);
   }
+
+  function revealOne(result) { revealResult(result); }
+
+  function revealAll() { state.results.forEach(revealResult); }
 
   function build() {
     var names = Ladder.parseParticipants(el('names').value);
