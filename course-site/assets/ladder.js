@@ -51,10 +51,11 @@
   };
 
   // 하단 순번 1..N 고정. participant[i] → 도착 col 의 (col+1)번
-  Ladder.computeResults = function (ladder, participants) {
+  // 하단 outcomes[endCol] 매핑. outcome = 문자열 라벨(기본 "N번" 또는 커스텀)
+  Ladder.computeResults = function (ladder, participants, outcomes) {
     return participants.map(function (name, i) {
       var t = Ladder.tracePath(ladder, i);
-      return { name: name, startCol: i, endCol: t.endCol, slot: t.endCol + 1, path: t.path };
+      return { name: name, startCol: i, endCol: t.endCol, outcome: outcomes[t.endCol], path: t.path };
     });
   };
 
@@ -188,11 +189,11 @@
     Array.prototype.forEach.call(box.querySelectorAll('.result-row'), function (row) {
       existing[row.getAttribute('data-slot')] = true;
     });
-    list.slice().sort(function (a, b) { return a.slot - b.slot; }).forEach(function (r) {
-      if (existing[r.slot]) return; // 누적 공개: 이미 있는 slot 건너뜀
+    list.slice().sort(function (a, b) { return a.endCol - b.endCol; }).forEach(function (r) {
+      if (existing[r.endCol]) return; // 누적 공개 (endCol 키 — 문자열 정렬 회피)
       var row = document.createElement('div'); row.className = 'result-row';
-      row.setAttribute('data-slot', r.slot);
-      var slot = document.createElement('span'); slot.className = 'result-slot'; slot.textContent = r.slot;
+      row.setAttribute('data-slot', r.endCol);
+      var slot = document.createElement('span'); slot.className = 'result-slot'; slot.textContent = r.outcome;
       var name = document.createElement('span'); name.className = 'result-name'; name.textContent = r.name;
       row.appendChild(slot); row.appendChild(name);
       box.appendChild(row);
@@ -225,9 +226,21 @@
   function build() {
     var names = Ladder.parseParticipants(el('names').value);
     if (names.length < 2) { el('hint').textContent = '최소 2명이 필요합니다.'; return; }
+    var outcomes;
+    var ri = el('results-input');
+    var custom = ri && !ri.hidden ? Ladder.parseParticipants(ri.value) : [];
+    if (custom.length > 0) {
+      if (custom.length !== names.length) {
+        el('hint').textContent = '결과를 ' + names.length + '개 입력하세요 (현재 ' + custom.length + '개)';
+        return;
+      }
+      outcomes = custom;
+    } else {
+      outcomes = names.map(function (_, i) { return (i + 1) + '번'; });
+    }
     el('hint').textContent = '';
     var ladder = Ladder.generateLadder(names.length);
-    state = { names: names, ladder: ladder, results: Ladder.computeResults(ladder, names) };
+    state = { names: names, ladder: ladder, outcomes: outcomes, results: Ladder.computeResults(ladder, names, outcomes) };
     el('results').textContent = ''; el('results').hidden = true;
     renderBoard();
     el('resetBtn').hidden = false;
@@ -245,6 +258,14 @@
     if (!el('buildBtn')) return;
     el('buildBtn').addEventListener('click', build);
     el('resetBtn').addEventListener('click', reset);
+    var rt = el('resultToggle');
+    if (rt) rt.addEventListener('click', function () {
+      var ri = el('results-input');
+      var open = ri.hidden;
+      ri.hidden = !open;
+      rt.setAttribute('aria-expanded', open ? 'true' : 'false');
+      rt.classList.toggle('is-open', open);
+    });
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
