@@ -35,17 +35,29 @@
 .ladder-draw { margin-top: var(--sp-6); justify-content: center; }
 .ladder-hint { color: var(--warn); font-size: .8rem; min-height: 1.2em; margin-top: var(--sp-2); }
 
-.ladder-board { margin-top: var(--sp-8); }
+.ladder-board {
+  margin-top: var(--sp-8);
+  overflow-x: auto;
+  /* full-bleed: 사다리는 page max-width(960)를 벗어나 뷰포트 폭 활용 */
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  padding: 0 var(--sp-6);
+}
+.ladder-inner { margin: 0 auto; } /* width는 JS가 자연 폭(px)으로 지정 — 좁으면 중앙, 넓으면 스크롤 */
 /* 라벨은 colX() 기준 절대위치 — SVG 줄과 정확히 정렬(flexbox 금지). JS가 style.left=% 지정 */
-.ladder-tops, .ladder-bottoms { position: relative; height: 2.2em; }
+.ladder-tops, .ladder-bottoms { position: relative; min-height: 2.8em; }
 .ladder-name, .ladder-slot {
   position: absolute; transform: translateX(-50%);
-  font-size: .82rem; text-align: center; white-space: nowrap; top: 0;
+  font-size: .74rem; text-align: center; top: 0;
 }
-.ladder-name { color: var(--text); cursor: pointer; padding: var(--sp-1) var(--sp-2); border-radius: var(--radius-sm); }
+.ladder-name {
+  color: var(--text); cursor: pointer; padding: var(--sp-1) var(--sp-2);
+  border-radius: var(--radius-sm);
+  max-width: 76px; white-space: normal; word-break: keep-all; line-height: 1.2;
+}
 .ladder-name:hover { color: var(--key-soft); background: var(--surface); }
 .ladder-name:focus-visible { outline: 2px solid var(--key-border); }
-.ladder-slot { color: var(--muted-strong); font-variant-numeric: tabular-nums; }
+.ladder-slot { color: var(--muted-strong); font-variant-numeric: tabular-nums; white-space: nowrap; }
 
 .ladder-svg { width: 100%; height: auto; display: block; }
 .ladder-col, .ladder-rung { stroke: var(--line-strong); stroke-width: 2; }
@@ -63,12 +75,6 @@
 }
 .result-slot::after { content: '번'; font-weight: 400; color: var(--muted); font-size: .8rem; margin-left: 2px; }
 .result-name { color: var(--text); font-weight: 500; }
-
-/* 대규모 인원 — 가로 스크롤 (라벨·SVG 같은 min-width로 정렬 유지) */
-.ladder-board.is-dense { overflow-x: auto; }
-.ladder-board.is-dense .ladder-svg,
-.ladder-board.is-dense .ladder-tops,
-.ladder-board.is-dense .ladder-bottoms { min-width: 720px; }
 
 @media (max-width: 720px) {
   .ladder-page { padding: var(--sp-6) var(--sp-4) var(--sp-12); }
