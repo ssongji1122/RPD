@@ -58,6 +58,169 @@
     });
   };
 
-  // DOM 바인딩은 파일 하단 init()에서 (다음 Task).
+  /* ── 렌더 / UI ─────────────────────────────────────── */
+
+  var NS = 'http://www.w3.org/2000/svg';
+  var GEO = { padX: 28, padY: 28, gapY: 22, colGap: 64 }; // SVG 좌표 상수
+  var state = null; // { names, ladder, results }
+
+  function el(id) { return document.getElementById(id); }
+  function colX(i) { return GEO.padX + i * GEO.colGap; }
+  function rowY(r) { return GEO.padY + (r + 1) * GEO.gapY; } // r=-1 → top
+
+  function reducedMotion() {
+    return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
+  function buildLadderSVG(ladder) {
+    var w = GEO.padX * 2 + (ladder.n - 1) * GEO.colGap;
+    var h = GEO.padY * 2 + (ladder.rows + 1) * GEO.gapY;
+    var svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+    svg.setAttribute('class', 'ladder-svg');
+    svg.setAttribute('role', 'img');
+    svg.setAttribute('aria-label', '사다리');
+    for (var c = 0; c < ladder.n; c++) {
+      var v = document.createElementNS(NS, 'line');
+      v.setAttribute('class', 'ladder-col');
+      v.setAttribute('x1', colX(c)); v.setAttribute('x2', colX(c));
+      v.setAttribute('y1', rowY(-1)); v.setAttribute('y2', rowY(ladder.rows - 1));
+      svg.appendChild(v);
+    }
+    for (var r = 0; r < ladder.rows; r++) {
+      ladder.rungs[r].forEach(function (i) {
+        var hr = document.createElementNS(NS, 'line');
+        hr.setAttribute('class', 'ladder-rung');
+        hr.setAttribute('x1', colX(i)); hr.setAttribute('x2', colX(i + 1));
+        hr.setAttribute('y1', rowY(r)); hr.setAttribute('y2', rowY(r));
+        svg.appendChild(hr);
+      });
+    }
+    return { svg: svg, w: w, h: h };
+  }
+
+  function pathPoints(result) {
+    return result.path.map(function (p) {
+      return colX(p.col) + ',' + (p.row < 0 ? rowY(-1) : rowY(p.row));
+    }).join(' ');
+  }
+
+  function svgEl() { return el('board').querySelector('svg'); }
+
+  function drawPath(svg, result, animate) {
+    var pl = document.createElementNS(NS, 'polyline');
+    pl.setAttribute('class', 'ladder-path');
+    pl.setAttribute('points', pathPoints(result));
+    svg.appendChild(pl);
+    if (animate && !reducedMotion()) {
+      var len = pl.getTotalLength();
+      pl.style.strokeDasharray = len;
+      pl.style.strokeDashoffset = len;
+      pl.getBoundingClientRect(); // 강제 reflow 후 transition
+      pl.style.transition = 'stroke-dashoffset .8s ease';
+      pl.style.strokeDashoffset = '0';
+    }
+    return pl;
+  }
+
+  function drawControls() {
+    var wrap = document.createElement('div'); wrap.className = 'ladder-actions ladder-draw';
+    var all = document.createElement('button');
+    all.type = 'button'; all.className = 'btn-primary'; all.id = 'drawAllBtn';
+    all.textContent = '전체 공개';
+    all.addEventListener('click', revealAll);
+    wrap.appendChild(all);
+    return wrap;
+  }
+
+  function renderBoard() {
+    var board = el('board');
+    board.textContent = '';
+    var built = buildLadderSVG(state.ladder);
+    var pct = function (c) { return (colX(c) / built.w * 100) + '%'; }; // 라벨↔줄 정렬 핵심
+    // 상단 이름 라벨 — colX 기준 절대위치(중앙정렬은 CSS translateX). textContent=XSS 안전
+    var top = document.createElement('div'); top.className = 'ladder-tops';
+    state.names.forEach(function (name, idx) {
+      var s = document.createElement('span'); s.className = 'ladder-name'; s.textContent = name;
+      s.style.left = pct(idx);
+      s.setAttribute('role', 'button'); s.setAttribute('tabindex', '0');
+      s.setAttribute('title', name + ' 순서 보기');
+      s.addEventListener('click', function () { revealOne(state.results[idx]); });
+      s.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); revealOne(state.results[idx]); }
+      });
+      top.appendChild(s);
+    });
+    // 하단 순번 1..N — 같은 colX 기준
+    var bot = document.createElement('div'); bot.className = 'ladder-bottoms';
+    for (var k = 0; k < state.ladder.n; k++) {
+      var b = document.createElement('span'); b.className = 'ladder-slot'; b.textContent = (k + 1) + '번';
+      b.style.left = pct(k);
+      bot.appendChild(b);
+    }
+    board.appendChild(top);
+    board.appendChild(built.svg);
+    board.appendChild(bot);
+    board.appendChild(drawControls());
+    board.hidden = false;
+  }
+
+  function renderResults(list) {
+    list = list || state.results;
+    var box = el('results');
+    var existing = {};
+    Array.prototype.forEach.call(box.querySelectorAll('.result-row'), function (row) {
+      existing[row.getAttribute('data-slot')] = true;
+    });
+    list.slice().sort(function (a, b) { return a.slot - b.slot; }).forEach(function (r) {
+      if (existing[r.slot]) return; // 누적 공개: 이미 있는 slot 건너뜀
+      var row = document.createElement('div'); row.className = 'result-row';
+      row.setAttribute('data-slot', r.slot);
+      var slot = document.createElement('span'); slot.className = 'result-slot'; slot.textContent = r.slot;
+      var name = document.createElement('span'); name.className = 'result-name'; name.textContent = r.name;
+      row.appendChild(slot); row.appendChild(name);
+      box.appendChild(row);
+    });
+    box.hidden = false;
+  }
+
+  function revealOne(result) {
+    drawPath(svgEl(), result, true);
+    renderResults([result]);
+  }
+
+  function revealAll() {
+    var svg = svgEl();
+    state.results.forEach(function (r) { drawPath(svg, r, true); });
+    renderResults(state.results);
+  }
+
+  function build() {
+    var names = Ladder.parseParticipants(el('names').value);
+    if (names.length < 2) { el('hint').textContent = '최소 2명이 필요합니다.'; return; }
+    el('hint').textContent = '';
+    var ladder = Ladder.generateLadder(names.length);
+    state = { names: names, ladder: ladder, results: Ladder.computeResults(ladder, names) };
+    el('results').textContent = ''; el('results').hidden = true;
+    renderBoard();
+    el('resetBtn').hidden = false;
+  }
+
+  function reset() {
+    state = null;
+    el('board').hidden = true; el('board').textContent = '';
+    el('results').hidden = true; el('results').textContent = '';
+    el('resetBtn').hidden = true;
+    el('hint').textContent = '';
+  }
+
+  function init() {
+    if (!el('buildBtn')) return;
+    el('buildBtn').addEventListener('click', build);
+    el('resetBtn').addEventListener('click', reset);
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else { init(); }
 
 })();
