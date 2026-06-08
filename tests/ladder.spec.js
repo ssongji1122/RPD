@@ -126,6 +126,28 @@ test('large group (24) still bijection via UI', async ({ page }) => {
   expect(new Set(slots).size).toBe(24);
 });
 
+test('reveal path follows ladder orthogonally (no diagonal segments)', async ({ page }) => {
+  await page.goto('/ladder.html');
+  await page.fill('#names', 'A\nB\nC\nD\nE');
+  await page.click('#buildBtn');
+  await page.click('#drawAllBtn');
+  const diagonal = await page.evaluate(() => {
+    var pls = document.querySelectorAll('.ladder-path');
+    for (var i = 0; i < pls.length; i++) {
+      var pts = pls[i].getAttribute('points').trim().split(/\s+/).map(function (s) {
+        var a = s.split(','); return { x: +a[0], y: +a[1] };
+      });
+      for (var k = 1; k < pts.length; k++) {
+        var dx = Math.abs(pts[k].x - pts[k - 1].x);
+        var dy = Math.abs(pts[k].y - pts[k - 1].y);
+        if (dx > 0.5 && dy > 0.5) return true; // 한 구간에서 x,y 둘 다 변함 = 대각선
+      }
+    }
+    return false;
+  });
+  expect(diagonal).toBe(false); // 모든 구간이 수평 또는 수직
+});
+
 test('25 long names: labels do not overlap, ladder rendered at natural width', async ({ page }) => {
   await page.goto('/ladder.html');
   const names = Array.from({ length: 25 }, (_, i) => '학생' + (i + 1) + ' (122424' + String(i + 1).padStart(2, '0') + ')').join('\n');

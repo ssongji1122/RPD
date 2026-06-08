@@ -100,9 +100,16 @@
   }
 
   function pathPoints(result) {
-    return result.path.map(function (p) {
-      return colX(p.col) + ',' + (p.row < 0 ? rowY(-1) : rowY(p.row));
-    }).join(' ');
+    var p = result.path, pts = [];
+    for (var i = 0; i < p.length; i++) {
+      var y = (p[i].row < 0) ? rowY(-1) : rowY(p[i].row);
+      if (i > 0 && p[i].col !== p[i - 1].col) {
+        // 직각 꺾임: 이전 칸 x에서 현재 높이까지 수직 → 현재 칸으로 수평 (대각선 금지)
+        pts.push(colX(p[i - 1].col) + ',' + y);
+      }
+      pts.push(colX(p[i].col) + ',' + y);
+    }
+    return pts.join(' ');
   }
 
   function svgEl() { return el('board').querySelector('svg'); }
@@ -114,10 +121,11 @@
     svg.appendChild(pl);
     if (animate && !reducedMotion()) {
       var len = pl.getTotalLength();
+      var dur = Math.min(3, Math.max(0.7, len / 600)); // 길이 비례 — 일정 속도로 또박또박 진행
       pl.style.strokeDasharray = len;
       pl.style.strokeDashoffset = len;
       pl.getBoundingClientRect(); // 강제 reflow 후 transition
-      pl.style.transition = 'stroke-dashoffset .8s ease';
+      pl.style.transition = 'stroke-dashoffset ' + dur + 's linear';
       pl.style.strokeDashoffset = '0';
     }
     return pl;
