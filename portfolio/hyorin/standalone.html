@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="ko">
+<!--
+  정효린 3D/AI 포트폴리오 — 단일 파일 (claude design 복붙용)
+  ─────────────────────────────────────────────────────────
+  · CSS/JS 전부 인라인. 외부 의존: 폰트 CDN(Space Grotesk, Pretendard)만.
+  · 이미지는 회색 placeholder로 대체돼 있습니다. 실제 자산은
+    portfolio/hyorin/assets/curated/ 에 있고, 각 <img> 바로 위 주석에
+    원본 파일명을 적어뒀습니다 — claude design에서 그 이미지로 교체하세요.
+  · 컬러 위계: 메인=보라(--pf-violet) / 보조=스카이(--pf-sky) / 중립=흰·검·회색.
+  · 구조: 히어로(About·통계·대표) → W1~W13 6챕터 → 클로징.
+-->
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>정효린 — 3D/AI 포트폴리오</title>
+  <meta name="description" content="Blender와 AI로 캐릭터 '보물이'를 만든 15주. 정효린 포트폴리오." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+
+  <style>
+  /* ===== TOKENS ===== */
+  :root {
+    /* 팔레트 — 메인 보라 / 보조 스카이 / 중립 */
+    --pf-bg: #ececec;
+    --pf-card: #ffffff;
+    --pf-violet: #7b6ef6;   /* MAIN */
+    --pf-sky: #7ec8e3;      /* ACCENT — 보물이 시그니처 */
+    --pf-ink: #111111;
+    --pf-text: #1a1a1a;
+    --pf-muted: #6b6b6b;
+    --pf-on-violet: #ffffff;
+    --pf-on-ink: #ffffff;
+
+    /* 타이포 */
+    --pf-font-head: "Space Grotesk", "Pretendard", sans-serif;
+    --pf-font-body: "Pretendard", -apple-system, BlinkMacSystemFont, sans-serif;
+    --pf-fs-hero: clamp(3rem, 9vw, 7.5rem);
+    --pf-fs-h2:   clamp(1.6rem, 3.6vw, 2.75rem);
+    --pf-fs-h3:   clamp(1.15rem, 1.8vw, 1.5rem);
+    --pf-fs-stat: clamp(2rem, 4.5vw, 3.5rem);
+    --pf-fs-body: clamp(0.95rem, 1.1vw, 1.05rem);
+    --pf-fs-cap:  0.8rem;
+
+    /* 스페이싱 (4px 베이스) */
+    --pf-sp-2: 8px;  --pf-sp-3: 12px; --pf-sp-4: 16px;
+    --pf-sp-6: 24px; --pf-sp-8: 32px; --pf-sp-12: 48px; --pf-sp-16: 64px;
+
+    /* 라디우스 */
+    --pf-r-card: 24px;
+    --pf-r-md: 16px;
+    --pf-r-pill: 999px;
+
+    /* 베이토 */
+    --pf-gap: 20px;
+    --pf-maxw: 1240px;
+  }
+
+  /* ===== BASE ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--pf-bg);
+    color: var(--pf-text);
+    font-family: var(--pf-font-body);
+    font-size: var(--pf-fs-body);
+    line-height: 1.6;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    -webkit-font-smoothing: antialiased;
+  }
+  img, video { display: block; max-width: 100%; height: auto; }
+  #app { max-width: var(--pf-maxw); margin: 0 auto; padding: var(--pf-sp-8) var(--pf-sp-6); }
+  .pf-head { font-family: var(--pf-font-head); font-weight: 700; letter-spacing: -0.02em; }
+
+  /* ===== COMPONENTS ===== */
+  .bento { border-radius: var(--pf-r-card); padding: var(--pf-sp-6); position: relative; overflow: clip; background: var(--pf-card); border: 1px solid rgba(17,17,17,.06); transition: transform .14s ease; }
+  .bento--violet { background: var(--pf-violet); color: var(--pf-on-violet); border-color: transparent; }
+  .bento--ink    { background: var(--pf-ink); color: var(--pf-on-ink); border-color: transparent; }
+  .bento--sky    { background: var(--pf-sky); border-color: transparent; }
+  .bento:hover { transform: translateY(-2px); }
+
+  /* 코너 브래킷 — 우상단 ㄱ자 */
+  .bento--bracket::after {
+    content: ""; position: absolute; top: 14px; right: 14px;
+    width: 18px; height: 18px;
+    border-top: 2px solid currentColor; border-right: 2px solid currentColor;
+    opacity: .5;
+  }
+
+  .stat { display: flex; flex-direction: column; justify-content: center; gap: 4px; }
+  .stat__num { font-family: var(--pf-font-head); font-weight: 700; font-size: var(--pf-fs-stat); font-variant-numeric: tabular-nums; line-height: 1; }
+  .stat__label { font-size: var(--pf-fs-cap); text-transform: uppercase; letter-spacing: .08em; opacity: .75; }
+
+  .media { position: relative; border-radius: var(--pf-r-card); overflow: clip; background: var(--pf-ink); }
+  .media img, .media video { width: 100%; height: 100%; object-fit: cover; }
+  .media__play { position: absolute; inset: 0; margin: auto; width: 64px; height: 64px; border: 0; border-radius: var(--pf-r-pill); background: rgba(255,255,255,.92); cursor: pointer; display: grid; place-items: center; }
+  .media__play::before { content: ""; width: 0; height: 0; border-left: 16px solid var(--pf-ink); border-top: 10px solid transparent; border-bottom: 10px solid transparent; margin-left: 4px; }
+
+  .seal { width: 84px; height: 84px; border-radius: var(--pf-r-pill); background: var(--pf-ink); color: #fff; display: grid; place-items: center; }
+  .seal__dot { width: 12px; height: 12px; border-radius: 50%; background: #fff; }
+
+  .sidenav { position: fixed; left: 18px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: var(--pf-sp-6); writing-mode: vertical-rl; font-size: var(--pf-fs-cap); letter-spacing: .12em; text-transform: uppercase; color: var(--pf-muted); z-index: 10; }
+  .sidenav a { color: inherit; text-decoration: none; }
+  .sidenav a:hover, .sidenav a:focus-visible { color: var(--pf-text); }
+
+  /* ===== HERO ===== */
+  .hero { display: grid; grid-template-columns: minmax(280px, 1fr) 1.8fr; gap: var(--pf-gap); align-items: stretch; }
+  .hero__about { display: flex; flex-direction: column; gap: var(--pf-sp-4); }
+  .hero__kicker { font-size: var(--pf-fs-cap); text-transform: uppercase; letter-spacing: .1em; opacity: .8; }
+  .hero__avatar { width: 100%; aspect-ratio: 1; border-radius: var(--pf-r-pill); overflow: clip; background: var(--pf-sky); }
+  .hero__avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .hero__name { font-size: var(--pf-fs-h2); line-height: 1.05; }
+  .hero__name strong { font-weight: 700; }
+  .hero__intro { font-size: var(--pf-fs-body); opacity: .95; }
+  .hero__mail { margin-top: auto; align-self: start; background: #fff; color: var(--pf-ink); padding: 10px 18px; border-radius: var(--pf-r-pill); text-decoration: none; font-weight: 600; }
+  .hero__seal { position: absolute; right: 20px; bottom: 20px; }
+  .hero__right { display: grid; grid-template-rows: auto 1fr auto; gap: var(--pf-gap); min-width: 0; }
+  .hero__display { font-size: var(--pf-fs-hero); line-height: .9; }
+  .hero__video { min-height: 280px; }
+  .hero__stats { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--pf-gap); }
+
+  /* ===== CHAPTER ===== */
+  .chapter { margin-top: var(--pf-sp-16); display: flex; flex-direction: column; gap: var(--pf-sp-16); }
+  .chap__head { display: grid; gap: var(--pf-sp-2); margin-bottom: var(--pf-sp-6); }
+  .chap__no { font-size: var(--pf-fs-hero); line-height: .8; color: var(--pf-violet); opacity: .25; }
+  .chap__title { font-size: var(--pf-fs-h2); }
+  .chap__lead { max-width: 60ch; color: var(--pf-muted); }
+  .chap__grid { display: grid; grid-template-columns: 2fr 1fr; grid-auto-rows: minmax(120px, auto); gap: var(--pf-gap); }
+  .chap__hero { grid-row: span 2; min-height: 320px; }
+  .chap__side { min-height: 150px; }
+  .chap__note { display: grid; align-content: center; gap: var(--pf-sp-3); }
+  .chap__note a { color: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+
+  /* Ch6 갤러리: 첫 컷 크게 */
+  .chap__gallery { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: minmax(160px, 1fr); gap: var(--pf-gap); }
+  .chap__gallery .media:first-child { grid-column: span 2; grid-row: span 2; }
+  .chap__credit { margin-top: var(--pf-sp-4); color: var(--pf-muted); font-size: var(--pf-fs-cap); letter-spacing: .04em; }
+
+  /* ===== CLOSING ===== */
+  .closing { margin-top: var(--pf-sp-16); display: grid; gap: var(--pf-sp-6); }
+  .closing__card { display: grid; gap: var(--pf-sp-6); padding: var(--pf-sp-12); }
+  .closing__credit { text-align: center; color: var(--pf-muted); font-size: var(--pf-fs-cap); }
+
+  /* ===== REVEAL ===== */
+  [data-reveal] { opacity: 0; transform: translateY(16px); transition: opacity .5s ease, transform .5s ease; }
+  [data-reveal].is-in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { [data-reveal] { opacity: 1; transform: none; transition: none; } }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero__stats { grid-template-columns: repeat(2, 1fr); }
+    .chap__grid { grid-template-columns: 1fr; }
+    .chap__hero { grid-row: auto; }
+    .sidenav { display: none; }
+  }
+  @media (max-width: 600px) {
+    #app { padding: var(--pf-sp-6) var(--pf-sp-4); }
+    .hero__stats { grid-template-columns: 1fr 1fr; }
+    .hero__display { font-size: clamp(2.5rem, 16vw, 4rem); }
+  }
+  </style>
+</head>
+<body>
+  <!-- 이미지 placeholder. 실제 자산: assets/curated/<파일명>.png 로 교체 -->
+  <main id="app">
+
+    <!-- ===== HERO ===== -->
+    <section class="hero" id="intro">
+      <article class="bento bento--violet hero__about">
+        <p class="hero__kicker">About Me</p>
+        <!-- IMG: about-bomul.png (보물이 정면 — 수호천사 콘셉트) -->
+        <div class="hero__avatar"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect width='40' height='40' fill='%23dcdce0'/%3E%3C/svg%3E" alt="보물이 정면 — 수호천사 콘셉트" /></div>
+        <h1 class="hero__name pf-head">Im,<br><strong>정효린</strong></h1>
+        <p class="hero__intro">3D와 AI로 캐릭터를 만드는 미디어커뮤니케이션 전공.<br>다음 무대는 기업 홍보실입니다.</p>
+        <a class="hero__mail" href="mailto:hyorin@example.com">이메일 보내기</a>
+        <div class="seal hero__seal"><span class="seal__dot"></span></div>
+      </article>
+
+      <div class="hero__right">
+        <h2 class="hero__display pf-head">Portfolio</h2>
+        <!-- IMG: hero-key.png (보물이 시네마틱 렌더 — 사이버펑크) -->
+        <figure class="media bento--bracket hero__video">
+          <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='30'%3E%3Crect width='40' height='30' fill='%23222'/%3E%3C/svg%3E" alt="보물이 시네마틱 렌더 — 사이버펑크 라이팅" />
+        </figure>
+        <ul class="hero__stats">
+          <li class="bento bento--violet stat bento--bracket"><span class="stat__num">15</span><span class="stat__label">Weeks</span></li>
+          <li class="bento stat"><span class="stat__num">7</span><span class="stat__label">AI · 3D Tools</span></li>
+          <li class="bento stat bento--bracket"><span class="stat__num">5</span><span class="stat__label">Cinematic Renders</span></li>
+          <li class="bento bento--ink stat"><span class="stat__num">1</span><span class="stat__label">Character · 보물이</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ===== CHAPTERS (W1~W13) ===== -->
+    <section class="chapter" id="works">
+
+      <article class="chap" data-reveal>
+        <header class="chap__head">
+          <span class="chap__no pf-head">01</span>
+          <h2 class="chap__title pf-head">컨셉 — 보물이</h2>
+          <p class="chap__lead">"보험처럼 나를 지켜주는 수호천사." 삼성화재 '보험 선물하기'를 위한 캐릭터 <strong>보물이</strong>를 기획했습니다. 선물상자를 깨고 나온 아기 수호천사 — 이름은 '보험'과 '선물'에서 따왔습니다.</p>
+        </header>
+        <div class="chap__grid">
+          <!-- IMG: about-bomul.png (보물이 컨셉 비주얼) -->
+          <figure class="media bento--bracket chap__hero"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='30'%3E%3Crect width='40' height='30' fill='%23dcdce0'/%3E%3C/svg%3E" alt="보물이 컨셉 비주얼" /></figure>
+          <div class="bento chap__note">
+            <p>Google Mixboard로 아이데이션. 삼성화재 키컬러(하늘색)를 캐릭터에 반영했습니다.</p>
+            <p><a href="https://mixboard.google.com/projects/f4555dce94c046e4b52fce871c892978" target="_blank" rel="noopener">무드보드 보기 →</a></p>
+          </div>
+        </div>
+      </article>
+
+      <article class="chap" data-reveal>
+        <header class="chap__head">
+          <span class="chap__no pf-head">02</span>
+          <h2 class="chap__title pf-head">기초 — Blender 모델링</h2>
+          <p class="chap__lead">GRS 단축키도 낯설던 첫 주에서 시작해, 모디파이어로 형태를 잡고 캐릭터 하나를 끝까지 완성했습니다.</p>
+        </header>
+        <div class="chap__grid">
+          <!-- IMG: ch2-model1.png (Blender 모델링 작업) -->
+          <figure class="media bento--bracket chap__hero"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='30'%3E%3Crect width='40' height='30' fill='%23dcdce0'/%3E%3C/svg%3E" alt="Blender 모델링 작업" /></figure>
+          <!-- IMG: ch2-model2.png (모델링 디테일) -->
+          <figure class="media chap__side"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='30'%3E%3Crect width='40' height='30' fill='%23dcdce0'/%3E%3C/svg%3E" alt="모델링 디테일" /></figure>
+          <div class="bento bento--sky chap__note"><p>"머리 하나를 만드는데도 이렇게 디테일이 들어가는 걸 깨달았습니다."</p></div>
+        </div>
+      </article>
+
+      <article class="chap" data-reveal>
+        <header class="chap__head">
+          <span class="chap__no pf-head">03</span>
+          <h2 class="chap__title pf-head">AI 3D — 빠른 형태 탐색</h2>
+          <p class="chap__lead">Hyper3D로 아이디어를 즉시 입체로 생성해 형태를 탐색하고 Blender로 다듬었습니다. <em>(AI 3D 생성 = 텍스트·이미지로 3D 모델을 자동 생성하는 기술)</em></p>
+        </header>
+        <div class="chap__grid">
+          <!-- IMG: ch3-goldfish.png (Hyper3D 생성 초기 컨셉) -->
+          <figure class="media bento--bracket chap__hero"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='30'%3E%3Crect width='40' height='30' fill='%23dcdce0'/%3E%3C/svg%3E" alt="Hyper3D로 생성한 초기 컨셉 모델" /></figure>
+          <div class="bento chap__note"><p>"Peach Goldfish companion robot" 프롬프트로 생성한 초기 탐색안.</p></div>
+        </div>
+      </article>
+
+      <article class="chap" data-reveal>
+        <header class="chap__head">
+          <span class="chap__no pf-head">04</span>
+          <h2 class="chap__title pf-head">재질과 빛</h2>
+          <p class="chap__lead">Metal · Plastic · Glass · Emission을 파츠별로 분리하고, 조명을 설계해 질감을 입혔습니다.</p>
+        </header>
+        <div class="chap__grid">
+          <!-- IMG: ch4-material.png (재질·셰이더 렌더) -->
+          <figure class="media bento--bracket chap__hero"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='30'%3E%3Crect width='40' height='30' fill='%23dcdce0'/%3E%3C/svg%3E" alt="재질·셰이더 렌더" /></figure>
+          <div class="bento chap__note"><p>EEVEE Next로 렌더. 브론즈·크롬·실버 등 재질마다 다른 질감을 구분했습니다.</p></div>
+        </div>
+      </article>
+
+      <article class="chap" data-reveal>
+        <header class="chap__head">
+          <span class="chap__no pf-head">05</span>
+          <h2 class="chap__title pf-head">움직임 — 애니메이션 · 리깅</h2>
+          <p class="chap__lead">캐릭터에 뼈대를 심어(리깅) 움직임을 만들고, Bezier 보간으로 자연스러운 가감속을 연출했습니다. Mixamo로 Walking → Kick 시퀀스도 조합했습니다.</p>
+        </header>
+        <div class="chap__grid">
+          <!-- IMG: ch5-rigging1.png (리깅 포즈) -->
+          <figure class="media bento--bracket chap__hero"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='30'%3E%3Crect width='40' height='30' fill='%23dcdce0'/%3E%3C/svg%3E" alt="리깅 포즈" /></figure>
+          <!-- IMG: ch5-rigging2.png (리깅 디테일) -->
+          <figure class="media chap__side"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='30'%3E%3Crect width='40' height='30' fill='%23dcdce0'/%3E%3C/svg%3E" alt="리깅 디테일" /></figure>
+          <div class="bento bento--sky chap__note"><p>"로봇엔 수동 리깅이 적합하고, 사람 캐릭터엔 Rigify가 압도적으로 효율적입니다."</p></div>
+        </div>
+      </article>
+
+      <article class="chap" data-reveal>
+        <header class="chap__head">
+          <span class="chap__no pf-head">06</span>
+          <h2 class="chap__title pf-head">완성 — 렌더 · AI 영상 · 음악</h2>
+          <p class="chap__lead">멀티앵글로 렌더링하고, Kling AI로 영상을, Suno AI로 BGM을 만들어 보물이를 하나의 작품으로 완성했습니다.</p>
+        </header>
+        <div class="chap__gallery">
+          <!-- IMG: ch6-cyberpunk.png (사이버펑크 렌더) -->
+          <figure class="media bento--bracket"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='30'%3E%3Crect width='40' height='30' fill='%23222'/%3E%3C/svg%3E" alt="사이버펑크 라이팅 렌더" /></figure>
+          <!-- IMG: ch6-studio.png (스튜디오 렌더) -->
+          <figure class="media"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='30'%3E%3Crect width='40' height='30' fill='%23dcdce0'/%3E%3C/svg%3E" alt="스튜디오 렌더" /></figure>
+          <!-- IMG: ch6-sunset.png (선셋 렌더) -->
+          <figure class="media"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='30'%3E%3Crect width='40' height='30' fill='%23dcdce0'/%3E%3C/svg%3E" alt="선셋 렌더" /></figure>
+          <!-- IMG: ch6-ballet.png (발레 포즈 렌더) -->
+          <figure class="media"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='30'%3E%3Crect width='40' height='30' fill='%23dcdce0'/%3E%3C/svg%3E" alt="발레 포즈 렌더" /></figure>
+          <!-- IMG: ch6-noir.png (누아르 렌더) -->
+          <figure class="media"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='30'%3E%3Crect width='40' height='30' fill='%23222'/%3E%3C/svg%3E" alt="누아르 렌더" /></figure>
+        </div>
+        <p class="chap__credit">Rendered in Blender · Video by Kling AI · Music by Suno AI · Mixamo · Hyper3D</p>
+      </article>
+
+    </section>
+
+    <!-- ===== CLOSING ===== -->
+    <section class="closing" id="contact">
+      <div class="bento bento--ink closing__card" data-reveal>
+        <h2 class="pf-head">보물이를 만든 과정처럼,<br>다음 캐릭터도 만들 준비가 되어 있습니다.</h2>
+        <a class="hero__mail" href="mailto:hyorin@example.com">함께 일하기</a>
+      </div>
+      <p class="closing__credit">Made with Blender · Hyper3D · Kling AI · Suno AI · Mixamo · Rigify</p>
+    </section>
+
+  </main>
+
+  <nav class="sidenav" aria-label="섹션 이동">
+    <a href="#intro">Intro</a><a href="#works">Works</a><a href="#contact">Contact</a>
+  </nav>
+
+  <script>
+  // 스크롤 인뷰 reveal
+  (function () {
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!reduce && "IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); }
+        });
+      }, { threshold: 0.15 });
+      document.querySelectorAll("[data-reveal]").forEach(function (el) { io.observe(el); });
+    } else {
+      document.querySelectorAll("[data-reveal]").forEach(function (el) { el.classList.add("is-in"); });
+    }
+    // 영상 클릭 재생(자동재생 금지) — <img>를 <video>로 교체 시 동작
+    document.querySelectorAll(".media__play").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var v = btn.parentElement.querySelector("video");
+        if (!v) return;
+        v.setAttribute("controls", "");
+        btn.remove();
+        v.play();
+      });
+    });
+  })();
+  </script>
+</body>
+</html>
