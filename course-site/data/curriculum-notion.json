@@ -3495,11 +3495,8 @@
       ]
     },
     "mistakes": [
-      "Automatic Weights 오류 → 메쉬에 구멍이 있거나 중복 정점 있음. Merge by Distance 먼저",
-      "팔을 들면 몸이 딸려옴 → Weight Paint에서 해당 본의 Weight를 0으로 칠하기",
-      "본이 안 움직임 → Pose Mode인지 확인 (Edit Mode에서는 구조만 바뀜)",
-      "포즈가 뒤틀림 → 본 방향이 이상하면 Edit Mode에서 Recalculate Roll",
-      "메쉬가 안 따라옴 → Parent가 제대로 됐는지 Outliner에서 확인"
+      "방법 A (간단, 기존 웨이트 초기화됨): 메쉬 + Armature 선택 → Ctrl+P → With Automatic Weights 재실행",
+      "방법 B (기존 웨이트 유지): 메쉬 선택 → Properties > Vertex Groups > + 버튼으로 본 이름과 동일한 그룹 추가 → Edit Mode에서 버텍스 선택 → Weight 값 설정 → Assign 클릭"
     ],
     "shortcuts": [
       {
