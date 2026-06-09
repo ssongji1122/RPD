@@ -86,7 +86,11 @@
 @media (max-width: 720px) {
   .ladder-page { padding: var(--sp-6) var(--sp-4) var(--sp-12); }
   .ladder-setup, .ladder-results { max-width: 100%; }
-  .ladder-name, .ladder-slot { font-size: .74rem; }
+  /* 폰: 사다리를 화면 폭에 맞춰 축소(가로 스크롤 제거) */
+  .ladder-board { margin-left: 0; margin-right: 0; padding: 0; }
+  .ladder-inner { width: 100% !important; }
+  .ladder-name, .ladder-slot { font-size: .62rem; }
+  .ladder-name { max-width: 13vw; padding: 2px; }
 }
 /* 도착 순번 강조 + 결과 등장 */
 .ladder-slot.is-hit { color: var(--key-soft); font-weight: 700; animation: ladder-slot-pop .35s ease; }
