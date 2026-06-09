@@ -74,7 +74,7 @@
   }
 
   function colorFor(i, n) {
-    return 'hsl(' + Math.round(i * 360 / Math.max(n, 1)) + ', 70%, 62%)'; // 참가자별 고유색
+    return 'hsl(' + Math.round(i * 360 / Math.max(n, 1)) + ', 88%, 64%)'; // 참가자별 고유색 (네온 채도)
   }
 
   function buildLadderSVG(ladder) {
@@ -123,7 +123,7 @@
     var pl = document.createElementNS(NS, 'polyline');
     pl.setAttribute('class', 'ladder-path');
     pl.setAttribute('points', pathPoints(result));
-    if (color) pl.style.stroke = color;
+    if (color) { pl.style.stroke = color; pl.style.filter = 'drop-shadow(0 0 4px ' + color + ')'; } // 네온 글로우
     svg.appendChild(pl);
     if (animate && !reducedMotion()) {
       var len = pl.getTotalLength();

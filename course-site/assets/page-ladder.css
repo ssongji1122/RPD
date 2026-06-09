@@ -1,4 +1,10 @@
-/* course-site/assets/page-ladder.css — 발표순서 사다리타기 (Flat Outline) */
+/* course-site/assets/page-ladder.css — 발표순서 사다리타기 (Cub Studio 절제 네온 테마 · 게임 한정) */
+/* 주의: 이 페이지 한정 DESIGN.md(Flat Outline) 예외 — 다크 보라 배경 + 비네팅 + 네온 글로우. 사이트 전파 금지. */
+body {
+  background:
+    radial-gradient(ellipse 90% 65% at 50% 30%, #181030 0%, #0d0a18 55%, #060409 100%) fixed;
+  min-height: 100vh;
+}
 .ladder-page {
   max-width: 960px;
   margin: 0 auto;
@@ -15,7 +21,7 @@
   margin-bottom: var(--sp-6);
 }
 .ladder-back:hover { color: var(--key-soft); }
-.ladder-title { font-size: clamp(1.5rem, 2.4vw, 2rem); font-weight: 700; margin: 0 0 var(--sp-2); }
+.ladder-title { font-size: clamp(1.5rem, 2.4vw, 2rem); font-weight: 700; margin: 0 0 var(--sp-2); text-shadow: 0 0 14px rgba(255,110,150,.45); }
 .ladder-sub { color: var(--muted); font-size: .9rem; margin: 0 0 var(--sp-8); }
 
 .ladder-setup { max-width: 420px; }
@@ -67,7 +73,7 @@
 .ladder-slot.is-hidden { color: var(--muted); }
 
 .ladder-svg { width: 100%; height: auto; display: block; }
-.ladder-col, .ladder-rung { stroke: var(--line-strong); stroke-width: 2; }
+.ladder-col, .ladder-rung { stroke: rgba(190,175,230,.22); stroke-width: 2; } /* 보라끼 밝은 줄 (네온 배경 가독) */
 .ladder-path { fill: none; stroke: var(--key); stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; }
 
 .ladder-results { margin-top: var(--sp-8); display: grid; gap: var(--sp-2); max-width: 420px; }
@@ -78,7 +84,7 @@
 }
 .result-slot {
   font-variant-numeric: tabular-nums; font-weight: 700; color: var(--key-soft);
-  min-width: 2.2em;
+  min-width: 2.2em; text-shadow: 0 0 8px currentColor;
 }
 .result-name { color: var(--text); font-weight: 500; }
 .result-dot { width: 10px; height: 10px; border-radius: 50%; flex: 0 0 auto; }
