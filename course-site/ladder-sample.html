@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>사다리타기 — 바이브코딩 샘플 | RPD</title>
+  <meta name="description" content="프롬프트 한 줄로 만든 인터랙티브 웹페이지 예시. 이름과 결과를 바꾸고, 사다리를 만든 뒤 참가자를 눌러 경로를 따라가 보세요." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" />
+  <style>
+    :root {
+      --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif;
+
+      --bg: #0d1117;
+      --bg-soft: #131922;
+      --surface: #171e29;
+      --surface-2: #1d2532;
+      --line: rgba(255, 255, 255, .09);
+      --line-strong: rgba(255, 255, 255, .16);
+      --text: #f3f5f8;
+      --muted: #9aa6b8;
+      --muted-strong: #c8d1de;
+      --key: #00bfa5;
+      --key-strong: #009e8a;
+      --key-soft: #6ee8d8;
+
+      --r-sm: 8px;
+      --r: 12px;
+      --r-lg: 18px;
+      --r-pill: 999px;
+
+      --fs-hero: clamp(1.6rem, 4vw, 2.3rem);
+      --fs-lead: clamp(.92rem, 2vw, 1.02rem);
+      --fs-body: clamp(.86rem, 1.6vw, .94rem);
+      --fs-small: .8rem;
+
+      /* 참가자별 컬러 (flat, 장식 그라디언트 없음) */
+      --c0: #00bfa5;
+      --c1: #f59e0b;
+      --c2: #6366f1;
+      --c3: #ef4444;
+      --c4: #10b981;
+      --c5: #ec4899;
+      --c6: #3b82f6;
+      --c7: #a855f7;
+    }
+
+    * , *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: clamp(20px, 5vw, 44px) clamp(16px, 4vw, 24px) 64px;
+    }
+
+    /* ── Header ── */
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: var(--fs-small); font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--key-soft);
+      margin-bottom: 14px;
+    }
+    .eyebrow::before {
+      content: ""; width: 22px; height: 2px; background: var(--key); border-radius: 2px;
+    }
+    h1 {
+      font-size: var(--fs-hero); font-weight: 900; line-height: 1.18;
+      letter-spacing: -.02em; margin: 0 0 10px;
+    }
+    .lead {
+      font-size: var(--fs-lead); color: var(--muted-strong); line-height: 1.7;
+      margin: 0 0 28px; max-width: 52ch;
+    }
+
+    /* ── Control bar ── */
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--r-lg);
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+    .controls {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px;
+    }
+    .field { display: flex; align-items: center; gap: 10px; }
+    .field-label { font-size: var(--fs-small); color: var(--muted); font-weight: 500; }
+
+    .stepper { display: inline-flex; align-items: center; gap: 4px; }
+    .stepper button {
+      width: 34px; height: 34px; display: grid; place-items: center;
+      border: 1px solid var(--line-strong); background: var(--surface-2);
+      color: var(--text); border-radius: var(--r-sm); cursor: pointer;
+      font-size: 1.1rem; line-height: 1; transition: border-color .14s, background .14s;
+    }
+    .stepper button:hover:not(:disabled) { border-color: var(--key-soft); }
+    .stepper button:disabled { opacity: .35; cursor: not-allowed; }
+    .stepper .count {
+      min-width: 30px; text-align: center; font-weight: 700; font-size: 1rem;
+    }
+
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-left: auto; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 9px 16px; border-radius: var(--r-pill);
+      font: inherit; font-size: var(--fs-small); font-weight: 700;
+      cursor: pointer; border: 1px solid transparent; line-height: 1;
+      transition: background .14s, border-color .14s, color .14s, opacity .14s;
+    }
+    .btn-primary { background: var(--key); border-color: var(--key-strong); color: #04201c; }
+    .btn-primary:hover { background: var(--key-soft); }
+    .btn-ghost { background: transparent; border-color: var(--line-strong); color: var(--muted-strong); }
+    .btn-ghost:hover { border-color: var(--key-soft); color: var(--text); }
+    .btn:disabled { opacity: .4; cursor: not-allowed; }
+    .btn svg { width: 16px; height: 16px; }
+
+    /* ── Names / results editable chips ── */
+    .row-edit { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 4px; }
+    .chip-row { display: flex; gap: 8px; }
+    .chip-row .row-tag {
+      flex-shrink: 0; align-self: center; width: 52px;
+      font-size: .72rem; font-weight: 700; color: var(--muted); letter-spacing: .04em;
+    }
+    .chip-inputs { display: grid; gap: 8px; flex: 1; }
+    .chip-input {
+      width: 100%; min-width: 0;
+      border: 1px solid var(--line); background: var(--bg-soft);
+      color: var(--text); font: inherit; font-size: var(--fs-small); font-weight: 600;
+      padding: 9px 12px; border-radius: var(--r-sm); text-align: center;
+      transition: border-color .14s;
+    }
+    .chip-input:focus { outline: none; border-color: var(--key); }
+    .chip-input.is-top { border-left: 3px solid var(--chipc, var(--key)); }
+
+    /* ── Ladder board ── */
+    .board { padding: 0; overflow: hidden; }
+    .pegs { display: grid; gap: 6px; }
+    .pegs-row { display: grid; }
+    .peg {
+      text-align: center; font-weight: 700; font-size: var(--fs-small);
+      padding: 10px 4px; border-radius: var(--r-sm); cursor: pointer;
+      border: 1px solid transparent; background: var(--surface-2);
+      color: var(--muted-strong); user-select: none;
+      transition: transform .12s, border-color .14s, color .14s, background .14s;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .peg.is-top { border-color: var(--pegc); color: var(--text); }
+    .peg.is-top:hover { transform: translateY(-2px); }
+    .peg.is-active { background: var(--pegc); color: #06120f; border-color: var(--pegc); }
+    .peg.is-bottom { cursor: default; background: var(--bg-soft); }
+    .peg.is-hit { border-color: var(--pegc); color: var(--text); box-shadow: inset 0 0 0 1px var(--pegc); }
+
+    .pegs-top { margin-bottom: 8px; }
+    .pegs-bottom { margin-top: 8px; }
+
+    svg.ladder { width: 100%; height: auto; display: block; touch-action: none; }
+    .rail { stroke: var(--line-strong); stroke-width: 3; stroke-linecap: round; }
+    .rung { stroke: var(--muted); stroke-width: 3; stroke-linecap: round; opacity: .55; }
+    .trace { fill: none; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* ── Result readout ── */
+    .result {
+      margin-top: 16px; min-height: 28px;
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+    }
+    .result-tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 7px 13px; border-radius: var(--r-pill);
+      background: var(--surface-2); border: 1px solid var(--line-strong);
+      font-size: var(--fs-small); font-weight: 700;
+    }
+    .result-tag b { color: var(--tagc); }
+    .result-empty { color: var(--muted); font-size: var(--fs-small); }
+
+    /* ── Footer note ── */
+    .note {
+      margin-top: 26px; padding: 16px 18px;
+      background: var(--bg-soft); border: 1px solid var(--line);
+      border-radius: var(--r); color: var(--muted);
+      font-size: var(--fs-small); line-height: 1.75;
+    }
+    .note b { color: var(--muted-strong); }
+    .foot {
+      margin-top: 22px; text-align: center;
+      color: var(--muted); font-size: .74rem; letter-spacing: .02em;
+    }
+    .foot a { color: var(--key-soft); }
+
+    @media (max-width: 480px) {
+      .actions { margin-left: 0; width: 100%; }
+      .actions .btn { flex: 1; justify-content: center; }
+      .chip-row .row-tag { width: 40px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .trace { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <span class="eyebrow">바이브코딩 샘플</span>
+    <h1>사다리타기</h1>
+    <p class="lead">
+      프롬프트 한 줄로 만든 인터랙티브 웹페이지 예시예요. 인원을 정하고 이름·결과를 바꾼 뒤,
+      <b>사다리 만들기</b>를 누르고 위쪽 참가자를 눌러 경로를 따라가 보세요.
+    </p>
+
+    <!-- 컨트롤 -->
+    <section class="panel">
+      <div class="controls">
+        <div class="field">
+          <span class="field-label">인원</span>
+          <div class="stepper">
+            <button id="dec" type="button" aria-label="인원 줄이기">−</button>
+            <span class="count" id="count" aria-live="polite">4</span>
+            <button id="inc" type="button" aria-label="인원 늘리기">+</button>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-primary" id="make" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v18M16 3v18M8 8h8M8 13h8M8 18h8"/></svg>
+            사다리 만들기
+          </button>
+          <button class="btn btn-ghost" id="all" type="button">전체 결과</button>
+          <button class="btn btn-ghost" id="reset" type="button">초기화</button>
+        </div>
+      </div>
+
+      <div class="row-edit">
+        <div class="chip-row">
+          <span class="row-tag">참가자</span>
+          <div class="chip-inputs" id="topInputs"></div>
+        </div>
+        <div class="chip-row">
+          <span class="row-tag">결과</span>
+          <div class="chip-inputs" id="botInputs"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 사다리 보드 -->
+    <section class="panel board">
+      <div class="pegs pegs-top" id="pegsTop"></div>
+      <svg class="ladder" id="ladder" preserveAspectRatio="none" aria-hidden="true"></svg>
+      <div class="pegs pegs-bottom" id="pegsBot"></div>
+      <div class="result" id="result">
+        <span class="result-empty">위쪽 참가자를 누르면 결과가 여기에 표시돼요.</span>
+      </div>
+    </section>
+
+    <p class="note">
+      <b>이 페이지에서 눈여겨볼 점.</b> 사다리 가로줄은 누를 때마다 무작위로 새로 생성되고,
+      경로 추적·정답 매칭·결과 표시가 모두 브라우저 안에서 즉시 일어나요. 이름과 결과를 직접 바꿀 수도 있죠.
+      이런 작동하는 결과물을 <b>프롬프트 한 줄</b>로 얻는 게 바이브코딩이에요. 여러분의 최종 포트폴리오 페이지도 같은 방식으로 만들 수 있어요.
+    </p>
+
+    <p class="foot">
+      RPD · 바이브코딩 샘플 — <a href="week.html?week=14">Week 14 최종 프로젝트</a>로 돌아가기
+    </p>
+  </main>
+
+  <script>
+  (function () {
+    "use strict";
+
+    var COLORS = ["--c0","--c1","--c2","--c3","--c4","--c5","--c6","--c7"];
+    var MIN = 2, MAX = 8;
+    var ROWS = 10;          // 사다리 가로줄을 놓을 수 있는 층 수
+    var COL_W = 92;         // 열 간격 (viewBox 단위)
+    var TOP_PAD = 14, BOT_PAD = 14, BODY_H = 320;
+
+    var state = {
+      n: 4,
+      names: ["가", "나", "다", "라", "마", "바", "사", "아"],
+      results: ["당첨", "꽝", "꽝", "꽝", "꽝", "꽝", "꽝", "꽝"],
+      rungs: [],            // [{row, col}] col=left column of a horizontal rung (connects col & col+1)
+      animating: false
+    };
+
+    var $ = function (id) { return document.getElementById(id); };
+    var svgNS = "http://www.w3.org/2000/svg";
+    var cssVar = function (name) {
+      return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    };
+
+    /* ── 사다리 무작위 생성 ──
+       각 층(row)에서 인접하지 않게 가로줄을 배치(아미다쿠지 규칙). */
+    function genRungs() {
+      var rungs = [];
+      for (var row = 0; row < ROWS; row++) {
+        var col = 0;
+        while (col < state.n - 1) {
+          // 약 45% 확률로 가로줄. 바로 옆에 줄이 있으면 건너뛴다.
+          if (Math.random() < 0.45) {
+            rungs.push({ row: row, col: col });
+            col += 2; // 인접 충돌 방지
+          } else {
+            col += 1;
+          }
+        }
+      }
+      // 모든 열이 최소 한 번은 섞이도록 보강
+      ensureMixing(rungs);
+      state.rungs = rungs;
+    }
+
+    function hasRung(rungs, row, col) {
+      for (var i = 0; i < rungs.length; i++) {
+        if (rungs[i].row === row && rungs[i].col === col) return true;
+      }
+      return false;
+    }
+
+    // 한 열에도 가로줄이 하나도 안 닿는 경우를 줄여 결과가 골고루 퍼지게 한다.
+    function ensureMixing(rungs) {
+      for (var col = 0; col < state.n - 1; col++) {
+        var touched = false;
+        for (var r = 0; r < ROWS; r++) {
+          if (hasRung(rungs, r, col)) { touched = true; break; }
+        }
+        if (!touched) {
+          for (var r2 = 0; r2 < ROWS; r2++) {
+            if (!hasRung(rungs, r2, col - 1) && !hasRung(rungs, r2, col + 1)) {
+              rungs.push({ row: r2, col: col });
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    /* ── 경로 추적: 시작 열 → 도착 열, 폴리라인 좌표 반환 ── */
+    function trace(startCol) {
+      var pts = [];
+      var x = colX(startCol);
+      var pos = startCol;
+      pts.push([x, rowY(-1)]);
+      for (var row = 0; row < ROWS; row++) {
+        pts.push([colX(pos), rowY(row)]);
+        if (hasRung(state.rungs, row, pos - 1)) {
+          pos = pos - 1;
+          pts.push([colX(pos), rowY(row)]);
+        } else if (hasRung(state.rungs, row, pos)) {
+          pos = pos + 1;
+          pts.push([colX(pos), rowY(row)]);
+        }
+      }
+      pts.push([colX(pos), rowY(ROWS)]);
+      return { end: pos, points: pts };
+    }
+
+    function vbWidth() { return (state.n - 1) * COL_W + COL_W; }
+    function colX(col) { return COL_W / 2 + col * COL_W; }
+    function rowY(row) {
+      // row -1 = 최상단, row ROWS = 최하단
+      var top = TOP_PAD, bottom = TOP_PAD + BODY_H;
+      var t = (row + 1) / (ROWS + 1);
+      return top + (bottom - top) * t;
+    }
+
+    /* ── 렌더 ── */
+    function renderInputs() {
+      var top = $("topInputs"), bot = $("botInputs");
+      top.innerHTML = ""; bot.innerHTML = "";
+      top.style.gridTemplateColumns = "repeat(" + state.n + ", 1fr)";
+      bot.style.gridTemplateColumns = "repeat(" + state.n + ", 1fr)";
+      for (var i = 0; i < state.n; i++) {
+        top.appendChild(makeInput(i, "top"));
+        bot.appendChild(makeInput(i, "bot"));
+      }
+    }
+    function makeInput(i, kind) {
+      var el = document.createElement("input");
+      el.className = "chip-input" + (kind === "top" ? " is-top" : "");
+      el.type = "text";
+      el.value = kind === "top" ? state.names[i] : state.results[i];
+      el.setAttribute("aria-label", (kind === "top" ? "참가자 " : "결과 ") + (i + 1));
+      if (kind === "top") el.style.setProperty("--chipc", cssVar(COLORS[i % COLORS.length]));
+      el.addEventListener("input", function () {
+        if (kind === "top") state.names[i] = el.value;
+        else state.results[i] = el.value;
+        renderPegs();
+      });
+      return el;
+    }
+
+    function renderPegs() {
+      var top = $("pegsTop"), bot = $("pegsBot");
+      top.innerHTML = ""; bot.innerHTML = "";
+      top.style.gridTemplateColumns = "repeat(" + state.n + ", 1fr)";
+      bot.style.gridTemplateColumns = "repeat(" + state.n + ", 1fr)";
+      for (var i = 0; i < state.n; i++) {
+        var c = cssVar(COLORS[i % COLORS.length]);
+        var t = document.createElement("button");
+        t.type = "button";
+        t.className = "peg is-top";
+        t.textContent = state.names[i] || ("참가자 " + (i + 1));
+        t.style.setProperty("--pegc", c);
+        t.dataset.col = i;
+        t.addEventListener("click", function () {
+          if (!state.animating) runOne(parseInt(this.dataset.col, 10));
+        });
+        top.appendChild(t);
+
+        var b = document.createElement("div");
+        b.className = "peg is-bottom";
+        b.textContent = state.results[i] || ("결과 " + (i + 1));
+        b.dataset.slot = i;
+        bot.appendChild(b);
+      }
+    }
+
+    function renderLadder() {
+      var svg = $("ladder");
+      svg.innerHTML = "";
+      var w = vbWidth(), h = TOP_PAD + BODY_H + BOT_PAD;
+      svg.setAttribute("viewBox", "0 0 " + w + " " + h);
+      svg.style.height = Math.max(280, Math.min(440, h)) + "px";
+
+      // 세로 레일
+      for (var c = 0; c < state.n; c++) {
+        var line = document.createElementNS(svgNS, "line");
+        line.setAttribute("class", "rail");
+        line.setAttribute("x1", colX(c)); line.setAttribute("x2", colX(c));
+        line.setAttribute("y1", rowY(-1)); line.setAttribute("y2", rowY(ROWS));
+        svg.appendChild(line);
+      }
+      // 가로줄
+      for (var i = 0; i < state.rungs.length; i++) {
+        var rg = state.rungs[i];
+        if (rg.col >= state.n - 1) continue;
+        var rung = document.createElementNS(svgNS, "line");
+        rung.setAttribute("class", "rung");
+        rung.setAttribute("x1", colX(rg.col)); rung.setAttribute("x2", colX(rg.col + 1));
+        rung.setAttribute("y1", rowY(rg.row)); rung.setAttribute("y2", rowY(rg.row));
+        svg.appendChild(rung);
+      }
+    }
+
+    function clearTrace() {
+      var svg = $("ladder");
+      var old = svg.querySelectorAll(".trace");
+      for (var i = 0; i < old.length; i++) old[i].remove();
+      var pegs = document.querySelectorAll(".peg");
+      for (var j = 0; j < pegs.length; j++) {
+        pegs[j].classList.remove("is-active", "is-hit");
+      }
+    }
+
+    function pathFromPoints(points) {
+      var d = "M " + points[0][0] + " " + points[0][1];
+      for (var i = 1; i < points.length; i++) d += " L " + points[i][0] + " " + points[i][1];
+      return d;
+    }
+
+    function drawTrace(startCol, color, onDone) {
+      var res = trace(startCol);
+      var svg = $("ladder");
+      var path = document.createElementNS(svgNS, "path");
+      path.setAttribute("class", "trace");
+      path.setAttribute("d", pathFromPoints(res.points));
+      path.setAttribute("stroke", color);
+      svg.appendChild(path);
+
+      var len = path.getTotalLength();
+      var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduce) {
+        if (onDone) onDone(res);
+        return res;
+      }
+      path.style.strokeDasharray = len;
+      path.style.strokeDashoffset = len;
+      path.getBoundingClientRect(); // reflow
+      var dur = Math.min(1.7, 0.7 + len / 900);
+      path.style.transition = "stroke-dashoffset " + dur + "s cubic-bezier(.45,.05,.25,1)";
+      path.style.strokeDashoffset = "0";
+      var done = false;
+      path.addEventListener("transitionend", function () {
+        if (done) return; done = true; if (onDone) onDone(res);
+      });
+      // 폴백 타이머
+      setTimeout(function () { if (!done) { done = true; if (onDone) onDone(res); } }, dur * 1000 + 250);
+      return res;
+    }
+
+    function runOne(startCol) {
+      clearTrace();
+      state.animating = true;
+      var color = cssVar(COLORS[startCol % COLORS.length]);
+      var topPeg = $("pegsTop").children[startCol];
+      if (topPeg) topPeg.classList.add("is-active");
+      drawTrace(startCol, color, function (res) {
+        var botPeg = $("pegsBot").children[res.end];
+        if (botPeg) { botPeg.classList.add("is-hit"); botPeg.style.setProperty("--pegc", color); }
+        showResult([{ from: startCol, to: res.end, color: color }]);
+        state.animating = false;
+      });
+    }
+
+    function runAll() {
+      clearTrace();
+      state.animating = true;
+      var order = [];
+      for (var i = 0; i < state.n; i++) order.push(i);
+      var pairs = [];
+      var idx = 0;
+      function next() {
+        if (idx >= order.length) {
+          showResult(pairs);
+          state.animating = false;
+          return;
+        }
+        var sc = order[idx];
+        var color = cssVar(COLORS[sc % COLORS.length]);
+        $("pegsTop").children[sc].classList.add("is-active");
+        drawTrace(sc, color, function (res) {
+          var botPeg = $("pegsBot").children[res.end];
+          if (botPeg) { botPeg.classList.add("is-hit"); botPeg.style.setProperty("--pegc", color); }
+          pairs.push({ from: sc, to: res.end, color: color });
+          idx++;
+          next();
+        });
+      }
+      next();
+    }
+
+    function showResult(pairs) {
+      var box = $("result");
+      box.innerHTML = "";
+      pairs.forEach(function (p) {
+        var tag = document.createElement("span");
+        tag.className = "result-tag";
+        tag.style.setProperty("--tagc", p.color);
+        var name = state.names[p.from] || ("참가자 " + (p.from + 1));
+        var out = state.results[p.to] || ("결과 " + (p.to + 1));
+        tag.innerHTML = "<b>" + escapeHtml(name) + "</b> → " + escapeHtml(out);
+        box.appendChild(tag);
+      });
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, function (m) {
+        return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[m];
+      });
+    }
+
+    function emptyResult() {
+      $("result").innerHTML = '<span class="result-empty">위쪽 참가자를 누르면 결과가 여기에 표시돼요.</span>';
+    }
+
+    /* ── 액션 ── */
+    function makeLadder() {
+      genRungs();
+      renderLadder();
+      clearTrace();
+      emptyResult();
+    }
+    function setCount(n) {
+      state.n = Math.max(MIN, Math.min(MAX, n));
+      $("count").textContent = state.n;
+      $("dec").disabled = state.n <= MIN;
+      $("inc").disabled = state.n >= MAX;
+      renderInputs();
+      renderPegs();
+      makeLadder();
+    }
+    function resetAll() {
+      state.names = ["가", "나", "다", "라", "마", "바", "사", "아"].slice();
+      state.results = ["당첨", "꽝", "꽝", "꽝", "꽝", "꽝", "꽝", "꽝"].slice();
+      setCount(4);
+    }
+
+    $("inc").addEventListener("click", function () { setCount(state.n + 1); });
+    $("dec").addEventListener("click", function () { setCount(state.n - 1); });
+    $("make").addEventListener("click", function () { if (!state.animating) makeLadder(); });
+    $("all").addEventListener("click", function () { if (!state.animating) runAll(); });
+    $("reset").addEventListener("click", function () { if (!state.animating) resetAll(); });
+    window.addEventListener("resize", function () { /* viewBox 비율 유지로 재렌더 불필요 */ });
+
+    // 초기화
+    setCount(4);
+  })();
+  </script>
+</body>
+</html>
