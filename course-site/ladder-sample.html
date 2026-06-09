@@ -45,6 +45,13 @@
       --c5: #ec4899;
       --c6: #3b82f6;
       --c7: #a855f7;
+      --c8: #eab308;
+      --c9: #06b6d4;
+      --c10: #f97316;
+      --c11: #d946ef;
+      --c12: #84cc16;
+      --c13: #f43f5e;
+      --c14: #0ea5e9;
     }
 
     * , *::before, *::after { box-sizing: border-box; }
@@ -114,6 +121,17 @@
       min-width: 30px; text-align: center; font-weight: 700; font-size: 1rem;
     }
 
+    /* 반 선택 (1반/2반 명단 자동입력) */
+    .class-pick { display: inline-flex; gap: 6px; }
+    .class-btn {
+      padding: 8px 14px; border: 1px solid var(--line-strong); background: var(--surface-2);
+      color: var(--muted-strong); border-radius: var(--r-sm); cursor: pointer;
+      font: inherit; font-size: var(--fs-small); font-weight: 700; line-height: 1;
+      transition: border-color .14s, background .14s, color .14s;
+    }
+    .class-btn:hover { border-color: var(--key-soft); color: var(--text); }
+    .class-btn.is-active { background: var(--key); border-color: var(--key-strong); color: #04201c; }
+
     .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-left: auto; }
     .btn {
       display: inline-flex; align-items: center; gap: 7px;
@@ -146,6 +164,11 @@
     }
     .chip-input:focus { outline: none; border-color: var(--key); }
     .chip-input.is-top { border-left: 3px solid var(--chipc, var(--key)); }
+    /* 인원 많을 때(10명+) 칸 좁아짐 → 간격·패딩·폰트 축소해 이름 안 잘리게 */
+    .chip-inputs.dense { gap: 4px; }
+    .chip-inputs.dense .chip-input { padding: 8px 2px; font-size: .68rem; }
+    .pegs.dense { gap: 4px; }
+    .pegs.dense .peg { padding: 9px 2px; font-size: .68rem; }
 
     /* ── Ladder board ── */
     .board { padding: 0; overflow: hidden; }
@@ -231,6 +254,13 @@
             <button id="inc" type="button" aria-label="인원 늘리기">+</button>
           </div>
         </div>
+        <div class="field">
+          <span class="field-label">반</span>
+          <div class="class-pick">
+            <button class="class-btn" id="class1" type="button">1반</button>
+            <button class="class-btn" id="class2" type="button">2반</button>
+          </div>
+        </div>
         <div class="actions">
           <button class="btn btn-primary" id="make" type="button">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v18M16 3v18M8 8h8M8 13h8M8 18h8"/></svg>
@@ -278,16 +308,23 @@
   (function () {
     "use strict";
 
-    var COLORS = ["--c0","--c1","--c2","--c3","--c4","--c5","--c6","--c7"];
-    var MIN = 2, MAX = 8;
+    var COLORS = ["--c0","--c1","--c2","--c3","--c4","--c5","--c6","--c7","--c8","--c9","--c10","--c11","--c12","--c13","--c14"];
+    var MIN = 2, MAX = 15;
     var ROWS = 10;          // 사다리 가로줄을 놓을 수 있는 층 수
     var COL_W = 92;         // 열 간격 (viewBox 단위)
     var TOP_PAD = 14, BOT_PAD = 14, BODY_H = 320;
 
+    // 반별 명단 (실명, 학번 제외) — 버튼으로 이름칸 자동입력. 출처: Notion 2026 RPD 1반/2반
+    var ROSTERS = {
+      "1반": ["학생○○","학생○○","학생○○","학생○○","학생○○","학생○○","학생○○","학생○○","학생○○","학생○○","학생○○","학생○○","학생○○","학생○○"],
+      "2반": ["학생○○","학생○○","학생○○","학생○○","학생○○","학생○○","정효린","학생○○","학생○○","학생○○","학생○○"]
+    };
+    var DEFAULT_NAMES = ["가","나","다","라","마","바","사","아","자","차","카","타","파","하","거"];
+
     var state = {
       n: 4,
-      names: ["가", "나", "다", "라", "마", "바", "사", "아"],
-      results: ["당첨", "꽝", "꽝", "꽝", "꽝", "꽝", "꽝", "꽝"],
+      names: DEFAULT_NAMES.slice(),
+      results: makeDefaultResults(DEFAULT_NAMES.length),
       rungs: [],            // [{row, col}] col=left column of a horizontal rung (connects col & col+1)
       animating: false
     };
@@ -379,6 +416,8 @@
       top.innerHTML = ""; bot.innerHTML = "";
       top.style.gridTemplateColumns = "repeat(" + state.n + ", 1fr)";
       bot.style.gridTemplateColumns = "repeat(" + state.n + ", 1fr)";
+      var dense = state.n >= 10;
+      top.classList.toggle("dense", dense); bot.classList.toggle("dense", dense);
       for (var i = 0; i < state.n; i++) {
         top.appendChild(makeInput(i, "top"));
         bot.appendChild(makeInput(i, "bot"));
@@ -388,7 +427,7 @@
       var el = document.createElement("input");
       el.className = "chip-input" + (kind === "top" ? " is-top" : "");
       el.type = "text";
-      el.value = kind === "top" ? state.names[i] : state.results[i];
+      el.value = (kind === "top" ? state.names[i] : state.results[i]) || "";
       el.setAttribute("aria-label", (kind === "top" ? "참가자 " : "결과 ") + (i + 1));
       if (kind === "top") el.style.setProperty("--chipc", cssVar(COLORS[i % COLORS.length]));
       el.addEventListener("input", function () {
@@ -404,6 +443,8 @@
       top.innerHTML = ""; bot.innerHTML = "";
       top.style.gridTemplateColumns = "repeat(" + state.n + ", 1fr)";
       bot.style.gridTemplateColumns = "repeat(" + state.n + ", 1fr)";
+      var dense = state.n >= 10;
+      top.classList.toggle("dense", dense); bot.classList.toggle("dense", dense);
       for (var i = 0; i < state.n; i++) {
         var c = cssVar(COLORS[i % COLORS.length]);
         var t = document.createElement("button");
@@ -563,6 +604,30 @@
       $("result").innerHTML = '<span class="result-empty">위쪽 참가자를 누르면 결과가 여기에 표시돼요.</span>';
     }
 
+    /* ── 반 선택 / 결과 헬퍼 ── */
+    function makeDefaultResults(n) {
+      var r = ["당첨"];
+      for (var i = 1; i < n; i++) r.push("꽝");
+      return r;
+    }
+    function clearClassHighlight() {
+      var b1 = $("class1"), b2 = $("class2");
+      if (b1) b1.classList.remove("is-active");
+      if (b2) b2.classList.remove("is-active");
+    }
+    // 반 버튼 클릭 → 해당 명단을 이름칸에 자동입력 + 인원수 자동 + 사다리 생성
+    function selectClass(cls) {
+      var roster = ROSTERS[cls];
+      if (!roster || state.animating) return;
+      var n = Math.max(MIN, Math.min(MAX, roster.length));
+      state.names = roster.slice(0, n);
+      state.results = makeDefaultResults(n);
+      var b1 = $("class1"), b2 = $("class2");
+      if (b1) b1.classList.toggle("is-active", cls === "1반");
+      if (b2) b2.classList.toggle("is-active", cls === "2반");
+      setCount(n);
+    }
+
     /* ── 액션 ── */
     function makeLadder() {
       genRungs();
@@ -580,16 +645,19 @@
       makeLadder();
     }
     function resetAll() {
-      state.names = ["가", "나", "다", "라", "마", "바", "사", "아"].slice();
-      state.results = ["당첨", "꽝", "꽝", "꽝", "꽝", "꽝", "꽝", "꽝"].slice();
+      state.names = DEFAULT_NAMES.slice();
+      state.results = makeDefaultResults(DEFAULT_NAMES.length);
+      clearClassHighlight();
       setCount(4);
     }
 
-    $("inc").addEventListener("click", function () { setCount(state.n + 1); });
-    $("dec").addEventListener("click", function () { setCount(state.n - 1); });
+    $("inc").addEventListener("click", function () { clearClassHighlight(); setCount(state.n + 1); });
+    $("dec").addEventListener("click", function () { clearClassHighlight(); setCount(state.n - 1); });
     $("make").addEventListener("click", function () { if (!state.animating) makeLadder(); });
     $("all").addEventListener("click", function () { if (!state.animating) runAll(); });
     $("reset").addEventListener("click", function () { if (!state.animating) resetAll(); });
+    $("class1").addEventListener("click", function () { selectClass("1반"); });
+    $("class2").addEventListener("click", function () { selectClass("2반"); });
     window.addEventListener("resize", function () { /* viewBox 비율 유지로 재렌더 불필요 */ });
 
     // 초기화
