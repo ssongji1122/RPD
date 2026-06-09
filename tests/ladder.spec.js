@@ -184,7 +184,8 @@ test('reveal path follows ladder orthogonally (no diagonal segments)', async ({ 
   expect(diagonal).toBe(false); // 모든 구간이 수평 또는 수직
 });
 
-test('25 long names: labels do not overlap, ladder rendered at natural width', async ({ page }) => {
+test('25 long names: labels do not overlap, ladder rendered at natural width', async ({ page, viewport }) => {
+  test.skip(!!viewport && viewport.width < 720, 'desktop only (mobile fits to width)');
   await page.goto('/ladder.html');
   const names = Array.from({ length: 25 }, (_, i) => '학생' + (i + 1) + ' (122424' + String(i + 1).padStart(2, '0') + ')').join('\n');
   await page.fill('#names', names);
@@ -230,4 +231,16 @@ test('outcomes hidden until arrival, then revealed', async ({ page }) => {
   await expect(page.locator('.ladder-slot.is-hidden')).toHaveCount(0);
   const shown = await page.locator('.ladder-slot').allInnerTexts();
   expect(shown.some(t => t.trim() === '?')).toBe(false);
+});
+
+test('mobile: ladder fits viewport width (no horizontal scroll)', async ({ page, viewport }) => {
+  test.skip(!!viewport && viewport.width >= 720, 'mobile only');
+  await page.goto('/ladder.html');
+  await page.fill('#names', 'A\nB\nC\nD\nE\nF\nG');
+  await page.click('#buildBtn');
+  const m = await page.evaluate(() => {
+    var b = document.getElementById('board');
+    return { scroll: b.scrollWidth, client: b.clientWidth };
+  });
+  expect(m.scroll).toBeLessThanOrEqual(m.client + 2); // 폰: 가로 스크롤 없이 화면에 맞음
 });
