@@ -1,0 +1,113 @@
+/* course-site/assets/page-ladder.css — 발표순서 사다리타기 (Cub Studio 절제 네온 테마 · 게임 한정) */
+/* 주의: 이 페이지 한정 DESIGN.md(Flat Outline) 예외 — 다크 보라 배경 + 비네팅 + 네온 글로우. 사이트 전파 금지. */
+body {
+  background:
+    radial-gradient(ellipse 90% 65% at 50% 30%, #181030 0%, #0d0a18 55%, #060409 100%) fixed;
+  min-height: 100vh;
+}
+.ladder-page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: var(--sp-8) var(--sp-6) var(--sp-16);
+  color: var(--text);
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+.ladder-back {
+  display: inline-block;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: .82rem;
+  margin-bottom: var(--sp-6);
+}
+.ladder-back:hover { color: var(--key-soft); }
+.ladder-title { font-size: clamp(1.5rem, 2.4vw, 2rem); font-weight: 700; margin: 0 0 var(--sp-2); text-shadow: 0 0 14px rgba(255,110,150,.45); }
+.ladder-sub { color: var(--muted); font-size: .9rem; margin: 0 0 var(--sp-8); }
+
+.ladder-setup { max-width: 420px; }
+.ladder-label { display: block; font-size: .82rem; color: var(--muted-strong); margin-bottom: var(--sp-2); }
+.ladder-input {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  padding: var(--sp-3);
+  font-family: inherit; font-size: .9rem; line-height: 1.6;
+  resize: vertical;
+}
+.ladder-input:focus { outline: none; border-color: var(--key-border); }
+.ladder-actions { display: flex; gap: var(--sp-3); margin-top: var(--sp-4); }
+.ladder-toggle {
+  display: inline-block; margin-top: var(--sp-3);
+  background: none; border: none; color: var(--muted);
+  font-size: .8rem; cursor: pointer; padding: var(--sp-1) 0; text-align: left;
+}
+.ladder-toggle:hover, .ladder-toggle.is-open { color: var(--key-soft); }
+.ladder-draw { margin-top: var(--sp-6); justify-content: center; }
+.ladder-hint { color: var(--warn); font-size: .8rem; min-height: 1.2em; margin-top: var(--sp-2); }
+
+.ladder-board {
+  margin-top: var(--sp-8);
+  overflow-x: auto;
+  /* full-bleed: 사다리는 page max-width(960)를 벗어나 뷰포트 폭 활용 */
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  padding: 0 var(--sp-6);
+}
+.ladder-inner { margin: 0 auto; } /* width는 JS가 자연 폭(px)으로 지정 — 좁으면 중앙, 넓으면 스크롤 */
+/* 라벨은 colX() 기준 절대위치 — SVG 줄과 정확히 정렬(flexbox 금지). JS가 style.left=% 지정 */
+.ladder-tops, .ladder-bottoms { position: relative; min-height: 2.8em; }
+.ladder-name, .ladder-slot {
+  position: absolute; transform: translateX(-50%);
+  font-size: .74rem; text-align: center; top: 0;
+}
+.ladder-name {
+  color: var(--text); cursor: pointer; padding: var(--sp-1) var(--sp-2);
+  border-radius: var(--radius-sm);
+  max-width: 76px; white-space: normal; word-break: keep-all; line-height: 1.2;
+}
+.ladder-name:hover { color: var(--key-soft); background: var(--surface); }
+.ladder-name:focus-visible { outline: 2px solid var(--key-border); }
+.ladder-slot { color: var(--muted-strong); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ladder-slot.is-hidden { color: var(--muted); }
+
+.ladder-svg { width: 100%; height: auto; display: block; }
+.ladder-col, .ladder-rung { stroke: rgba(190,175,230,.22); stroke-width: 2; } /* 보라끼 밝은 줄 (네온 배경 가독) */
+.ladder-path { fill: none; stroke: var(--key); stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; }
+
+.ladder-results { margin-top: var(--sp-8); display: grid; gap: var(--sp-2); max-width: 420px; }
+.result-row {
+  display: flex; align-items: center; gap: var(--sp-3);
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius-sm); padding: var(--sp-3) var(--sp-4);
+}
+.result-slot {
+  font-variant-numeric: tabular-nums; font-weight: 700; color: var(--key-soft);
+  min-width: 2.2em; text-shadow: 0 0 8px currentColor;
+}
+.result-name { color: var(--text); font-weight: 500; }
+.result-dot { width: 10px; height: 10px; border-radius: 50%; flex: 0 0 auto; }
+
+@media (max-width: 720px) {
+  .ladder-page { padding: var(--sp-6) var(--sp-4) var(--sp-12); }
+  .ladder-setup, .ladder-results { max-width: 100%; }
+  /* 폰: 사다리를 화면 폭에 맞춰 축소(가로 스크롤 제거) */
+  .ladder-board { margin-left: 0; margin-right: 0; padding: 0; }
+  .ladder-inner { width: 100% !important; }
+  .ladder-name, .ladder-slot { font-size: .62rem; }
+  .ladder-name { max-width: 13vw; padding: 2px; }
+}
+/* 도착 순번 강조 + 결과 등장 */
+.ladder-slot.is-hit { color: var(--key-soft); font-weight: 700; animation: ladder-slot-pop .35s ease; }
+.result-row { animation: ladder-pop .28s ease both; }
+@keyframes ladder-pop { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+@keyframes ladder-slot-pop {
+  0% { transform: translateX(-50%) scale(1); }
+  50% { transform: translateX(-50%) scale(1.3); }
+  100% { transform: translateX(-50%) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ladder-path { transition: none !important; }
+  .result-row, .ladder-slot.is-hit { animation: none !important; }
+}
