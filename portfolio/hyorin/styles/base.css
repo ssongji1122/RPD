@@ -1,0 +1,17 @@
+/* base.css */
+*, *::before, *::after { box-sizing: border-box; margin: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--pf-bg);
+  color: var(--pf-text);
+  font-family: var(--pf-font-body);
+  font-size: var(--pf-fs-body);
+  line-height: 1.6;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  -webkit-font-smoothing: antialiased;
+}
+img, video { display: block; max-width: 100%; height: auto; }
+#app { max-width: var(--pf-maxw); margin: 0 auto; padding: var(--pf-sp-8) var(--pf-sp-6); }
+.pf-head { font-family: var(--pf-font-head); font-weight: 700; letter-spacing: -0.02em; }
+h2.pf-section { font-family: var(--pf-font-head); font-size: var(--pf-fs-h2); font-weight: 700; }

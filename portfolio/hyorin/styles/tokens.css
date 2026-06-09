@@ -1,0 +1,39 @@
+/* portfolio/hyorin/styles/tokens.css — design doc §6 */
+:root {
+  /* 팔레트 */
+  --pf-bg: #ececec;
+  --pf-card: #ffffff;
+  --pf-violet: #7b6ef6;
+  --pf-mint: #a8e0d8;
+  --pf-yellow: #fbc95e;
+  --pf-ink: #111111;
+  --pf-pink: #eba6e0;
+  --pf-sky: #7ec8e3;            /* 보물이 시그니처 */
+  --pf-text: #1a1a1a;
+  --pf-muted: #6b6b6b;
+  --pf-on-violet: #ffffff;
+  --pf-on-ink: #ffffff;
+
+  /* 타이포 */
+  --pf-font-head: "Space Grotesk", "Pretendard", sans-serif;
+  --pf-font-body: "Pretendard", -apple-system, BlinkMacSystemFont, sans-serif;
+  --pf-fs-hero: clamp(3rem, 9vw, 7.5rem);
+  --pf-fs-h2:   clamp(1.6rem, 3.6vw, 2.75rem);
+  --pf-fs-h3:   clamp(1.15rem, 1.8vw, 1.5rem);
+  --pf-fs-stat: clamp(2rem, 4.5vw, 3.5rem);
+  --pf-fs-body: clamp(0.95rem, 1.1vw, 1.05rem);
+  --pf-fs-cap:  0.8rem;
+
+  /* 스페이싱 (4px 베이스) */
+  --pf-sp-2: 8px;  --pf-sp-3: 12px; --pf-sp-4: 16px;
+  --pf-sp-6: 24px; --pf-sp-8: 32px; --pf-sp-12: 48px; --pf-sp-16: 64px;
+
+  /* 라디우스 */
+  --pf-r-card: 24px;
+  --pf-r-md: 16px;
+  --pf-r-pill: 999px;
+
+  /* 베이토 */
+  --pf-gap: 20px;
+  --pf-maxw: 1240px;
+}
