@@ -7,7 +7,7 @@
         labels: {
           school: { ko: "인하대학교", en: "Inha University" },
           program: { ko: "Robot Product Design", en: "Robot Product Design" },
-          heroEyebrow: { ko: "Blender Archive · 인하대학교", en: "Blender Archive · Inha University" },
+          heroEyebrow: { ko: "studio.soluta · 인하대학교", en: "studio.soluta · Inha University" },
           summaryTitle: { ko: "이번 주", en: "This week" },
           courseSnapshotTitle: { ko: "수업 스냅샷", en: "Course snapshot" },
           courseSnapshotWeeks: { ko: "총 주차", en: "Weeks" },

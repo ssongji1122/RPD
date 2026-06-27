@@ -26,32 +26,47 @@
           <div>
             <p class="rpd-kicker">Week 15 Final Archive</p>
             <h1>기말 작품 기록</h1>
-            <p class="final-hero-copy">잘 완성된 최종 결과물을 익명으로 모아 둔 아카이브입니다. 카드를 선택하면 작품별 상세 화면으로 이동합니다.</p>
+            <p class="final-hero-copy">23개 작품이 한 줄 필름스트립으로 이어집니다. 커서를 올리면 해당 프레임이 넓어지고, 클릭하면 상세 화면으로 이동합니다.</p>
           </div>
           <dl class="final-stats" id="finalStats" aria-label="기말 작품 기록 통계"></dl>
         </header>
 
-        <section class="final-toolbar" aria-label="기말 작품 검색">
+        <section class="final-toolbar" aria-label="기말 작품 검색 및 필터">
           <div class="final-search-wrap">
             <label class="final-search-label" for="finalSearch">작품 검색</label>
             <input class="rpd-search-input" id="finalSearch" type="search" autocomplete="off" placeholder="작품 01, RPD 2026" />
+          </div>
+          <div class="final-filter-wrap">
+            <span class="final-search-label" id="finalFilterLabel">유형</span>
+            <div class="final-filter-chips" id="finalFilterChips" role="group" aria-labelledby="finalFilterLabel"></div>
           </div>
         </section>
 
         <section class="final-layout" aria-label="기말 프로젝트 리뷰">
           <div class="final-list-panel">
-            <div class="final-list-head">
-              <h2>작품 목록</h2>
-              <span id="finalResultCount" class="rpd-pill-count" role="status" aria-live="polite"></span>
-            </div>
-            <div class="final-grid" id="finalGrid"></div>
+            <section class="final-section-block final-gallery-section" id="finalGallerySection" aria-label="작품 갤러리">
+              <div class="final-list-head">
+                <h2>작품 갤러리</h2>
+                <span id="finalResultCount" class="rpd-pill-count" role="status" aria-live="polite"></span>
+              </div>
+              <div class="final-gallery-stage">
+                <div class="final-gallery-meta" id="finalGalleryMeta" aria-live="polite">
+                  <p class="final-gallery-meta-index" id="finalGalleryMetaIndex">( — )</p>
+                  <p class="final-gallery-meta-caption" id="finalGalleryMetaCaption">커서를 올리면 작품이 확대됩니다</p>
+                </div>
+                <div class="final-gallery-rail-wrap">
+                  <div class="final-gallery-rail" id="finalGalleryRail" role="list" aria-label="작품 목록"></div>
+                </div>
+              </div>
+            </section>
           </div>
-          <aside class="final-detail" id="finalDetail" aria-live="polite"></aside>
+          <div class="final-detail" id="finalDetail" aria-live="polite"></div>
         </section>
       </div>
     </main>
   </div>
 
+  <script src="assets/config.js"></script>
   <script src="assets/nav-config.js"></script>
   <script src="assets/shell.js"></script>
   <script src="assets/tab-system.js"></script>

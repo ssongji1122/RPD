@@ -1,0 +1,192 @@
+/* ============================================================
+   studio.soluta — Design Tokens (정본)
+   ----------------------------------------------------------------
+   This file is the single source of truth for all design values.
+   - Edit values here only. Components must reference var(--*).
+   - dark mode is auto via prefers-color-scheme (overrides at bottom).
+   ============================================================ */
+
+/* ---------- Fonts ---------- */
+/* Pretendard Variable — Korean-first sans, web-served via static.cdn-pretendard. */
+/* JetBrains Mono — display/heading/meta accent. */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+:root {
+  /* ============================================================
+     COLOR — warm paper editorial
+     ============================================================ */
+  --c-bg:        #F8F6F0;   /* warm paper, page bg */
+  --c-bg-2:      #EEEAE0;   /* secondary surface, code blocks */
+  --c-bg-dark:   #181816;   /* dark inverse (never #000) */
+  --c-ink:       #1A1A18;   /* primary text */
+  --c-ink-2:     #5C5A55;   /* secondary text */
+  --c-ink-3:     #9A9890;   /* meta / hint / caption */
+  --c-line:      #E5E1D8;   /* borders, hr, dividers */
+  --c-accent:    #B85C38;   /* warm rust — links + CTAs ONLY */
+
+  /* Status (paper-toned, low-saturation) */
+  --c-success:   #5C7A3E;
+  --c-warn:      #B8862B;
+  --c-error:     #A8412C;
+  --c-info:      #4A6B82;
+
+  /* ============================================================
+     TYPE — family
+     ============================================================ */
+  --f-display: 'JetBrains Mono', 'Pretendard Variable', ui-monospace, Menlo, monospace;
+  --f-body:    'Pretendard Variable', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', sans-serif;
+  --f-mono:    'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* ---------- Type scale (Minor Third 1.20, fluid) ---------- */
+  --fs-2xs:     11px;
+  --fs-xs:      13px;
+  --fs-sm:      14px;
+  --fs-base:    clamp(15px, 0.4vw + 14px, 16px);
+  --fs-md:      clamp(16px, 0.5vw + 15px, 18px);
+  --fs-lg:      clamp(18px, 0.6vw + 16.5px, 21px);
+  --fs-xl:      clamp(20px, 0.8vw + 18px, 24px);
+  --fs-2xl:     clamp(22px, 1vw + 20px, 26px);
+  --fs-3xl:     clamp(26px, 1.3vw + 23px, 30px);
+  --fs-display: clamp(34px, 2.5vw + 30px, 40px);
+  --fs-quote:   clamp(18px, 0.8vw + 16px, 22px);
+
+  /* ---------- Weight ---------- */
+  --w-regular:  400;
+  --w-medium:   500;
+  --w-semibold: 600;
+  --w-bold:     700;
+
+  /* ---------- Line height (named) ---------- */
+  --lh-tight:   1.2;    /* display, headings */
+  --lh-normal:  1.7;    /* body, prose (W3C klreq for Korean) */
+  --lh-loose:   1.85;   /* long-form Korean reading */
+
+  /* ---------- Letter-spacing ---------- */
+  --ls-ko:    -0.01em;  /* Korean body */
+  --ls-en:     0;       /* English body */
+  --ls-mono:   0.02em;  /* mono labels, dates */
+
+  /* ---------- Reading width ---------- */
+  --read-ko:   36em;    /* Korean optimal: ~40 chars/line */
+  --read-en:   62ch;    /* Latin optimal */
+
+  /* ============================================================
+     SPACING — 8pt grid
+     ============================================================ */
+  --s-0:  0;
+  --s-1:  4px;
+  --s-2:  8px;
+  --s-3:  16px;
+  --s-4:  24px;
+  --s-5:  32px;
+  --s-6:  48px;
+  --s-7:  64px;
+  --s-8:  96px;
+  --s-9:  128px;
+
+  /* ---------- Layout ---------- */
+  --max:  880px;                       /* single-column max */
+  --gut:  clamp(20px, 4vw, 40px);      /* gutter */
+
+  /* ============================================================
+     RADII
+     ============================================================ */
+  --r-none:  0;
+  --r-sm:    2px;     /* inputs, badges */
+  --r-md:    4px;     /* buttons */
+  --r-lg:    8px;     /* cards */
+  --r-pill:  9999px;
+  --r-circle: 50%;
+
+  /* ============================================================
+     ELEVATION — paper shadows, low opacity, layered
+     ============================================================ */
+  --shadow-flat:    none;
+  --shadow-rule:    0 1px 0 var(--c-line);
+  --shadow-soft:
+    0 1px 2px rgba(24, 24, 22, 0.04),
+    0 4px 12px rgba(24, 24, 22, 0.04);
+  --shadow-deep:
+    0 1px 2px rgba(24, 24, 22, 0.04),
+    0 4px 12px rgba(24, 24, 22, 0.05),
+    0 16px 32px rgba(24, 24, 22, 0.06);
+
+  /* ============================================================
+     MOTION
+     ============================================================ */
+  --ease:     cubic-bezier(0.16, 1, 0.3, 1);   /* spring-like */
+  --ease-in:  cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --t:        240ms;
+  --t-fast:   120ms;
+  --t-slow:   480ms;
+
+  /* ============================================================
+     Z-INDEX SCALE
+     ============================================================ */
+  --z-base:     0;
+  --z-raised:   10;       /* in-flow raised elements */
+  --z-dropdown: 100;      /* select menus, popovers */
+  --z-sticky:   200;      /* sticky headers */
+  --z-overlay:  300;      /* modal backdrop */
+  --z-modal:    400;      /* modal panel */
+  --z-toast:    500;      /* toast / snackbar */
+  --z-tooltip:  600;      /* tooltips, top-most */
+
+  /* ============================================================
+     BORDERS
+     ============================================================ */
+  --border:        1px solid var(--c-line);
+  --border-strong: 1px solid var(--c-ink-2);
+  --border-input:  1px solid var(--c-line);
+
+  /* ============================================================
+     FOCUS
+     ============================================================ */
+  --focus-ring:   2px solid var(--c-accent);
+  --focus-offset: 3px;
+}
+
+/* ============================================================
+   DARK MODE — token override only (see DESIGN.md "Dark mode" rules)
+   ============================================================ */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --c-bg:        #181816;
+    --c-bg-2:      #22221F;
+    --c-bg-dark:   #0F0F0E;
+    --c-ink:       #EDEAE0;
+    --c-ink-2:     #A8A59C;
+    --c-ink-3:     #6E6C66;
+    --c-line:      #2E2D29;
+    --c-accent:    #D87A56;   /* lifted for AA on dark bg */
+
+    --c-success:   #8FB36F;
+    --c-warn:      #D9AC4F;
+    --c-error:     #D17157;
+    --c-info:      #7B9CB3;
+
+    --shadow-soft:
+      0 1px 2px rgba(0, 0, 0, 0.40),
+      0 4px 12px rgba(0, 0, 0, 0.32);
+    --shadow-deep:
+      0 1px 2px rgba(0, 0, 0, 0.40),
+      0 4px 12px rgba(0, 0, 0, 0.40),
+      0 16px 32px rgba(0, 0, 0, 0.48);
+  }
+}
+
+/* Manual override hooks — set [data-theme="dark"|"light"] on <html> to force */
+[data-theme="dark"] {
+  color-scheme: dark;
+  --c-bg: #181816; --c-bg-2: #22221F; --c-bg-dark: #0F0F0E;
+  --c-ink: #EDEAE0; --c-ink-2: #A8A59C; --c-ink-3: #6E6C66;
+  --c-line: #2E2D29; --c-accent: #D87A56;
+}
+[data-theme="light"] {
+  color-scheme: light;
+  --c-bg: #F8F6F0; --c-bg-2: #EEEAE0; --c-bg-dark: #181816;
+  --c-ink: #1A1A18; --c-ink-2: #5C5A55; --c-ink-3: #9A9890;
+  --c-line: #E5E1D8; --c-accent: #B85C38;
+}

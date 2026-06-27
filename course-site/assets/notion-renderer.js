@@ -142,23 +142,11 @@
   function renderCallout(block) {
     var data = block.callout || {};
     var rt = data.rich_text || [];
-    var icon = '';
-    if (data.icon) {
-      if (data.icon.type === 'emoji') icon = data.icon.emoji || '';
-      else if (data.icon.type === 'external') {
-        icon = '<img src="' + (data.icon.external && data.icon.external.url || '') + '" style="width:1.2em;height:1.2em;vertical-align:middle">';
-      }
-    }
-    var color = (data.color && data.color !== 'default') ? data.color.replace('_background', '') : '';
-    var colorClass = color ? ' nb-callout--' + color : '';
     var bodyHtml = '<p class="nb-p">' + renderRichText(rt) + '</p>';
     if (block.children && block.children.length) {
       bodyHtml += renderBlockList(block.children);
     }
-    return '<div class="nb-callout' + colorClass + '">' +
-      (icon ? '<span class="nb-callout-icon">' + icon + '</span>' : '') +
-      '<div class="nb-callout-body">' + bodyHtml + '</div>' +
-      '</div>';
+    return '<div class="nb-callout"><div class="nb-callout-body">' + bodyHtml + '</div></div>';
   }
 
   function renderTodo(block) {
@@ -178,45 +166,102 @@
   function renderCode(block) {
     var data = block.code || {};
     var rt = data.rich_text || [];
-    var lang = data.language || '';
+    var lang = (data.language || '').trim();
+    var isPlainText = lang.toLowerCase() === 'plain text';
     var code = rt.map(function (s) { return s.plain_text || ''; }).join('');
     var escaped = code
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;');
-    var langClass = lang ? ' class="language-' + lang + '"' : '';
+    var langClass = lang && !isPlainText ? ' class="language-' + lang + '"' : '';
     var langLabel = lang ? '<span class="nb-code-lang">' + lang + '</span>' : '';
+    var wrapClass = 'nb-code-wrap' + (isPlainText ? ' nb-code-wrap--plain' : '');
     var copyBtn = '<button class="nb-code-copy" type="button" onclick="(function(btn){var pre=btn.closest(\'.nb-code-wrap\').querySelector(\'code\');navigator.clipboard&&navigator.clipboard.writeText(pre.textContent).then(function(){btn.textContent=\'✓\';setTimeout(function(){btn.textContent=\'복사\'},1500)})})(this)">복사</button>';
-    return '<div class="nb-code-wrap">' + langLabel + copyBtn +
+    return '<div class="' + wrapClass + '">' + langLabel + copyBtn +
       '<pre class="nb-code"><code' + langClass + '>' + escaped + '</code></pre></div>';
+  }
+
+  function escapeAttr(value) {
+    return String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/</g, '&lt;');
+  }
+
+  function escapePlainText(value) {
+    return String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  function resolvePayloadUrl(payload) {
+    if (!payload) return '';
+    if (payload.type === 'external' && payload.external) return payload.external.url || '';
+    if (payload.type === 'file' && payload.file) return payload.file.url || '';
+    return '';
+  }
+
+  function resolveBlockMediaSrc(block, payloadKey) {
+    if (block.local_url) return block.local_url;
+    return resolvePayloadUrl(block[payloadKey]);
+  }
+
+  function normalizeEmbedUrl(url) {
+    if (!url) return '';
+    var showmeMatch = url.match(/\/RPD\/(assets\/showme\/[^?#]+)/i);
+    if (showmeMatch) return showmeMatch[1];
+    return url;
+  }
+
+  function fileLabelFromBlock(block) {
+    var data = block.file || {};
+    if (data.name) return data.name;
+    var src = resolveBlockMediaSrc(block, 'file');
+    if (!src) return '파일 다운로드';
+    var parts = src.split('?')[0].split('/');
+    return parts[parts.length - 1] || '파일 다운로드';
   }
 
   function renderImage(block) {
     var data = block.image || {};
-    var src = block.local_url || '';
-    if (!src) {
-      if (data.type === 'file' && data.file) src = data.file.url || '';
-      else if (data.type === 'external' && data.external) src = data.external.url || '';
-    }
+    var src = resolveBlockMediaSrc(block, 'image');
     if (!src) return '<!-- notion-block: image (no src) -->';
     var caption = (data.caption || []).map(function (s) { return s.plain_text || ''; }).join('');
-    return '<figure class="nb-image"><img src="' + src + '" alt="' + (caption || 'image') + '" loading="lazy">' +
-      (caption ? '<figcaption>' + caption + '</figcaption>' : '') + '</figure>';
+    return '<figure class="nb-image"><img src="' + escapeAttr(src) + '" alt="' + escapeAttr(caption || 'image') + '" loading="lazy">' +
+      (caption ? '<figcaption>' + escapePlainText(caption) + '</figcaption>' : '') + '</figure>';
   }
 
   function renderVideo(block) {
-    var data = block.video || {};
-    var src = block.local_url || '';
-    if (!src) {
-      if (data.type === 'external' && data.external) src = data.external.url || '';
-      else if (data.type === 'file' && data.file) src = data.file.url || '';
-    }
+    var src = resolveBlockMediaSrc(block, 'video');
     if (!src) return '<!-- notion-block: video (no src) -->';
-    var ytMatch = src.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([A-Za-z0-9_-]{11})/);
+    var ytMatch = src.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([A-Za-z0-9_-]{11})/);
     if (ytMatch) {
       return '<div class="nb-video-wrap"><iframe src="https://www.youtube.com/embed/' + ytMatch[1] + '" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen title="video"></iframe></div>';
     }
-    return '<div class="nb-video-wrap"><video controls preload="metadata"><source src="' + src + '"></video></div>';
+    return '<div class="nb-video-wrap"><video controls preload="metadata"><source src="' + escapeAttr(src) + '"></video></div>';
+  }
+
+  function renderFile(block) {
+    var data = block.file || {};
+    var src = resolveBlockMediaSrc(block, 'file');
+    if (!src) return '<!-- notion-block: file (no src) -->';
+    var label = fileLabelFromBlock(block);
+    var caption = (data.caption || []).map(function (s) { return s.plain_text || ''; }).join('');
+    return '<p class="nb-file">' +
+      '<a class="nb-file-link" href="' + escapeAttr(src) + '" download rel="noopener">' + escapePlainText(label) + ' ↓</a>' +
+      (caption ? '<span class="nb-file-caption">' + escapePlainText(caption) + '</span>' : '') +
+      '</p>';
+  }
+
+  function renderEmbed(block) {
+    var data = block.embed || {};
+    var url = normalizeEmbedUrl(data.url || '');
+    if (!url) return '<!-- notion-block: embed (no url) -->';
+    var isShowMe = /assets\/showme\/.+\.html$/i.test(url);
+    var wrapClass = isShowMe ? 'nb-embed nb-embed-showme' : 'nb-embed';
+    var title = isShowMe ? 'Show Me card' : 'embedded content';
+    return '<div class="' + wrapClass + '"><iframe src="' + escapeAttr(url) + '" title="' + escapeAttr(title) + '" loading="lazy"></iframe></div>';
   }
 
   function renderTable(block) {
@@ -257,18 +302,25 @@
 
   function renderLinkToPage(block) {
     var data = block.link_to_page || {};
-    if (data.type !== 'page_id' || !data.page_id) {
-      return '<p class="nb-p"><a class="nb-link-page" href="#">→ 데이터베이스 링크</a></p>';
+    if (data.type === 'page_id' && data.page_id) {
+      var subpageTitle = (block.linked_page_title || block._resolved_title || '').trim() || '관련 자료';
+      return '<p class="nb-p"><a class="nb-link-page nb-link-subpage" href="'
+        + _subpageHref(data.page_id) + '">' + escapePlainText(subpageTitle) + '</a></p>';
     }
-    var title = (block._resolved_title || '').trim() || '관련 자료';
-    return '<p class="nb-p"><a class="nb-link-page nb-link-subpage" href="'
-      + _subpageHref(data.page_id) + '">📄 ' + _escapeHtml(title) + '</a></p>';
+    var pageId = data.page_id || '';
+    var title = block.linked_page_title || '';
+    var url = block.linked_page_url || (pageId ? 'https://www.notion.so/' + String(pageId).replace(/-/g, '') : '');
+    var label = title || (pageId ? 'Notion 페이지에서 열기' : 'Notion 데이터베이스');
+    if (!url) {
+      return '<p class="nb-p nb-link-page-wrap"><span class="nb-link-page nb-link-page--missing">' + escapePlainText(label) + '</span></p>';
+    }
+    return '<p class="nb-p nb-link-page-wrap"><a class="nb-link-page" href="' + escapeAttr(url) + '" target="_blank" rel="noopener">' + escapePlainText(title || label) + ' ↗</a></p>';
   }
 
   function renderChildPage(block) {
-    var title = ((block.child_page || {}).title || '').trim() || '하위 페이지';
+    var childTitle = ((block.child_page || {}).title || '').trim() || '하위 페이지';
     return '<p class="nb-p"><a class="nb-link-page nb-link-subpage" href="'
-      + _subpageHref(block.id) + '">📄 ' + _escapeHtml(title) + '</a></p>';
+      + _subpageHref(block.id) + '">' + escapePlainText(childTitle) + '</a></p>';
   }
 
   // ---------------------------------------------------------------------------
@@ -291,6 +343,8 @@
       case 'code':       return renderCode(block);
       case 'image':      return renderImage(block);
       case 'video':      return renderVideo(block);
+      case 'file':       return renderFile(block);
+      case 'embed':      return renderEmbed(block);
       case 'table':      return renderTable(block);
       case 'table_row':  return '';
       case 'quote':      return renderQuote(block);
@@ -331,21 +385,37 @@
   function renderNotionPage(notionData, weekMeta) {
     var w = weekMeta;
     var blocks = notionData.blocks || [];
+    var localized = (window.RPDI18n && typeof window.RPDI18n.localizeWeekData === 'function')
+      ? window.RPDI18n.localizeWeekData(w)
+      : w;
+    var preset = (window.RPDWeekUI && typeof window.RPDWeekUI.getPreset === 'function')
+      ? window.RPDWeekUI.getPreset()
+      : {};
+    var lang = (window.RPDI18n && typeof window.RPDI18n.getLanguage === 'function')
+      ? window.RPDI18n.getLanguage()
+      : 'ko';
+    var heroEyebrow = (preset.labels && preset.labels.heroEyebrow)
+      ? (window.RPDWeekUI
+        ? window.RPDWeekUI.localize(preset.labels.heroEyebrow, lang, '')
+        : (preset.labels.heroEyebrow.ko || preset.labels.heroEyebrow.en || ''))
+      : '';
+    var weekNum = String(w.week).padStart(2, '0');
+    var pageTitle = localized.title || w.title || '';
 
-    document.title = 'Week ' + w.week + ' — ' + w.title + ' | Blender Archive';
+    document.title = 'Week ' + w.week + ' — ' + pageTitle + ' | Blender Archive';
     var brandBadge = document.getElementById('brandBadge');
     var brandTitle = document.getElementById('brandTitle');
-    if (brandBadge) brandBadge.textContent = String(w.week).padStart(2, '0');
-    if (brandTitle) brandTitle.textContent = 'Week ' + String(w.week).padStart(2, '0');
+    if (brandBadge) brandBadge.textContent = weekNum;
+    if (brandTitle) brandTitle.textContent = pageTitle;
 
     var heroHtml = '<section class="hero" id="hero-section">' +
       '<div class="hero-card rpd-panel rpd-panel--soft">' +
       '<div class="hero-header">' +
-      '<span class="hero-week-well rpd-icon-well">' + String(w.week).padStart(2, '0') + '</span>' +
+      '<span class="hero-week-well rpd-icon-well" aria-hidden="true">' + weekNum + '</span>' +
       '<div class="hero-copy">' +
-      '<span class="hero-kicker">Week ' + String(w.week).padStart(2, '0') + '</span>' +
-      '<h1>Week ' + String(w.week).padStart(2, '0') + ' \xb7 ' + (w.title || '') + '</h1>' +
-      (w.subtitle ? '<p>' + w.subtitle + '</p>' : '') +
+      (heroEyebrow ? '<span class="hero-kicker">' + heroEyebrow + '</span>' : '') +
+      '<h1>' + pageTitle + '</h1>' +
+      (localized.subtitle ? '<p>' + localized.subtitle + '</p>' : '') +
       '</div></div></div></section>';
 
     var contentHtml = '<section class="content-block" id="notion-body">' +

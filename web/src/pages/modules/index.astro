@@ -1,0 +1,55 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { modules } from '../../data/modules';
+---
+
+<Layout title="모듈 — rpd" description="rpd R0~R5 모듈 목록">
+  <section class="wrap section">
+    <h1>모듈</h1>
+    <p class="lead">R0부터 R5까지. SOLV M1~M3 이수 후 수강합니다.</p>
+
+    <ul class="module-list">
+      {modules.map((m) => (
+        <li>
+          <a href={`/modules/${m.id}`} class="module-row">
+            <span class="module-label eyebrow">{m.label}</span>
+            <div class="module-info">
+              <strong class="module-title">{m.title}</strong>
+              <p class="module-desc">{m.description}</p>
+            </div>
+            {m.week && <span class="meta week-tag">{m.week}</span>}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+</Layout>
+
+<style>
+  h1 { margin-bottom: var(--s-2); }
+  .lead { color: var(--c-ink-2); margin-bottom: var(--s-6); }
+
+  .module-list { border-top: var(--border); }
+  .module-row {
+    display: grid;
+    grid-template-columns: 3rem 1fr auto;
+    gap: var(--s-4);
+    align-items: start;
+    padding-block: var(--s-4);
+    border-bottom: var(--border);
+    transition: padding-left var(--t) var(--ease);
+  }
+  .module-row:hover { padding-left: var(--s-2); opacity: 1; }
+  .module-title {
+    font-size: var(--fs-base);
+    font-weight: var(--w-medium);
+    display: block;
+    margin-bottom: var(--s-1);
+  }
+  .module-desc { font-size: var(--fs-sm); color: var(--c-ink-2); }
+  .week-tag { margin-top: 4px; }
+  @media (max-width: 560px) {
+    .module-row { grid-template-columns: 2.5rem 1fr; }
+    .week-tag { display: none; }
+  }
+</style>

@@ -56,10 +56,12 @@
   });
 
   /* ── user-profile.js 동기화 ──────────────────────────── */
+  var USER_NAME_KEY = window.RPD_KEYS.USER_NAME;
+
   function syncUserProfile(user) {
     if (!user) return;
     var displayName = (user.user_metadata && user.user_metadata.full_name) || user.email || '사용자';
-    localStorage.setItem('rpd-user-name', displayName);
+    localStorage.setItem(USER_NAME_KEY, displayName);
     // admin 체크는 admin-role.js가 담당
     var nameEl = document.getElementById('userName');
     var roleEl = document.getElementById('userRole');
@@ -93,7 +95,7 @@
     /** 로그아웃 */
     signOut: function () {
       return supabase.auth.signOut().then(function () {
-        localStorage.removeItem('rpd-user-name');
+        localStorage.removeItem(USER_NAME_KEY);
         var nameEl = document.getElementById('userName');
         var roleEl = document.getElementById('userRole');
         if (nameEl) nameEl.textContent = '게스트';

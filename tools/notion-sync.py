@@ -35,6 +35,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 from notion_api import (
     download_block_assets,
+    enrich_link_to_page_blocks,
     fetch_block_tree,
     fetch_notion_to_curriculum,
     get_notion_token,
@@ -87,6 +88,7 @@ def _save_block_tree(week_num: int, page_id: str, token: str) -> int:
     public_prefix = f"assets/notion-images/week{week_num:02d}"
 
     tree = fetch_block_tree(page_id, token=token)
+    enrich_link_to_page_blocks(tree, token=token)
     downloaded = download_block_assets(tree, week_image_dir, public_prefix)
 
     out_path = BLOCKS_DIR / f"week{week_num:02d}.json"

@@ -3,7 +3,7 @@
 (function () {
   'use strict';
 
-  var STORAGE_KEY = 'rpd-decks';
+  var STORAGE_KEY = window.RPD_KEYS.DECKS;
 
   /* ── Helpers ─────────────────────────────────────────── */
   function uid() {
