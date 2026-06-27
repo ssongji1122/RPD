@@ -6,6 +6,16 @@
   gap: var(--sp-8);
 }
 
+.final-review[data-view="detail"] {
+  width: min(980px, calc(100% - 32px));
+  gap: var(--sp-6);
+}
+
+.final-review[data-view="detail"] .final-hero,
+.final-review[data-view="detail"] .final-toolbar {
+  display: none;
+}
+
 .final-hero {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(240px, 360px);
@@ -96,6 +106,15 @@
   grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
   gap: var(--sp-8);
   align-items: start;
+}
+
+.final-layout[data-view="detail"] {
+  display: block;
+}
+
+.final-layout[data-view="detail"] .final-list-panel,
+.final-layout[data-view="list"] .final-detail {
+  display: none;
 }
 
 .final-list-head {
@@ -227,6 +246,48 @@
   padding: 18px;
 }
 
+.final-layout[data-view="detail"] .final-detail {
+  position: static;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+}
+
+.final-detail-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding-bottom: var(--sp-2);
+  border-bottom: 1px solid var(--line);
+}
+
+.final-detail-nav span {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: .72rem;
+}
+
+.final-detail-back {
+  min-height: 34px;
+  padding: 8px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--muted-strong);
+  font: inherit;
+  font-size: .86rem;
+  cursor: pointer;
+  transition: border-color .14s, color .14s, background .14s;
+}
+
+.final-detail-back:hover {
+  border-color: var(--key-border);
+  background: var(--surface);
+  color: var(--text);
+}
+
 .final-detail h2 {
   margin: 0;
   font-family: var(--font-display);
@@ -278,6 +339,10 @@
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
+}
+
+.final-layout[data-view="detail"] .final-media-thumbs {
+  grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
 }
 
 .final-media-thumb {
@@ -338,6 +403,10 @@
   gap: 8px;
 }
 
+.final-layout[data-view="detail"] .final-storyboard {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
 .final-story-card {
   min-width: 0;
   margin: 0;
@@ -384,6 +453,10 @@
 .final-video-list {
   display: grid;
   gap: 10px;
+}
+
+.final-layout[data-view="detail"] .final-video-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .final-video-list video {
@@ -453,6 +526,11 @@
 
   .final-detail {
     position: static;
+  }
+
+  .final-layout[data-view="detail"] .final-storyboard,
+  .final-layout[data-view="detail"] .final-video-list {
+    grid-template-columns: 1fr;
   }
 }
 

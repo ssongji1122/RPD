@@ -8,6 +8,8 @@
   };
 
   var els = {
+    review: document.querySelector(".final-review"),
+    layout: document.querySelector(".final-layout"),
     stats: document.getElementById("finalStats"),
     search: document.getElementById("finalSearch"),
     count: document.getElementById("finalResultCount"),
@@ -63,6 +65,32 @@
     });
   }
 
+  function getProjectById(id) {
+    return data.projects.find(function (project) { return project.id === id; }) || null;
+  }
+
+  function activeIdFromUrl() {
+    return location.hash ? decodeURIComponent(location.hash.slice(1)) : "";
+  }
+
+  function openProject(project) {
+    state.activeId = project.id;
+    if (location.hash !== "#" + encodeURIComponent(project.id)) {
+      location.hash = project.id;
+    }
+    render();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function showProjectList() {
+    state.activeId = "";
+    if (location.hash) {
+      history.replaceState("", document.title, location.pathname + location.search);
+    }
+    render();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
   function mediaCover(project) {
     return (project.media || [])[0] || null;
   }
@@ -91,10 +119,7 @@
       el("p", { textContent: getProjectMeta(project) })
     ]));
     card.addEventListener("click", function () {
-      state.activeId = project.id;
-      location.hash = project.id;
-      render();
-      els.detail.scrollIntoView({ block: "nearest" });
+      openProject(project);
     });
     return card;
   }
@@ -227,6 +252,12 @@
       els.detail.appendChild(el("p", { className: "final-detail-summary", textContent: "왼쪽에서 작품을 선택하면 큰 미리보기가 표시됩니다." }));
       return;
     }
+    var back = el("button", { className: "final-detail-back", type: "button", textContent: "목록으로" });
+    back.addEventListener("click", showProjectList);
+    els.detail.appendChild(el("div", { className: "final-detail-nav" }, [
+      back,
+      el("span", { textContent: project.code })
+    ]));
     els.detail.appendChild(el("div", { className: "final-detail-kicker", textContent: "RPD 2026 · " + project.code }));
     els.detail.appendChild(el("h2", { textContent: project.title }));
     els.detail.appendChild(el("p", { className: "final-detail-summary", textContent: getProjectMeta(project) + "를 함께 담은 최종 결과물 기록입니다." }));
@@ -241,11 +272,16 @@
 
   function render() {
     var projects = getFilteredProjects();
-    if (!state.activeId || !data.projects.some(function (project) { return project.id === state.activeId; })) {
-      state.activeId = projects[0] ? projects[0].id : "";
-    }
+    var activeProject = getProjectById(state.activeId);
+    var isDetailView = Boolean(activeProject);
+    if (els.review) els.review.dataset.view = isDetailView ? "detail" : "list";
+    if (els.layout) els.layout.dataset.view = isDetailView ? "detail" : "list";
     els.count.textContent = projects.length + " works";
     els.grid.textContent = "";
+    if (isDetailView) {
+      renderDetail(activeProject);
+      return;
+    }
     if (!projects.length) {
       els.grid.appendChild(el("div", { className: "final-empty-state", textContent: "조건에 맞는 작품이 없습니다." }));
     } else {
@@ -253,11 +289,11 @@
         els.grid.appendChild(renderCard(project));
       });
     }
-    renderDetail(data.projects.find(function (project) { return project.id === state.activeId; }));
+    renderDetail(null);
   }
 
   function hydrateFromUrl() {
-    state.activeId = location.hash ? decodeURIComponent(location.hash.slice(1)) : "";
+    state.activeId = activeIdFromUrl();
   }
 
   hydrateFromUrl();
@@ -267,7 +303,11 @@
     render();
   });
   window.addEventListener("hashchange", function () {
-    state.activeId = location.hash ? decodeURIComponent(location.hash.slice(1)) : state.activeId;
+    hydrateFromUrl();
+    render();
+  });
+  window.addEventListener("popstate", function () {
+    hydrateFromUrl();
     render();
   });
   render();
