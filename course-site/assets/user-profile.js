@@ -4,7 +4,7 @@
   'use strict';
 
   var STORAGE_KEY = window.RPD_KEYS.USER;
-  var defaults = { name: '게스트', role: 'student', avatar: '👤' };
+  var defaults = { name: '게스트', role: 'student', avatar: '' };
 
   function getUser() {
     try {
@@ -31,7 +31,9 @@
 
     if (nameEl) nameEl.textContent = user.name;
     if (roleEl) roleEl.textContent = user.role === 'admin' ? '관리자' : '학생';
-    if (avatarEl) avatarEl.textContent = user.avatar;
+    if (avatarEl && user.avatar && !/[\uD800-\uDFFF]/.test(user.avatar)) {
+      avatarEl.textContent = user.avatar;
+    }
 
     if (user.role === 'admin') {
       document.body.dataset.role = 'admin';

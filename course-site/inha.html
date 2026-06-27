@@ -8,7 +8,9 @@
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Nanum+Myeongjo:wght@400;700;800&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
   <link rel="stylesheet" href="assets/tokens.css" />
   <link rel="stylesheet" href="assets/components.css" />
   <link rel="stylesheet" href="assets/surface.css?v=20260318a" />
@@ -115,7 +117,7 @@
           <!-- 중간 발표 -->
           <div class="timeline-item is-milestone" data-phase="중간"><div class="timeline-dot"></div>
             <span class="timeline-week-badge">Week 08</span><span class="timeline-phase-badge">중간 35%</span>
-            <p class="timeline-title">🏆 중간 프로젝트 발표</p>
+            <p class="timeline-title">중간 프로젝트 발표</p>
             <p class="timeline-desc">로봇 하드서피스 모델링 완성본 발표 (배점 35%)</p>
           </div>
 
@@ -159,7 +161,7 @@
           </div>
           <div class="timeline-item is-milestone" data-phase="마무리"><div class="timeline-dot"></div>
             <span class="timeline-week-badge">Week 16</span><span class="timeline-phase-badge">마무리 65%</span>
-            <p class="timeline-title">🎓 최종 평가 · 수업 마무리</p>
+            <p class="timeline-title">최종 평가 · 수업 마무리</p>
             <p class="timeline-desc">최종 성적 확정, 피드백 세션, 수업 종료</p>
           </div>
         </div>
@@ -768,7 +770,7 @@
 
     document.getElementById("themeToggle").addEventListener("click", function() {
       var current = document.documentElement.getAttribute("data-theme");
-      var next = current === "light" ? "" : "light";
+      var next = current === "dark" ? "" : "dark";
       if (next) {
         document.documentElement.setAttribute("data-theme", next);
         localStorage.setItem("rpd-theme", next);

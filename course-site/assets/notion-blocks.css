@@ -55,28 +55,15 @@
 .nb-toggle[open] > summary::before { transform: rotate(90deg); }
 .nb-toggle-body { padding-left: 1.5rem; margin-top: .25rem; }
 
-/* ── Callout ───────────────────────────────────────────── */
+/* ── Callout (Notion SSOT text only — no icon / accent bar) ─ */
 .nb-callout {
-  display: flex;
-  gap: .75rem;
-  padding: .75rem 1rem;
-  border-radius: var(--radius, 6px);
   margin: .75rem 0;
-  background: var(--bg-2, rgba(255,255,255,.04));
-  border-left: 3px solid var(--key);
+  padding: 0;
+  background: none;
+  border: none;
 }
-.nb-callout--gray   { border-color: var(--muted); }
-.nb-callout--red    { border-color: #ef4444; background: rgba(239,68,68,.08); }
-.nb-callout--orange { border-color: #f97316; background: rgba(249,115,22,.08); }
-.nb-callout--yellow { border-color: #eab308; background: rgba(234,179,8,.08); }
-.nb-callout--green  { border-color: #22c55e; background: rgba(34,197,94,.08); }
-.nb-callout--blue   { border-color: var(--key); background: rgba(0,191,165,.08); }
-.nb-callout--purple { border-color: #a855f7; background: rgba(168,85,247,.08); }
-.nb-callout--pink   { border-color: #ec4899; background: rgba(236,72,153,.08); }
-.nb-callout--brown  { border-color: #92400e; background: rgba(146,64,14,.08); }
-.nb-callout-icon { font-size: 1.2em; flex-shrink: 0; line-height: 1.75; }
-.nb-callout-body { flex: 1; min-width: 0; }
-.nb-callout-body .nb-p { margin: 0; }
+.nb-callout-body { min-width: 0; }
+.nb-callout-body .nb-p { margin: .5rem 0; line-height: 1.75; }
 
 /* ── Code ──────────────────────────────────────────────── */
 .nb-code-wrap { position: relative; margin: 1rem 0; }
@@ -107,8 +94,9 @@
 .nb-code-wrap:hover .nb-code-copy { opacity: 1; }
 .nb-code-wrap:hover .nb-code-copy:hover { color: var(--text); }
 pre.nb-code {
-  background: var(--bg-2, #111);
-  border: 1px solid var(--border, rgba(255,255,255,.08));
+  background: var(--surface-alt, #F1EBE1);
+  color: var(--text);
+  border: 1px solid var(--line, rgba(27, 23, 24, 0.12));
   border-radius: var(--radius, 6px);
   padding: 2.2rem .9rem .9rem;
   overflow-x: auto;
@@ -116,7 +104,25 @@ pre.nb-code {
   font-size: .875rem;
   line-height: 1.6;
 }
-pre.nb-code code { font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace; }
+pre.nb-code code {
+  font-family: var(--font-mono, 'JetBrains Mono', 'Fira Code', ui-monospace, monospace);
+  color: inherit;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.nb-code-wrap--plain pre.nb-code {
+  font-family: var(--font-body, 'Pretendard Variable', sans-serif);
+  font-size: .92rem;
+  line-height: 1.75;
+}
+.nb-link-page-wrap { margin: .35rem 0 .75rem; }
+a.nb-link-page {
+  color: var(--key);
+  text-decoration: none;
+  font-weight: 500;
+}
+a.nb-link-page:hover { text-decoration: underline; }
+.nb-link-page--missing { color: var(--muted); font-size: .9rem; }
 
 /* ── Image ─────────────────────────────────────────────── */
 figure.nb-image { margin: 1rem 0; }
@@ -127,6 +133,44 @@ figure.nb-image figcaption { font-size: .8rem; color: var(--muted); margin-top: 
 .nb-video-wrap { position: relative; padding-top: 56.25%; margin: 1rem 0; border-radius: var(--radius, 6px); overflow: hidden; background: #000; }
 .nb-video-wrap iframe,
 .nb-video-wrap video { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+
+/* ── File download ─────────────────────────────────────── */
+p.nb-file { margin: .75rem 0; }
+a.nb-file-link {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .55rem .85rem;
+  border: 1px solid var(--border, rgba(255,255,255,.12));
+  border-radius: var(--radius, 6px);
+  color: var(--key, #00bfa5);
+  text-decoration: none;
+  font-size: .9rem;
+}
+a.nb-file-link:hover { border-color: var(--key, #00bfa5); }
+.nb-file-caption {
+  display: block;
+  margin-top: .35rem;
+  font-size: .8rem;
+  color: var(--muted);
+}
+
+/* ── Embed (Show Me / external) ────────────────────────── */
+.nb-embed {
+  position: relative;
+  margin: 1rem 0;
+  border: 1px solid var(--border, rgba(255,255,255,.1));
+  border-radius: var(--radius, 6px);
+  overflow: hidden;
+  background: var(--bg-2, rgba(255,255,255,.02));
+}
+.nb-embed iframe {
+  display: block;
+  width: 100%;
+  min-height: 420px;
+  border: none;
+}
+.nb-embed-showme iframe { min-height: 560px; }
 
 /* ── Divider ───────────────────────────────────────────── */
 hr.nb-divider { border: none; border-top: 1px solid var(--border, rgba(255,255,255,.1)); margin: 1.5rem 0; }

@@ -2735,16 +2735,13 @@
       }
     ],
     "assignment": {
-      "title": "본인 학생 페이지에 업로드",
+      "title": "본인 학생 페이지에 업로드 ",
       "description": "간단한 캐릭터 메쉬에 Armature를 연결하고 포즈 3가지를 스크린샷으로 제출해요.",
       "checklist": []
     },
     "mistakes": [
-      "Automatic Weights 오류 → 메쉬에 구멍이 있거나 중복 정점 있음. Merge by Distance 먼저",
-      "팔을 들면 몸이 딸려옴 → Weight Paint에서 해당 본의 Weight를 0으로 칠하기",
-      "본이 안 움직임 → Pose Mode인지 확인 (Edit Mode에서는 구조만 바뀜)",
-      "포즈가 뒤틀림 → 본 방향이 이상하면 Edit Mode에서 Recalculate Roll",
-      "메쉬가 안 따라옴 → Parent가 제대로 됐는지 Outliner에서 확인"
+      "방법 A (간단, 기존 웨이트 초기화됨): 메쉬 + Armature 선택 → Ctrl+P → With Automatic Weights 재실행",
+      "방법 B (기존 웨이트 유지): 메쉬 선택 → Properties > Vertex Groups > + 버튼으로 본 이름과 동일한 그룹 추가 → Edit Mode에서 버텍스 선택 → Weight 값 설정 → Assign 클릭"
     ],
     "shortcuts": [
       {
@@ -2778,20 +2775,24 @@
     ],
     "docs": [
       {
-        "title": "Armatures",
+        "title": "Blender Manual — Armatures",
         "url": "https://docs.blender.org/manual/en/latest/animation/armatures/index.html"
       },
       {
-        "title": "Skinning",
-        "url": "https://docs.blender.org/manual/en/latest/animation/armatures/skinning/index.html"
+        "title": "Blender Manual — Armature Deform Parent",
+        "url": "https://docs.blender.org/manual/en/latest/animation/armatures/skinning/parenting.html"
       },
       {
-        "title": "Weight Paint",
+        "title": "Blender Manual — Weight Paint",
         "url": "https://docs.blender.org/manual/en/latest/sculpt_paint/weight_paint/index.html"
       },
       {
-        "title": "Pose Mode",
-        "url": "https://docs.blender.org/manual/en/latest/animation/armatures/posing/index.html"
+        "title": "Blender Manual — Inverse Kinematics",
+        "url": "https://docs.blender.org/manual/en/latest/animation/armatures/posing/bone_constraints/inverse_kinematics/introduction.html"
+      },
+      {
+        "title": "Blender Manual — Rigify",
+        "url": "https://docs.blender.org/manual/en/latest/addons/rigging/rigify/index.html"
       }
     ]
   },
