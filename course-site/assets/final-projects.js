@@ -144,9 +144,40 @@
 
   function getProjectMeta(project) {
     var parts = [];
-    if ((project.videos || []).length) parts.push("영상 " + project.videos.length);
-    if ((project.links || []).length) parts.push("링크 " + project.links.length);
+    var storyboardCount = getStoryboardItems(project).length;
+    if (storyboardCount >= 3) parts.push("스토리보드 " + storyboardCount + "장");
+    if ((project.videos || []).length) parts.push("영상 " + project.videos.length + "개");
+    if ((project.links || []).length) parts.push("링크 " + project.links.length + "개");
     return parts.length ? parts.join(" · ") : "이미지 기록";
+  }
+
+  function getStoryboardItems(project) {
+    return (project.media || []).slice(0, 12).map(function (item, index) {
+      return {
+        src: item.src,
+        type: item.type === "video" ? "영상 장면" : "이미지 장면",
+        label: "장면 " + String(index + 1).padStart(2, "0")
+      };
+    });
+  }
+
+  function renderStoryboard(project) {
+    var items = getStoryboardItems(project);
+    if (items.length < 3) return null;
+    var board = el("div", { className: "final-storyboard" });
+    items.forEach(function (item) {
+      board.appendChild(el("figure", { className: "final-story-card" }, [
+        el("img", { src: item.src, alt: project.code + " " + item.label, loading: "lazy" }),
+        el("figcaption", {}, [
+          el("span", { textContent: item.label }),
+          el("b", { textContent: item.type })
+        ])
+      ]));
+    });
+    return el("section", { className: "final-section" }, [
+      el("h3", { textContent: "스토리보드 / 장면 흐름" }),
+      board
+    ]);
   }
 
   function renderLinks(project) {
@@ -198,8 +229,10 @@
     }
     els.detail.appendChild(el("div", { className: "final-detail-kicker", textContent: "RPD 2026 · " + project.code }));
     els.detail.appendChild(el("h2", { textContent: project.title }));
-    els.detail.appendChild(el("p", { className: "final-detail-summary", textContent: getProjectMeta(project) + "가 포함된 최종 결과물 기록입니다." }));
+    els.detail.appendChild(el("p", { className: "final-detail-summary", textContent: getProjectMeta(project) + "를 함께 담은 최종 결과물 기록입니다." }));
     els.detail.appendChild(renderMedia(project));
+    var storyboard = renderStoryboard(project);
+    if (storyboard) els.detail.appendChild(storyboard);
     var videos = renderVideos(project);
     if (videos) els.detail.appendChild(videos);
     var links = renderLinks(project);
