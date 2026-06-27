@@ -25,6 +25,7 @@
       archive: '카드 검색... (Extrude, Boolean, UV...)',
       showme: '카드 검색... (Array, Mirror, UV...)',
       class: '주차 검색... (Week 3, Mirror...)',
+      final: '작품 검색... (작품 01, RPD 2026)',
       studio: '내 덱 검색...'
     };
     search.placeholder = placeholders[currentTab] || placeholders.archive;

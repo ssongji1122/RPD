@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Final Review Gallery — RPD</title>
+  <meta name="description" content="RPD 2026 기말 프로젝트 우수 작품을 익명 갤러리와 작품별 상세 보기로 정리한 기록 페이지" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Nanum+Myeongjo:wght@400;700;800&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+  <link rel="stylesheet" href="assets/tokens.css" />
+  <link rel="stylesheet" href="assets/components.css" />
+  <link rel="stylesheet" href="assets/layout.css" />
+  <link rel="stylesheet" href="assets/page-final-projects.css" />
+  <script>/* FOUC prevention */ (function(){var t=localStorage.getItem('rpd-theme');if(t)document.documentElement.setAttribute('data-theme',t);var l=localStorage.getItem('rpd-lang');if(l){document.documentElement.lang=l;document.documentElement.setAttribute('data-lang',l);}})()</script>
+</head>
+<body data-tab="final">
+  <a href="#main-content" class="skip-link">본문으로 건너뛰기</a>
+  <div class="app" data-shell>
+    <main class="main" id="main-content">
+      <div class="main-inner final-review">
+        <header class="final-hero">
+          <div>
+            <p class="rpd-kicker">Week 15 Final Archive</p>
+            <h1>기말 작품 기록</h1>
+            <p class="final-hero-copy">잘 완성된 최종 결과물을 익명으로 모아 둔 아카이브입니다. 카드를 열어 작품 이미지를 크게 확인합니다.</p>
+          </div>
+          <dl class="final-stats" id="finalStats" aria-label="기말 작품 기록 통계"></dl>
+        </header>
+
+        <section class="final-toolbar" aria-label="기말 작품 검색">
+          <div class="final-search-wrap">
+            <label class="final-search-label" for="finalSearch">작품 검색</label>
+            <input class="rpd-search-input" id="finalSearch" type="search" autocomplete="off" placeholder="작품 01, RPD 2026" />
+          </div>
+        </section>
+
+        <section class="final-layout" aria-label="기말 프로젝트 리뷰">
+          <div>
+            <div class="final-list-head">
+              <h2>작품 목록</h2>
+              <span id="finalResultCount" class="rpd-pill-count" role="status" aria-live="polite"></span>
+            </div>
+            <div class="final-grid" id="finalGrid"></div>
+          </div>
+          <aside class="final-detail" id="finalDetail" aria-live="polite"></aside>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script src="assets/config.js"></script>
+  <script src="assets/nav-config.js"></script>
+  <script src="assets/shell.js"></script>
+  <script src="assets/tab-system.js"></script>
+  <script src="assets/user-profile.js"></script>
+  <script src="assets/site-shell.js?v=20260318a"></script>
+  <script src="assets/layout.js"></script>
+  <script src="assets/topbar-search.js"></script>
+  <script src="data/final-projects.js"></script>
+  <script src="assets/final-projects.js"></script>
+</body>
+</html>
