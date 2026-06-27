@@ -173,9 +173,11 @@
 
       return metricKeys.map(function(key) {
         if (!Object.prototype.hasOwnProperty.call(metricValues, key)) return "";
+        var value = metricValues[key];
+        if (!value) return "";  // 0개 메트릭은 숨김(예: 실습 없는 이론 중심 주차)
         var label = getWeekCardMetricLabel(key, text, preset);
         if (!label) return "";
-        return metricValues[key] + " " + label;
+        return value + " " + label;
       }).filter(Boolean);
     }
 

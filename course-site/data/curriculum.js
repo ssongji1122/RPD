@@ -17,11 +17,23 @@ const CURRICULUM = [
     ],
     "steps": [
       {
-        "title": "Blender 설치",
-        "copy": "blender.org에서 다운로드 후 실행 확인.",
+        "title": "Blender 5.0 설치",
+        "copy": "blender.org에서 다운로드 후 실행 확인.\n\n필수 GPU 설정\n\nBlender 설치 후 반드시 GPU를 설정해야 렌더링 속도가 크게 향상됩니다.\n\n왜? Blender의 렌더링 엔진(특히 Cycles)은 장면 속 수천 개의 광선을 추적하는 연산을 수행합니다. CPU는 코어가 8~16개인 반면, GPU는 수천 개의 코어를 병렬로 활용하므로 렌더링 속도가 5~10배 빨라집니다. 이 설정 하나가 수십 시간의 차이를 만듭니다.\n\nGPU 설정 경로:\n\n필수 초기 설정 (GPU 설정과 함께 반드시!)\n\nBlender를 처음 설치하면 GPU 외에도 아래 설정들을 미리 해두면 작업 효율이 크게 올라갑니다.\n\n① 오토세이브 (Auto Save) — 작업 날림 방지\n\n② Undo Steps — 실수 되돌리기 횟수\n\n③ 언어 설정 — 한국어/영어 전환\n\n④ 파일 저장 습관",
         "goal": [
-          "Blender 공식 사이트에서 설치 파일 다운로드",
-          "실행 후 Welcome Screen 확인"
+          "NVIDIA: CUDA 또는 OptiX 선택",
+          "Apple Silicon (M1/M2/M3/M4): Metal 선택",
+          "AMD: HIP 선택",
+          "Auto Save: 체크 활성화 (기본 켜져 있지만 반드시 확인)",
+          "Timer (minutes): 2분으로 설정 (기본 5분 → 2분 권장)",
+          "왜? Blender는 작업 중 충돌이 발생할 수 있습니다. 2분마다 자동 저장되면 최악의 경우에도 2분치 작업만 잃게 됩니다. File > Recover > Auto Save에서 복구할 수 있습니다.",
+          "Undo Steps: 64 이상으로 설정 (기본 32)",
+          "왜? 모델링 중 Ctrl+Z로 되돌리는 일이 매우 잦습니다. 32번이면 금방 한계에 닿아서 더 이전으로 돌아갈 수 없게 됩니다.",
+          "수업에서는 영어 인터페이스 권장 (튜토리얼, 검색 시 영어가 압도적으로 유리)",
+          "한국어로 바꾸고 싶다면 Language에서 Korean (한국어) 선택",
+          "Tooltips만 한국어로 설정하면 메뉴는 영어로 유지하면서 도움말만 한국어로 볼 수 있어 학습에 유리",
+          "작업 시작 전 반드시 Ctrl+S로 .blend 파일을 먼저 저장",
+          "파일명 규칙: week01_robot_v01.blend → 버전업 시 v02, v03",
+          "왜? 오토세이브는 임시 백업이지 정식 저장이 아닙니다. 오토세이브 파일은 Blender 임시 폴더에 저장되어 OS 업데이트나 디스크 정리 시 삭제될 수 있습니다."
         ],
         "done": [
           "Blender가 정상적으로 열린다",
@@ -30,36 +42,151 @@ const CURRICULUM = [
         "tasks": [
           {
             "id": "w1-t1",
-            "label": "blender.org 에서 다운로드 완료",
-            "detail": "최신 LTS 버전 권장"
+            "label": "https://www.blender.org/download/ 접속",
+            "detail": ""
           },
           {
             "id": "w1-t2",
-            "label": "Blender 처음 실행 완료",
-            "detail": "Welcome Screen이 보이는지 확인"
+            "label": "운영체제에 맞는 버전 다운로드 (Windows/Mac)",
+            "detail": ""
+          },
+          {
+            "id": "w1-t3",
+            "label": "설치 후 실행 확인",
+            "detail": ""
+          },
+          {
+            "id": "w1-t4",
+            "label": "첫 화면: Splash Screen → General 클릭",
+            "detail": ""
+          },
+          {
+            "id": "w1-t5",
+            "label": "기본 화면 구성 확인 (Viewport, Outliner, Properties, Timeline)",
+            "detail": ""
           }
         ]
       },
       {
-        "title": "컨셉 설정 (Mixboard)",
-        "copy": "이번 수업에서 뭘 만들고 싶은지 이미지로 모아두세요. 방향이 있으면 매 주 수업이 훨씬 재밌어져요.",
-        "goal": [
-          "Mixboard를 열어 레이아웃 구성",
-          "3개 이상 레퍼런스 이미지 수집"
-        ],
+        "title": "AI 무드보드 & 컨셉 이미지 제작",
+        "copy": "이번 수업에서 뭘 만들고 싶은지 이미지로 모아두세요. 방향이 있으면 매 주 수업이 훨씬 재밌어져요.\n\n이번 실습의 목표\n\n믹스보드 하나로 아이디어 발산부터 정밀 편집, 다각도 뷰 생성까지 올인원으로 진행하여 Blender 모델링용 레퍼런스 이미지를 완성합니다.\n\n나노바나나(Nano Banana)는 믹스보드에 내장된 이미지 편집 엔진입니다. 별도로 접속할 필요 없이, 믹스보드 보드 위에서 이미지를 선택하고 자연어로 편집 요청하면 나노바나나 엔진이 자동으로 작동합니다.\n\n🔧 믹스보드 핵심 기능 요약\n\nB-1. 믹스보드 접속 & 보드 생성\n\nB-2. 프롬프트로 초기 이미지 생성\n\n텍스트 입력창에 아래 프롬프트를 복사 → 붙여넣기 하세요:\n\n프롬프트 작성 공식:\n\n누가/무엇이 + 어떤 모습인지 + 무슨 재질/색상 + 어떤 스타일 + 어디서 보는지 + 배경\n\n🔵 기본 로봇 컨셉 (먼저 이것부터!)\n\n왜 잘 작동하나요? cute round(모습) + soft pastel, matte plastic(재질/색상) + art toy style(스타일) + front view(앵글) + white background(배경) — 공식의 모든 요소가 빠짐없이 들어가 있어 AI가 정확한 이미지를 생성합니다.\n\n🔵 구조 로봇 (산업/작업용)\n\n왜 잘 작동하나요? rescue robot with spider legs로 구체적 형태를 지정하고, metallic gray and orange로 산업 디자인 느낌의 색상 조합을 명시했습니다. industrial design concept이 전체 톤을 잡아줍니다.\n\n🔵 반려 로봇 (감성형)\n\n왜 잘 작동하나요? companion robot pet으로 역할을, cat-like ears, round body로 친근한 형태를, product photography로 깔끔한 촬영 스타일을 지정합니다. 감성 로봇에 어울리는 따뜻한 색감(pastel pink and mint)이 포인트입니다.\n\n🔵 아트토이 스타일\n\n왜 잘 작동하나요? designer art toy와 vinyl collectible style이 팝마트/키디랜드 느낌의 아트토이를 정확히 타겟합니다. isometric view는 피규어 제품 사진에서 자주 쓰는 앵글입니다.\n\nB-3. \"More like this\"로 변형 대량 생성\n\n\"More like this\"가 핵심입니다! 처음 프롬프트가 완벽할 필요 없어요. 대략적인 방향만 잡고 마음에 드는 이미지에 \"More like this\"를 반복하면 원하는 방향으로 수렴합니다.\n\nB-4. 자연어 편집 & Doodle\n\n보드 위 이미지를 선택한 후 아래 프롬프트로 수정:\n\n🔵 자연어 편집 프롬프트 (복사해서 사용)\n\n🔵 Doodle to Edit (낙서로 편집)\n\nB-5. 이미지 합성\n\n마음에 드는 이미지 2~3개를 선택하고 자연어로 합성 지시:\n\n🔵 기본 합성\n\n🔵 부분 요소 합성 (로봇 디자인 특화)\n\n합성 팁: 합성할 이미지들의 스타일이 비슷할수록 자연스러운 결과가 나옵니다. 같은 프롬프트 계열에서 생성된 이미지끼리 합성하면 가장 좋아요.\n\n이 단계의 목표: 보드 위에서 마음에 드는 이미지를 선택하고, 자연어로 세부 편집합니다. 별도의 도구로 이동할 필요 없이 믹스보드 안에서 모든 편집이 가능합니다.\n\nC-1. 선택 이미지 정밀 편집\n\n보드에서 가장 마음에 드는 이미지 1~2개를 선택하고, Area Select 또는 전체 편집 모드에서:\n\n핵심 편집 패턴: \"Change only [바꿀 부분]. Keep everything else unchanged.\" — 바꿀 것만 지정하고, 나머지는 유지하라고 명시하면 캐릭터가 완전히 달라지는 것을 방지할 수 있습니다.\n\n🔵 재질감 변경\n\n🔵 색상 통일\n\n🔵 포즈 변형\n\nC-2. 다각도 뷰 생성 (Blender 레퍼런스용)\n\n보드 위에서 가장 마음에 드는 이미지를 선택하고 자연어로 다각도 이미지를 생성하세요:\n\n핵심 패턴: 보드 위 이미지를 선택한 뒤 \"featuring the same character shown in the reference image\"를 포함하면 AI가 레퍼런스 이미지의 특징을 분석하여 일관성을 유지합니다.\n\n🔵 정면 뷰 (Front View)\n\n🔵 측면 뷰 (Side View)\n\n🔵 45도 뷰 (3/4 View)\n\nC-3. 배경 교체\n\nC-4. 캐릭터 일관성 유지\n\n일관성 유지 = 이미지 선택 + 변경 금지 지시\n\n믹스보드에서 기존 이미지를 선택한 뒤, 바꾸고 싶은 부분만 지정하고 나머지는 \"do not change\" 또는 \"변경하지 마\"라고 명시하세요.\n\n🔵 기본 패턴: \"featuring the same character\"\n\n보드 위 이미지를 선택한 후, 아래 패턴으로 프롬프트를 작성하세요:\n\n🔵 뷰 앵글만 변경\n\n🔵 포즈만 변경\n\n🔵 의상/액세서리만 변경\n\n🔵 감정/표정만 변경\n\n핵심 원칙 3가지:\n\n① 항상 do not change 또는 변경하지 마로 유지할 요소를 명시\n\n② featuring the same character shown in the reference image로 레퍼런스 연결\n\n③ 변경할 부분은 only change [X] 또는 [X]만 변경해로 범위를 한정\n\nC-5. 캐릭터 베리에이션 (색상/재질/스타일 변형)\n\n하나의 로봇 컨셉에서 다양한 변형을 탐색하세요:\n\n🔵 색상 베리에이션\n\n🔵 재질 베리에이션\n\n베리에이션 활용 팁: \"More like this\"로 대량 생성한 뒤, 마음에 드는 변형에 다시 자연어 편집을 적용하면 원하는 방향으로 빠르게 수렴할 수 있습니다.\n\nC-6. 제품 연출 컷 & 디테일 컷\n\n로봇 디자인을 제품 사진처럼 연출하거나, 특정 부위를 클로즈업합니다:\n\n🔵 제품 연출 컷 (Product Shot)\n\n🔵 디테일 컷 (Close-up)\n\n🔵 관절/메커니즘 디테일\n\n제품 연출 컷은 포트폴리오에 활용도가 높습니다. 같은 로봇이라도 연출 방식에 따라 완성도가 크게 달라져요. 중간/기말 발표 때 Final 보드에 연출 컷을 포함하면 프로페셔널한 인상을 줄 수 있습니다.\n\nC-7. 스타일 변경\n\n같은 로봇 디자인을 완전히 다른 스타일로 변환해보세요:\n\n🔵 실사 → 아트토이\n\n🔵 미니멀 → 사이버펑크\n\n🔵 3D → 2D 일러스트\n\n스타일 변경의 의미: 같은 캐릭터를 여러 스타일로 변환해보면, 어떤 스타일이 자신의 디자인 의도와 가장 잘 맞는지 발견할 수 있습니다. \n\nD-1. 보드 정리 (과정이 보이도록)\n\n믹스보드에서 보드를 3개로 구분하여 작업 과정을 기록합니다:\n\n왜 다중 보드인가요? 중간/기말 발표 때 이 보드들이 그대로 포트폴리오가 됩니다! Idea → Explore → Final 순서가 디자인 사고 과정을 보여줍니다.\n\nD-2. 프레젠테이션 변환 (중간/기말 활용 미리보기)\n\n믹스보드의 프레젠테이션 자동 변환 기능:\n\n왜 다각도 이미지가 필요한가요?\n\n3D 모델링은 2D 화면에서 3차원 형태를 만드는 작업이라, 하나의 각도만 보고 만들면 다른 각도에서 비율이 무너지기 쉽습니다. 정면과 측면 레퍼런스를 동시에 띄워놓고 작업하면, 캐릭터의 두께와 깊이감을 정확하게 잡을 수 있습니다.\n\n한 걸음 더: Blender에서 Shift+A > Image > Reference로 이미지를 3D 뷰포트에 바로 불러올 수 있습니다. 정면 이미지를 Front 뷰에, 측면 이미지를 Right 뷰에 배치하면 두 방향을 번갈아 보며 정확한 비율로 모델링할 수 있어요. 다음 주(Week 02)부터 이 방법을 본격적으로 활용합니다.\n\n모델링 참고 이미지 체크리스트...꼭 준비!\n\n✅ 정면 뷰 (front view)\n\n✅ 측면 뷰 (side view)\n\n✅ 45도 뷰 (3/4 view)",
+        "goal": [],
         "done": [
           "Mixboard에 적어도 3개 이상 이미지가 있다",
           "어떤 걸 만들지 한 문장으로 설명할 수 있다"
         ],
         "tasks": [
           {
-            "id": "w1-t3",
-            "label": "레퍼런스 이미지 3개 이상 수집",
+            "id": "w1-t6",
+            "label": "https://labs.google/mixboard 접속",
             "detail": ""
           },
           {
-            "id": "w1-t4",
-            "label": "Mixboard 보드 캡처해서 저장",
+            "id": "w1-t7",
+            "label": "Google 계정으로 로그인",
+            "detail": ""
+          },
+          {
+            "id": "w1-t8",
+            "label": "\"Create new board\" 클릭",
+            "detail": ""
+          },
+          {
+            "id": "w1-t9",
+            "label": "보드 이름을 [본인이름] Robot Concept",
+            "detail": "Idea 로 설정"
+          },
+          {
+            "id": "w1-t10",
+            "label": "생성된 이미지 중 마음에 드는 것 클릭",
+            "detail": ""
+          },
+          {
+            "id": "w1-t11",
+            "label": "\"More like this\" 버튼 클릭",
+            "detail": ""
+          },
+          {
+            "id": "w1-t12",
+            "label": "AI가 유사한 변형 이미지를 대량 생성",
+            "detail": ""
+          },
+          {
+            "id": "w1-t13",
+            "label": "이 과정을 2~3회 반복 → 원하는 방향으로 수렴",
+            "detail": ""
+          },
+          {
+            "id": "w1-t14",
+            "label": "이미지 위에 원하는 부위를 낙서로 표시",
+            "detail": ""
+          },
+          {
+            "id": "w1-t15",
+            "label": "텍스트로 설명: \"add a sensor here\" 또는 \"이 부분에 날개 추가\"",
+            "detail": ""
+          },
+          {
+            "id": "w1-t16",
+            "label": "AI가 낙서 위치에 맞춰 편집",
+            "detail": ""
+          },
+          {
+            "id": "w1-t17",
+            "label": "보드 위 마음에 드는 이미지 선택",
+            "detail": ""
+          },
+          {
+            "id": "w1-t18",
+            "label": "\"More like this\" 로 유사 변형 생성",
+            "detail": ""
+          },
+          {
+            "id": "w1-t19",
+            "label": "생성된 변형에 자연어로 추가 수정",
+            "detail": ""
+          },
+          {
+            "id": "w1-t20",
+            "label": "완성된 보드에서 \"Create presentation\" 클릭",
+            "detail": ""
+          },
+          {
+            "id": "w1-t21",
+            "label": "AI가 보드 맥락을 파악하여 슬라이드 자동 구성",
+            "detail": ""
+          },
+          {
+            "id": "w1-t22",
+            "label": "형식/초점/비주얼 스타일 지정 가능",
+            "detail": ""
+          },
+          {
+            "id": "w1-t23",
+            "label": "공유 링크로 발표",
+            "detail": ""
+          }
+        ]
+      },
+      {
+        "title": "자기 프로젝트 컨셉 잡기",
+        "copy": "깊이 보기: Blender를 완벽히 다루는 것보다 \"내가 왜 이 캐릭터를 만드는가\"를 명확히 하는 것이 훨씬 중요합니다. 컨셉이 명확하면 모델링할 때 어떤 형태를 살리고 어떤 부분을 단순화할지 스스로 판단할 수 있습니다.",
+        "goal": [],
+        "done": [],
+        "tasks": [
+          {
+            "id": "w1-t24",
+            "label": "무드보드 결과를 바탕으로 자신의 로봇/캐릭터 컨셉 결정",
+            "detail": ""
+          },
+          {
+            "id": "w1-t25",
+            "label": "컨셉 시트 정리: 이름, 성격, 형태, 색상, 기능",
+            "detail": ""
+          },
+          {
+            "id": "w1-t26",
+            "label": "본인 학생 페이지에 업로드할 무드보드 이미지 선별",
             "detail": ""
           }
         ]
@@ -494,7 +621,7 @@ const CURRICULUM = [
   {
     "week": 3,
     "status": "done",
-    "title": "기초 모델링 1 - Modifier",
+    "title": "기초 모델링 1 — Edit + Modifier",
     "subtitle": "기본형 · 대칭 · 곡면 · 반복",
     "duration": "~3시간",
     "topics": [
@@ -1064,11 +1191,9 @@ const CURRICULUM = [
       "title": "직접 해볼 수 있는 추가 실험이에요. 정답은 없고, 결과를 캡처해서 공유하면 좋아요.",
       "description": "Edit Mode와 Modifier를 함께 써서 기본형과 디테일이 보이는 형태를 만들어요. 스크린샷 3장 + Modifier 목록 + 한줄 코멘트를 제출해요.",
       "checklist": [
-        "Edit Mode 도구 3가지 이상 사용",
-        "Modifier 2가지 이상 사용",
-        "필수 추가 Modifier 1개 확인",
-        "Join/Separate 또는 Apply 타이밍 확인",
-        "Modifier 스택이 보이는 스크린샷"
+        "로봇 몸체 만들기 — Cube → Edit Mode로 기본형 → Mirror → Subdivision으로 부드럽게",
+        "패널 구조 만들기 — Plane → Solidify → Boolean으로 홈 추가",
+        "반복 파츠 만들기 — Cube/Cylinder → Array로 6~10개 반복"
       ]
     },
     "mistakes": [
@@ -1160,12 +1285,9 @@ const CURRICULUM = [
     ],
     "steps": [
       {
-        "title": "Transform 정리와 파츠 관리",
-        "copy": "디테일을 넣기 전에 Scale과 파츠 구성을 먼저 정리해요. 수치가 꼬여 있거나 파츠가 뒤섞여 있으면 그다음 작업이 계속 불편해져요.",
-        "goal": [
-          "Transform을 정리한다",
-          "파츠를 분리하거나 합쳐 관리한다"
-        ],
+        "title": "몸통 만들기",
+        "copy": "3주차에 만든 머리 아래에 몸통을 붙여요. Cube에 Subdivision을 걸면 둥근 로봇 몸통이 되고, Inset으로 가슴판 영역을 구분하면 나중에 색을 나눌 때도 편해요.\n\n몸통 기본 형태:\n\n가슴판 영역 구분:\n\nSubdivision Level은 2면 충분해요. 높이면 컴퓨터가 느려지고, 디테일 작업도 어려워집니다. 필요하면 나중에 올릴 수 있어요.\n\n체크리스트:",
+        "goal": [],
         "done": [
           "Scale이 안정적으로 정리됐다",
           "움직일 파츠와 고정 파츠를 구분할 수 있다"
@@ -1173,63 +1295,122 @@ const CURRICULUM = [
         "tasks": [
           {
             "id": "w4-t1",
-            "label": "N 패널에서 Scale 값 확인",
-            "detail": "1,1,1이 아니면 먼저 정리"
+            "label": "Shift + A → Mesh → Cube 추가",
+            "detail": ""
           },
           {
             "id": "w4-t2",
-            "label": "Ctrl+A로 All Transforms 적용",
-            "detail": "Modifier 전에 수치 정리"
+            "label": "S로 몸통 비율 잡기 (머리보다 살짝 작거나 비슷한 폭)",
+            "detail": ""
           },
           {
             "id": "w4-t3",
-            "label": "P로 움직일 파츠 분리하기",
-            "detail": "안테나, 헤드셋, 손 파츠 등"
+            "label": "Subdivision Surface Modifier 추가 (Level 2)",
+            "detail": ""
           },
           {
             "id": "w4-t4",
-            "label": "Ctrl+J로 함께 갈 파츠 묶기",
-            "detail": "고정 파츠끼리 정리"
+            "label": "G + Z로 머리 아래에 배치",
+            "detail": ""
+          },
+          {
+            "id": "w4-t5",
+            "label": "Tab → Edit Mode 진입",
+            "detail": ""
+          },
+          {
+            "id": "w4-t6",
+            "label": "앞면 Face 선택",
+            "detail": ""
+          },
+          {
+            "id": "w4-t7",
+            "label": "I → Inset으로 안쪽 영역 생성",
+            "detail": ""
+          },
+          {
+            "id": "w4-t8",
+            "label": "E → Extrude로 살짝 돌출 (로봇 외장 느낌)",
+            "detail": ""
+          },
+          {
+            "id": "w4-t9",
+            "label": "Cube 추가 후 S로 몸통 비율 잡기",
+            "detail": "머리보다 살짝 작거나 비슷한 폭"
+          },
+          {
+            "id": "w4-t10",
+            "label": "Subdivision Surface Modifier 추가",
+            "detail": "Level 2로 둥근 형태 확인"
+          },
+          {
+            "id": "w4-t11",
+            "label": "Edit Mode에서 Inset으로 가슴판 영역 만들기",
+            "detail": "앞면 선택 → I → 안쪽 면 생성"
+          },
+          {
+            "id": "w4-t12",
+            "label": "Extrude로 가슴판을 살짝 돌출시키기",
+            "detail": "로봇 외장 느낌 추가"
           }
         ],
         "image": "assets/images/week04/transform-apply.png",
         "showme": "transform-apply"
       },
       {
-        "title": "얼굴과 패널 디테일",
-        "copy": "큰 덩어리가 잡힌 상태에서 눈, 패널, 관절 라인을 추가하는 단계예요. Inset과 Boolean을 같이 쓰면 디테일을 빠르게 만들 수 있어요.",
-        "goal": [
-          "Inset과 Boolean으로 디테일을 추가한다"
-        ],
+        "title": "3D Cursor로 위치 잡기",
+        "copy": "Blender에서 오브젝트를 정확한 위치에 만들려면 3D Cursor를 먼저 옮겨야 해요. 3D Cursor가 있는 곳에 새 오브젝트가 생기거든요. 관절을 붙이고 싶은 위치에 Cursor를 먼저 놓는 연습을 해봐요.\n\n3D Cursor 이동 방법:\n\nCursor 위치에 오브젝트 생성:\n\n3D Cursor는 주황색 십자가 표시예요. 뷰포트에서 위치를 확인하세요. 엉뚝한 곳에 가면 Shift+S → Cursor to World Origin으로 원점으로 되돌릴 수 있어요.\n\n체크리스트:",
+        "goal": [],
         "done": [
           "얼굴이나 가슴판에 디테일이 생겼다",
           "구멍이나 홈이 한 곳 이상 만들어졌다"
         ],
         "tasks": [
           {
-            "id": "w4-t5",
-            "label": "Inset으로 안쪽 영역 만들기",
-            "detail": "눈, 버튼, 패널 라인 시작점"
+            "id": "w4-t13",
+            "label": "Shift + Right Click으로 어깨 위치에 Cursor 놓기",
+            "detail": ""
           },
           {
-            "id": "w4-t6",
-            "label": "Extrude로 살짝 들어가거나 나오게 만들기",
-            "detail": "작은 깊이 차이 주기"
+            "id": "w4-t14",
+            "label": "Shift + A → Mesh → UV Sphere",
+            "detail": ""
           },
           {
-            "id": "w4-t7",
-            "label": "Boolean Difference로 홈 또는 소켓 만들기",
-            "detail": "커터가 실제로 겹치는지 확인"
+            "id": "w4-t15",
+            "label": "Cursor가 있는 어깨 위치에 바로 생성됨!",
+            "detail": ""
+          },
+          {
+            "id": "w4-t16",
+            "label": "Shift+Right Click으로 3D Cursor 이동 연습",
+            "detail": "뷰포트에서 클릭한 곳으로 주황색 십자가 이동"
+          },
+          {
+            "id": "w4-t17",
+            "label": "Shift+S → Cursor to Selected로 정확한 위치로",
+            "detail": "오브젝트나 Vertex를 선택한 후 실행"
+          },
+          {
+            "id": "w4-t18",
+            "label": "Shift+S → Cursor to World Origin으로 원점 복귀",
+            "detail": "Cursor를 0,0,0으로 되돌리기"
+          },
+          {
+            "id": "w4-t19",
+            "label": "3D Cursor 위치에 UV Sphere 추가해보기",
+            "detail": "Shift+A → Mesh → UV Sphere"
           }
         ],
         "image": "assets/images/week04/inset-panel-detail.png",
         "showme": "boolean-modifier"
       },
       {
-        "title": "Bevel 두 가지 비교",
-        "copy": "같은 '모서리 정리'라도 손으로 직접 깎는 방법과 Modifier로 전체를 정리하는 방법은 다르게 느껴져요. 둘 다 직접 비교해보는 게 가장 빠릅니다.",
+        "title": "Origin 이동과 Snap 배치",
+        "copy": "Origin은 오브젝트의 기준점이에요. 회전하면 Origin을 중심으로 돌고, 좌표도 Origin 위치를 표시해요. Snap은 오브젝트를 다른 오브젝트의 꼭짓점·면·모서리에 정확히 붙이는 기능이에요.\n\nOrigin 이동:\n\nSnap 배치:\n\nOrigin과 3D Cursor는 다른 것이에요!\n\n둘 다 자유롭게 옮길 수 있지만, 역할이 다릅니다.\n\n체크리스트:",
         "goal": [
-          "Ctrl+B와 Bevel Modifier를 구분해 쓴다"
+          "3D Cursor: 새 오브젝트가 생성될 위치 (주황색 십자가)",
+          "Origin: 오브젝트의 기준점 (주황색 점)"
         ],
         "done": [
           "부분 수정과 전체 정리의 차이를 알게 됐다",
@@ -1237,97 +1418,321 @@ const CURRICULUM = [
         ],
         "tasks": [
           {
-            "id": "w4-t8",
-            "label": "특정 모서리에 Ctrl+B 써보기",
-            "detail": "부분 디테일 직접 다듬기"
+            "id": "w4-t20",
+            "label": "상단 자석 아이콘 켜기",
+            "detail": ""
           },
           {
-            "id": "w4-t9",
-            "label": "다른 파츠에는 Bevel Modifier 넣기",
-            "detail": "Width와 Segments 비교"
+            "id": "w4-t21",
+            "label": "Snap To: Vertex로 설정 (꼭짓점에 딱 붙음)",
+            "detail": ""
           },
           {
-            "id": "w4-t10",
-            "label": "두 방식의 결과를 나란히 비교하기",
-            "detail": "부분 수정 vs 전체 정리"
+            "id": "w4-t22",
+            "label": "G로 이동할 때 Ctrl 누르면 Snap 동작",
+            "detail": ""
+          },
+          {
+            "id": "w4-t23",
+            "label": "Right Click → Set Origin → Origin to 3D Cursor",
+            "detail": "미리 3D Cursor를 원하는 위치에 놓고 실행"
+          },
+          {
+            "id": "w4-t24",
+            "label": "Right Click → Set Origin → Origin to Geometry",
+            "detail": "Origin을 오브젝트 중심으로 되돌리기"
+          },
+          {
+            "id": "w4-t25",
+            "label": "상단 Snap 자석 아이콘 켜고 Snap To: Vertex 설정",
+            "detail": "꼭짓점에 딱 붙음"
+          },
+          {
+            "id": "w4-t26",
+            "label": "G로 이동할 때 Ctrl 눌러 Snap 이동 연습",
+            "detail": "몸통 표면 꼭짓점에 관절이 딱 붙는 느낌 확인"
           }
         ],
         "image": "assets/images/week04/bevel-modifier.png",
         "showme": "bevel-modifier"
       },
       {
-        "title": "Weighted Normal과 음영 정리",
-        "copy": "형태는 괜찮은데 표면이 울퉁불퉁해 보일 때가 있어요. 이럴 때 음영을 정리해주는 흐름을 익혀두면 결과물이 훨씬 단정해져요.",
-        "goal": [
-          "Weighted Normal의 역할을 이해한다"
-        ],
+        "title": "관절 구체 배치 실습",
+        "copy": "이제 배운 3D Cursor, Origin, Snap을 조합해서 로봇의 어깨·팔꿈치·무릎·발목에 관절 구체를 실제로 배치해요. 하나 만들고 복제해서 각 위치에 놓으면 돼요.\n\n관절 배치 워크플로우:\n\n관절 구체는 파츠와 살짝 파묻히는 정도가 자연스러워요. 완전히 떨어져 있으면 분리된 느낌이 나고, 너무 깊이 들어가면 안 보여요.\n\n체크리스트:",
+        "goal": [],
         "done": [
           "평평한 외장 면이 더 깔끔하게 보인다",
           "언제 넣는지 설명할 수 있다"
         ],
         "tasks": [
           {
-            "id": "w4-t11",
-            "label": "Shade Smooth 적용하기",
-            "detail": "음영 비교 준비"
+            "id": "w4-t27",
+            "label": "Shift + Right Click → 어깨 위치에 3D Cursor 놓기",
+            "detail": ""
           },
           {
-            "id": "w4-t12",
-            "label": "Bevel Modifier 아래에 Weighted Normal 추가",
-            "detail": "순서 포함해서 확인"
+            "id": "w4-t28",
+            "label": "Shift + A → UV Sphere (Segments 16) → Cursor 위치에 생성",
+            "detail": ""
           },
           {
-            "id": "w4-t13",
-            "label": "전후 화면 비교하기",
-            "detail": "가슴판, 팔 외장, 다리 파츠에서 확인"
+            "id": "w4-t29",
+            "label": "S로 관절 크기 조절, R로 회전 조정",
+            "detail": ""
+          },
+          {
+            "id": "w4-t30",
+            "label": "Shift + D → 복제",
+            "detail": ""
+          },
+          {
+            "id": "w4-t31",
+            "label": "G + Ctrl → Snap으로 팔꿈치 위치에 배치",
+            "detail": ""
+          },
+          {
+            "id": "w4-t32",
+            "label": "반복: 무릎, 발목도 같은 방식",
+            "detail": ""
+          },
+          {
+            "id": "w4-t33",
+            "label": "어깨 위치에 3D Cursor 놓고 UV Sphere 생성",
+            "detail": "Shift+Right Click → Shift+A → UV Sphere (Segments 16)"
+          },
+          {
+            "id": "w4-t34",
+            "label": "S로 관절 크기 조절, R로 회전 조정",
+            "detail": "관절이 파츠에 살짝 파묻히는 정도가 자연스러움"
+          },
+          {
+            "id": "w4-t35",
+            "label": "Shift+D로 복제 → 팔꿈치 위치에 Snap 배치",
+            "detail": "복제 후 G → Ctrl 누른 채 이동하면 Snap"
+          },
+          {
+            "id": "w4-t36",
+            "label": "같은 방식으로 무릎, 발목 관절도 배치",
+            "detail": "총 6~8개 관절 구체 (좌우 대칭)"
           }
         ],
         "image": "assets/images/week04/weighted-normal.png",
-        "showme": "weighted-normal",
-        "widgets": [
-          {
-            "type": "showme",
-            "id": "edge-split-modifier"
-          }
-        ]
+        "showme": "weighted-normal"
       },
       {
-        "title": "Apply 시점과 최종 점검",
-        "copy": "정리 단계에서 가장 많이 헷갈리는 건 '언제 확정하느냐'예요. 수정 가능성을 남길지, 지금 확정할지를 의식적으로 나눠보면 훨씬 안정적으로 작업할 수 있어요.",
-        "goal": [
-          "Apply Transform과 Modifier Apply를 구분한다"
-        ],
+        "title": "팔과 다리 제작",
+        "copy": "관절 사이를 채울 팔과 다리를 만들어요. Cube나 Cylinder를 늘려서 상완/하완, 허벅지/종아리를 만들고, Mirror Modifier로 반대편도 한 번에 처리해요.\n\n팔 파츠 제작:\n\nMirror로 좌우 대칭:\n\nMirror가 이상한 방향으로 되면? Origin이 몸통 중심에 있는지 확인하세요. Origin이 파츠 자체에 있으면 그 자리에서 미러됩니다. Right-click → Set Origin → Origin to 3D Cursor (3D Cursor를 중심에 먼저 놓고)\n\n체크리스트:",
+        "goal": [],
         "done": [
           "언제 Ctrl+A를 쓰는지 안다",
           "Modifier Apply는 마지막에만 하는 흐름을 이해한다"
         ],
         "tasks": [
           {
-            "id": "w4-t14",
-            "label": "Modifier Stack 순서 다시 보기",
-            "detail": "수정 가능 상태 유지"
+            "id": "w4-t37",
+            "label": "Shift + A → Cube 추가",
+            "detail": ""
           },
           {
-            "id": "w4-t15",
-            "label": "정말 확정할 파츠만 따로 저장 후 Apply 시험",
-            "detail": "Apply 전후 수정 차이 느끼기"
+            "id": "w4-t38",
+            "label": "S로 팔 하나 비율 잡기 (관절 구체 사이 길이)",
+            "detail": ""
           },
           {
-            "id": "w4-t16",
-            "label": "Transform 또는 Modifier 화면 포함해 스크린샷 저장",
-            "detail": "작업 흐름 증거 남기기"
+            "id": "w4-t39",
+            "label": "Tab → Edit Mode → Ctrl + R → Loop Cut으로 분절 추가",
+            "detail": ""
+          },
+          {
+            "id": "w4-t40",
+            "label": "G로 관절 사이에 배치",
+            "detail": ""
+          },
+          {
+            "id": "w4-t41",
+            "label": "팔 파츠 선택",
+            "detail": ""
+          },
+          {
+            "id": "w4-t42",
+            "label": "Modifier → Mirror Modifier 추가",
+            "detail": ""
+          },
+          {
+            "id": "w4-t43",
+            "label": "Mirror Object: 몸통 (또는 Empty)",
+            "detail": ""
+          },
+          {
+            "id": "w4-t44",
+            "label": "Origin이 몸통 중심에 있는지 확인!",
+            "detail": ""
+          },
+          {
+            "id": "w4-t45",
+            "label": "Cube 추가 → S로 팔 하나 비율 잡기",
+            "detail": "관절 구체 사이에 맞는 길이로"
+          },
+          {
+            "id": "w4-t46",
+            "label": "Edit Mode에서 Loop Cut으로 팔꿈치 분절 추가",
+            "detail": "상완/하완 느낌을 구분"
+          },
+          {
+            "id": "w4-t47",
+            "label": "Mirror Modifier로 반대편 팔 생성",
+            "detail": "Origin이 몸통 중심에 있는지 확인"
+          },
+          {
+            "id": "w4-t48",
+            "label": "같은 방식으로 다리 파츠 제작",
+            "detail": "허벅지/종아리를 관절 구체 사이에 배치"
           }
         ],
         "image": "assets/images/week04/array-modifier.png",
-        "showme": "join-separate",
-        "widgets": [
+        "showme": "join-separate"
+      },
+      {
+        "title": "손과 발 디테일",
+        "copy": "손가락은 작은 Cube를 복제해서 3~4개 나란히 배치하면 돼요. 발은 Cube를 Extrude해서 부츠 형태로 잡아요. 반복 파츠에는 Array Modifier를 써볼 수도 있어요.\n\n손가락 만들기 (Loop Cut + Inset + Extrude):\n\n발 만들기:\n\nArray vs 수동 복제: Array Modifier는 간격이 균일해서 깔끔하지만, 수동 복제(Shift+D)는 각 손가락 크기를 다르게 할 수 있어요. 둘 다 시도해보세요!\n\n체크리스트:",
+        "goal": [],
+        "done": [],
+        "tasks": [
           {
-            "type": "showme",
-            "id": "triangulate-modifier"
+            "id": "w4-t49",
+            "label": "Shift + A → Cube → S로 손바닥 형태 잡기",
+            "detail": ""
           },
           {
-            "type": "showme",
-            "id": "weld-modifier"
+            "id": "w4-t50",
+            "label": "Tab → Edit Mode 진입",
+            "detail": ""
+          },
+          {
+            "id": "w4-t51",
+            "label": "Ctrl + R → Loop Cut으로 손가락 갯수만큼 분할 (3~4줄)",
+            "detail": ""
+          },
+          {
+            "id": "w4-t52",
+            "label": "나뉜 앞면(Face)에서 I → Inset으로 손가락 뽑을 위치 조정",
+            "detail": ""
+          },
+          {
+            "id": "w4-t53",
+            "label": "E → Extrude로 손가락 한 마디 뽑기",
+            "detail": ""
+          },
+          {
+            "id": "w4-t54",
+            "label": "R로 꺾어서 관절 느낌 주기",
+            "detail": ""
+          },
+          {
+            "id": "w4-t55",
+            "label": "다시 E → Extrude로 다음 마디 뽑기",
+            "detail": ""
+          },
+          {
+            "id": "w4-t56",
+            "label": "각 손가락마다 4~6번 반복",
+            "detail": ""
+          },
+          {
+            "id": "w4-t57",
+            "label": "Shift + A → Cube",
+            "detail": ""
+          },
+          {
+            "id": "w4-t58",
+            "label": "Tab → Edit Mode",
+            "detail": ""
+          },
+          {
+            "id": "w4-t59",
+            "label": "앞쪽 Face 선택 → E → Extrude로 발끝 형태 잡기",
+            "detail": ""
+          },
+          {
+            "id": "w4-t60",
+            "label": "밑면이 평평해야 바닥에 안정적으로 서요",
+            "detail": ""
+          },
+          {
+            "id": "w4-t61",
+            "label": "Cube를 손바닥 형태로 만들기",
+            "detail": "S로 비율 잡은 뒤 Edit Mode 진입"
+          },
+          {
+            "id": "w4-t62",
+            "label": "Ctrl+R Loop Cut으로 손가락 갯수만큼 분할",
+            "detail": "3~4줄로 나누기"
+          },
+          {
+            "id": "w4-t63",
+            "label": "Inset → Extrude → 꺾기를 반복해 손가락 제작",
+            "detail": "마디마다 E로 뽑고 R로 꺾기"
+          },
+          {
+            "id": "w4-t64",
+            "label": "발 파츠: Cube → Extrude로 부츠 형태 잡기",
+            "detail": "밑면이 평평해야 바닥에 안정적으로 서요"
+          }
+        ]
+      },
+      {
+        "title": "Bevel로 모서리 마감",
+        "copy": "파츠를 다 만들었으면 모서리를 정리해서 완성도를 높여요. 얼굴 화면 테두리나 몸통 이음새에 Bevel을 넣으면 금속 느낌이 살아나요. 직접 깎는 Ctrl+B와 전체 적용 Modifier를 비교해보세요.\n\n방법 1: Bevel Tool (부분 수정)\n\n방법 2: Bevel Modifier (전체 정리)\n\n체크리스트:",
+        "goal": [
+          "특정 모서리만 선택적으로 다듬을 때 사용",
+          "적용 즉시 메쉬에 반영 (되돌리기: Ctrl+Z)",
+          "전체 오브젝트의 모서리를 균일하게 정리",
+          "비파괴적: 언제든 Width, Segments 조절 가능"
+        ],
+        "done": [],
+        "tasks": [
+          {
+            "id": "w4-t65",
+            "label": "얼굴 화면 테두리 모서리에 Ctrl+B",
+            "detail": "Scroll로 Segment 수 조절"
+          },
+          {
+            "id": "w4-t66",
+            "label": "몸통 파츠에 Bevel Modifier 적용",
+            "detail": "Width를 아주 작게 시작 (0.01~0.02)"
+          },
+          {
+            "id": "w4-t67",
+            "label": "두 방식의 결과를 나란히 비교하기",
+            "detail": "부분 수정 vs 전체 정리, 어떤 게 편한지 느끼기"
+          }
+        ]
+      },
+      {
+        "title": "파츠 정리 & Apply",
+        "copy": "모든 파츠가 만들어졌으면 구조를 정리해요. 움직여야 할 파츠(팔, 다리, 머리)는 따로 두고, 고정 파츠끼리는 Join으로 합쳐요. Transform을 Apply해서 수치를 깔끔하게 만들면 완성이에요.\n\n파츠 이름 정리:\n\n파츠 합치기/분리:\n\nTransform 정리:\n\nMirror Modifier는 Apply 전에 확인! Mirror Modifier가 남아 있으면 Apply 순서를 잘 지켜야 해요. Mirror를 먼저 Apply하고, 그다음 다른 Modifier를 정리하세요.\n\n체크리스트:",
+        "goal": [],
+        "done": [],
+        "tasks": [
+          {
+            "id": "w4-t68",
+            "label": "Outliner에서 파츠 이름 정리하기",
+            "detail": "Head, Body, Arm_L, Leg_R 등 알아보기 쉽게"
+          },
+          {
+            "id": "w4-t69",
+            "label": "고정 파츠끼리 Ctrl+J로 합치기",
+            "detail": "몸통+가슴판 등 항상 같이 움직일 것들"
+          },
+          {
+            "id": "w4-t70",
+            "label": "Ctrl+A → All Transforms 적용",
+            "detail": "모든 파츠의 Scale을 1,1,1로 정리"
+          },
+          {
+            "id": "w4-t71",
+            "label": "최종 형태 스크린샷 저장",
+            "detail": "정면/측면 뷰로 완성 상태 기록"
           }
         ]
       }
@@ -1707,7 +2112,7 @@ const CURRICULUM = [
     "videos": [
       {
         "title": "Blender Studio - Introduction to Sculpting",
-        "url": "https://studio.blender.org/training/sculpting-in-blender/introduction/"
+        "url": "https://studio.blender.org/training/blender-fundamentals-45-lts/sculpting_introduction/"
       }
     ],
     "docs": [
@@ -2376,7 +2781,7 @@ const CURRICULUM = [
   {
     "week": 9,
     "status": "done",
-    "title": "Lighting 기초 + MCP 설치",
+    "title": "Lighting 기초 + MCP 조명 연출",
     "subtitle": "빛의 종류 · HDRI · 3점 조명 · 카메라",
     "duration": "~3시간",
     "topics": [
@@ -2588,6 +2993,50 @@ const CURRICULUM = [
             "detail": "Color Temp 5500K 느낌, Energy 균등 — 비교군"
           }
         ]
+      },
+      {
+        "title": "MCP 설치 및 연결",
+        "copy": "Claude에게 텍스트로 명령하면 Blender가 직접 움직여요. 조명, 카메라, 오브젝트 배치를 말 한마디로 바꿀 수 있어요. 오늘 만든 3점 조명도 MCP로 자동 세팅해볼 수 있어요.",
+        "goal": [
+          "Blender MCP를 설치하고 Claude에 연결한다",
+          "자연어 명령으로 Blender를 제어한다"
+        ],
+        "done": [
+          "Claude 명령에 Blender가 반응했다",
+          "MCP로 조명 설정을 1가지 이상 자동 생성했다"
+        ],
+        "tasks": [
+          {
+            "id": "w9-t-mcp1",
+            "label": "uv 설치 — Mac: brew install uv / Win: PowerShell 스크립트",
+            "detail": "설치 후 터미널 재시작 → uv --version 으로 확인"
+          },
+          {
+            "id": "w9-t-mcp2",
+            "label": "addon.py 다운로드 → Blender Edit > Preferences > Add-ons > Install",
+            "detail": "github.com/ahujasid/blender-mcp 에서 addon.py 파일만 다운로드"
+          },
+          {
+            "id": "w9-t-mcp3",
+            "label": "3D 뷰포트 N 키 → BlenderMCP 탭 → Start MCP Server 클릭",
+            "detail": "포트 9876에서 서버 시작 메시지 확인"
+          },
+          {
+            "id": "w9-t-mcp4",
+            "label": "Claude Code: claude mcp add blender -s user -- uvx blender-mcp",
+            "detail": "Claude Desktop이면 Settings > Developer > Edit Config에서 JSON 추가 후 재시작"
+          },
+          {
+            "id": "w9-t-mcp5",
+            "label": "Claude에게 \"빨간 구체 하나 만들어줘\" 요청 → Blender 반응 확인",
+            "detail": "Claude 우측 하단에 망치 아이콘이 보이면 연결 성공"
+          },
+          {
+            "id": "w9-t-mcp6",
+            "label": "Claude에게 3점 조명 자동 세팅 요청",
+            "detail": "\"3점 조명 세팅해줘 — Key는 오른쪽 45도 위, Fill은 왼쪽, Rim은 뒤쪽\""
+          }
+        ]
       }
     ],
     "shortcuts": [
@@ -2685,7 +3134,7 @@ const CURRICULUM = [
   },
   {
     "week": 10,
-    "status": "active",
+    "status": "done",
     "title": "Animation 기초",
     "subtitle": "키프레임 · Dope Sheet · Graph Editor · 루프",
     "duration": "~3시간",
@@ -2842,32 +3291,72 @@ const CURRICULUM = [
     ],
     "shortcuts": [
       {
-        "keys": "I",
-        "action": "Insert Keyframe"
+        "keys": "K",
+        "action": "→ Keyframe 삽입 (Blender 4.1+)"
       },
       {
-        "keys": "Alt + I",
-        "action": "Delete Keyframe"
-      },
-      {
-        "keys": "Space",
-        "action": "재생/정지"
-      },
-      {
-        "keys": "← / →",
-        "action": "이전/다음 프레임"
-      },
-      {
-        "keys": "Shift + ← / →",
-        "action": "시작/끝 프레임으로 이동"
+        "keys": "Alt + K",
+        "action": "→ Keyframe 삭제"
       },
       {
         "keys": "T",
-        "action": "Interpolation 변경 (Bezier/Linear)"
+        "action": "→ 보간 모드 변경 (Timeline/Dope Sheet/Graph Editor)"
       },
       {
         "keys": "V",
-        "action": "핸들 타입 변경 (Free/Auto)"
+        "action": "→ 핸들 타입 변경 (Graph Editor)"
+      },
+      {
+        "keys": "Space",
+        "action": "→ 재생/일시정지"
+      },
+      {
+        "keys": "← / →",
+        "action": "→ 1프레임 이동"
+      },
+      {
+        "keys": "↑ / ↓",
+        "action": "→ 다음/이전 키프레임으로 이동"
+      },
+      {
+        "keys": "Shift + ←",
+        "action": "→ 시작 프레임으로"
+      },
+      {
+        "keys": "Shift + →",
+        "action": "→ 끝 프레임으로"
+      },
+      {
+        "keys": "A",
+        "action": "→ 전체 키프레임 선택"
+      },
+      {
+        "keys": "G",
+        "action": "→ 키프레임 이동 (타이밍 조절)"
+      },
+      {
+        "keys": "Shift + D",
+        "action": "→ 키프레임 복사"
+      },
+      {
+        "keys": "Shift + E",
+        "action": "→ Extrapolation Mode (Make Cyclic)"
+      },
+      {
+        "keys": "Home",
+        "action": "→ 전체 커브 화면에 맞추기"
+      },
+      {
+        "keys": "F12",
+        "action": "→ 현재 프레임 이미지 렌더"
+      },
+      {
+        "keys": "Ctrl + F12",
+        "action": "→ 전체 애니메이션 렌더"
+      },
+      {
+        "keys": "Esc",
+        "action": "→ 렌더 취소"
       }
     ],
     "explore": [
@@ -2933,7 +3422,7 @@ const CURRICULUM = [
   },
   {
     "week": 11,
-    "status": "upcoming",
+    "status": "done",
     "title": "Rigging 기초",
     "subtitle": "Armature · 본 구조 · 웨이트 페인팅 · 포즈",
     "duration": "~3시간",
@@ -3144,28 +3633,32 @@ const CURRICULUM = [
     ],
     "docs": [
       {
-        "title": "Armatures",
+        "title": "Blender Manual — Armatures",
         "url": "https://docs.blender.org/manual/en/latest/animation/armatures/index.html"
       },
       {
-        "title": "Skinning",
-        "url": "https://docs.blender.org/manual/en/latest/animation/armatures/skinning/index.html"
+        "title": "Blender Manual — Armature Deform Parent",
+        "url": "https://docs.blender.org/manual/en/latest/animation/armatures/skinning/parenting.html"
       },
       {
-        "title": "Weight Paint",
+        "title": "Blender Manual — Weight Paint",
         "url": "https://docs.blender.org/manual/en/latest/sculpt_paint/weight_paint/index.html"
       },
       {
-        "title": "Pose Mode",
-        "url": "https://docs.blender.org/manual/en/latest/animation/armatures/posing/index.html"
+        "title": "Blender Manual — Inverse Kinematics",
+        "url": "https://docs.blender.org/manual/en/latest/animation/armatures/posing/bone_constraints/inverse_kinematics/introduction.html"
+      },
+      {
+        "title": "Blender Manual — Rigify",
+        "url": "https://docs.blender.org/manual/en/latest/addons/rigging/rigify/index.html"
       }
     ],
     "summary": "Armature(뼈대)를 세팅하고 메쉬에 연결해 캐릭터를 움직여요. 마리오네트 인형에 줄을 매다는 거예요."
   },
   {
     "week": 12,
-    "status": "upcoming",
-    "title": "AI 활용 리깅 (Mixamo)",
+    "status": "done",
+    "title": "Week 12: AI 활용 리깅 (Mixamo)",
     "subtitle": "Mixamo 자동 리깅 · FBX 워크플로우 · NLA",
     "duration": "~3시간",
     "topics": [
@@ -3332,21 +3825,33 @@ const CURRICULUM = [
       }
     ],
     "assignment": {
-      "title": "본인 학생 페이지에 업로드",
-      "description": "Mixamo로 리깅된 캐릭터에 애니메이션 2가지 이상을 적용해요.",
+      "title": "NLA의 “클립 조립” 감각을 빨리 잡을 수 있어요.",
+      "description": "조합 예시:\n\n본인 학생 페이지에 업로드",
       "checklist": [
-        "리깅 과정 스크린샷 (Mixamo 마커 화면)",
-        "애니메이션 2가지 재생 영상 or GIF",
-        "수동 리깅 vs Mixamo 차이 한 줄 메모",
-        ".blend 파일"
+        "Action 이름을 Idle / Walk / Run / Wave처럼 명확히 바꿨는가?",
+        "Push Down으로 모두 Strip화했는가?",
+        "전환이 어색하면 Blend In/Out을 5~10프레임 범위에서 조정했는가?",
+        "“끝난 뒤에도 포즈가 남는 느낌”이면 Extrapolation을 Nothing으로 바꿔봤는가?",
+        "겹침/레이어링이 필요하면 Track을 분리했는가?"
       ]
     },
     "mistakes": [
-      "FBX 임포트가 회전됨 → Import 설정에서 Manual Orientation, Forward: -Z, Up: Y",
-      "메쉬가 너무 큼/작음 → Import 시 Scale 조절 또는 Ctrl+A",
-      "Mixamo 업로드 실패 → 메쉬에 구멍이나 뒤집힌 법선 확인 (Shift+N)",
-      "애니메이션이 슬로우 모션 → Frame Rate가 24fps와 맞는지 확인",
-      "관절이 이상하게 꺾임 → Mixamo 마커 위치를 더 정확히 맞추고 재시도"
+      "Adobe ID 무료 가입만 하면 사용 가능(신용카드/학생 인증 불필요)",
+      "상업 프로젝트에 “결과물로 포함”은 가능하다고 안내되는 편이지만, FBX 원본을 에셋팩 형태로 재배포/재판매는 금지 쪽으로 안내되는 경우가 많음",
+      "T-Pose로 맞추기(팔과 몸통이 겹치지 않게)",
+      "팔/다리/머리가 몸통에서 명확히 분리되어 보이게 모델 정리",
+      "파츠가 여러 개면 Ctrl+J로 단일 Mesh 권장",
+      "구멍/Non-Manifold, Normals 문제 정리 후 재-export",
+      "Blender에서 Ctrl+A → All Transforms 적용 후 FBX Export",
+      "(참고) FBX는 단위/스케일 해석이 달라서 크기 이슈가 흔함",
+      "Import 시 Automatic Bone Orientation 체크",
+      "스케일이 튀면 스케일 조정 후 Ctrl+A → Scale로 정리",
+      "Mixamo 다운로드 시 In Place 옵션을 통일(추천: In Place 켜고 통일)",
+      "전환이 필요하면 Strip 겹침 + Blend In/Out로 부드럽게 처리",
+      "Normals 뒤집힘: Edit Mode → 전체 선택 → Shift+N",
+      "텍스처/머티리얼 누락: Shading에서 이미지 재연결",
+      "Hold: 끝난 뒤에도 마지막 포즈/값이 남아있을 수 있음",
+      "Nothing: strip 구간 밖 영향 없음. “유령 스트립”처럼 남는 느낌이면 우선 Nothing으로"
     ],
     "videos": [
       {
@@ -3372,9 +3877,9 @@ const CURRICULUM = [
   },
   {
     "week": 13,
-    "status": "upcoming",
+    "status": "done",
     "title": "AI 영상/사운드 + 렌더링 + MCP",
-    "subtitle": "Cycles vs EEVEE · 출력 설정 · Compositing · AI 후처리",
+    "subtitle": "Cycles vs EEVEE · 출력 설정 · AI 영상/음악 · VSE 편집",
     "duration": "~3시간",
     "topics": [
       "Cycles vs EEVEE 비교",
@@ -3384,152 +3889,7 @@ const CURRICULUM = [
       "애니메이션 렌더링",
       "AI 후처리 체험"
     ],
-    "steps": [
-      {
-        "title": "렌더 엔진 비교",
-        "copy": "Cycles는 사진 인화처럼 정밀하고 느리고, EEVEE는 게임 엔진처럼 빠르지만 덜 사실적이에요. 수정 중엔 EEVEE, 최종 제출엔 Cycles를 써요. 용도에 따라 골라 쓰면 돼요.",
-        "goal": [
-          "두 엔진의 차이를 안다",
-          "각각 어떤 상황에 쓰는지 판단한다"
-        ],
-        "done": [
-          "같은 씬을 두 엔진으로 렌더해서 비교했다"
-        ],
-        "tasks": [
-          {
-            "id": "w13-t1",
-            "label": "Render Properties → Engine → Cycles로 전환 후 F12",
-            "detail": "렌더 시간 기록해두기"
-          },
-          {
-            "id": "w13-t2",
-            "label": "EEVEE로 전환 후 같은 씬 F12 → 속도와 품질 비교",
-            "detail": "그림자, 반사, 유리 차이 주목"
-          },
-          {
-            "id": "w13-t3",
-            "label": "Cycles Samples를 128 → 512로 바꿔서 노이즈 비교",
-            "detail": "높을수록 깨끗하지만 느림"
-          }
-        ],
-        "image": "assets/images/week13/cycles-eevee.png",
-        "showme": "render-settings",
-        "widgets": [
-          {
-            "type": "showme",
-            "id": "volume-to-mesh"
-          }
-        ]
-      },
-      {
-        "title": "렌더 출력 설정",
-        "copy": "해상도, 파일 형식, 저장 경로를 설정하고 F12로 렌더해요. 한 번 설정해두면 계속 쓸 수 있어요. 포트폴리오용이면 1920×1080 이상이 좋아요.",
-        "goal": [
-          "Output Properties를 자유롭게 설정한다"
-        ],
-        "done": [
-          "의도한 해상도와 파일 형식으로 렌더가 저장됐다"
-        ],
-        "tasks": [
-          {
-            "id": "w13-t4",
-            "label": "Output Properties → Resolution 1920×1080 설정",
-            "detail": "% 스케일로 미리보기 가능 (50%로 빠른 테스트)"
-          },
-          {
-            "id": "w13-t5",
-            "label": "Output Format → PNG (이미지) 또는 FFmpeg (영상) 선택",
-            "detail": ""
-          },
-          {
-            "id": "w13-t6",
-            "label": "파일 출력 경로 설정 후 F12로 렌더",
-            "detail": "Image → Save As로 원하는 위치에 저장"
-          }
-        ],
-        "image": "assets/images/week13/render-output.png"
-      },
-      {
-        "title": "Compositing 기초",
-        "copy": "사진 찍고 나서 보정하듯, 렌더 후에 밝기, 색감, 글로우 효과를 추가할 수 있어요. Compositing 노드로 후처리를 하면 렌더를 다시 안 해도 돼요.",
-        "goal": [
-          "Compositing 노드의 기본 흐름을 이해한다"
-        ],
-        "done": [
-          "Glare나 Color Balance 효과를 적용했다"
-        ],
-        "tasks": [
-          {
-            "id": "w13-t7",
-            "label": "Compositing 워크스페이스로 전환, Use Nodes 켜기",
-            "detail": "Render Layers → Composite 기본 연결 확인"
-          },
-          {
-            "id": "w13-t8",
-            "label": "Shift+A → Filter → Glare 추가해서 빛 번짐 효과",
-            "detail": "Emission 재질이 있으면 효과가 잘 보여요"
-          },
-          {
-            "id": "w13-t9",
-            "label": "Color Balance 노드로 색감 조정",
-            "detail": "Lift/Gamma/Gain으로 분위기 바꾸기"
-          }
-        ],
-        "image": "assets/images/week13/compositing.png",
-        "showme": "compositing-basics"
-      },
-      {
-        "title": "애니메이션 렌더링",
-        "copy": "프레임을 하나씩 렌더해서 영상으로 만드는 거예요. Ctrl+F12 하나로 시작돼요. 시간이 오래 걸리니까 범위와 해상도를 먼저 확인하세요.",
-        "goal": [
-          "애니메이션 렌더 파이프라인을 이해한다"
-        ],
-        "done": [
-          "5초 이상 애니메이션 영상 파일이 생성됐다"
-        ],
-        "tasks": [
-          {
-            "id": "w13-t10",
-            "label": "Frame Range 확인 (Start/End Frame)",
-            "detail": "24fps 기준 5초 = 120프레임"
-          },
-          {
-            "id": "w13-t11",
-            "label": "Output Format → FFmpeg → MPEG-4 설정",
-            "detail": ".mp4 파일로 출력"
-          },
-          {
-            "id": "w13-t12",
-            "label": "EEVEE로 먼저 테스트 렌더 후 Cycles로 최종 렌더",
-            "detail": "Ctrl+F12로 시작"
-          }
-        ],
-        "image": "assets/images/week13/animation-render.png"
-      },
-      {
-        "title": "AI 후처리 체험",
-        "copy": "렌더 이미지를 AI 이미지 생성 툴에 넣으면 스타일을 바꾸거나 디테일을 추가할 수 있어요. 3D + AI의 하이브리드 워크플로우예요.",
-        "goal": [
-          "AI 후처리의 가능성을 이해한다"
-        ],
-        "done": [
-          "렌더 이미지를 AI로 변형해봤다"
-        ],
-        "tasks": [
-          {
-            "id": "w13-t13",
-            "label": "렌더 이미지를 AI 이미지 툴에 업로드 (img2img)",
-            "detail": "스타일 변형이나 디테일 추가"
-          },
-          {
-            "id": "w13-t14",
-            "label": "원본 렌더와 AI 후처리 결과 나란히 비교",
-            "detail": ""
-          }
-        ],
-        "image": "assets/images/week13/ai-postprocess.png"
-      }
-    ],
+    "steps": [],
     "shortcuts": [
       {
         "keys": "F12",
@@ -3572,16 +3932,24 @@ const CURRICULUM = [
       {
         "title": "AI로 스타일 변형",
         "hint": "같은 렌더를 3가지 다른 AI 스타일(사이버펑크/수채화/픽셀아트)로 변형해보기"
+      },
+      {
+        "title": "Veo 3 영상+오디오 동시 생성",
+        "hint": "Google AI Studio(aistudio.google.com)에서 Veo 3.1을 무료로 테스트 — 영상 안에 BGM·효과음이 함께 생성돼서 Step 6/7을 한 번에 처리"
+      },
+      {
+        "title": "Higgsfield Soul ID 캐릭터 일관성",
+        "hint": "Higgsfield free tier로 같은 로봇이 여러 장면에 등장하는 시네마틱 영상 실험 (워터마크 720p 한계 감안)"
       }
     ],
     "assignment": {
-      "title": "렌더링 포트폴리오",
+      "title": "렌더 이미지 3장 이상 + AI 영상 1개 + AI BGM 1개 제출",
       "description": "EEVEE와 Cycles로 동일한 씬을 렌더한 비교 이미지와 최종 고품질 렌더를 제출해요.",
       "checklist": [
-        "EEVEE vs Cycles 비교 이미지 (같은 앵글)",
-        "Compositing 후처리 적용된 최종 렌더",
-        "애니메이션 영상 파일 (5초 이상)",
-        "AI 후처리 비교 이미지 (선택)"
+        "자신의 로봇을 다양한 각도와 조명으로 렌더링하여 이미지 3장 이상 제출",
+        "Kling AI로 AI 영상 1개 생성하여 제출",
+        "Suno AI로 AI BGM 1개 생성하여 제출",
+        "(선택/가산점) 영상+BGM을 조합한 프로모션 영상 제출"
       ]
     },
     "mistakes": [
@@ -3595,36 +3963,60 @@ const CURRICULUM = [
       {
         "title": "Blender Studio - Rendering",
         "url": "https://studio.blender.org/training/blender-2-8-fundamentals/rendering/"
+      },
+      {
+        "title": "Blender 공식 YouTube 채널",
+        "url": "https://www.youtube.com/@BlenderOfficial"
       }
     ],
     "docs": [
       {
-        "title": "Cycles",
+        "title": "Camera (Blender)",
+        "url": "https://docs.blender.org/manual/en/latest/render/cameras.html"
+      },
+      {
+        "title": "Cycles (Blender)",
         "url": "https://docs.blender.org/manual/en/latest/render/cycles/index.html"
       },
       {
-        "title": "EEVEE",
+        "title": "EEVEE (Blender)",
         "url": "https://docs.blender.org/manual/en/latest/render/eevee/index.html"
       },
       {
-        "title": "Render Output",
-        "url": "https://docs.blender.org/manual/en/latest/render/output/index.html"
-      },
-      {
-        "title": "Compositing",
+        "title": "Compositing (Blender)",
         "url": "https://docs.blender.org/manual/en/latest/compositing/index.html"
       },
       {
-        "title": "Denoising",
-        "url": "https://docs.blender.org/manual/en/latest/render/cycles/render_settings/sampling.html"
+        "title": "Video Editing (Blender)",
+        "url": "https://docs.blender.org/manual/en/latest/video_editing/introduction.html"
+      },
+      {
+        "title": "Kling AI (영상 생성)",
+        "url": "https://www.klingai.com/"
+      },
+      {
+        "title": "Suno AI (BGM 생성)",
+        "url": "https://suno.com/"
+      },
+      {
+        "title": "Google Flow Music (Lyria 3, BGM)",
+        "url": "https://www.flowmusic.app/"
+      },
+      {
+        "title": "Google Veo (영상+오디오)",
+        "url": "https://deepmind.google/models/veo/"
+      },
+      {
+        "title": "ElevenLabs (효과음/음악)",
+        "url": "https://elevenlabs.io/"
       }
     ],
     "summary": "Cycles와 EEVEE의 차이를 이해하고 렌더 설정을 최적화해요. 카메라 감독처럼 최종 출력을 결정하는 단계예요."
   },
   {
     "week": 14,
-    "status": "upcoming",
-    "title": "최종 프로젝트 제작",
+    "status": "done",
+    "title": "FINAL PROJECT 제작",
     "subtitle": "개인 프로젝트 집중 작업",
     "duration": "수업 전체 작업 + 피드백",
     "topics": [
@@ -3688,7 +4080,7 @@ const CURRICULUM = [
   },
   {
     "week": 15,
-    "status": "upcoming",
+    "status": "active",
     "title": "기말고사 - 최종 프로젝트 발표",
     "subtitle": "학기 전체 결과물 발표",
     "duration": "수업 전체 발표",
@@ -3748,5 +4140,7 @@ const CURRICULUM = [
   }
 ];
 
+// 브라우저 window 프로퍼티 등록 (notion-renderer.js 등 window.CURRICULUM 참조 대응)
+if (typeof window !== "undefined") window.CURRICULUM = CURRICULUM;
 // Node.js 환경 대응
 if (typeof module !== "undefined") module.exports = CURRICULUM;

@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — Merge by Distance (겹친 버텍스 정리)</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #0a84ff;
+  --key-strong:    #0071e3;
+  --key-soft:      #8ec5ff;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --danger-soft:   #fca5a5;
+  --warn-soft:     #fbbf24;
+  --warn-medium:   #fcd34d;
+  --accent-soft:   #FFB347;
+  --secondary-soft:#a5b4fc;
+  --secondary-mid: #c4b5fd;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --muted-mid:     #94a3b8;
+  --muted-soft:    #cbd5e1;
+  --muted-dim:     #64748b;
+  --info-soft:     #67e8f9;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Tab Navigation ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active,
+.tab.active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+
+/* ── Tab Panels ── */
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active,
+.panel.active { display: block; }
+
+/* ── Card SSoT render classes (Notion DB → HTML) ── */
+.card-concept,
+.card-usage,
+.card-pitfall {
+  max-width: 780px;
+  margin: 0 auto;
+}
+.card-concept p,
+.card-usage p,
+.card-pitfall p {
+  color: var(--text);
+  font-size: .95rem;
+  line-height: 1.85;
+  margin: 0 0 14px;
+  word-break: keep-all;
+}
+.card-concept strong,
+.card-usage strong,
+.card-pitfall strong {
+  color: var(--key-soft);
+  font-weight: 600;
+}
+.card-usage,
+.card-pitfall {
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+.card-usage h3,
+.card-pitfall h3 {
+  margin: 0 0 10px;
+  font-size: .95rem;
+  font-weight: 600;
+  color: var(--muted-strong);
+}
+.card-pitfall h3 {
+  color: var(--warn-soft);
+}
+
+/* ── Steps list (Blender step-by-step) ── */
+.steps-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.step-item {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  align-items: baseline;
+  gap: 10px 14px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.step-n {
+  font-weight: 700;
+  color: var(--key-soft);
+  font-variant-numeric: tabular-nums;
+  font-size: 1.05rem;
+}
+.step-action {
+  color: var(--text);
+  font-size: .95rem;
+  line-height: 1.6;
+  word-break: keep-all;
+}
+.step-item kbd {
+  display: inline-block;
+  padding: 3px 8px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: .82rem;
+  color: var(--text);
+  background: var(--surface-strong);
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  white-space: nowrap;
+}
+.step-menu {
+  grid-column: 2;
+  color: var(--muted-strong);
+  font-size: .85rem;
+  word-break: keep-all;
+}
+.step-item kbd + .step-menu {
+  /* When kbd present, menu should sit next to it instead of below */
+  grid-column: auto;
+}
+.step-note {
+  display: block;
+  grid-column: 2;
+  color: var(--muted);
+  font-size: .82rem;
+  margin-top: 4px;
+  word-break: keep-all;
+}
+.step-screenshot {
+  grid-column: 2;
+  margin-top: 8px;
+  max-width: 100%;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+}
+
+/* ── Videos list ── */
+.videos-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.video-item {
+  padding: 16px 18px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.video-item a {
+  color: var(--key-soft);
+  font-weight: 600;
+  text-decoration: none;
+  font-size: .98rem;
+}
+.video-item a:hover {
+  text-decoration: underline;
+}
+.video-meta {
+  color: var(--muted);
+  font-size: .82rem;
+  margin-top: 6px;
+  font-variant-numeric: tabular-nums;
+}
+.video-reason {
+  color: var(--muted-strong);
+  font-size: .88rem;
+  margin-top: 6px;
+  word-break: keep-all;
+}
+.badge-official {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 8px;
+  font-size: .72rem;
+  font-weight: 600;
+  color: var(--success);
+  background: rgba(16, 185, 129, .12);
+  border-radius: 4px;
+}
+
+/* ── Widget mount placeholder (filled by widget JS) ── */
+.widget-mount {
+  min-height: 280px;
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--line);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: .85rem;
+}
+
+/* ── Doc ref footer ── */
+.doc-ref-footer {
+  padding: 16px;
+  text-align: center;
+  border-top: 1px solid var(--line);
+  margin-top: 24px;
+}
+.doc-ref-footer .doc-ref {
+  color: var(--muted-strong);
+  font-size: .82rem;
+  text-decoration: none;
+}
+.doc-ref-footer .doc-ref:hover {
+  color: var(--key-soft);
+  text-decoration: underline;
+}
+
+/* ── Legacy: Concept Cards (kept for 79 legacy HTML files) ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card h3 {
+  margin: 0 0 8px; font-size: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.concept-card p {
+  margin: 0; color: var(--muted-strong);
+  font-size: .88rem; line-height: 1.7;
+}
+.concept-card ul {
+  margin: 8px 0 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
+}
+
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: .72rem; font-weight: 600;
+}
+.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: #fbbf24; }
+
+/* ── Keyboard Shortcut ── */
+.kbd {
+  display: inline-block;
+  padding: 3px 8px; border-radius: 6px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  color: var(--key-soft);
+  font-size: .82rem; font-weight: 600;
+  font-family: var(--font);
+}
+
+/* ── Canvas / Demo ── */
+.demo-wrap {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+  margin: 14px 0;
+}
+.demo-wrap canvas {
+  display: block; width: 100%;
+}
+.demo-controls {
+  display: flex; gap: 8px; padding: 12px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.demo-hint {
+  font-size: .78rem; color: var(--muted);
+  text-align: center; padding: 6px 0 0;
+}
+.demo-btn {
+  padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .82rem;
+  cursor: pointer;
+  transition: background .14s, color .14s;
+}
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active {
+  background: rgba(10,132,255,.14);
+  color: var(--key-soft);
+  border-color: rgba(10,132,255,.3);
+}
+.modifier-panel {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.03);
+  padding: 14px;
+}
+.control-group + .control-group { margin-top: 12px; }
+.control-row {
+  display: grid;
+  grid-template-columns: 1fr 72px;
+  gap: 8px;
+  align-items: center;
+}
+.control-row input[type="range"] {
+  width: 100%;
+  accent-color: var(--key);
+}
+.control-row input[type="number"] {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--text);
+  padding: 7px 10px;
+  font: inherit;
+  font-size: .82rem;
+}
+.modifier-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.03);
+}
+.mini-note-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+.mini-note-card {
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.03);
+  padding: 12px;
+}
+.mini-note-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: .7rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.mini-note-value {
+  font-size: .86rem;
+  color: var(--muted-strong);
+  font-weight: 600;
+}
+.concept-more {
+  margin-top: 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.03);
+  padding: 14px 16px;
+}
+.concept-more summary {
+  cursor: pointer;
+  color: var(--key-soft);
+  font-weight: 600;
+  list-style: none;
+}
+.concept-more summary::-webkit-details-marker { display: none; }
+.concept-more-body {
+  margin-top: 10px;
+  color: var(--muted-strong);
+  font-size: .84rem;
+  line-height: 1.7;
+}
+
+/* ── Usage Grid ── */
+.usage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.usage-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 16px;
+}
+.usage-card h4 {
+  margin: 0 0 8px; font-size: .92rem;
+  color: var(--key-soft);
+}
+.usage-card ul {
+  margin: 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem;
+  line-height: 1.8;
+}
+
+/* ── Tip Box ── */
+.tip-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(10,132,255,.2);
+  background: rgba(10,132,255,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+}
+.tip-box strong { color: var(--key-soft); }
+
+/* ── Quiz ── */
+.quiz-progress {
+  font-size: .78rem; color: var(--muted);
+  margin-bottom: 12px;
+}
+.quiz-question {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.quiz-question h4 {
+  margin: 0 0 12px; font-size: .94rem;
+}
+.quiz-option {
+  display: block; width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.025);
+  color: var(--text);
+  font: inherit; font-size: .86rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background .14s, border-color .14s;
+}
+.quiz-option:hover {
+  background: rgba(255,255,255,.06);
+  border-color: var(--line-strong);
+}
+.quiz-option.correct {
+  background: rgba(16,185,129,.12);
+  border-color: rgba(16,185,129,.4);
+  color: var(--success-soft);
+}
+.quiz-option.wrong {
+  background: rgba(239,68,68,.1);
+  border-color: rgba(239,68,68,.3);
+  color: #fca5a5;
+}
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback {
+  margin-top: 8px; padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: .84rem;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: #fca5a5; }
+
+.quiz-score {
+  text-align: center; padding: 20px;
+  font-size: 1.1rem; font-weight: 600;
+}
+.quiz-retry {
+  display: block; margin: 12px auto;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--key);
+  background: rgba(10,132,255,.12);
+  color: var(--key-soft);
+  font: inherit; font-size: .88rem;
+  cursor: pointer;
+  transition: background .14s;
+}
+.quiz-retry:hover { background: rgba(10,132,255,.22); }
+
+/* ── Official Doc Reference ── */
+.doc-ref {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(10,132,255,.15);
+  background: rgba(10,132,255,.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-ref a {
+  color: var(--key-soft);
+  font-size: .84rem;
+  text-decoration: none;
+  line-height: 1.5;
+}
+.doc-ref a:hover { text-decoration: underline; }
+.doc-ref-list {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.doc-ref-list .doc-ref { margin-top: 0; }
+
+/* ── Comparison Table ── */
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 14px;
+  font-size: .84rem;
+}
+.compare-table thead { background: rgba(10,132,255,.06); }
+.compare-table th {
+  padding: 10px 14px; text-align: left;
+  color: var(--muted-strong); font-weight: 600;
+  font-size: .78rem; letter-spacing: .03em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--line-strong);
+}
+.compare-table td {
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted-strong); line-height: 1.6;
+}
+.compare-table tr:last-child td { border-bottom: none; }
+.compare-table tr:hover td { background: rgba(255,255,255,.02); }
+
+/* ── Section Divider ── */
+.section-divider {
+  margin: 20px 0 16px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--line);
+  font-size: .92rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+  .compare-table { font-size: .78rem; }
+  .compare-table th, .compare-table td { padding: 6px 10px; }
+}
+</style>
+</head>
+<body class="has-steps">
+
+<!-- Tab Bar -->
+<nav class="tabs">
+  <button class="tab active" data-tab="concept">개념</button>
+  <button class="tab" data-tab="steps" data-conditional="has-steps">따라하기</button>
+  <button class="tab" data-tab="interaction" data-conditional="has-widget">인터랙션</button>
+  <button class="tab" data-tab="usage">언제 쓰나요</button>
+  <button class="tab" data-tab="videos" data-conditional="has-videos">영상</button>
+</nav>
+
+<section class="panel active" data-panel="concept">
+  <div class="card-concept"><p>Boolean이나 Extrude를 잘못 누르면 <strong>같은 자리에 버텍스가 두 개씩 쌓여요</strong>. 눈에는 멀쩡해 보여도 메쉬가 끊어진 상태라 Subdivision이 깨지거나 Smooth가 이상하게 적용돼요.</p>
+<p><strong>Merge by Distance</strong>는 설정한 거리 안에 있는 버텍스를 하나로 합쳐주는 청소 도구예요. 빨래 짤 때 물기 빼듯, 메쉬에서 중복 정보를 짜내는 작업.</p></div>
+</section>
+
+<section class="panel" data-panel="steps">
+  <ol class="steps-list"><li class="step-item"><span class="step-n">1</span> <span class="step-action">Edit Mode 진입</span> <kbd>Tab</kbd></li><li class="step-item"><span class="step-n">2</span> <span class="step-action">전체 선택</span> <kbd>A</kbd></li><li class="step-item"><span class="step-n">3</span> <span class="step-action">Merge 메뉴 열기</span> <kbd>M</kbd> <span class="step-menu">Mesh &gt; Merge</span></li><li class="step-item"><span class="step-n">4</span> <span class="step-action">By Distance 선택</span> <span class="step-menu">By Distance</span></li><li class="step-item"><span class="step-n">5</span> <span class="step-action">좌하단 패널에서 거리 조정</span> <span class="step-menu">Merge Distance</span> <span class="step-note">0.0001m → 0.001m 순으로</span></li></ol>
+</section>
+
+<section class="panel" data-panel="interaction">
+  
+</section>
+
+<section class="panel" data-panel="usage">
+  <div class="card-usage"><h3>언제 쓰나요</h3><p>Boolean 직후, Mirror에 Clipping 없이 작업한 직후, 외부 메쉬(AI 생성·STL import)를 받았을 때 가장 먼저 돌려요. Subdivision이 갑자기 이상해지면 십중팔구 중복 버텍스가 원인.</p></div>
+  <div class="card-pitfall"><h3>흔한 실수</h3><p>거리가 너무 크면(예: 1m) <strong>분리되어 있어야 할 버텍스까지 합쳐져</strong> 메쉬가 뭉개져요. 기본값 <strong>0.0001m</strong>부터 시작하고, 안 합쳐지면 단계적으로 키워요. 작업 후에는 합쳐진 개수가 화면 하단에 표시돼요 — &#x27;Removed 12 vertices&#x27; 같은 메시지.</p></div>
+</section>
+
+<section class="panel" data-panel="videos">
+  
+</section>
+
+<script>
+// ── Tab Switching ──────────────────────────────
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(t) { t.classList.remove("active", "is-active"); });
+    document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("active", "is-active"); });
+    tab.classList.add("active");
+    var target = document.querySelector('[data-panel="' + tab.dataset.tab + '"]');
+    if (target) target.classList.add("active");
+  });
+});
+
+// Hide tabs/panels that lack content (data-conditional flags injected by builder)
+(function hideConditional() {
+  document.querySelectorAll('[data-conditional]').forEach(el => {
+    const flag = el.dataset.conditional;
+    if (!document.body.classList.contains(flag)) {
+      el.style.display = 'none';
+      const panelKey = el.dataset.tab;
+      if (panelKey) {
+        const panel = document.querySelector(`[data-panel="${panelKey}"]`);
+        if (panel) panel.style.display = 'none';
+      }
+    }
+  });
+})();
+</script>
+
+<script src="./_helpers.js?v=20260318ai"></script>
+<script>
+window.addEventListener("load", function() {
+  if (window.normalizeStandaloneShowMeLayout) {
+    window.normalizeStandaloneShowMeLayout(document);
+  }
+});
+</script>
+<footer class="doc-ref-footer"><a class="doc-ref" href="https://docs.blender.org/manual/en/latest/modeling/meshes/editing/mesh/merge.html#by-distance" target="_blank" rel="noopener">Blender Docs</a></footer>
+
+</body>
+</html>

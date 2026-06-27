@@ -851,7 +851,7 @@ const SHOWME_SUPPLEMENTS = {
     "takeaway": "Sculpt는 계산이 아니라 감각이에요. 일단 브러시로 밀고 당겨보면서 형태를 잡는 거예요.",
     "officialVideos": [
       {
-        "url": "https://studio.blender.org/training/sculpting-in-blender/introduction/",
+        "url": "https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/index.html",
         "label": "Blender Studio — Introduction to Sculpting"
       }
     ],

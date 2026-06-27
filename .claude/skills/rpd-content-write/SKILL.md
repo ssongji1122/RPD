@@ -11,26 +11,57 @@ description: "콘텐츠 작성", "curriculum 편집", "톤 교정" 요청 시 �
 - **있으면** → 비유(§7), 실수(§6), 단축키(§3)를 브리프에서 가져와 curriculum.js에 반영
 - **없으면** → `⚠️ {id} 리서치 브리프가 없습니다. /rpd-research {id} 먼저 실행을 권장합니다.`
 
-## 수정 경로
+## 수정 경로 🔴 SSoT = Notion
 
-콘텐츠 수정은 Notion을 통해 수행한다. curriculum.json/js는 generated file이므로 직접 수정하지 않는다.
+콘텐츠의 SoT는 **Notion**이다. 흐름은 **단방향**:
+
+```
+Notion 편집 (MCP) → notion-sync.py → curriculum-notion.json + notion-blocks → 웹
+```
+
+**generated·mirror 파일은 절대 직접 편집하지 않는다.** 직접 편집은 SSoT를 역전시키며, 다음 sync에 덮어써져 휘발된다 (2026-04-28 curriculum-push 사고와 동일 방향).
+
+| 파일 | 성격 | 직접 편집 |
+|------|------|----------|
+| `curriculum.json` / `curriculum.js` | generated | ❌ |
+| `curriculum-notion.json` | Notion snapshot | ❌ |
+| `notion-blocks/week{N}.json` | **Notion 단방향 미러** (웹 본문 렌더 소스) | ❌ 절대 |
+| `weeks/site-data.json` | canonical (sync 산출) | ❌ |
+| `overrides.json` | admin 전용 | ✅ image/showme/done/status만 |
 
 | 필드 | 수정 위치 | 방법 |
 |------|----------|------|
-| step title, copy, tasks, goal, assignment | Notion | Notion MCP (mcp__notion__update-page) |
-| shortcuts, mistakes, docs | Notion | Notion MCP |
+| step title, copy, tasks, goal, assignment | Notion | Notion MCP |
+| shortcuts, mistakes, docs, videos | Notion | Notion MCP |
 | image, showme, done, status | overrides.json | Edit tool |
 
 ### Notion 수정 절차
 1. `tools/notion-mapping.json`에서 대상 week의 Notion page ID 확인
 2. Notion MCP로 해당 페이지의 블록 수정
-3. `python3 tools/notion-sync.py --fetch-only` 실행
+3. `python3 tools/notion-sync.py --weeks {N}` 실행
 4. curriculum.json 재생성 확인
 5. `/rpd-check week {N}` 검증
 
+### 🔴 Notion token이 없거나 MCP가 실패할 때
+
+Notion MCP가 401/실패하면 **작업을 중단하고 사용자에게 token 재발급을 요청한다.** 캐시·canonical·generated 파일을 직접 편집해서 우회하지 않는다.
+
+초안은 `claudedocs/research/week{N}-notion-patch.md`(markdown)로 준비해두고, token 복구 후 Notion MCP로 반영 → sync 한다. patch.md는 백업이지 SSoT 우회 경로가 아니다.
+
+| 변명 | 현실 |
+|------|------|
+| "token 없으니 notion-blocks 캐시에 임시로 넣자" | 캐시는 단방향 미러. 다음 sync에 휘발. SSoT 역전. |
+| "patch.md로 나중에 paste하면 되니까 지금 캐시 편집" | 사람 수동 의존 + sync 전 paste 안 하면 소실. 정석은 token 복구 후 MCP. |
+| "사이트에 지금 보여야 하니까" | 보이는 건 임시. Notion에 없으면 없는 것. |
+| "regen-from-cache로 돌리면 되니까" | regen은 token-outage 응급 도구. 평시 워크플로우로 쓰면 SSoT 우회 제도화. |
+
+### 웹 렌더링 경로 (왜 캐시 편집이 무의미한가)
+
+`week.html`은 `notion-blocks/week{N}.json`이 있으면 **그걸 렌더**(`renderNotionPage`)하고, 없을 때만 `step.image`/curriculum을 쓴다. 즉 notion-blocks 캐시가 있는 주차는 `overrides.image`가 **무효(dead code)**다. 이미지도 **Notion에 업로드 → sync** 해야 사이트에 보인다.
+
 ### 참고 파일
 - `course-site/data/curriculum.json` — 읽기 전용, 현재 상태 확인용
-- `course-site/data/overrides.json` — 코드 에셋 필드 수정용
+- `course-site/data/overrides.json` — 코드 에셋 필드(image/showme/done/status)만
 - `tools/notion-mapping.json` — week → Notion page ID
 
 ## 데이터 스키마
@@ -140,4 +171,5 @@ curriculum.js의 각 섹션이 Bloom's 단계에 대응:
 ## Gotchas ⚠️
 > Claude가 이 스킬을 쓸 때 실수했던 것들. 새 함정 발견 시 여기에 추가.
 
-1. (아직 없음 — 사용하면서 추가)
+1. **(2026-06-02) notion-blocks 캐시 직접 편집 = 휘발성 SSoT 역전.** token 401 상황에서 `notion-blocks/week13.json`에 step copy·tasks·image 블록을 직접 주입했다. 사이트엔 보였지만 Notion엔 없는 상태 → 다음 sync에 소실. token 없으면 캐시 우회하지 말고 작업 중단 + token 요청 + patch.md 준비가 정석. (위 "Notion token이 없거나 MCP가 실패할 때" 참조)
+2. **(2026-06-02) step 구조 변경 시 image/STEP_MAP 매핑이 옛 구조에 묶임.** 6→7 step 재구성 시 overrides·STEP_MAP의 image 파일명이 옛 의미로 남아 내용과 어긋났다. step 재구성 후 image 매핑을 step 제목 기준으로 재검증할 것.

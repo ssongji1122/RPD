@@ -291,8 +291,22 @@
     return html;
   }
 
+  function _escapeHtml(str) {
+    return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function _subpageHref(pageId) {
+    var id = (pageId || '').replace(/-/g, '');
+    return 'subpage.html?id=' + id;
+  }
+
   function renderLinkToPage(block) {
     var data = block.link_to_page || {};
+    if (data.type === 'page_id' && data.page_id) {
+      var subpageTitle = (block.linked_page_title || block._resolved_title || '').trim() || '관련 자료';
+      return '<p class="nb-p"><a class="nb-link-page nb-link-subpage" href="'
+        + _subpageHref(data.page_id) + '">' + escapePlainText(subpageTitle) + '</a></p>';
+    }
     var pageId = data.page_id || '';
     var title = block.linked_page_title || '';
     var url = block.linked_page_url || (pageId ? 'https://www.notion.so/' + String(pageId).replace(/-/g, '') : '');
@@ -301,6 +315,12 @@
       return '<p class="nb-p nb-link-page-wrap"><span class="nb-link-page nb-link-page--missing">' + escapePlainText(label) + '</span></p>';
     }
     return '<p class="nb-p nb-link-page-wrap"><a class="nb-link-page" href="' + escapeAttr(url) + '" target="_blank" rel="noopener">' + escapePlainText(title || label) + ' ↗</a></p>';
+  }
+
+  function renderChildPage(block) {
+    var childTitle = ((block.child_page || {}).title || '').trim() || '하위 페이지';
+    return '<p class="nb-p"><a class="nb-link-page nb-link-subpage" href="'
+      + _subpageHref(block.id) + '">' + escapePlainText(childTitle) + '</a></p>';
   }
 
   // ---------------------------------------------------------------------------
@@ -330,6 +350,7 @@
       case 'quote':      return renderQuote(block);
       case 'divider':    return renderDivider();
       case 'link_to_page': return renderLinkToPage(block);
+      case 'child_page':   return renderChildPage(block);
       default:
         return '<!-- notion-block: ' + type + ' -->';
     }
