@@ -311,16 +311,17 @@ Sculpt를 하다 보면 메쉬가 늘어나서 찌그러지는 곳이 생겨요.
 - `Ctrl + R (Sculpt)`: Voxel Remesh
 - `Ctrl + Z`: 되돌리기
 - `X`: Draw 브러시 빠른 선택
+- `우클릭 → LoopTools`: LoopTools 메뉴 (Edit Mode)
+- `Ctrl + Shift + B`: Bool Tool 빠른 실행 (Object Mode)
 
 ### 과제 한눈에 보기
 
-- 과제명: AI + 수동 하이브리드 오브젝트
-- 설명: AI 생성 메쉬를 Sculpt로 다듬은 결과물을 제출해요. 원본과 수정 후를 비교할 수 있어야 해요.
+- 과제명: 내 프로젝트 첫 3D 러프
+- 설명: 1주차 무드보드를 바탕으로 AI 러프를 뽑고, 메쉬를 정리한 결과물을 제출해요. 완성도보다 방향이 맞는지가 중요해요.
 - 제출 체크:
-  - AI 생성 원본과 Sculpt 수정 후 비교 이미지
-  - AI 생성 → Sculpt 수정 흔적 있는 .blend
-  - 사용한 브러시 3가지 이상 적기
-  - 완성 렌더 이미지 2장 이상
+  - 내 무드보드에서 추출한 프롬프트 키워드 +  무드보드에서 선택한 이미지
+  - 3D AI 로 생성/테스트 해본 스크린샷
+  - Blender 로 다운받은 경우( hyper 3d GEN 1.5 버전은 다운로드 가능)  임포트 한 이미지 샷
 
 ### 자주 막히는 지점
 
@@ -329,6 +330,11 @@ Sculpt를 하다 보면 메쉬가 늘어나서 찌그러지는 곳이 생겨요.
 - 브러시가 반대로 작동함 → Ctrl을 누르고 있으면 반전이에요. 떼세요
 - 형태가 너무 울퉁불퉁 → Smooth 브러시로 정리, 또는 Strength 낮추기
 - Import 메쉬가 너무 작거나 큼 → S로 크기 맞추고 Ctrl+A로 Scale 적용
+- 프롬프트가 너무 짧음 → 형태+스타일+재질 키워드를 넣어야 원하는 결과가 나와요
+- AI 메쉬를 정리 없이 바로 작업 → Mesh Cleaner 먼저 돌리고 시작하기
+- LoopTools 메뉴가 안 보임 → Preferences에서 애드온 활성화 확인. Edit Mode에서 우클릭해야 나와요
+- Bool Tool이 작동 안 함 → 두 오브젝트가 겹쳐 있어야 해요. Object Mode에서 실행
+- BlenderKit 패널이 안 보임 → 설치 후 활성화 체크 확인. 뷰포트 상단 검색바 확인
 
 ### 공식 영상 튜토리얼
 
@@ -339,7 +345,13 @@ Sculpt를 하다 보면 메쉬가 늘어나서 찌그러지는 곳이 생겨요.
 - [Sculpt Mode](https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/introduction/index.html)
 - [Sculpt Brushes](https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/tools/index.html)
 - [Remesh](https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/tool_settings/remesh.html)
+- [Dyntopo](https://docs.blender.org/manual/en/latest/sculpt_paint/sculpting/tool_settings/dyntopo.html)
 - [Decimate Modifier](https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/decimate.html)
+- [Mesh Cleaner 2](https://decoded.gumroad.com/l/meshcleaner)
+- [QRemeshify](https://ksami.gumroad.com/l/QRemeshify)
+- [LoopTools](https://extensions.blender.org/add-ons/looptools/)
+- [Bool Tool](https://extensions.blender.org/add-ons/bool-tool/)
+- [BlenderKit](https://www.blenderkit.com/get-blenderkit/)
 <!-- AUTO:CURRICULUM-SYNC:END -->
 
 ## 참고 자료
