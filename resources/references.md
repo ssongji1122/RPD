@@ -14,7 +14,7 @@
 
 ## AI 도구
 - Mixboard (무드보드): https://labs.google/mixboard
-- 나노바나나: https://nanobananas.ai
+- 나노바나나 (= Gemini 2.5 Flash Image, 공식): https://gemini.google.com
 - Meshy AI (3D 생성): https://meshy.ai
 - Tripo AI (3D 생성): https://tripo3d.ai
 - Luma Genie (3D 생성): https://lumalabs.ai/genie

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>발표순서 사다리타기 — RPD</title>
+  <meta name="description" content="기말 발표순서 추첨 사다리타기 — Robot Product Design" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="assets/tokens.css" />
+  <link rel="stylesheet" href="assets/components.css" />
+  <link rel="stylesheet" href="assets/page-ladder.css" />
+  <script>/* FOUC */ (function(){var t=localStorage.getItem('rpd-theme');if(t)document.documentElement.setAttribute('data-theme',t);})()</script>
+</head>
+<body>
+  <main class="ladder-page" id="main">
+    <a class="ladder-back" href="index.html">← RPD</a>
+    <header class="ladder-head">
+      <h1 class="ladder-title">발표순서 사다리타기</h1>
+      <p class="ladder-sub">이름을 넣고 사다리를 타서 발표 순서를 정하세요.</p>
+    </header>
+    <section class="ladder-stage" id="stage">
+      <div class="ladder-setup" id="setup">
+        <label class="ladder-label" for="names">참가자 (한 줄에 한 명)</label>
+        <textarea id="names" class="ladder-input" rows="6" placeholder="홍길동&#10;김철수&#10;이영희"></textarea>
+        <button type="button" class="ladder-toggle" id="resultToggle" aria-expanded="false">결과 직접 입력 (벌칙·역할 등, 비우면 발표순서)</button>
+        <textarea id="results-input" class="ladder-input" rows="4" hidden placeholder="치킨&#10;꽝&#10;커피"></textarea>
+        <div class="ladder-actions">
+          <button type="button" class="btn-primary" id="buildBtn">사다리 만들기</button>
+          <button type="button" class="btn-ghost" id="resetBtn" hidden>처음부터</button>
+        </div>
+        <p class="ladder-hint" id="hint" role="status"></p>
+      </div>
+      <div class="ladder-board" id="board" hidden></div>
+      <div class="ladder-results" id="results" aria-live="polite" hidden></div>
+    </section>
+  </main>
+  <script src="assets/ladder.js"></script>
+</body>
+</html>

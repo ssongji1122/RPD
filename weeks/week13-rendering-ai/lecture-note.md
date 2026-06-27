@@ -559,90 +559,8 @@ Set render engine to Eevee with bloom enabled and render each camera view.
 
 > 이 섹션은 `course-site/data/curriculum.js` 기준으로 자동 갱신됩니다.
 
-- 핵심 키워드: Cycles vs EEVEE · 출력 설정 · Compositing · AI 후처리
+- 핵심 키워드: Cycles vs EEVEE · 출력 설정 · AI 영상/음악 · VSE 편집
 - 예상 시간: ~3시간
-
-### 실습 단계
-
-#### 1. 렌더 엔진 비교
-
-Cycles는 사진 인화처럼 정밀하고 느리고, EEVEE는 게임 엔진처럼 빠르지만 덜 사실적이에요. 수정 중엔 EEVEE, 최종 제출엔 Cycles를 써요. 용도에 따라 골라 쓰면 돼요.
-
-![렌더 엔진 비교](../../course-site/assets/images/week13/cycles-eevee.png)
-
-배울 것
-
-- 두 엔진의 차이를 안다
-- 각각 어떤 상황에 쓰는지 판단한다
-
-체크해볼 것
-
-- Render Properties → Engine → Cycles로 전환 후 F12 (렌더 시간 기록해두기)
-- EEVEE로 전환 후 같은 씬 F12 → 속도와 품질 비교 (그림자, 반사, 유리 차이 주목)
-- Cycles Samples를 128 → 512로 바꿔서 노이즈 비교 (높을수록 깨끗하지만 느림)
-
-#### 2. 렌더 출력 설정
-
-해상도, 파일 형식, 저장 경로를 설정하고 F12로 렌더해요. 한 번 설정해두면 계속 쓸 수 있어요. 포트폴리오용이면 1920×1080 이상이 좋아요.
-
-![렌더 출력 설정](../../course-site/assets/images/week13/render-output.png)
-
-배울 것
-
-- Output Properties를 자유롭게 설정한다
-
-체크해볼 것
-
-- Output Properties → Resolution 1920×1080 설정 (% 스케일로 미리보기 가능 (50%로 빠른 테스트))
-- Output Format → PNG (이미지) 또는 FFmpeg (영상) 선택
-- 파일 출력 경로 설정 후 F12로 렌더 (Image → Save As로 원하는 위치에 저장)
-
-#### 3. Compositing 기초
-
-사진 찍고 나서 보정하듯, 렌더 후에 밝기, 색감, 글로우 효과를 추가할 수 있어요. Compositing 노드로 후처리를 하면 렌더를 다시 안 해도 돼요.
-
-![Compositing 기초](../../course-site/assets/images/week13/compositing.png)
-
-배울 것
-
-- Compositing 노드의 기본 흐름을 이해한다
-
-체크해볼 것
-
-- Compositing 워크스페이스로 전환, Use Nodes 켜기 (Render Layers → Composite 기본 연결 확인)
-- Shift+A → Filter → Glare 추가해서 빛 번짐 효과 (Emission 재질이 있으면 효과가 잘 보여요)
-- Color Balance 노드로 색감 조정 (Lift/Gamma/Gain으로 분위기 바꾸기)
-
-#### 4. 애니메이션 렌더링
-
-프레임을 하나씩 렌더해서 영상으로 만드는 거예요. Ctrl+F12 하나로 시작돼요. 시간이 오래 걸리니까 범위와 해상도를 먼저 확인하세요.
-
-![애니메이션 렌더링](../../course-site/assets/images/week13/animation-render.png)
-
-배울 것
-
-- 애니메이션 렌더 파이프라인을 이해한다
-
-체크해볼 것
-
-- Frame Range 확인 (Start/End Frame) (24fps 기준 5초 = 120프레임)
-- Output Format → FFmpeg → MPEG-4 설정 (.mp4 파일로 출력)
-- EEVEE로 먼저 테스트 렌더 후 Cycles로 최종 렌더 (Ctrl+F12로 시작)
-
-#### 5. AI 후처리 체험
-
-렌더 이미지를 AI 이미지 생성 툴에 넣으면 스타일을 바꾸거나 디테일을 추가할 수 있어요. 3D + AI의 하이브리드 워크플로우예요.
-
-![AI 후처리 체험](../../course-site/assets/images/week13/ai-postprocess.png)
-
-배울 것
-
-- AI 후처리의 가능성을 이해한다
-
-체크해볼 것
-
-- 렌더 이미지를 AI 이미지 툴에 업로드 (img2img) (스타일 변형이나 디테일 추가)
-- 원본 렌더와 AI 후처리 결과 나란히 비교
 
 ### 핵심 단축키
 
@@ -655,13 +573,13 @@ Cycles는 사진 인화처럼 정밀하고 느리고, EEVEE는 게임 엔진처�
 
 ### 과제 한눈에 보기
 
-- 과제명: 렌더링 포트폴리오
+- 과제명: 렌더 이미지 3장 이상 + AI 영상 1개 + AI BGM 1개 제출
 - 설명: EEVEE와 Cycles로 동일한 씬을 렌더한 비교 이미지와 최종 고품질 렌더를 제출해요.
 - 제출 체크:
-  - EEVEE vs Cycles 비교 이미지 (같은 앵글)
-  - Compositing 후처리 적용된 최종 렌더
-  - 애니메이션 영상 파일 (5초 이상)
-  - AI 후처리 비교 이미지 (선택)
+  - 자신의 로봇을 다양한 각도와 조명으로 렌더링하여 이미지 3장 이상 제출
+  - Kling AI로 AI 영상 1개 생성하여 제출
+  - Suno AI로 AI BGM 1개 생성하여 제출
+  - (선택/가산점) 영상+BGM을 조합한 프로모션 영상 제출
 
 ### 자주 막히는 지점
 
@@ -674,14 +592,20 @@ Cycles는 사진 인화처럼 정밀하고 느리고, EEVEE는 게임 엔진처�
 ### 공식 영상 튜토리얼
 
 - [Blender Studio - Rendering](https://studio.blender.org/training/blender-2-8-fundamentals/rendering/)
+- [Blender 공식 YouTube 채널](https://www.youtube.com/@BlenderOfficial)
 
 ### 공식 문서
 
-- [Cycles](https://docs.blender.org/manual/en/latest/render/cycles/index.html)
-- [EEVEE](https://docs.blender.org/manual/en/latest/render/eevee/index.html)
-- [Render Output](https://docs.blender.org/manual/en/latest/render/output/index.html)
-- [Compositing](https://docs.blender.org/manual/en/latest/compositing/index.html)
-- [Denoising](https://docs.blender.org/manual/en/latest/render/cycles/render_settings/sampling.html)
+- [Camera (Blender)](https://docs.blender.org/manual/en/latest/render/cameras.html)
+- [Cycles (Blender)](https://docs.blender.org/manual/en/latest/render/cycles/index.html)
+- [EEVEE (Blender)](https://docs.blender.org/manual/en/latest/render/eevee/index.html)
+- [Compositing (Blender)](https://docs.blender.org/manual/en/latest/compositing/index.html)
+- [Video Editing (Blender)](https://docs.blender.org/manual/en/latest/video_editing/introduction.html)
+- [Kling AI (영상 생성)](https://www.klingai.com/)
+- [Suno AI (BGM 생성)](https://suno.com/)
+- [Google Flow Music (Lyria 3, BGM)](https://www.flowmusic.app/)
+- [Google Veo (영상+오디오)](https://deepmind.google/models/veo/)
+- [ElevenLabs (효과음/음악)](https://elevenlabs.io/)
 <!-- AUTO:CURRICULUM-SYNC:END -->
 
 ## Notion 참고 자료

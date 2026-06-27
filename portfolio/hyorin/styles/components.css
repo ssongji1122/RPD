@@ -1,0 +1,33 @@
+/* components.css */
+.bento { border-radius: var(--pf-r-card); padding: var(--pf-sp-6); position: relative; overflow: clip; background: var(--pf-card); border: 1px solid rgba(17,17,17,.06); }
+.bento--violet { background: var(--pf-violet); color: var(--pf-on-violet); border-color: transparent; }
+.bento--ink    { background: var(--pf-ink); color: var(--pf-on-ink); border-color: transparent; }
+.bento--sky    { background: var(--pf-sky); border-color: transparent; }
+
+/* 코너 브래킷(Dribbble 시그니처) — 우상단 ㄱ자 */
+.bento--bracket::after {
+  content: ""; position: absolute; top: 14px; right: 14px;
+  width: 18px; height: 18px;
+  border-top: 2px solid currentColor; border-right: 2px solid currentColor;
+  opacity: .5;
+}
+
+/* StatTile */
+.stat { display: flex; flex-direction: column; justify-content: center; gap: 4px; }
+.stat__num { font-family: var(--pf-font-head); font-weight: 700; font-size: var(--pf-fs-stat); font-variant-numeric: tabular-nums; line-height: 1; }
+.stat__label { font-size: var(--pf-fs-cap); text-transform: uppercase; letter-spacing: .08em; opacity: .75; }
+
+/* MediaCard */
+.media { position: relative; border-radius: var(--pf-r-card); overflow: clip; background: var(--pf-ink); }
+.media img, .media video { width: 100%; height: 100%; object-fit: cover; }
+.media__play { position: absolute; inset: 0; margin: auto; width: 64px; height: 64px; border: 0; border-radius: var(--pf-r-pill); background: rgba(255,255,255,.92); cursor: pointer; display: grid; place-items: center; }
+.media__play::before { content: ""; width: 0; height: 0; border-left: 16px solid var(--pf-ink); border-top: 10px solid transparent; border-bottom: 10px solid transparent; margin-left: 4px; }
+
+/* SealBadge */
+.seal { width: 84px; height: 84px; border-radius: var(--pf-r-pill); background: var(--pf-ink); color: #fff; display: grid; place-items: center; }
+.seal__dot { width: 12px; height: 12px; border-radius: 50%; background: #fff; }
+
+/* SideNav */
+.sidenav { position: fixed; left: 18px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: var(--pf-sp-6); writing-mode: vertical-rl; font-size: var(--pf-fs-cap); letter-spacing: .12em; text-transform: uppercase; color: var(--pf-muted); z-index: 10; }
+.sidenav a { color: inherit; text-decoration: none; }
+.sidenav a:hover, .sidenav a:focus-visible { color: var(--pf-text); }

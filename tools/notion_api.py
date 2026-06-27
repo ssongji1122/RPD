@@ -24,6 +24,8 @@ from __future__ import annotations
 import json
 import os
 import re
+import subprocess
+import tempfile
 import urllib.parse
 import urllib.request
 from pathlib import Path
@@ -183,13 +185,37 @@ def get_page_blocks_recursive(
     return flat_blocks
 
 
+def get_page_title(page_id: str, token: str | None = None) -> str:
+    """Return the plain-text title of a Notion page, or empty string on error."""
+    try:
+        result = notion_request("GET", f"/pages/{page_id}", token=token)
+        props = result.get("properties", {})
+        # Title can be under any property with type "title"
+        for prop in props.values():
+            if prop.get("type") == "title":
+                return extract_text(prop.get("title", []))
+    except Exception:
+        pass
+    return ""
+
+
 def fetch_block_tree(page_id: str, token: str | None = None) -> list[dict]:
     """Fetch all blocks of a Notion page preserving parent-child nesting.
 
     Each block dict has a `children` key listing nested blocks (toggle, callout,
     column_list contents, etc.). This is the canonical tree representation used
     by the web mirror.
+
+    For `link_to_page` blocks, injects `_resolved_title` so the renderer can
+    display a meaningful label without an extra round-trip at render time.
     """
+    title_cache: dict[str, str] = {}
+
+    def resolve_title(pid: str) -> str:
+        if pid not in title_cache:
+            title_cache[pid] = get_page_title(pid, token=token)
+        return title_cache[pid]
+
     def walk(parent_id: str) -> list[dict]:
         nodes: list[dict] = []
         for block in _get_page_blocks(parent_id, token=token):
@@ -197,6 +223,11 @@ def fetch_block_tree(page_id: str, token: str | None = None) -> list[dict]:
             if block.get("has_children"):
                 children = walk(block["id"])
             block["children"] = children
+            # Inject resolved title for link_to_page blocks
+            if block.get("type") == "link_to_page":
+                ltp = block.get("link_to_page", {})
+                if ltp.get("type") == "page_id":
+                    block["_resolved_title"] = resolve_title(ltp["page_id"])
             nodes.append(block)
         return nodes
 
@@ -277,6 +308,41 @@ def _ext_from_url(url: str, fallback: str = ".bin") -> str:
     return suffix if suffix else fallback
 
 
+def _download_and_transcode_video(url: str, target: Path, req: urllib.request.Request) -> None:
+    """Download a Notion-hosted video to a temp file, transcode to a compressed mp4 at target.
+
+    Notion signed URLs expire ~1 hour, so we download once at sync time. Raw uploads
+    (.mov screen recordings) are large, so we compress with ffmpeg to keep the repo small —
+    matching the existing `clips/` "small compressed mp4" policy. On any download or
+    transcode failure, raise so the caller leaves no `local_url` (renderer falls back to the
+    remote URL rather than pointing at a missing/partial file).
+    """
+    suffix = _ext_from_url(url, ".mov")
+    tmp_dir = Path(tempfile.mkdtemp(prefix="rpd-video-"))
+    tmp_path = tmp_dir / f"src{suffix}"
+    try:
+        with urllib.request.urlopen(req, timeout=120) as resp:
+            tmp_path.write_bytes(resp.read())
+        cmd = [
+            "ffmpeg", "-y", "-i", str(tmp_path),
+            "-vcodec", "libx264", "-crf", "28", "-preset", "fast",
+            "-vf", "scale='min(1280,iw)':-2",
+            "-acodec", "aac", "-b:a", "128k",
+            "-movflags", "+faststart",
+            str(target),
+        ]
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
+        if result.returncode != 0:
+            target.unlink(missing_ok=True)
+            raise RuntimeError(f"ffmpeg failed (rc={result.returncode}): {result.stderr[-200:]}")
+    finally:
+        tmp_path.unlink(missing_ok=True)
+        try:
+            tmp_dir.rmdir()
+        except OSError:
+            pass
+
+
 def download_block_assets(
     blocks: list[dict],
     dest_dir: Path,
@@ -299,18 +365,27 @@ def download_block_assets(
                 if kind == "file":
                     block_id = block.get("id", "").replace("-", "")
                     if block_id:
-                        ext = _ext_from_url(url)
+                        is_video = block.get("type") == "video"
+                        # 영상은 압축 mp4로 변환해 저장(repo 비대 방지 — clips/ 정책과 동일).
+                        ext = ".mp4" if is_video else _ext_from_url(url)
                         target = dest_dir / f"{block_id}{ext}"
                         if not target.exists():
                             try:
                                 req = urllib.request.Request(url, headers={"User-Agent": "rpd-notion-sync/1.0"})
-                                with urllib.request.urlopen(req, timeout=30) as resp:
-                                    target.write_bytes(resp.read())
+                                if is_video:
+                                    _download_and_transcode_video(url, target, req)
+                                else:
+                                    with urllib.request.urlopen(req, timeout=30) as resp:
+                                        target.write_bytes(resp.read())
                                 downloaded += 1
                             except Exception as exc:  # noqa: BLE001
                                 print(f"  ! failed to download {url[:80]}...: {exc}")
-                        block["local_url"] = f"{public_prefix.rstrip('/')}/{target.name}"
-                        block["local_path"] = str(target)
+                        # 파일이 존재하면(캐시 또는 방금 생성) local_url을 설정한다.
+                        # 다운로드/변환 실패 시 target이 없으므로 local_url 미설정 →
+                        # 렌더러가 원격 URL로 fallback(만료 전까지 동작, 깨진 로컬 경로 방지).
+                        if target.exists():
+                            block["local_url"] = f"{public_prefix.rstrip('/')}/{target.name}"
+                            block["local_path"] = str(target)
             children = block.get("children") or []
             if children:
                 visit(children)
@@ -608,31 +683,35 @@ def sync_week_to_notion(week: dict, token: str | None = None) -> dict:
     return {"ok": True, "page_id": page_id, "blocks_written": len(new_blocks)}
 
 
-def fetch_notion_to_curriculum(
+def parse_blocks_to_curriculum(
+    blocks: list[dict],
     week_num: int,
     existing_week: dict,
-    token: str | None = None,
+    title: str | None = None,
 ) -> dict:
-    """Fetch a Notion page and extract curriculum-compatible data."""
-    mapping = load_notion_mapping()
-    page_id = mapping.get(str(week_num))
-    if not page_id:
-        raise ValueError(f"No Notion page mapped for week {week_num}")
+    """Pure function: parse a Notion block tree into curriculum-compatible data.
 
-    # Fetch page properties (title)
-    page = notion_request("GET", f"/pages/{page_id}", token=token)
-    title_parts = page.get("properties", {}).get("title", {}).get("title", [])
-    raw_title = extract_text(title_parts)
-    # Strip "Week NN: " prefix if present
-    clean_title = re.sub(r"^(?:⭐\s*)?Week\s*\d+\s*[:：]\s*", "", raw_title).strip()
+    Token-free. Used by both ``fetch_notion_to_curriculum`` (live API path) and
+    the cache-based regeneration scripts.
 
-    # Fetch blocks
-    blocks = get_page_blocks_recursive(page_id, token=token)
+    Heading_2 keywords recognized as section markers:
+        - "학습 목표" or "실습"  -> steps section
+        - "공식 영상"            -> videos
+        - "공식 문서"            -> docs
+        - "단축키"               -> shortcuts
+        - "실수" / "해결"         -> mistakes
+        - "과제"                 -> assignment
 
-    # Parse blocks into structured sections
-    result = {**existing_week, "title": clean_title or existing_week.get("title", "")}
+    Inside the steps section, each heading_3 starts a new step. Step body blocks:
+        - paragraph / callout    -> copy
+        - bulleted_list_item     -> goal
+        - to_do / numbered_list_item -> tasks (one per item)
+        - code                    -> tasks (split on lines that start with ``N.``)
+    """
+    result = {**existing_week}
+    if title:
+        result["title"] = title
 
-    # Extract shortcuts from code blocks
     existing_steps = existing_week.get("steps", []) or []
     steps: list[dict] = []
     current_step: dict | None = None
@@ -646,13 +725,34 @@ def fetch_notion_to_curriculum(
     current_section = ""
     seen_sections: set[str] = set()
 
+    task_counter = 0  # global per-week task counter (preserves w{N}-t{n} uniqueness)
+
+    def _append_task(label: str, detail: str = "") -> None:
+        nonlocal task_counter
+        if current_step is None or not label:
+            return
+        task_counter += 1
+        current_step["tasks"].append({
+            "id": f"w{week_num}-t{task_counter}",
+            "label": label.strip(),
+            "detail": detail.strip(),
+        })
+
+    def _append_copy(text: str) -> None:
+        if current_step is None or not text:
+            return
+        if current_step["copy"]:
+            current_step["copy"] += "\n\n" + text
+        else:
+            current_step["copy"] = text
+
     for block in blocks:
         btype = block.get("type", "")
 
         if btype == "heading_2":
             text = extract_text(block["heading_2"].get("rich_text", []))
             current_step = None
-            if "학습 목표" in text:
+            if "학습 목표" in text or "실습" in text:
                 current_section = "steps"
                 seen_sections.add("steps")
             elif "공식 영상" in text:
@@ -675,9 +775,11 @@ def fetch_notion_to_curriculum(
 
         elif btype == "heading_3" and current_section == "steps":
             text = extract_text(block["heading_3"].get("rich_text", []))
+            # Strip "Step N: " prefix so the title matches the on-site label.
+            clean_step_title = re.sub(r"^Step\s*\d+\s*[:：]\s*", "", text).strip() or text
             existing_step = existing_steps[len(steps)] if len(steps) < len(existing_steps) else {}
             current_step = {
-                "title": text,
+                "title": clean_step_title,
                 "copy": "",
                 "goal": [],
                 "done": list(existing_step.get("done", []) or []),
@@ -688,11 +790,11 @@ def fetch_notion_to_curriculum(
 
         elif btype == "paragraph" and current_section == "steps" and current_step is not None:
             text = extract_text(block["paragraph"].get("rich_text", []))
-            if text:
-                if current_step["copy"]:
-                    current_step["copy"] += "\n\n" + text
-                else:
-                    current_step["copy"] = text
+            _append_copy(text)
+
+        elif btype == "callout" and current_section == "steps" and current_step is not None:
+            text = extract_text(block["callout"].get("rich_text", []))
+            _append_copy(text)
 
         elif btype == "paragraph" and current_section == "assignment":
             text = extract_text(block["paragraph"].get("rich_text", []))
@@ -701,6 +803,19 @@ def fetch_notion_to_curriculum(
                     assignment_title = text
                 else:
                     assignment_description_parts.append(text)
+
+        elif btype == "callout" and current_section == "assignment":
+            text = extract_text(block["callout"].get("rich_text", []))
+            if text:
+                if not assignment_title:
+                    assignment_title = text
+                else:
+                    assignment_description_parts.append(text)
+
+        elif btype == "numbered_list_item" and current_section == "assignment":
+            text = extract_text(block["numbered_list_item"].get("rich_text", []))
+            if text:
+                assignment_checklist.append(text)
 
         elif btype == "code" and current_section == "shortcuts":
             code_text = extract_text(block["code"].get("rich_text", []))
@@ -712,6 +827,20 @@ def fetch_notion_to_curriculum(
                 parts = re.split(r"\s{2,}", line, maxsplit=1)
                 if len(parts) == 2:
                     shortcuts.append({"keys": parts[0].strip(), "action": parts[1].strip()})
+
+        elif btype == "code" and current_section == "steps" and current_step is not None:
+            code_text = extract_text(block["code"].get("rich_text", []))
+            for raw_line in code_text.strip().split("\n"):
+                line = raw_line.strip()
+                if not line:
+                    continue
+                # Accept numbered prefixes like "1.", "1)", "1 ."
+                match = re.match(r"^\d+\s*[\.\)]\s+(.+)$", line)
+                if not match:
+                    continue
+                label_full = match.group(1).strip()
+                label, sep, detail = label_full.partition(" — ")
+                _append_task(label, detail if sep else "")
 
         elif btype == "bulleted_list_item" and current_section == "steps" and current_step is not None:
             text = extract_text(block["bulleted_list_item"].get("rich_text", []))
@@ -734,27 +863,23 @@ def fetch_notion_to_curriculum(
         elif btype == "to_do" and current_section == "steps" and current_step is not None:
             text = extract_text(block["to_do"].get("rich_text", []))
             if text:
-                existing_task = {}
-                if steps:
-                    step_idx = len(steps) - 1
-                    if step_idx < len(existing_steps):
-                        existing_tasks = existing_steps[step_idx].get("tasks", []) or []
-                        if len(current_step["tasks"]) < len(existing_tasks):
-                            existing_task = existing_tasks[len(current_step["tasks"])]
-
                 label, sep, detail = text.partition(" — ")
-                current_step["tasks"].append({
-                    "id": existing_task.get("id") or f"w{week_num}-t{len(current_step['tasks']) + 1}",
-                    "label": label.strip(),
-                    "detail": detail.strip() if sep else "",
-                })
+                _append_task(label, detail if sep else "")
+
+        elif btype == "numbered_list_item" and current_section == "steps" and current_step is not None:
+            text = extract_text(block["numbered_list_item"].get("rich_text", []))
+            if text:
+                label, sep, detail = text.partition(" — ")
+                _append_task(label, detail if sep else "")
 
         elif btype == "to_do" and current_section == "assignment":
             text = extract_text(block["to_do"].get("rich_text", []))
             if text:
                 assignment_checklist.append(text)
 
-    if "steps" in seen_sections and steps:
+    if "steps" in seen_sections:
+        # 빈 리스트도 명시적으로 반영한다(실습 섹션을 의도적으로 비운 주차).
+        # `and steps`를 붙이면 실습이 0개일 때 이전 stale steps가 남는다.
         result["steps"] = steps
     if shortcuts:
         result["shortcuts"] = shortcuts
@@ -774,6 +899,30 @@ def fetch_notion_to_curriculum(
         result["docs"] = docs
 
     return result
+
+
+def fetch_notion_to_curriculum(
+    week_num: int,
+    existing_week: dict,
+    token: str | None = None,
+) -> dict:
+    """Fetch a Notion page and extract curriculum-compatible data."""
+    mapping = load_notion_mapping()
+    page_id = mapping.get(str(week_num))
+    if not page_id:
+        raise ValueError(f"No Notion page mapped for week {week_num}")
+
+    # Fetch page properties (title)
+    page = notion_request("GET", f"/pages/{page_id}", token=token)
+    title_parts = page.get("properties", {}).get("title", {}).get("title", [])
+    raw_title = extract_text(title_parts)
+    # Strip "Week NN: " prefix if present
+    clean_title = re.sub(r"^(?:⭐\s*)?Week\s*\d+\s*[:：]\s*", "", raw_title).strip()
+
+    # Fetch blocks
+    blocks = get_page_blocks_recursive(page_id, token=token)
+
+    return parse_blocks_to_curriculum(blocks, week_num, existing_week, clean_title)
 
 
 # ---------------------------------------------------------------------------

@@ -26,12 +26,12 @@
 | 04 | 기초 모델링 2 - 하드서피스 디테일 & 정리 | 얼굴/관절/패널 디테일 추가, Bevel/Weighted Normal 반복 적용, Boolean/Inset 디테일 심화, 파츠 정리 반복 | Week 03 기본형에 얼굴/관절/패널 디테일 추가, 음영 정리, 파츠 정리 실습 | - | 로봇/캐릭터 디테일 정리 결과물 제출 | |
 | 05 | AI 3D 생성 + Sculpting + MCP | AI 3D 생성 원리 이해, Sculpt Mode 기초 (Draw, Clay Strips, Smooth, Grab) | Meshy AI / Tripo AI로 3D 모델 생성 후 Blender 임포트, Sculpt 수정 작업, MCP 씬 자동 생성 | Meshy AI, Tripo AI, Luma Genie, Blender MCP | AI 3D 생성 + Blender 작업 이미지 제출 | |
 | 06 | Material & Shader Node | Material 생성, Principled BSDF (Base Color, Metallic, Roughness, Specular), Thin Film Iridescence (5.0 신기능), Shader Node Editor | Poly Haven / BlenderKit 텍스처 활용, 로봇에 금속/플라스틱/유리 재질 적용 | - | 로봇/캐릭터 재질 적용 이미지 제출 | |
-| 07 | UV Unwrapping + AI Texture | UV 개념, Seam (Mark Seam), Unwrap 방법, UV Editor 활용 | Texture 이미지 적용, AI 텍스처 생성 및 적용, Texture Painting | Meshy AI Texture, 나노바나나 | 텍스처 적용된 로봇 렌더 이미지 제출 | |
+| 07 | UV Unwrapping + AI Texture | UV 개념, Seam (Mark Seam), Unwrap 방법, UV Editor 활용 | Texture 이미지 적용, AI 텍스처 생성 및 적용, Texture Painting | Meshy AI, 나노바나나 | 텍스처 적용된 로봇 렌더 이미지 제출 | |
 | **08** | **중간고사 - 중간 프로젝트 발표** | 로봇/캐릭터 모델링 + 텍스처 완성본 제출 (렌더 이미지 3장 이상 + .blend 파일) | - | - | 중간 프로젝트 제출 | **배점: 35%** |
 | 09 | Lighting 기초 + MCP 조명 연출 | 조명 종류 (Point, Sun, Spot, Area), 3-Point Lighting, HDRI 환경 조명, Blender 5.0 색상 관리 (AgX vs ACES) | Poly Haven HDRI 적용, Blockade Labs AI HDRI 생성, Claude MCP 조명 자동 연출 | Blockade Labs Skybox, Blender MCP | 3가지 조명 환경 렌더 이미지 제출 | |
 | 10 | Animation 기초 | Timeline, Keyframe (I), 오브젝트 애니메이션 (이동/회전/스케일), Graph Editor 기초 | 3~5초 로봇 움직임 애니메이션 제작 | - | 3~5초 간단한 애니메이션 제출 | |
 | 11 | Rigging 기초 | Armature, Bone 구조 (Parent-Child), IK/FK, Weight Painting, Pose Mode | 로봇 팔/다리 기초 리깅 작업 | - | 기초 리깅 적용 결과물 제출 | |
 | 12 | AI 활용 리깅 (Mixamo) | Mixamo 자동 리깅 원리, 애니메이션 라이브러리 활용, NLA Editor 기초 | Mixamo 리깅 후 Blender 임포트, 애니메이션 편집 | Mixamo | Mixamo 리깅/애니메이션 적용 결과물 제출 | |
-| 13 | AI 영상/사운드 + 렌더링 + MCP | Camera 설정 (Focal Length, DOF), Eevee vs Cycles 비교, 5.0 색상 관리, Compositor 기초 | Kling AI (이미지에서 비디오 생성), Suno AI (BGM 생성), MCP 카메라/렌더 자동화 | Kling AI, Veo, Suno AI, ElevenLabs Music, Blender MCP | 렌더링 + AI 영상/사운드 테스트 결과물 제출 | |
+| 13 | AI 영상/사운드 + 렌더링 + MCP | Camera 설정 (Focal Length, DOF), Eevee vs Cycles 비교, 5.0 색상 관리, Compositor 기초 | Kling AI (이미지에서 비디오 생성), Suno AI (BGM 생성), MCP 카메라/렌더 자동화 | Kling AI, Veo, Suno AI, Eleven Music, Blender MCP | 렌더링 + AI 영상/사운드 테스트 결과물 제출 | |
 | 14 | 최종 프로젝트 제작 | 기말 프로젝트 본격 제작, 개별 피드백 진행 | 최종 프로젝트 자유 작업 | - | 최종 프로젝트 중간 체크 제출 | |
 | **15** | **기말고사 - 최종 프로젝트 발표** | 최종 프로덕트 완성본 제출 (렌더 이미지 + .blend 파일 + 영상) 및 발표 | - | - | 최종 프로젝트 제출 및 발표 | **배점: 35%** |

@@ -276,6 +276,14 @@
   gap: 20px;
 }
 
+/* Grid items default to min-width: auto (min-content), which makes long
+   unbreakable inline content (URLs, code, wide images) push the grid
+   column beyond its track width. Force shrinkable children to keep mobile
+   layouts within the viewport. */
+.rpd-page-main > * {
+  min-width: 0;
+}
+
 .rpd-page-toolbar {
   display: flex;
   justify-content: flex-start;
