@@ -81,7 +81,7 @@
     if (!win.document || !win.document.documentElement) return "";
     var root = win.document.documentElement;
     var current = root.getAttribute("data-theme");
-    var next = current === "light" ? "" : "light";
+    var next = current === "dark" ? "" : "dark";
     if (next) {
       root.setAttribute("data-theme", next);
       win.localStorage.setItem(THEME_KEY, next);

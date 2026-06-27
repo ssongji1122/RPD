@@ -203,6 +203,52 @@ def fetch_block_tree(page_id: str, token: str | None = None) -> list[dict]:
     return walk(page_id)
 
 
+def notion_page_url(page_id: str) -> str:
+    return "https://www.notion.so/" + page_id.replace("-", "")
+
+
+def get_page_title(page_id: str, token: str | None = None) -> str:
+    """Fetch a Notion page title by ID."""
+    page = notion_request("GET", f"/pages/{page_id}", token=token)
+    props = page.get("properties") or {}
+    for prop in props.values():
+        if prop.get("type") == "title":
+            return extract_text(prop.get("title") or []).strip()
+    return ""
+
+
+def enrich_link_to_page_blocks(blocks: list[dict], token: str | None = None) -> None:
+    """Resolve link_to_page block titles from Notion API (mutates blocks in place)."""
+    if not token:
+        return
+
+    title_cache: dict[str, str] = {}
+
+    def title_for(page_id: str) -> str:
+        if page_id in title_cache:
+            return title_cache[page_id]
+        try:
+            title = get_page_title(page_id, token=token)
+        except Exception:
+            title = ""
+        title_cache[page_id] = title
+        return title
+
+    def visit(nodes: list[dict]) -> None:
+        for block in nodes:
+            if block.get("type") == "link_to_page":
+                link = block.get("link_to_page") or {}
+                page_id = link.get("page_id")
+                if page_id:
+                    block["linked_page_url"] = notion_page_url(page_id)
+                    title = title_for(page_id)
+                    if title:
+                        block["linked_page_title"] = title
+            visit(block.get("children") or [])
+
+    visit(blocks)
+
+
 # ---------------------------------------------------------------------------
 # Image / file download for offline mirror
 # ---------------------------------------------------------------------------

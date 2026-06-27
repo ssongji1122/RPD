@@ -2565,46 +2565,6 @@ const CURRICULUM = [
         "showme": "mood-lighting"
       },
       {
-        "title": "Blender MCP 설치 — Claude와 연결하기",
-        "copy": "지금까지는 키보드와 마우스로 직접 조작했어요. 이제 Claude에게 말로 시키면 Blender가 자동으로 움직여요. Blender MCP는 Claude와 Blender 사이의 통역사예요 — 말 한마디가 Python 코드로 바뀌어 Blender에 바로 실행돼요. 10주차 AI 씬 제작 실습에서 바로 써요.",
-        "goal": [
-          "Blender MCP 애드온을 설치한다",
-          "Claude와 Blender가 연결되는 걸 직접 확인한다"
-        ],
-        "done": [
-          "N 패널에 MCP 탭이 생겼다",
-          "Claude에게 명령했을 때 Blender 뷰포트에 오브젝트가 생겼다"
-        ],
-        "tasks": [
-          {
-            "id": "w9-mcp1",
-            "label": "github.com/ahujasid/blender-mcp → Releases → addon.py 다운로드",
-            "detail": "최신 버전 addon.py 파일 하나만 저장하면 돼요"
-          },
-          {
-            "id": "w9-mcp2",
-            "label": "Blender → Edit → Preferences → Add-ons → Install → addon.py 선택 → 체크박스 활성화",
-            "detail": "설치 후 우측 패널(N 키)에 'MCP' 탭이 생겨요"
-          },
-          {
-            "id": "w9-mcp3",
-            "label": "N 패널 → MCP 탭 → Start Server 클릭",
-            "detail": "'Running on port 9876' 메시지가 나오면 성공"
-          },
-          {
-            "id": "w9-mcp4",
-            "label": "Claude Code 설정 파일(claude_desktop_config.json)에 blender MCP 서버 추가",
-            "detail": "{\"mcpServers\":{\"blender\":{\"command\":\"uvx\",\"args\":[\"blender-mcp\"]}}} — README 참고"
-          },
-          {
-            "id": "w9-mcp5",
-            "label": "Claude에게 테스트: '블렌더 씬에 빨간 구체 하나 추가해줘'",
-            "detail": "뷰포트에 구체가 생기면 연결 성공 — 10주차 AI 씬 실습 준비 완료!"
-          }
-        ],
-        "image": "assets/images/week09/mcp-setup.png"
-      },
-      {
         "title": "분위기 연출 실험",
         "copy": "조명 색온도(따뜻/차가움)와 세기를 바꿔서 같은 로봇으로 낮/저녁/밤 분위기를 만들어요. 같은 오브젝트인데 사진 3장이 완전히 달라 보이면 성공이에요.",
         "goal": [
@@ -2878,76 +2838,6 @@ const CURRICULUM = [
           }
         ],
         "image": "assets/images/week10/loop-animation.png"
-      },
-      {
-        "title": "AI 프롬프팅으로 버블 씬 만들기",
-        "copy": "9주차에 설치한 Blender MCP를 켜고 Claude에게 말로 씬을 만들어달라고 해요. Midjourney 프롬프트처럼, 원하는 결과를 말로 설명하면 Blender가 자동으로 움직여요. 아래 프롬프트를 그대로 붙여넣어 Pixar 스타일 풍선+폼폼 씬을 만들어보세요.",
-        "goal": [
-          "AI 프롬프트로 복잡한 씬을 자동 구성한다",
-          "머티리얼과 파티클도 AI가 설정하도록 한다"
-        ],
-        "done": [
-          "청록 배경에 파스텔 풍선 오브젝트들이 배치됐다",
-          "주황 폼폼 구체와 유리 물방울이 씬에 있다"
-        ],
-        "tasks": [
-          {
-            "id": "w10-t15",
-            "label": "N 패널 → MCP 탭 → Start Server 확인 (9주차 설치 필요)",
-            "detail": "MCP 탭이 없으면 → 9주차 'Blender MCP 설치' 단계 먼저 진행하세요"
-          },
-          {
-            "id": "w10-t16",
-            "label": "Claude에게 씬 기초 구성 요청",
-            "detail": "프롬프트: '블렌더 씬을 초기화하고, World Background 색상을 청록색(R:0.05, G:0.69, B:0.71)으로 설정해줘. Area Light 2개를 위에서 45도 각도로 배치하고 Power는 각각 500으로 해줘.'"
-          },
-          {
-            "id": "w10-t17",
-            "label": "Claude에게 파스텔 풍선 오브젝트 생성 요청",
-            "detail": "프롬프트: 'UV Sphere 5개를 크기 0.5~2.0으로 다양하게 공중에 랜덤 배치하고, 각각 핑크(#FFB3C6), 민트(#B3FFE8), 노랑(#FFE8A3), 연보라(#DDB3FF), 복숭아(#FFD4B3) Principled BSDF 머티리얼 적용해줘. Roughness 0.05, Transmission 0.25, Subdivision Surface Level 3 추가해줘.'"
-          },
-          {
-            "id": "w10-t18",
-            "label": "Claude에게 비눗방울 + 주황 폼폼 추가 요청",
-            "detail": "프롬프트: 'Ico Sphere 20개를 크기 0.03~0.10 랜덤으로 씬 전체에 흩뿌리고 Glass BSDF(IOR 1.33) 적용해줘. 그리고 UV Sphere 2개(크기 0.6)에 Hair Particle System(Number 8000, Length 0.25)을 추가하고 색상은 주황(#FF6B35)으로 해줘.'"
-          }
-        ],
-        "image": "assets/images/week10/bubble-scene.png"
-      },
-      {
-        "title": "Python으로 떠다니는 애니메이션 자동화",
-        "copy": "오브젝트 10개에 하나씩 키프레임을 찍으면 몇 시간이 걸려요. Python 스크립트 하나로 모든 오브젝트에 자연스러운 떠다니기 애니메이션을 한 번에 넣을 수 있어요. 사인파를 쓰면 수학적으로 자연스러운 위아래 움직임이 만들어져요.",
-        "goal": [
-          "Python Scripting 탭을 처음 써본다",
-          "씬의 모든 오브젝트에 떠다니는 애니메이션을 자동화한다"
-        ],
-        "done": [
-          "Play 버튼을 눌렀을 때 버블들이 각자 다른 속도로 둥실둥실 움직인다",
-          "240프레임 루프가 자연스럽게 반복된다"
-        ],
-        "tasks": [
-          {
-            "id": "w10-t19",
-            "label": "Scripting 탭 열기 → New 클릭",
-            "detail": "상단 메뉴바 → Scripting 탭 (또는 Editor Type → Text Editor)"
-          },
-          {
-            "id": "w10-t20",
-            "label": "아래 스크립트를 붙여넣고 Run Script(▶) 실행",
-            "detail": "import bpy,math,random\nrandom.seed(42)\nbpy.context.scene.frame_end=240\nfor i,obj in enumerate([o for o in bpy.context.scene.objects if o.type=='MESH']):\n    bz=obj.location.z;bx=obj.location.x\n    f=0.3+random.random()*0.4;a=0.2+random.random()*0.25\n    p=random.random()*6.28;r=(random.random()-0.5)*25\n    for fr in range(1,241):\n        t=fr/24.0\n        obj.location.z=bz+math.sin(t*f*6.28+p)*a\n        obj.location.x=bx+math.sin(t*f*4.0+p)*a*0.3\n        obj.keyframe_insert('location',frame=fr)\n        obj.rotation_euler.y=math.radians(t*r)\n        obj.keyframe_insert('rotation_euler',frame=fr)\nprint('완료!')"
-          },
-          {
-            "id": "w10-t21",
-            "label": "Graph Editor → 전체 선택(A) → T → Smooth 이징 적용",
-            "detail": "기계적인 키프레임을 자연스러운 곡선으로 바꿔줘요"
-          },
-          {
-            "id": "w10-t22",
-            "label": "Ctrl+F12로 애니메이션 렌더 (MP4)",
-            "detail": "Output > File Format: FFmpeg Video, Container: MPEG-4"
-          }
-        ],
-        "image": "assets/images/week10/float-animation-script.png"
       }
     ],
     "shortcuts": [
@@ -3037,14 +2927,6 @@ const CURRICULUM = [
       {
         "title": "Cyclic Extrapolation",
         "url": "https://docs.blender.org/manual/en/latest/editors/graph_editor/fcurves/modifiers.html"
-      },
-      {
-        "title": "9주차 — Blender MCP 설치 (MCP 실습 선수 학습)",
-        "url": "week.html?week=9"
-      },
-      {
-        "title": "blender-mcp GitHub",
-        "url": "https://github.com/ahujasid/blender-mcp"
       }
     ],
     "summary": "키프레임으로 움직임을 기록하고, Dope Sheet과 Graph Editor로 타이밍을 조절해요. 마리오네트 인형에 줄을 매달듯, 움직임을 하나씩 기록하는 거예요."

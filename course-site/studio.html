@@ -4,7 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>My Studio — Blender Archive</title>
-  <script>document.documentElement.dataset.theme=localStorage.getItem('rpd-theme')||'dark'</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Nanum+Myeongjo:wght@400;700;800&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+  <script>(function(){var t=localStorage.getItem('rpd-theme');if(t)document.documentElement.dataset.theme=t})()</script>
   <link rel="stylesheet" href="assets/tokens.css">
   <link rel="stylesheet" href="assets/components.css">
   <link rel="stylesheet" href="assets/layout.css">
@@ -54,7 +59,7 @@
       <!-- User profile -->
       <div class="rail-user" id="railUser">
         <button class="rail-user-btn" onclick="toggleUserMenu()" type="button" aria-label="프로필 메뉴" aria-expanded="false" aria-haspopup="true">
-          <span class="rail-user-avatar" id="userAvatar" aria-hidden="true">👤</span>
+          <span class="rail-user-avatar" id="userAvatar" aria-hidden="true"></span>
           <div class="rail-user-info">
             <span class="rail-user-name" id="userName">게스트</span>
             <span class="rail-user-role" id="userRole">학생</span>

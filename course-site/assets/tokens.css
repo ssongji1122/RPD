@@ -3,70 +3,76 @@
    공통 디자인 토큰 — 모든 페이지가 이 파일 하나를 공유
    ===================================================================== */
 
-/* Noto Sans KR is loaded via <link> in each HTML <head> for non-blocking fetch */
-
 :root {
-  /* Colors — Dark (default) */
-  --bg:            #0a0a0a;
-  --bg-soft:       #101113;
-  --surface:       #141517;
-  --surface-strong:#191b1e;
-  --surface-alt:   #111214;
-  --surface-tint:  rgba(255, 255, 255, 0.03);
-  --line:          rgba(255, 255, 255, 0.08);
-  --line-strong:   rgba(255, 255, 255, 0.14);
+  --bg:            #F6F3EE;
+  --bg-soft:       #ECE6DC;
+  --surface:       #FFFDF8;
+  --surface-strong:#ECE6DC;
+  --surface-alt:   #F1EBE1;
+  --surface-tint:  rgba(26, 26, 24, 0.025);
+  --line:          #E3DCD2;
+  --line-strong:   rgba(27, 23, 24, 0.18);
   --key:           #00bfa5;
+  --key-rgb:       0, 191, 165;
   --key-strong:    #009e8a;
-  --key-soft:      #6ee8d8;
-  --success:       #10b981;
-  --success-soft:  #6ee7b7;
-  --warn:          #f59e0b;
-  --text:          #f5f5f7;
-  --muted:         #a1a1aa;
-  --muted-strong:  #d4d4d8;
-  --overlay-white: rgba(255, 255, 255, 0.04);
-  --overlay-white-hover: rgba(255, 255, 255, 0.09);
+  --key-soft:      #14a894;
+  --success:       #3F706D;
+  --success-rgb:   63, 112, 109;
+  --success-soft:  #3F706D;
+  --warn:          #A66629;
+  --warn-rgb:      166, 102, 41;
+  --danger:        #B64A4A;
+  --danger-rgb:    182, 74, 74;
+  --text:          #1B1718;
+  --muted:         #8F8982;
+  --muted-strong:  #514B47;
+  --overlay-white: rgba(26, 26, 24, 0.035);
+  --overlay-white-hover: rgba(26, 26, 24, 0.07);
+  --text-primary: var(--text);
+  --text-secondary: var(--muted-strong);
+  --border: var(--line);
 
   /* Backgrounds — flat outline style */
-  --body-bg: #0a0a0a;
+  --body-bg: #F6F3EE;
   --body-glow: transparent;
-  --topbar-bg: rgba(12, 13, 15, .95);
-  --topbar-border: rgba(255,255,255,.06);
-  --grid-line: rgba(255,255,255,.02);
+  --topbar-bg: rgba(246,243,238,.94);
+  --topbar-border: var(--line);
+  --grid-line: rgba(26,26,24,.035);
   --modal-panel-bg: var(--surface);
-  --modal-panel-soft-bg: rgba(255,255,255,.02);
-  --modal-panel-soft-strong-bg: rgba(255,255,255,.03);
-  --modal-panel-shadow: 0 1px 0 rgba(255,255,255,.04);
+  --modal-panel-soft-bg: rgba(26,26,24,.025);
+  --modal-panel-soft-strong-bg: rgba(26,26,24,.04);
+  --modal-panel-shadow: 0 1px 0 var(--line);
   --modal-card-shadow: none;
-  --modal-hover-shadow: 0 1px 0 rgba(255,255,255,.06);
+  --modal-hover-shadow: 0 1px 0 var(--line-strong);
   --modal-active-shadow: 0 0 0 1px var(--key-border);
   --modal-top-line: transparent;
-  --modal-accent-bg: rgba(255,255,255,.03);
-  --modal-hover-bg: rgba(255,255,255,.03);
-  --modal-nav-active-bg: rgba(255,255,255,.04);
-  --modal-icon-bg: rgba(255,255,255,.04);
+  --modal-accent-bg: rgba(var(--key-rgb),.08);
+  --modal-hover-bg: rgba(26,26,24,.04);
+  --modal-nav-active-bg: rgba(var(--key-rgb),.09);
+  --modal-icon-bg: rgba(var(--key-rgb),.08);
   --modal-icon-shadow: none;
 
   /* Typography */
-  --font-display: "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif;
-  --font-body:    "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif;
+  --font-display: "Cormorant Garamond", "Nanum Myeongjo", Georgia, serif;
+  --font-body:    "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
   /* Semantic type scale */
-  --type-hero:    clamp(1.5rem, 2.4vw, 2rem);
-  --type-section: clamp(1.12rem, 1.6vw, 1.4rem);
+  --type-hero:    clamp(2.75rem, 7vw, 5.5rem);
+  --type-section: clamp(1.75rem, 3vw, 2.4rem);
   --type-sub:     clamp(1rem, 1.3vw, 1.14rem);
 
   /* Layout */
   --max-width: 1180px;
-  --radius: 12px;
-  --radius-sm: 8px;
-  --radius-md: 16px;
-  --radius-lg: 20px;
-  --radius-xl:   24px;
-  --radius-2xl:  26px;
+  --radius: 8px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl:   12px;
+  --radius-2xl:  12px;
   --radius-pill: 999px;
-  --pill-radius: 18px;        /* pill-like rounded rect (lang-switcher, download btn) */
-  --pill-inner-radius: 12px;  /* inner button radius within pill containers */
+  --pill-radius: 8px;
+  --pill-inner-radius: 6px;
 
   /* Spacing scale */
   --sp-1:  4px;
@@ -79,21 +85,21 @@
   --sp-16: 64px;
 
   /* Surface / border — flat outline */
-  --glass-tint:          rgba(255,255,255,.03);
-  --glass-tint-strong:   rgba(255,255,255,.05);
-  --glass-tint-hover:    rgba(255,255,255,.08);
-  --glass-border:        rgba(255,255,255,.08);
-  --glass-border-strong: rgba(255,255,255,.14);
-  --glass-shadow:        rgba(0,0,0,.12);
-  --glass-shadow-light:  rgba(0,0,0,.06);
+  --glass-tint:          rgba(26,26,24,.025);
+  --glass-tint-strong:   rgba(26,26,24,.045);
+  --glass-tint-hover:    rgba(26,26,24,.07);
+  --glass-border:        var(--line);
+  --glass-border-strong: var(--line-strong);
+  --glass-shadow:        rgba(24,24,22,.04);
+  --glass-shadow-light:  rgba(24,24,22,.02);
   --glass-inset:         transparent;
-  --glass-accent:        rgba(0,191,165,.08);
-  --glass-accent-strong: rgba(0,191,165,.14);
-  --key-border:          rgba(110,232,216,.28);
+  --glass-accent:        rgba(var(--key-rgb),.08);
+  --glass-accent-strong: rgba(var(--key-rgb),.14);
+  --key-border:          rgba(var(--key-rgb),.24);
   --key-glow:            transparent;
   --key-glow-soft:       transparent;
-  --success-border:      rgba(16,185,129,.35);
-  --success-glow:        rgba(16,185,129,.06);
+  --success-border:      rgba(var(--success-rgb),.30);
+  --success-glow:        rgba(var(--success-rgb),.06);
 
   /* Font weight scale */
   --fw-normal:  400;
@@ -101,64 +107,79 @@
   --fw-semi:    600;
   --fw-bold:    700;
 
-  --shadow-card: none;
+  --shadow-card:
+    0 1px 2px rgba(27, 23, 24, 0.04),
+    0 6px 18px rgba(27, 23, 24, 0.04);
 }
 
-/* ─── Light theme ──────────────────────────────────── */
-[data-theme="light"] {
-  --bg:            #ffffff;
-  --bg-soft:       #f5f5f7;
-  --surface:       #ffffff;
-  --surface-strong:#f5f5f7;
-  --surface-alt:   #fafafc;
-  --surface-tint:  rgba(0, 0, 0, 0.02);
-  --line:          rgba(0, 0, 0, 0.08);
-  --line-strong:   rgba(0, 0, 0, 0.14);
-  --key:           #00897b;
-  --key-strong:    #006b5f;
-  --key-soft:      #00897b;
-  --success:       #059669;
-  --success-soft:  #059669;
-  --warn:          #d97706;
-  --text:          #1d1d1f;
-  --muted:         #6e6e73;
-  --muted-strong:  #3a3a3c;
-  --overlay-white: rgba(0, 0, 0, 0.03);
-  --overlay-white-hover: rgba(0, 0, 0, 0.06);
-  --body-bg: #ffffff;
+[data-theme="dark"] {
+  --bg:            #171516;
+  --bg-soft:       #241E20;
+  --surface:       #1F1B1D;
+  --surface-strong:#241E20;
+  --surface-alt:   #1A1718;
+  --surface-tint:  rgba(237,234,224,.025);
+  --line:          #342A2E;
+  --line-strong:   rgba(237,234,224,.18);
+  --key:           #00bfa5;
+  --key-rgb:       0, 191, 165;
+  --key-strong:    #2dd4bf;
+  --key-soft:      #6ee8d8;
+  --success:       #8AC4BE;
+  --success-rgb:   138, 196, 190;
+  --success-soft:  #8AC4BE;
+  --warn:          #E2AA66;
+  --warn-rgb:      226, 170, 102;
+  --danger:        #F19A9A;
+  --danger-rgb:    241, 154, 154;
+  --text:          #F0E9E5;
+  --muted:         #82777A;
+  --muted-strong:  #B8ADB0;
+  --overlay-white: rgba(237,234,224,.045);
+  --overlay-white-hover: rgba(237,234,224,.08);
+  --text-primary: var(--text);
+  --text-secondary: var(--muted-strong);
+  --border: var(--line);
+  --body-bg: #171516;
   --body-glow: transparent;
-  --topbar-bg: rgba(255,255,255,.95);
-  --topbar-border: rgba(0,0,0,.08);
-  --grid-line: rgba(0,0,0,.02);
+  --topbar-bg: rgba(23,21,22,.94);
+  --topbar-border: var(--line);
+  --grid-line: rgba(237,234,224,.025);
   --modal-panel-bg: var(--surface);
-  --modal-panel-soft-bg: rgba(0,0,0,.02);
-  --modal-panel-soft-strong-bg: rgba(0,0,0,.03);
-  --modal-panel-shadow: 0 1px 0 rgba(0,0,0,.06);
+  --modal-panel-soft-bg: rgba(237,234,224,.025);
+  --modal-panel-soft-strong-bg: rgba(237,234,224,.04);
+  --modal-panel-shadow: 0 1px 0 rgba(237,234,224,.05);
   --modal-card-shadow: none;
-  --modal-hover-shadow: 0 1px 0 rgba(0,0,0,.08);
+  --modal-hover-shadow: 0 1px 0 rgba(237,234,224,.08);
   --modal-active-shadow: 0 0 0 1px var(--key-border);
   --modal-top-line: transparent;
-  --modal-accent-bg: rgba(0,0,0,.02);
-  --modal-hover-bg: rgba(0,0,0,.02);
-  --modal-nav-active-bg: rgba(0,0,0,.03);
-  --modal-icon-bg: rgba(0,0,0,.03);
+  --modal-accent-bg: rgba(var(--key-rgb),.08);
+  --modal-hover-bg: rgba(237,234,224,.04);
+  --modal-nav-active-bg: rgba(var(--key-rgb),.09);
+  --modal-icon-bg: rgba(var(--key-rgb),.08);
   --modal-icon-shadow: none;
-  --glass-tint:          rgba(0,0,0,.02);
-  --glass-tint-strong:   rgba(0,0,0,.04);
-  --glass-tint-hover:    rgba(0,0,0,.06);
-  --glass-border:        rgba(0,0,0,.08);
-  --glass-border-strong: rgba(0,0,0,.14);
-  --glass-shadow:        rgba(0,0,0,.04);
-  --glass-shadow-light:  rgba(0,0,0,.02);
+  --glass-tint:          rgba(237,234,224,.025);
+  --glass-tint-strong:   rgba(237,234,224,.045);
+  --glass-tint-hover:    rgba(237,234,224,.08);
+  --glass-border:        var(--line);
+  --glass-border-strong: var(--line-strong);
+  --glass-shadow:        rgba(0,0,0,.18);
+  --glass-shadow-light:  rgba(0,0,0,.10);
   --glass-inset:         transparent;
-  --glass-accent:        rgba(0,137,123,.06);
-  --glass-accent-strong: rgba(0,137,123,.1);
-  --key-border:          rgba(0,137,123,.2);
+  --glass-accent:        rgba(var(--key-rgb),.08);
+  --glass-accent-strong: rgba(var(--key-rgb),.14);
+  --key-border:          rgba(var(--key-rgb),.30);
   --key-glow:            transparent;
   --key-glow-soft:       transparent;
-  --success-border:      rgba(5,150,105,.3);
-  --success-glow:        rgba(5,150,105,.06);
-  --shadow-card: none;
+  --success-border:      rgba(var(--success-rgb),.30);
+  --success-glow:        rgba(var(--success-rgb),.06);
+  --shadow-card:
+    0 1px 2px rgba(0, 0, 0, 0.40),
+    0 6px 18px rgba(0, 0, 0, 0.22);
+}
+
+[data-theme="light"] {
+  color-scheme: light;
 }
 
 /* ─── Reset ─────────────────────────────────────────── */
@@ -198,14 +219,8 @@ img, video { max-width: 100%; display: block; }
 /* ─── Grid faint overlay ─────────────────────────────── */
 .page-shell { position: relative; overflow: hidden; }
 .page-shell::before {
-  content: "";
-  position: fixed; inset: 0;
-  pointer-events: none;
-  background-image:
-    linear-gradient(var(--grid-line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
-  background-size: 72px 72px;
-  mask-image: linear-gradient(180deg, rgba(0,0,0,.2), transparent 78%);
+  content: none;
+  display: none;
 }
 
 /* ─── Topbar ─────────────────────────────────────────── */
@@ -251,7 +266,7 @@ img, video { max-width: 100%; display: block; }
 /* ─── Buttons ────────────────────────────────────────── */
 .btn {
   display: inline-flex; align-items: center; gap: 8px;
-  padding: 9px 16px; border-radius: 999px;
+  padding: 9px 14px; border-radius: var(--radius-sm);
   font: inherit; font-size: .86rem; font-weight: var(--fw-medium); cursor: pointer;
   transition: border-color .15s, color .15s, background .15s, box-shadow .15s;
   text-decoration: none; line-height: 1.25;
@@ -259,7 +274,7 @@ img, video { max-width: 100%; display: block; }
 .btn-primary {
   border: 1px solid var(--key-strong);
   background: var(--key);
-  color: #fff;
+  color: var(--bg);
   font-weight: var(--fw-semi);
 }
 .btn-primary:hover { background: var(--key-strong); }
@@ -271,7 +286,7 @@ img, video { max-width: 100%; display: block; }
 .btn-link {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 9px 4px;
-  border: 1px solid transparent; border-radius: 999px;
+  border: 1px solid transparent; border-radius: var(--radius-sm);
   background: none;
   color: var(--key-soft);
   font: inherit; font-size: .86rem; font-weight: var(--fw-medium);
@@ -730,8 +745,8 @@ section, .section-inner {
 .theme-toggle:hover { background: var(--overlay-white-hover); color: var(--text); }
 .theme-toggle .icon-sun  { display: none; }
 .theme-toggle .icon-moon { display: block; }
-[data-theme="light"] .theme-toggle .icon-sun  { display: block; }
-[data-theme="light"] .theme-toggle .icon-moon { display: none; }
+[data-theme="dark"] .theme-toggle .icon-sun  { display: block; }
+[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
 
 /* ─── Responsive ─────────────────────────────────────── */
 @media (max-width: 980px) {
