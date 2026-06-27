@@ -35,12 +35,22 @@
     var placeholders = {
       archive: '카드 검색...',
       class:   '주차 검색...',
+      final:   '작품 검색... (작품 01, RPD 2026)',
       studio:  '내 덱 검색...'
     };
     input.placeholder = placeholders[currentTab] || placeholders.archive;
 
     input.addEventListener('input', function () {
       var q = input.value.trim().toLowerCase();
+      if (currentTab === 'final') {
+        var pageSearch = document.getElementById('finalSearch');
+        if (pageSearch) {
+          pageSearch.value = input.value;
+          pageSearch.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        hide(dropdown);
+        return;
+      }
       if (!q) { hide(dropdown); return; }
       render(dropdown, search(currentTab, q));
     });

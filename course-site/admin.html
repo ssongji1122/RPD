@@ -8,6 +8,9 @@
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Nanum+Myeongjo:wght@400;700;800&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
   <link rel="stylesheet" href="assets/tokens.css" />
   <link rel="stylesheet" href="assets/components.css" />
   <link rel="stylesheet" href="assets/layout.css" />
@@ -172,6 +175,7 @@
 
   <!-- Sync review overlay removed: save flow simplified (Notion is source of truth) -->
 
+  <script src="assets/config.js"></script>
   <script src="assets/site-shell.js?v=20260318a"></script>
   <script src="assets/nav-config.js"></script>
   <script src="assets/topbar-sync.js"></script>
@@ -963,7 +967,7 @@
           '<div style="display:flex;gap:6px;align-items:center">',
           '<input class="edit-inline" data-video-field="url" data-idx="', i, '" value="', esc(v.url), '" placeholder="URL 또는 업로드" style="font-size:.78rem;color:var(--muted);flex:1" />',
           '<label class="video-upload-btn">',
-          '&#127916; 업로드',
+          '영상 업로드',
           '<input type="file" accept="video/*" data-upload-video="', i, '" data-week="', w.week, '" />',
           '</label>',
           '</div>',
@@ -1079,7 +1083,7 @@
       parts.push(
         '<div class="preview-admin-row">',
         '<label class="image-upload-btn">',
-        '&#128247; 이미지 업로드',
+        '이미지 업로드',
         '<input type="file" accept="image/*" data-upload-step="', si, '" data-week="', weekNum, '" />',
         '</label>',
         '<input class="edit-inline" data-step-field="link" data-step="', si, '" value="', esc(step.link || ""), '" placeholder="공식 페이지 URL (이미지 클릭 링크)" style="flex:1;font-size:.82rem;color:var(--muted);min-width:180px" />',

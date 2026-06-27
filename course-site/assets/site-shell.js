@@ -75,17 +75,19 @@
     };
   }
 
+  var THEME_KEY = win.RPD_KEYS.THEME;
+
   function toggleTheme() {
     if (!win.document || !win.document.documentElement) return "";
     var root = win.document.documentElement;
     var current = root.getAttribute("data-theme");
-    var next = current === "light" ? "" : "light";
+    var next = current === "dark" ? "" : "dark";
     if (next) {
       root.setAttribute("data-theme", next);
-      win.localStorage.setItem("rpd-theme", next);
+      win.localStorage.setItem(THEME_KEY, next);
     } else {
       root.removeAttribute("data-theme");
-      win.localStorage.removeItem("rpd-theme");
+      win.localStorage.removeItem(THEME_KEY);
     }
     return next;
   }

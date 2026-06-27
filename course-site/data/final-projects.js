@@ -16,17 +16,20 @@ window.RPDFinalProjects = {
       "media": [
         {
           "type": "image",
-          "src": "assets/final-projects/project-01/image-01.webp"
+          "src": "assets/final-projects/project-01/image-01.webp",
+          "role": "process"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-01/video-01.webp",
-          "videoSrc": "assets/final-projects/project-01/video-01.mp4"
+          "videoSrc": "assets/final-projects/project-01/video-01.mp4",
+          "role": "render"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-01/video-02.webp",
-          "videoSrc": "assets/final-projects/project-01/video-02.mp4"
+          "videoSrc": "assets/final-projects/project-01/video-02.mp4",
+          "role": "render"
         }
       ],
       "videos": [
@@ -45,7 +48,8 @@ window.RPDFinalProjects = {
           "url": "https://rpdfinalproject.netlify.app/",
           "kind": "웹페이지"
         }
-      ]
+      ],
+      "coverSrc": "assets/final-projects/project-01/video-01.webp"
     },
     {
       "id": "project-02",
@@ -55,12 +59,14 @@ window.RPDFinalProjects = {
         {
           "type": "video",
           "src": "assets/final-projects/project-02/video-01.webp",
-          "videoSrc": "assets/final-projects/project-02/video-01.mp4"
+          "videoSrc": "assets/final-projects/project-02/video-01.mp4",
+          "role": "render"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-02/video-02.webp",
-          "videoSrc": "assets/final-projects/project-02/video-02.mp4"
+          "videoSrc": "assets/final-projects/project-02/video-02.mp4",
+          "role": "render"
         }
       ],
       "videos": [
@@ -79,7 +85,8 @@ window.RPDFinalProjects = {
           "url": "https://www.behance.net/gallery/251170535/Tesla_x",
           "kind": "Behance"
         }
-      ]
+      ],
+      "coverSrc": "assets/final-projects/project-02/video-02.webp"
     },
     {
       "id": "project-03",
@@ -89,7 +96,8 @@ window.RPDFinalProjects = {
         {
           "type": "video",
           "src": "assets/final-projects/project-03/video-01.webp",
-          "videoSrc": "assets/final-projects/project-03/video-01.mp4"
+          "videoSrc": "assets/final-projects/project-03/video-01.mp4",
+          "role": "render"
         }
       ],
       "videos": [
@@ -104,7 +112,8 @@ window.RPDFinalProjects = {
           "url": "http://shingeonu.netlify.app/",
           "kind": "웹페이지"
         }
-      ]
+      ],
+      "coverSrc": "assets/final-projects/project-03/video-01.webp"
     },
     {
       "id": "project-04",
@@ -114,7 +123,8 @@ window.RPDFinalProjects = {
         {
           "type": "video",
           "src": "assets/final-projects/project-04/video-01.webp",
-          "videoSrc": "assets/final-projects/project-04/video-01.mp4"
+          "videoSrc": "assets/final-projects/project-04/video-01.mp4",
+          "role": "render"
         }
       ],
       "videos": [
@@ -129,7 +139,8 @@ window.RPDFinalProjects = {
           "url": "https://www.notion.so/A-02-NERA-37af8cd09f8f8080b64ec536b958ce38?source=copy_link",
           "kind": "작품 페이지"
         }
-      ]
+      ],
+      "coverSrc": "assets/final-projects/project-04/video-01.webp"
     },
     {
       "id": "project-05",
@@ -139,12 +150,14 @@ window.RPDFinalProjects = {
         {
           "type": "video",
           "src": "assets/final-projects/project-05/video-01.webp",
-          "videoSrc": "assets/final-projects/project-05/video-01.mp4"
+          "videoSrc": "assets/final-projects/project-05/video-01.mp4",
+          "role": "render"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-05/video-02.webp",
-          "videoSrc": "assets/final-projects/project-05/video-02.mp4"
+          "videoSrc": "assets/final-projects/project-05/video-02.mp4",
+          "role": "render"
         }
       ],
       "videos": [
@@ -157,7 +170,8 @@ window.RPDFinalProjects = {
           "poster": "assets/final-projects/project-05/video-02.webp"
         }
       ],
-      "links": []
+      "links": [],
+      "coverSrc": "assets/final-projects/project-05/video-01.webp"
     },
     {
       "id": "project-06",
@@ -167,12 +181,14 @@ window.RPDFinalProjects = {
         {
           "type": "video",
           "src": "assets/final-projects/project-06/video-01.webp",
-          "videoSrc": "assets/final-projects/project-06/video-01.mp4"
+          "videoSrc": "assets/final-projects/project-06/video-01.mp4",
+          "role": "render"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-06/video-02.webp",
-          "videoSrc": "assets/final-projects/project-06/video-02.mp4"
+          "videoSrc": "assets/final-projects/project-06/video-02.mp4",
+          "role": "render"
         }
       ],
       "videos": [
@@ -191,7 +207,8 @@ window.RPDFinalProjects = {
           "url": "https://canva.link/t98vdzg894eidmv",
           "kind": "발표 자료"
         }
-      ]
+      ],
+      "coverSrc": "assets/final-projects/project-06/video-01.webp"
     },
     {
       "id": "project-07",
@@ -200,50 +217,61 @@ window.RPDFinalProjects = {
       "media": [
         {
           "type": "image",
-          "src": "assets/final-projects/project-07/image-01.webp"
+          "src": "assets/final-projects/project-07/image-01.webp",
+          "role": "process"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-07/image-02.webp"
+          "src": "assets/final-projects/project-07/image-02.webp",
+          "role": "render"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-07/image-03.webp"
+          "src": "assets/final-projects/project-07/image-03.webp",
+          "role": "process"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-07/image-04.webp"
+          "src": "assets/final-projects/project-07/image-04.webp",
+          "role": "render"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-07/image-05.webp"
+          "src": "assets/final-projects/project-07/image-05.webp",
+          "role": "render"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-07/image-06.webp"
+          "src": "assets/final-projects/project-07/image-06.webp",
+          "role": "render"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-07/image-07.webp"
+          "src": "assets/final-projects/project-07/image-07.webp",
+          "role": "render"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-07/image-08.webp"
+          "src": "assets/final-projects/project-07/image-08.webp",
+          "role": "process"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-07/video-01.webp",
-          "videoSrc": "assets/final-projects/project-07/video-01.mp4"
+          "videoSrc": "assets/final-projects/project-07/video-01.mp4",
+          "role": "render"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-07/video-02.webp",
-          "videoSrc": "assets/final-projects/project-07/video-02.mp4"
+          "videoSrc": "assets/final-projects/project-07/video-02.mp4",
+          "role": "render"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-07/video-03.webp",
-          "videoSrc": "assets/final-projects/project-07/video-03.mp4"
+          "videoSrc": "assets/final-projects/project-07/video-03.mp4",
+          "role": "render"
         }
       ],
       "videos": [
@@ -260,7 +288,8 @@ window.RPDFinalProjects = {
           "poster": "assets/final-projects/project-07/video-03.webp"
         }
       ],
-      "links": []
+      "links": [],
+      "coverSrc": "assets/final-projects/project-07/image-05.webp"
     },
     {
       "id": "project-08",
@@ -269,29 +298,35 @@ window.RPDFinalProjects = {
       "media": [
         {
           "type": "image",
-          "src": "assets/final-projects/project-08/image-01.webp"
+          "src": "assets/final-projects/project-08/image-01.webp",
+          "role": "render"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-08/image-02.webp"
+          "src": "assets/final-projects/project-08/image-02.webp",
+          "role": "render"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-08/image-03.webp"
+          "src": "assets/final-projects/project-08/image-03.webp",
+          "role": "render"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-08/image-04.webp"
+          "src": "assets/final-projects/project-08/image-04.webp",
+          "role": "render"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-08/video-01.webp",
-          "videoSrc": "assets/final-projects/project-08/video-01.mp4"
+          "videoSrc": "assets/final-projects/project-08/video-01.mp4",
+          "role": "render"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-08/video-02.webp",
-          "videoSrc": "assets/final-projects/project-08/video-02.mp4"
+          "videoSrc": "assets/final-projects/project-08/video-02.mp4",
+          "role": "render"
         }
       ],
       "videos": [
@@ -304,7 +339,8 @@ window.RPDFinalProjects = {
           "poster": "assets/final-projects/project-08/video-02.webp"
         }
       ],
-      "links": []
+      "links": [],
+      "coverSrc": "assets/final-projects/project-08/video-01.webp"
     },
     {
       "id": "project-09",
@@ -314,7 +350,8 @@ window.RPDFinalProjects = {
         {
           "type": "video",
           "src": "assets/final-projects/project-09/video-01.webp",
-          "videoSrc": "assets/final-projects/project-09/video-01.mp4"
+          "videoSrc": "assets/final-projects/project-09/video-01.mp4",
+          "role": "render"
         }
       ],
       "videos": [
@@ -329,7 +366,8 @@ window.RPDFinalProjects = {
           "url": "https://canva.link/c0vz3ymf35cr9pv",
           "kind": "발표 자료"
         }
-      ]
+      ],
+      "coverSrc": "assets/final-projects/project-09/video-01.webp"
     },
     {
       "id": "project-10",
@@ -338,46 +376,56 @@ window.RPDFinalProjects = {
       "media": [
         {
           "type": "image",
-          "src": "assets/final-projects/project-10/image-01.webp"
+          "src": "assets/final-projects/project-10/image-01.webp",
+          "role": "process"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-10/image-02.webp"
+          "src": "assets/final-projects/project-10/image-02.webp",
+          "role": "process"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-10/image-03.webp"
+          "src": "assets/final-projects/project-10/image-03.webp",
+          "role": "process"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-10/image-04.webp"
+          "src": "assets/final-projects/project-10/image-04.webp",
+          "role": "process"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-10/image-05.webp"
+          "src": "assets/final-projects/project-10/image-05.webp",
+          "role": "process"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-10/image-06.webp"
+          "src": "assets/final-projects/project-10/image-06.webp",
+          "role": "process"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-10/image-07.webp"
+          "src": "assets/final-projects/project-10/image-07.webp",
+          "role": "process"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-10/video-01.webp",
-          "videoSrc": "assets/final-projects/project-10/video-01.mp4"
+          "videoSrc": "assets/final-projects/project-10/video-01.mp4",
+          "role": "render"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-10/video-02.webp",
-          "videoSrc": "assets/final-projects/project-10/video-02.mp4"
+          "videoSrc": "assets/final-projects/project-10/video-02.mp4",
+          "role": "render"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-10/video-03.webp",
-          "videoSrc": "assets/final-projects/project-10/video-03.mp4"
+          "videoSrc": "assets/final-projects/project-10/video-03.mp4",
+          "role": "render"
         }
       ],
       "videos": [
@@ -400,7 +448,8 @@ window.RPDFinalProjects = {
           "url": "https://pandi-robot.netlify.app/",
           "kind": "웹페이지"
         }
-      ]
+      ],
+      "coverSrc": "assets/final-projects/project-10/video-01.webp"
     },
     {
       "id": "project-11",
@@ -410,12 +459,14 @@ window.RPDFinalProjects = {
         {
           "type": "video",
           "src": "assets/final-projects/project-11/video-01.webp",
-          "videoSrc": "assets/final-projects/project-11/video-01.mp4"
+          "videoSrc": "assets/final-projects/project-11/video-01.mp4",
+          "role": "render"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-11/video-02.webp",
-          "videoSrc": "assets/final-projects/project-11/video-02.mp4"
+          "videoSrc": "assets/final-projects/project-11/video-02.mp4",
+          "role": "render"
         }
       ],
       "videos": [
@@ -428,7 +479,8 @@ window.RPDFinalProjects = {
           "poster": "assets/final-projects/project-11/video-02.webp"
         }
       ],
-      "links": []
+      "links": [],
+      "coverSrc": "assets/final-projects/project-11/video-02.webp"
     },
     {
       "id": "project-12",
@@ -438,7 +490,8 @@ window.RPDFinalProjects = {
         {
           "type": "video",
           "src": "assets/final-projects/project-12/video-01.webp",
-          "videoSrc": "assets/final-projects/project-12/video-01.mp4"
+          "videoSrc": "assets/final-projects/project-12/video-01.mp4",
+          "role": "render"
         }
       ],
       "videos": [
@@ -453,7 +506,8 @@ window.RPDFinalProjects = {
           "url": "https://canva.link/68dl9nqx2qt6twy",
           "kind": "발표 자료"
         }
-      ]
+      ],
+      "coverSrc": "assets/final-projects/project-12/video-01.webp"
     },
     {
       "id": "project-13",
@@ -462,60 +516,73 @@ window.RPDFinalProjects = {
       "media": [
         {
           "type": "image",
-          "src": "assets/final-projects/project-13/image-01.webp"
+          "src": "assets/final-projects/project-13/image-01.webp",
+          "role": "render"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-13/image-02.webp"
+          "src": "assets/final-projects/project-13/image-02.webp",
+          "role": "render"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-13/image-03.webp"
+          "src": "assets/final-projects/project-13/image-03.webp",
+          "role": "process"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-13/image-04.webp"
+          "src": "assets/final-projects/project-13/image-04.webp",
+          "role": "process"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-13/image-05.webp"
+          "src": "assets/final-projects/project-13/image-05.webp",
+          "role": "process"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-13/image-06.webp"
+          "src": "assets/final-projects/project-13/image-06.webp",
+          "role": "render"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-13/image-07.webp"
+          "src": "assets/final-projects/project-13/image-07.webp",
+          "role": "process"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-13/image-08.webp"
+          "src": "assets/final-projects/project-13/image-08.webp",
+          "role": "render"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-13/video-01.webp",
-          "videoSrc": "assets/final-projects/project-13/video-01.mp4"
+          "videoSrc": "assets/final-projects/project-13/video-01.mp4",
+          "role": "render"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-13/video-02.webp",
-          "videoSrc": "assets/final-projects/project-13/video-02.mp4"
+          "videoSrc": "assets/final-projects/project-13/video-02.mp4",
+          "role": "render"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-13/video-03.webp",
-          "videoSrc": "assets/final-projects/project-13/video-03.mp4"
+          "videoSrc": "assets/final-projects/project-13/video-03.mp4",
+          "role": "render"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-13/video-04.webp",
-          "videoSrc": "assets/final-projects/project-13/video-04.mp4"
+          "videoSrc": "assets/final-projects/project-13/video-04.mp4",
+          "role": "render"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-13/video-05.webp",
-          "videoSrc": "assets/final-projects/project-13/video-05.mp4"
+          "videoSrc": "assets/final-projects/project-13/video-05.mp4",
+          "role": "render"
         }
       ],
       "videos": [
@@ -546,7 +613,8 @@ window.RPDFinalProjects = {
           "url": "https://c7fc4448-minimalist-senior-portfolio.netlify.app/",
           "kind": "웹페이지"
         }
-      ]
+      ],
+      "coverSrc": "assets/final-projects/project-13/image-01.webp"
     },
     {
       "id": "project-14",
@@ -555,39 +623,47 @@ window.RPDFinalProjects = {
       "media": [
         {
           "type": "image",
-          "src": "assets/final-projects/project-14/image-01.webp"
+          "src": "assets/final-projects/project-14/image-01.webp",
+          "role": "process"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-14/image-02.webp"
+          "src": "assets/final-projects/project-14/image-02.webp",
+          "role": "render"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-14/image-03.webp"
+          "src": "assets/final-projects/project-14/image-03.webp",
+          "role": "render"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-14/image-04.webp"
+          "src": "assets/final-projects/project-14/image-04.webp",
+          "role": "process"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-14/video-01.webp",
-          "videoSrc": "assets/final-projects/project-14/video-01.mp4"
+          "videoSrc": "assets/final-projects/project-14/video-01.mp4",
+          "role": "render"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-14/video-02.webp",
-          "videoSrc": "assets/final-projects/project-14/video-02.mp4"
+          "videoSrc": "assets/final-projects/project-14/video-02.mp4",
+          "role": "render"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-14/video-03.webp",
-          "videoSrc": "assets/final-projects/project-14/video-03.mp4"
+          "videoSrc": "assets/final-projects/project-14/video-03.mp4",
+          "role": "render"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-14/video-04.webp",
-          "videoSrc": "assets/final-projects/project-14/video-04.mp4"
+          "videoSrc": "assets/final-projects/project-14/video-04.mp4",
+          "role": "render"
         }
       ],
       "videos": [
@@ -619,7 +695,8 @@ window.RPDFinalProjects = {
           "url": "https://21st.dev/community/components/s/background",
           "kind": "외부 링크"
         }
-      ]
+      ],
+      "coverSrc": "assets/final-projects/project-14/video-03.webp"
     },
     {
       "id": "project-15",
@@ -629,12 +706,14 @@ window.RPDFinalProjects = {
         {
           "type": "video",
           "src": "assets/final-projects/project-15/video-01.webp",
-          "videoSrc": "assets/final-projects/project-15/video-01.mp4"
+          "videoSrc": "assets/final-projects/project-15/video-01.mp4",
+          "role": "render"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-15/video-02.webp",
-          "videoSrc": "assets/final-projects/project-15/video-02.mp4"
+          "videoSrc": "assets/final-projects/project-15/video-02.mp4",
+          "role": "render"
         }
       ],
       "videos": [
@@ -658,7 +737,8 @@ window.RPDFinalProjects = {
           "url": "https://www.behance.net/gallery/250915905/MATI-42ARCHIVE",
           "kind": "Behance"
         }
-      ]
+      ],
+      "coverSrc": "assets/final-projects/project-15/video-01.webp"
     },
     {
       "id": "project-16",
@@ -667,45 +747,55 @@ window.RPDFinalProjects = {
       "media": [
         {
           "type": "image",
-          "src": "assets/final-projects/project-16/image-01.webp"
+          "src": "assets/final-projects/project-16/image-01.webp",
+          "role": "render"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-16/image-02.webp"
+          "src": "assets/final-projects/project-16/image-02.webp",
+          "role": "render"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-16/image-03.webp"
+          "src": "assets/final-projects/project-16/image-03.webp",
+          "role": "render"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-16/image-04.webp"
+          "src": "assets/final-projects/project-16/image-04.webp",
+          "role": "render"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-16/image-05.webp"
+          "src": "assets/final-projects/project-16/image-05.webp",
+          "role": "render"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-16/image-06.webp"
+          "src": "assets/final-projects/project-16/image-06.webp",
+          "role": "render"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-16/image-07.webp"
+          "src": "assets/final-projects/project-16/image-07.webp",
+          "role": "render"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-16/image-08.webp"
+          "src": "assets/final-projects/project-16/image-08.webp",
+          "role": "render"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-16/video-01.webp",
-          "videoSrc": "assets/final-projects/project-16/video-01.mp4"
+          "videoSrc": "assets/final-projects/project-16/video-01.mp4",
+          "role": "render"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-16/video-02.webp",
-          "videoSrc": "assets/final-projects/project-16/video-02.mp4"
+          "videoSrc": "assets/final-projects/project-16/video-02.mp4",
+          "role": "render"
         }
       ],
       "videos": [
@@ -724,7 +814,8 @@ window.RPDFinalProjects = {
           "url": "https://127ae18c-digital-toy-robot-showcase.netlify.app/",
           "kind": "웹페이지"
         }
-      ]
+      ],
+      "coverSrc": "assets/final-projects/project-16/image-07.webp"
     },
     {
       "id": "project-17",
@@ -733,33 +824,40 @@ window.RPDFinalProjects = {
       "media": [
         {
           "type": "image",
-          "src": "assets/final-projects/project-17/image-01.webp"
+          "src": "assets/final-projects/project-17/image-01.webp",
+          "role": "render"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-17/image-02.webp"
+          "src": "assets/final-projects/project-17/image-02.webp",
+          "role": "process"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-17/image-03.webp"
+          "src": "assets/final-projects/project-17/image-03.webp",
+          "role": "render"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-17/image-04.webp"
+          "src": "assets/final-projects/project-17/image-04.webp",
+          "role": "render"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-17/image-05.webp"
+          "src": "assets/final-projects/project-17/image-05.webp",
+          "role": "process"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-17/video-01.webp",
-          "videoSrc": "assets/final-projects/project-17/video-01.mp4"
+          "videoSrc": "assets/final-projects/project-17/video-01.mp4",
+          "role": "render"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-17/video-02.webp",
-          "videoSrc": "assets/final-projects/project-17/video-02.mp4"
+          "videoSrc": "assets/final-projects/project-17/video-02.mp4",
+          "role": "render"
         }
       ],
       "videos": [
@@ -778,7 +876,8 @@ window.RPDFinalProjects = {
           "url": "https://lighthearted-frangollo-77c27d.netlify.app/",
           "kind": "웹페이지"
         }
-      ]
+      ],
+      "coverSrc": "assets/final-projects/project-17/image-04.webp"
     },
     {
       "id": "project-18",
@@ -787,45 +886,55 @@ window.RPDFinalProjects = {
       "media": [
         {
           "type": "image",
-          "src": "assets/final-projects/project-18/image-01.webp"
+          "src": "assets/final-projects/project-18/image-01.webp",
+          "role": "render"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-18/image-02.webp"
+          "src": "assets/final-projects/project-18/image-02.webp",
+          "role": "process"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-18/image-03.webp"
+          "src": "assets/final-projects/project-18/image-03.webp",
+          "role": "render"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-18/image-04.webp"
+          "src": "assets/final-projects/project-18/image-04.webp",
+          "role": "render"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-18/image-05.webp"
+          "src": "assets/final-projects/project-18/image-05.webp",
+          "role": "render"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-18/image-06.webp"
+          "src": "assets/final-projects/project-18/image-06.webp",
+          "role": "render"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-18/image-07.webp"
+          "src": "assets/final-projects/project-18/image-07.webp",
+          "role": "render"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-18/image-08.webp"
+          "src": "assets/final-projects/project-18/image-08.webp",
+          "role": "render"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-18/video-01.webp",
-          "videoSrc": "assets/final-projects/project-18/video-01.mp4"
+          "videoSrc": "assets/final-projects/project-18/video-01.mp4",
+          "role": "render"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-18/video-02.webp",
-          "videoSrc": "assets/final-projects/project-18/video-02.mp4"
+          "videoSrc": "assets/final-projects/project-18/video-02.mp4",
+          "role": "render"
         }
       ],
       "videos": [
@@ -838,7 +947,8 @@ window.RPDFinalProjects = {
           "poster": "assets/final-projects/project-18/video-02.webp"
         }
       ],
-      "links": []
+      "links": [],
+      "coverSrc": "assets/final-projects/project-18/image-03.webp"
     },
     {
       "id": "project-19",
@@ -848,12 +958,14 @@ window.RPDFinalProjects = {
         {
           "type": "video",
           "src": "assets/final-projects/project-19/video-01.webp",
-          "videoSrc": "assets/final-projects/project-19/video-01.mp4"
+          "videoSrc": "assets/final-projects/project-19/video-01.mp4",
+          "role": "render"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-19/video-02.webp",
-          "videoSrc": "assets/final-projects/project-19/video-02.mp4"
+          "videoSrc": "assets/final-projects/project-19/video-02.mp4",
+          "role": "render"
         }
       ],
       "videos": [
@@ -866,7 +978,8 @@ window.RPDFinalProjects = {
           "poster": "assets/final-projects/project-19/video-02.webp"
         }
       ],
-      "links": []
+      "links": [],
+      "coverSrc": "assets/final-projects/project-19/video-01.webp"
     },
     {
       "id": "project-20",
@@ -875,37 +988,45 @@ window.RPDFinalProjects = {
       "media": [
         {
           "type": "image",
-          "src": "assets/final-projects/project-20/image-01.webp"
+          "src": "assets/final-projects/project-20/image-01.webp",
+          "role": "render"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-20/image-02.webp"
+          "src": "assets/final-projects/project-20/image-02.webp",
+          "role": "render"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-20/image-03.webp"
+          "src": "assets/final-projects/project-20/image-03.webp",
+          "role": "render"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-20/image-04.webp"
+          "src": "assets/final-projects/project-20/image-04.webp",
+          "role": "render"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-20/image-05.webp"
+          "src": "assets/final-projects/project-20/image-05.webp",
+          "role": "render"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-20/image-06.webp"
+          "src": "assets/final-projects/project-20/image-06.webp",
+          "role": "render"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-20/video-01.webp",
-          "videoSrc": "assets/final-projects/project-20/video-01.mp4"
+          "videoSrc": "assets/final-projects/project-20/video-01.mp4",
+          "role": "render"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-20/video-02.webp",
-          "videoSrc": "assets/final-projects/project-20/video-02.mp4"
+          "videoSrc": "assets/final-projects/project-20/video-02.mp4",
+          "role": "render"
         }
       ],
       "videos": [
@@ -918,7 +1039,8 @@ window.RPDFinalProjects = {
           "poster": "assets/final-projects/project-20/video-02.webp"
         }
       ],
-      "links": []
+      "links": [],
+      "coverSrc": "assets/final-projects/project-20/image-02.webp"
     },
     {
       "id": "project-21",
@@ -927,33 +1049,40 @@ window.RPDFinalProjects = {
       "media": [
         {
           "type": "image",
-          "src": "assets/final-projects/project-21/image-01.webp"
+          "src": "assets/final-projects/project-21/image-01.webp",
+          "role": "process"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-21/image-02.webp"
+          "src": "assets/final-projects/project-21/image-02.webp",
+          "role": "process"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-21/image-03.webp"
+          "src": "assets/final-projects/project-21/image-03.webp",
+          "role": "process"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-21/image-04.webp"
+          "src": "assets/final-projects/project-21/image-04.webp",
+          "role": "process"
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-21/image-05.webp"
+          "src": "assets/final-projects/project-21/image-05.webp",
+          "role": "process"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-21/video-01.webp",
-          "videoSrc": "assets/final-projects/project-21/video-01.mp4"
+          "videoSrc": "assets/final-projects/project-21/video-01.mp4",
+          "role": "render"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-21/video-02.webp",
-          "videoSrc": "assets/final-projects/project-21/video-02.mp4"
+          "videoSrc": "assets/final-projects/project-21/video-02.mp4",
+          "role": "render"
         }
       ],
       "videos": [
@@ -966,7 +1095,8 @@ window.RPDFinalProjects = {
           "poster": "assets/final-projects/project-21/video-02.webp"
         }
       ],
-      "links": []
+      "links": [],
+      "coverSrc": "assets/final-projects/project-21/video-02.webp"
     },
     {
       "id": "project-22",
@@ -976,7 +1106,8 @@ window.RPDFinalProjects = {
         {
           "type": "video",
           "src": "assets/final-projects/project-22/video-01.webp",
-          "videoSrc": "assets/final-projects/project-22/video-01.mp4"
+          "videoSrc": "assets/final-projects/project-22/video-01.mp4",
+          "role": "render"
         }
       ],
       "videos": [
@@ -996,7 +1127,8 @@ window.RPDFinalProjects = {
           "url": "https://godly.website/website/chirpley-731",
           "kind": "외부 링크"
         }
-      ]
+      ],
+      "coverSrc": "assets/final-projects/project-22/video-01.webp"
     },
     {
       "id": "project-23",
@@ -1006,17 +1138,20 @@ window.RPDFinalProjects = {
         {
           "type": "video",
           "src": "assets/final-projects/project-23/video-01.webp",
-          "videoSrc": "assets/final-projects/project-23/video-01.mp4"
+          "videoSrc": "assets/final-projects/project-23/video-01.mp4",
+          "role": "render"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-23/video-02.webp",
-          "videoSrc": "assets/final-projects/project-23/video-02.mp4"
+          "videoSrc": "assets/final-projects/project-23/video-02.mp4",
+          "role": "render"
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-23/video-03.webp",
-          "videoSrc": "assets/final-projects/project-23/video-03.mp4"
+          "videoSrc": "assets/final-projects/project-23/video-03.mp4",
+          "role": "render"
         }
       ],
       "videos": [
@@ -1039,7 +1174,8 @@ window.RPDFinalProjects = {
           "url": "https://docs.google.com/presentation/d/1usCytyhA4J2npyg-wIWuTAmlaapNyWu6_4LO9iqMhxo/edit?usp=sharing",
           "kind": "발표 자료"
         }
-      ]
+      ],
+      "coverSrc": "assets/final-projects/project-23/video-01.webp"
     }
   ]
 };

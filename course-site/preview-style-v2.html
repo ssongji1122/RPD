@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RPD Style Preview v2 — Editorial Gallery</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Nanum+Myeongjo:wght@400;700;800&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+  <link rel="stylesheet" href="assets/tokens.css" />
+  <link rel="stylesheet" href="assets/preview-style-v2.css" />
+</head>
+<body class="preview-body">
+  <div class="preview-banner" role="status">
+    <span>Style Preview</span>
+    <span>전체 사이트 적용 전 시안 · 커밋/배포 대상 아님</span>
+    <a href="final-projects.html">현행 작품 페이지</a>
+  </div>
+
+  <div class="preview-shell">
+    <header class="preview-chrome preview-chrome-top">
+      <a class="preview-brand" href="index.html">RPD 2026</a>
+      <button class="preview-back" type="button" id="previewBack">( BACK )</button>
+      <nav class="preview-nav" aria-label="주요 메뉴">
+        <a href="index.html">Archive</a>
+        <a href="week.html">Class</a>
+        <a href="final-projects.html" aria-current="page">Works</a>
+        <a href="studio.html">Studio</a>
+      </nav>
+    </header>
+
+    <main class="preview-main">
+      <section class="preview-gallery-stage preview-gallery-vitra" aria-label="작품 갤러리 Vitra 시안">
+        <button class="preview-gallery-hero" type="button" id="previewGalleryHero" aria-label="선택한 대표 작품 상세 보기">
+          <div class="preview-gallery-hero-frame">
+            <img id="previewGalleryHeroImage" alt="" />
+          </div>
+        </button>
+
+        <div class="preview-strip" id="previewCarousel" role="tablist" aria-label="대표 작품 선택"></div>
+
+        <div class="preview-gallery-meta">
+          <p class="preview-index" id="galleryIndex">( 01 )</p>
+          <p class="preview-caption" id="galleryCaption"></p>
+        </div>
+
+        <div class="preview-gallery-foot">
+          <button class="preview-open-detail" type="button" id="openDetail">Open detail</button>
+        </div>
+      </section>
+
+      <section class="preview-spec" aria-label="전체 사이트 적용 방향">
+        <div class="preview-spec-head">
+          <h1>Editorial Gallery Direction</h1>
+          <p>RUE STUDIO 레퍼런스의 캐러셀 리듬을 RPD warm-paper 토큰에 맞게 옮긴 시안입니다. UI는 뒤로 물러나고, 3D 결과물이 화면 중심이 됩니다.</p>
+        </div>
+
+        <div class="preview-spec-grid">
+          <article class="preview-spec-card">
+            <h2>01 · Gallery (Works)</h2>
+            <ul>
+              <li>큰 세로 프리뷰 + 동일 크기 썸네일 스트립 (Vitra형)</li>
+              <li>대표 8작품 · 썸네일 클릭 시 메인 교체</li>
+              <li>메타는 mono 3줄 이하 (코드 · 태그 · 유형)</li>
+              <li>hover/선택 시 하단 정보만 노출</li>
+            </ul>
+          </article>
+
+          <article class="preview-spec-card">
+            <h2>02 · Global Chrome</h2>
+            <ul>
+              <li>상·하단 대칭 미니멀 내비 (rail 대체 옵션)</li>
+              <li>JetBrains Mono 라벨 + Cormorant 제목</li>
+              <li>기존 carmine / mineral 토큰 유지</li>
+              <li>gradient·blur·glow 없음 (Flat Outline)</li>
+            </ul>
+          </article>
+
+          <article class="preview-spec-card">
+            <h2>03 · Archive / Class</h2>
+            <ul>
+              <li>주차 카드 → 작은 썸네일 + 한 줄 메타</li>
+              <li>현재 주차만 캐러셀 featured 슬롯</li>
+              <li>Show Me · Library는 동일 카드 규격</li>
+              <li>모바일: 1열 snap scroll</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="preview-samples" aria-label="다른 페이지 적용 미리보기">
+        <h2 class="preview-samples-title">Other pages at a glance</h2>
+        <div class="preview-samples-grid">
+          <article class="preview-sample">
+            <p class="preview-sample-kicker">Archive / Home</p>
+            <h3>Robot Product Design</h3>
+            <p class="preview-sample-copy">15주 커리큘럼을 종이 아카이브처럼 정리합니다. 현재 주차는 featured 슬롯으로 강조합니다.</p>
+            <div class="preview-week-row">
+              <span class="preview-week-chip is-active">W15 Final</span>
+              <span class="preview-week-chip">W14 Rigging</span>
+              <span class="preview-week-chip">W13 Animation</span>
+            </div>
+          </article>
+
+          <article class="preview-sample">
+            <p class="preview-sample-kicker">Class / Week</p>
+            <h3>Week 11 · Lighting</h3>
+            <p class="preview-sample-copy">본문은 Notion 콘텐츠 우선. 사이드 UI는 mono 라벨과 flat outline만 사용합니다.</p>
+            <div class="preview-outline-card">
+              <span>실습</span>
+              <b>HDRI · Three-point light</b>
+            </div>
+          </article>
+
+          <article class="preview-sample">
+            <p class="preview-sample-kicker">Studio / My</p>
+            <h3>진행 기록</h3>
+            <p class="preview-sample-copy">mineral green으로 완료 상태, carmine으로 액션. 카드 padding과 border 규격은 Works와 동일합니다.</p>
+            <div class="preview-outline-card is-done">
+              <span>완료</span>
+              <b>Week 8 중간 발표</b>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="preview-chrome preview-chrome-bottom">
+      <span class="preview-brand">RPD 2026</span>
+      <span class="preview-back-static">( BACK )</span>
+      <nav class="preview-nav" aria-label="하단 메뉴">
+        <a href="index.html">Archive</a>
+        <a href="week.html">Class</a>
+        <a href="final-projects.html">Works</a>
+        <a href="studio.html">Studio</a>
+      </nav>
+    </footer>
+  </div>
+
+  <script src="data/final-projects.js"></script>
+  <script src="assets/preview-style-v2.js"></script>
+</body>
+</html>

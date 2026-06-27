@@ -7,9 +7,7 @@
   position: relative;
   border-radius: var(--radius-2xl);
   border: 1px solid var(--line);
-  background:
-    linear-gradient(180deg, var(--surface-tint), transparent 72%),
-    var(--surface);
+  background: var(--surface);
   box-shadow: var(--modal-panel-shadow);
   overflow: hidden;
   isolation: isolate;
@@ -25,18 +23,18 @@
 }
 
 .rpd-panel--soft {
-  border-radius: 20px;
+  border-radius: var(--radius);
   background: var(--modal-panel-soft-bg);
   box-shadow: var(--modal-card-shadow);
 }
 
 .rpd-surface-item {
-  border-radius: 20px;
-  border: 1px solid rgba(255,255,255,.06);
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
   background: var(--modal-panel-soft-bg);
   box-shadow: var(--modal-card-shadow);
 }
 
 .rpd-panel-divider {
-  border-top: 1px solid rgba(255,255,255,.06);
+  border-top: 1px solid var(--line);
 }

@@ -1,0 +1,143 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { modules, getModule } from '../../data/modules';
+import { syllabus } from '../../data/syllabus';
+
+export function getStaticPaths() {
+  return modules.map((m) => ({ params: { module: m.id } }));
+}
+
+const { module: moduleId } = Astro.params;
+const mod = getModule(moduleId);
+if (!mod) return Astro.redirect('/modules');
+
+const relatedWeeks = syllabus.filter((w) => w.module === mod.id);
+const moduleIndex = modules.findIndex((m) => m.id === mod.id);
+const prev = modules[moduleIndex - 1];
+const next = modules[moduleIndex + 1];
+---
+
+<Layout title={`${mod.label} — rpd`} description={mod.description}>
+  <article class="wrap section">
+    <header class="module-header">
+      <a href="/modules" class="back meta">← 모듈 목록</a>
+      <p class="eyebrow module-label">{mod.label}</p>
+      <h1>{mod.title}</h1>
+      <p class="lead">{mod.description}</p>
+      {mod.week && (
+        <p class="meta week-info">{mod.week}부터 진행</p>
+      )}
+    </header>
+
+    <section class="topics">
+      <h2>주요 내용</h2>
+      <ul class="topic-list">
+        {mod.topics.map((t) => <li>{t}</li>)}
+      </ul>
+    </section>
+
+    {relatedWeeks.length > 0 && (
+      <section class="related-weeks">
+        <h2>연결 주차</h2>
+        <ul class="week-list">
+          {relatedWeeks.map((w) => (
+            <li>
+              <span class="meta">{w.week}</span>
+              <span>{w.title}</span>
+              <span class="meta week-type">{w.type}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    <section class="lesson-body">
+      <h2>수업 자료</h2>
+      <p class="placeholder-text">
+        수업 자료는 해당 주차에 업로드됩니다.
+      </p>
+    </section>
+
+    <nav class="module-nav">
+      {prev ? (
+        <a href={`/modules/${prev.id}`} class="nav-link prev">
+          <span class="eyebrow">이전</span>
+          <span>{prev.label} — {prev.title}</span>
+        </a>
+      ) : <span />}
+      {next && (
+        <a href={`/modules/${next.id}`} class="nav-link next">
+          <span class="eyebrow">다음</span>
+          <span>{next.label} — {next.title}</span>
+        </a>
+      )}
+    </nav>
+  </article>
+</Layout>
+
+<style>
+  .back {
+    display: inline-block;
+    margin-bottom: var(--s-4);
+    color: var(--c-accent);
+    letter-spacing: var(--ls-mono);
+  }
+  .module-label { margin-bottom: var(--s-2); }
+  h1 { margin-bottom: var(--s-3); }
+  .lead {
+    font-size: var(--fs-md);
+    color: var(--c-ink-2);
+    max-width: var(--read-ko);
+  }
+  .week-info { margin-top: var(--s-3); }
+
+  .topics, .related-weeks, .lesson-body {
+    margin-top: var(--s-7);
+    padding-top: var(--s-6);
+    border-top: var(--border);
+  }
+  h2 {
+    font-family: var(--f-mono);
+    font-size: var(--fs-lg);
+    font-weight: var(--w-medium);
+    margin-bottom: var(--s-4);
+  }
+
+  .topic-list { display: flex; flex-direction: column; gap: var(--s-2); }
+  .topic-list li {
+    padding: var(--s-2) var(--s-3);
+    background: var(--c-bg-2);
+    border-radius: var(--r-md);
+    font-size: var(--fs-sm);
+  }
+
+  .week-list { display: flex; flex-direction: column; gap: 0; border-top: var(--border); }
+  .week-list li {
+    display: flex;
+    gap: var(--s-4);
+    align-items: center;
+    padding-block: var(--s-3);
+    border-bottom: var(--border);
+    font-size: var(--fs-sm);
+  }
+  .week-type { margin-left: auto; text-transform: capitalize; }
+
+  .placeholder-text { color: var(--c-ink-3); font-size: var(--fs-sm); }
+
+  .module-nav {
+    margin-top: var(--s-8);
+    padding-top: var(--s-6);
+    border-top: var(--border);
+    display: flex;
+    justify-content: space-between;
+    gap: var(--s-4);
+  }
+  .nav-link {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-1);
+    max-width: 40%;
+  }
+  .nav-link.next { text-align: right; margin-left: auto; }
+  .nav-link span:last-child { font-size: var(--fs-sm); color: var(--c-ink); }
+</style>

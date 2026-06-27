@@ -1,0 +1,105 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const resources = [
+  {
+    category: 'Blender',
+    items: [
+      { title: 'Blender 공식 문서', url: 'https://docs.blender.org', desc: 'Blender 4.x 레퍼런스 및 튜토리얼' },
+      { title: 'Blender Python API', url: 'https://docs.blender.org/api/current/', desc: 'bpy 모듈 API 레퍼런스' },
+    ],
+  },
+  {
+    category: 'Claude',
+    items: [
+      { title: 'Claude Code 공식 Docs', url: 'https://code.claude.com/docs/en/', desc: 'Claude Code 기능·명령어·Hooks 가이드' },
+      { title: 'Anthropic 공식 블로그', url: 'https://www.anthropic.com/news', desc: '모델 업데이트·신기능 공지' },
+    ],
+  },
+  {
+    category: 'AI 3D 생성',
+    items: [
+      { title: 'Meshy', url: 'https://www.meshy.ai', desc: 'AI 텍스트·이미지 → 3D 모델 생성' },
+      { title: 'Tripo', url: 'https://www.tripo3d.ai', desc: '빠른 3D 에셋 생성 서비스' },
+    ],
+  },
+  {
+    category: '수업 자료 (Notion)',
+    items: [
+      { title: 'RPD 학생 페이지', url: 'https://www.notion.so/31d54d654971814a9af5ecacef8dfb07', desc: '주차별 강의자료 원본 (Notion)' },
+    ],
+  },
+];
+---
+
+<Layout title="자료 — rpd" description="Blender+AI 실습 자료 및 레퍼런스 링크">
+  <section class="wrap section">
+    <h1>자료</h1>
+    <p class="lead">수업에서 사용하는 도구·레퍼런스·강의자료 링크를 모았습니다.</p>
+
+    {resources.map((cat) => (
+      <div class="category">
+        <h2>{cat.category}</h2>
+        <ul class="resource-list">
+          {cat.items.map((item) => (
+            <li>
+              <a href={item.url} target="_blank" rel="noopener noreferrer" class="resource-link">
+                <span class="resource-title">{item.title}</span>
+                <span class="resource-desc meta">{item.desc}</span>
+                <span class="resource-url meta">{new URL(item.url).hostname}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </section>
+</Layout>
+
+<style>
+  h1 { margin-bottom: var(--s-2); }
+  .lead { color: var(--c-ink-2); margin-bottom: var(--s-7); }
+
+  .category { margin-bottom: var(--s-7); }
+  h2 {
+    font-family: var(--f-mono);
+    font-size: var(--fs-sm);
+    font-weight: var(--w-medium);
+    letter-spacing: var(--ls-mono);
+    color: var(--c-ink-3);
+    text-transform: uppercase;
+    margin-bottom: var(--s-3);
+  }
+
+  .resource-list { border-top: var(--border); }
+  .resource-link {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    gap: var(--s-1) var(--s-4);
+    padding-block: var(--s-3);
+    border-bottom: var(--border);
+    transition: padding-left var(--t) var(--ease);
+  }
+  .resource-link:hover { padding-left: var(--s-2); opacity: 1; }
+  .resource-title {
+    font-size: var(--fs-base);
+    color: var(--c-ink);
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .resource-desc {
+    grid-column: 1;
+    grid-row: 2;
+    color: var(--c-ink-3);
+  }
+  .resource-url {
+    grid-column: 2;
+    grid-row: 1;
+    color: var(--c-accent);
+    align-self: start;
+  }
+  @media (max-width: 560px) {
+    .resource-url { display: none; }
+  }
+</style>

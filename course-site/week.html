@@ -8,7 +8,9 @@
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Nanum+Myeongjo:wght@400;700;800&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
   <link rel="stylesheet" href="assets/tokens.css" />
   <link rel="stylesheet" href="assets/components.css" />
   <script>/* FOUC prevention */ (function(){var t=localStorage.getItem('rpd-theme');if(t)document.documentElement.setAttribute('data-theme',t);var l=localStorage.getItem('rpd-lang');if(l){document.documentElement.lang=l;document.documentElement.setAttribute('data-lang',l);}})()</script>
@@ -140,7 +142,7 @@
     <!-- Student Login (full-page, shown when ?sid= is missing) -->
     <div class="student-login-overlay is-hidden" id="studentLoginOverlay">
       <div class="student-login-card">
-        <h2 id="studentLoginTitle"><span aria-hidden="true">👋</span> 바로 시작하세요</h2>
+        <h2 id="studentLoginTitle">바로 시작하세요</h2>
         <p class="login-subtitle" id="studentLoginSubtitle">퀴즈 기록은 이 브라우저에만 저장됩니다</p>
         <input class="student-login-input" id="studentLoginInput"
                type="text" placeholder="이름 없이 사용 가능" maxlength="32" inputmode="text"
@@ -152,6 +154,7 @@
     <div class="rail-overlay" id="railOverlay" onclick="toggleMobileRail()"></div>
   </div>
 
+  <script src="assets/config.js"></script>
   <script src="assets/tab-system.js"></script>
   <script src="assets/user-profile.js"></script>
   <script src="data/i18n-content.js?v=20260318e"></script>
@@ -752,7 +755,7 @@
       var taskSummaryLabel = isKo ? "체크리스트" : "Checklist";
       document.title = `Week ${w.week} — ${w.title} | Blender Archive`;
       document.getElementById("brandBadge").textContent = String(w.week).padStart(2, "0");
-      document.getElementById("brandTitle").textContent = `Week ${String(w.week).padStart(2, "0")}`;
+      document.getElementById("brandTitle").textContent = w.title;
 
       var prev = CURRICULUM.find(function(item) { return item.week === w.week - 1; });
       var next = CURRICULUM.find(function(item) { return item.week === w.week + 1; });
@@ -956,10 +959,10 @@
         <section class="hero" id="hero-section">
           <div class="hero-card rpd-panel rpd-panel--soft">
             <div class="hero-header">
-              <span class="hero-week-well rpd-icon-well">${String(w.week).padStart(2, "0")}</span>
+              <span class="hero-week-well rpd-icon-well" aria-hidden="true">${String(w.week).padStart(2, "0")}</span>
               <div class="hero-copy">
-                <span class="hero-kicker">${heroKicker}</span>
-                <h1>Week ${String(w.week).padStart(2, "0")} · ${w.title}</h1>
+                ${heroKicker ? `<span class="hero-kicker">${heroKicker}</span>` : ""}
+                <h1>${w.title}</h1>
                 ${heroSubtitle ? `<p>${heroSubtitle}</p>` : ""}
               </div>
             </div>
