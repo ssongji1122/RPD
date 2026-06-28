@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — Remesh Modifier 이해</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #00bfa5;
+  --key-strong:    #009e8a;
+  --key-soft:      #6ee8d8;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --danger-soft:   #fca5a5;
+  --warn-soft:     #fbbf24;
+  --warn-medium:   #fcd34d;
+  --accent-soft:   #FFB347;
+  --secondary-soft:#a5b4fc;
+  --secondary-mid: #c4b5fd;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --muted-mid:     #94a3b8;
+  --muted-soft:    #cbd5e1;
+  --muted-dim:     #64748b;
+  --info-soft:     #67e8f9;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Tab Navigation ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+
+/* ── Tab Panels ── */
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+
+/* ── Concept Cards ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card h3 {
+  margin: 0 0 8px; font-size: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.concept-card p {
+  margin: 0; color: var(--muted-strong);
+  font-size: .88rem; line-height: 1.7;
+}
+.concept-card ul {
+  margin: 8px 0 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
+}
+
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: .72rem; font-weight: 600;
+}
+.badge-blue  { background: rgba(0,191,165,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: var(--warn-soft); }
+.badge-red   { background: rgba(239,68,68,.15);   color: var(--danger-soft); }
+
+/* ── Keyboard Shortcut ── */
+.kbd {
+  display: inline-block;
+  padding: 3px 8px; border-radius: 6px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  color: var(--key-soft);
+  font-size: .82rem; font-weight: 600;
+  font-family: var(--font);
+}
+
+/* ── Canvas / Demo ── */
+.demo-wrap {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+  margin: 14px 0;
+}
+.demo-wrap canvas {
+  display: block; width: 100%;
+}
+.demo-controls {
+  display: flex; gap: 8px; padding: 12px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+  align-items: center;
+}
+.demo-hint {
+  font-size: .78rem; color: var(--muted);
+  text-align: center; padding: 6px 0 0;
+}
+.demo-btn {
+  padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .82rem;
+  cursor: pointer;
+  transition: background .14s, color .14s;
+}
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active {
+  background: rgba(0,191,165,.14);
+  color: var(--key-soft);
+  border-color: rgba(0,191,165,.3);
+}
+.demo-slider-wrap {
+  display: flex; align-items: center; gap: 8px;
+  margin-left: auto;
+}
+.demo-slider-wrap label {
+  font-size: .78rem; color: var(--muted);
+  white-space: nowrap;
+}
+.demo-slider-wrap input[type="range"] {
+  width: 100px;
+  accent-color: var(--key);
+}
+.demo-slider-wrap .slider-val {
+  font-size: .78rem; color: var(--key-soft);
+  min-width: 28px; text-align: center;
+}
+
+/* ── Usage Grid ── */
+.usage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.usage-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 16px;
+}
+.usage-card h4 {
+  margin: 0 0 8px; font-size: .92rem;
+  color: var(--key-soft);
+}
+.usage-card ul {
+  margin: 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem;
+  line-height: 1.8;
+}
+
+/* ── Tip Box ── */
+.tip-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(239,68,68,.2);
+  background: rgba(239,68,68,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+}
+.tip-box strong { color: var(--danger-soft); }
+
+/* ── Combo Section ── */
+.combo-section {
+  margin-top: 18px;
+}
+.combo-section h4 {
+  margin: 0 0 10px;
+  font-size: .92rem;
+  color: var(--text);
+}
+.combo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.combo-card {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 12px 14px;
+}
+.combo-card .combo-name {
+  font-size: .86rem;
+  font-weight: 600;
+  color: var(--key-soft);
+  margin-bottom: 4px;
+}
+.combo-card .combo-desc {
+  font-size: .8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ── Shortcut Reference ── */
+.shortcut-list {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.shortcut-list h4 {
+  margin: 0 0 10px;
+  font-size: .9rem;
+  color: var(--text);
+}
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: .84rem;
+  color: var(--muted-strong);
+}
+.shortcut-row + .shortcut-row {
+  border-top: 1px solid var(--line);
+}
+.shortcut-keys {
+  flex-shrink: 0;
+}
+.analogy {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(245,158,11,.06);
+  border: 1px solid rgba(245,158,11,.15);
+  font-size: .82rem;
+  color: var(--warn-soft);
+  font-style: italic;
+}
+
+/* ── Quiz ── */
+.quiz-progress {
+  font-size: .78rem; color: var(--muted);
+  margin-bottom: 12px;
+}
+.quiz-question {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.quiz-question h4 {
+  margin: 0 0 12px; font-size: .94rem;
+}
+.quiz-option {
+  display: block; width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.025);
+  color: var(--text);
+  font: inherit; font-size: .86rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background .14s, border-color .14s;
+}
+.quiz-option:hover {
+  background: rgba(255,255,255,.06);
+  border-color: var(--line-strong);
+}
+.quiz-option.correct {
+  background: rgba(16,185,129,.12);
+  border-color: rgba(16,185,129,.4);
+  color: var(--success-soft);
+}
+.quiz-option.wrong {
+  background: rgba(239,68,68,.1);
+  border-color: rgba(239,68,68,.3);
+  color: var(--danger-soft);
+}
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback {
+  margin-top: 8px; padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: .84rem;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: var(--danger-soft); }
+
+.quiz-score {
+  text-align: center; padding: 20px;
+  font-size: 1.1rem; font-weight: 600;
+}
+.quiz-retry {
+  display: block; margin: 12px auto;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--key);
+  background: rgba(0,191,165,.12);
+  color: var(--key-soft);
+  font: inherit; font-size: .88rem;
+  cursor: pointer;
+  transition: background .14s;
+}
+.quiz-retry:hover { background: rgba(0,191,165,.22); }
+
+/* ── Official Doc Reference ── */
+.doc-ref {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(0,191,165,.15);
+  background: rgba(0,191,165,.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-ref a {
+  color: var(--key-soft);
+  font-size: .84rem;
+  text-decoration: none;
+  line-height: 1.5;
+}
+.doc-ref a:hover { text-decoration: underline; }
+
+/* ── Scenario Nav ── */
+.scenario-nav { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+.scenario-btn { padding:6px 14px; border-radius:20px; border:1px solid rgba(255,255,255,.15); background:transparent; color:var(--muted-soft); cursor:pointer; font-size:13px; transition:all .2s; font-family:inherit; }
+.scenario-btn.active { background:rgba(99,102,241,.25); border-color:rgba(99,102,241,.5); color:var(--secondary-soft); }
+.before-after { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:12px 0; }
+.ba-panel { border-radius:12px; overflow:hidden; background:var(--surface); }
+.ba-panel canvas { width:100%; display:block; }
+.ba-label { text-align:center; font-size:11px; color:var(--muted-mid); padding:4px; background:rgba(0,0,0,.2); }
+.cause-effect { display:flex; flex-direction:column; gap:8px; margin:12px 0; }
+.ce-row { display:flex; align-items:center; gap:8px; }
+.ce-cause { background:rgba(99,102,241,.12); border:1px solid rgba(99,102,241,.25); border-radius:8px; padding:6px 12px; font-size:13px; flex:1; color:var(--muted-strong); }
+.ce-arrow { color:var(--muted-dim); font-size:16px; }
+.ce-result { border-radius:8px; padding:6px 12px; font-size:13px; flex:1.5; }
+.result-a { background:rgba(16,185,129,.1); border:1px solid rgba(16,185,129,.25); color:var(--success-soft); }
+.result-b { background:rgba(245,158,11,.1); border:1px solid rgba(245,158,11,.25); color:var(--warn-medium); }
+.result-c { background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.25); color:var(--danger-soft); }
+.scene-desc { font-size:.84rem; color:var(--muted-strong); margin-bottom:10px; padding:10px 14px; border-radius:var(--radius-sm); background:var(--surface); border:1px solid var(--line); line-height:1.7; }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+  .demo-slider-wrap { margin-left: 0; width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- Tab Bar -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각화</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+</nav>
+
+<!-- TAB 1: 개념 이해 -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3><span class="badge badge-blue">Core</span> Remesh란?</h3>
+      <p>메쉬의 토폴로지를 완전히 재구성하는 모디파이어입니다. 지저분한 메쉬를 균일한 사각형 또는 삼각형 그리드로 바꿔줍니다.</p>
+      <div class="analogy">구겨진 종이를 펴서 새 격자무늬 종이로 바꾸는 것과 같습니다</div>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-green">Modes</span> 4가지 모드</h3>
+      <ul>
+        <li><strong>Voxel</strong> — 가장 많이 사용. 균일한 복셀 크기로 재구성</li>
+        <li><strong>Smooth</strong> — 부드럽게 재구성, 형태 유지</li>
+        <li><strong>Sharp</strong> — 날카로운 모서리를 유지하며 재구성</li>
+        <li><strong>Blocks</strong> — 마인크래프트 스타일 복셀화</li>
+      </ul>
+    </div>
+    <div class="concept-card">
+      <h3><span class="badge badge-amber">Setting</span> Voxel Size</h3>
+      <p>Voxel 크기가 작을수록 원본 디테일을 더 잘 보존하지만, 면 수가 크게 증가합니다. 클수록 단순화됩니다.</p>
+      <ul>
+        <li><strong>작은 값</strong> — 디테일 보존, 면 수 증가</li>
+        <li><strong>큰 값</strong> — 단순화, 면 수 감소</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/remesh.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Remesh Modifier
+    </a>
+  </div>
+</section>
+
+<!-- TAB 2: 시각화 -->
+<section class="panel" id="panel-visual" role="tabpanel">
+  <div class="scenario-nav" id="scenarioNav">
+    <button class="scenario-btn active" data-scene="voxel">Voxel 모드</button>
+    <button class="scenario-btn" data-scene="smooth">Smooth 모드</button>
+    <button class="scenario-btn" data-scene="blocks">Blocks 모드</button>
+  </div>
+  <div class="scene-desc" id="scene-desc">균일한 복셀 크기로 메쉬를 재구성합니다. 가장 많이 사용되는 모드로, 스컬핑 전 준비에 최적입니다.</div>
+  <div class="before-after">
+    <div class="ba-panel">
+      <canvas id="canvas-before" width="280" height="160"></canvas>
+      <div class="ba-label">적용 전 (불균일한 메쉬)</div>
+    </div>
+    <div class="ba-panel">
+      <canvas id="canvas-after" width="280" height="160"></canvas>
+      <div class="ba-label">적용 후 (균일한 쿼드 메쉬)</div>
+    </div>
+  </div>
+  <div class="cause-effect" id="cause-effect"></div>
+</section>
+
+<!-- TAB 3: 언제 쓰나요? -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>Remesh가 필요할 때</h4>
+      <ul>
+        <li>Sculpt 후 리토폴로지</li>
+        <li>Boolean 연산 후 메쉬 정리</li>
+        <li>AI 생성 모델 토폴로지 정리</li>
+        <li>3D 스캔 데이터 정리</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>Remesh를 안 쓰는 경우</h4>
+      <ul>
+        <li>이미 깨끗한 토폴로지</li>
+        <li>UV가 필요한 모델 (UV 파괴됨)</li>
+        <li>정밀한 Edge Flow가 필요할 때</li>
+        <li>애니메이션용 토폴로지</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>주의:</strong> Remesh는 UV 맵을 파괴합니다! UV 작업 전에 사용하세요. Remesh 후에는 반드시 UV를 새로 펴야 합니다.
+  </div>
+
+  <div class="combo-section">
+    <h4>자주 쓰는 조합</h4>
+    <div class="combo-grid">
+      <div class="combo-card">
+        <div class="combo-name">Boolean → Remesh</div>
+        <div class="combo-desc">Boolean 연산 후 지저분해진 메쉬를 Remesh로 깨끗하게 정리합니다.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Sculpt → Remesh → Decimate</div>
+        <div class="combo-desc">Sculpt 결과를 균일하게 정리한 뒤 Decimate로 면 수를 줄여 최적화합니다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/remesh.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Remesh Modifier
+    </a>
+  </div>
+</section>
+
+<!-- TAB 4: 퀴즈 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+// ── Tab Switching ──────────────────────────────
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(t) {
+      t.classList.remove("is-active");
+      t.setAttribute("aria-selected", "false");
+    });
+    document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("is-active"); });
+    tab.classList.add("is-active");
+    tab.setAttribute("aria-selected", "true");
+    document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+  });
+});
+
+// ── Quiz Engine (Safe DOM methods) ────────────
+function initQuiz(questions) {
+  var container = document.getElementById("quizArea");
+  var score = 0, answered = 0;
+  var scoreDiv = null; // track score section for updates
+
+  // Progress indicator
+  var progress = document.createElement("div");
+  progress.className = "quiz-progress";
+  progress.textContent = "문제 0 / " + questions.length + " \u00b7 점수 0점";
+  container.appendChild(progress);
+
+  questions.forEach(function(q, qi) {
+    var div = document.createElement("div");
+    div.className = "quiz-question";
+
+    var heading = document.createElement("h4");
+    heading.textContent = "Q" + (qi + 1) + ". " + q.question;
+    div.appendChild(heading);
+
+    var fb = document.createElement("div");
+    fb.className = "quiz-feedback";
+
+    q.options.forEach(function(opt, oi) {
+      var btn = document.createElement("button");
+      btn.className = "quiz-option";
+      btn.textContent = opt;
+      btn.addEventListener("click", function() {
+        if (btn.disabled) return;
+        div.querySelectorAll(".quiz-option").forEach(function(b) { b.disabled = true; });
+        answered++;
+        if (oi === q.answer) {
+          btn.classList.add("correct");
+          fb.className = "quiz-feedback show correct-fb";
+          fb.textContent = "\u2705 " + q.explanation;
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
+          fb.className = "quiz-feedback show wrong-fb";
+          fb.textContent = "\u274c " + q.explanation;
+
+          // Add retry button for wrong answers
+          var retryBtn = document.createElement("button");
+          retryBtn.className = "quiz-retry";
+          retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
+          retryBtn.textContent = "다시 풀기";
+          retryBtn.addEventListener("click", function() {
+            // Reset this question
+            answered--;
+            div.querySelectorAll(".quiz-option").forEach(function(b) {
+              b.disabled = false;
+              b.classList.remove("wrong", "correct");
+            });
+            fb.className = "quiz-feedback";
+            fb.textContent = "";
+            retryBtn.remove();
+            // Remove score section if it was shown
+            if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+            progress.textContent = "문제 " + answered + " / " + questions.length + " \u00b7 점수 " + score + "점";
+          });
+          fb.appendChild(retryBtn);
+        }
+        progress.textContent = "문제 " + answered + " / " + questions.length + " \u00b7 점수 " + score + "점";
+        if (answered === questions.length) showScore();
+      });
+      div.appendChild(btn);
+    });
+
+    div.appendChild(fb);
+    container.appendChild(div);
+  });
+
+  function showScore() {
+    // Remove previous score section if exists (e.g. after retry)
+    if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+
+    scoreDiv = document.createElement("div");
+    scoreDiv.className = "quiz-score";
+
+    var emoji = document.createElement("div");
+    emoji.style.cssText = "font-size:36px;margin-bottom:8px";
+    emoji.textContent = score === questions.length ? "\ud83c\udf89" : score >= Math.ceil(questions.length / 2) ? "\ud83d\udc4d" : "\ud83d\udcda";
+    scoreDiv.appendChild(emoji);
+
+    var result = document.createElement("div");
+    result.style.cssText = "font-size:18px;font-weight:500;margin-bottom:6px";
+    result.textContent = score + " / " + questions.length + " 정답";
+    scoreDiv.appendChild(result);
+
+    var msg = document.createElement("div");
+    msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
+    msg.textContent = score === questions.length ? "완벽합니다!" : "조금 더 연습하면 완벽해질 거예요!";
+    scoreDiv.appendChild(msg);
+
+    // Save button — sends result to parent for Notion sync
+    var saveBtn = document.createElement("button");
+    saveBtn.className = "quiz-retry";
+    saveBtn.style.cssText = "background:rgba(0,191,165,.18);border-color:var(--key);margin-bottom:8px";
+    saveBtn.textContent = "기록 저장하기";
+    saveBtn.addEventListener("click", function() {
+      try {
+        var wid = new URLSearchParams(location.search).get("wid")
+               || location.pathname.split("/").pop().replace(".html", "");
+        window.parent.postMessage({
+          type: "showme-quiz-complete",
+          widgetId: wid,
+          score: score,
+          total: questions.length,
+          pass: score >= Math.ceil(questions.length * 0.75)
+        }, "*");
+      } catch(e) {}
+      saveBtn.textContent = "저장 완료!";
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = ".5";
+    });
+    scoreDiv.appendChild(saveBtn);
+
+    var retry = document.createElement("button");
+    retry.className = "quiz-retry";
+    retry.textContent = "처음부터 다시";
+    retry.addEventListener("click", function() { location.reload(); });
+    scoreDiv.appendChild(retry);
+
+    container.appendChild(scoreDiv);
+  }
+}
+
+// ── Remesh Scenario Visualization ────────────
+(function() {
+  function drawBg(ctx, w, h) {
+    ctx.fillStyle = "#1e293b";
+    ctx.fillRect(0, 0, w, h);
+  }
+
+  function drawMessyMesh(ctx, w, h) {
+    drawBg(ctx, w, h);
+    var cx = w / 2, cy = h / 2;
+    var seed = 42;
+    function sr() { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
+    var pts = [];
+    for (var i = 0; i < 20; i++) {
+      var angle = (i / 20) * Math.PI * 2;
+      var r = 55 + (sr() - 0.5) * 40;
+      pts.push({ x: cx + Math.cos(angle) * r, y: cy + Math.sin(angle) * r });
+    }
+    ctx.beginPath();
+    pts.forEach(function(p, i) { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+    ctx.closePath();
+    ctx.fillStyle = "rgba(239,68,68,.12)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(239,68,68,.6)";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    seed = 99;
+    ctx.strokeStyle = "rgba(239,68,68,.2)";
+    ctx.lineWidth = 0.5;
+    for (var a = 0; a < pts.length; a++) {
+      for (var b = a + 2; b < pts.length; b++) {
+        if (sr() > 0.6) {
+          ctx.beginPath(); ctx.moveTo(pts[a].x, pts[a].y); ctx.lineTo(pts[b].x, pts[b].y); ctx.stroke();
+        }
+      }
+    }
+    pts.forEach(function(p) {
+      ctx.beginPath(); ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(239,68,68,.7)"; ctx.fill();
+    });
+    ctx.fillStyle = "rgba(239,68,68,.8)"; ctx.font = "bold 11px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("\uC6D0\uBCF8 (\uBD88\uADE0\uC77C)", cx, 16);
+  }
+
+  function drawVoxelMesh(ctx, w, h) {
+    drawBg(ctx, w, h);
+    var cx = w / 2, cy = h / 2, r = 55, segs = 24;
+    var pts = [];
+    for (var i = 0; i <= segs; i++) {
+      var angle = (i / segs) * Math.PI * 2;
+      pts.push({ x: cx + Math.cos(angle) * r, y: cy + Math.sin(angle) * r });
+    }
+    ctx.beginPath();
+    pts.forEach(function(p, i) { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+    ctx.closePath();
+    ctx.fillStyle = "rgba(10,132,255,.12)"; ctx.fill();
+    ctx.strokeStyle = "rgba(10,132,255,.6)"; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.strokeStyle = "rgba(10,132,255,.2)"; ctx.lineWidth = 0.5;
+    for (var i = 0; i < segs; i += 3) {
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(pts[i].x, pts[i].y); ctx.stroke();
+    }
+    pts.forEach(function(p, i) {
+      if (i % 3 === 0) { ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI * 2); ctx.fillStyle = "rgba(10,132,255,.8)"; ctx.fill(); }
+    });
+    ctx.fillStyle = "rgba(10,132,255,.8)"; ctx.font = "bold 11px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("Voxel \uACB0\uACFC (\uADE0\uC77C)", cx, 16);
+  }
+
+  function drawSmoothMesh(ctx, w, h) {
+    drawBg(ctx, w, h);
+    var cx = w / 2, cy = h / 2;
+    ctx.beginPath(); ctx.arc(cx, cy, 58, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(16,185,129,.12)"; ctx.fill();
+    ctx.strokeStyle = "rgba(16,185,129,.6)"; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.strokeStyle = "rgba(16,185,129,.15)"; ctx.lineWidth = 0.5;
+    for (var i = 0; i < 12; i++) {
+      var a = (i / 12) * Math.PI * 2;
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(a) * 58, cy + Math.sin(a) * 58); ctx.stroke();
+    }
+    for (var rv = 20; rv <= 58; rv += 19) {
+      ctx.beginPath(); ctx.arc(cx, cy, rv, 0, Math.PI * 2); ctx.stroke();
+    }
+    ctx.fillStyle = "rgba(16,185,129,.8)"; ctx.font = "bold 11px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("Smooth \uACB0\uACFC (\uBD80\uB4DC\uB7EC\uC6C0)", cx, 16);
+  }
+
+  function drawBlocksMesh(ctx, w, h) {
+    drawBg(ctx, w, h);
+    var cx = w / 2, cy = h / 2, r = 55, gs = 14;
+    ctx.fillStyle = "rgba(245,158,11,.15)"; ctx.strokeStyle = "rgba(245,158,11,.5)"; ctx.lineWidth = 1;
+    for (var bx = cx - r; bx < cx + r; bx += gs) {
+      for (var by = cy - r; by < cy + r; by += gs) {
+        var dx = bx + gs / 2 - cx, dy = by + gs / 2 - cy;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        var ang = Math.atan2(dy, dx);
+        if (dist < r + Math.sin(ang * 3) * 12) {
+          ctx.fillRect(bx, by, gs - 1, gs - 1);
+          ctx.strokeRect(bx, by, gs - 1, gs - 1);
+        }
+      }
+    }
+    ctx.fillStyle = "rgba(245,158,11,.8)"; ctx.font = "bold 11px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("Blocks \uACB0\uACFC (\uBCF5\uC140\uD654)", cx, 16);
+  }
+
+  var scenarios = {
+    voxel: {
+      desc: "\uADE0\uC77C\uD55C \uBCF5\uC140 \uD06C\uAE30\uB85C \uBA54\uC2DC\uB97C \uC7AC\uAD6C\uC131\uD569\uB2C8\uB2E4. \uBD88\uADDC\uCE59\uD55C \uD3F4\uB9AC\uACE4\uC774 \uAE54\uB054\uD55C \uCFFC\uB4DC \uADF8\uB9AC\uB4DC\uB85C \uBC14\uB00C\uC5B4 \uC2A4\uCEF5\uD305\uC774\uB098 \uB9AC\uD1A0\uD3F4\uB85C\uC9C0 \uC804\uCC98\uB9AC\uC5D0 \uCD5C\uC801\uC785\uB2C8\uB2E4.",
+      ce: [
+        { cause: "\uBD88\uADE0\uC77C \uD3F4\uB9AC\uACE4 (\uC6D0\uBCF8)", result: "\uADE0\uC77C\uD55C \uCFFC\uB4DC \uBA54\uC2DC", resultClass: "result-a" },
+        { cause: "\uBCF5\uC140 \uD06C\uAE30 \uCD95\uC18C", result: "\uB514\uD14C\uC77C \uC99D\uAC00, \uBA74 \uC218 \uC99D\uAC00", resultClass: "result-b" },
+        { cause: "\uBCF5\uC120 \uD06C\uAE30 \uD655\uB300", result: "\uD615\uD0DC \uB2E8\uC21C\uD654, \uBA74 \uC218 \uAC10\uC18C", resultClass: "result-a" }
+      ],
+      before: drawMessyMesh,
+      after: drawVoxelMesh
+    },
+    smooth: {
+      desc: "\uD45C\uBA74\uC744 \uBD80\uB4DC\uB7FD\uAC8C \uC7AC\uAD6C\uC131\uD569\uB2C8\uB2E4. Sharp \uAC01\uB3C4\uB97C \uC81C\uAC70\uD558\uACE0 \uC720\uAE30\uCCB4(\uCE90\uB9AD\uD130\u00B7\uB3D9\uBB3C) \uBAA8\uB378\uB9C1\uC5D0 \uC5B4\uC6B8\uB9AC\uB294 \uB9E4\uB04C\uB7EC\uC6B4 \uAD6C\uBA74 \uBA54\uC2DC\uB97C \uB9CC\uB4ED\uB2C8\uB2E4.",
+      ce: [
+        { cause: "\uC6B8\uD280\uBD88\uD280\uD55C \uC6D0\uBCF8 \uD615\uD0DC", result: "\uBD80\uB4DC\uB7FD\uACE0 \uADE0\uC77C\uD55C \uD1A0\uD3F4\uB85C\uC9C0", resultClass: "result-a" },
+        { cause: "\uB0A0\uCE74\uB85C\uC6B4 \uC5A3\uC9C0 \uC874\uC7AC", result: "Sharp \uC81C\uAC70, \uB77C\uC6B4\uB4DC \uCC98\uB9AC", resultClass: "result-a" },
+        { cause: "\uAE30\uC874 UV \uB9F5", result: "UV \uD30C\uAD34 \uC8FC\uC758", resultClass: "result-c" }
+      ],
+      before: drawMessyMesh,
+      after: drawSmoothMesh
+    },
+    blocks: {
+      desc: "\uB9C8\uC778\uD06C\uB798\uD504\uD2B8 \uC2A4\uD0C0\uC77C \uBCF5\uC140 \uBE14\uB85D\uC73C\uB85C \uBCC0\uD658\uD569\uB2C8\uB2E4. \uD53D\uC140 \uC544\uD2B8\u00B7\uAC8C\uC784 \uC5D0\uC14B \uC2A4\uD0C0\uC77C \uD45C\uD604\uC774\uB098 \uB3C5\uD2B9\uD55C \uBE44\uC8FC\uC5BC \uD6A8\uACFC\uC5D0 \uD65C\uC6A9\uD569\uB2C8\uB2E4.",
+      ce: [
+        { cause: "\uC720\uAE30\uCCB4 \uACE1\uBA74 \uD615\uD0DC", result: "\uC9C1\uC721\uBA74\uCCB4 \uBE14\uB85D \uBC30\uC5F4", resultClass: "result-b" },
+        { cause: "\uBE14\uB85D \uD06C\uAE30 \uC870\uC808", result: "\uD574\uC0C1\uB3C4\u00B7\uC2A4\uD0C0\uC77C \uBCC0\uACBD", resultClass: "result-a" },
+        { cause: "\uC6D0\uBCF8 \uB514\uD14C\uC77C", result: "\uBCF5\uC140\uD654\uB85C \uB514\uD14C\uC77C \uC190\uC2E4", resultClass: "result-c" }
+      ],
+      before: drawMessyMesh,
+      after: drawBlocksMesh
+    }
+  };
+
+  function switchScenario(key) {
+    document.querySelectorAll('.scenario-btn').forEach(function(b) {
+      b.classList.toggle('active', b.dataset.scene === key);
+    });
+    var s = scenarios[key];
+    document.getElementById('scene-desc').textContent = s.desc;
+    buildCauseEffect(s.ce);
+    renderBAPanels(s);
+  }
+
+  function buildCauseEffect(ces) {
+    var el = document.getElementById('cause-effect');
+    while (el.firstChild) el.removeChild(el.firstChild);
+    ces.forEach(function(c) {
+      var row = document.createElement('div'); row.className = 'ce-row';
+      var cause = document.createElement('div'); cause.className = 'ce-cause'; cause.textContent = c.cause;
+      var arrow = document.createElement('div'); arrow.className = 'ce-arrow'; arrow.textContent = '\u2192';
+      var result = document.createElement('div'); result.className = 'ce-result ' + c.resultClass; result.textContent = c.result;
+      row.appendChild(cause); row.appendChild(arrow); row.appendChild(result);
+      el.appendChild(row);
+    });
+  }
+
+  function renderBAPanels(s) {
+    var bc = document.getElementById('canvas-before'), ac = document.getElementById('canvas-after');
+    var bx = bc.getContext('2d'), ax = ac.getContext('2d');
+    bc.width = bc.offsetWidth || 280; bc.height = 160;
+    ac.width = ac.offsetWidth || 280; ac.height = 160;
+    bx.clearRect(0, 0, bc.width, bc.height);
+    ax.clearRect(0, 0, ac.width, ac.height);
+    if (s.before) s.before(bx, bc.width, bc.height);
+    if (s.after) s.after(ax, ac.width, ac.height);
+  }
+
+  document.querySelectorAll('.scenario-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() { switchScenario(btn.dataset.scene); });
+  });
+
+  document.querySelectorAll('.tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      if (tab.dataset.tab === 'visual') { setTimeout(function() { switchScenario('voxel'); }, 50); }
+    });
+  });
+
+  switchScenario('voxel');
+})();
+
+// ── Quiz Data ─────────────────────────────────
+initQuiz([
+  {
+    question: "Remesh \uBAA8\uB514\uD30C\uC774\uC5B4\uC758 \uC8FC\uC694 \uC5ED\uD560\uC740?",
+    options: [
+      "\uBA54\uC26C\uB97C \uBD80\uB4DC\uB7FD\uAC8C \uB9CC\uB4E0\uB2E4",
+      "\uBA54\uC26C\uC758 \uD1A0\uD3F4\uB85C\uC9C0\uB97C \uC644\uC804\uD788 \uC7AC\uAD6C\uC131\uD55C\uB2E4",
+      "\uBA54\uC26C\uB97C \uBBF8\uB7EC\uD55C\uB2E4",
+      "\uBA54\uC26C\uC5D0 \uB450\uAED8\uB97C \uCD94\uAC00\uD55C\uB2E4"
+    ],
+    answer: 1,
+    explanation: "Remesh\uB294 \uBA54\uC26C\uC758 \uD1A0\uD3F4\uB85C\uC9C0\uB97C \uC644\uC804\uD788 \uC7AC\uAD6C\uC131\uD558\uC5EC \uADE0\uC77C\uD55C \uADF8\uB9AC\uB4DC\uB85C \uBC14\uAFF8\uB2C8\uB2E4."
+  },
+  {
+    question: "Voxel \uBAA8\uB4DC\uC5D0\uC11C \uBCF5\uC140 \uD06C\uAE30\uB97C \uC904\uC774\uBA74 \uC5B4\uB5BB\uAC8C \uB418\uB098\uC694?",
+    options: [
+      "\uBA54\uC26C\uAC00 \uC0AD\uC81C\uB41C\uB2E4",
+      "\uB514\uD14C\uC77C\uC774 \uC904\uC5B4\uB4E0\uB2E4",
+      "\uB514\uD14C\uC77C\uC774 \uC99D\uAC00\uD558\uACE0 \uBA74 \uC218\uAC00 \uC99D\uAC00\uD55C\uB2E4",
+      "\uBD80\uB4DC\uB7EC\uC6CC\uC9C4\uB2E4"
+    ],
+    answer: 2,
+    explanation: "Voxel \uD06C\uAE30\uAC00 \uC791\uC744\uC218\uB85D \uB354 \uC791\uC740 \uBCF5\uC140\uB85C \uBD84\uD560\uB418\uC5B4 \uB514\uD14C\uC77C\uC774 \uC99D\uAC00\uD558\uACE0 \uBA74 \uC218\uB3C4 \uD568\uAED8 \uC99D\uAC00\uD569\uB2C8\uB2E4."
+  },
+  {
+    question: "Remesh \uC0AC\uC6A9 \uC2DC \uAC00\uC7A5 \uD070 \uC8FC\uC758\uC810\uC740?",
+    options: [
+      "\uBA54\uC26C\uAC00 \uB108\uBB34 \uBD80\uB4DC\uB7EC\uC6CC\uC9C4\uB2E4",
+      "UV \uB9F5\uC774 \uD30C\uAD34\uB41C\uB2E4",
+      "Modifier\uB97C Apply\uD560 \uC218 \uC5C6\uB2E4",
+      "\uC560\uB2C8\uBA54\uC774\uC158\uC774 \uAE68\uC9C4\uB2E4"
+    ],
+    answer: 1,
+    explanation: "Remesh\uB294 \uD1A0\uD3F4\uB85C\uC9C0\uB97C \uC644\uC804\uD788 \uC7AC\uAD6C\uC131\uD558\uBBC0\uB85C \uAE30\uC874 UV \uB9F5\uC774 \uD30C\uAD34\uB429\uB2C8\uB2E4. UV \uC791\uC5C5 \uC804\uC5D0 \uC0AC\uC6A9\uD574\uC57C \uD569\uB2C8\uB2E4."
+  },
+  {
+    question: "Blocks \uBAA8\uB4DC\uC758 \uD6A8\uACFC\uB294?",
+    options: [
+      "\uBD80\uB4DC\uB7EC\uC6B4 \uACE1\uBA74\uC744 \uB9CC\uB4E0\uB2E4",
+      "\uB0A0\uCE74\uB85C\uC6B4 \uBAA8\uC11C\uB9AC\uB97C \uC720\uC9C0\uD55C\uB2E4",
+      "\uB9C8\uC778\uD06C\uB798\uD504\uD2B8 \uC2A4\uD0C0\uC77C \uBCF5\uC140\uD654",
+      "\uBA54\uC26C\uB97C \uB2E8\uC21C\uD654\uD55C\uB2E4"
+    ],
+    answer: 2,
+    explanation: "Blocks \uBAA8\uB4DC\uB294 \uBA54\uC26C\uB97C \uB9C8\uC778\uD06C\uB798\uD504\uD2B8\uCC98\uB7FC \uC9C1\uC721\uBA74\uCCB4(Voxel) \uD615\uD0DC\uB85C \uBCC0\uD658\uD569\uB2C8\uB2E4."
+  }
+]);
+</script>
+
+<script src="./_helpers.js?v=20260318ai"></script>
+<script>
+window.addEventListener("load", function() {
+  if (window.normalizeStandaloneShowMeLayout) {
+    window.normalizeStandaloneShowMeLayout(document);
+  }
+});
+</script>
+</body>
+</html>
