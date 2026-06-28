@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>기말 작품 — RPD</title>
-  <meta name="description" content="RPD 2026 기말 프로젝트 작품 갤러리" />
+  <title>Final Review Gallery — RPD</title>
+  <meta name="description" content="RPD 2026 기말 프로젝트 우수 작품을 익명 갤러리와 작품별 상세 보기로 정리한 기록 페이지" />
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,26 +14,65 @@
   <link rel="stylesheet" href="assets/tokens.css" />
   <link rel="stylesheet" href="assets/components.css" />
   <link rel="stylesheet" href="assets/layout.css" />
-  <link rel="stylesheet" href="assets/page-final-projects.css" />
+  <link rel="stylesheet" href="assets/page-final-projects.css?v=20260628g" />
   <script>/* FOUC prevention */ (function(){var t=localStorage.getItem('rpd-theme');if(t)document.documentElement.setAttribute('data-theme',t);var l=localStorage.getItem('rpd-lang');if(l){document.documentElement.lang=l;document.documentElement.setAttribute('data-lang',l);}})()</script>
 </head>
 <body data-tab="final">
   <a href="#main-content" class="skip-link">본문으로 건너뛰기</a>
   <div class="app" data-shell>
     <main class="main" id="main-content">
-      <div class="main-inner final-review">
-        <header class="final-hero">
+      <div class="main-inner final-review" data-view="list">
+        <header class="final-hero" aria-hidden="true">
           <div>
-            <h1>기말 작품</h1>
+            <p class="rpd-kicker">Week 15 Final Archive</p>
+            <h1>기말 작품 기록</h1>
+            <p class="final-hero-copy">RPD 2026 Spring 기말 프로젝트 아카이브</p>
           </div>
+          <dl class="final-stats" id="finalStats" aria-label="기말 작품 기록 통계"></dl>
         </header>
 
-        <section class="final-layout" aria-label="기말 프로젝트 리뷰">
+        <section class="final-layout" data-view="list" aria-label="기말 프로젝트 리뷰">
           <div class="final-list-panel">
-            <section class="final-section-block final-gallery-section" id="finalGallerySection" aria-label="작품 갤러리">
-              <div class="final-gallery-stage">
-                <div class="final-gallery-rail" id="finalGalleryRail" role="list" aria-label="작품 목록"></div>
+            <section class="final-gallery-view" id="finalGallerySection" aria-label="작품 갤러리">
+              <header class="final-gallery-chrome final-gallery-chrome-top">
+                <span class="final-gallery-brand">RPD 2026</span>
+                <button class="final-gallery-back" type="button" id="finalGalleryBack">( BACK )</button>
+                <div class="final-gallery-chrome-end">
+                  <span id="finalResultCount" class="final-gallery-works-count" role="status" aria-live="polite"></span>
+                  <button class="final-gallery-tools-btn" type="button" id="finalGalleryToolsToggle" aria-expanded="false" aria-controls="finalGalleryToolsPanel">( FILTER )</button>
+                </div>
+              </header>
+
+              <div class="final-gallery-tools-panel" id="finalGalleryToolsPanel" hidden>
+                <section class="final-toolbar" aria-label="기말 작품 검색">
+                  <div class="final-search-wrap">
+                    <label class="final-search-label" for="finalSearch">작품 검색</label>
+                    <input class="rpd-search-input" id="finalSearch" type="search" autocomplete="off" placeholder="작품 01, RPD 2026" />
+                  </div>
+                </section>
               </div>
+
+              <div class="final-gallery-stage" id="finalGalleryStage">
+                <div class="final-gallery-meta-host" id="finalGalleryMetaHost">
+                  <div class="final-gallery-meta" id="finalGalleryMeta" aria-live="polite" hidden>
+                    <p class="final-gallery-meta-index" id="finalGalleryMetaIndex"></p>
+                    <p class="final-gallery-meta-caption" id="finalGalleryMetaCaption"></p>
+                  </div>
+                </div>
+                <div class="final-gallery-rail-wrap">
+                  <div class="final-gallery-rail" id="finalGalleryRail" role="list" aria-label="작품 목록"></div>
+                </div>
+              </div>
+
+              <footer class="final-gallery-chrome final-gallery-chrome-bottom">
+                <span class="final-gallery-brand">RPD 2026</span>
+                <p class="final-gallery-footnote" id="finalGalleryFootnote">FINAL ARCHIVE</p>
+                <nav class="final-gallery-nav" aria-label="갤러리 내비게이션">
+                  <a href="index.html">ARCHIVE</a>
+                  <a href="week.html">CLASS</a>
+                  <a href="studio.html">STUDIO</a>
+                </nav>
+              </footer>
             </section>
           </div>
           <div class="final-detail" id="finalDetail" aria-live="polite"></div>
@@ -50,7 +89,7 @@
   <script src="assets/site-shell.js?v=20260318a"></script>
   <script src="assets/layout.js"></script>
   <script src="assets/topbar-search.js"></script>
-  <script src="data/final-projects.js"></script>
-  <script src="assets/final-projects.js"></script>
+  <script src="data/final-projects.js?v=20260628g"></script>
+  <script src="assets/final-projects.js?v=20260628h"></script>
 </body>
 </html>
