@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — Solidify Modifier 이해</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #00bfa5;
+  --key-strong:    #009e8a;
+  --key-soft:      #6ee8d8;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --danger-soft:   #fca5a5;
+  --warn-soft:     #fbbf24;
+  --warn-medium:   #fcd34d;
+  --accent-soft:   #FFB347;
+  --secondary-soft:#a5b4fc;
+  --secondary-mid: #c4b5fd;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --muted-mid:     #94a3b8;
+  --muted-soft:    #cbd5e1;
+  --muted-dim:     #64748b;
+  --info-soft:     #67e8f9;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Tab Navigation ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+
+/* ── Tab Panels ── */
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+
+/* ── Concept Cards ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card h3 {
+  margin: 0 0 8px; font-size: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.concept-card p {
+  margin: 0; color: var(--muted-strong);
+  font-size: .88rem; line-height: 1.7;
+}
+.concept-card ul {
+  margin: 8px 0 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
+}
+
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: .72rem; font-weight: 600;
+}
+.badge-blue  { background: rgba(0,191,165,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: var(--warn-soft); }
+
+/* ── Keyboard Shortcut ── */
+.kbd {
+  display: inline-block;
+  padding: 3px 8px; border-radius: 6px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  color: var(--key-soft);
+  font-size: .82rem; font-weight: 600;
+  font-family: var(--font);
+}
+
+/* ── Canvas / Demo ── */
+.demo-wrap {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+  margin: 14px 0;
+}
+.demo-wrap canvas {
+  display: block; width: 100%;
+}
+.demo-controls {
+  display: flex; gap: 8px; padding: 12px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.demo-hint {
+  font-size: .78rem; color: var(--muted);
+  text-align: center; padding: 6px 0 0;
+}
+.demo-btn {
+  padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .82rem;
+  cursor: pointer;
+  transition: background .14s, color .14s;
+}
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active {
+  background: rgba(0,191,165,.14);
+  color: var(--key-soft);
+  border-color: rgba(0,191,165,.3);
+}
+.control-guide {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.control-kind {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: .72rem;
+  font-weight: 600;
+  letter-spacing: .02em;
+}
+.control-kind.discrete { background: rgba(0,191,165,.14); color: var(--key-soft); }
+.control-kind.range { background: rgba(16,185,129,.14); color: var(--success-soft); }
+.control-copy {
+  font-size: .78rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.scenario-nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.scenario-btn {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,.15);
+  background: transparent;
+  color: var(--muted-soft);
+  cursor: pointer;
+  font-size: 13px;
+  transition: all .2s;
+  font-family: inherit;
+}
+.scenario-btn.active {
+  background: rgba(99,102,241,.25);
+  border-color: rgba(99,102,241,.5);
+  color: var(--secondary-soft);
+}
+.scene-desc {
+  font-size: .84rem;
+  color: var(--muted-strong);
+  margin: 0 0 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  line-height: 1.7;
+}
+.cause-effect {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 12px 0 14px;
+}
+.ce-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ce-cause {
+  background: rgba(99,102,241,.12);
+  border: 1px solid rgba(99,102,241,.25);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 13px;
+  flex: 1;
+}
+.ce-arrow {
+  color: var(--muted-dim);
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.ce-result {
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 13px;
+  flex: 1.5;
+}
+.result-a {
+  background: rgba(16,185,129,.1);
+  border: 1px solid rgba(16,185,129,.25);
+  color: var(--success-soft);
+}
+.result-b {
+  background: rgba(245,158,11,.1);
+  border: 1px solid rgba(245,158,11,.25);
+  color: var(--warn-medium);
+}
+.result-c {
+  background: rgba(239,68,68,.1);
+  border: 1px solid rgba(239,68,68,.25);
+  color: var(--danger-soft);
+}
+
+/* ── Usage Grid ── */
+.usage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.usage-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 16px;
+}
+.usage-card h4 {
+  margin: 0 0 8px; font-size: .92rem;
+  color: var(--key-soft);
+}
+.usage-card ul {
+  margin: 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem;
+  line-height: 1.8;
+}
+
+/* ── Tip Box ── */
+.tip-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(0,191,165,.2);
+  background: rgba(0,191,165,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+}
+.tip-box strong { color: var(--key-soft); }
+
+/* ── Combo Section ── */
+.combo-section {
+  margin-top: 18px;
+}
+.combo-section h4 {
+  margin: 0 0 10px;
+  font-size: .92rem;
+  color: var(--text);
+}
+.combo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.combo-card {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 12px 14px;
+}
+.combo-card .combo-name {
+  font-size: .86rem;
+  font-weight: 600;
+  color: var(--key-soft);
+  margin-bottom: 4px;
+}
+.combo-card .combo-desc {
+  font-size: .8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ── Shortcut Reference ── */
+.shortcut-list {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.shortcut-list h4 {
+  margin: 0 0 10px;
+  font-size: .9rem;
+  color: var(--text);
+}
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: .84rem;
+  color: var(--muted-strong);
+}
+.shortcut-row + .shortcut-row {
+  border-top: 1px solid var(--line);
+}
+.shortcut-keys {
+  flex-shrink: 0;
+}
+.analogy {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(245,158,11,.06);
+  border: 1px solid rgba(245,158,11,.15);
+  font-size: .82rem;
+  color: var(--warn-soft);
+  font-style: italic;
+}
+
+/* ── Quiz ── */
+.quiz-progress {
+  font-size: .78rem; color: var(--muted);
+  margin-bottom: 12px;
+}
+.quiz-question {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.quiz-question h4 {
+  margin: 0 0 12px; font-size: .94rem;
+}
+.quiz-option {
+  display: block; width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.025);
+  color: var(--text);
+  font: inherit; font-size: .86rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background .14s, border-color .14s;
+}
+.quiz-option:hover {
+  background: rgba(255,255,255,.06);
+  border-color: var(--line-strong);
+}
+.quiz-option.correct {
+  background: rgba(16,185,129,.12);
+  border-color: rgba(16,185,129,.4);
+  color: var(--success-soft);
+}
+.quiz-option.wrong {
+  background: rgba(239,68,68,.1);
+  border-color: rgba(239,68,68,.3);
+  color: var(--danger-soft);
+}
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback {
+  margin-top: 8px; padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: .84rem;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: var(--danger-soft); }
+
+.quiz-score {
+  text-align: center; padding: 20px;
+  font-size: 1.1rem; font-weight: 600;
+}
+.quiz-retry {
+  display: block; margin: 12px auto;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--key);
+  background: rgba(0,191,165,.12);
+  color: var(--key-soft);
+  font: inherit; font-size: .88rem;
+  cursor: pointer;
+  transition: background .14s;
+}
+.quiz-retry:hover { background: rgba(0,191,165,.22); }
+
+/* ── Official Doc Reference ── */
+.doc-ref {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(0,191,165,.15);
+  background: rgba(0,191,165,.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-ref a {
+  color: var(--key-soft);
+  font-size: .84rem;
+  text-decoration: none;
+  line-height: 1.5;
+}
+.doc-ref a:hover { text-decoration: underline; }
+
+
+.section-divider {
+  margin: 18px 0 12px;
+  font-size: .82rem;
+  font-weight: 700;
+  color: var(--key-soft);
+}
+.showme-concept-visual {
+  margin-top: 18px;
+  padding: 16px 18px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(0,191,165,.18);
+  background: rgba(255,255,255,.02);
+}
+.showme-concept-visual > p {
+  margin: 0 0 14px;
+  font-size: .84rem;
+  color: var(--muted-strong);
+}
+.visual-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+.visual-summary-card {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 12px 14px;
+}
+.visual-summary-card h4 {
+  margin: 0 0 6px;
+  font-size: .86rem;
+  color: var(--text);
+}
+.visual-summary-card p {
+  margin: 0;
+  font-size: .8rem;
+  line-height: 1.6;
+  color: var(--muted-strong);
+}
+.visual-chip {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: rgba(0,191,165,.12);
+  color: var(--key-soft);
+  font-size: .72rem;
+  font-weight: 600;
+}
+.interaction-layout {
+  display: grid;
+  grid-template-columns: minmax(220px, 260px) 1fr;
+  gap: 14px;
+  align-items: start;
+}
+.modifier-panel {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+  padding: 14px;
+}
+.modifier-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.modifier-title {
+  font-size: .9rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.modifier-badge {
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(0,191,165,.14);
+  color: var(--key-soft);
+  font-size: .72rem;
+  font-weight: 600;
+}
+.modifier-subtitle {
+  margin: 0 0 14px;
+  font-size: .78rem;
+  color: var(--muted);
+}
+.control-group + .control-group {
+  margin-top: 12px;
+}
+.control-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.control-label {
+  font-size: .82rem;
+  color: var(--muted-strong);
+  font-weight: 600;
+}
+.control-value {
+  font-size: .76rem;
+  color: var(--key-soft);
+}
+.control-row {
+  display: grid;
+  grid-template-columns: 1fr 74px;
+  gap: 8px;
+  align-items: center;
+}
+.control-row input[type="range"] {
+  width: 100%;
+  accent-color: var(--key);
+}
+.control-row input[type="number"] {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--text);
+  padding: 7px 10px;
+  font: inherit;
+  font-size: .82rem;
+}
+.control-row input[type="number"]:focus {
+  outline: 1px solid rgba(0,191,165,.45);
+  border-color: rgba(0,191,165,.45);
+}
+.modifier-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.03);
+  color: var(--muted-strong);
+  font-size: .82rem;
+}
+.modifier-toggle input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--key);
+}
+.modifier-reset {
+  width: 100%;
+  margin-top: 14px;
+}
+.demo-stage {
+  display: grid;
+  gap: 10px;
+}
+.interaction-status {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.status-card {
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 12px;
+}
+.status-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: .72rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.status-value {
+  font-size: .86rem;
+  color: var(--muted-strong);
+  font-weight: 600;
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
+  .visual-summary-grid, .interaction-status, .interaction-layout { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+  .control-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Tab Bar -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">interaction</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+</nav>
+
+<!-- TAB 1: 개념 이해 -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3>Solidify란?</h3>
+      <p>평면(면)에 두께를 추가하는 모디파이어입니다. 종이처럼 얇은 메쉬를 실제 물체처럼 두께 있는 3D로 만들어 줍니다.</p>
+      <div class="analogy">종이에 두께를 입혀 판자로 만드는 것</div>
+    </div>
+    <div class="concept-card">
+      <h3>Offset 방향</h3>
+      <p>Offset 값으로 두께가 추가되는 방향을 제어합니다.</p>
+      <ul>
+        <li><strong>-1</strong> : 안쪽(노멀 반대 방향)</li>
+        <li><strong>0</strong> : 양쪽 균등</li>
+        <li><strong>+1</strong> : 바깥쪽(노멀 방향)</li>
+      </ul>
+      <p style="margin-top:8px">Even Thickness를 켜면 경사면에서도 균일한 두께를 유지합니다.</p>
+    </div>
+    <div class="concept-card">
+      <h3>Thickness</h3>
+      <p>두께 값을 직접 지정합니다. 양수가 기본이며, 음수를 입력하면 방향이 반전됩니다.</p>
+    </div>
+  </div>
+  <details style="margin-top:14px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:14px 16px">
+    <summary style="cursor:pointer;color:var(--key-soft);font-weight:600;list-style:none">더보기</summary>
+    <div style="margin-top:10px;color:var(--muted-strong);font-size:.84rem;line-height:1.7">
+      입문 단계에서는 `Thickness = 두께`, `Offset = 어느 쪽으로 생기는지`, `Even Thickness = 코너 보정` 이 세 가지만 먼저 기억하면 충분합니다.
+    </div>
+  </details>
+
+  <div class="showme-concept-visual">
+    <div class="section-divider">개념 이해 시각화</div>
+    <p>Solidify는 같은 평면이라도 <strong>Thickness</strong>와 <strong>Offset</strong> 조합에 따라 “종이”, “얇은 패널”, “중앙 기준 두께”처럼 전혀 다른 결과를 만듭니다.</p>
+    <div class="visual-summary-grid">
+      <div class="visual-summary-card">
+        <div class="visual-chip">Thickness 0.00</div>
+        <h4>면만 있는 상태</h4>
+        <p>아직 두께가 없어서 한쪽 면처럼 보입니다. 렌더나 출력에서 실제 부피가 없는 상태예요.</p>
+      </div>
+      <div class="visual-summary-card">
+        <div class="visual-chip">Thickness 0.04 / Offset +1</div>
+        <h4>바깥으로 두께 추가</h4>
+        <p>원본 면을 기준으로 바깥쪽으로만 벽이 자랍니다. 외곽 실루엣을 유지해야 할 때 직관적입니다.</p>
+      </div>
+      <div class="visual-summary-card">
+        <div class="visual-chip">Thickness 0.04 / Offset 0</div>
+        <h4>중앙 기준 확장</h4>
+        <p>기존 면을 중심으로 양쪽에 반씩 두께가 생깁니다. 기준선을 유지하며 패널을 만들 때 유용합니다.</p>
+      </div>
+      <div class="visual-summary-card">
+        <div class="visual-chip">Even Thickness On</div>
+        <h4>모서리 두께 보정</h4>
+        <p>굽은 부분이나 경사면에서 두께가 찌그러지는 걸 줄여 줍니다. 코너를 만질 때 더 “실제 벽”처럼 보입니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="shortcut-list">
+    <h4>조작 방법</h4>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Add Modifier</span></span>
+      <span>Properties &rarr; Modifiers &rarr; Add Modifier &rarr; Solidify</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Thickness</span></span>
+      <span>모디파이어 패널에서 직접 입력</span>
+    </div>
+    <div class="shortcut-row">
+      <span class="shortcut-keys"><span class="kbd">Even Thickness</span></span>
+      <span>경사면 두께 보정 체크박스</span>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/solidify.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Solidify Modifier
+    </a>
+  </div>
+</section>
+
+<!-- TAB 2: interaction -->
+<section class="panel" id="panel-visual" role="tabpanel">
+  <div class="interaction-layout">
+    <aside class="modifier-panel" aria-label="Solidify modifier controls">
+      <div class="modifier-header">
+        <div class="modifier-title">Solidify</div>
+        <span class="modifier-badge">Modifier</span>
+      </div>
+      <p class="modifier-subtitle">Thickness와 Offset만 조절해 보세요.</p>
+
+      <div class="control-group">
+        <div class="control-head">
+          <label class="control-label" for="solidifyThicknessRange">Thickness</label>
+          <span class="control-value" id="solidifyThicknessLabel">0.04 m</span>
+        </div>
+        <div class="control-row">
+          <input type="range" id="solidifyThicknessRange" min="0" max="0.20" step="0.01" value="0.04">
+          <input type="number" id="solidifyThicknessNumber" min="0" max="0.20" step="0.01" value="0.04" inputmode="decimal">
+        </div>
+      </div>
+
+      <div class="control-group">
+        <div class="control-head">
+          <label class="control-label" for="solidifyOffsetRange">Offset</label>
+          <span class="control-value" id="solidifyOffsetLabel">+1.00</span>
+        </div>
+        <div class="control-row">
+          <input type="range" id="solidifyOffsetRange" min="-1" max="1" step="0.1" value="1">
+          <input type="number" id="solidifyOffsetNumber" min="-1" max="1" step="0.1" value="1" inputmode="decimal">
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="modifier-toggle" for="solidifyEvenThickness">
+          <span>Even Thickness</span>
+          <input type="checkbox" id="solidifyEvenThickness" checked>
+        </label>
+      </div>
+
+      <button class="demo-btn modifier-reset" id="solidifyReset" type="button">기본값으로 리셋</button>
+    </aside>
+
+    <div class="demo-stage">
+      <div class="demo-wrap">
+        <canvas id="demoCanvas" width="680" height="320"></canvas>
+      </div>
+      <div class="interaction-status" aria-live="polite">
+        <div class="status-card">
+          <span class="status-label">Direction</span>
+          <strong class="status-value" id="solidifyDirectionStatus">바깥쪽으로 추가</strong>
+        </div>
+        <div class="status-card">
+          <span class="status-label">Center Line</span>
+          <strong class="status-value" id="solidifyCenterStatus">원본 면은 안쪽 경계</strong>
+        </div>
+        <div class="status-card">
+          <span class="status-label">Corner</span>
+          <strong class="status-value" id="solidifyCornerStatus">모서리 두께 보정 ON</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TAB 3: 언제 쓰나요? -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>Solidify가 필요할 때</h4>
+      <ul>
+        <li>갑옷 / 헬멧</li>
+        <li>그릇 / 컵</li>
+        <li>유리창</li>
+        <li>건축 벽체</li>
+        <li>기계 패널</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>Solidify를 안 쓰는 경우</h4>
+      <ul>
+        <li>이미 닫힌 메쉬 (Solid)</li>
+        <li>솔리드 오브젝트</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>팁:</strong> Solidify는 열린 메쉬(Open Mesh)에 사용합니다. 이미 닫힌 메쉬에는 효과가 이상해질 수 있어요.
+  </div>
+
+  <div class="combo-section">
+    <h4>자주 쓰는 조합</h4>
+    <div class="combo-grid">
+      <div class="combo-card">
+        <div class="combo-name">Solidify + Subdivision</div>
+        <div class="combo-desc">부드러운 두께감. Solidify가 위, Subdivision이 아래 순서로 배치합니다.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Solidify + Mirror</div>
+        <div class="combo-desc">대칭 형태에 두께 추가. Mirror가 위, Solidify가 아래 순서로 배치합니다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/solidify.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Solidify Modifier
+    </a>
+  </div>
+</section>
+
+<!-- TAB 4: 퀴즈 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+// ── Tab Switching ──────────────────────────────
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(t) {
+      t.classList.remove("is-active");
+      t.setAttribute("aria-selected", "false");
+    });
+    document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("is-active"); });
+    tab.classList.add("is-active");
+    tab.setAttribute("aria-selected", "true");
+    document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+  });
+});
+
+// ── Quiz Engine (Safe DOM methods) ────────────
+function initQuiz(questions) {
+  var container = document.getElementById("quizArea");
+  var score = 0, answered = 0;
+  var scoreDiv = null; // track score section for updates
+
+  // Progress indicator
+  var progress = document.createElement("div");
+  progress.className = "quiz-progress";
+  progress.textContent = "문제 0 / " + questions.length + " \u00b7 점수 0점";
+  container.appendChild(progress);
+
+  questions.forEach(function(q, qi) {
+    var div = document.createElement("div");
+    div.className = "quiz-question";
+
+    var heading = document.createElement("h4");
+    heading.textContent = "Q" + (qi + 1) + ". " + q.question;
+    div.appendChild(heading);
+
+    var fb = document.createElement("div");
+    fb.className = "quiz-feedback";
+
+    q.options.forEach(function(opt, oi) {
+      var btn = document.createElement("button");
+      btn.className = "quiz-option";
+      btn.textContent = opt;
+      btn.addEventListener("click", function() {
+        if (btn.disabled) return;
+        div.querySelectorAll(".quiz-option").forEach(function(b) { b.disabled = true; });
+        answered++;
+        if (oi === q.answer) {
+          btn.classList.add("correct");
+          fb.className = "quiz-feedback show correct-fb";
+          fb.textContent = "\u2705 " + q.explanation;
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
+          fb.className = "quiz-feedback show wrong-fb";
+          fb.textContent = "\u274c " + q.explanation;
+
+          // Add retry button for wrong answers
+          var retryBtn = document.createElement("button");
+          retryBtn.className = "quiz-retry";
+          retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
+          retryBtn.textContent = "다시 풀기";
+          retryBtn.addEventListener("click", function() {
+            // Reset this question
+            answered--;
+            div.querySelectorAll(".quiz-option").forEach(function(b) {
+              b.disabled = false;
+              b.classList.remove("wrong", "correct");
+            });
+            fb.className = "quiz-feedback";
+            fb.textContent = "";
+            retryBtn.remove();
+            // Remove score section if it was shown
+            if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+            progress.textContent = "문제 " + answered + " / " + questions.length + " \u00b7 점수 " + score + "점";
+          });
+          fb.appendChild(retryBtn);
+        }
+        progress.textContent = "문제 " + answered + " / " + questions.length + " \u00b7 점수 " + score + "점";
+        if (answered === questions.length) showScore();
+      });
+      div.appendChild(btn);
+    });
+
+    div.appendChild(fb);
+    container.appendChild(div);
+  });
+
+  function showScore() {
+    // Remove previous score section if exists (e.g. after retry)
+    if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+
+    scoreDiv = document.createElement("div");
+    scoreDiv.className = "quiz-score";
+
+    var emoji = document.createElement("div");
+    emoji.style.cssText = "font-size:36px;margin-bottom:8px";
+    emoji.textContent = score === questions.length ? "\ud83c\udf89" : score >= Math.ceil(questions.length / 2) ? "\ud83d\udc4d" : "\ud83d\udcda";
+    scoreDiv.appendChild(emoji);
+
+    var result = document.createElement("div");
+    result.style.cssText = "font-size:18px;font-weight:500;margin-bottom:6px";
+    result.textContent = score + " / " + questions.length + " 정답";
+    scoreDiv.appendChild(result);
+
+    var msg = document.createElement("div");
+    msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
+    msg.textContent = score === questions.length ? "완벽합니다!" : "조금 더 연습하면 완벽해질 거예요!";
+    scoreDiv.appendChild(msg);
+
+    // Save button — sends result to parent for Notion sync
+    var saveBtn = document.createElement("button");
+    saveBtn.className = "quiz-retry";
+    saveBtn.style.cssText = "background:rgba(0,191,165,.18);border-color:var(--key);margin-bottom:8px";
+    saveBtn.textContent = "기록 저장하기";
+    saveBtn.addEventListener("click", function() {
+      try {
+        var wid = new URLSearchParams(location.search).get("wid")
+               || location.pathname.split("/").pop().replace(".html", "");
+        window.parent.postMessage({
+          type: "showme-quiz-complete",
+          widgetId: wid,
+          score: score,
+          total: questions.length,
+          pass: score >= Math.ceil(questions.length * 0.75)
+        }, "*");
+      } catch(e) {}
+      saveBtn.textContent = "저장 완료!";
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = ".5";
+    });
+    scoreDiv.appendChild(saveBtn);
+
+    var retry = document.createElement("button");
+    retry.className = "quiz-retry";
+    retry.textContent = "처음부터 다시";
+    retry.addEventListener("click", function() { location.reload(); });
+    scoreDiv.appendChild(retry);
+
+    container.appendChild(scoreDiv);
+  }
+}
+
+// ── Solidify Interaction ───────────────────────
+(function() {
+  var canvas = document.getElementById("demoCanvas");
+  var ctx = canvas.getContext("2d");
+  var thicknessRange = document.getElementById("solidifyThicknessRange");
+  var thicknessNumber = document.getElementById("solidifyThicknessNumber");
+  var offsetRange = document.getElementById("solidifyOffsetRange");
+  var offsetNumber = document.getElementById("solidifyOffsetNumber");
+  var evenCheckbox = document.getElementById("solidifyEvenThickness");
+  var resetButton = document.getElementById("solidifyReset");
+  var thicknessLabel = document.getElementById("solidifyThicknessLabel");
+  var offsetLabel = document.getElementById("solidifyOffsetLabel");
+  var directionStatus = document.getElementById("solidifyDirectionStatus");
+  var centerStatus = document.getElementById("solidifyCenterStatus");
+  var cornerStatus = document.getElementById("solidifyCornerStatus");
+  var solidifyDesc = null;
+  var solidifyCE = null;
+  var scenarioButtons = [];
+
+  var state = {
+    thickness: 0.04,
+    offset: 1,
+    evenThickness: true
+  };
+  var solidifyPresets = {
+    outer: { thickness: 0.04, offset: 1, evenThickness: true },
+    center: { thickness: 0.06, offset: 0, evenThickness: true },
+    inner: { thickness: 0.04, offset: -1, evenThickness: false }
+  };
+
+  function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
+  }
+
+  function formatSigned(value) {
+    return (value > 0 ? "+" : "") + value.toFixed(2);
+  }
+
+  function buildSolidifyCE(rows) {
+    if (!solidifyCE) return;
+    while (solidifyCE.firstChild) { solidifyCE.removeChild(solidifyCE.firstChild); }
+    rows.forEach(function(item) {
+      var row = document.createElement("div");
+      row.className = "ce-row";
+      var cause = document.createElement("div");
+      cause.className = "ce-cause";
+      cause.textContent = item.cause;
+      var arrow = document.createElement("div");
+      arrow.className = "ce-arrow";
+      arrow.textContent = "\u2192";
+      var result = document.createElement("div");
+      result.className = "ce-result " + item.resultClass;
+      result.textContent = item.result;
+      row.appendChild(cause);
+      row.appendChild(arrow);
+      row.appendChild(result);
+      solidifyCE.appendChild(row);
+    });
+  }
+
+  function describeThickness() {
+    if (state.thickness <= 0.015) return "매우 얇은 판재처럼 보입니다.";
+    if (state.thickness <= 0.06) return "제품 외피나 벽 두께를 설명하기 좋은 범위입니다.";
+    if (state.thickness <= 0.12) return "두께가 분명하게 보여서 방향 차이를 읽기 쉬워집니다.";
+    return "벽체처럼 두꺼운 쉘이 되어 방향보다 부피감이 먼저 보입니다.";
+  }
+
+  function getCurrentPresetKey() {
+    if (Math.abs(state.thickness - solidifyPresets.outer.thickness) < 0.001 &&
+        Math.abs(state.offset - solidifyPresets.outer.offset) < 0.001 &&
+        state.evenThickness === solidifyPresets.outer.evenThickness) {
+      return "outer";
+    }
+    if (Math.abs(state.thickness - solidifyPresets.center.thickness) < 0.001 &&
+        Math.abs(state.offset - solidifyPresets.center.offset) < 0.001 &&
+        state.evenThickness === solidifyPresets.center.evenThickness) {
+      return "center";
+    }
+    if (Math.abs(state.thickness - solidifyPresets.inner.thickness) < 0.001 &&
+        Math.abs(state.offset - solidifyPresets.inner.offset) < 0.001 &&
+        state.evenThickness === solidifyPresets.inner.evenThickness) {
+      return "inner";
+    }
+    return "";
+  }
+
+  function updateScenarioButtons() {
+    var activeKey = getCurrentPresetKey();
+    scenarioButtons.forEach(function(btn) {
+      btn.classList.toggle("active", btn.dataset.preset === activeKey);
+    });
+  }
+
+  function updateSolidifyDesc() {
+    if (!solidifyDesc) return;
+    var thicknessText = "Thickness " + state.thickness.toFixed(2) + " m";
+    var evenResult = state.evenThickness
+      ? "코너에서도 두께를 일정하게 유지하려고 보정합니다."
+      : "굽은 코너에서 두께가 눌려 보일 수 있습니다.";
+
+    if (state.thickness <= 0.001) {
+      solidifyDesc.textContent = "Solidify는 아직 두께가 0이라 원본 면만 보입니다. Thickness를 올리면 Offset 기준에 따라 어느 쪽으로 껍질을 만들지 바로 비교할 수 있어요.";
+      buildSolidifyCE([
+        { cause: thicknessText, result: "아직 쉘이 만들어지지 않아 방향 차이가 드러나지 않습니다.", resultClass: "result-b" },
+        { cause: "Offset " + formatSigned(state.offset), result: "두께가 생기면 바깥, 중심, 안쪽 중 어디를 기준으로 확장할지 정해집니다.", resultClass: "result-a" },
+        { cause: state.evenThickness ? "Even Thickness ON" : "Even Thickness OFF", result: evenResult, resultClass: state.evenThickness ? "result-a" : "result-c" }
+      ]);
+      return;
+    }
+
+    if (state.offset >= 0.75) {
+      solidifyDesc.textContent = "원본 면을 안쪽 벽처럼 두고 바깥으로 두께를 더하는 상태입니다. 갑옷 외피나 얇은 패널처럼 실루엣을 키우고 싶을 때 가장 직관적인 설정이에요.";
+      buildSolidifyCE([
+        { cause: "Offset " + formatSigned(state.offset), result: "원본 면 바깥으로만 두께가 생겨 외곽 실루엣이 커집니다.", resultClass: "result-a" },
+        { cause: thicknessText, result: describeThickness(), resultClass: "result-a" },
+        { cause: state.evenThickness ? "Even Thickness ON" : "Even Thickness OFF", result: evenResult, resultClass: state.evenThickness ? "result-a" : "result-c" }
+      ]);
+      return;
+    }
+
+    if (state.offset <= -0.75) {
+      solidifyDesc.textContent = "기존 외곽을 유지한 채 안쪽으로 두께를 넣는 상태입니다. 컵 안쪽 라이닝이나 내부 벽을 만들 때, 바깥 크기를 바꾸고 싶지 않을 때 유용합니다.";
+      buildSolidifyCE([
+        { cause: "Offset " + formatSigned(state.offset), result: "외곽선을 거의 유지하면서 내부로 두께가 파고듭니다.", resultClass: "result-a" },
+        { cause: thicknessText, result: describeThickness(), resultClass: state.thickness > 0.08 ? "result-b" : "result-a" },
+        { cause: state.evenThickness ? "Even Thickness ON" : "Even Thickness OFF", result: evenResult, resultClass: state.evenThickness ? "result-a" : "result-c" }
+      ]);
+      return;
+    }
+
+    solidifyDesc.textContent = "원본 면을 중심선으로 두고 양쪽으로 반씩 두께를 나누는 상태입니다. 판재의 실제 중심을 유지하거나, 전후 균형이 중요한 구조를 설명할 때 적합합니다.";
+    buildSolidifyCE([
+      { cause: "Offset " + formatSigned(state.offset), result: "원본 면이 중심선이 되어 앞뒤로 균등하게 두께가 배분됩니다.", resultClass: "result-a" },
+      { cause: thicknessText, result: describeThickness(), resultClass: "result-a" },
+      { cause: state.evenThickness ? "Even Thickness ON" : "Even Thickness OFF", result: evenResult, resultClass: state.evenThickness ? "result-a" : "result-c" }
+    ]);
+  }
+
+  function applySolidifyPreset(key) {
+    var preset = solidifyPresets[key];
+    if (!preset) return;
+    state.thickness = preset.thickness;
+    state.offset = preset.offset;
+    state.evenThickness = preset.evenThickness;
+    syncInputs();
+  }
+
+  function setCanvasSize() {
+    canvas.width = Math.max(520, Math.floor(canvas.clientWidth || 680));
+    canvas.height = 320;
+  }
+
+  function drawStageBackground(x, y, w, h, title, subtitle) {
+    ctx.fillStyle = "rgba(255,255,255,.02)";
+    ctx.fillRect(x, y, w, h);
+    ctx.strokeStyle = "rgba(255,255,255,.06)";
+    ctx.strokeRect(x + 0.5, y + 0.5, w - 1, h - 1);
+
+    ctx.strokeStyle = "rgba(255,255,255,.04)";
+    ctx.lineWidth = 1;
+    for (var gx = x + 20; gx < x + w; gx += 20) {
+      ctx.beginPath();
+      ctx.moveTo(gx, y);
+      ctx.lineTo(gx, y + h);
+      ctx.stroke();
+    }
+    for (var gy = y + 20; gy < y + h; gy += 20) {
+      ctx.beginPath();
+      ctx.moveTo(x, gy);
+      ctx.lineTo(x + w, gy);
+      ctx.stroke();
+    }
+
+    ctx.fillStyle = "#f5f5f7";
+    ctx.font = "600 13px sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText(title, x + 14, y + 22);
+    if (subtitle) {
+      ctx.fillStyle = "#94a3b8";
+      ctx.font = "11px sans-serif";
+      ctx.fillText(subtitle, x + 14, y + 40);
+    }
+  }
+
+  function drawBasePlane(area) {
+    var lineY = area.y + area.h * 0.6;
+    ctx.strokeStyle = "rgba(239,68,68,.82)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(area.x + 40, lineY);
+    ctx.lineTo(area.x + area.w - 40, lineY);
+    ctx.stroke();
+
+    ctx.fillStyle = "#fca5a5";
+    ctx.font = "12px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("원본 Face", area.x + area.w / 2, area.y + area.h - 18);
+  }
+
+  function drawMeasurementLabel(x, yTop, yBottom, valueText) {
+    ctx.strokeStyle = "rgba(10,132,255,.7)";
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(x, yTop);
+    ctx.lineTo(x, yBottom);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x - 5, yTop);
+    ctx.lineTo(x + 5, yTop);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x - 5, yBottom);
+    ctx.lineTo(x + 5, yBottom);
+    ctx.stroke();
+    ctx.fillStyle = "#8ec5ff";
+    ctx.font = "11px sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText(valueText, x + 8, (yTop + yBottom) / 2 + 4);
+  }
+
+  function drawSolidifyPreview(area) {
+    var lineY = area.y + area.h * 0.6;
+    var thicknessPx = state.thickness * 720;
+    var normalSide = thicknessPx * ((state.offset + 1) / 2);
+    var reverseSide = thicknessPx * ((1 - state.offset) / 2);
+    var top = lineY - normalSide;
+    var bottom = lineY + reverseSide;
+    var left = area.x + 46;
+    var width = area.w - 92;
+    var hasThickness = thicknessPx > 0.5;
+
+    ctx.save();
+    ctx.setLineDash([5, 5]);
+    ctx.strokeStyle = "rgba(245,245,247,.28)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(left, lineY);
+    ctx.lineTo(left + width, lineY);
+    ctx.stroke();
+    ctx.restore();
+
+    if (hasThickness) {
+      ctx.fillStyle = "rgba(10,132,255,.18)";
+      ctx.fillRect(left, top, width, bottom - top);
+      ctx.strokeStyle = "rgba(10,132,255,.75)";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(left, top, width, bottom - top);
+
+      ctx.fillStyle = "rgba(142,197,255,.18)";
+      ctx.beginPath();
+      ctx.moveTo(left + 26, top);
+      ctx.lineTo(left + width + 16, top - 16);
+      ctx.lineTo(left + width + 16, bottom - 16);
+      ctx.lineTo(left + 26, bottom);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = "rgba(142,197,255,.55)";
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(left + width, top);
+      ctx.lineTo(left + width + 16, top - 16);
+      ctx.lineTo(left + width + 16, bottom - 16);
+      ctx.lineTo(left + width, bottom);
+      ctx.closePath();
+      ctx.fillStyle = "rgba(16,185,129,.15)";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(16,185,129,.5)";
+      ctx.stroke();
+
+      drawMeasurementLabel(left + width + 34, top, bottom, state.thickness.toFixed(2) + " m");
+    } else {
+      ctx.strokeStyle = "rgba(239,68,68,.85)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(left, lineY);
+      ctx.lineTo(left + width, lineY);
+      ctx.stroke();
+    }
+
+    ctx.fillStyle = "#f5f5f7";
+    ctx.font = "12px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("원본 면 위치", area.x + area.w / 2, area.y + 58);
+
+    ctx.strokeStyle = state.offset >= 0 ? "rgba(16,185,129,.9)" : "rgba(245,158,11,.85)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(area.x + 26, lineY);
+    ctx.lineTo(area.x + 26, state.offset >= 0 ? top : bottom);
+    ctx.stroke();
+    ctx.beginPath();
+    if (state.offset >= 0) {
+      ctx.moveTo(area.x + 22, top + 8);
+      ctx.lineTo(area.x + 26, top);
+      ctx.lineTo(area.x + 30, top + 8);
+    } else {
+      ctx.moveTo(area.x + 22, bottom - 8);
+      ctx.lineTo(area.x + 26, bottom);
+      ctx.lineTo(area.x + 30, bottom - 8);
+    }
+    ctx.stroke();
+  }
+
+  function drawCornerInset(area) {
+    var thicknessPx = Math.max(6, state.thickness * 500);
+    var cornerShift = state.evenThickness ? thicknessPx : thicknessPx * 0.45;
+    var startX = area.x + 40;
+    var startY = area.y + area.h - 42;
+    var bendX = area.x + area.w * 0.52;
+    var bendY = area.y + 56;
+
+    ctx.strokeStyle = "rgba(245,245,247,.35)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(startX, startY);
+    ctx.lineTo(bendX, bendY);
+    ctx.lineTo(area.x + area.w - 34, bendY + 22);
+    ctx.stroke();
+
+    ctx.strokeStyle = state.evenThickness ? "rgba(16,185,129,.9)" : "rgba(245,158,11,.9)";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(startX + cornerShift * 0.36, startY - thicknessPx);
+    ctx.lineTo(bendX + cornerShift * 0.5, bendY - thicknessPx);
+    ctx.lineTo(area.x + area.w - 34, bendY + 22 - (state.evenThickness ? thicknessPx : thicknessPx * 0.35));
+    ctx.stroke();
+
+  }
+
+  function draw() {
+    setCanvasSize();
+    var w = canvas.width;
+    var h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    ctx.fillStyle = "#101215";
+    ctx.fillRect(0, 0, w, h);
+
+    var leftArea = { x: 16, y: 16, w: Math.floor(w * 0.31), h: h - 32 };
+    var rightArea = { x: leftArea.x + leftArea.w + 12, y: 16, w: w - leftArea.w - 44, h: Math.floor(h * 0.63) };
+    var cornerArea = { x: rightArea.x, y: rightArea.y + rightArea.h + 12, w: rightArea.w, h: h - rightArea.h - 44 };
+
+    drawStageBackground(leftArea.x, leftArea.y, leftArea.w, leftArea.h, "Base Mesh", "");
+    drawStageBackground(rightArea.x, rightArea.y, rightArea.w, rightArea.h, "Solidify Result", "");
+    drawStageBackground(cornerArea.x, cornerArea.y, cornerArea.w, cornerArea.h, "Corner Check", "");
+
+    drawBasePlane(leftArea);
+    drawSolidifyPreview(rightArea);
+    drawCornerInset(cornerArea);
+  }
+
+  function updateStatus() {
+    thicknessLabel.textContent = state.thickness.toFixed(2) + " m";
+    offsetLabel.textContent = formatSigned(state.offset);
+
+    if (state.thickness <= 0.001) {
+      directionStatus.textContent = "아직 두께가 없습니다";
+      centerStatus.textContent = "원본 면만 보이는 상태";
+    } else if (state.offset >= 0.75) {
+      directionStatus.textContent = "바깥쪽으로 추가";
+      centerStatus.textContent = "원본 면은 안쪽 경계";
+    } else if (state.offset <= -0.75) {
+      directionStatus.textContent = "안쪽으로 추가";
+      centerStatus.textContent = "원본 면은 바깥 경계";
+    } else {
+      directionStatus.textContent = "양쪽으로 균등 확장";
+      centerStatus.textContent = "원본 면이 중심선";
+    }
+
+    cornerStatus.textContent = state.evenThickness
+      ? "모서리 두께 보정 ON"
+      : "코너에서 두께가 눌릴 수 있음";
+  }
+
+  function syncInputs() {
+    thicknessRange.value = state.thickness.toFixed(2);
+    thicknessNumber.value = state.thickness.toFixed(2);
+    offsetRange.value = state.offset.toFixed(1);
+    offsetNumber.value = state.offset.toFixed(1);
+    evenCheckbox.checked = state.evenThickness;
+    updateStatus();
+    draw();
+  }
+
+  function setThickness(value) {
+    state.thickness = clamp(Number(value) || 0, 0, 0.2);
+    syncInputs();
+  }
+
+  function setOffset(value) {
+    state.offset = clamp(Number(value) || 0, -1, 1);
+    syncInputs();
+  }
+
+  thicknessRange.addEventListener("input", function() { setThickness(thicknessRange.value); });
+  thicknessNumber.addEventListener("input", function() { setThickness(thicknessNumber.value); });
+  offsetRange.addEventListener("input", function() { setOffset(offsetRange.value); });
+  offsetNumber.addEventListener("input", function() { setOffset(offsetNumber.value); });
+  evenCheckbox.addEventListener("change", function() {
+    state.evenThickness = evenCheckbox.checked;
+    syncInputs();
+  });
+  [thicknessRange, thicknessNumber, offsetRange, offsetNumber].forEach(function(control) {
+    control.addEventListener("touchstart", function(e) { e.stopPropagation(); }, { passive: true });
+    control.addEventListener("touchmove", function(e) { e.stopPropagation(); }, { passive: true });
+  });
+
+  resetButton.addEventListener("click", function() {
+    state.thickness = 0.04;
+    state.offset = 1;
+    state.evenThickness = true;
+    syncInputs();
+  });
+
+  window.addEventListener("resize", draw);
+  document.querySelectorAll(".tab").forEach(function(tab) {
+    tab.addEventListener("click", function() {
+      if (tab.dataset.tab === "visual") {
+        setTimeout(draw, 40);
+      }
+    });
+  });
+
+  syncInputs();
+})();
+
+// ── Quiz Data ─────────────────────────────────
+initQuiz([
+  {
+    question: "Solidify Modifier\uC758 \uC8FC\uC694 \uC5ED\uD560\uC740?",
+    options: [
+      "\uBA54\uC26C\uB97C \uBD80\uB4DC\uB7FD\uAC8C \uB9CC\uB4E0\uB2E4",
+      "\uD3C9\uBA74\uC5D0 \uB450\uAED8\uB97C \uCD94\uAC00\uD55C\uB2E4",
+      "\uBA54\uC26C\uB97C \uB300\uCE6D\uC73C\uB85C \uBCF5\uC0AC\uD55C\uB2E4",
+      "\uBA54\uC26C\uB97C \uBCC0\uD615\uD55C\uB2E4"
+    ],
+    answer: 1,
+    explanation: "Solidify\uB294 \uC5F4\uB9B0 \uBA54\uC26C(\uD3C9\uBA74)\uC5D0 \uB450\uAED8\uB97C \uCD94\uAC00\uD558\uC5EC 3D \uBCFC\uB968\uAC10\uC744 \uB9CC\uB4DC\uB294 \uBAA8\uB514\uD30C\uC774\uC5B4\uC785\uB2C8\uB2E4."
+  },
+  {
+    question: "Offset \uAC12\uC774 -1\uC774\uBA74 \uB450\uAED8\uAC00 \uC5B4\uB290 \uBC29\uD5A5\uC73C\uB85C \uCD94\uAC00\uB418\uB098\uC694?",
+    options: [
+      "\uBC14\uAE65\uCABD(\uB178\uB9D0 \uBC29\uD5A5)",
+      "\uC591\uCABD \uADE0\uB4F1",
+      "\uC548\uCABD(\uB178\uB9D0 \uBC18\uB300 \uBC29\uD5A5)",
+      "\uB79C\uB364 \uBC29\uD5A5"
+    ],
+    answer: 2,
+    explanation: "Offset -1\uC740 \uB178\uB9D0 \uBC18\uB300 \uBC29\uD5A5, \uC989 \uC548\uCABD\uC73C\uB85C \uB450\uAED8\uAC00 \uCD94\uAC00\uB429\uB2C8\uB2E4."
+  },
+  {
+    question: "\uACBD\uC0AC\uBA74\uC5D0\uC11C \uB450\uAED8\uAC00 \uADE0\uC77C\uD558\uC9C0 \uC54A\uC744 \uB54C \uC5B4\uB5BB\uAC8C \uD574\uACB0\uD558\uB098\uC694?",
+    options: [
+      "Thickness\uB97C \uB354 \uD06C\uAC8C \uC124\uC815\uD55C\uB2E4",
+      "Offset\uC744 0\uC73C\uB85C \uBC14\uAFBC\uB2E4",
+      "Even Thickness\uB97C \uCF1C\uB2E4",
+      "Solidify\uB97C \uC0AD\uC81C\uD558\uACE0 \uB2E4\uC2DC \uCD94\uAC00\uD55C\uB2E4"
+    ],
+    answer: 2,
+    explanation: "Even Thickness \uCCB4\uD06C\uBC15\uC2A4\uB97C \uCF1C\uBA74 \uACBD\uC0AC\uBA74\uC5D0\uC11C\uB3C4 \uADE0\uC77C\uD55C \uB450\uAED8\uB97C \uC720\uC9C0\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
+  },
+  {
+    question: "Solidify + Subdivision Surface \uC870\uD569\uC5D0\uC11C \uC62C\uBC14\uB978 \uC21C\uC11C\uB294?",
+    options: [
+      "Subdivision\uC774 \uC704, Solidify\uAC00 \uC544\uB798",
+      "Solidify\uAC00 \uC704, Subdivision\uC774 \uC544\uB798",
+      "\uC21C\uC11C \uC0C1\uAD00\uC5C6\uB2E4",
+      "\uB458 \uB2E4 Apply \uD6C4 \uC0AC\uC6A9"
+    ],
+    answer: 1,
+    explanation: "Solidify\uAC00 \uC704\uC5D0, Subdivision\uC774 \uC544\uB798\uC5D0 \uC640\uC57C \uD569\uB2C8\uB2E4. \uBA3C\uC800 \uB450\uAED8\uB97C \uC8FC\uACE0 \uB098\uC11C \uBD80\uB4DC\uB7FD\uAC8C \uB9CC\uB4DC\uB294 \uAC83\uC774 \uC62C\uBC14\uB978 \uC21C\uC11C\uC785\uB2C8\uB2E4."
+  }
+]);
+</script>
+
+<script src="./_helpers.js?v=20260318ai"></script>
+<script>
+window.addEventListener("load", function() {
+  if (window.normalizeStandaloneShowMeLayout) {
+    window.normalizeStandaloneShowMeLayout(document);
+  }
+});
+</script>
+</body>
+</html>

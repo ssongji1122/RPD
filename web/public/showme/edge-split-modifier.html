@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show Me — Edge Split Modifier 이해</title>
+<style>
+/* ══════════════════════════════════════════════════
+   Show Me Widget — Standalone Dark Theme
+   tokens.css 변수명과 동일하게 유지 (iframe 독립 동작)
+   ══════════════════════════════════════════════════ */
+:root {
+  --bg:            #0a0a0a;
+  --bg-soft:       #111214;
+  --surface:       #17181a;
+  --surface-strong:#1c1d20;
+  --line:          rgba(255,255,255,.08);
+  --line-strong:   rgba(255,255,255,.14);
+  --key:           #00bfa5;
+  --key-strong:    #009e8a;
+  --key-soft:      #6ee8d8;
+  --success:       #10b981;
+  --success-soft:  #6ee7b7;
+  --warn:          #f59e0b;
+  --danger:        #ef4444;
+  --danger-soft:   #fca5a5;
+  --warn-soft:     #fbbf24;
+  --warn-medium:   #fcd34d;
+  --accent-soft:   #FFB347;
+  --secondary-soft:#a5b4fc;
+  --secondary-mid: #c4b5fd;
+  --text:          #f5f5f7;
+  --muted:         #a1a1aa;
+  --muted-strong:  #d4d4d8;
+  --muted-mid:     #94a3b8;
+  --muted-soft:    #cbd5e1;
+  --muted-dim:     #64748b;
+  --info-soft:     #67e8f9;
+  --radius-sm:     12px;
+  --radius-md:     18px;
+  --radius-lg:     24px;
+  --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; padding: 0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Tab Navigation ── */
+.tabs {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-soft);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  padding: 12px 16px;
+  font-size: .84rem; font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border: none; border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .14s, border-color .14s;
+  background: none;
+  font-family: inherit;
+}
+.tab:hover { color: var(--muted-strong); }
+.tab.is-active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+
+/* ── Tab Panels ── */
+.panel { display: none; padding: 20px 16px; }
+.panel.is-active { display: block; }
+
+/* ── Concept Cards ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+.concept-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 18px;
+}
+.concept-card h3 {
+  margin: 0 0 8px; font-size: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.concept-card p {
+  margin: 0; color: var(--muted-strong);
+  font-size: .88rem; line-height: 1.7;
+}
+.concept-card ul {
+  margin: 8px 0 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem; line-height: 1.8;
+}
+
+/* ── Badge ── */
+.badge {
+  display: inline-block;
+  padding: 3px 9px; border-radius: 999px;
+  font-size: .72rem; font-weight: 600;
+}
+.badge-blue  { background: rgba(0,191,165,.15);  color: var(--key-soft); }
+.badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
+.badge-amber { background: rgba(245,158,11,.15);  color: var(--warn-soft); }
+
+/* ── Keyboard Shortcut ── */
+.kbd {
+  display: inline-block;
+  padding: 3px 8px; border-radius: 6px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  color: var(--key-soft);
+  font-size: .82rem; font-weight: 600;
+  font-family: var(--font);
+}
+
+/* ── Canvas / Demo ── */
+.demo-wrap {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  overflow: hidden;
+  margin: 14px 0;
+}
+.demo-wrap canvas {
+  display: block; width: 100%;
+}
+.demo-controls {
+  display: flex; gap: 8px; padding: 12px;
+  border-top: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+.demo-hint {
+  font-size: .78rem; color: var(--muted);
+  text-align: center; padding: 6px 0 0;
+}
+.demo-btn {
+  padding: 7px 14px; border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255,255,255,.04);
+  color: var(--muted-strong);
+  font: inherit; font-size: .82rem;
+  cursor: pointer;
+  transition: background .14s, color .14s;
+}
+.demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
+.demo-btn.is-active {
+  background: rgba(0,191,165,.14);
+  color: var(--key-soft);
+  border-color: rgba(0,191,165,.3);
+}
+.scenario-nav { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.control-guide { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+.control-kind { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; font-size: .72rem; font-weight: 600; letter-spacing: .02em; }
+.control-kind.discrete { background: rgba(0,191,165,.14); color: var(--key-soft); }
+.control-kind.range { background: rgba(16,185,129,.14); color: var(--success-soft); }
+.control-copy { font-size: .78rem; color: var(--muted); line-height: 1.6; }
+.scene-desc { font-size: .84rem; color: var(--muted-strong); margin-bottom: 12px; padding: 10px 14px; border-radius: var(--radius-sm); background: var(--surface); border: 1px solid var(--line); line-height: 1.7; }
+.cause-effect { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0 14px; }
+.cause-card { padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--surface); }
+.cause-card h4 { margin: 0 0 6px; font-size: .82rem; text-transform: uppercase; letter-spacing: .04em; }
+.cause-card p { margin: 0; font-size: .82rem; color: var(--muted-strong); line-height: 1.65; }
+.cause-card.bad h4 { color: var(--danger-soft); }
+.cause-card.good h4 { color: var(--success-soft); }
+
+/* ── Usage Grid ── */
+.usage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.usage-card {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 16px;
+}
+.usage-card h4 {
+  margin: 0 0 8px; font-size: .92rem;
+  color: var(--key-soft);
+}
+.usage-card ul {
+  margin: 0; padding-left: 16px;
+  color: var(--muted-strong); font-size: .85rem;
+  line-height: 1.8;
+}
+
+/* ── Tip Box ── */
+.tip-box {
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(0,191,165,.2);
+  background: rgba(0,191,165,.06);
+  padding: 14px 16px;
+  margin-top: 14px;
+  font-size: .86rem;
+  color: var(--muted-strong);
+}
+.tip-box strong { color: var(--key-soft); }
+
+/* ── Combo Section ── */
+.combo-section {
+  margin-top: 18px;
+}
+.combo-section h4 {
+  margin: 0 0 10px;
+  font-size: .92rem;
+  color: var(--text);
+}
+.combo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.combo-card {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 12px 14px;
+}
+.combo-card .combo-name {
+  font-size: .86rem;
+  font-weight: 600;
+  color: var(--key-soft);
+  margin-bottom: 4px;
+}
+.combo-card .combo-desc {
+  font-size: .8rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ── Shortcut Reference ── */
+.shortcut-list {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.shortcut-list h4 {
+  margin: 0 0 10px;
+  font-size: .9rem;
+  color: var(--text);
+}
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: .84rem;
+  color: var(--muted-strong);
+}
+.shortcut-row + .shortcut-row {
+  border-top: 1px solid var(--line);
+}
+.shortcut-keys {
+  flex-shrink: 0;
+}
+.analogy {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(245,158,11,.06);
+  border: 1px solid rgba(245,158,11,.15);
+  font-size: .82rem;
+  color: var(--warn-soft);
+  font-style: italic;
+}
+
+/* ── Quiz ── */
+.quiz-progress {
+  font-size: .78rem; color: var(--muted);
+  margin-bottom: 12px;
+}
+.quiz-question {
+  margin-bottom: 20px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+.quiz-question h4 {
+  margin: 0 0 12px; font-size: .94rem;
+}
+.quiz-option {
+  display: block; width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.025);
+  color: var(--text);
+  font: inherit; font-size: .86rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background .14s, border-color .14s;
+}
+.quiz-option:hover {
+  background: rgba(255,255,255,.06);
+  border-color: var(--line-strong);
+}
+.quiz-option.correct {
+  background: rgba(16,185,129,.12);
+  border-color: rgba(16,185,129,.4);
+  color: var(--success-soft);
+}
+.quiz-option.wrong {
+  background: rgba(239,68,68,.1);
+  border-color: rgba(239,68,68,.3);
+  color: var(--danger-soft);
+}
+.quiz-option:disabled { cursor: default; opacity: .85; }
+.quiz-feedback {
+  margin-top: 8px; padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: .84rem;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.correct-fb { background: rgba(16,185,129,.08); color: var(--success-soft); }
+.quiz-feedback.wrong-fb   { background: rgba(239,68,68,.06);  color: var(--danger-soft); }
+
+.quiz-score {
+  text-align: center; padding: 20px;
+  font-size: 1.1rem; font-weight: 600;
+}
+.quiz-retry {
+  display: block; margin: 12px auto;
+  padding: 10px 24px;
+  border-radius: 999px;
+  border: 1px solid var(--key);
+  background: rgba(0,191,165,.12);
+  color: var(--key-soft);
+  font: inherit; font-size: .88rem;
+  cursor: pointer;
+  transition: background .14s;
+}
+.quiz-retry:hover { background: rgba(0,191,165,.22); }
+
+/* ── Official Doc Reference ── */
+.doc-ref {
+  margin-top: 16px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(0,191,165,.15);
+  background: rgba(0,191,165,.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.doc-ref a {
+  color: var(--key-soft);
+  font-size: .84rem;
+  text-decoration: none;
+  line-height: 1.5;
+}
+.doc-ref a:hover { text-decoration: underline; }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .concept-grid, .usage-grid, .combo-grid { grid-template-columns: 1fr; }
+  .tabs { padding: 0 8px; }
+  .tab { padding: 10px 12px; font-size: .8rem; }
+  .panel { padding: 16px 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Tab Bar -->
+<nav class="tabs" role="tablist">
+  <button class="tab is-active" data-tab="concept" role="tab" aria-selected="true" aria-controls="panel-concept">개념 이해</button>
+  <button class="tab" data-tab="visual" role="tab" aria-selected="false" aria-controls="panel-visual">시각적 비교</button>
+  <button class="tab" data-tab="when" role="tab" aria-selected="false" aria-controls="panel-when">언제 쓰나요?</button>
+  <button class="tab" data-tab="quiz" role="tab" aria-selected="false" aria-controls="panel-quiz">퀴즈</button>
+</nav>
+
+<!-- TAB 1: 개념 이해 -->
+<section class="panel is-active" id="panel-concept" role="tabpanel">
+  <div class="concept-grid">
+    <div class="concept-card">
+      <h3>Edge Split이란?</h3>
+      <p>특정 모서리에서 면을 분리하여 날카로운 셰이딩을 만드는 모디파이어입니다. Smooth Shading 상태에서 특정 모서리만 날카롭게 보이게 합니다.</p>
+      <div class="analogy">부드러운 천에 접는 선을 만드는 것과 같아요</div>
+    </div>
+    <div class="concept-card">
+      <h3>Split Angle</h3>
+      <p>이 각도보다 큰 모서리는 자동으로 분리됩니다. 기본값은 30도입니다. 각도가 클수록 더 적은 모서리가 분리되고, 작을수록 더 많은 모서리가 분리됩니다.</p>
+    </div>
+    <div class="concept-card">
+      <h3>수동 Sharp 지정</h3>
+      <p>Sharp Edge 표시(<span class="kbd">Ctrl</span>+<span class="kbd">E</span> &rarr; Mark Sharp)로 수동 지정도 가능합니다. 각도 기반 자동 분리와 함께 사용할 수 있습니다.</p>
+    </div>
+  </div>
+
+  <div class="shortcut-list">
+    <h4>Auto Smooth과의 관계</h4>
+    <div class="shortcut-row">
+      <span>Blender 5.0에서는 Auto Smooth가 개선되어 Edge Split 대신 사용 가능한 경우가 많습니다. 노드 기반으로 더 유연한 제어가 가능합니다.</span>
+    </div>
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/edge_split.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Edge Split Modifier
+    </a>
+  </div>
+</section>
+
+<!-- TAB 2: 시각적 비교 -->
+<section class="panel" id="panel-visual" role="tabpanel">
+  <div class="control-guide">
+    <span class="control-kind discrete">상태 전환</span>
+    <span class="control-copy">버튼으로 셰이딩 모드를 바꿔서 같은 실루엣이 어떻게 다르게 읽히는지 비교합니다.</span>
+  </div>
+  <div class="scene-desc" id="edgeSplitDesc">Smooth는 모든 모서리를 하나의 덩어리처럼 이어 보이게 하고, Flat은 모든 면을 개별적으로 끊어 보이게 합니다. Edge Split은 필요한 모서리만 분리해 둘 사이를 조절하는 방식입니다.</div>
+  <div class="cause-effect">
+    <div class="cause-card bad">
+      <h4>All or Nothing</h4>
+      <p>전부 Smooth면 기계 모서리까지 녹아 버리고, 전부 Flat이면 곡면까지 각져 보여서 형태 정보가 지나치게 손실됩니다.</p>
+    </div>
+    <div class="cause-card good">
+      <h4>Selective Sharp</h4>
+      <p>Edge Split은 필요한 엣지만 날카롭게 남겨서, 하드서피스의 모서리와 곡면의 부드러움을 한 모델 안에서 함께 설명할 수 있어요.</p>
+    </div>
+  </div>
+  <div class="demo-wrap">
+    <canvas id="demoCanvas" width="680" height="340"></canvas>
+    <div class="demo-controls scenario-nav">
+      <button class="demo-btn is-active" id="btnSmooth">Smooth</button>
+      <button class="demo-btn" id="btnFlat">Flat</button>
+      <button class="demo-btn" id="btnEdgeSplit">Edge Split</button>
+    </div>
+  </div>
+  <p class="demo-hint">모드를 전환하여 모서리 셰이딩이 어떻게 달라지는지 확인하세요.</p>
+</section>
+
+<!-- TAB 3: 언제 쓰나요? -->
+<section class="panel" id="panel-when" role="tabpanel">
+  <div class="usage-grid">
+    <div class="usage-card">
+      <h4>Edge Split이 필요할 때</h4>
+      <ul>
+        <li>기계 부품 (날카로운 모서리 + 부드러운 면 공존)</li>
+        <li>건축 모델</li>
+        <li>하드서페이스 모델링</li>
+      </ul>
+    </div>
+    <div class="usage-card">
+      <h4>Edge Split을 안 쓰는 경우</h4>
+      <ul>
+        <li>유기적 모델 (캐릭터, 동물 등)</li>
+        <li>Auto Smooth으로 충분한 경우</li>
+        <li>이미 Flat Shading이 적절한 경우</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="combo-section">
+    <h4>자주 쓰는 조합</h4>
+    <div class="combo-grid">
+      <div class="combo-card">
+        <div class="combo-name">Edge Split + Subdivision Surface</div>
+        <div class="combo-desc">Edge Split으로 날카로운 모서리를 유지하면서 Subdivision으로 전체를 부드럽게 합니다.</div>
+      </div>
+      <div class="combo-card">
+        <div class="combo-name">Edge Split + Bevel</div>
+        <div class="combo-desc">날카로운 모서리에 Bevel을 추가해 현실적인 하이라이트 반사를 만듭니다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>팁:</strong> Blender 5.0에서는 Auto Smooth 개선으로 Edge Split 대신 사용할 수 있는 경우가 많습니다. 노드 기반 Auto Smooth는 더 유연하고 비파괴적인 워크플로우를 제공합니다.
+  </div>
+
+  <div class="doc-ref">
+    <a href="https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/edge_split.html" target="_blank" rel="noopener">
+      📖 Blender 공식 문서 — Edge Split Modifier
+    </a>
+  </div>
+</section>
+
+<!-- TAB 4: 퀴즈 -->
+<section class="panel" id="panel-quiz" role="tabpanel">
+  <div id="quizArea"></div>
+</section>
+
+<script>
+// ── Tab Switching ──────────────────────────────
+document.querySelectorAll(".tab").forEach(function(tab) {
+  tab.addEventListener("click", function() {
+    document.querySelectorAll(".tab").forEach(function(t) {
+      t.classList.remove("is-active");
+      t.setAttribute("aria-selected", "false");
+    });
+    document.querySelectorAll(".panel").forEach(function(p) { p.classList.remove("is-active"); });
+    tab.classList.add("is-active");
+    tab.setAttribute("aria-selected", "true");
+    document.getElementById("panel-" + tab.dataset.tab).classList.add("is-active");
+  });
+});
+
+// ── Quiz Engine (Safe DOM methods) ────────────
+function initQuiz(questions) {
+  var container = document.getElementById("quizArea");
+  var score = 0, answered = 0;
+  var scoreDiv = null; // track score section for updates
+
+  // Progress indicator
+  var progress = document.createElement("div");
+  progress.className = "quiz-progress";
+  progress.textContent = "문제 0 / " + questions.length + " \u00b7 점수 0점";
+  container.appendChild(progress);
+
+  questions.forEach(function(q, qi) {
+    var div = document.createElement("div");
+    div.className = "quiz-question";
+
+    var heading = document.createElement("h4");
+    heading.textContent = "Q" + (qi + 1) + ". " + q.question;
+    div.appendChild(heading);
+
+    var fb = document.createElement("div");
+    fb.className = "quiz-feedback";
+
+    q.options.forEach(function(opt, oi) {
+      var btn = document.createElement("button");
+      btn.className = "quiz-option";
+      btn.textContent = opt;
+      btn.addEventListener("click", function() {
+        if (btn.disabled) return;
+        div.querySelectorAll(".quiz-option").forEach(function(b) { b.disabled = true; });
+        answered++;
+        if (oi === q.answer) {
+          btn.classList.add("correct");
+          fb.className = "quiz-feedback show correct-fb";
+          fb.textContent = "\u2705 " + q.explanation;
+          score++;
+        } else {
+          btn.classList.add("wrong");
+          div.querySelectorAll(".quiz-option")[q.answer].classList.add("correct");
+          fb.className = "quiz-feedback show wrong-fb";
+          fb.textContent = "\u274c " + q.explanation;
+
+          // Add retry button for wrong answers
+          var retryBtn = document.createElement("button");
+          retryBtn.className = "quiz-retry";
+          retryBtn.style.cssText = "margin-top:10px;font-size:.82rem;padding:7px 18px";
+          retryBtn.textContent = "다시 풀기";
+          retryBtn.addEventListener("click", function() {
+            // Reset this question
+            answered--;
+            div.querySelectorAll(".quiz-option").forEach(function(b) {
+              b.disabled = false;
+              b.classList.remove("wrong", "correct");
+            });
+            fb.className = "quiz-feedback";
+            fb.textContent = "";
+            retryBtn.remove();
+            // Remove score section if it was shown
+            if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+            progress.textContent = "문제 " + answered + " / " + questions.length + " \u00b7 점수 " + score + "점";
+          });
+          fb.appendChild(retryBtn);
+        }
+        progress.textContent = "문제 " + answered + " / " + questions.length + " \u00b7 점수 " + score + "점";
+        if (answered === questions.length) showScore();
+      });
+      div.appendChild(btn);
+    });
+
+    div.appendChild(fb);
+    container.appendChild(div);
+  });
+
+  function showScore() {
+    // Remove previous score section if exists (e.g. after retry)
+    if (scoreDiv) { scoreDiv.remove(); scoreDiv = null; }
+
+    scoreDiv = document.createElement("div");
+    scoreDiv.className = "quiz-score";
+
+    var emoji = document.createElement("div");
+    emoji.style.cssText = "font-size:36px;margin-bottom:8px";
+    emoji.textContent = score === questions.length ? "\ud83c\udf89" : score >= Math.ceil(questions.length / 2) ? "\ud83d\udc4d" : "\ud83d\udcda";
+    scoreDiv.appendChild(emoji);
+
+    var result = document.createElement("div");
+    result.style.cssText = "font-size:18px;font-weight:500;margin-bottom:6px";
+    result.textContent = score + " / " + questions.length + " 정답";
+    scoreDiv.appendChild(result);
+
+    var msg = document.createElement("div");
+    msg.style.cssText = "font-size:14px;color:var(--muted-strong);margin-bottom:16px";
+    msg.textContent = score === questions.length ? "완벽합니다!" : "조금 더 연습하면 완벽해질 거예요!";
+    scoreDiv.appendChild(msg);
+
+    // Save button — sends result to parent for Notion sync
+    var saveBtn = document.createElement("button");
+    saveBtn.className = "quiz-retry";
+    saveBtn.style.cssText = "background:rgba(0,191,165,.18);border-color:var(--key);margin-bottom:8px";
+    saveBtn.textContent = "기록 저장하기";
+    saveBtn.addEventListener("click", function() {
+      try {
+        var wid = new URLSearchParams(location.search).get("wid")
+               || location.pathname.split("/").pop().replace(".html", "");
+        window.parent.postMessage({
+          type: "showme-quiz-complete",
+          widgetId: wid,
+          score: score,
+          total: questions.length,
+          pass: score >= Math.ceil(questions.length * 0.75)
+        }, "*");
+      } catch(e) {}
+      saveBtn.textContent = "저장 완료!";
+      saveBtn.disabled = true;
+      saveBtn.style.opacity = ".5";
+    });
+    scoreDiv.appendChild(saveBtn);
+
+    var retry = document.createElement("button");
+    retry.className = "quiz-retry";
+    retry.textContent = "처음부터 다시";
+    retry.addEventListener("click", function() { location.reload(); });
+    scoreDiv.appendChild(retry);
+
+    container.appendChild(scoreDiv);
+  }
+}
+
+// ── Canvas Edge Split Demo ────────────────────
+(function() {
+  var canvas = document.getElementById("demoCanvas");
+  var ctx = canvas.getContext("2d");
+  var mode = "smooth"; // smooth, flat, edgesplit
+  var numSegments = 12;
+  var cx = canvas.width / 2;
+  var cy = canvas.height / 2 + 10;
+  var radius = 120;
+
+  // Which edges are "sharp" in edge-split mode (indices of edges between segments)
+  var sharpEdges = [0, 3, 6, 9]; // every 3rd edge is sharp
+
+  function draw() {
+    var w = canvas.width;
+    var h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    // Background
+    ctx.fillStyle = "#17181a";
+    ctx.fillRect(0, 0, w, h);
+
+    // Grid
+    ctx.strokeStyle = "rgba(255,255,255,.04)";
+    ctx.lineWidth = 1;
+    var step = 40;
+    for (var gx = step; gx < w; gx += step) {
+      ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, h); ctx.stroke();
+    }
+    for (var gy = step; gy < h; gy += step) {
+      ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
+    }
+
+    // Title
+    ctx.fillStyle = "rgba(255,255,255,.6)";
+    ctx.font = "bold 13px sans-serif";
+    ctx.textAlign = "center";
+    var modeLabel = mode === "smooth" ? "Smooth Shading" : mode === "flat" ? "Flat Shading" : "Edge Split";
+    ctx.fillText(modeLabel, cx, 24);
+
+    // Draw cylinder cross-section (polygon)
+    var points = [];
+    for (var i = 0; i < numSegments; i++) {
+      var angle = (Math.PI * 2 / numSegments) * i - Math.PI / 2;
+      points.push({
+        x: cx + Math.cos(angle) * radius,
+        y: cy + Math.sin(angle) * radius
+      });
+    }
+
+    // Draw faces with shading
+    for (var i = 0; i < numSegments; i++) {
+      var i2 = (i + 1) % numSegments;
+      var p1 = points[i];
+      var p2 = points[i2];
+
+      // Calculate face normal angle for shading
+      var midAngle = (Math.PI * 2 / numSegments) * (i + 0.5) - Math.PI / 2;
+      var lightDir = -Math.PI / 4; // light from top-left
+      var dot = Math.cos(midAngle - lightDir);
+      var brightness;
+
+      if (mode === "flat") {
+        // Flat: each face has uniform brightness
+        brightness = 0.25 + Math.max(0, dot) * 0.55;
+      } else if (mode === "smooth") {
+        // Smooth: we blend — draw gradient between vertices
+        brightness = 0.25 + Math.max(0, dot) * 0.55;
+      } else {
+        // Edge split: smooth where not sharp, flat at sharp edges
+        brightness = 0.25 + Math.max(0, dot) * 0.55;
+      }
+
+      // Draw face as triangle from center
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(p1.x, p1.y);
+      ctx.lineTo(p2.x, p2.y);
+      ctx.closePath();
+
+      if (mode === "smooth") {
+        // Gradient fill to simulate smooth shading
+        var grad = ctx.createLinearGradient(p1.x, p1.y, p2.x, p2.y);
+        var angle1 = (Math.PI * 2 / numSegments) * i - Math.PI / 2;
+        var angle2 = (Math.PI * 2 / numSegments) * i2 - Math.PI / 2;
+        var dot1 = Math.cos(angle1 - lightDir);
+        var dot2 = Math.cos(angle2 - lightDir);
+        var b1 = 0.25 + Math.max(0, dot1) * 0.55;
+        var b2 = 0.25 + Math.max(0, dot2) * 0.55;
+        var c1 = Math.round(b1 * 100);
+        var c2 = Math.round(b2 * 100);
+        grad.addColorStop(0, "hsl(210,50%," + c1 + "%)");
+        grad.addColorStop(1, "hsl(210,50%," + c2 + "%)");
+        ctx.fillStyle = grad;
+      } else if (mode === "flat") {
+        var c = Math.round(brightness * 100);
+        ctx.fillStyle = "hsl(210,50%," + c + "%)";
+      } else {
+        // Edge Split: smooth gradient but with hard breaks at sharp edges
+        var isSharp = sharpEdges.indexOf(i) !== -1;
+        var isPrevSharp = sharpEdges.indexOf((i - 1 + numSegments) % numSegments) !== -1;
+
+        if (isSharp || isPrevSharp) {
+          // This face has a sharp boundary — use flat shading
+          var c = Math.round(brightness * 100);
+          ctx.fillStyle = "hsl(210,50%," + c + "%)";
+        } else {
+          // Smooth shading between non-sharp edges
+          var grad = ctx.createLinearGradient(p1.x, p1.y, p2.x, p2.y);
+          var angle1 = (Math.PI * 2 / numSegments) * i - Math.PI / 2;
+          var angle2 = (Math.PI * 2 / numSegments) * i2 - Math.PI / 2;
+          var dot1 = Math.cos(angle1 - lightDir);
+          var dot2 = Math.cos(angle2 - lightDir);
+          var b1 = 0.25 + Math.max(0, dot1) * 0.55;
+          var b2 = 0.25 + Math.max(0, dot2) * 0.55;
+          var c1 = Math.round(b1 * 100);
+          var c2 = Math.round(b2 * 100);
+          grad.addColorStop(0, "hsl(210,50%," + c1 + "%)");
+          grad.addColorStop(1, "hsl(210,50%," + c2 + "%)");
+          ctx.fillStyle = grad;
+        }
+      }
+      ctx.fill();
+    }
+
+    // Draw edges
+    for (var i = 0; i < numSegments; i++) {
+      var i2 = (i + 1) % numSegments;
+      var p1 = points[i];
+      var p2 = points[i2];
+      var isSharp = (mode === "edgesplit" && sharpEdges.indexOf(i) !== -1);
+
+      ctx.beginPath();
+      ctx.moveTo(p1.x, p1.y);
+      ctx.lineTo(p2.x, p2.y);
+
+      if (mode === "flat") {
+        ctx.strokeStyle = "rgba(255,255,255,.3)";
+        ctx.lineWidth = 1.5;
+      } else if (isSharp) {
+        ctx.strokeStyle = "#ef4444";
+        ctx.lineWidth = 3;
+      } else if (mode === "edgesplit") {
+        ctx.strokeStyle = "rgba(255,255,255,.1)";
+        ctx.lineWidth = 1;
+      } else {
+        ctx.strokeStyle = "rgba(255,255,255,.1)";
+        ctx.lineWidth = 1;
+      }
+      ctx.stroke();
+    }
+
+    // Draw vertices
+    points.forEach(function(p, i) {
+      var isOnSharp = false;
+      if (mode === "edgesplit") {
+        isOnSharp = sharpEdges.indexOf(i) !== -1 || sharpEdges.indexOf((i - 1 + numSegments) % numSegments) !== -1;
+      }
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, isOnSharp ? 5 : 3, 0, Math.PI * 2);
+      ctx.fillStyle = isOnSharp ? "#ef4444" : "rgba(255,255,255,.5)";
+      ctx.fill();
+    });
+
+    // Legend
+    var legendY = h - 20;
+    if (mode === "edgesplit") {
+      ctx.fillStyle = "#ef4444";
+      ctx.fillRect(cx - 100, legendY - 8, 12, 3);
+      ctx.fillStyle = "rgba(255,255,255,.6)";
+      ctx.font = "11px sans-serif";
+      ctx.textAlign = "left";
+      ctx.fillText("Sharp Edge (분리됨)", cx - 84, legendY - 3);
+    }
+
+    // Description
+    ctx.fillStyle = "rgba(255,255,255,.45)";
+    ctx.font = "11px sans-serif";
+    ctx.textAlign = "center";
+    if (mode === "smooth") {
+      ctx.fillText("모든 모서리가 부드럽게 연결됨", cx, h - 4);
+    } else if (mode === "flat") {
+      ctx.fillText("모든 면이 개별적으로 평평하게 렌더링됨", cx, h - 4);
+    } else {
+      ctx.fillText("빨간 모서리만 날카롭게, 나머지는 부드럽게", cx, h - 4);
+    }
+  }
+
+  // Button handlers
+  var btnSmooth = document.getElementById("btnSmooth");
+  var btnFlat = document.getElementById("btnFlat");
+  var btnEdgeSplit = document.getElementById("btnEdgeSplit");
+  var allBtns = [btnSmooth, btnFlat, btnEdgeSplit];
+  var edgeSplitDesc = document.getElementById("edgeSplitDesc");
+
+  function updateEdgeSplitDesc() {
+    if (!edgeSplitDesc) return;
+    if (mode === "smooth") {
+      edgeSplitDesc.textContent = "Smooth 상태입니다. 모든 면 법선이 이어져 보여서 원통 전체가 하나의 부드러운 곡면처럼 읽히지만, 날카로운 기계 모서리까지 함께 흐려집니다.";
+    } else if (mode === "flat") {
+      edgeSplitDesc.textContent = "Flat 상태입니다. 모든 면이 개별 조각처럼 끊겨 보여 구조는 분명하지만, 원래 부드러워야 할 곡면도 각진 저폴리처럼 보입니다.";
+    } else {
+      edgeSplitDesc.textContent = "Edge Split 상태입니다. 지정한 모서리만 분리되어 빨간 엣지는 날카롭게, 나머지 부분은 부드럽게 유지되는 하드서피스용 절충안이에요.";
+    }
+  }
+
+  function setMode(m, activeBtn) {
+    mode = m;
+    allBtns.forEach(function(b) { b.classList.remove("is-active"); });
+    activeBtn.classList.add("is-active");
+    updateEdgeSplitDesc();
+    draw();
+  }
+
+  btnSmooth.addEventListener("click", function() { setMode("smooth", btnSmooth); });
+  btnFlat.addEventListener("click", function() { setMode("flat", btnFlat); });
+  btnEdgeSplit.addEventListener("click", function() { setMode("edgesplit", btnEdgeSplit); });
+
+  // Touch events for buttons
+  [btnSmooth, btnFlat, btnEdgeSplit].forEach(function(btn) {
+    btn.addEventListener("touchstart", function(e) {
+      e.preventDefault();
+      btn.click();
+    }, { passive: false });
+  });
+
+  // Initial draw
+  updateEdgeSplitDesc();
+  draw();
+})();
+
+// ── Quiz Data ─────────────────────────────────
+initQuiz([
+  {
+    question: "Edge Split Modifier\uC758 \uC5ED\uD560\uC740 \uBB34\uC5C7\uC778\uAC00\uC694?",
+    options: [
+      "\uBA54\uC26C\uB97C \uB450 \uAC1C\uB85C \uBD84\uB9AC\uD55C\uB2E4",
+      "\uD2B9\uC815 \uBAA8\uC11C\uB9AC\uC5D0\uC11C \uBA74\uC744 \uBD84\uB9AC\uD558\uC5EC \uB0A0\uCE74\uB85C\uC6B4 \uC170\uC774\uB529\uC744 \uB9CC\uB4E0\uB2E4",
+      "\uBAA8\uB4E0 \uBAA8\uC11C\uB9AC\uB97C \uBD80\uB4DC\uB7FD\uAC8C \uB9CC\uB4E0\uB2E4",
+      "\uBA54\uC26C\uC758 \uBAA8\uC11C\uB9AC\uB97C \uC81C\uAC70\uD55C\uB2E4"
+    ],
+    answer: 1,
+    explanation: "Edge Split\uC740 \uD2B9\uC815 \uBAA8\uC11C\uB9AC\uC5D0\uC11C \uBA74\uC744 \uBD84\uB9AC\uD558\uC5EC Smooth Shading \uC0C1\uD0DC\uC5D0\uC11C\uB3C4 \uB0A0\uCE74\uB85C\uC6B4 \uC170\uC774\uB529\uC744 \uB9CC\uB4ED\uB2C8\uB2E4."
+  },
+  {
+    question: "Split Angle\uC774 30\uB3C4\uB85C \uC124\uC815\uB418\uC5B4 \uC788\uC73C\uBA74 \uC5B4\uB5BB\uAC8C \uB418\uB098\uC694?",
+    options: [
+      "30\uB3C4 \uBBF8\uB9CC\uC758 \uBAA8\uC11C\uB9AC\uAC00 \uB0A0\uCE74\uB86D\uAC8C \uB41C\uB2E4",
+      "30\uB3C4 \uC774\uC0C1\uC758 \uBAA8\uC11C\uB9AC\uAC00 \uB0A0\uCE74\uB86D\uAC8C \uB41C\uB2E4",
+      "\uBAA8\uB4E0 \uBAA8\uC11C\uB9AC\uAC00 30\uB3C4\uB85C \uD68C\uC804\uD55C\uB2E4",
+      "\uBAA8\uC11C\uB9AC\uAC00 30\uAC1C\uB85C \uBD84\uB9AC\uB41C\uB2E4"
+    ],
+    answer: 1,
+    explanation: "Split Angle\uBCF4\uB2E4 \uD070 \uAC01\uB3C4\uC758 \uBAA8\uC11C\uB9AC\uAC00 \uC790\uB3D9\uC73C\uB85C \uBD84\uB9AC\uB418\uC5B4 \uB0A0\uCE74\uB86D\uAC8C \uD45C\uC2DC\uB429\uB2C8\uB2E4."
+  },
+  {
+    question: "\uC218\uB3D9\uC73C\uB85C \uB0A0\uCE74\uB85C\uC6B4 \uBAA8\uC11C\uB9AC\uB97C \uC9C0\uC815\uD558\uB824\uBA74 \uC5B4\uB5BB\uAC8C \uD574\uC57C \uD558\uB098\uC694?",
+    options: [
+      "Ctrl+B \u2192 Bevel Edge",
+      "Ctrl+E \u2192 Mark Sharp",
+      "Ctrl+F \u2192 Shade Flat",
+      "Ctrl+N \u2192 Recalculate Normals"
+    ],
+    answer: 1,
+    explanation: "Ctrl+E \u2192 Mark Sharp\uB85C \uC218\uB3D9\uC73C\uB85C \uB0A0\uCE74\uB85C\uC6B4 \uBAA8\uC11C\uB9AC\uB97C \uC9C0\uC815\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
+  },
+  {
+    question: "Blender 5.0\uC5D0\uC11C Edge Split\uC758 \uB300\uC548\uC73C\uB85C \uC0AC\uC6A9\uD560 \uC218 \uC788\uB294 \uAE30\uB2A5\uC740?",
+    options: [
+      "Smooth Modifier",
+      "Weighted Normal",
+      "Auto Smooth",
+      "Decimate"
+    ],
+    answer: 2,
+    explanation: "Blender 5.0\uC5D0\uC11C\uB294 Auto Smooth\uAC00 \uAC1C\uC120\uB418\uC5B4 Edge Split \uB300\uC2E0 \uC0AC\uC6A9\uD560 \uC218 \uC788\uB294 \uACBD\uC6B0\uAC00 \uB9CE\uC2B5\uB2C8\uB2E4."
+  }
+]);
+</script>
+
+<script src="./_helpers.js?v=20260318ai"></script>
+<script>
+window.addEventListener("load", function() {
+  if (window.normalizeStandaloneShowMeLayout) {
+    window.normalizeStandaloneShowMeLayout(document);
+  }
+});
+</script>
+</body>
+</html>
