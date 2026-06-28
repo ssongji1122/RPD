@@ -40,7 +40,10 @@
 ## 전환 게이트
 
 학생용 페이지 이행이 모두 끝나 web/ 이 course-site 의 **상위집합**이 됐다(`subpage`→`/resources` 항목 대조만 남음).
-이제 배포 전환이 가능하다. 전환은 학기 경계(다음 학기 시작 직전)에서 수행한다. 두 경로:
 
-1. **슬롯 교체**: 루트 `.github/workflows/deploy-pages.yml` 을 Astro 빌드로 교체 → 같은 GitHub Pages(github.io/RPD)가 web/ 이 됨. 도메인 불필요, 라이브가 한 번에 전환.
-2. **별도 호스팅 + 도메인**: web/ 을 별도 Pages/Vercel + `rpd.soluta.studio` DNS 로 띄워 병행 검증 후 전환.
+**전환 실행됨 (옵션 1 — 슬롯 교체, 학기 종료 후):**
+- 루트 `.github/workflows/deploy-pages.yml` 을 Astro(web/) 빌드로 교체. github.io/RPD 가 web/ 이 됨.
+- `astro.config.mjs`: `base: '/RPD/'` (project pages 하위 경로). 내부 링크는 `src/lib/url.ts` 의 `url()` 헬퍼가 base 를 따른다.
+- `public/CNAME` 제거(커스텀 도메인 보류). course-site 는 repo 에 남되 더는 배포되지 않는다.
+
+**도메인 전환(나중, 별도 작업):** `rpd.soluta.studio` DNS 연결 시 — `astro.config` 의 `base` 를 `'/'`, `site` 를 도메인으로 바꾸고 `public/CNAME`(rpd.soluta.studio) 재생성. `url()` 헬퍼 덕에 링크는 자동 적응.

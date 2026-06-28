@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { cardGroups, cardCount } from '../data/showme';
+import { url } from '../lib/url';
 
 function weekLabel(week: number | number[] | null): string {
   if (week == null) return '';
@@ -32,7 +33,7 @@ function weekLabel(week: number | number[] | null): string {
           <ul class="card-grid">
             {g.items.map((c) => (
               <li data-card data-text={`${c.label} ${c.id}`.toLowerCase()}>
-                <a href={`/showme/${c.id}.html`} class="card">
+                <a href={url(`/showme/${c.id}.html`)} class="card">
                   <span class="card-label">{c.label}</span>
                   {weekLabel(c.week) && <span class="card-week meta">{weekLabel(c.week)}</span>}
                 </a>

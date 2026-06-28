@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { weeks } from '../data/curriculum';
+import { url } from '../lib/url';
 
 // canonical 의 주차별 shortcuts 를 집계한다. (SSoT — 별도 데이터 없음)
 const groups = weeks
@@ -28,7 +29,7 @@ const total = groups.reduce((n, g) => n + g.items.length, 0);
       {groups.map((g) => (
         <div class="sc-group" data-group>
           <h2 class="sc-week eyebrow">
-            <a href={`/weeks/${g.id}`}>{g.id}</a>
+            <a href={url(`/weeks/${g.id}`)}>{g.id}</a>
             <span class="sc-week-title">{g.title}</span>
           </h2>
           <ul class="shortcut-list">

@@ -61,10 +61,11 @@ function load(): FinalProjects {
   return JSON.parse(match[1]) as FinalProjects;
 }
 
-// 데이터의 상대 경로(assets/...)를 web/ 의 절대 경로(/assets/...)로 보정한다.
+// 데이터의 상대 경로(assets/...)를 배포 base 를 반영한 절대 경로로 보정한다.
+const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
 function toPublic(src: string | undefined): string | undefined {
   if (!src) return src;
-  return src.startsWith('assets/') ? `/${src}` : src;
+  return src.startsWith('assets/') ? `${BASE}/${src}` : src;
 }
 
 const data = load();
