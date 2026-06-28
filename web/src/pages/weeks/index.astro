@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { weeks, currentWeek, phaseLabels } from '../../data/curriculum';
+import { url } from '../../lib/url';
 
 // 단계별 그룹핑 (canonical week 순서 유지)
 const groups = phaseLabels
@@ -22,7 +23,7 @@ const groups = phaseLabels
         <ul class="week-list">
           {g.items.map((w) => (
             <li>
-              <a href={`/weeks/${w.id}`} class="week-row">
+              <a href={url(`/weeks/${w.id}`)} class="week-row">
                 <span class="week-no meta">{w.id}</span>
                 <div class="week-info">
                   <strong class="week-title">{w.title}</strong>

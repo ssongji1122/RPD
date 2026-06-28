@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { weeks, getWeek } from '../../data/curriculum';
+import { url } from '../../lib/url';
 
 export function getStaticPaths() {
   return weeks.map((w) => ({ params: { week: w.id } }));
@@ -18,7 +19,7 @@ const next = weeks[idx + 1];
 <Layout title={`${w.id} — ${w.title} · rpd`} description={w.summary || w.subtitle}>
   <article class="wrap section">
     <header class="week-header">
-      <a href="/weeks" class="back meta">← 주차 목록</a>
+      <a href={url('/weeks')} class="back meta">← 주차 목록</a>
       <p class="eyebrow">{w.id}{w.phaseLabel && ` · ${w.phaseLabel}`}{w.duration && ` · ${w.duration}`}</p>
       <h1>{w.title}</h1>
       {w.subtitle && <p class="lead">{w.subtitle}</p>}
@@ -120,13 +121,13 @@ const next = weeks[idx + 1];
 
     <nav class="week-nav">
       {prev ? (
-        <a href={`/weeks/${prev.id}`} class="nav-link prev">
+        <a href={url(`/weeks/${prev.id}`)} class="nav-link prev">
           <span class="eyebrow">이전</span>
           <span>{prev.id} — {prev.title}</span>
         </a>
       ) : <span />}
       {next && (
-        <a href={`/weeks/${next.id}`} class="nav-link next">
+        <a href={url(`/weeks/${next.id}`)} class="nav-link next">
           <span class="eyebrow">다음</span>
           <span>{next.id} — {next.title}</span>
         </a>

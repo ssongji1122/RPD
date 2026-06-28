@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { weeks, currentWeek } from '../data/curriculum';
+import { url } from '../lib/url';
 
 const preview = weeks.slice(0, 6);
 ---
@@ -22,7 +23,7 @@ const preview = weeks.slice(0, 6);
 
   {currentWeek && (
     <section class="wrap section">
-      <a href={`/weeks/${currentWeek.id}`} class="current-card">
+      <a href={url(`/weeks/${currentWeek.id}`)} class="current-card">
         <span class="eyebrow">이번 주 · {currentWeek.id}</span>
         <strong class="current-title">{currentWeek.title}</strong>
         {currentWeek.subtitle && <span class="current-sub">{currentWeek.subtitle}</span>}
@@ -33,19 +34,19 @@ const preview = weeks.slice(0, 6);
   <section class="wrap section">
     <header class="section-head">
       <h2>주차</h2>
-      <a href="/weeks" class="more">전체 보기 →</a>
+      <a href={url('/weeks')} class="more">전체 보기 →</a>
     </header>
     <ul class="week-grid">
       {preview.map((w) => (
         <li>
-          <a href={`/weeks/${w.id}`} class="week-card">
+          <a href={url(`/weeks/${w.id}`)} class="week-card">
             <span class="week-label eyebrow">{w.id}{w.phaseLabel && ` · ${w.phaseLabel}`}</span>
             <span class="week-title">{w.title}</span>
           </a>
         </li>
       ))}
     </ul>
-    <a href="/weeks" class="more more-link">전체 {weeks.length}주 보기 →</a>
+    <a href={url('/weeks')} class="more more-link">전체 {weeks.length}주 보기 →</a>
   </section>
 </Layout>
 

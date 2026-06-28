@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { weeks, currentWeek } from '../data/curriculum';
+import { url } from '../lib/url';
 
 const doneCount = weeks.filter((w) => w.status === 'done').length;
 // 중간/기말 같은 평가 주차 식별 (canonical 제목 기준)
@@ -48,7 +49,7 @@ const isExam = (title: string) => /중간고사|기말고사|발표/.test(title)
         return (
           <li class:list={['tl-item', { done, active, exam: isExam(w.title) }]}>
             <span class="tl-node" aria-hidden="true"></span>
-            <a href={`/weeks/${w.id}`} class="tl-card">
+            <a href={url(`/weeks/${w.id}`)} class="tl-card">
               <span class="tl-week meta">{w.id}{active && <span class="tl-badge">진행 중</span>}</span>
               <span class="tl-title">{w.title}</span>
               {w.subtitle && <span class="tl-sub meta">{w.subtitle}</span>}
