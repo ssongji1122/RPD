@@ -31,6 +31,15 @@ const links = [
           {l.label}
         </a>
       ))}
+      <button id="themeToggle" class="theme-toggle" type="button" aria-label="라이트/다크 전환">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19" />
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
+        </svg>
+      </button>
     </nav>
   </div>
 </header>
@@ -67,7 +76,7 @@ const links = [
     color: var(--c-ink-3);
     letter-spacing: var(--ls-mono);
   }
-  nav { display: flex; gap: var(--s-4); }
+  nav { display: flex; align-items: center; gap: var(--s-4); }
   nav a {
     font-family: var(--f-mono);
     font-size: 12px;
@@ -77,8 +86,42 @@ const links = [
   }
   nav a:hover { color: var(--c-ink); opacity: 1; }
   nav a.active { color: var(--c-ink); }
+
+  .theme-toggle {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    color: var(--c-ink-2);
+    background: none;
+    border: var(--border);
+    border-radius: var(--r-circle);
+    cursor: pointer;
+    transition: color var(--t) var(--ease), border-color var(--t) var(--ease);
+  }
+  .theme-toggle:hover { color: var(--c-ink); border-color: var(--c-ink-2); }
+  .theme-toggle svg { display: block; }
+  /* 현재 테마 표시: 라이트면 해, 다크면 달 */
+  :global([data-theme='light']) .theme-toggle .icon-moon { display: none; }
+  :global([data-theme='dark']) .theme-toggle .icon-sun { display: none; }
+
   @media (max-width: 560px) {
     .brand-sub { display: none; }
     nav { gap: var(--s-3); }
   }
 </style>
+
+<script>
+  const btn = document.getElementById('themeToggle');
+  btn?.addEventListener('click', () => {
+    const cur = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    try {
+      localStorage.setItem('theme', next);
+    } catch (e) {
+      /* localStorage 불가 시 무시 */
+    }
+  });
+</script>
