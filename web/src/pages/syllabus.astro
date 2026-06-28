@@ -1,42 +1,27 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { syllabus } from '../data/syllabus';
-import { modules } from '../data/modules';
-
-const typeLabel = {
-  lecture: '강의',
-  workshop: '실습',
-  review: '리뷰',
-  project: '프로젝트',
-} as const;
+import { weeks, currentWeek } from '../data/curriculum';
 ---
 
-<Layout title="강의 일정 — rpd" description="rpd 15주 강의 일정">
+<Layout title="강의 일정 — rpd" description={`rpd ${weeks.length}주 강의 일정`}>
   <section class="wrap section">
     <h1>강의 일정</h1>
-    <p class="lead">2026학년도 · 15주 · 인하대학교</p>
+    <p class="lead">2026학년도 · {weeks.length}주 · 인하대학교</p>
 
     <ul class="syllabus-list">
-      {syllabus.map((w) => {
-        const mod = w.module ? modules.find((m) => m.id === w.module) : null;
-        return (
-          <li class={`week-item type-${w.type}`}>
-            <span class="week-no meta">{w.week}</span>
-            <div class="week-body">
-              <div class="week-head">
-                <strong class="week-title">{w.title}</strong>
-                <span class="type-badge eyebrow">{typeLabel[w.type]}</span>
-              </div>
-              <p class="week-desc">{w.description}</p>
-              {mod && (
-                <a href={`/modules/${mod.id}`} class="module-link meta">
-                  {mod.label} — {mod.title} →
-                </a>
-              )}
+      {weeks.map((w) => (
+        <li class="week-item">
+          <span class="week-no meta">{w.id}</span>
+          <div class="week-body">
+            <div class="week-head">
+              <a href={`/weeks/${w.id}`} class="week-title">{w.title}</a>
+              {w.phaseLabel && <span class="type-badge eyebrow">{w.phaseLabel}</span>}
+              {w.id === currentWeek.id && <span class="badge">진행 중</span>}
             </div>
-          </li>
-        );
-      })}
+            {w.subtitle && <p class="week-desc">{w.subtitle}</p>}
+          </div>
+        </li>
+      ))}
     </ul>
   </section>
 </Layout>
@@ -61,19 +46,27 @@ const typeLabel = {
     margin-bottom: var(--s-1);
     flex-wrap: wrap;
   }
-  .week-title { font-size: var(--fs-base); font-weight: var(--w-medium); }
-  .week-desc { font-size: var(--fs-sm); color: var(--c-ink-2); }
-  .module-link {
-    display: inline-block;
-    margin-top: var(--s-2);
-    color: var(--c-accent);
-    letter-spacing: var(--ls-mono);
+  .week-title {
+    font-size: var(--fs-base);
+    font-weight: var(--w-medium);
+    color: var(--c-ink);
+    word-break: keep-all;
   }
+  .week-title:hover { color: var(--c-accent); opacity: 1; }
+  .week-desc { font-size: var(--fs-sm); color: var(--c-ink-2); word-break: keep-all; }
   .type-badge {
     padding: 2px var(--s-2);
     background: var(--c-bg-2);
     border-radius: var(--r-pill);
+    color: var(--c-ink-3);
   }
-  .type-review .type-badge,
-  .type-project .type-badge { background: color-mix(in srgb, var(--c-accent) 12%, transparent); }
+  .badge {
+    font-family: var(--f-mono);
+    font-size: var(--fs-2xs);
+    padding: 2px var(--s-2);
+    background: var(--c-accent);
+    color: var(--c-bg);
+    border-radius: var(--r-pill);
+    letter-spacing: var(--ls-mono);
+  }
 </style>
