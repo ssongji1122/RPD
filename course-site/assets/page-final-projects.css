@@ -35,14 +35,6 @@
   letter-spacing: 0;
 }
 
-.final-hero-copy {
-  max-width: 680px;
-  margin: 0;
-  color: var(--muted-strong);
-  font-size: var(--type-sub);
-  line-height: 1.75;
-}
-
 .final-stats {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -184,8 +176,7 @@
   opacity: .72;
 }
 
-.final-gallery-meta-index,
-.final-gallery-meta-caption {
+.final-gallery-meta-index {
   margin: 0;
   font-family: var(--font-mono);
   font-size: .68rem;
@@ -544,16 +535,6 @@ button.final-web-embed-open {
   display: block;
   background: #fff;
   pointer-events: auto;
-}
-
-.final-web-embed-note {
-  margin: 0;
-  padding: 10px 14px 12px;
-  border-top: 1px solid var(--line);
-  color: var(--muted);
-  font-family: var(--font-mono);
-  font-size: .64rem;
-  line-height: 1.5;
 }
 
 .final-web-launch-panel {
