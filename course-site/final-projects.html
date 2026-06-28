@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Final Review Gallery — RPD</title>
-  <meta name="description" content="RPD 2026 기말 프로젝트 우수 작품을 익명 갤러리와 작품별 상세 보기로 정리한 기록 페이지" />
+  <title>기말 작품 — RPD</title>
+  <meta name="description" content="RPD 2026 기말 프로젝트 작품 갤러리" />
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,37 +24,15 @@
       <div class="main-inner final-review">
         <header class="final-hero">
           <div>
-            <p class="rpd-kicker">Week 15 Final Archive</p>
-            <h1>기말 작품 기록</h1>
+            <h1>기말 작품</h1>
           </div>
-          <dl class="final-stats" id="finalStats" aria-label="기말 작품 기록 통계"></dl>
         </header>
-
-        <section class="final-toolbar" aria-label="기말 작품 검색 및 필터">
-          <div class="final-search-wrap">
-            <label class="final-search-label" for="finalSearch">작품 검색</label>
-            <input class="rpd-search-input" id="finalSearch" type="search" autocomplete="off" placeholder="작품 01, RPD 2026" />
-          </div>
-          <div class="final-filter-wrap">
-            <span class="final-search-label" id="finalFilterLabel">유형</span>
-            <div class="final-filter-chips" id="finalFilterChips" role="group" aria-labelledby="finalFilterLabel"></div>
-          </div>
-        </section>
 
         <section class="final-layout" aria-label="기말 프로젝트 리뷰">
           <div class="final-list-panel">
             <section class="final-section-block final-gallery-section" id="finalGallerySection" aria-label="작품 갤러리">
-              <div class="final-list-head">
-                <h2>작품 갤러리</h2>
-                <span id="finalResultCount" class="rpd-pill-count" role="status" aria-live="polite"></span>
-              </div>
               <div class="final-gallery-stage">
-                <div class="final-gallery-meta" id="finalGalleryMeta" aria-live="polite">
-                  <p class="final-gallery-meta-index" id="finalGalleryMetaIndex">( — )</p>
-                </div>
-                <div class="final-gallery-rail-wrap">
-                  <div class="final-gallery-rail" id="finalGalleryRail" role="list" aria-label="작품 목록"></div>
-                </div>
+                <div class="final-gallery-rail" id="finalGalleryRail" role="list" aria-label="작품 목록"></div>
               </div>
             </section>
           </div>

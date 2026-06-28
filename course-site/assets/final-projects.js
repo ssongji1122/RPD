@@ -2,37 +2,15 @@
   "use strict";
 
   var data = window.RPDFinalProjects || { stats: {}, projects: [] };
-  var CATEGORY_OPTIONS = [
-    { id: "all", label: "전체" },
-    { id: "character", label: "캐릭터형" },
-    { id: "industrial", label: "산업형" },
-    { id: "vehicle", label: "차량형" },
-    { id: "web", label: "웹페이지형" }
-  ];
-  var CATEGORY_LABELS = {
-    character: "캐릭터형",
-    industrial: "산업형",
-    vehicle: "차량형",
-    web: "웹페이지형"
-  };
-
   var state = {
-    query: "",
-    category: "all",
     activeId: ""
   };
 
   var els = {
     review: document.querySelector(".final-review"),
     layout: document.querySelector(".final-layout"),
-    stats: document.getElementById("finalStats"),
-    search: document.getElementById("finalSearch"),
-    filterChips: document.getElementById("finalFilterChips"),
     gallerySection: document.getElementById("finalGallerySection"),
     galleryRail: document.getElementById("finalGalleryRail"),
-    galleryMeta: document.getElementById("finalGalleryMeta"),
-    galleryMetaIndex: document.getElementById("finalGalleryMetaIndex"),
-    count: document.getElementById("finalResultCount"),
     detail: document.getElementById("finalDetail")
   };
 
@@ -60,117 +38,8 @@
     });
   }
 
-  function enrichProject(project) {
-    return {
-      project: project,
-      category: inferCategory(project),
-      tags: getProjectTags(project)
-    };
-  }
-
-  function inferCategory(project) {
-    var links = project.links || [];
-    var linkText = links.map(function (item) {
-      return [item.label, item.url, item.kind].join(" ");
-    }).join(" ").toLowerCase();
-
-    if (links.some(function (item) {
-      return item.kind === "웹페이지" || item.kind === "작품 페이지";
-    })) {
-      return "web";
-    }
-    if (/tesla|vehicle|car|automotive|차량/.test(linkText)) {
-      return "vehicle";
-    }
-    var imageCount = (project.media || []).filter(function (item) {
-      return item.type === "image";
-    }).length;
-    if (imageCount >= 4) return "character";
-    return "industrial";
-  }
-
-  function getProjectTags(project) {
-    var tags = [];
-    var imageCount = (project.media || []).filter(function (item) {
-      return item.type === "image";
-    }).length;
-    var videoCount = (project.videos || []).length;
-    var links = project.links || [];
-
-    if (imageCount) tags.push("Render");
-    if (videoCount) tags.push("MP4");
-    if (links.some(function (item) {
-      return item.kind === "웹페이지" || item.kind === "작품 페이지";
-    })) {
-      tags.push("Web");
-    }
-    if (links.some(function (item) { return item.kind === "Behance"; })) {
-      tags.push("Behance");
-    }
-    if (links.some(function (item) { return item.kind === "발표 자료"; })) {
-      tags.push("Deck");
-    }
-    if (!tags.length) tags.push("Archive");
-    return tags;
-  }
-
-  function addStat(label, value) {
-    return el("div", { className: "final-stat" }, [
-      el("dt", { textContent: label }),
-      el("dd", { textContent: String(value) })
-    ]);
-  }
-
-  function renderStats() {
-    if (!els.stats) return;
-    els.stats.textContent = "";
-    els.stats.appendChild(addStat("작품", data.stats.works || 0));
-    els.stats.appendChild(addStat("영상", data.stats.videos || 0));
-    els.stats.appendChild(addStat("링크", data.stats.links || 0));
-    els.stats.appendChild(addStat("형식", data.stats.format || "갤러리"));
-  }
-
-  function renderFilterChips() {
-    if (!els.filterChips) return;
-    els.filterChips.textContent = "";
-    CATEGORY_OPTIONS.forEach(function (option) {
-      var btn = el("button", {
-        className: "rpd-filter-chip" + (state.category === option.id ? " is-active" : ""),
-        type: "button",
-        "data-category": option.id,
-        textContent: option.label
-      });
-      btn.addEventListener("click", function () {
-        state.category = option.id;
-        renderFilterChips();
-        render();
-      });
-      els.filterChips.appendChild(btn);
-    });
-  }
-
-  function projectSearchText(project) {
-    var meta = enrichProject(project);
-    return [
-      project.code,
-      project.title,
-      meta.category,
-      CATEGORY_LABELS[meta.category],
-      meta.tags.join(" "),
-      "RPD 2026",
-      "Week 15",
-      (project.links || []).map(function (item) { return item.label; }).join(" ")
-    ].join(" ").toLowerCase();
-  }
-
   function getFilteredProjects() {
-    var query = state.query.trim().toLowerCase();
-    return data.projects.filter(function (project) {
-      var meta = enrichProject(project);
-      if (state.category !== "all" && meta.category !== state.category) return false;
-      if (query && projectSearchText(project).indexOf(query) === -1) return false;
-      return true;
-    });
+    return data.projects.slice();
   }
 
   function getAllProjectsSorted() {
@@ -233,50 +102,7 @@
   }
 
   function getRenderMedia(project) {
-    return (project.media || []).filter(function (item) {
-      return item.role !== "process";
-    });
-  }
-
-  function getProcessMedia(project) {
-    return (project.media || []).filter(function (item) {
-      return item.role === "process";
-    });
-  }
-
-  function getProjectMeta(project) {
-    var parts = [];
-    var renderCount = getRenderMedia(project).length;
-    if (renderCount) parts.push("미리보기 " + renderCount + "장");
-    if ((project.videos || []).length) parts.push("영상 " + project.videos.length + "개");
-    if ((project.links || []).length) parts.push("링크 " + project.links.length + "개");
-    return parts.length ? parts.join(" · ") : "이미지 기록";
-  }
-
-  function setGalleryMeta(project, index, isIdle) {
-    if (!els.galleryMetaIndex) return;
-    if (!project) {
-      els.galleryMetaIndex.textContent = "( — )";
-      if (els.galleryMeta) els.galleryMeta.classList.add("is-idle");
-      return;
-    }
-    els.galleryMetaIndex.textContent = "( " + String(index + 1).padStart(2, "0") + " )";
-    if (els.galleryMeta) els.galleryMeta.classList.toggle("is-idle", Boolean(isIdle));
-  }
-
-  function bindGalleryPanelMeta(panel, project, index) {
-    function showMeta() {
-      setGalleryMeta(project, index, false);
-    }
-    function resetMeta() {
-      if (!els.galleryRail || !els.galleryRail.matches(":hover")) {
-        setGalleryMeta(null, 0, true);
-      }
-    }
-    panel.addEventListener("mouseenter", showMeta);
-    panel.addEventListener("focus", showMeta);
-    panel.addEventListener("mouseleave", resetMeta);
-    panel.addEventListener("blur", resetMeta);
+    return project.media || [];
   }
 
   function renderGalleryRail(projects) {
@@ -313,15 +139,9 @@
         frame.appendChild(el("div", { className: "final-card-empty", textContent: "—" }));
       }
       panel.appendChild(frame);
-      panel.appendChild(el("span", {
-        className: "final-gallery-panel-index",
-        textContent: String(index + 1).padStart(2, "0")
-      }));
-      bindGalleryPanelMeta(panel, project, index);
       els.galleryRail.appendChild(panel);
     });
 
-    setGalleryMeta(null, 0, true);
     return ordered.length;
   }
 
@@ -355,7 +175,6 @@
     }
 
     cell.appendChild(mediaWrap);
-    cell.appendChild(el("figcaption", { textContent: (item.type === "video" ? "영상" : "렌더") + " " + String(index + 1).padStart(2, "0") }));
     return cell;
   }
 
@@ -364,7 +183,7 @@
     var mediaWrap = el("div", { className: "final-editorial-media is-hero" });
 
     if (!cover) {
-      mediaWrap.appendChild(el("div", { className: "final-card-empty", textContent: "미리보기 없음" }));
+      mediaWrap.appendChild(el("div", { className: "final-card-empty", textContent: "—" }));
     } else if (cover.type === "video" && cover.videoSrc) {
       mediaWrap.appendChild(el("video", {
         src: cover.videoSrc,
@@ -384,27 +203,6 @@
 
     cell.appendChild(mediaWrap);
     return cell;
-  }
-
-  function renderProcessFold(project) {
-    var items = getProcessMedia(project);
-    if (!items.length) return null;
-    var grid = el("div", { className: "final-process-grid" });
-    items.forEach(function (item, index) {
-      grid.appendChild(el("figure", { className: "final-process-card" }, [
-        el("img", {
-          src: item.src,
-          alt: project.code + " 제작 메모 " + (index + 1),
-          loading: "lazy"
-        }),
-        el("figcaption", { textContent: "메모 " + String(index + 1).padStart(2, "0") })
-      ]));
-    });
-    var fold = el("details", { className: "final-process-fold" }, [
-      el("summary", { textContent: "AI · 제작 메모 (" + items.length + ")" }),
-      grid
-    ]);
-    return el("div", { className: "final-editorial-cell is-span-4 is-process" }, [fold]);
   }
 
   function getEmbeddableLinks(project) {
@@ -524,9 +322,8 @@
       }));
     }
     panel.appendChild(el("div", { className: "final-web-launch-copy" }, [
-      el("span", { className: "final-web-embed-kind", textContent: link.kind || "웹페이지" }),
-      el("strong", { textContent: link.label || project.code + " 웹" }),
-      el("b", { textContent: "웹페이지 열기 →" })
+      el("strong", { textContent: link.label || project.code }),
+      el("b", { textContent: "열기" })
     ]));
     cell.appendChild(panel);
     return cell;
@@ -562,8 +359,7 @@
     ]);
     var head = el("div", { className: "final-web-embed-head" }, [
       el("div", { className: "final-web-embed-title" }, [
-        el("span", { className: "final-web-embed-kind", textContent: link.kind || "웹페이지" }),
-        el("strong", { textContent: link.label || project.code + " 웹" })
+        el("strong", { textContent: link.label || project.code })
       ]),
       actions
     ]);
@@ -630,10 +426,6 @@
     }
 
     row.appendChild(prev);
-    row.appendChild(el("p", {
-      className: "final-detail-nav-copy",
-      textContent: getProjectMeta(project) + "를 기록한 Week 15 최종 결과물입니다."
-    }));
     row.appendChild(next);
     return row;
   }
@@ -642,7 +434,6 @@
     els.detail.textContent = "";
     if (!project) return;
 
-    var meta = enrichProject(project);
     var cover = bestCover(project);
     var coverSrc = cover ? cover.src : "";
     var remainingMedia = getRenderMedia(project).filter(function (item) {
@@ -662,30 +453,14 @@
     grid.appendChild(renderHeroMedia(cover, project));
 
     var titleCell = el("div", { className: "final-editorial-cell is-hero-copy" }, [
-      el("p", { className: "final-detail-kicker", textContent: "RPD 2026 · Week 15" }),
-      el("h2", { textContent: project.title }),
-      el("p", { className: "final-editorial-sub", textContent: CATEGORY_LABELS[meta.category] || meta.category }),
-      el("div", { className: "final-detail-tags" }, meta.tags.map(function (tag) {
-        return el("span", { className: "final-chip", textContent: tag });
-      }))
+      el("h2", { textContent: project.title })
     ]);
     grid.appendChild(titleCell);
 
-    var metaCell = el("div", { className: "final-editorial-cell is-hero-meta" }, [
-      el("dl", { className: "final-editorial-meta-list" }, [
-        el("div", {}, [
-          el("dt", { textContent: "기록" }),
-          el("dd", { textContent: getProjectMeta(project) })
-        ]),
-        el("div", {}, [
-          el("dt", { textContent: "유형" }),
-          el("dd", { textContent: CATEGORY_LABELS[meta.category] || meta.category })
-        ])
-      ])
-    ]);
     var links = renderDetailLinks(project);
-    if (links) metaCell.appendChild(links);
-    grid.appendChild(metaCell);
+    if (links) {
+      grid.appendChild(el("div", { className: "final-editorial-cell is-span-2 is-hero-meta" }, [links]));
+    }
 
     remainingMedia.forEach(function (item, index) {
       grid.appendChild(renderEditorialMediaCell(item, project, index));
@@ -694,9 +469,6 @@
     renderWebEmbeds(project).forEach(function (embedCell) {
       grid.appendChild(embedCell);
     });
-
-    var processFold = renderProcessFold(project);
-    if (processFold) grid.appendChild(processFold);
 
     grid.appendChild(renderDetailNavRow(project, adjacent));
     sheet.appendChild(grid);
@@ -717,7 +489,6 @@
     }
 
     var galleryCount = renderGalleryRail(projects);
-    if (els.count) els.count.textContent = galleryCount + " works";
     if (els.gallerySection) els.gallerySection.hidden = galleryCount === 0;
   }
 
@@ -734,14 +505,6 @@
   }
 
   hydrateFromUrl();
-  renderStats();
-  renderFilterChips();
-  if (els.search) {
-    els.search.addEventListener("input", function () {
-      state.query = els.search.value || "";
-      render();
-    });
-  }
   if (els.galleryRail) {
     els.galleryRail.addEventListener("click", function (event) {
       var panel = event.target.closest(".final-gallery-panel");

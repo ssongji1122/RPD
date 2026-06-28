@@ -104,7 +104,7 @@
         { href: 'inha.html', svg: ICONS.graduationCap, text: '수업 개요', page: 'inha.html' }
       ],
       final: [
-        { href: 'final-projects.html', svg: ICONS.images, text: '작품 기록', page: 'final-projects.html' }
+        { href: 'final-projects.html', svg: ICONS.images, text: '기말 작품', page: 'final-projects.html' }
       ],
       studio: [
         { href: 'studio.html', svg: ICONS.package, text: '내 덱', page: 'studio.html' },
