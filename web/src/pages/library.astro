@@ -1,0 +1,134 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { cardGroups, cardCount } from '../data/showme';
+import { url } from '../lib/url';
+
+function weekLabel(week: number | number[] | null): string {
+  if (week == null) return '';
+  const arr = Array.isArray(week) ? week : [week];
+  const valid = arr.filter((n) => n > 0);
+  if (valid.length === 0) return '';
+  return valid.map((n) => `W${String(n).padStart(2, '0')}`).join('·');
+}
+---
+
+<Layout title="Show Me 카드 — rpd" description="Blender 개념 Show Me 카드 라이브러리">
+  <section class="wrap section">
+    <h1>Show Me 카드</h1>
+    <p class="lead">Blender 개념을 한 장으로 설명하는 카드 {cardCount}개 · 카테고리별</p>
+
+    <input
+      type="search"
+      id="lib-search"
+      class="lib-search"
+      placeholder="카드 검색 (예: Bevel, Modifier, UV)"
+      autocomplete="off"
+      aria-label="카드 검색"
+    />
+
+    <div id="lib-list">
+      {cardGroups.map((g) => (
+        <div class="lib-group" data-group>
+          <h2 class="lib-cat eyebrow">{g.category} <span class="lib-count">{g.items.length}</span></h2>
+          <ul class="card-grid">
+            {g.items.map((c) => (
+              <li data-card data-text={`${c.label} ${c.id}`.toLowerCase()}>
+                <a href={url(`/showme/${c.id}.html`)} class="card">
+                  <span class="card-label">{c.label}</span>
+                  {weekLabel(c.week) && <span class="card-week meta">{weekLabel(c.week)}</span>}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+    <p id="lib-empty" class="lib-empty meta" hidden>일치하는 카드가 없습니다.</p>
+  </section>
+</Layout>
+
+<script>
+  const input = document.getElementById('lib-search') as HTMLInputElement | null;
+  const empty = document.getElementById('lib-empty');
+  if (input) {
+    input.addEventListener('input', () => {
+      const q = input.value.trim().toLowerCase();
+      let anyVisible = false;
+      document.querySelectorAll<HTMLElement>('[data-group]').forEach((group) => {
+        let groupVisible = false;
+        group.querySelectorAll<HTMLElement>('[data-card]').forEach((card) => {
+          const match = !q || (card.dataset.text || '').includes(q);
+          card.hidden = !match;
+          if (match) groupVisible = true;
+        });
+        group.hidden = !groupVisible;
+        if (groupVisible) anyVisible = true;
+      });
+      if (empty) empty.hidden = anyVisible;
+    });
+  }
+</script>
+
+<style>
+  h1 { margin-bottom: var(--s-2); }
+  .lead { color: var(--c-ink-2); margin-bottom: var(--s-4); }
+
+  .lib-search {
+    width: 100%;
+    padding: var(--s-3);
+    margin-bottom: var(--s-6);
+    background: var(--c-bg-2);
+    border: var(--border-input);
+    border-radius: var(--r-md);
+    color: var(--c-ink);
+    font-family: var(--f-body);
+    font-size: var(--fs-sm);
+  }
+  .lib-search::placeholder { color: var(--c-ink-3); }
+  .lib-search:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-offset);
+    border-color: var(--c-accent);
+  }
+
+  .lib-group { margin-bottom: var(--s-6); }
+  .lib-group[hidden] { display: none; }
+  .lib-cat {
+    color: var(--c-ink-3);
+    margin-bottom: var(--s-3);
+    padding-bottom: var(--s-1);
+    border-bottom: var(--border);
+  }
+  .lib-count { color: var(--c-ink-3); margin-left: var(--s-1); }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--s-2);
+  }
+  .card-grid li[hidden] { display: none; }
+  .card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-2);
+    padding: var(--s-3);
+    border: var(--border);
+    border-radius: var(--r-md);
+    transition: border-color var(--t) var(--ease), background var(--t) var(--ease);
+  }
+  .card:hover {
+    border-color: var(--c-ink-2);
+    background: var(--c-bg-2);
+    opacity: 1;
+  }
+  .card-label { font-size: var(--fs-sm); color: var(--c-ink); word-break: keep-all; }
+  .card-week {
+    font-family: var(--f-mono);
+    font-size: var(--fs-2xs);
+    color: var(--c-ink-3);
+    white-space: nowrap;
+  }
+
+  .lib-empty { padding: var(--s-6) 0; text-align: center; }
+</style>

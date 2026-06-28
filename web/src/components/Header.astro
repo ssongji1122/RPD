@@ -1,24 +1,33 @@
 ---
-const pathname = Astro.url.pathname;
-const isActive = (href: string) =>
-  href === '/' ? pathname === '/' : pathname.startsWith(href);
+import { url } from '../lib/url';
+
+const norm = (p: string) => p.replace(/\/$/, '') || '/';
+const pathname = norm(Astro.url.pathname);
+const isActive = (href: string) => {
+  const target = norm(url(href));
+  return href === '/' ? pathname === target : pathname.startsWith(target);
+};
 
 const links = [
+  { href: '/inha', label: 'inha' },
   { href: '/syllabus', label: 'syllabus' },
-  { href: '/modules', label: 'modules' },
+  { href: '/weeks', label: 'weeks' },
+  { href: '/shortcuts', label: 'shortcuts' },
+  { href: '/library', label: 'library' },
+  { href: '/final-projects', label: 'final' },
   { href: '/resources', label: 'resources' },
 ];
 ---
 
 <header>
   <div class="wrap header-inner">
-    <a href="/" class="brand">
+    <a href={url('/')} class="brand">
       <span class="brand-main">rpd</span>
       <span class="brand-sub">a studio.soluta series</span>
     </a>
     <nav>
       {links.map((l) => (
-        <a href={l.href} class:list={[{ active: isActive(l.href) }]}>
+        <a href={url(l.href)} class:list={[{ active: isActive(l.href) }]}>
           {l.label}
         </a>
       ))}

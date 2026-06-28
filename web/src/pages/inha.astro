@@ -1,0 +1,137 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { weeks, currentWeek } from '../data/curriculum';
+import { url } from '../lib/url';
+
+const doneCount = weeks.filter((w) => w.status === 'done').length;
+// 중간/기말 같은 평가 주차 식별 (canonical 제목 기준)
+const isExam = (title: string) => /중간고사|기말고사|발표/.test(title);
+---
+
+<Layout
+  title="인하대학교 · Robot Product Design"
+  description="인하대학교 디자인테크놀로지학과 로봇프러덕트 디자인 코스 페이지"
+>
+  <section class="wrap section">
+    <p class="eyebrow">Inha University · Course Page</p>
+    <h1>인하대학교 · Robot Product Design</h1>
+    <p class="lead">
+      매주 수업에서 쓸 자료를 한 페이지로 정리해뒀어요.
+      필요한 주차만 바로 열어볼 수 있어요.
+    </p>
+
+    <div class="snapshot">
+      <div class="stat">
+        <span class="stat-num">{weeks.length}</span>
+        <span class="stat-label meta">주차</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">{doneCount}</span>
+        <span class="stat-label meta">진행됨</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">{currentWeek.id}</span>
+        <span class="stat-label meta">이번 주</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section">
+    <header class="tl-head">
+      <h2>커리큘럼 타임라인</h2>
+      <p class="tl-note meta">수업이 진행될수록 선이 채워집니다.</p>
+    </header>
+
+    <ol class="timeline">
+      {weeks.map((w) => {
+        const done = w.status === 'done';
+        const active = w.id === currentWeek.id;
+        return (
+          <li class:list={['tl-item', { done, active, exam: isExam(w.title) }]}>
+            <span class="tl-node" aria-hidden="true"></span>
+            <a href={url(`/weeks/${w.id}`)} class="tl-card">
+              <span class="tl-week meta">{w.id}{active && <span class="tl-badge">진행 중</span>}</span>
+              <span class="tl-title">{w.title}</span>
+              {w.subtitle && <span class="tl-sub meta">{w.subtitle}</span>}
+            </a>
+          </li>
+        );
+      })}
+    </ol>
+  </section>
+</Layout>
+
+<style>
+  .eyebrow { color: var(--c-ink-3); }
+  h1 { margin: var(--s-2) 0 var(--s-3); word-break: keep-all; }
+  .lead { color: var(--c-ink-2); max-width: var(--read-ko); word-break: keep-all; }
+
+  .snapshot { display: flex; gap: var(--s-6); margin-top: var(--s-5); }
+  .stat { display: flex; flex-direction: column; gap: 2px; }
+  .stat-num { font-family: var(--f-mono); font-size: var(--fs-xl); color: var(--c-ink); }
+  .stat-label { color: var(--c-ink-3); }
+
+  .tl-head { margin-bottom: var(--s-5); }
+  .tl-head h2 {
+    font-family: var(--f-mono);
+    font-size: var(--fs-lg);
+    font-weight: var(--w-medium);
+    margin-bottom: var(--s-1);
+  }
+  .tl-note { color: var(--c-ink-3); }
+
+  .timeline { position: relative; padding-left: var(--s-5); }
+  /* 세로 연결선 (배경) */
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px; top: 6px; bottom: 6px;
+    width: 2px;
+    background: var(--c-line);
+  }
+  .tl-item { position: relative; padding-bottom: var(--s-4); }
+  .tl-item:last-child { padding-bottom: 0; }
+
+  .tl-node {
+    position: absolute;
+    left: calc(-1 * var(--s-5) + 2px);
+    top: 5px;
+    width: 12px; height: 12px;
+    border-radius: var(--r-circle);
+    background: var(--c-bg);
+    border: 2px solid var(--c-line);
+    z-index: 1;
+  }
+  /* 진행된 주차: 채워진 노드 + 위로 잇는 선을 accent 로 */
+  .tl-item.done .tl-node { background: var(--c-accent); border-color: var(--c-accent); }
+  .tl-item.done::before {
+    content: '';
+    position: absolute;
+    left: calc(-1 * var(--s-5) + 7px);
+    top: -6px; bottom: -6px;
+    width: 2px;
+    background: var(--c-accent);
+    z-index: 0;
+  }
+  .tl-item.active .tl-node {
+    background: var(--c-accent);
+    border-color: var(--c-accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-accent) 25%, transparent);
+  }
+
+  .tl-card { display: flex; flex-direction: column; gap: 2px; }
+  .tl-card:hover .tl-title { color: var(--c-accent); }
+  .tl-week { display: flex; align-items: center; gap: var(--s-2); color: var(--c-ink-3); }
+  .tl-badge {
+    font-family: var(--f-mono);
+    font-size: var(--fs-2xs);
+    padding: 1px var(--s-2);
+    background: var(--c-accent);
+    color: var(--c-bg);
+    border-radius: var(--r-pill);
+    letter-spacing: var(--ls-mono);
+  }
+  .tl-title { font-size: var(--fs-base); font-weight: var(--w-medium); color: var(--c-ink); word-break: keep-all; }
+  .tl-item.exam .tl-title { color: var(--c-ink); }
+  .tl-sub { color: var(--c-ink-2); word-break: keep-all; }
+</style>
