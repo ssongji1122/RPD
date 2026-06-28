@@ -16,9 +16,9 @@
   --surface-strong:#1c1d20;
   --line:          rgba(255,255,255,.08);
   --line-strong:   rgba(255,255,255,.14);
-  --key:           #0a84ff;
-  --key-strong:    #0071e3;
-  --key-soft:      #8ec5ff;
+  --key:           #00bfa5;
+  --key-strong:    #009e8a;
+  --key-soft:      #6ee8d8;
   --success:       #10b981;
   --success-soft:  #6ee7b7;
   --warn:          #f59e0b;
@@ -115,7 +115,7 @@ body {
   padding: 3px 9px; border-radius: 999px;
   font-size: .72rem; font-weight: 600;
 }
-.badge-blue  { background: rgba(10,132,255,.15);  color: var(--key-soft); }
+.badge-blue  { background: rgba(0,191,165,.15);  color: var(--key-soft); }
 .badge-green { background: rgba(16,185,129,.15);  color: var(--success-soft); }
 .badge-amber { background: rgba(245,158,11,.15);  color: var(--warn-soft); }
 
@@ -161,9 +161,9 @@ body {
 }
 .demo-btn:hover { background: rgba(255,255,255,.09); color: var(--text); }
 .demo-btn.is-active {
-  background: rgba(10,132,255,.14);
+  background: rgba(0,191,165,.14);
   color: var(--key-soft);
-  border-color: rgba(10,132,255,.3);
+  border-color: rgba(0,191,165,.3);
 }
 
 /* ── Usage Grid ── */
@@ -191,8 +191,8 @@ body {
 /* ── Tip Box ── */
 .tip-box {
   border-radius: var(--radius-md);
-  border: 1px solid rgba(10,132,255,.2);
-  background: rgba(10,132,255,.06);
+  border: 1px solid rgba(0,191,165,.2);
+  background: rgba(0,191,165,.06);
   padding: 14px 16px;
   margin-top: 14px;
   font-size: .86rem;
@@ -399,21 +399,21 @@ body {
   padding: 10px 24px;
   border-radius: 999px;
   border: 1px solid var(--key);
-  background: rgba(10,132,255,.12);
+  background: rgba(0,191,165,.12);
   color: var(--key-soft);
   font: inherit; font-size: .88rem;
   cursor: pointer;
   transition: background .14s;
 }
-.quiz-retry:hover { background: rgba(10,132,255,.22); }
+.quiz-retry:hover { background: rgba(0,191,165,.22); }
 
 /* ── Official Doc Reference ── */
 .doc-ref {
   margin-top: 16px;
   padding: 10px 14px;
   border-radius: var(--radius-sm);
-  border: 1px solid rgba(10,132,255,.15);
-  background: rgba(10,132,255,.04);
+  border: 1px solid rgba(0,191,165,.15);
+  background: rgba(0,191,165,.04);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -543,7 +543,7 @@ body {
     <aside style="border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.03);padding:14px">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px">
         <div style="font-size:.9rem;font-weight:700;color:var(--text)">컨트롤</div>
-        <span style="padding:4px 8px;border-radius:999px;background:rgba(10,132,255,.14);color:var(--key-soft);font-size:.72rem;font-weight:600">Exact</span>
+        <span style="padding:4px 8px;border-radius:999px;background:rgba(0,191,165,.14);color:var(--key-soft);font-size:.72rem;font-weight:600">Exact</span>
       </div>
 
       <div style="margin-bottom:12px">
@@ -791,7 +791,7 @@ function initQuiz(questions) {
     // Save button — sends result to parent for Notion sync
     var saveBtn = document.createElement("button");
     saveBtn.className = "quiz-retry";
-    saveBtn.style.cssText = "background:rgba(10,132,255,.18);border-color:var(--key);margin-bottom:8px";
+    saveBtn.style.cssText = "background:rgba(0,191,165,.18);border-color:var(--key);margin-bottom:8px";
     saveBtn.textContent = "기록 저장하기";
     saveBtn.addEventListener("click", function() {
       try {
