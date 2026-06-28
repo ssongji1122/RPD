@@ -28,6 +28,16 @@
       }
     },
     {
+      "name": "rpd-web",
+      "runtimeExecutable": "/Users/ssongji/.nvm/versions/node/v24.14.0/bin/node",
+      "runtimeArgs": ["/Users/ssongji/.nvm/versions/node/v24.14.0/bin/npm", "--prefix", "web", "run", "dev", "--", "--port", "4329"],
+      "port": 4329,
+      "autoPort": true,
+      "env": {
+        "PATH": "/Users/ssongji/.nvm/versions/node/v24.14.0/bin:/usr/local/bin:/usr/bin:/bin"
+      }
+    },
+    {
       "name": "hyorin-portfolio",
       "runtimeExecutable": "/Users/ssongji/.nvm/versions/node/v24.14.0/bin/node",
       "runtimeArgs": ["/Users/ssongji/.nvm/versions/node/v24.14.0/bin/npx", "serve", "portfolio/hyorin"],
