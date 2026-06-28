@@ -1,9 +1,9 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { modules } from '../data/modules';
-import { syllabus } from '../data/syllabus';
+import { weeks, currentWeek } from '../data/curriculum';
+import { url } from '../lib/url';
 
-const currentWeek = 'W01'; // 수동 업데이트
+const preview = weeks.slice(0, 6);
 ---
 
 <Layout title="rpd — a studio.soluta series">
@@ -11,51 +11,42 @@ const currentWeek = 'W01'; // 수동 업데이트
     <p class="eyebrow">a studio.soluta series</p>
     <h1>Robot Product Design × AI</h1>
     <p class="lead">
-      Blender와 AI 도구를 연결해 로봇 제품 디자인의 아이디에이션부터
-      포트폴리오까지 실전으로 다룹니다.
+      Blender 5.0과 AI 도구를 연결해 로봇·캐릭터 제품 디자인의
+      모델링부터 렌더링·포트폴리오까지 실전으로 다룹니다.
     </p>
     <div class="meta-row">
       <span class="meta">2026 · 인하대학교</span>
-      <span class="meta">15주 · R0–R5</span>
-      <span class="meta">선수: SOLV M1~M3</span>
+      <span class="meta">{weeks.length}주 · Blender 5.0</span>
+      <span class="meta">AI 3D · MCP</span>
     </div>
   </section>
 
+  {currentWeek && (
+    <section class="wrap section">
+      <a href={url(`/weeks/${currentWeek.id}`)} class="current-card">
+        <span class="eyebrow">이번 주 · {currentWeek.id}</span>
+        <strong class="current-title">{currentWeek.title}</strong>
+        {currentWeek.subtitle && <span class="current-sub">{currentWeek.subtitle}</span>}
+      </a>
+    </section>
+  )}
+
   <section class="wrap section">
     <header class="section-head">
-      <h2>모듈</h2>
-      <a href="/modules" class="more">전체 보기 →</a>
+      <h2>주차</h2>
+      <a href={url('/weeks')} class="more">전체 보기 →</a>
     </header>
-    <ul class="module-grid">
-      {modules.map((m) => (
+    <ul class="week-grid">
+      {preview.map((w) => (
         <li>
-          <a href={`/modules/${m.id}`} class="module-card">
-            <span class="module-label eyebrow">{m.label}</span>
-            <span class="module-title">{m.title}</span>
-            {m.week && <span class="meta">{m.week}부터</span>}
+          <a href={url(`/weeks/${w.id}`)} class="week-card">
+            <span class="week-label eyebrow">{w.id}{w.phaseLabel && ` · ${w.phaseLabel}`}</span>
+            <span class="week-title">{w.title}</span>
           </a>
         </li>
       ))}
     </ul>
-  </section>
-
-  <section class="wrap section">
-    <header class="section-head">
-      <h2>강의 일정</h2>
-      <a href="/syllabus" class="more">전체 보기 →</a>
-    </header>
-    <ul class="list">
-      {syllabus.slice(0, 5).map((w) => (
-        <li>
-          <span class="week-row">
-            <span class="meta week-no">{w.week}</span>
-            <span class="week-title">{w.title}</span>
-            {w.week === currentWeek && <span class="badge">진행 중</span>}
-          </span>
-        </li>
-      ))}
-    </ul>
-    <a href="/syllabus" class="more more-link">전체 15주 일정 보기 →</a>
+    <a href={url('/weeks')} class="more more-link">전체 {weeks.length}주 보기 →</a>
   </section>
 </Layout>
 
@@ -70,6 +61,7 @@ const currentWeek = 'W01'; // 수동 업데이트
     font-size: var(--fs-md);
     color: var(--c-ink-2);
     max-width: var(--read-ko);
+    word-break: keep-all;
   }
   .meta-row {
     display: flex;
@@ -77,6 +69,20 @@ const currentWeek = 'W01'; // 수동 업데이트
     margin-top: var(--s-4);
     flex-wrap: wrap;
   }
+
+  .current-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-1);
+    padding: var(--s-4);
+    border: var(--border);
+    border-radius: var(--r-lg);
+    background: color-mix(in srgb, var(--c-accent) 6%, transparent);
+    transition: border-color var(--t) var(--ease);
+  }
+  .current-card:hover { border-color: var(--c-accent); opacity: 1; }
+  .current-title { font-size: var(--fs-lg); color: var(--c-ink); word-break: keep-all; }
+  .current-sub { font-size: var(--fs-sm); color: var(--c-ink-2); word-break: keep-all; }
 
   .section-head {
     display: flex;
@@ -90,14 +96,14 @@ const currentWeek = 'W01'; // 수동 업데이트
     font-weight: var(--w-medium);
   }
 
-  .module-grid {
+  .week-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: var(--s-3);
   }
-  @media (max-width: 560px) { .module-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 560px) { .week-grid { grid-template-columns: 1fr; } }
 
-  .module-card {
+  .week-card {
     display: flex;
     flex-direction: column;
     gap: var(--s-1);
@@ -106,35 +112,18 @@ const currentWeek = 'W01'; // 수동 업데이트
     border-radius: var(--r-lg);
     transition: border-color var(--t) var(--ease), background var(--t) var(--ease);
   }
-  .module-card:hover {
+  .week-card:hover {
     border-color: var(--c-ink-2);
     background: var(--c-bg-2);
     opacity: 1;
   }
-  .module-title {
+  .week-card .week-title {
     font-size: var(--fs-sm);
     color: var(--c-ink);
     line-height: var(--lh-tight);
+    word-break: keep-all;
   }
 
-  .list { border-top: var(--border); }
-  .list li { border-bottom: var(--border); padding-block: var(--s-3); }
-  .week-row {
-    display: flex;
-    align-items: center;
-    gap: var(--s-3);
-  }
-  .week-no { min-width: 2.5rem; }
-  .week-title { font-size: var(--fs-sm); color: var(--c-ink); }
-  .badge {
-    font-family: var(--f-mono);
-    font-size: var(--fs-2xs);
-    padding: 2px var(--s-2);
-    background: var(--c-accent);
-    color: var(--c-bg);
-    border-radius: var(--r-pill);
-    letter-spacing: var(--ls-mono);
-  }
   .more {
     font-family: var(--f-mono);
     font-size: var(--fs-sm);

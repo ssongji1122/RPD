@@ -1,0 +1,94 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { weeks, currentWeek, phaseLabels } from '../../data/curriculum';
+import { url } from '../../lib/url';
+
+// 단계별 그룹핑 (canonical week 순서 유지)
+const groups = phaseLabels
+  .map((label) => ({
+    label,
+    items: weeks.filter((w) => w.phaseLabel === label),
+  }))
+  .filter((g) => g.items.length > 0);
+---
+
+<Layout title="주차 — rpd" description={`rpd ${weeks.length}주 커리큘럼`}>
+  <section class="wrap section">
+    <h1>주차</h1>
+    <p class="lead">Blender 5.0 + AI 도구 · 전체 {weeks.length}주</p>
+
+    {groups.map((g) => (
+      <div class="phase">
+        <h2 class="phase-label eyebrow">{g.label}</h2>
+        <ul class="week-list">
+          {g.items.map((w) => (
+            <li>
+              <a href={url(`/weeks/${w.id}`)} class="week-row">
+                <span class="week-no meta">{w.id}</span>
+                <div class="week-info">
+                  <strong class="week-title">{w.title}</strong>
+                  {w.subtitle && <p class="week-sub">{w.subtitle}</p>}
+                </div>
+                {w.id === currentWeek.id && <span class="badge">진행 중</span>}
+                {w.duration && <span class="meta dur">{w.duration}</span>}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </section>
+</Layout>
+
+<style>
+  h1 { margin-bottom: var(--s-2); }
+  .lead { color: var(--c-ink-2); margin-bottom: var(--s-6); }
+
+  .phase { margin-bottom: var(--s-6); }
+  .phase-label {
+    color: var(--c-ink-3);
+    margin-bottom: var(--s-2);
+    padding-bottom: var(--s-1);
+    border-bottom: var(--border);
+  }
+
+  .week-list { border-top: 0; }
+  .week-row {
+    display: grid;
+    grid-template-columns: 3rem 1fr auto;
+    gap: var(--s-3);
+    align-items: center;
+    padding-block: var(--s-3);
+    border-bottom: var(--border);
+    transition: padding-left var(--t) var(--ease);
+  }
+  .week-row:hover { padding-left: var(--s-2); opacity: 1; }
+  .week-title {
+    font-size: var(--fs-base);
+    font-weight: var(--w-medium);
+    display: block;
+    line-height: var(--lh-tight);
+    word-break: keep-all;
+  }
+  .week-sub {
+    font-size: var(--fs-sm);
+    color: var(--c-ink-2);
+    margin-top: 2px;
+    word-break: keep-all;
+  }
+  .badge {
+    font-family: var(--f-mono);
+    font-size: var(--fs-2xs);
+    padding: 2px var(--s-2);
+    background: var(--c-accent);
+    color: var(--c-bg);
+    border-radius: var(--r-pill);
+    letter-spacing: var(--ls-mono);
+    white-space: nowrap;
+  }
+  .dur { white-space: nowrap; }
+  @media (max-width: 560px) {
+    .week-row { grid-template-columns: 2.5rem 1fr; }
+    .dur { display: none; }
+  }
+</style>

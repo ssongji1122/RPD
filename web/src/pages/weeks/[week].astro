@@ -1,0 +1,244 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { weeks, getWeek } from '../../data/curriculum';
+import { url } from '../../lib/url';
+
+export function getStaticPaths() {
+  return weeks.map((w) => ({ params: { week: w.id } }));
+}
+
+const { week: weekId } = Astro.params;
+const w = getWeek(weekId);
+if (!w) return Astro.redirect('/weeks');
+
+const idx = weeks.findIndex((x) => x.id === w.id);
+const prev = weeks[idx - 1];
+const next = weeks[idx + 1];
+---
+
+<Layout title={`${w.id} — ${w.title} · rpd`} description={w.summary || w.subtitle}>
+  <article class="wrap section">
+    <header class="week-header">
+      <a href={url('/weeks')} class="back meta">← 주차 목록</a>
+      <p class="eyebrow">{w.id}{w.phaseLabel && ` · ${w.phaseLabel}`}{w.duration && ` · ${w.duration}`}</p>
+      <h1>{w.title}</h1>
+      {w.subtitle && <p class="lead">{w.subtitle}</p>}
+    </header>
+
+    {w.topics.length > 0 && (
+      <section class="block">
+        <h2>다루는 내용</h2>
+        <ul class="topic-list">
+          {w.topics.map((t) => <li>{t}</li>)}
+        </ul>
+      </section>
+    )}
+
+    {w.steps.length > 0 && (
+      <section class="block">
+        <h2>수업 단계</h2>
+        <ol class="step-list">
+          {w.steps.map((s, i) => (
+            <li class="step">
+              <div class="step-head">
+                <span class="step-no meta">{String(i + 1).padStart(2, '0')}</span>
+                <strong class="step-title">{s.title}</strong>
+              </div>
+              {s.copy && s.copy.trim().split(/\n{2,}/).map((para) => (
+                <p class="step-copy">{para.trim()}</p>
+              ))}
+              {s.goal.length > 0 && (
+                <ul class="mini-list">
+                  {s.goal.map((g) => <li>{g}</li>)}
+                </ul>
+              )}
+              {s.done.length > 0 && (
+                <ul class="done-list">
+                  {s.done.map((d) => <li>{d}</li>)}
+                </ul>
+              )}
+            </li>
+          ))}
+        </ol>
+      </section>
+    )}
+
+    {w.shortcuts.length > 0 && (
+      <section class="block">
+        <h2>단축키</h2>
+        <ul class="shortcut-list">
+          {w.shortcuts.map((s) => (
+            <li>
+              <kbd>{s.keys}</kbd>
+              <span>{s.action}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {w.assignment && (
+      <section class="block assignment">
+        <h2>과제</h2>
+        <strong class="assign-title">{w.assignment.title}</strong>
+        {w.assignment.description && <p class="assign-desc">{w.assignment.description}</p>}
+        {w.assignment.checklist.length > 0 && (
+          <ul class="check-list">
+            {w.assignment.checklist.map((c) => <li>{c}</li>)}
+          </ul>
+        )}
+      </section>
+    )}
+
+    {w.mistakes.length > 0 && (
+      <section class="block">
+        <h2>자주 하는 실수</h2>
+        <ul class="mistake-list">
+          {w.mistakes.map((m) => <li>{m}</li>)}
+        </ul>
+      </section>
+    )}
+
+    {(w.videos.length > 0 || w.docs.length > 0) && (
+      <section class="block">
+        <h2>참고 자료</h2>
+        <ul class="ref-list">
+          {w.videos.map((v) => (
+            <li>
+              <span class="ref-tag meta">영상</span>
+              <a href={v.url} target="_blank" rel="noopener">{v.title}</a>
+            </li>
+          ))}
+          {w.docs.map((d) => (
+            <li>
+              <span class="ref-tag meta">문서</span>
+              <a href={d.url} target="_blank" rel="noopener">{d.title}</a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    <nav class="week-nav">
+      {prev ? (
+        <a href={url(`/weeks/${prev.id}`)} class="nav-link prev">
+          <span class="eyebrow">이전</span>
+          <span>{prev.id} — {prev.title}</span>
+        </a>
+      ) : <span />}
+      {next && (
+        <a href={url(`/weeks/${next.id}`)} class="nav-link next">
+          <span class="eyebrow">다음</span>
+          <span>{next.id} — {next.title}</span>
+        </a>
+      )}
+    </nav>
+  </article>
+</Layout>
+
+<style>
+  .week-header { margin-bottom: var(--s-6); }
+  .back { display: inline-block; margin-bottom: var(--s-3); color: var(--c-ink-2); }
+  .week-header h1 {
+    font-size: var(--fs-2xl);
+    margin: var(--s-2) 0 var(--s-2);
+    word-break: keep-all;
+    line-height: var(--lh-tight);
+  }
+  .lead { color: var(--c-ink-2); word-break: keep-all; }
+
+  .block { margin-bottom: var(--s-6); }
+  .block h2 {
+    font-family: var(--f-mono);
+    font-size: var(--fs-md);
+    font-weight: var(--w-medium);
+    margin-bottom: var(--s-3);
+    padding-bottom: var(--s-1);
+    border-bottom: var(--border);
+  }
+
+  .topic-list, .mini-list, .done-list, .check-list, .mistake-list {
+    display: flex; flex-direction: column; gap: var(--s-1);
+  }
+  .topic-list li { font-size: var(--fs-sm); color: var(--c-ink); }
+
+  .step-list { display: flex; flex-direction: column; gap: var(--s-4); }
+  .step { padding-left: var(--s-1); }
+  .step-head { display: flex; align-items: baseline; gap: var(--s-3); margin-bottom: var(--s-2); }
+  .step-no { font-family: var(--f-mono); color: var(--c-accent); }
+  .step-title { font-size: var(--fs-base); font-weight: var(--w-medium); }
+  .step-copy {
+    font-size: var(--fs-sm);
+    color: var(--c-ink-2);
+    line-height: var(--lh-normal);
+    word-break: keep-all;
+    margin-bottom: var(--s-2);
+  }
+  .step-copy:last-of-type { margin-bottom: 0; }
+  .mini-list li, .mistake-list li {
+    font-size: var(--fs-sm); color: var(--c-ink-2);
+    padding-left: var(--s-3); position: relative;
+  }
+  .mini-list li::before, .mistake-list li::before {
+    content: '-'; position: absolute; left: var(--s-1); color: var(--c-ink-3);
+  }
+
+  /* done: CSS 보더로 그린 체크 표시 (글리프 미사용) */
+  .done-list { margin-top: var(--s-2); }
+  .done-list li {
+    font-size: var(--fs-sm); color: var(--c-success);
+    padding-left: var(--s-4); position: relative;
+  }
+  .done-list li::before {
+    content: ''; position: absolute; left: 6px; top: 0.35em;
+    width: 4px; height: 8px;
+    border: solid var(--c-success); border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  .shortcut-list { display: flex; flex-direction: column; gap: var(--s-2); }
+  .shortcut-list li { display: flex; align-items: center; gap: var(--s-3); }
+  kbd {
+    font-family: var(--f-mono); font-size: var(--fs-xs);
+    padding: 2px var(--s-2);
+    border: var(--border); border-radius: var(--r-sm);
+    background: var(--c-bg-2); color: var(--c-ink);
+    min-width: 3rem; text-align: center; white-space: nowrap;
+  }
+  .shortcut-list span { font-size: var(--fs-sm); color: var(--c-ink-2); }
+
+  .assignment {
+    padding: var(--s-4);
+    border: var(--border); border-radius: var(--r-lg);
+    background: color-mix(in srgb, var(--c-accent) 6%, transparent);
+  }
+  .assignment h2 { border-bottom: 0; margin-bottom: var(--s-2); }
+  .assign-title { font-size: var(--fs-base); display: block; margin-bottom: var(--s-2); }
+  .assign-desc { font-size: var(--fs-sm); color: var(--c-ink-2); margin-bottom: var(--s-2); word-break: keep-all; }
+
+  /* checklist: CSS 보더로 그린 빈 박스 (글리프 미사용) */
+  .check-list li {
+    font-size: var(--fs-sm); color: var(--c-ink-2);
+    padding-left: var(--s-4); position: relative;
+  }
+  .check-list li::before {
+    content: ''; position: absolute; left: var(--s-1); top: 0.25em;
+    width: 0.8em; height: 0.8em;
+    border: 1.5px solid var(--c-ink-3); border-radius: 2px;
+  }
+
+  .ref-list { display: flex; flex-direction: column; gap: var(--s-2); }
+  .ref-list li { display: flex; align-items: baseline; gap: var(--s-3); }
+  .ref-tag { min-width: 2.5rem; color: var(--c-ink-3); }
+  .ref-list a { font-size: var(--fs-sm); color: var(--c-accent); }
+
+  .week-nav {
+    display: flex; justify-content: space-between; gap: var(--s-3);
+    margin-top: var(--s-7); padding-top: var(--s-4);
+    border-top: var(--border);
+  }
+  .nav-link { display: flex; flex-direction: column; gap: 2px; max-width: 48%; }
+  .nav-link.next { text-align: right; margin-left: auto; }
+  .nav-link span:last-child { font-size: var(--fs-sm); color: var(--c-ink); word-break: keep-all; }
+  .nav-link:hover span:last-child { color: var(--c-accent); }
+</style>
