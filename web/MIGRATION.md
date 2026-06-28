@@ -11,6 +11,7 @@
 |---|---|---|---|
 | `index.html` | 홈 | `/` | 완료 (canonical 연동) |
 | `week.html` | 주차 상세 (notion-blocks 렌더) | `/weeks/[id]` | 완료 (canonical 연동) |
+| `shortcuts.html` | 단축키 DB (전체) | `/shortcuts` | 완료 — canonical `weeks[].shortcuts` 131개 집계 + 주차별 그룹 + 클라이언트 검색 |
 | `subpage.html` | 자료 모음 | `/resources` | 부분 — 큐레이션 링크는 옮김, 원본과 항목 대조 필요 |
 
 ## 남은 갭 (web/ 에 없는 학생용 페이지)
@@ -20,7 +21,6 @@
 | 페이지 | 역할 | 데이터 의존 | 난이도 | 비고 |
 |---|---|---|---|---|
 | `library.html` | Show Me 카드 라이브러리 | 카드 데이터 + 이미지 자산 | 중–상 | index에서 4회 링크. 자산 경로 이전 필요 |
-| `shortcuts.html` | 단축키 DB (전체) | 단축키 데이터 | 중 | index에서 2회 링크. web 주차 상세엔 주차별 단축키만 있음. 통합 DB 페이지 별도 필요 |
 | `inha.html` | 인하대 RPD 아카이브 랜딩 | 정적/일부 데이터 | 중 | 보조 허브 역할 (index·library·shortcuts·studio·week 링크) |
 | `final-projects.html` | 기말 작품 갤러리 | 제출물 데이터 | 중 | 제출물 소스 연동 방식 확인 필요 |
 | `studio.html` | My Studio | 정적 (173줄) | 하 | 소형 페이지 |
@@ -38,7 +38,7 @@
 - **데이터는 SSoT 유지**: 새 페이지도 하드코딩하지 말고 canonical/기존 데이터 파일을 빌드 타임에 읽는다.
   library·shortcuts·final-projects 의 데이터 소스를 먼저 식별하고 `src/data/` 로더로 흡수한다.
 - **자산 이전**: library 카드 이미지 등 `output/`(gitignored) 의존 자산은 web/ `public/` 또는 별도 호스팅으로 옮길지 결정한다.
-- **순서 제안**: shortcuts → studio → inha → final-projects → ladder → library
+- **순서 제안**: ~~shortcuts~~(완료) → studio → inha → final-projects → ladder → library
   (데이터 단순·정적 우선, 자산/인터랙션 복잡한 것 후순위).
 
 ## 전환 게이트
