@@ -445,6 +445,34 @@ body {
   .texture-btns { justify-content: center; }
 }
 </style>
+<!--RPDLIGHT-START-->
+<script>(function(){try{var t=localStorage.getItem('theme');document.documentElement.dataset.theme=(t==='dark'||t==='light')?t:'light';}catch(e){document.documentElement.dataset.theme='light';}})();</script>
+<style id="rpd-light-theme">
+:root[data-theme="light"]{
+  --bg:#F8F6F0; --bg-soft:#F2EEE6; --surface:#EFEBE1; --surface-strong:#E6E1D6;
+  --line:rgba(26,26,24,.10); --line-strong:rgba(26,26,24,.18);
+  --text:#1A1A18; --muted:#5C5A55; --muted-strong:#38362F; --muted-mid:#6E6C64; --muted-soft:#7C7A72; --muted-dim:#9A9890;
+  --key:#B85C38; --key-strong:#9C4A2C; --key-soft:#C9744F;
+  --success:#0E8E63; --success-soft:#138A63;
+  --warn:#B5710A; --warn-soft:#A66608; --warn-medium:#8F5800;
+  --danger:#D23B3B; --danger-soft:#BE3232;
+  --info-soft:#2A7E9C; --accent-soft:#B5710A;
+  --secondary-soft:#5B5BD6; --secondary-mid:#6E5FD0;
+  --accent-a:#B85C38; --accent-a-soft:#C9744F; --accent-b:#5B5BD6; --accent-b-soft:#6E5FD0;
+}
+:root[data-theme="light"] body{background:var(--bg);color:var(--text);}
+/* 공유 _helpers.js 가 주입하는 다크 chrome 의 라이트 오버라이드 */
+:root[data-theme="light"] .showme-tab-shell{background:#F4F1EA !important;border-bottom-color:rgba(26,26,24,.10) !important;}
+:root[data-theme="light"] .showme-tab-arrow{background:#EBE6DC !important;border-color:rgba(26,26,24,.12) !important;color:var(--text) !important;}
+:root[data-theme="light"] .showme-tab-arrow:hover{background:#E0DACE !important;}
+:root[data-theme="light"] .tab{color:var(--muted) !important;}
+:root[data-theme="light"] .tab.is-active{color:var(--text) !important;background:rgba(26,26,24,.07) !important;box-shadow:inset 0 0 0 1px rgba(26,26,24,.10) !important;}
+:root[data-theme="light"] .tab.is-active:hover{background:rgba(26,26,24,.10) !important;}
+:root[data-theme="light"] .showme-quick-actions{background:#EFEBE1 !important;border-color:rgba(26,26,24,.10) !important;}
+:root[data-theme="light"] .showme-quick-link{background:#E8E3D8 !important;}
+:root[data-theme="light"] .showme-quick-link:hover{background:#DED8CB !important;}
+</style>
+<!--RPDLIGHT-END-->
 </head>
 <body>
 
