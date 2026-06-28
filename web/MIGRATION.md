@@ -13,6 +13,7 @@
 | `week.html` | 주차 상세 (notion-blocks 렌더) | `/weeks/[id]` | 완료 (canonical 연동) |
 | `shortcuts.html` | 단축키 DB (전체) | `/shortcuts` | 완료 — canonical `weeks[].shortcuts` 131개 집계 + 주차별 그룹 + 클라이언트 검색 |
 | `final-projects.html` | 기말 작품 갤러리 | `/final-projects` | 완료 — `course-site/data/final-projects.js`(작품 23) 빌드타임 로드 + 미디어 13MB를 `public/assets/final-projects/` 복사 |
+| `inha.html` | 인하대 코스 랜딩 | `/inha` | 완료 — canonical 기반 진행 채움 타임라인으로 단순화 재작성 (app-shell·i18n 제외) |
 | `subpage.html` | 자료 모음 | `/resources` | 부분 — 큐레이션 링크는 옮김, 원본과 항목 대조 필요 |
 
 ## 남은 갭 (web/ 에 없는 학생용 페이지)
@@ -21,7 +22,6 @@
 
 | 페이지 | 역할 | 데이터 의존 | 난이도 | 비고 |
 |---|---|---|---|---|
-| `inha.html` | 인하대 RPD 아카이브 랜딩 | curriculum.js + i18n + week-ui | 중 | app-shell 따라가지 말고 canonical 기반 Astro about/타임라인으로 단순화 재작성 (i18n 제외) |
 | `library.html` | Show Me 카드 라이브러리 | `assets/showme/` 서브시스템(_catalog.json + 카드 HTML 30+) + auth | 상 | **별도 마일스톤.** 카드 시스템 통째 이식, 공개=view-only |
 
 ## 드롭 후보 (이행 불필요)
@@ -38,8 +38,8 @@
 - **데이터는 SSoT 유지**: 새 페이지도 하드코딩하지 말고 canonical/기존 데이터 파일을 빌드 타임에 읽는다.
   library·shortcuts·final-projects 의 데이터 소스를 먼저 식별하고 `src/data/` 로더로 흡수한다.
 - **자산 이전**: 미디어 바이너리는 web/ `public/assets/` 로 복사한다(final-projects 13MB 적용 완료). course-site 은퇴 시 중복 해소.
-- **남은 순서**: ~~shortcuts~~(완료) → ~~final-projects~~(완료) → inha → library(별도 마일스톤).
-  studio·ladder 는 드롭.
+- **남은 순서**: ~~shortcuts~~ → ~~final-projects~~ → ~~inha~~ (완료) → library(별도 마일스톤).
+  studio·ladder 는 드롭. **library 만 남음.**
 
 ## 전환 게이트
 
