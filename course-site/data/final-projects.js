@@ -1,11 +1,11 @@
 window.RPDFinalProjects = {
-  "generatedAt": "2026-06-27",
-  "source": "Week 15 final-project visual archive, anonymized web-preview subset",
+  "generatedAt": "2026-06-28",
+  "source": "Week 15 final-project visual archive, anonymized web-preview subset; completed with direct Week 15 uploads",
   "stats": {
-    "works": 23,
-    "previewAssets": 113,
-    "videos": 49,
-    "links": 18,
+    "works": 24,
+    "previewAssets": 115,
+    "videos": 50,
+    "links": 21,
     "format": "갤러리"
   },
   "projects": [
@@ -736,6 +736,16 @@ window.RPDFinalProjects = {
           "label": "Behance 1",
           "url": "https://www.behance.net/gallery/250915905/MATI-42ARCHIVE",
           "kind": "Behance"
+        },
+        {
+          "label": "웹페이지 2",
+          "url": "https://incandescent-empanada-ba4297.netlify.app/",
+          "kind": "웹페이지"
+        },
+        {
+          "label": "웹페이지 3",
+          "url": "https://incredible-moxie-54ed49.netlify.app/",
+          "kind": "웹페이지"
         }
       ],
       "coverSrc": "assets/final-projects/project-15/video-01.webp"
@@ -935,6 +945,11 @@ window.RPDFinalProjects = {
           "src": "assets/final-projects/project-18/video-02.webp",
           "videoSrc": "assets/final-projects/project-18/video-02.mp4",
           "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-18/image-09.webp",
+          "role": "process"
         }
       ],
       "videos": [
@@ -947,7 +962,13 @@ window.RPDFinalProjects = {
           "poster": "assets/final-projects/project-18/video-02.webp"
         }
       ],
-      "links": [],
+      "links": [
+        {
+          "label": "웹페이지 캡처 HTML",
+          "url": "assets/final-projects/project-18/kkuing_portfolio_scroll_fixed.html",
+          "kind": "파일"
+        }
+      ],
       "coverSrc": "assets/final-projects/project-18/image-03.webp"
     },
     {
@@ -1176,6 +1197,27 @@ window.RPDFinalProjects = {
         }
       ],
       "coverSrc": "assets/final-projects/project-23/video-01.webp"
+    },
+    {
+      "id": "project-24",
+      "code": "작품 24",
+      "title": "작품 24",
+      "media": [
+        {
+          "type": "video",
+          "src": "assets/final-projects/project-24/video-01.webp",
+          "videoSrc": "assets/final-projects/project-24/video-01.mp4",
+          "role": "render"
+        }
+      ],
+      "videos": [
+        {
+          "src": "assets/final-projects/project-24/video-01.mp4",
+          "poster": "assets/final-projects/project-24/video-01.webp"
+        }
+      ],
+      "links": [],
+      "coverSrc": "assets/final-projects/project-24/video-01.webp"
     }
   ]
 };
