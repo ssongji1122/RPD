@@ -32,7 +32,6 @@
     galleryRail: document.getElementById("finalGalleryRail"),
     galleryMeta: document.getElementById("finalGalleryMeta"),
     galleryMetaIndex: document.getElementById("finalGalleryMetaIndex"),
-    galleryMetaCaption: document.getElementById("finalGalleryMetaCaption"),
     count: document.getElementById("finalResultCount"),
     detail: document.getElementById("finalDetail")
   };
@@ -255,15 +254,13 @@
   }
 
   function setGalleryMeta(project, index, isIdle) {
-    if (!els.galleryMetaIndex || !els.galleryMetaCaption) return;
+    if (!els.galleryMetaIndex) return;
     if (!project) {
       els.galleryMetaIndex.textContent = "( — )";
-      els.galleryMetaCaption.textContent = "커서를 올리면 작품이 확대됩니다";
       if (els.galleryMeta) els.galleryMeta.classList.add("is-idle");
       return;
     }
     els.galleryMetaIndex.textContent = "( " + String(index + 1).padStart(2, "0") + " )";
-    els.galleryMetaCaption.textContent = project.code + " · " + getProjectTags(project).join(" · ");
     if (els.galleryMeta) els.galleryMeta.classList.toggle("is-idle", Boolean(isIdle));
   }
 
@@ -532,10 +529,6 @@
       el("b", { textContent: "웹페이지 열기 →" })
     ]));
     cell.appendChild(panel);
-    cell.appendChild(el("p", {
-      className: "final-web-embed-note",
-      textContent: "이 페이지는 보안 정책상 미리보기 임베드가 불가합니다. 버튼을 누르면 새 탭에서 열립니다."
-    }));
     return cell;
   }
 
@@ -585,10 +578,6 @@
     });
     cell.appendChild(head);
     cell.appendChild(frame);
-    cell.appendChild(el("p", {
-      className: "final-web-embed-note",
-      textContent: "미리보기에서 바로 클릭·탐색할 수 있습니다. 더 넓게 보려면 전체 화면을 누르세요."
-    }));
     return cell;
   }
 
