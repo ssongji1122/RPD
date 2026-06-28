@@ -41,6 +41,8 @@ export interface Step {
   goal: string[];
   done: string[];
   tasks: StepTask[];
+  /** 로컬 스크린샷 (assets/images/weekNN/*.png). 단일 또는 복수. */
+  image?: string | string[];
 }
 
 export interface LinkRef {

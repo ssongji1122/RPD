@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { weeks, getWeek } from '../../data/curriculum';
+import { loadPrompts } from '../../data/prompts';
 import { url } from '../../lib/url';
 
 export function getStaticPaths() {
@@ -14,6 +15,11 @@ if (!w) return Astro.redirect('/weeks');
 const idx = weeks.findIndex((x) => x.id === w.id);
 const prev = weeks[idx - 1];
 const next = weeks[idx + 1];
+
+const prompts = loadPrompts(w.week);
+const imgSrc = (img: string) => url(img.startsWith('/') ? img : `/${img}`);
+const stepImages = (s: { image?: string | string[] }): string[] =>
+  s.image == null ? [] : Array.isArray(s.image) ? s.image : [s.image];
 ---
 
 <Layout title={`${w.id} — ${w.title} · rpd`} description={w.summary || w.subtitle}>
@@ -47,6 +53,13 @@ const next = weeks[idx + 1];
               {s.copy && s.copy.trim().split(/\n{2,}/).map((para) => (
                 <p class="step-copy">{para.trim()}</p>
               ))}
+              {stepImages(s).length > 0 && (
+                <div class="step-shots">
+                  {stepImages(s).map((img) => (
+                    <img class="step-shot" src={imgSrc(img)} alt={`${s.title} 스크린샷`} loading="lazy" />
+                  ))}
+                </div>
+              )}
               {s.goal.length > 0 && (
                 <ul class="mini-list">
                   {s.goal.map((g) => <li>{g}</li>)}
@@ -60,6 +73,21 @@ const next = weeks[idx + 1];
             </li>
           ))}
         </ol>
+      </section>
+    )}
+
+    {prompts.length > 0 && (
+      <section class="block">
+        <h2>프롬프트 ({prompts.length})</h2>
+        <p class="prompt-note meta">아래 프롬프트를 복사해 AI 도구에 붙여넣어 사용하세요.</p>
+        <ul class="prompt-list">
+          {prompts.map((p) => (
+            <li class="prompt">
+              <button class="prompt-copy" type="button" data-copy aria-label="프롬프트 복사">복사</button>
+              <pre class="prompt-text"><code>{p.text}</code></pre>
+            </li>
+          ))}
+        </ul>
       </section>
     )}
 
@@ -136,6 +164,27 @@ const next = weeks[idx + 1];
   </article>
 </Layout>
 
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const text = btn.parentElement?.querySelector('code')?.textContent ?? '';
+      try {
+        await navigator.clipboard.writeText(text);
+        const prev = btn.textContent;
+        btn.textContent = '복사됨';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = prev;
+          btn.classList.remove('copied');
+        }, 1500);
+      } catch {
+        btn.textContent = '복사 실패';
+        setTimeout(() => (btn.textContent = '복사'), 1500);
+      }
+    });
+  });
+</script>
+
 <style>
   .week-header { margin-bottom: var(--s-6); }
   .back { display: inline-block; margin-bottom: var(--s-3); color: var(--c-ink-2); }
@@ -175,6 +224,57 @@ const next = weeks[idx + 1];
     margin-bottom: var(--s-2);
   }
   .step-copy:last-of-type { margin-bottom: 0; }
+
+  .step-shots {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: var(--s-2);
+    margin: var(--s-2) 0;
+  }
+  .step-shot {
+    width: 100%;
+    border: var(--border);
+    border-radius: var(--r-md);
+    background: var(--c-bg-2);
+    display: block;
+  }
+
+  /* 프롬프트 (복붙) */
+  .prompt-note { color: var(--c-ink-3); margin-bottom: var(--s-3); }
+  .prompt-list { display: flex; flex-direction: column; gap: var(--s-2); }
+  .prompt { position: relative; }
+  .prompt-text {
+    margin: 0;
+    padding: var(--s-3);
+    padding-right: var(--s-7);
+    background: var(--c-bg-2);
+    border: var(--border);
+    border-radius: var(--r-md);
+    overflow-x: auto;
+  }
+  .prompt-text code {
+    font-family: var(--f-mono);
+    font-size: var(--fs-xs);
+    color: var(--c-ink);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .prompt-copy {
+    position: absolute;
+    top: var(--s-2);
+    right: var(--s-2);
+    font-family: var(--f-mono);
+    font-size: var(--fs-2xs);
+    padding: 2px var(--s-2);
+    color: var(--c-ink-2);
+    background: var(--c-bg);
+    border: var(--border);
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    transition: color var(--t) var(--ease), border-color var(--t) var(--ease);
+  }
+  .prompt-copy:hover { color: var(--c-ink); border-color: var(--c-ink-2); }
+  .prompt-copy.copied { color: var(--c-accent); border-color: var(--c-accent); }
   .mini-list li, .mistake-list li {
     font-size: var(--fs-sm); color: var(--c-ink-2);
     padding-left: var(--s-3); position: relative;
