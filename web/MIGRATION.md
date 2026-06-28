@@ -12,6 +12,7 @@
 | `index.html` | 홈 | `/` | 완료 (canonical 연동) |
 | `week.html` | 주차 상세 (notion-blocks 렌더) | `/weeks/[id]` | 완료 (canonical 연동) |
 | `shortcuts.html` | 단축키 DB (전체) | `/shortcuts` | 완료 — canonical `weeks[].shortcuts` 131개 집계 + 주차별 그룹 + 클라이언트 검색 |
+| `final-projects.html` | 기말 작품 갤러리 | `/final-projects` | 완료 — `course-site/data/final-projects.js`(작품 23) 빌드타임 로드 + 미디어 13MB를 `public/assets/final-projects/` 복사 |
 | `subpage.html` | 자료 모음 | `/resources` | 부분 — 큐레이션 링크는 옮김, 원본과 항목 대조 필요 |
 
 ## 남은 갭 (web/ 에 없는 학생용 페이지)
@@ -20,11 +21,8 @@
 
 | 페이지 | 역할 | 데이터 의존 | 난이도 | 비고 |
 |---|---|---|---|---|
-| `library.html` | Show Me 카드 라이브러리 | 카드 데이터 + 이미지 자산 | 중–상 | index에서 4회 링크. 자산 경로 이전 필요 |
-| `inha.html` | 인하대 RPD 아카이브 랜딩 | 정적/일부 데이터 | 중 | 보조 허브 역할 (index·library·shortcuts·studio·week 링크) |
-| `final-projects.html` | 기말 작품 갤러리 | 제출물 데이터 | 중 | 제출물 소스 연동 방식 확인 필요 |
-| `studio.html` | My Studio | 정적 (173줄) | 하 | 소형 페이지 |
-| `ladder*.html` | 발표순서 사다리타기 (인터랙티브) | 클라이언트 JS | 중 | `ladder-standalone.html` 1403줄. Astro client island 또는 그대로 이식. 3변형(ladder/standalone/sample) 정리 |
+| `inha.html` | 인하대 RPD 아카이브 랜딩 | curriculum.js + i18n + week-ui | 중 | app-shell 따라가지 말고 canonical 기반 Astro about/타임라인으로 단순화 재작성 (i18n 제외) |
+| `library.html` | Show Me 카드 라이브러리 | `assets/showme/` 서브시스템(_catalog.json + 카드 HTML 30+) + auth | 상 | **별도 마일스톤.** 카드 시스템 통째 이식, 공개=view-only |
 
 ## 드롭 후보 (이행 불필요)
 
@@ -32,14 +30,16 @@
 |---|---|
 | `admin.html` | 운영 도구. 공개 배포 제외 대상. web/ 으로 옮기지 않음 |
 | `preview-style-v2.html` | 스타일 실험본. 실 콘텐츠 아님 |
+| `ladder*.html` | 발표순서 사다리타기 유틸. 사용자 결정으로 이행 제외 |
+| `studio.html` | "My Studio" 덱 빌더 도구(관리자 패널 성격) — 학생용 콘텐츠 아님 |
 
 ## 이행 원칙
 
 - **데이터는 SSoT 유지**: 새 페이지도 하드코딩하지 말고 canonical/기존 데이터 파일을 빌드 타임에 읽는다.
   library·shortcuts·final-projects 의 데이터 소스를 먼저 식별하고 `src/data/` 로더로 흡수한다.
-- **자산 이전**: library 카드 이미지 등 `output/`(gitignored) 의존 자산은 web/ `public/` 또는 별도 호스팅으로 옮길지 결정한다.
-- **순서 제안**: ~~shortcuts~~(완료) → studio → inha → final-projects → ladder → library
-  (데이터 단순·정적 우선, 자산/인터랙션 복잡한 것 후순위).
+- **자산 이전**: 미디어 바이너리는 web/ `public/assets/` 로 복사한다(final-projects 13MB 적용 완료). course-site 은퇴 시 중복 해소.
+- **남은 순서**: ~~shortcuts~~(완료) → ~~final-projects~~(완료) → inha → library(별도 마일스톤).
+  studio·ladder 는 드롭.
 
 ## 전환 게이트
 
