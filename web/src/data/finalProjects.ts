@@ -70,9 +70,18 @@ function toPublic(src: string | undefined): string | undefined {
 
 const data = load();
 
+// 대표 이미지 교정: 원본 coverSrc 가 대표성 없는 경우(웹 스크린샷·검은 포스터 등)
+// 히어로감 이미지로 덮어쓴다. 값은 relative(assets/...) — toPublic 이 base 를 붙인다.
+//  - project-03: 원본 포스터가 검정 → 비디오 25s 프레임을 추출한 cover.webp
+//  - project-16: 원본이 웹 스크린샷(image-07) → 캐릭터 렌더(image-01)
+const COVER_OVERRIDES: Record<string, string> = {
+  'project-03': 'assets/final-projects/project-03/cover.webp',
+  'project-16': 'assets/final-projects/project-16/image-01.webp',
+};
+
 export const finalProjects: FPProject[] = data.projects.map((p) => ({
   ...p,
-  coverSrc: toPublic(p.coverSrc),
+  coverSrc: toPublic(COVER_OVERRIDES[p.id] ?? p.coverSrc),
   media: p.media.map((m) => ({ ...m, src: toPublic(m.src)!, videoSrc: toPublic(m.videoSrc) })),
   videos: p.videos.map((v) => ({ src: toPublic(v.src)!, poster: toPublic(v.poster)! })),
 }));
