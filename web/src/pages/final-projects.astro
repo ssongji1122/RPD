@@ -1,0 +1,100 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { finalProjects, finalProjectsMeta } from '../data/finalProjects';
+
+const { stats } = finalProjectsMeta;
+---
+
+<Layout title="기말 작품 — rpd" description="RPD 기말 프로젝트 작품 아카이브">
+  <section class="wrap section">
+    <h1>기말 작품</h1>
+    <p class="lead">Week 15 최종 프로젝트 아카이브 · 작품 {stats.works}점</p>
+
+    <div class="gallery">
+      {finalProjects.map((p) => (
+        <article class="project" id={p.id}>
+          <header class="project-head">
+            <h2 class="project-title">{p.title}</h2>
+            {p.links.length > 0 && (
+              <ul class="project-links">
+                {p.links.map((l) => (
+                  <li>
+                    <a href={l.url} target="_blank" rel="noopener">{l.label}</a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </header>
+
+          <div class="media-grid">
+            {p.media.map((m) =>
+              m.type === 'video' ? (
+                <video
+                  class="media"
+                  controls
+                  preload="none"
+                  poster={m.src}
+                  playsinline
+                >
+                  <source src={m.videoSrc} type="video/mp4" />
+                </video>
+              ) : (
+                <img class="media" src={m.src} alt={`${p.title} 이미지`} loading="lazy" />
+              ),
+            )}
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+</Layout>
+
+<style>
+  h1 { margin-bottom: var(--s-2); }
+  .lead { color: var(--c-ink-2); margin-bottom: var(--s-6); }
+
+  .gallery { display: flex; flex-direction: column; gap: var(--s-7); }
+
+  .project { scroll-margin-top: var(--s-7); }
+  .project-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s-3);
+    margin-bottom: var(--s-3);
+    padding-bottom: var(--s-1);
+    border-bottom: var(--border);
+    flex-wrap: wrap;
+  }
+  .project-title {
+    font-family: var(--f-mono);
+    font-size: var(--fs-md);
+    font-weight: var(--w-medium);
+  }
+  .project-links { display: flex; gap: var(--s-3); flex-wrap: wrap; }
+  .project-links a {
+    font-family: var(--f-mono);
+    font-size: var(--fs-xs);
+    color: var(--c-accent);
+    letter-spacing: var(--ls-mono);
+  }
+
+  .media-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--s-3);
+  }
+  .media {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    background: var(--c-bg-2);
+    border: var(--border);
+    border-radius: var(--r-md);
+    display: block;
+  }
+  video.media { object-fit: contain; }
+  @media (max-width: 560px) {
+    .media-grid { grid-template-columns: 1fr; }
+  }
+</style>
