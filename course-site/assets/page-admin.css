@@ -17,6 +17,10 @@
     body[data-tab="admin"] .app-topbar-right {
       gap: 6px;
       flex-shrink: 0;
+      /* layout.css sets .app-topbar-right { pointer-events: none } and only
+         restores it on .theme-toggle. The admin topbar holds the editor
+         controls (diff/preview/save/account) instead, so restore clicks here. */
+      pointer-events: auto;
     }
     body[data-tab="admin"] .app-topbar-right .version-badge {
       display: none;
