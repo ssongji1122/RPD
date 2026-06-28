@@ -1,0 +1,131 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { weeks } from '../data/curriculum';
+
+// canonical 의 주차별 shortcuts 를 집계한다. (SSoT — 별도 데이터 없음)
+const groups = weeks
+  .map((w) => ({ id: w.id, title: w.title, items: w.shortcuts }))
+  .filter((g) => g.items.length > 0);
+
+const total = groups.reduce((n, g) => n + g.items.length, 0);
+---
+
+<Layout title="단축키 — rpd" description="Blender 단축키 모음 (주차별)">
+  <section class="wrap section">
+    <h1>단축키 DB</h1>
+    <p class="lead">수업에서 다루는 Blender 단축키 {total}개 · 주차별</p>
+
+    <input
+      type="search"
+      id="sc-search"
+      class="sc-search"
+      placeholder="단축키 또는 동작 검색 (예: Bevel, Tab, 렌더)"
+      autocomplete="off"
+      aria-label="단축키 검색"
+    />
+
+    <div id="sc-list">
+      {groups.map((g) => (
+        <div class="sc-group" data-group>
+          <h2 class="sc-week eyebrow">
+            <a href={`/weeks/${g.id}`}>{g.id}</a>
+            <span class="sc-week-title">{g.title}</span>
+          </h2>
+          <ul class="shortcut-list">
+            {g.items.map((s) => (
+              <li data-row data-text={`${s.keys} ${s.action}`.toLowerCase()}>
+                <kbd>{s.keys}</kbd>
+                <span>{s.action}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+    <p id="sc-empty" class="sc-empty meta" hidden>일치하는 단축키가 없습니다.</p>
+  </section>
+</Layout>
+
+<script>
+  const input = document.getElementById('sc-search') as HTMLInputElement | null;
+  const empty = document.getElementById('sc-empty');
+  if (input) {
+    input.addEventListener('input', () => {
+      const q = input.value.trim().toLowerCase();
+      let anyVisible = false;
+      document.querySelectorAll<HTMLElement>('[data-group]').forEach((group) => {
+        let groupVisible = false;
+        group.querySelectorAll<HTMLElement>('[data-row]').forEach((row) => {
+          const match = !q || (row.dataset.text || '').includes(q);
+          row.hidden = !match;
+          if (match) groupVisible = true;
+        });
+        group.hidden = !groupVisible;
+        if (groupVisible) anyVisible = true;
+      });
+      if (empty) empty.hidden = anyVisible;
+    });
+  }
+</script>
+
+<style>
+  h1 { margin-bottom: var(--s-2); }
+  .lead { color: var(--c-ink-2); margin-bottom: var(--s-4); }
+
+  .sc-search {
+    width: 100%;
+    padding: var(--s-3);
+    margin-bottom: var(--s-6);
+    background: var(--c-bg-2);
+    border: var(--border-input);
+    border-radius: var(--r-md);
+    color: var(--c-ink);
+    font-family: var(--f-body);
+    font-size: var(--fs-sm);
+  }
+  .sc-search::placeholder { color: var(--c-ink-3); }
+  .sc-search:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-offset);
+    border-color: var(--c-accent);
+  }
+
+  .sc-group { margin-bottom: var(--s-6); }
+  .sc-week {
+    display: flex;
+    align-items: baseline;
+    gap: var(--s-3);
+    margin-bottom: var(--s-3);
+    padding-bottom: var(--s-1);
+    border-bottom: var(--border);
+  }
+  .sc-week a { color: var(--c-accent); }
+  .sc-week-title { color: var(--c-ink-3); font-size: var(--fs-2xs); word-break: keep-all; }
+
+  .shortcut-list { display: flex; flex-direction: column; gap: var(--s-2); }
+  .shortcut-list li {
+    display: grid;
+    grid-template-columns: minmax(7rem, max-content) 1fr;
+    align-items: center;
+    gap: var(--s-3);
+  }
+  .shortcut-list li[hidden] { display: none; }
+  kbd {
+    font-family: var(--f-mono);
+    font-size: var(--fs-xs);
+    padding: 3px var(--s-2);
+    border: var(--border);
+    border-radius: var(--r-sm);
+    background: var(--c-bg-2);
+    color: var(--c-ink);
+    text-align: center;
+    white-space: nowrap;
+    justify-self: start;
+  }
+  .shortcut-list span { font-size: var(--fs-sm); color: var(--c-ink-2); word-break: keep-all; }
+
+  .sc-empty { padding: var(--s-6) 0; text-align: center; }
+  @media (max-width: 560px) {
+    .shortcut-list li { grid-template-columns: 1fr; gap: var(--s-1); }
+  }
+</style>
