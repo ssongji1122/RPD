@@ -125,15 +125,23 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
 
   function go(delta: number) { pos += delta; paint(); }
 
-  // 호버: 커서가 잠깐 머문 썸네일로 부드럽게 가운데 이동(브라우징).
-  // 클릭: 해당 작품 상세 페이지로 이동.
+  // 호버: 커서가 가리키는 썸네일을 가운데로 이동(브라우징).
+  // mouseenter 가 아니라 실제 pointermove 에만 반응한다 — 가운데 이동으로 레이아웃이
+  // 밀려 커서 밑 슬라이드가 바뀌어도 커서가 안 움직였으면 재발동 안 해 "지글거림"이 없다.
   let hoverTimer = 0;
-  slides.forEach((s, i) => {
-    s.addEventListener('mouseenter', () => {
-      clearTimeout(hoverTimer);
-      hoverTimer = window.setTimeout(() => { if (i !== pos) { pos = i; paint(); } }, 90);
-    });
-    s.addEventListener('mouseleave', () => clearTimeout(hoverTimer));
+  stage?.addEventListener('pointermove', (e) => {
+    if ((e as PointerEvent).pointerType === 'touch') return;
+    const slide = (e.target as HTMLElement).closest('.fp-slide') as HTMLButtonElement | null;
+    if (!slide) return;
+    const i = slides.indexOf(slide);
+    if (i === -1 || i === pos) return;
+    clearTimeout(hoverTimer);
+    hoverTimer = window.setTimeout(() => { pos = i; paint(); }, 70);
+  });
+  stage?.addEventListener('pointerleave', () => clearTimeout(hoverTimer));
+
+  // 클릭: 해당 작품 상세 페이지로 이동.
+  slides.forEach((s) => {
     s.addEventListener('click', () => {
       const href = s.dataset.detail;
       if (href) window.location.href = href;
