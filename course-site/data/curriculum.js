@@ -7,13 +7,13 @@ const CURRICULUM = [
   {
     "week": 1,
     "status": "done",
-    "title": "오리엔테이션, Blender 설치, Mixboard 활용하여 디자인 컨셉 설정",
-    "subtitle": "오리엔테이션 · Blender 설치 · 컨셉 설정",
+    "title": "오리엔테이션, Blender 설치, Mixboard 활용하여 작품 방향 설정",
+    "subtitle": "오리엔테이션 · Blender 설치 · 작품 방향 설정",
     "duration": "~2시간",
     "topics": [
       "수업 소개 및 방향",
       "Blender 설치 및 실행 확인",
-      "Mixboard 디자인 컨셉 설정"
+      "Mixboard 작품 방향 설정"
     ],
     "steps": [
       {
@@ -169,14 +169,14 @@ const CURRICULUM = [
         ]
       },
       {
-        "title": "자기 프로젝트 컨셉 잡기",
-        "copy": "깊이 보기: Blender를 완벽히 다루는 것보다 \"내가 왜 이 캐릭터를 만드는가\"를 명확히 하는 것이 훨씬 중요합니다. 컨셉이 명확하면 모델링할 때 어떤 형태를 살리고 어떤 부분을 단순화할지 스스로 판단할 수 있습니다.",
+        "title": "자기 프로젝트 방향 잡기",
+        "copy": "깊이 보기: Blender를 완벽히 다루는 것보다 \"내가 어떤 작품을 만들고 싶은가\"를 명확히 하는 것이 훨씬 중요합니다. 방향이 명확하면 모델링할 때 어떤 형태를 살리고 어떤 부분을 단순화할지 스스로 판단할 수 있습니다.",
         "goal": [],
         "done": [],
         "tasks": [
           {
             "id": "w1-t24",
-            "label": "무드보드 결과를 바탕으로 자신의 로봇/캐릭터 컨셉 결정",
+            "label": "무드보드 결과를 바탕으로 구현하고 싶은 작품의 방향 정리",
             "detail": ""
           },
           {
@@ -239,7 +239,7 @@ const CURRICULUM = [
         "url": "https://docs.blender.org/manual/en/latest/getting_started/index.html"
       }
     ],
-    "summary": "Blender 설치, Mixboard로 컨셉 설정."
+    "summary": "Blender 설치, Mixboard로 작품 방향 설정."
   },
   {
     "week": 2,

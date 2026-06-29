@@ -20,7 +20,7 @@
 
 | 주차 | 강의주제 | 강의내용 | 실습내용 | AI 도구 | 과제 | 비고 |
 |:----:|----------|----------|----------|---------|------|------|
-| 01 | 오리엔테이션, Blender 설치, 컨셉 설정 | 수업 목표/평가/일정 안내, 2026 캐릭터 프로덕트 트렌드 분석 | Blender 5.0 설치 및 환경 설정, Mixboard + 나노바나나를 활용한 무드보드 제작 | Mixboard, 나노바나나 | 무드보드 Discord 제출 | |
+| 01 | 오리엔테이션, Blender 설치, 작품 방향 설정 | 수업 목표/평가/일정 안내, 2026 캐릭터 프로덕트 트렌드 분석 | Blender 5.0 설치 및 환경 설정, Mixboard + 나노바나나를 활용한 무드보드 제작 | Mixboard, 나노바나나 | 무드보드 Discord 제출 | |
 | 02 | Blender 인터페이스 및 기초 + MCP 설정 | Blender 5.0 UI (Viewport, Outliner, Properties), 뷰 조작, Transform (G/R/S), Apply Transform (Ctrl+A), Origin 설정, Pivot Point | 기본 도형(Primitive) 배치 연습, Blender MCP + Claude 설치 및 연결 | Blender MCP + Claude | 기본 도형 배치 + MCP 테스트 스크린샷 제출 | |
 | 03 | 기초 모델링 1 - Edit Mode + Modifier | Edit Mode 핵심 도구, Modifier 개념, Mirror / Subdivision / Solidify / Array / Boolean, Bevel Tool vs Bevel Modifier, Weighted Normal, Join/Separate, Apply 타이밍 | Extrude, Loop Cut, Inset, Bevel로 기본형 제작 후 Mirror + Subdivision + Solidify + Array + Boolean 적용, 파츠 정리와 음영 확인 실습 | - | Edit Mode + Modifier를 함께 사용한 로봇/캐릭터 기본 형태 제출 | |
 | 04 | 기초 모델링 2 - 하드서피스 디테일 & 정리 | 얼굴/관절/패널 디테일 추가, Bevel/Weighted Normal 반복 적용, Boolean/Inset 디테일 심화, 파츠 정리 반복 | Week 03 기본형에 얼굴/관절/패널 디테일 추가, 음영 정리, 파츠 정리 실습 | - | 로봇/캐릭터 디테일 정리 결과물 제출 | |
