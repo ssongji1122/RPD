@@ -18,7 +18,9 @@
       }
     ],
     "takeaway": "화면 조작은 모델링이 아니라 카메라 잡기예요. 모델은 두고, 시점만 바꾼다고 생각하면 쉬워져요.",
-    "targets": ["viewport-navigation"]
+    "targets": [
+      "viewport-navigation"
+    ]
   },
   "edit-mode": {
     "title": "같은 큐브인데 왜 다르게 잡힐까요?",
@@ -39,7 +41,10 @@
       }
     ],
     "takeaway": "Mode는 조작 단위를 바꾸는 스위치예요. 전체를 만질지, 부품을 만질지 먼저 정하는 단계라고 보면 돼요.",
-    "targets": ["edit-mode", "edit-mode-tools"]
+    "targets": [
+      "edit-mode",
+      "edit-mode-tools"
+    ]
   },
   "extrude": {
     "title": "아직 헷갈린다면?",
@@ -65,7 +70,9 @@
       }
     ],
     "takeaway": "Extrude는 기존 메시에서 새 부분을 연결된 채로 뽑아내는 작업이라, 같은 오브젝트 안에서 형태를 계속 늘려나갈 수 있다.",
-    "targets": ["extrude"]
+    "targets": [
+      "extrude"
+    ]
   },
   "transform-apply": {
     "title": "눈에 보이는 값과 실제 값은 달라요",
@@ -86,7 +93,9 @@
       }
     ],
     "takeaway": "Apply는 겉으로만 변한 상태를 내부 데이터에도 반영해서, 다음 작업의 기준을 바로잡는 과정이에요.",
-    "targets": ["transform-apply"]
+    "targets": [
+      "transform-apply"
+    ]
   },
   "transform-core": {
     "title": "움직임, 방향, 기준점을 따로 보면 쉬워져요",
@@ -112,7 +121,11 @@
       }
     ],
     "takeaway": "G/R/S는 행동, Orientation은 방향 기준, Pivot은 중심 기준이에요. 세 가지를 분리해서 생각하면 변형 도구가 훨씬 안정적으로 느껴집니다.",
-    "targets": ["transform-grs", "transform-orientation", "pivot-point"]
+    "targets": [
+      "transform-grs",
+      "transform-orientation",
+      "pivot-point"
+    ]
   },
   "precision-modeling-core": {
     "title": "정확히 붙일지, 부드럽게 퍼뜨릴지 먼저 정하세요",
@@ -138,7 +151,10 @@
       }
     ],
     "takeaway": "정확한 정렬은 Snap, 자연스러운 흐름 조정은 Proportional Editing이에요. 둘을 같은 '이동 보조'로 보지 말고 목적별로 나누면 덜 헷갈립니다.",
-    "targets": ["snap", "proportional-editing"]
+    "targets": [
+      "snap",
+      "proportional-editing"
+    ]
   },
   "mirror-core": {
     "title": "Mirror가 어긋나는 건 보통 기준점 문제예요",
@@ -159,7 +175,11 @@
       }
     ],
     "takeaway": "Mirror에서 제일 중요한 건 메시보다 기준점이에요. 원점이 거울의 위치라고 생각하면 이해가 쉬워져요.",
-    "targets": ["mirror-modifier", "mirror-workflow", "mirror-origin-mode"]
+    "targets": [
+      "mirror-modifier",
+      "mirror-workflow",
+      "mirror-origin-mode"
+    ]
   },
   "origin-vs-3dcursor": {
     "title": "Origin과 3D Cursor는 역할이 달라요",
@@ -180,7 +200,9 @@
       }
     ],
     "takeaway": "Origin은 오브젝트의 기준점, 3D Cursor는 장면의 기준점이에요. 같은 점처럼 보여도 역할이 다릅니다.",
-    "targets": ["origin-vs-3dcursor"]
+    "targets": [
+      "origin-vs-3dcursor"
+    ]
   },
   "reference-image-core": {
     "title": "Reference는 따라 그리는 가이드지, 최종 오브젝트가 아니에요",
@@ -206,7 +228,9 @@
       }
     ],
     "takeaway": "Image Reference는 모델링 눈금을 맞추는 가이드예요. 렌더 결과물이나 실제 메시와는 역할이 다릅니다.",
-    "targets": ["image-reference"]
+    "targets": [
+      "image-reference"
+    ]
   },
   "subdivision-surface": {
     "title": "부드럽게 나누면 모서리도 같이 퍼져요",
@@ -227,7 +251,9 @@
       }
     ],
     "takeaway": "Subdivision은 부드럽게 만드는 기능이지, 모서리를 지켜주는 기능은 아니에요. 형태를 유지하려면 support loop가 같이 가야 해요.",
-    "targets": ["subdivision-surface"]
+    "targets": [
+      "subdivision-surface"
+    ]
   },
   "surface-detail-core": {
     "title": "Inset, Loop Cut, Bevel은 디테일을 여는 세 단계예요",
@@ -258,7 +284,11 @@
       }
     ],
     "takeaway": "Inset은 경계 만들기, Loop Cut은 제어선 추가, Bevel은 모서리 마감이에요. 셋을 구분하면 하드서피스 디테일 설계가 쉬워집니다.",
-    "targets": ["inset", "loop-cut", "bevel-tool"]
+    "targets": [
+      "inset",
+      "loop-cut",
+      "bevel-tool"
+    ]
   },
   "viewport-visibility-core": {
     "title": "같은 모델이라도 지금 보고 싶은 정보가 다르면 모드도 달라져요",
@@ -284,7 +314,10 @@
       }
     ],
     "takeaway": "Viewport Shading은 '무엇을 볼지', X-Ray는 '얼마나 관통해서 볼지'를 정하는 도구예요. 화면을 고정하지 말고 목적에 맞춰 바꾸는 습관이 중요합니다.",
-    "targets": ["viewport-shading", "xray-opacity"]
+    "targets": [
+      "viewport-shading",
+      "xray-opacity"
+    ]
   },
   "uv-core": {
     "title": "UV는 3D 표면을 2D로 번역하는 과정이에요",
@@ -305,7 +338,10 @@
       }
     ],
     "takeaway": "UV는 텍스처를 그리는 단계가 아니라, 텍스처가 들어갈 좌표계를 만드는 단계예요.",
-    "targets": ["uv-unwrapping", "uv-editor"]
+    "targets": [
+      "uv-unwrapping",
+      "uv-editor"
+    ]
   },
   "animation-core": {
     "title": "애니메이션은 움직임을 그리는 게 아니라 상태를 찍는 거예요",
@@ -326,7 +362,10 @@
       }
     ],
     "takeaway": "Keyframe은 상태 기록, Graph Editor는 그 상태 사이의 속도 조절이라고 나눠 생각하면 쉬워집니다.",
-    "targets": ["keyframe-basics", "graph-editor"]
+    "targets": [
+      "keyframe-basics",
+      "graph-editor"
+    ]
   },
   "rigging-core": {
     "title": "Bone과 Weight는 역할이 달라요",
@@ -347,7 +386,10 @@
       }
     ],
     "takeaway": "Armature는 구조, Weight Paint는 영향 범위예요. 둘을 따로 이해해야 리깅이 풀려요.",
-    "targets": ["armature-basics", "weight-paint"]
+    "targets": [
+      "armature-basics",
+      "weight-paint"
+    ]
   },
   "boolean-modifier": {
     "title": "Boolean이 꼬였다면?",
@@ -373,7 +415,9 @@
       }
     ],
     "takeaway": "Boolean은 오브젝트끼리 형태를 더하거나 빼는 도구예요. 커터는 숨기되 삭제하지 않는 게 핵심이에요.",
-    "targets": ["boolean-modifier"]
+    "targets": [
+      "boolean-modifier"
+    ]
   },
   "bevel-modifier": {
     "title": "Bevel이 이상하다면?",
@@ -399,7 +443,9 @@
       }
     ],
     "takeaway": "Bevel Modifier는 비파괴적으로 모서리를 다듬는 도구예요. Weight + Weighted Normal 조합이 실전 표준이에요.",
-    "targets": ["bevel-modifier"]
+    "targets": [
+      "bevel-modifier"
+    ]
   },
   "weighted-normal": {
     "title": "음영이 이상하다면?",
@@ -425,7 +471,9 @@
       }
     ],
     "takeaway": "Weighted Normal은 면 크기 기반으로 노말을 재계산해서 하드서페이스 음영을 정리하는 마무리 도구예요.",
-    "targets": ["weighted-normal"]
+    "targets": [
+      "weighted-normal"
+    ]
   },
   "join-separate": {
     "title": "합치기·나누기가 꼬였다면?",
@@ -451,7 +499,9 @@
       }
     ],
     "takeaway": "Join은 합치기, Separate는 나누기. Active Object가 결과의 이름·Origin·머티리얼 순서를 결정해요.",
-    "targets": ["join-separate"]
+    "targets": [
+      "join-separate"
+    ]
   },
   "edge-split-modifier": {
     "title": "엣지가 날카롭지 않다면?",
@@ -472,7 +522,9 @@
       }
     ],
     "takeaway": "Edge Split은 날카로운 엣지를 강제로 만드는 도구예요. Auto Smooth로 해결 안 될 때만 사용하세요.",
-    "targets": ["edge-split-modifier"]
+    "targets": [
+      "edge-split-modifier"
+    ]
   },
   "triangulate-modifier": {
     "title": "삼각형으로 바꿔야 하나요?",
@@ -493,7 +545,9 @@
       }
     ],
     "takeaway": "Triangulate는 내보내기 직전에 적용하는 호환성 도구예요. 모델링 중에는 사용하지 마세요.",
-    "targets": ["triangulate-modifier"]
+    "targets": [
+      "triangulate-modifier"
+    ]
   },
   "weld-modifier": {
     "title": "버텍스가 겹쳐 있다면?",
@@ -514,7 +568,9 @@
       }
     ],
     "takeaway": "Weld는 중복 버텍스를 자동 정리하는 비파괴적 도구예요. Boolean·Array 후 정리용으로 사용하세요.",
-    "targets": ["weld-modifier"]
+    "targets": [
+      "weld-modifier"
+    ]
   },
   "build-modifier": {
     "title": "Build가 안 보인다면?",
@@ -535,7 +591,9 @@
       }
     ],
     "takeaway": "Build는 면을 순서대로 나타나게 하는 애니메이션 Modifier예요. 타임라인 재생이 필수예요.",
-    "targets": ["build-modifier"]
+    "targets": [
+      "build-modifier"
+    ]
   },
   "decimate-modifier": {
     "title": "폴리곤을 줄이고 싶다면?",
@@ -556,7 +614,9 @@
       }
     ],
     "takeaway": "Decimate는 폴리곤 수를 줄이는 최적화 도구예요. Ratio를 점진적으로 조절하는 게 핵심이에요.",
-    "targets": ["decimate-modifier"]
+    "targets": [
+      "decimate-modifier"
+    ]
   },
   "remesh-modifier": {
     "title": "토폴로지가 엉망이라면?",
@@ -577,7 +637,9 @@
       }
     ],
     "takeaway": "Remesh는 불규칙한 토폴로지를 균일한 격자로 재구성하는 도구예요. Voxel Size 조절이 핵심이에요.",
-    "targets": ["remesh-modifier"]
+    "targets": [
+      "remesh-modifier"
+    ]
   },
   "screw-modifier": {
     "title": "회전체가 안 만들어진다면?",
@@ -598,7 +660,9 @@
       }
     ],
     "takeaway": "Screw는 단면을 축 중심으로 회전시켜 3D 형태를 만드는 도구예요. Origin 위치가 핵심이에요.",
-    "targets": ["screw-modifier"]
+    "targets": [
+      "screw-modifier"
+    ]
   },
   "skin-modifier": {
     "title": "뼈대에 살을 입히고 싶다면?",
@@ -619,7 +683,9 @@
       }
     ],
     "takeaway": "Skin은 뼈대에 메시 표면을 자동 생성하는 도구예요. 버텍스별 Ctrl+A 두께 조절이 핵심이에요.",
-    "targets": ["skin-modifier"]
+    "targets": [
+      "skin-modifier"
+    ]
   },
   "wireframe-modifier": {
     "title": "와이어프레임을 만들고 싶다면?",
@@ -640,7 +706,9 @@
       }
     ],
     "takeaway": "Wireframe은 엣지를 따라 와이어프레임 메시를 생성하는 도구예요. Replace Original 옵션에 주의하세요.",
-    "targets": ["wireframe-modifier"]
+    "targets": [
+      "wireframe-modifier"
+    ]
   },
   "mask-modifier": {
     "title": "일부만 숨기고 싶다면?",
@@ -661,7 +729,9 @@
       }
     ],
     "takeaway": "Mask는 Vertex Group 기반으로 메시 일부를 숨기는 도구예요. Vertex Group 설정이 선행되어야 해요.",
-    "targets": ["mask-modifier"]
+    "targets": [
+      "mask-modifier"
+    ]
   },
   "multiresolution-modifier": {
     "title": "스컬프팅 해상도를 조절하고 싶다면?",
@@ -682,7 +752,9 @@
       }
     ],
     "takeaway": "Multiresolution은 해상도 레벨별로 독립 스컬프팅이 가능한 도구예요. SubSurf와 달리 각 레벨을 따로 편집할 수 있어요.",
-    "targets": ["multiresolution-modifier"]
+    "targets": [
+      "multiresolution-modifier"
+    ]
   },
   "volume-to-mesh": {
     "title": "볼륨을 메시로 바꾸고 싶다면?",
@@ -703,7 +775,9 @@
       }
     ],
     "takeaway": "Volume to Mesh는 볼륨 데이터를 편집 가능한 메시로 변환하는 도구예요. 볼륨 오브젝트가 선행되어야 해요.",
-    "targets": ["volume-to-mesh"]
+    "targets": [
+      "volume-to-mesh"
+    ]
   },
   "curve-to-tube": {
     "title": "커브로 파이프를 만들고 싶다면?",
@@ -724,7 +798,9 @@
       }
     ],
     "takeaway": "Curve to Tube는 커브 경로에 Bevel Depth를 줘서 파이프를 만드는 기법이에요. Depth 설정이 핵심이에요.",
-    "targets": ["curve-to-tube"]
+    "targets": [
+      "curve-to-tube"
+    ]
   },
   "scatter-on-surface": {
     "title": "표면에 오브젝트를 뿌리고 싶다면?",
@@ -745,7 +821,9 @@
       }
     ],
     "takeaway": "Scatter는 Geometry Nodes 기반 분산 배치 도구예요. Distribute + Instance on Points 조합이 기본이에요.",
-    "targets": ["scatter-on-surface"]
+    "targets": [
+      "scatter-on-surface"
+    ]
   },
   "sculpt-basics": {
     "title": "Sculpt Mode, 어렵게 생각 말아요",
@@ -772,7 +850,9 @@
         "label": "Blender Studio — Introduction to Sculpting"
       }
     ],
-    "targets": ["sculpt-basics"]
+    "targets": [
+      "sculpt-basics"
+    ]
   },
   "sculpt-brushes": {
     "title": "어떤 브러시를 써야 할지 모르겠다면?",
@@ -799,7 +879,9 @@
         "label": "Blender 공식 — Sculpt Brushes 전체 목록"
       }
     ],
-    "targets": ["sculpt-brushes"]
+    "targets": [
+      "sculpt-brushes"
+    ]
   },
   "ai-prompt-design": {
     "title": "AI한테 어떻게 설명해야 원하는 게 나올까요?",
@@ -826,7 +908,9 @@
         "label": "Meshy AI — 공식 문서 (프롬프트 가이드 포함)"
       }
     ],
-    "targets": ["ai-prompt-design"]
+    "targets": [
+      "ai-prompt-design"
+    ]
   },
   "ai-3d-generation": {
     "title": "AI가 만든 3D, 그냥 써도 될까요?",
@@ -862,6 +946,176 @@
         "label": "Tripo AI — 공식 사이트"
       }
     ],
-    "targets": ["ai-3d-generation"]
+    "targets": [
+      "ai-3d-generation"
+    ]
+  },
+  "rigify-basics": {
+    "title": "Rigify가 헷갈린다면?",
+    "analogy": {
+      "emoji": "🤖",
+      "headline": "옷 패턴지 + 재봉틀 자동화예요",
+      "body": "Meta-Rig은 옷 패턴지예요. 사람 몸에 맞춰 늘리고 줄이는 단계. Generate Rig는 그 패턴으로 자동 재봉해서 완성된 옷(컨트롤 본 세트)을 만드는 거예요. AI 아니고 Blender가 정해진 룰로 만들어요."
+    },
+    "before_after": {
+      "before": "수동으로 팔다리 IK, FK 전환, Pole Target까지 다 만들려니 한나절 걸린다.",
+      "after": "Rigify Meta-Rig를 캐릭터 비율에 맞춘 뒤 Generate Rig 한 번이면 IK/FK/Tweak 전부 자동. 본 색상으로 역할도 즉시 구분."
+    },
+    "confusion": [
+      {
+        "symptom": "Generate Rig 눌렀는데 크기가 이상해요.",
+        "reason": "Object Mode에서 Meta-Rig를 스케일했고 Apply 안 했어요.",
+        "fix": "Ctrl+A > Scale 적용 후 다시 Generate. Edit Mode에서 본 크기 맞추면 이 문제 안 생겨요."
+      },
+      {
+        "symptom": "로봇에 Rigify 썼더니 본이 다 빨개요.",
+        "reason": "Rigify는 인체형 + 동물 한정. 로봇·식물 같은 비인체형은 부적합.",
+        "fix": "로봇은 수동 리깅 또는 Rigify의 'basic' 메타리그로 단순 본만 사용."
+      }
+    ],
+    "takeaway": "Rigify는 캐릭터 리깅의 자동화 도구. 본 색상(보라=Root, 빨강=IK, 초록=FK, 주황=손가락)을 기억하면 컨트롤이 즉시 보여요.",
+    "targets": [
+      "rigify-basics"
+    ]
+  },
+  "bone-parent-types": {
+    "title": "Bone Parent가 헷갈린다면?",
+    "analogy": {
+      "emoji": "🦴",
+      "headline": "기차 연결고리 vs 자석 따라가기예요",
+      "body": "Connected는 객차들이 갈고리로 단단히 묶인 기차예요. 앞 객차가 가면 뒤 객차가 정확히 같은 자리를 따라가요. Free(Keep Offset)는 자석이 멀리서 따라오는 거예요. 거리는 그대로지만 회전은 부모를 따라가요."
+    },
+    "before_after": {
+      "before": "전부 Connected로 잡으니 쇄골과 상완이 한 점에서 만나야 해서 어깨 회전이 부자연스럽다.",
+      "after": "쇄골-상완은 Free, 상완-하완-손은 Connected로 분리하면 어깨가 따로 돌면서 팔 체인은 한 줄로 깔끔하다."
+    },
+    "confusion": [
+      {
+        "symptom": "Symmetrize 후 한쪽 본이 떨어져 나갔다.",
+        "reason": "Connected 본의 부모 위치가 어긋났거나 .L/.R 이름 규칙을 안 따랐기 때문이에요.",
+        "fix": "한쪽 본을 완성하고 이름에 .L 붙인 뒤 Armature > Symmetrize. 이름 안 맞으면 Free로 우선 연결 후 위치 수동 보정."
+      },
+      {
+        "symptom": "Ctrl+P를 눌렀는데 메뉴가 안 떠요.",
+        "reason": "Edit Mode가 아니거나 본이 선택 안 됐어요.",
+        "fix": "Edit Mode 진입 + 자식 본 먼저, 부모 본 나중에 Shift+클릭 → Ctrl+P."
+      }
+    ],
+    "takeaway": "한 줄로 이어진 관절은 Connected, 회전축이 다른 컨트롤은 Free. 두 종류를 섞어 쓰는 게 정상이에요.",
+    "targets": [
+      "bone-parent-types"
+    ]
+  },
+  "ik-fk": {
+    "title": "IK와 FK가 헷갈린다면?",
+    "analogy": {
+      "emoji": "🦾",
+      "headline": "FK는 인형, IK는 줄 인형이에요",
+      "body": "FK는 인형 팔을 어깨부터 차례로 돌려서 자세를 잡는 방식이에요. 정확하지만 시간이 걸려요. IK는 줄 인형의 손목에 줄을 매단 거예요. 손목을 당기면 팔꿈치가 알아서 굽혀요. 빠르지만 어디서 꺾일지는 컨트롤이 필요해요."
+    },
+    "before_after": {
+      "before": "걷는 캐릭터를 FK로 만들었더니 발이 바닥에 안 붙어 매 프레임 위치를 다시 잡는다.",
+      "after": "다리를 IK로 바꾸니 발 위치만 고정하면 무릎이 자동으로 굽혀서 걷기 애니메이션이 자연스러워졌다."
+    },
+    "confusion": [
+      {
+        "symptom": "IK 걸었더니 팔꿈치가 반대 방향으로 꺾여요.",
+        "reason": "Pole Target이 없거나 위치가 잘못됐어요.",
+        "fix": "팔꿈치 앞쪽에 Empty 추가 → Bone Constraint > Pole Target 지정. 무릎도 동일 방식."
+      },
+      {
+        "symptom": "Chain Length를 0으로 두니 전체 본이 IK 영향을 받아요.",
+        "reason": "0은 무제한이에요.",
+        "fix": "팔이면 2 (상완+하완), 다리면 2 (허벅지+종아리)로 명시."
+      }
+    ],
+    "takeaway": "팔=FK 또는 IK 선택, 다리=거의 IK, 꼬리/안테나=FK가 일반 규칙이에요. 둘 사이 전환은 Influence 키프레임으로.",
+    "targets": [
+      "ik-fk"
+    ]
+  },
+  "mixamo-autorig": {
+    "title": "Mixamo가 헷갈린다면?",
+    "analogy": {
+      "emoji": "🎭",
+      "headline": "사진관 + 댄스 스튜디오 패키지예요",
+      "body": "캐릭터를 사진관에 들고 가면 자동으로 뼈대를 넣어주고(자동 리깅), 옆 스튜디오에서 무료로 춤·걷기·인사 같은 동작을 골라 입혀줘요(애니메이션 라이브러리). 둘 다 무료. 단 인체형만 받아줘요."
+    },
+    "before_after": {
+      "before": "걷기 애니메이션 만들려고 키프레임 하나하나 찍다가 한 동작에 30분 넘게 쓴다.",
+      "after": "Mixamo에 캐릭터 업로드 → 5개 마커 → 자동 리깅 + 'Walking' 검색 → 다운로드. 5분이면 걷는 캐릭터 완성."
+    },
+    "confusion": [
+      {
+        "symptom": "Mixamo가 'Failed to detect skeleton' 에러를 띄워요.",
+        "reason": "T-Pose가 아니거나 사지가 몸통에 붙어 있어요.",
+        "fix": "Blender에서 T-Pose로 조정 + Ctrl+J로 단일 메쉬화 + Ctrl+A All Transforms 후 재업로드."
+      },
+      {
+        "symptom": "임포트하니 캐릭터가 100배 작거나 커요.",
+        "reason": "FBX 단위 시스템 차이.",
+        "fix": "Import 시 Automatic Bone Orientation 체크 + Scale 슬라이더 조정 또는 Ctrl+A로 Apply."
+      }
+    ],
+    "takeaway": "Mixamo는 인체형 + 모션 라이브러리에 강해요. 손가락은 옵션 켜야 포함되고, 비인체형은 안 돼요.",
+    "targets": [
+      "mixamo-autorig"
+    ]
+  },
+  "accurig-workflow": {
+    "title": "AccuRIG가 헷갈린다면?",
+    "analogy": {
+      "emoji": "⚡",
+      "headline": "고급 미용실 같아요",
+      "body": "Mixamo가 셀프 사진관이면 AccuRIG는 손가락 매니큐어, 얼굴 메이크업까지 해주는 미용실이에요. 시간 비슷한데 결과 정확도가 더 높아요. 단 별도 앱 설치하고 Reallusion 계정 만들어야 해요."
+    },
+    "before_after": {
+      "before": "Mixamo로 손가락 옵션 켜도 손가락 본 정확도가 떨어진다.",
+      "after": "AccuRIG는 손가락 13개 본 + 얼굴 본까지 자동. 결과를 Rigify로 변환하는 무료 애드온도 제공해서 Blender 안에서도 컨트롤 가능."
+    },
+    "confusion": [
+      {
+        "symptom": "AccuRIG 다운로드 후 어디서 실행해야 할지 모르겠어요.",
+        "reason": "AccuRIG는 Reallusion ActorCore Hub 안에 들어 있는 standalone 앱이에요.",
+        "fix": "actorcore.reallusion.com 가입 → ActorCore Hub 설치 → 그 안에서 AccuRIG 다운로드 + 실행."
+      },
+      {
+        "symptom": "결과 FBX를 Blender에 임포트하니 본 이름이 Rigify와 달라요.",
+        "reason": "AccuRIG의 본 이름 체계는 자체 표준. 직접 사용해도 되고, Rigify 변환 애드온으로 변환 가능.",
+        "fix": "Blender Add-on Store에서 'AccuRIG to Rigify' 검색 후 설치 → 변환."
+      }
+    ],
+    "takeaway": "정확도 우선 + 손가락/얼굴 필요 = AccuRIG. 빠른 모션 라이브러리 + 웹 작업 = Mixamo. 둘 다 무료.",
+    "targets": [
+      "accurig-workflow"
+    ]
+  },
+  "fbx-export-settings": {
+    "title": "FBX Export가 헷갈린다면?",
+    "analogy": {
+      "emoji": "📦",
+      "headline": "이사용 박스 포장 같아요",
+      "body": "FBX는 이사용 박스예요. 메쉬·재질·본·애니메이션 모두 한 박스에 담아 보낼 수 있어요. 단 박스 라벨(축 방향·스케일 적용)을 정확히 붙여야 받는 쪽(Mixamo, Unity)이 제대로 열어요."
+    },
+    "before_after": {
+      "before": "Ctrl+A 없이 Export → Mixamo에서 캐릭터가 2배 크거나 거꾸로 뒤집혀 마커 배치가 불가능.",
+      "after": "Ctrl+A All Transforms + Forward: -Z + Up: Y로 export. Mixamo가 즉시 인식해서 마커 5개 자동 배치."
+    },
+    "confusion": [
+      {
+        "symptom": "Apply Modifiers 체크 안 했더니 Mirror가 사라졌어요.",
+        "reason": "Modifier는 viewport에만 보이는 절차예요. Export 시 실제 메쉬로 굳혀야 전달돼요.",
+        "fix": "Geometry > Apply Modifiers 체크. 또는 export 전 Ctrl+A로 Modifier Apply 수동 처리."
+      },
+      {
+        "symptom": "Unity로 보냈더니 본이 90도 회전돼 보여요.",
+        "reason": "Forward/Up 축이 Unity 기본값과 다름.",
+        "fix": "Forward: -Z, Up: Y 조합 사용. Unity는 자체적으로 이걸 Y-up + Z-forward로 변환해요."
+      }
+    ],
+    "takeaway": "Export 전 체크리스트 4개: Ctrl+J 단일 메쉬, Ctrl+A All Transforms, Forward -Z + Up Y, Apply Modifiers 체크. 이걸 빠뜨리면 받는 쪽에서 항상 에러가 나요.",
+    "targets": [
+      "fbx-export-settings"
+    ]
   }
 }

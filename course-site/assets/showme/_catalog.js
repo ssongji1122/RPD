@@ -90,12 +90,27 @@ const SHOWME_CATALOG = {
     "light-types": "rendering",
     "hdri-lighting": "rendering",
     "three-point-light": "rendering",
+    "mood-lighting": "rendering",
     "render-settings": "rendering",
     "compositing-basics": "rendering",
     "keyframe-basics": "animation-rigging",
     "graph-editor": "animation-rigging",
     "armature-basics": "animation-rigging",
-    "weight-paint": "animation-rigging"
+    "weight-paint": "animation-rigging",
+    "collection-outliner": "object",
+    "modifier-stack-order": "modifier",
+    "shade-smooth-auto-smooth": "modeling",
+    "merge-by-distance": "edit-mode",
+    "bridge-edge-loops": "edit-mode",
+    "duplicate-vs-linked-duplicate": "object",
+    "face-orientation-normals": "edit-mode",
+    "apply-modifier-vs-keep-procedural": "modifier",
+    "fbx-export-settings": "rigging",
+    "accurig-workflow": "rigging",
+    "mixamo-autorig": "rigging",
+    "ik-fk": "rigging",
+    "bone-parent-types": "rigging",
+    "rigify-basics": "rigging"
   },
   "categoryMap": {
     "image-reference": "기타",
@@ -157,6 +172,7 @@ const SHOWME_CATALOG = {
     "light-types": "Lighting",
     "hdri-lighting": "Lighting",
     "three-point-light": "Lighting",
+    "mood-lighting": "Lighting",
     "keyframe-basics": "Animation",
     "graph-editor": "Animation",
     "armature-basics": "Rigging",
@@ -165,7 +181,13 @@ const SHOWME_CATALOG = {
     "compositing-basics": "Rendering",
     "origin-vs-3dcursor": "기타",
     "poly-circle": "기타",
-    "box-rounding": "기타"
+    "box-rounding": "기타",
+    "rigify-basics": "Rigging",
+    "bone-parent-types": "Rigging",
+    "ik-fk": "Rigging",
+    "mixamo-autorig": "Rigging",
+    "accurig-workflow": "Rigging",
+    "fbx-export-settings": "Rigging"
   },
   "categoryDefaults": {
     "Edit Mode": {
@@ -813,6 +835,26 @@ const SHOWME_CATALOG = {
         "light-types"
       ],
       "audienceNeed": "조명이 세 개인 건 알겠는데 각각 무슨 역할인지 헷갈릴 때"
+    },
+    "mood-lighting": {
+      "confusionLabel": "색온도와 분위기",
+      "officialVideos": [
+        {
+          "label": "Blender Studio - Lighting Fundamentals",
+          "url": "https://studio.blender.org/training/blender-2-8-fundamentals/lighting/"
+        }
+      ],
+      "keywords": [
+        "color temperature",
+        "mood",
+        "warm light",
+        "cool light",
+        "kelvin"
+      ],
+      "prerequisites": [
+        "three-point-light"
+      ],
+      "audienceNeed": "조명을 켰는데 분위기가 의도대로 안 잡히고 어떤 색을 써야 할지 막막할 때"
     },
     "keyframe-basics": {
       "confusionLabel": "상태 기록",

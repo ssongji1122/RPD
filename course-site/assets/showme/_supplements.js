@@ -954,6 +954,174 @@ const SHOWME_SUPPLEMENTS = {
     "targets": [
       "ai-3d-generation"
     ]
+  },
+  "rigify-basics": {
+    "title": "Rigify가 헷갈린다면?",
+    "analogy": {
+      "emoji": "🤖",
+      "headline": "옷 패턴지 + 재봉틀 자동화예요",
+      "body": "Meta-Rig은 옷 패턴지예요. 사람 몸에 맞춰 늘리고 줄이는 단계. Generate Rig는 그 패턴으로 자동 재봉해서 완성된 옷(컨트롤 본 세트)을 만드는 거예요. AI 아니고 Blender가 정해진 룰로 만들어요."
+    },
+    "before_after": {
+      "before": "수동으로 팔다리 IK, FK 전환, Pole Target까지 다 만들려니 한나절 걸린다.",
+      "after": "Rigify Meta-Rig를 캐릭터 비율에 맞춘 뒤 Generate Rig 한 번이면 IK/FK/Tweak 전부 자동. 본 색상으로 역할도 즉시 구분."
+    },
+    "confusion": [
+      {
+        "symptom": "Generate Rig 눌렀는데 크기가 이상해요.",
+        "reason": "Object Mode에서 Meta-Rig를 스케일했고 Apply 안 했어요.",
+        "fix": "Ctrl+A > Scale 적용 후 다시 Generate. Edit Mode에서 본 크기 맞추면 이 문제 안 생겨요."
+      },
+      {
+        "symptom": "로봇에 Rigify 썼더니 본이 다 빨개요.",
+        "reason": "Rigify는 인체형 + 동물 한정. 로봇·식물 같은 비인체형은 부적합.",
+        "fix": "로봇은 수동 리깅 또는 Rigify의 'basic' 메타리그로 단순 본만 사용."
+      }
+    ],
+    "takeaway": "Rigify는 캐릭터 리깅의 자동화 도구. 본 색상(보라=Root, 빨강=IK, 초록=FK, 주황=손가락)을 기억하면 컨트롤이 즉시 보여요.",
+    "targets": [
+      "rigify-basics"
+    ]
+  },
+  "bone-parent-types": {
+    "title": "Bone Parent가 헷갈린다면?",
+    "analogy": {
+      "emoji": "🦴",
+      "headline": "기차 연결고리 vs 자석 따라가기예요",
+      "body": "Connected는 객차들이 갈고리로 단단히 묶인 기차예요. 앞 객차가 가면 뒤 객차가 정확히 같은 자리를 따라가요. Free(Keep Offset)는 자석이 멀리서 따라오는 거예요. 거리는 그대로지만 회전은 부모를 따라가요."
+    },
+    "before_after": {
+      "before": "전부 Connected로 잡으니 쇄골과 상완이 한 점에서 만나야 해서 어깨 회전이 부자연스럽다.",
+      "after": "쇄골-상완은 Free, 상완-하완-손은 Connected로 분리하면 어깨가 따로 돌면서 팔 체인은 한 줄로 깔끔하다."
+    },
+    "confusion": [
+      {
+        "symptom": "Symmetrize 후 한쪽 본이 떨어져 나갔다.",
+        "reason": "Connected 본의 부모 위치가 어긋났거나 .L/.R 이름 규칙을 안 따랐기 때문이에요.",
+        "fix": "한쪽 본을 완성하고 이름에 .L 붙인 뒤 Armature > Symmetrize. 이름 안 맞으면 Free로 우선 연결 후 위치 수동 보정."
+      },
+      {
+        "symptom": "Ctrl+P를 눌렀는데 메뉴가 안 떠요.",
+        "reason": "Edit Mode가 아니거나 본이 선택 안 됐어요.",
+        "fix": "Edit Mode 진입 + 자식 본 먼저, 부모 본 나중에 Shift+클릭 → Ctrl+P."
+      }
+    ],
+    "takeaway": "한 줄로 이어진 관절은 Connected, 회전축이 다른 컨트롤은 Free. 두 종류를 섞어 쓰는 게 정상이에요.",
+    "targets": [
+      "bone-parent-types"
+    ]
+  },
+  "ik-fk": {
+    "title": "IK와 FK가 헷갈린다면?",
+    "analogy": {
+      "emoji": "🦾",
+      "headline": "FK는 인형, IK는 줄 인형이에요",
+      "body": "FK는 인형 팔을 어깨부터 차례로 돌려서 자세를 잡는 방식이에요. 정확하지만 시간이 걸려요. IK는 줄 인형의 손목에 줄을 매단 거예요. 손목을 당기면 팔꿈치가 알아서 굽혀요. 빠르지만 어디서 꺾일지는 컨트롤이 필요해요."
+    },
+    "before_after": {
+      "before": "걷는 캐릭터를 FK로 만들었더니 발이 바닥에 안 붙어 매 프레임 위치를 다시 잡는다.",
+      "after": "다리를 IK로 바꾸니 발 위치만 고정하면 무릎이 자동으로 굽혀서 걷기 애니메이션이 자연스러워졌다."
+    },
+    "confusion": [
+      {
+        "symptom": "IK 걸었더니 팔꿈치가 반대 방향으로 꺾여요.",
+        "reason": "Pole Target이 없거나 위치가 잘못됐어요.",
+        "fix": "팔꿈치 앞쪽에 Empty 추가 → Bone Constraint > Pole Target 지정. 무릎도 동일 방식."
+      },
+      {
+        "symptom": "Chain Length를 0으로 두니 전체 본이 IK 영향을 받아요.",
+        "reason": "0은 무제한이에요.",
+        "fix": "팔이면 2 (상완+하완), 다리면 2 (허벅지+종아리)로 명시."
+      }
+    ],
+    "takeaway": "팔=FK 또는 IK 선택, 다리=거의 IK, 꼬리/안테나=FK가 일반 규칙이에요. 둘 사이 전환은 Influence 키프레임으로.",
+    "targets": [
+      "ik-fk"
+    ]
+  },
+  "mixamo-autorig": {
+    "title": "Mixamo가 헷갈린다면?",
+    "analogy": {
+      "emoji": "🎭",
+      "headline": "사진관 + 댄스 스튜디오 패키지예요",
+      "body": "캐릭터를 사진관에 들고 가면 자동으로 뼈대를 넣어주고(자동 리깅), 옆 스튜디오에서 무료로 춤·걷기·인사 같은 동작을 골라 입혀줘요(애니메이션 라이브러리). 둘 다 무료. 단 인체형만 받아줘요."
+    },
+    "before_after": {
+      "before": "걷기 애니메이션 만들려고 키프레임 하나하나 찍다가 한 동작에 30분 넘게 쓴다.",
+      "after": "Mixamo에 캐릭터 업로드 → 5개 마커 → 자동 리깅 + 'Walking' 검색 → 다운로드. 5분이면 걷는 캐릭터 완성."
+    },
+    "confusion": [
+      {
+        "symptom": "Mixamo가 'Failed to detect skeleton' 에러를 띄워요.",
+        "reason": "T-Pose가 아니거나 사지가 몸통에 붙어 있어요.",
+        "fix": "Blender에서 T-Pose로 조정 + Ctrl+J로 단일 메쉬화 + Ctrl+A All Transforms 후 재업로드."
+      },
+      {
+        "symptom": "임포트하니 캐릭터가 100배 작거나 커요.",
+        "reason": "FBX 단위 시스템 차이.",
+        "fix": "Import 시 Automatic Bone Orientation 체크 + Scale 슬라이더 조정 또는 Ctrl+A로 Apply."
+      }
+    ],
+    "takeaway": "Mixamo는 인체형 + 모션 라이브러리에 강해요. 손가락은 옵션 켜야 포함되고, 비인체형은 안 돼요.",
+    "targets": [
+      "mixamo-autorig"
+    ]
+  },
+  "accurig-workflow": {
+    "title": "AccuRIG가 헷갈린다면?",
+    "analogy": {
+      "emoji": "⚡",
+      "headline": "고급 미용실 같아요",
+      "body": "Mixamo가 셀프 사진관이면 AccuRIG는 손가락 매니큐어, 얼굴 메이크업까지 해주는 미용실이에요. 시간 비슷한데 결과 정확도가 더 높아요. 단 별도 앱 설치하고 Reallusion 계정 만들어야 해요."
+    },
+    "before_after": {
+      "before": "Mixamo로 손가락 옵션 켜도 손가락 본 정확도가 떨어진다.",
+      "after": "AccuRIG는 손가락 13개 본 + 얼굴 본까지 자동. 결과를 Rigify로 변환하는 무료 애드온도 제공해서 Blender 안에서도 컨트롤 가능."
+    },
+    "confusion": [
+      {
+        "symptom": "AccuRIG 다운로드 후 어디서 실행해야 할지 모르겠어요.",
+        "reason": "AccuRIG는 Reallusion ActorCore Hub 안에 들어 있는 standalone 앱이에요.",
+        "fix": "actorcore.reallusion.com 가입 → ActorCore Hub 설치 → 그 안에서 AccuRIG 다운로드 + 실행."
+      },
+      {
+        "symptom": "결과 FBX를 Blender에 임포트하니 본 이름이 Rigify와 달라요.",
+        "reason": "AccuRIG의 본 이름 체계는 자체 표준. 직접 사용해도 되고, Rigify 변환 애드온으로 변환 가능.",
+        "fix": "Blender Add-on Store에서 'AccuRIG to Rigify' 검색 후 설치 → 변환."
+      }
+    ],
+    "takeaway": "정확도 우선 + 손가락/얼굴 필요 = AccuRIG. 빠른 모션 라이브러리 + 웹 작업 = Mixamo. 둘 다 무료.",
+    "targets": [
+      "accurig-workflow"
+    ]
+  },
+  "fbx-export-settings": {
+    "title": "FBX Export가 헷갈린다면?",
+    "analogy": {
+      "emoji": "📦",
+      "headline": "이사용 박스 포장 같아요",
+      "body": "FBX는 이사용 박스예요. 메쉬·재질·본·애니메이션 모두 한 박스에 담아 보낼 수 있어요. 단 박스 라벨(축 방향·스케일 적용)을 정확히 붙여야 받는 쪽(Mixamo, Unity)이 제대로 열어요."
+    },
+    "before_after": {
+      "before": "Ctrl+A 없이 Export → Mixamo에서 캐릭터가 2배 크거나 거꾸로 뒤집혀 마커 배치가 불가능.",
+      "after": "Ctrl+A All Transforms + Forward: -Z + Up: Y로 export. Mixamo가 즉시 인식해서 마커 5개 자동 배치."
+    },
+    "confusion": [
+      {
+        "symptom": "Apply Modifiers 체크 안 했더니 Mirror가 사라졌어요.",
+        "reason": "Modifier는 viewport에만 보이는 절차예요. Export 시 실제 메쉬로 굳혀야 전달돼요.",
+        "fix": "Geometry > Apply Modifiers 체크. 또는 export 전 Ctrl+A로 Modifier Apply 수동 처리."
+      },
+      {
+        "symptom": "Unity로 보냈더니 본이 90도 회전돼 보여요.",
+        "reason": "Forward/Up 축이 Unity 기본값과 다름.",
+        "fix": "Forward: -Z, Up: Y 조합 사용. Unity는 자체적으로 이걸 Y-up + Z-forward로 변환해요."
+      }
+    ],
+    "takeaway": "Export 전 체크리스트 4개: Ctrl+J 단일 메쉬, Ctrl+A All Transforms, Forward -Z + Up Y, Apply Modifiers 체크. 이걸 빠뜨리면 받는 쪽에서 항상 에러가 나요.",
+    "targets": [
+      "fbx-export-settings"
+    ]
   }
 };
 if (typeof window !== "undefined") window.SHOWME_SUPPLEMENTS = SHOWME_SUPPLEMENTS;
