@@ -181,7 +181,13 @@ const SHOWME_CATALOG = {
     "compositing-basics": "Rendering",
     "origin-vs-3dcursor": "기타",
     "poly-circle": "기타",
-    "box-rounding": "기타"
+    "box-rounding": "기타",
+    "rigify-basics": "Rigging",
+    "bone-parent-types": "Rigging",
+    "ik-fk": "Rigging",
+    "mixamo-autorig": "Rigging",
+    "accurig-workflow": "Rigging",
+    "fbx-export-settings": "Rigging"
   },
   "categoryDefaults": {
     "Edit Mode": {
