@@ -125,7 +125,16 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
 
   function go(delta: number) { pos += delta; paint(); }
 
-  slides.forEach((s, i) => s.addEventListener('click', () => { pos = i; paint(); }));
+  // 가운데(활성) 작품 클릭 → 상세 페이지로 이동. 양옆 클릭 → 가운데로 이동(브라우징).
+  slides.forEach((s, i) => s.addEventListener('click', () => {
+    if (i === pos) {
+      const href = s.dataset.detail;
+      if (href) window.location.href = href;
+    } else {
+      pos = i;
+      paint();
+    }
+  }));
   document.getElementById('fpPrev')?.addEventListener('click', () => go(-1));
   document.getElementById('fpNext')?.addEventListener('click', () => go(1));
   stage?.addEventListener('keydown', (e) => {

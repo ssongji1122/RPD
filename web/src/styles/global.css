@@ -20,6 +20,8 @@ html {
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
   scroll-behavior: smooth;
+  /* 전체 사이트를 ~80% 스케일로 축소(텍스트·여백·필름스트립 등 균일). */
+  zoom: 0.8;
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
