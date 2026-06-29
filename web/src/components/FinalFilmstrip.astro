@@ -125,16 +125,20 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
 
   function go(delta: number) { pos += delta; paint(); }
 
-  // 가운데(활성) 작품 클릭 → 상세 페이지로 이동. 양옆 클릭 → 가운데로 이동(브라우징).
-  slides.forEach((s, i) => s.addEventListener('click', () => {
-    if (i === pos) {
+  // 호버: 커서가 잠깐 머문 썸네일로 부드럽게 가운데 이동(브라우징).
+  // 클릭: 해당 작품 상세 페이지로 이동.
+  let hoverTimer = 0;
+  slides.forEach((s, i) => {
+    s.addEventListener('mouseenter', () => {
+      clearTimeout(hoverTimer);
+      hoverTimer = window.setTimeout(() => { if (i !== pos) { pos = i; paint(); } }, 90);
+    });
+    s.addEventListener('mouseleave', () => clearTimeout(hoverTimer));
+    s.addEventListener('click', () => {
       const href = s.dataset.detail;
       if (href) window.location.href = href;
-    } else {
-      pos = i;
-      paint();
-    }
-  }));
+    });
+  });
   document.getElementById('fpPrev')?.addEventListener('click', () => go(-1));
   document.getElementById('fpNext')?.addEventListener('click', () => go(1));
   stage?.addEventListener('keydown', (e) => {
@@ -198,13 +202,8 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
   }
   .fp-slide-frame img { width: 100%; height: 100%; object-fit: cover; }
 
-  /* 호버: 비활성 썸네일을 키워 미리보기 (레이아웃 reflow 없이 transform 으로). */
-  .fp-slide:not(.is-active) { position: relative; }
-  .fp-slide:not(.is-active):hover { z-index: 3; }
-  .fp-slide:not(.is-active):hover .fp-slide-frame {
-    transform: scale(1.35);
-    border-color: var(--c-accent);
-  }
+  /* 호버하면 그 썸네일이 가운데로 이동(JS)해 히어로로 커진다. 살짝 강조만. */
+  .fp-slide:not(.is-active):hover .fp-slide-frame { border-color: var(--c-ink-2); }
 
   /* 가운데(활성) 슬라이드 = 히어로 */
   .fp-slide.is-active { width: 300px; }
