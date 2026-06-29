@@ -1,7 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import FinalFilmstrip from '../components/FinalFilmstrip.astro';
-import { weeks, currentWeek } from '../data/curriculum';
+import { weeks } from '../data/curriculum';
 import { finalProjectsMeta } from '../data/finalProjects';
 import { url } from '../lib/url';
 
@@ -22,16 +22,6 @@ const preview = weeks.slice(0, 6);
       <span class="meta">AI 3D · MCP</span>
     </div>
   </section>
-
-  {currentWeek && (
-    <section class="wrap section">
-      <a href={url(`/weeks/${currentWeek.id}`)} class="current-card">
-        <span class="eyebrow">이번 주 · {currentWeek.id}</span>
-        <strong class="current-title">{currentWeek.title}</strong>
-        {currentWeek.subtitle && <span class="current-sub">{currentWeek.subtitle}</span>}
-      </a>
-    </section>
-  )}
 
   <section class="section">
     <header class="section-head wrap">
@@ -79,20 +69,6 @@ const preview = weeks.slice(0, 6);
     margin-top: var(--s-4);
     flex-wrap: wrap;
   }
-
-  .current-card {
-    display: flex;
-    flex-direction: column;
-    gap: var(--s-1);
-    padding: var(--s-4);
-    border: var(--border);
-    border-radius: var(--r-lg);
-    background: color-mix(in srgb, var(--c-accent) 6%, transparent);
-    transition: border-color var(--t) var(--ease);
-  }
-  .current-card:hover { border-color: var(--c-accent); opacity: 1; }
-  .current-title { font-size: var(--fs-lg); color: var(--c-ink); word-break: keep-all; }
-  .current-sub { font-size: var(--fs-sm); color: var(--c-ink-2); word-break: keep-all; }
 
   .section-head {
     display: flex;
