@@ -26,29 +26,41 @@ function bestCover(p: FPProject): FPMedia | null {
 
 const PRESENTATION = '발표 자료';
 const firstPres = (p: FPProject) => p.links.find((l) => l.kind === PRESENTATION);
+
+// 무한 루프: 슬라이드를 3벌 렌더해 양옆(특히 왼쪽)이 항상 채워지게 한다.
+// 중앙 세트를 기준으로 순환하고, 경계를 넘으면 무애니메이션으로 스냅(아래 스크립트).
+const realTotal = finalProjects.length;
+const COPIES = 3;
+const looped = Array.from({ length: COPIES * realTotal }, (_, di) => ({ p: finalProjects[di % realTotal], di, real: di % realTotal }));
+// 초기 중앙(real 0, 중앙 세트) 주변만 eager 로드.
+const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
 ---
 
 <!-- 필름스트립: 가운데 큰 히어로 + 양옆 썸네일, 좌우로 탐색 -->
 <section class="fp-film" aria-label="작품 필름스트립">
   <button class="fp-nav fp-prev" id="fpPrev" type="button" aria-label="이전 작품">←</button>
   <div class="fp-stage">
-    <div class="fp-track" id="fpTrack">
-      {finalProjects.map((p, i) => {
+    <div class="fp-track" id="fpTrack" data-real-total={realTotal}>
+      {looped.map(({ p, di, real }) => {
         const cover = bestCover(p);
         const pres = firstPres(p);
+        const isClone = di < realTotal || di >= 2 * realTotal;
         return (
           <button
             class="fp-slide"
             type="button"
-            data-idx={i}
+            data-idx={di}
+            data-real={real}
             data-code={p.code}
             data-title={p.title}
             data-detail={`${detailBase}#${p.id}`}
             data-pres-url={pres?.url ?? ''}
             aria-label={`${p.code} 보기`}
+            aria-hidden={isClone ? 'true' : undefined}
+            tabindex={isClone ? -1 : undefined}
           >
             <span class="fp-slide-frame">
-              {cover ? <img src={cover.src} alt={p.code} loading={i < 6 ? 'eager' : 'lazy'} draggable="false" /> : <span class="fp-empty">—</span>}
+              {cover ? <img src={cover.src} alt={p.code} loading={eager(di) ? 'eager' : 'lazy'} draggable="false" /> : <span class="fp-empty">—</span>}
             </span>
           </button>
         );
@@ -75,44 +87,68 @@ const firstPres = (p: FPProject) => p.links.find((l) => l.kind === PRESENTATION)
   const titleEl = document.getElementById('fpTitle');
   const detailEl = document.getElementById('fpDetail') as HTMLAnchorElement | null;
   const presEl = document.getElementById('fpPres') as HTMLAnchorElement | null;
-  const total = slides.length;
-  let active = 0;
+  const realTotal = Number(track?.dataset.realTotal || slides.length) || slides.length;
+  // 중앙 세트(real 0)에서 시작 — 좌우가 항상 클론으로 채워진다.
+  let pos = realTotal;
 
-  function center() {
-    if (!track || !stage || !slides[active]) return;
-    const s = slides[active];
+  function setTransition(on: boolean) {
+    if (track) track.style.transition = on ? '' : 'none';
+  }
+
+  function paint() {
+    if (!track || !stage || !slides[pos]) return;
+    slides.forEach((el, i) => el.classList.toggle('is-active', i === pos));
+    const s = slides[pos];
     const target = s.offsetLeft + s.offsetWidth / 2;
     track.style.transform = `translateX(${stage.clientWidth / 2 - target}px)`;
-    slides.forEach((el, i) => el.classList.toggle('is-active', i === active));
 
-    const s2 = slides[active];
-    if (idxEl) idxEl.textContent = `(${String(active + 1).padStart(2, '0')} / ${total})`;
-    if (titleEl) titleEl.textContent = s2.dataset.title || s2.dataset.code || '';
-    if (detailEl) detailEl.setAttribute('href', s2.dataset.detail || '#');
+    const real = ((pos % realTotal) + realTotal) % realTotal;
+    if (idxEl) idxEl.textContent = `(${String(real + 1).padStart(2, '0')} / ${realTotal})`;
+    if (titleEl) titleEl.textContent = s.dataset.title || s.dataset.code || '';
+    if (detailEl) detailEl.setAttribute('href', s.dataset.detail || '#');
     if (presEl) {
-      const url = s2.dataset.presUrl;
+      const url = s.dataset.presUrl;
       if (url) { presEl.setAttribute('href', url); presEl.hidden = false; }
       else presEl.hidden = true;
     }
   }
 
-  function setActive(i: number) {
-    active = Math.max(0, Math.min(total - 1, i));
-    center();
+  // 경계를 벗어나면(첫/세번째 세트) 동일하게 보이는 중앙 세트 슬라이드로 무애니메이션 스냅.
+  function normalize() {
+    if (pos >= realTotal && pos < 2 * realTotal) return;
+    setTransition(false);
+    pos = realTotal + (((pos % realTotal) + realTotal) % realTotal);
+    paint();
+    void track?.offsetWidth; // reflow 강제 후 트랜지션 복구
+    setTransition(true);
   }
 
-  slides.forEach((s, i) => s.addEventListener('click', () => setActive(i)));
-  document.getElementById('fpPrev')?.addEventListener('click', () => setActive(active - 1));
-  document.getElementById('fpNext')?.addEventListener('click', () => setActive(active + 1));
+  function go(delta: number) { pos += delta; paint(); }
+
+  slides.forEach((s, i) => s.addEventListener('click', () => { pos = i; paint(); }));
+  document.getElementById('fpPrev')?.addEventListener('click', () => go(-1));
+  document.getElementById('fpNext')?.addEventListener('click', () => go(1));
   stage?.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowLeft') { e.preventDefault(); setActive(active - 1); }
-    if (e.key === 'ArrowRight') { e.preventDefault(); setActive(active + 1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
   });
+  track?.addEventListener('transitionend', (e) => {
+    if (e.propertyName === 'transform') normalize();
+  });
+
   let raf = 0;
-  window.addEventListener('resize', () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(center); });
-  // 이미지가 로드되며 폭이 바뀌면 재정렬
-  slides.forEach((s) => s.querySelector('img')?.addEventListener('load', center));
-  center();
+  window.addEventListener('resize', () => {
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(() => { setTransition(false); paint(); void track?.offsetWidth; setTransition(true); });
+  });
+  // 이미지 로드로 폭이 바뀌면 재정렬(애니메이션 없이)
+  slides.forEach((s) => s.querySelector('img')?.addEventListener('load', () => { setTransition(false); paint(); void track?.offsetWidth; setTransition(true); }));
+
+  // 초기 배치는 애니메이션 없이
+  setTransition(false);
+  paint();
+  void track?.offsetWidth;
+  setTransition(true);
 </script>
 
 <style>
