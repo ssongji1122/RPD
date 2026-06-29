@@ -1,6 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import FinalFilmstrip from '../components/FinalFilmstrip.astro';
 import { weeks, currentWeek } from '../data/curriculum';
+import { finalProjectsMeta } from '../data/finalProjects';
 import { url } from '../lib/url';
 
 const preview = weeks.slice(0, 6);
@@ -30,6 +32,14 @@ const preview = weeks.slice(0, 6);
       </a>
     </section>
   )}
+
+  <section class="section">
+    <header class="section-head wrap">
+      <h2>기말 작품</h2>
+      <a href={url('/final-projects')} class="more">전체 {finalProjectsMeta.stats.works}점 →</a>
+    </header>
+    <FinalFilmstrip detailBase={url('/final-projects')} />
+  </section>
 
   <section class="wrap section">
     <header class="section-head">
