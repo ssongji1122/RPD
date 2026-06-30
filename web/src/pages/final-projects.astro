@@ -22,6 +22,22 @@ function bestCover(p: FPProject): FPMedia | null {
 const editorialSpan = (i: number, item: FPMedia) =>
   item.type === 'video' ? 2 : i % 3 === 1 ? 2 : 1;
 
+function mediaGroups(p: FPProject, cover: FPMedia | null) {
+  const rest = p.media.filter((m) => m !== cover);
+  return {
+    outcome: rest.filter((m) => m.role !== 'process'),
+    process: rest.filter((m) => m.role === 'process'),
+  };
+}
+
+function projectCounts(p: FPProject) {
+  return {
+    images: p.media.filter((m) => m.type === 'image').length,
+    videos: p.videos.length || p.media.filter((m) => m.type === 'video').length,
+    process: p.media.filter((m) => m.role === 'process').length,
+  };
+}
+
 const PRESENTATION = '발표 자료';
 ---
 
@@ -39,14 +55,19 @@ const PRESENTATION = '발표 자료';
   <section class="wrap section fp-projects">
     {finalProjects.map((p) => {
       const cover = bestCover(p);
-      const rest = p.media.filter((m) => m !== cover);
+      const groups = mediaGroups(p, cover);
+      const counts = projectCounts(p);
       const presentations = p.links.filter((l) => l.kind === PRESENTATION);
       const otherLinks = p.links.filter((l) => l.kind !== PRESENTATION);
       return (
         <article class="fp-project" id={p.id}>
           <div class="fp-grid">
             <div class="fp-cell fp-copy is-span-2">
+              <p class="fp-kicker meta">{p.code}</p>
               <h2 class="fp-title">{p.title}</h2>
+              <p class="fp-counts meta">
+                이미지 {counts.images}장 · 영상 {counts.videos}개 · 과정 {counts.process}개
+              </p>
               {presentations.length > 0 && (
                 <ul class="fp-links">
                   {presentations.map((l) => (
@@ -79,7 +100,12 @@ const PRESENTATION = '발표 자료';
               )}
             </div>
 
-            {rest.map((m, i) => (
+            {groups.outcome.length > 0 && (
+              <div class="fp-section-label is-span-4">
+                <span>완성 결과</span>
+              </div>
+            )}
+            {groups.outcome.map((m, i) => (
               <div class:list={['fp-cell', 'fp-media', `is-span-${editorialSpan(i, m)}`]}>
                 {m.type === 'video' && m.videoSrc ? (
                   <video controls playsinline preload="none" poster={m.src}>
@@ -87,6 +113,23 @@ const PRESENTATION = '발표 자료';
                   </video>
                 ) : (
                   <img src={m.src} alt={`${p.code} 장면 ${i + 1}`} loading="lazy" />
+                )}
+              </div>
+            ))}
+
+            {groups.process.length > 0 && (
+              <div class="fp-section-label is-span-4">
+                <span>과정 기록</span>
+              </div>
+            )}
+            {groups.process.map((m, i) => (
+              <div class:list={['fp-cell', 'fp-media', `is-span-${editorialSpan(i, m)}`]}>
+                {m.type === 'video' && m.videoSrc ? (
+                  <video controls playsinline preload="none" poster={m.src}>
+                    <source src={m.videoSrc} type="video/mp4" />
+                  </video>
+                ) : (
+                  <img src={m.src} alt={`${p.code} 과정 ${i + 1}`} loading="lazy" />
                 )}
               </div>
             ))}
@@ -116,8 +159,28 @@ const PRESENTATION = '발표 자료';
   }
   .fp-cell { min-width: 0; border-right: var(--border); border-bottom: var(--border); }
   .fp-cell.is-span-2 { grid-column: span 2; }
+  .fp-section-label {
+    grid-column: 1 / -1;
+    min-width: 0;
+    padding: var(--s-2) var(--s-4);
+    border-right: var(--border);
+    border-bottom: var(--border);
+    background: var(--c-bg-2);
+  }
+  .fp-section-label span {
+    font-family: var(--f-mono);
+    font-size: var(--fs-2xs);
+    color: var(--c-ink-2);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+  }
 
   .fp-copy { display: grid; align-content: start; gap: var(--s-3); padding: var(--s-4); }
+  .fp-kicker,
+  .fp-counts {
+    margin: 0;
+    color: var(--c-ink-3);
+  }
   .fp-title { margin: 0; font-family: var(--f-mono); font-size: var(--fs-lg); font-weight: var(--w-medium); }
   .fp-links { display: flex; flex-direction: column; gap: var(--s-2); }
   .fp-links a { display: inline-flex; align-items: baseline; gap: var(--s-2); font-size: var(--fs-sm); color: var(--c-accent); }
