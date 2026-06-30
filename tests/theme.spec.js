@@ -1,23 +1,21 @@
 // @ts-check
 const { test, expect } = require('@playwright/test');
 
-test('theme toggle switches to light', async ({ page }) => {
+test('theme toggle switches to dark', async ({ page }) => {
   await page.goto('/index.html');
 
-  // Click theme toggle
   await page.click('.theme-toggle');
   await page.waitForTimeout(200);
 
   const theme = await page.evaluate(() =>
     document.documentElement.getAttribute('data-theme')
   );
-  expect(theme).toBe('light');
+  expect(theme).toBe('dark');
 });
 
-test('theme toggle returns to dark', async ({ page }) => {
+test('theme toggle returns to default light', async ({ page }) => {
   await page.goto('/index.html');
 
-  // Toggle twice: dark → light → dark
   await page.click('.theme-toggle');
   await page.waitForTimeout(200);
   await page.click('.theme-toggle');
@@ -26,14 +24,12 @@ test('theme toggle returns to dark', async ({ page }) => {
   const theme = await page.evaluate(() =>
     document.documentElement.getAttribute('data-theme')
   );
-  // After double toggle, should be dark or null (both mean dark)
-  expect(theme === 'dark' || theme === null).toBeTruthy();
+  expect(theme).toBe(null);
 });
 
 test('theme persists across navigation', async ({ page }) => {
   await page.goto('/index.html');
 
-  // Switch to light
   await page.click('.theme-toggle');
   await page.waitForTimeout(200);
 
@@ -43,5 +39,5 @@ test('theme persists across navigation', async ({ page }) => {
   const theme = await page.evaluate(() =>
     document.documentElement.getAttribute('data-theme')
   );
-  expect(theme).toBe('light');
+  expect(theme).toBe('dark');
 });
