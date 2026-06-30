@@ -26,6 +26,11 @@ function bestCover(p: FPProject): FPMedia | null {
 
 const PRESENTATION = '발표 자료';
 const firstPres = (p: FPProject) => p.links.find((l) => l.kind === PRESENTATION);
+const projectSummary = (p: FPProject) => {
+  const images = p.media.filter((m) => m.type === 'image').length;
+  const videos = p.videos.length || p.media.filter((m) => m.type === 'video').length;
+  return `이미지 ${images} · 영상 ${videos}`;
+};
 
 // 무한 루프: 슬라이드를 3벌 렌더해 양옆(특히 왼쪽)이 항상 채워지게 한다.
 // 중앙 세트를 기준으로 순환하고, 경계를 넘으면 무애니메이션으로 스냅(아래 스크립트).
@@ -61,6 +66,10 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
           >
             <span class="fp-slide-frame">
               {cover ? <img src={cover.src} alt={p.code} loading={eager(di) ? 'eager' : 'lazy'} draggable="false" /> : <span class="fp-empty">—</span>}
+              <span class="fp-slide-caption" aria-hidden="true">
+                <strong>{p.code}</strong>
+                <span>{projectSummary(p)}</span>
+              </span>
             </span>
           </button>
         );
@@ -200,6 +209,7 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
   }
   .fp-slide-frame {
     display: block;
+    position: relative;
     width: 100%;
     height: 180px;
     overflow: hidden;
@@ -209,15 +219,53 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
     transition: height 0.55s var(--ease), transform var(--t) var(--ease), border-color var(--t) var(--ease);
   }
   .fp-slide-frame img { width: 100%; height: 100%; object-fit: cover; }
+  .fp-slide-caption {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: grid;
+    gap: 2px;
+    padding: var(--s-2);
+    background: var(--c-bg);
+    border-top: var(--border);
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+    pointer-events: none;
+  }
+  .fp-slide-caption strong,
+  .fp-slide-caption span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .fp-slide-caption strong {
+    font-family: var(--f-mono);
+    font-size: var(--fs-xs);
+    color: var(--c-ink);
+  }
+  .fp-slide-caption span {
+    font-family: var(--f-mono);
+    font-size: var(--fs-2xs);
+    color: var(--c-ink-3);
+    letter-spacing: var(--ls-mono);
+  }
 
   /* 호버하면 그 썸네일이 가운데로 이동(JS)해 히어로로 커진다. 살짝 강조만. */
   .fp-slide:not(.is-active):hover .fp-slide-frame { border-color: var(--c-ink-2); }
 
   /* 가운데(활성) 슬라이드 = 히어로 */
-  .fp-slide.is-active { width: 300px; }
+  .fp-slide.is-active { width: clamp(300px, 22vw, 340px); }
   .fp-slide.is-active .fp-slide-frame {
     height: 360px;
     border-color: var(--c-accent);
+  }
+  .fp-slide:hover .fp-slide-caption,
+  .fp-slide:focus-visible .fp-slide-caption,
+  .fp-slide.is-active .fp-slide-caption {
+    opacity: 1;
+    transform: translateY(0);
   }
   .fp-empty { display: grid; place-items: center; width: 100%; height: 100%; color: var(--c-ink-3); }
 
@@ -259,6 +307,6 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
   .fp-detail-link:hover { color: var(--c-ink); }
 
   @media (max-width: 700px) {
-    .fp-slide.is-active { width: 240px; }
+    .fp-slide.is-active { width: min(240px, calc(100vw - 120px)); }
   }
 </style>
