@@ -497,6 +497,20 @@ body[data-role="admin"] .rail-user-menu-item[data-admin] { display: flex; }
     padding: 4px 8px;
     background: var(--bg);
   }
+  .app-topbar > .app-tabs:first-child {
+    max-width: calc(100vw - 128px);
+    overflow-x: auto;
+    justify-content: flex-start;
+    flex: 0 1 auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .app-topbar > .app-tabs:first-child::-webkit-scrollbar {
+    display: none;
+  }
+  .app-topbar > .app-tabs:first-child .app-tab {
+    flex: 0 0 auto;
+  }
   .app-tab {
     flex: 1;
     text-align: center;
@@ -537,6 +551,9 @@ body[data-role="admin"] .rail-user-menu-item[data-admin] { display: flex; }
   .app-topbar {
     padding: 8px 12px;
     gap: 10px;
+  }
+  .app-topbar-right {
+    z-index: 10;
   }
   .app-topbar-search {
     position: static;

@@ -4,12 +4,15 @@ const { test, expect } = require('@playwright/test');
 test.describe('sidebar (desktop only)', () => {
   test.skip(({ viewport }) => viewport.width < 720, 'desktop only');
 
-  test('archive pages show sidebar links', async ({ page }) => {
+  test('archive pages expose primary sidebar links', async ({ page }) => {
     await page.goto('/index.html');
     const rail = page.locator('.rail');
     await expect(rail).toBeVisible();
-    await expect(rail.locator('a[href="library.html"], a[href="/library.html"]')).toBeVisible();
+    await page.click('.rail-toggle');
+    await page.waitForTimeout(300);
+    await expect(rail.locator('a[href="index.html"], a[href="/index.html"]')).toBeVisible();
     await expect(rail.locator('a[href="shortcuts.html"], a[href="/shortcuts.html"]')).toBeVisible();
+    await expect(rail.locator('a[href="library.html"], a[href="/library.html"]')).toHaveCount(1);
   });
 
   test('sidebar toggle expands and collapses', async ({ page }) => {

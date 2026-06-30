@@ -1,0 +1,356 @@
+<!DOCTYPE html><html class="scroll-smooth" lang="ko"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>KKU-ING | Brand Identity Board</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;family=Playfair+Display:ital,wght@0,700;0,900;1,700&amp;family=Noto+Sans+KR:wght@300;400;500;700;900&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "cream": "#fefae0",
+                        "pastel-pink": "#fcd5ce",
+                        "mint": "#d8e2dc",
+                        "deep-green": "#1b4332",
+                        "primary": "#7a5365",
+                        "background": "#000000",
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "2xl": "4rem",
+                    },
+                    spacing: {
+                        "stack-gap": "160px",
+                        "margin-mobile": "20px",
+                        "container-max": "1300px",
+                    },
+                    fontFamily: {
+                        "display": ["Playfair Display", "serif"],
+                        "sans": ["Plus Jakarta Sans", "Noto Sans KR", "sans-serif"],
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { background-color: #000000; color: #ffffff; -webkit-font-smoothing: antialiased; }
+        .serif-title { font-family: 'Playfair Display', serif; }
+        .korean-body { word-break: keep-all; line-height: 1.7; font-family: 'Noto Sans KR', sans-serif; }
+        .collage-card { transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1); }
+        .collage-card:hover { transform: translateY(-8px); filter: brightness(1.05); }
+        .overlap-1 { margin-right: -10%; z-index: 10; }
+        .overlap-2 { margin-left: -10%; z-index: 10; }
+        .section-label { writing-mode: vertical-rl; text-orientation: mixed; }
+
+
+        /* === Scroll fix added by ChatGPT === */
+        html {
+            opacity: 1 !important;
+            height: auto !important;
+            min-height: 100% !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+        }
+        body {
+            height: auto !important;
+            min-height: 100vh !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            position: static !important;
+            touch-action: auto !important;
+        }
+        main, section {
+            height: auto !important;
+            max-height: none !important;
+            overflow: visible !important;
+            position: relative;
+        }
+        /* Tailwind custom max width backup */
+        .max-w-container-max { max-width: 1300px; }
+        @media (max-width: 768px) {
+            .py-stack-gap { padding-top: 96px !important; padding-bottom: 96px !important; }
+        }
+    </style>
+</head>
+<body class="font-sans overflow-x-hidden selection:bg-mint selection:text-deep-green min-h-screen">
+<nav class="fixed top-0 w-full z-[100] mix-blend-difference px-8 py-6">
+<div class="max-w-container-max mx-auto flex justify-between items-center">
+<div class="text-2xl font-black tracking-tighter serif-title italic">Kku-ing</div>
+<div class="hidden md:flex gap-8 text-[10px] uppercase tracking-[0.3em] font-bold">
+<a class="hover:text-pastel-pink transition-colors" href="#concept">Concept</a>
+<a class="hover:text-pastel-pink transition-colors" href="#process">Process</a>
+<a class="hover:text-pastel-pink transition-colors" href="#result">Result</a>
+</div>
+</div>
+</nav>
+<main class="w-full">
+<!-- 00 HERO -->
+<section class="relative min-h-screen flex flex-col items-center justify-center pt-32 pb-20 px-6" id="hero">
+<div class="max-w-container-max w-full transition-all duration-1000 ease-out opacity-100 translate-y-0">
+<div class="mb-12">
+<span class="font-display italic text-pastel-pink text-xl mb-4 block">00 / Project Introduction</span>
+<h1 class="serif-title text-[clamp(80px,18vw,240px)] font-black leading-[0.8] tracking-tighter text-white uppercase">KKU-ING</h1>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-12 items-end">
+<div class="md:col-span-4 border-l border-white/20 pl-8 mb-12 md:mb-0">
+<h2 class="text-2xl md:text-3xl font-bold mb-6 korean-body">로봇 프로덕트 디자인 기말 포트폴리오</h2>
+<p class="text-white/50 korean-body text-lg">
+                        AI 콘셉트 탐색부터 Blender 모델링, 재질 연구, 리깅과 애니메이션까지 이어지는 3D 캐릭터 제작 과정
+                    </p>
+</div>
+<div class="md:col-span-8">
+<div class="rounded-2xl overflow-hidden collage-card relative aspect-[16/10] shadow-2xl">
+<!-- HERO IMAGE: High-end render -->
+<img alt="KKU-ING Hero" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAeNqcM98uC4lipzPvt4hW-UMI5DLngx3tqUhFrCo-swVfLeLrPyaXR2acmG_pEze14m0wLEdd94JXzpNIGom9n4shtrPCUhSfSLPzp7lPpNdFvCs4tLZfV9siP6Y0QBtamP3cjnXUfzquBiiJNv1llRCj119_IEVPsMMTEMvU7_0_7QSUuXfhC_wj6Ghm35BtX1rcnYSJ9V2SPXLEFbpnOwf4DP4UuGN-ryXswFNEXklr7jz-4Rarr-q47dATeOy0uKjB_wa7ShWP2oh4">
+<div class="absolute bottom-8 left-8 bg-black/40 backdrop-blur-md px-6 py-3 rounded-full border border-white/10">
+<span class="text-sm font-medium italic">부드러운 곡선과 디지털 생명력이 만나는 순간</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 01 CONCEPT: Collage Style -->
+<section class="py-stack-gap px-6" id="concept">
+<div class="max-w-container-max mx-auto transition-all duration-1000 ease-out opacity-100 translate-y-0">
+<div class="flex flex-col md:flex-row gap-10 items-start">
+<div class="serif-title text-[120px] leading-none opacity-20 -mb-8">01</div>
+<div class="relative w-full">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
+<!-- Cream Text Card -->
+<div class="md:col-span-6 bg-cream text-deep-green p-12 md:p-20 rounded-2xl flex flex-col justify-between collage-card">
+<div>
+<span class="text-xs font-bold uppercase tracking-widest mb-10 block opacity-60">Brand Concept / 브랜드 콘셉트</span>
+<h2 class="serif-title text-5xl md:text-6xl font-bold mb-10 italic">부드러운&nbsp;<div class="">상상에서&nbsp;</div><div class="">시작된 로봇</div></h2>
+<p class="text-xl korean-body font-medium leading-relaxed">
+                                    Kku-ing은 기니피그의 둥글고 귀여운 형태와 피노젤리의 말랑하고 반짝이는 이미지를 결합해 만든 로봇 캐릭터입니다.
+                                </p>
+</div>
+<div class="mt-12 flex flex-wrap gap-3">
+<span class="px-4 py-2 border border-deep-green/20 rounded-full text-[10px] font-bold uppercase">Guinea Pig</span>
+<span class="px-4 py-2 border border-deep-green/20 rounded-full text-[10px] font-bold uppercase">Soft Robot</span>
+<span class="px-4 py-2 border border-deep-green/20 rounded-full text-[10px] font-bold uppercase">Tactile Object</span>
+</div>
+</div>
+<!-- Reference Images Collage -->
+<div class="md:col-span-6 flex flex-col gap-6">
+<div class="h-full min-h-[300px] rounded-2xl overflow-hidden collage-card shadow-xl">
+<img alt="Moodboard" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDllIVu5OX1MbppJ1wIl-KRnqslt_1Y0Bi0EUvLK-068HKSkPCJ63NF_1q5Vn76xrZwvL_VN1ScwlUMlmagrcuXG-0MWAy8WnjHTVDyxozS6LAydHKA4UsPyHAzqwo4ofZzNQrFeck6sUsVqL7mAZD_xqfDgzRqBIEtOuJtoC1EF7uw8eMRNvbbc9o7uKSN_hTGdyaPHA8K-Eg_p54Vp9jyVxkzAjaO2gWO7kZZLojb4V9BpAJetsoAmV8Ck1UvdGBCw__ujpZ-MqzRcM8">
+</div>
+<div class="bg-mint/20 border border-mint/30 p-8 rounded-2xl">
+<p class="text-mint text-sm korean-body italic">
+                                    "단순히 기계적인 로봇이 아닌, 디지털 공간에서 만질 수 있을 것 같은 '물성'을 가진 오브제를 지향했습니다."
+                                </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 02 AI EXPLORATION -->
+<section class="py-stack-gap px-6" id="process">
+<div class="max-w-container-max mx-auto transition-all duration-1000 ease-out opacity-100 translate-y-0">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+<div class="md:col-span-4 flex flex-col gap-6">
+<h3 class="serif-title text-6xl text-pastel-pink italic mb-4">AI Vision</h3>
+<div class="bg-pastel-pink text-background p-10 rounded-2xl collage-card">
+<h4 class="text-xl font-black mb-4 korean-body">AI로 시각 방향을 탐색하다</h4>
+<p class="korean-body text-sm opacity-80">
+                            GPT-4와 Geminai를 연계하여 수백 가지의 변주를 거친 뒤, 가장 'Kku-ing'다운 시각적 DNA를 확립했습니다.
+                        </p>
+</div>
+<div class="flex gap-4">
+<div class="w-1/2 aspect-square rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center p-6 italic text-xs text-white/40">
+                            "Innovation through AI Generation"
+                        </div>
+<div class="w-1/2 aspect-square rounded-2xl bg-mint p-4">
+<div class="w-full h-full border border-deep-green/10 rounded-lg"></div>
+</div>
+</div>
+</div>
+<div class="md:col-span-8 rounded-2xl overflow-hidden collage-card shadow-2xl relative">
+<img alt="AI Exploration" class="w-full aspect-video object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBNbH_kZJtlplwTYU0n4vbcnylkBqRqyu5n2to60StagXj9B3q_tbcpfjlFjd_5RAYmNemV3PgsuEreTYcQG_dRYNkyIuz6T1G3jsFigpNN6Z6RAP2eUNbHIO1_iEvPgDfP5tuv26iCOA9mTC8PlLL1bdNlwvE8cWtjGEJjXm1m8K26J641f55hkJ4s-amI3Hkgh4GBqHNqV5Bmz7AVJfgTjk4UdDA0xwp9NQNd-kJkD9L5bgfIFiw2mNJvu_Ms0oVdhQWxq9iphbjTVA">
+<div class="absolute inset-0 bg-gradient-to-tr from-pastel-pink/20 to-transparent pointer-events-none"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- 03 MODELING: 2-Column Grid -->
+<section class="py-stack-gap px-6">
+<div class="max-w-container-max mx-auto transition-all duration-1000 ease-out opacity-100 translate-y-0">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+<!-- Left Side: 2x2 Mesh Grid -->
+<div class="lg:col-span-7 grid grid-cols-2 gap-4">
+<div class="aspect-square rounded-2xl overflow-hidden collage-card bg-deep-green/20 border border-white/5">
+<img alt="Step 1" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzdiJ1D5kZ5RAwUtbYwB9Xc1NZrigHVoxfvLRXVrqMR0EAliikOfIo_b5pf1icbRU2rhHR4BgPod9vSjjSRPqYX4xi04p-aXEDgviBwUmA7mteTldAOTP24MhGFmaHOeNUEtTUSzWrbU7tGyTf1zhczlOsZ16_eSq0GIsnMMUmaMXmSt5NRMkdv17czq3Uq78pKympMKbazBtRAjp2sns1tNiLVXOlWo01kc2BqyemGl5HwM2_vYeHzcljeDOQSKmjdVLL8kwPSrWSLqs">
+</div>
+<div class="aspect-square rounded-2xl overflow-hidden collage-card mt-8 bg-deep-green/20 border border-white/5">
+<img alt="Step 2" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2XE13iEKBsKCz1ubvnH7fH-IaSfWCIwicO5cTen21vYhout8ec_UU58QAOLwkwgnm5LNUa3z_8TkoSUvSwuI4UnFutX6aTtrVcHyHYO7XGchUrIoO-hgmoy5WsdJz6EtVMnMVxQPb2ezUsJskX0GUCpb-QulOWAnalZcgHdLOfgcKT1yiQA32xRZrEPRT5T55zMSLjozo8-xfcrydXkWYvC299qIsIJ_EFgbMYIq-YZOOq-YHX2xQqILoEd0_MLLKEdHd_BLP_JCjBZo">
+</div>
+<div class="aspect-square rounded-2xl overflow-hidden collage-card -mt-8 bg-deep-green/20 border border-white/5">
+<img alt="Step 3" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5f83BJz_TAyFJ1OkgZfiYrao0xSuKSbECY1fqep1R6y2a3G8zvMIVP8sIm_qHFmHcFGoZHTj9hKcyTHlXJOEcpu6sNibfuMcjLL3pz2hyt0HagbPfSgaOvdUWdeOQ4vpCkY1NHziaJSLpg9th3Kaoy0noSJHyTPiNKd7cgXbB7Ffn9-ErBIJEB3MVqseZfmEOVuOEh5zIyvjKAD2OvQoTDELYLY_8WbxbfJDvInkOYnKpqT6BJqMgBpgd2M30X6CdvGRMutAE2WyTNiE">
+</div>
+<div class="aspect-square rounded-2xl overflow-hidden collage-card bg-deep-green/20 border border-white/5 p-8 flex items-center justify-center">
+<span class="serif-title italic text-4xl text-mint/40">3D Production</span>
+</div>
+</div>
+<!-- Right Side: Vertical Text Card -->
+<div class="lg:col-span-5 flex flex-col gap-8">
+<div class="serif-title text-[100px] leading-none text-white/10 mb-[-40px]">03</div>
+<div class="bg-deep-green p-12 md:p-16 rounded-2xl border border-mint/20 shadow-2xl relative overflow-hidden">
+<div class="absolute top-0 right-0 p-8 opacity-10">
+<span class="material-symbols-outlined text-[120px]">architecture</span>
+</div>
+<h3 class="serif-title text-4xl md:text-5xl font-bold text-mint mb-8 italic">2D 콘셉트를 3D 형태로 만들다</h3>
+<div class="space-y-8">
+<div>
+<h5 class="text-xs font-black uppercase tracking-[0.2em] text-white/50 mb-3">Process / 과정</h5>
+<p class="korean-body text-mint/80">Blender를 사용해 Kku-ing의 기본 형태를 모델링했습니다. Clipping 기능, Bevel 활용, 파츠 분리 등 정교한 작업이 병행되었습니다.</p>
+</div>
+<div class="bg-white/5 rounded-xl p-6 border border-white/10">
+<h5 class="text-xs font-black uppercase tracking-[0.2em] text-pastel-pink mb-3">Core Solution / 해결</h5>
+<p class="korean-body text-sm">토폴로지 최적화를 통해 애니메이션 시 변형이 자연스럽도록 고른 면 분할에 집중했습니다.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 04 MATERIAL: Focal Card -->
+<section class="py-stack-gap px-6">
+<div class="max-w-container-max mx-auto transition-all duration-1000 ease-out opacity-100 translate-y-0">
+<div class="flex flex-col items-center mb-16 text-center">
+<span class="serif-title italic text-pastel-pink text-2xl mb-4">Material Identity</span>
+<h2 class="serif-title text-5xl md:text-7xl font-bold uppercase tracking-tight">Texture &amp; Lighting</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+<div class="md:col-span-3 flex flex-col gap-6 order-2 md:order-1">
+<div class="aspect-square rounded-2xl overflow-hidden collage-card shadow-lg bg-white/5 border border-white/10">
+<img alt="Glass Study" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5jGHUcfpS38RCdvrqep4ogqvPcuLCTZyhPgNQwqP8GvM6chw45EfuTXydi05gqGE1d7aALfdCctH51Gf-F0XrsLFyBxNmU6zk4kxLZIlQVSLFUhQzsaHnRuVIgEqkqiIAJNhJNZwG_guTqazQ64vsdxqctsaM6w0H98YavFS88eVOfDnD46en5OASx9nZ5K-LwMg6JcFKV3LEb_RmElsUVVYvYqGP0GE05ikhAlN6z4pZXSrizW1HTErXi0HiuWw0rD2TnyTJBMeBdcI">
+</div>
+<div class="bg-mint p-8 rounded-2xl collage-card text-deep-green">
+<h4 class="font-black text-lg mb-2">Glass / 유리</h4>
+<p class="text-xs korean-body opacity-80 font-medium">IOR 값 조정을 통한 리얼한 유리 투명도 구현</p>
+</div>
+</div>
+<div class="md:col-span-6 rounded-2xl overflow-hidden shadow-[0_0_100px_rgba(252,213,206,0.15)] order-1 md:order-2">
+<div class="aspect-[4/5] md:aspect-[1/1] relative group">
+<img alt="Main Material Focal" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBC4dnSMk_IYb-hIuo0Q2Rms_h4OSl0ThDxNplkYXsPkP6VIP-F2Z0HWMSoCFxVwlXgHllQ4Vi3HeMYQoA5JcuTsZq0k0w516082kETDDG19_QADE7SfFXNQh7blwraHBEZSwFf7A9c6waM92sQcxHqQ9-zUDvWQccMLBuTNjwjsHasM3oNvXXNZGtHjs0izm8aUeUwd0ixfXWKbDBzeG-ikakLae4hT_qBs2ji-iWtiG0aDl3eWIze-MKPUibJeMhOMoJawNdAi0qbcXo">
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center p-12 text-center backdrop-blur-sm">
+<p class="serif-title italic text-4xl leading-tight">"장난감 같은 표면감을 만들다"</p>
+</div>
+</div>
+</div>
+<div class="md:col-span-3 flex flex-col gap-6 order-3">
+<div class="bg-pastel-pink p-8 rounded-2xl collage-card text-background">
+<h4 class="font-black text-lg mb-2">Plastic / 플라스틱</h4>
+<p class="text-xs korean-body opacity-80 font-medium">표면 거칠기 조절로 부드러운 질감 표현</p>
+</div>
+<div class="aspect-square rounded-2xl overflow-hidden collage-card shadow-lg bg-white/5 border border-white/10">
+<div class="w-full h-full bg-gradient-to-br from-mint/40 to-pastel-pink/40 flex items-center justify-center italic text-xs p-6 text-center">
+                            Soft Studio Lighting with HDRI
+                        </div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 05 RIGGING: Horizontal card -->
+<section class="py-stack-gap px-6">
+<div class="max-w-container-max mx-auto transition-all duration-1000 ease-out opacity-100 translate-y-0">
+<div class="bg-cream text-deep-green rounded-2xl overflow-hidden shadow-2xl flex flex-col md:flex-row items-stretch">
+<div class="md:w-1/3 p-12 md:p-16 flex flex-col justify-center">
+<span class="serif-title italic text-primary text-xl mb-6">05 / Animation</span>
+<h2 class="serif-title text-4xl md:text-5xl font-bold mb-8 italic leading-tight">Kku-ing에 움직임을 더하다</h2>
+<p class="korean-body text-sm font-medium opacity-70">부모-자식 구조와 키프레임, Bezier 보간을 사용해 캐릭터가 실제로 살아있는 듯한 리듬감을 부여했습니다.</p>
+</div>
+<div class="md:w-2/3 bg-black/10 p-4">
+<div class="rounded-xl overflow-hidden h-full min-h-[400px] collage-card shadow-inner border border-black/5">
+<img alt="Rigging Timeline" class="w-full h-full object-cover mix-blend-multiply opacity-90" src="https://lh3.googleusercontent.com/aida-public/AB6AXuArFuHIjpIPFygD177CzHgaLkcaBS_TBA7Zs3iel54kYtKyAPvb-AQqz1H5sqK8kx6qzk8b2nwVkagLp-FzbXypIovHotOYdy4v50OGufzHGdIVB99W01nBG9Nf3toNAvBW1EaN6PCX61Dh4Gcpz6_xyWqa4n_0AY9f9twrIpI70LC4gFJJfBxWquIlHKjCeiHbvSSto1RXROE9PM0V0b1McmDrPYSRcCQBUY_jPAgeOGuqWSKvXlQmoFTW3L1jXGtmQ98Ps4-sw_1jHe0">
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- 06 FINAL OUTPUT: Visual Climax (Pinterest Collage) -->
+<section class="py-stack-gap px-6" id="result">
+<div class="max-w-container-max mx-auto transition-all duration-1000 ease-out opacity-100 translate-y-0">
+<div class="mb-20">
+<h2 class="serif-title text-6xl md:text-8xl font-black italic mb-6">Final Output</h2>
+<div class="w-32 h-1 bg-pastel-pink"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6 relative">
+<!-- Large Hero Render (3/4 width) -->
+<div class="md:col-span-9 rounded-2xl overflow-hidden shadow-2xl collage-card z-0 aspect-[4/3]">
+<img alt="Final Hero" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiDGp-dPZSSMUrquWIa7_NhlIsbcR6bKoCKwcRLjd9fJAAWFxvh5m65OZ4A_JZpaTeUG4Q1oDg4VhjSwfFcOpIf99Ne9viQU3nxhihA3VTnXCB-Ha0LSCLO-c6cJsWR4qjpmR-r4CIdT_Hj4ueVbfM02qJbBtdoXaSzNP079WEBlFubW1zZFdUTLfC6dZHNsElPsN2BRDETFKAreAeU1tyrY5PmHzLoOr_U9CklLoXRrMB3sGiBWcN13aBgO3n3XVoRLBm3iCcZToPsxU">
+</div>
+<!-- Vertical Detail (overlapping slightly) -->
+<div class="md:col-span-3 rounded-2xl overflow-hidden shadow-2xl collage-card md:-ml-20 md:mt-24 z-10 aspect-[3/4]">
+<img alt="Final Detail 1" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJOIbIwO-BQ-oKdsmiNTSIic8mliIC0UzsobTBhtmRIsTQI9m3CZnodxJBzIbWeGk275IPzAg-qPKjtknytJm_ryGEUtyI0npN7g8iCzDk_7HZmEkUwASsFX5a7lBujo8y65ouUClsztsDUjnv5o-QsvRTDzL1PdBEaG5mDULaxFEjGRjVMpccNLlH3WYIS6HJ0VErH4PoAX4Ne2IgJLkx_F-6l58dKcsBHaDfzNxYr_E24ZZtx96qM2usFfEsNKcMp2bp-AzUZiRGYC4">
+</div>
+<!-- Horizontal Secondary -->
+<div class="md:col-span-5 rounded-2xl overflow-hidden shadow-2xl collage-card md:-mt-20 z-20 aspect-video">
+<img alt="Final Render 3" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfUQjZy6Wz4WjPRV-K69gGeLHUcSj-O7nzB1AagdN5P7fA3C-DCUq3kuVArjg2vZdlwIVVfvlKxK0inc2KkzIjbjLaz_KWq4BfvtwXcL54MQrTG3oNQMEze8mRbiNl4oJjj7Rnu7D8cXzar3EKuymeqtMqi2onAsbLX8aPVm_ZxEkj8bGRd4z4hY1UuwtWBgfF3AbWkmFvmUq-AfG7ZZLmGab6tqrf6JxVz3wmC5c4A5MahE1UeArT9oEcJ_6VnTNCkMOT6XMYF2lrYM0">
+</div>
+<!-- Smaller Detail Squares -->
+<div class="md:col-span-3 rounded-2xl overflow-hidden shadow-2xl collage-card aspect-square">
+<img alt="Final Render 4" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuABZWW6B37r0miGGyf2senRs-zlOif_fsf27uIbbQ-HdENOU_AIOzEojTe0iFXdK9DWZrKrV57fwlKVrOLiY-ujdqCRaPyoqIhYvQcgbhmLI6xbXQYCHzcSmUy204kRffi8yDomGRCbbvYPAaS34-fKf7gATxIhU48htIZb1hwz-gtXDohdmT5z95-PftQI87EKS_v2R98FHpME8sY87LesT9H6OIVMHTEhYpeTi5eK7i_DlYado5gzNFQhOH1pCdfNx9nv-kVVS-4MZVM">
+</div>
+<div class="md:col-span-4 rounded-2xl overflow-hidden shadow-2xl collage-card aspect-square">
+<img alt="Final Render 5" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEJrGn1_Iz40Let-qHjnE1rzKUQ1f90QhWTN4bVGuo4dsmkP1DeXpc3xpax1FMa8wHmXwTfY0VDjdEx_yC7eoAtYp-N_zCheJSI7QTneZt3UWNPhjI4iY0nZOXL3Jsxmblkx7q9ofDbQCjvLrHt8jgqMApbC0MmpYb5qAjO4rMny95LL4sJUV6gqM0uD1mkYepmfeXIZ_F5ZfpQ0cqtK-u7mjiwfgScqCDSgxJt6O5ZDV2dNxCjy5WXdAC6SWe6MQ3yPfzGu56HbEbNrQ">
+</div>
+</div>
+</div>
+</section>
+<!-- 07 REFLECTION: Simple Elegant Card -->
+<section class="py-stack-gap px-6 mb-32" id="reflection">
+<div class="max-w-container-max mx-auto px-8 md:px-24 transition-all duration-1000 ease-out opacity-100 translate-y-0">
+<div class="bg-cream text-deep-green p-12 md:p-32 rounded-2xl relative overflow-hidden flex flex-col items-center text-center">
+<div class="serif-title text-[180px] leading-none opacity-5 absolute -top-10 -left-10 italic">Reflection</div>
+<span class="serif-title italic text-primary text-2xl mb-10 block z-10">Retrospective</span>
+<h2 class="serif-title text-4xl md:text-6xl font-bold mb-12 italic leading-tight z-10">처음 해본 Blender,&nbsp;<div class="">그리고 성장</div></h2>
+<div class="max-w-2xl korean-body space-y-6 text-lg z-10">
+<p class="font-bold">이 프로젝트는 단순한 캐릭터 제작을 넘어,&nbsp;</p><div class="">AI와 인간의 예술적 협업 가능성을 탐구한 여정이었습니다.</div><p></p>
+<p class="opacity-70 text-base">기초 습득부터 기말 프로젝트 직접 제작까지의 성장 기록입니다. 메쉬 클리핑부터 재질 IOR 값 해결까지 수많은 시행착오가 있었지만, 이를 통해 3D 아티스트로서의 기초 체력을 기를 수 있었습니다. 앞으로 더 복잡한 인터랙티브 3D 경험을 설계하고 싶습니다.</p>
+</div>
+<button class="mt-16 group flex items-center gap-4 bg-deep-green text-white px-10 py-5 rounded-full text-xs font-black uppercase tracking-widest hover:scale-105 transition-all duration-500 shadow-xl z-10">
+                    View Full Process Book
+                    <span class="material-symbols-outlined transition-transform group-hover:translate-x-2">arrow_forward</span>
+</button>
+</div>
+</div>
+</section>
+</main>
+<footer class="w-full py-20 px-6 border-t border-white/5">
+<div class="max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-12">
+<div class="serif-title text-4xl italic font-bold text-white">Kku-ing</div>
+<div class="space-y-4">
+<div class="text-[10px] uppercase tracking-[0.3em] font-bold text-white/40">Connect</div>
+<div class="flex gap-10">
+<a class="text-sm hover:text-pastel-pink transition-colors" href="#">Instagram</a>
+<a class="text-sm hover:text-pastel-pink transition-colors" href="#">ArtStation</a>
+<a class="text-sm hover:text-pastel-pink transition-colors" href="#">LinkedIn</a>
+</div>
+</div>
+<div class="text-[10px] uppercase tracking-[0.3em] font-bold text-white/20">
+            © 2024 Kku-ing Studio.
+        </div>
+</div>
+</footer>
+<script>
+    // Ensure the exported Stitch page is visible and naturally scrollable.
+    document.documentElement.style.opacity = '1';
+    document.body.style.overflowY = 'auto';
+    document.body.style.overflowX = 'hidden';
+</script>
+
+
+
+
+</body></html>
