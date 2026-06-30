@@ -5,7 +5,7 @@ window.RPDFinalProjects = {
     "works": 23,
     "previewAssets": 88,
     "videos": 49,
-    "links": 21,
+    "links": 20,
     "format": "Interactive filmstrip + Final Project detail pages"
   },
   "featuredIds": [
@@ -92,11 +92,6 @@ window.RPDFinalProjects = {
         }
       ],
       "links": [
-        {
-          "label": "Website 1",
-          "url": "assets/final-projects/project-02/video-02.mp4",
-          "kind": "Website"
-        },
         {
           "label": "Behance 1",
           "url": "https://www.behance.net/gallery/251170535/Tesla_x",
