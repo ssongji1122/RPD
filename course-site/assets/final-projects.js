@@ -589,7 +589,7 @@
     var provider = getPresentationProvider(link);
     var panel = el("a", {
       className: "final-web-launch-panel final-presentation-launch",
-      href: embedUrl,
+      href: resolveProjectLinkUrl(embedUrl),
       target: "_blank",
       rel: "noopener",
       "aria-label": (link.label || project.code + " 발표 자료") + " 열기"
@@ -985,17 +985,19 @@
     if (!links.length) return null;
     var list = el("div", { className: "final-detail-link-stack" });
     links.forEach(function (link) {
+      var href = resolveProjectLinkUrl(link.url);
+      if (!href) return;
       list.appendChild(el("a", {
         className: "final-link",
-        href: link.url,
+        href: href,
         target: "_blank",
         rel: "noopener"
       }, [
-        el("span", { textContent: link.label }),
+        el("span", { textContent: link.label || link.kind || "Link" }),
         el("b", { textContent: "열기" })
       ]));
     });
-    return list;
+    return list.children.length ? list : null;
   }
 
   function renderDetailNavRow(project, adjacent) {
