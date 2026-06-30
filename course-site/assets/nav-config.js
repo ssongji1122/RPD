@@ -15,7 +15,7 @@
         { href: 'index.html', tabTarget: 'archive', label: isKo ? '홈' : 'Home' },
         { href: 'library.html', tabTarget: 'showme', label: 'Show Me' },
         { href: 'inha.html', tabTarget: 'class', label: 'Class' },
-        { href: 'final-projects.html', tabTarget: 'final', label: isKo ? '기말 작품' : 'Works' },
+        { href: 'final-projects.html', tabTarget: 'final', label: 'Final Project' },
         { href: 'studio.html', tabTarget: 'studio', label: 'My Studio' }
       ];
     }

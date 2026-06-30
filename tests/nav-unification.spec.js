@@ -3,22 +3,25 @@ const { test, expect } = require('@playwright/test');
 
 const PAGES = [
   { path: '/index.html', activeTab: 'archive' },
-  { path: '/library.html', activeTab: 'archive' },
+  { path: '/library.html', activeTab: 'showme' },
   { path: '/shortcuts.html', activeTab: 'archive' },
   { path: '/studio.html', activeTab: 'studio' },
   { path: '/inha.html', activeTab: 'class' },
+  { path: '/final-projects.html', activeTab: 'final' },
   { path: '/week.html?week=3', activeTab: 'class' },
   { path: '/admin.html', activeTab: null }, // no tab matches 'admin'
 ];
 
 const EXPECTED_TABS = [
   { label: '홈', href: 'index.html', tabTarget: 'archive' },
+  { label: 'Show Me', href: 'library.html', tabTarget: 'showme' },
   { label: 'Class', href: 'inha.html', tabTarget: 'class' },
+  { label: '기말 작품', href: 'final-projects.html', tabTarget: 'final' },
   { label: 'My Studio', href: 'studio.html', tabTarget: 'studio' },
 ];
 
 for (const pg of PAGES) {
-  test(`${pg.path} has unified topbar with 3 tabs`, async ({ page }) => {
+  test(`${pg.path} has unified topbar with current tabs`, async ({ page }) => {
     await page.goto(pg.path);
     await page.waitForLoadState('domcontentloaded');
     // Wait for topbar-sync.js (DOMContentLoaded handler) to run
@@ -33,8 +36,8 @@ for (const pg of PAGES) {
       }))
     );
 
-    expect(tabs.length).toBe(3);
-    for (let i = 0; i < 3; i++) {
+    expect(tabs.length).toBe(EXPECTED_TABS.length);
+    for (let i = 0; i < EXPECTED_TABS.length; i++) {
       expect(tabs[i].label).toBe(EXPECTED_TABS[i].label);
       expect(tabs[i].href).toBe(EXPECTED_TABS[i].href);
       expect(tabs[i].tabTarget).toBe(EXPECTED_TABS[i].tabTarget);
