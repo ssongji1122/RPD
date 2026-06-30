@@ -85,7 +85,7 @@ cd web && npm run build                  # dist/ 생성
 ## Knowledge Pointers
 
 <!-- BEGIN:WIKI -->
-_last sync: 2026-06-27_
+_last sync: 2026-06-30_
 
 - [[agents-md-sst]] — AGENTS.md SSoT 전략 (symlink, .cursorrules deprecated) | 2026-05-06
 - [[gemini-cli-agents-md]] — Gemini CLI context.fileName 설정 | 2026-05-06
@@ -106,13 +106,13 @@ _last sync: 2026-06-27_
 - [[gstack-ship-workflow-notes]] — /ship 워크플로우 운영 노트 (pre-commit hook, 장기 브랜치) | 2026-05-11
 - [[karpathy-llm-wiki-pattern]] — Karpathy LLM Wiki 패턴 + 1인 사업가 필터 (5도메인 재설계 출처) | 2026-05-13
 - [[claude-cli-subprocess-pattern]] — Claude CLI spawn: non-zero exit → resolve(502) 처리 + --max-budget-usd 1.00 필수, fan-out 저장 실패 fail-fast | 2026-06-24
-- [[claude-code-remote-control-401]] — Remote Control 401(구독 정상) = scope 누락·stale credentials, /logout→/login 자동 콜백 해소 | 2026-06-05
+- [[ai-report-hallucinated-premise-verification]] — AI 보고서가 file:line 근거 달고도 전제를 환각하는 패턴, SoT 대조 4단계 검증 | 2026-06-28
 <!-- END:WIKI -->
 
 ## Recent Decisions
 
 <!-- BEGIN:DECISIONS -->
-_last sync: 2026-06-27_
+_last sync: 2026-06-30_
 
 | 2026-05-20 | AGENTS.md 표준 골격 11-section 확정 + agent-init 본문 풍부화 | ~/.dotfiles/agent-template/AGENTS.base.md를 빈 placeholder에서 11-section 골격으로 재작성 (Project Overview, Stack, Dev Servers, Commands, Quality Gates, Protected Files, Conventions, Design System, Karpathy 4원칙, Knowledge Pointers, Recent Decisions). 신규 프로젝트가 /agent-init 한 방으로 thegoodfriends 수준 골격 확보. 기존 4개 프로젝트는 audit 후 실제 갭만 보완 (scrave 골격 추가, studio.soluta Quality Gates). | 전체 |
 | 2026-05-20 | busywork 회피 원칙 확립 — 표준화 ≠ 동질화 | audit 결과(grep substring 매트릭스)를 무비판 실행 계획으로 전환 금지. thegoodfriends(404줄) 처럼 이미 풍부한 AGENTS.md는 명칭이 표준과 달라도 정보가 더 풍부하면 그대로 유지. Karpathy 외과적 변경 원칙과 일치. 다음 표준화 작업 시 "실제로 빈 곳만 채움" 가이드. | 전체 |
