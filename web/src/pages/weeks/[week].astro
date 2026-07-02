@@ -18,6 +18,10 @@ const next = weeks[idx + 1];
 
 const prompts = loadPrompts(w.week);
 const imgSrc = (img: string) => url(img.startsWith('/') ? img : `/${img}`);
+// 참고 자료의 사이트 내부 링크(예: shortcuts.html)는 Astro 라우트로 해석한다.
+// 외부 http(s) URL 은 그대로 통과.
+const refHref = (u: string) =>
+  /^https?:\/\//.test(u) ? u : url(`/${u.replace(/^\.?\//, '').replace(/\.html$/, '')}`);
 const stepImages = (s: { image?: string | string[] }): string[] =>
   s.image == null ? [] : Array.isArray(s.image) ? s.image : [s.image];
 ---
@@ -134,13 +138,13 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
           {w.videos.map((v) => (
             <li>
               <span class="ref-tag meta">영상</span>
-              <a href={v.url} target="_blank" rel="noopener">{v.title}</a>
+              <a href={refHref(v.url)} target="_blank" rel="noopener">{v.title}</a>
             </li>
           ))}
           {w.docs.map((d) => (
             <li>
               <span class="ref-tag meta">문서</span>
-              <a href={d.url} target="_blank" rel="noopener">{d.title}</a>
+              <a href={refHref(d.url)} target="_blank" rel="noopener">{d.title}</a>
             </li>
           ))}
         </ul>
