@@ -434,6 +434,11 @@ body[data-tab="final"] .main:has(.final-review[data-view="detail"]) {
   z-index: 2;
 }
 
+.final-gallery-panel:focus-visible {
+  outline: 2px solid var(--key);
+  outline-offset: 3px;
+}
+
 .final-gallery-panel-frame {
   position: absolute;
   inset: 0;
@@ -470,6 +475,11 @@ body[data-tab="final"] .main:has(.final-review[data-view="detail"]) {
     height: clamp(280px, 32vw, 400px);
     outline: none;
     z-index: 2;
+  }
+
+  .final-gallery-panel:focus-visible {
+    outline: 2px solid var(--key);
+    outline-offset: 3px;
   }
 
   .final-gallery-panel:hover .final-gallery-panel-frame,
