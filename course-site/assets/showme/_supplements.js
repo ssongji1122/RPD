@@ -954,6 +954,219 @@ const SHOWME_SUPPLEMENTS = {
     "targets": [
       "ai-3d-generation"
     ]
+  },
+  "material-core": {
+    "title": "재질을 바꿨는데 회색 그대로라면, 보는 모드부터 확인하세요",
+    "analogy": {
+      "headline": "재질은 물체가 입는 옷이에요",
+      "body": "Principled BSDF는 한 벌로 플라스틱·금속·고무까지 소화하는 만능 원단이고, Shader Editor는 그 원단을 마름질하는 재봉대예요. Material Properties 패널과 Shader Editor는 같은 옷을 다른 각도에서 보는 것뿐이에요."
+    },
+    "before_after": {
+      "before": "Base Color와 Roughness를 아무리 바꿔도 뷰포트가 회색이라, 재질이 고장 났다고 생각하고 같은 값을 계속 다시 만진다.",
+      "after": "Z 키로 Material Preview나 Rendered 모드로 바꾸면 값 하나하나가 바로 보이고, Metallic·Roughness 두 값만으로도 재질 대부분을 구분해 만들 수 있다."
+    },
+    "confusion": [
+      {
+        "symptom": "Base Color를 바꿨는데 뷰포트에선 아무 변화가 없어요.",
+        "reason": "기본 Solid 모드는 작업용 음영만 보여주고 재질을 계산하지 않기 때문이에요.",
+        "fix": "Z 키를 눌러 Material Preview로 전환한 뒤 재질을 조정하세요. 최종 확인은 Rendered 모드에서 하세요."
+      },
+      {
+        "symptom": "금속처럼 만들었는데 그냥 어두운 플라스틱처럼 보여요.",
+        "reason": "Metallic 1.0은 주변에 비칠 환경이 있어야 금속답게 보여요. 빈 씬에서는 반사할 것이 없어서 검게 가라앉아요.",
+        "fix": "Material Preview의 기본 HDRI에서 확인하거나, 씬에 라이트·환경을 먼저 깔고 판단하세요."
+      }
+    ],
+    "takeaway": "재질 작업의 절반은 보는 모드예요. Metallic과 Roughness 두 슬라이더를 먼저 손에 익히면 나머지는 응용이에요.",
+    "targets": [
+      "material-basics",
+      "principled-bsdf",
+      "shader-editor"
+    ]
+  },
+  "lighting-core": {
+    "title": "조명이 밋밋하면 개수보다 역할을 먼저 점검하세요",
+    "analogy": {
+      "headline": "사진 스튜디오의 조명 배치와 같아요",
+      "body": "Key는 주인공을 비추는 메인 조명, Fill은 그림자를 살짝 풀어주는 보조, Rim은 뒤에서 윤곽을 살리는 라인이에요. HDRI는 조명 여러 개 대신 촬영 장소를 통째로 바꿔서 빛을 깔아주는 배경 세트예요."
+    },
+    "before_after": {
+      "before": "라이트를 여러 개 놓아도 전부 앞에서만 비추니 그림자가 겹치고, 형태가 평평하게 눌린 렌더가 나온다.",
+      "after": "Key 하나로 방향을 정하고 Fill·Rim으로 역할을 나누면, 같은 모델도 입체감과 분위기가 살아 있는 렌더가 나온다."
+    },
+    "confusion": [
+      {
+        "symptom": "렌더가 너무 어둡거나, 반대로 하얗게 날아가요.",
+        "reason": "라이트의 Power와 거리 문제일 때가 많아요. 라이트는 거리가 멀어지면 급격히 어두워져요.",
+        "fix": "라이트를 하나만 남기고 Power와 거리를 먼저 잡은 뒤, 나머지를 추가하세요. HDRI를 쓰면 기본 밝기가 확보돼요."
+      },
+      {
+        "symptom": "HDRI를 넣었더니 배경 이미지가 렌더에 그대로 나와요.",
+        "reason": "HDRI는 조명이자 배경이라 기본값으로는 카메라에도 보여요.",
+        "fix": "Render Properties > Film > Transparent를 켜면 빛은 유지하고 배경만 투명하게 만들 수 있어요."
+      }
+    ],
+    "takeaway": "조명은 개수가 아니라 역할 분담이에요. Key부터 하나씩, 각 라이트가 무슨 일을 하는지 말할 수 있으면 성공이에요.",
+    "targets": [
+      "light-types",
+      "three-point-light",
+      "hdri-lighting",
+      "mood-lighting"
+    ]
+  },
+  "array-modifier": {
+    "title": "Array 간격이 이상하면 Scale부터 정리하세요",
+    "analogy": {
+      "headline": "복사기의 연속 출력 버튼이에요",
+      "body": "부품 하나를 원본으로 두고 Count만큼 줄지어 찍어내요. 원본을 고치면 복사본 전체가 한 번에 따라 바뀌는 게 복사-붙여넣기와 다른 점이에요."
+    },
+    "before_after": {
+      "before": "볼트 여덟 개를 하나씩 복사해 배치하면, 디자인이 바뀔 때마다 여덟 개를 전부 다시 만진다.",
+      "after": "Array 하나로 반복을 만들면 원본 하나만 수정해도 전체가 갱신되고, Count 값으로 개수를 바로 조절할 수 있다."
+    },
+    "confusion": [
+      {
+        "symptom": "Relative Offset을 1로 줬는데 간격이 벌어지거나 겹쳐요.",
+        "reason": "Relative Offset은 오브젝트의 크기 기준이라, Scale이 적용되지 않은 상태면 계산이 어긋나요.",
+        "fix": "Object Mode에서 Ctrl+A > Scale로 먼저 정리한 뒤 Offset을 조절하세요."
+      }
+    ],
+    "takeaway": "Array는 반복을 원본 하나로 관리하는 도구예요. 간격이 이상하면 십중팔구 Scale 문제예요.",
+    "targets": [
+      "array-modifier"
+    ]
+  },
+  "bevel-tool-vs-modifier": {
+    "title": "하나만 다듬을 땐 Ctrl+B, 전체를 관리할 땐 Modifier예요",
+    "analogy": {
+      "headline": "수동 사포질과 연마 기계의 차이예요",
+      "body": "Ctrl+B는 원하는 모서리만 골라 손으로 사포질하는 것이고, Bevel Modifier는 전체 모서리를 규칙에 따라 한 번에 연마하는 기계예요. 기계는 설정을 바꾸면 언제든 결과가 다시 계산돼요."
+    },
+    "before_after": {
+      "before": "모든 모서리를 Ctrl+B로 하나씩 깎다가, 두께를 바꾸고 싶어지면 처음부터 다시 깎는다.",
+      "after": "전체 라운딩은 Modifier에 맡기고 특별한 모서리만 Ctrl+B로 손보면, Amount 값 하나로 전체 느낌을 계속 조절할 수 있다."
+    },
+    "confusion": [
+      {
+        "symptom": "Bevel Modifier를 켰더니 원하지 않는 모서리까지 전부 둥글어져요.",
+        "reason": "Modifier는 기본적으로 모든 모서리에 적용되기 때문이에요.",
+        "fix": "Limit Method를 Angle로 두고 각도를 조절하거나, Weight로 바꾸고 원하는 모서리에만 Bevel Weight를 주세요."
+      }
+    ],
+    "takeaway": "부분은 Tool, 전체는 Modifier. 되돌릴 가능성이 있는 작업일수록 Modifier 쪽이 유리해요.",
+    "targets": [
+      "bevel-tool-vs-modifier"
+    ]
+  },
+  "solidify-modifier": {
+    "title": "Solidify 두께가 한쪽으로만 자라는 건 Offset 때문이에요",
+    "analogy": {
+      "headline": "색종이를 판지로 바꿔주는 기능이에요",
+      "body": "두께가 없는 면에 Thickness만큼 살을 붙여요. Offset은 그 살을 어느 쪽으로 붙일지 정하는 값이라, -1은 안쪽, 1은 바깥쪽, 0은 양쪽 균등이에요."
+    },
+    "before_after": {
+      "before": "로봇 외장 패널을 Plane으로 만들면 옆에서 볼 때 종이처럼 얇아 존재감이 없다.",
+      "after": "Solidify로 두께를 주면 패널이 실제 부품처럼 보이고, Thickness 값으로 판의 무게감을 조절할 수 있다."
+    },
+    "confusion": [
+      {
+        "symptom": "두께를 줬더니 표면이 원래 위치에서 밀려났어요.",
+        "reason": "Offset 값에 따라 원래 면을 기준으로 어느 방향에 살을 붙일지가 달라지기 때문이에요.",
+        "fix": "표면 위치를 유지하려면 Offset을 -1 또는 1로 조절해 붙는 방향을 바꿔보세요."
+      }
+    ],
+    "takeaway": "Solidify는 Thickness와 Offset 두 값이 전부예요. 두께의 양과 방향을 따로 생각하세요.",
+    "targets": [
+      "solidify-modifier"
+    ]
+  },
+  "simple-deform": {
+    "title": "휘는 방향이 이상하면 축과 기준점을 확인하세요",
+    "analogy": {
+      "headline": "빨대를 손으로 다루는 네 가지 방법이에요",
+      "body": "Bend는 구부리기, Twist는 비틀기, Taper는 한쪽 끝 좁히기, Stretch는 잡아 늘이기예요. 어느 손으로 어디를 잡고 도는지가 Axis와 Origin이에요."
+    },
+    "before_after": {
+      "before": "안테나를 곡선으로 만들려고 버텍스를 하나씩 옮기면, 곡률이 고르지 않고 수정도 어렵다.",
+      "after": "Simple Deform의 Bend에 각도만 주면 균일한 곡선이 나오고, Angle 값으로 휘는 정도를 언제든 다시 조절할 수 있다."
+    },
+    "confusion": [
+      {
+        "symptom": "Bend를 줬는데 엉뚱한 방향으로 꺾이거나 형태가 뭉개져요.",
+        "reason": "변형의 기준이 되는 Axis와 Origin이 의도한 방향과 다르기 때문이에요.",
+        "fix": "Axis를 X/Y/Z로 바꿔 보고, 필요하면 Empty를 추가해 Origin으로 지정한 뒤 Empty를 회전해 기준을 잡으세요. 세그먼트가 부족해도 뭉개지니 Loop Cut을 먼저 넣으세요."
+      }
+    ],
+    "takeaway": "Simple Deform은 값보다 기준이 중요해요. 축·기준점·세그먼트 세 가지를 세트로 점검하세요.",
+    "targets": [
+      "simple-deform"
+    ]
+  },
+  "blender-preferences": {
+    "title": "처음 10분의 설정이 한 학기 사고를 줄여줘요",
+    "analogy": {
+      "headline": "새 폰을 개통하면 제일 먼저 하는 초기 설정이에요",
+      "body": "한 번 맞춰두면 계속 따라오는 값들이에요. Auto Save는 자동 백업, Undo Steps는 되돌리기 한도, Emulate 3 Button Mouse는 입력 장치 보정이라고 생각하면 돼요."
+    },
+    "before_after": {
+      "before": "기본 설정 그대로 쓰다가 프로그램이 꺼지면 수십 분의 작업이 사라지고, Ctrl+Z 한도에 막혀 실수 이전으로 돌아가지 못한다.",
+      "after": "Auto Save 주기를 짧게, Undo Steps를 64 이상으로 올려두면 사고가 나도 잃는 작업이 몇 분 단위로 줄어든다."
+    },
+    "confusion": [
+      {
+        "symptom": "노트북 트랙패드라 화면 회전(Orbit)이 안 돼요.",
+        "reason": "Blender의 화면 조작은 가운데 버튼(휠 클릭) 중심으로 설계되어 있기 때문이에요.",
+        "fix": "Preferences > Input에서 Emulate 3 Button Mouse를 켜면 Alt+클릭으로 가운데 버튼을 대신할 수 있어요."
+      }
+    ],
+    "takeaway": "Auto Save와 Undo Steps 두 가지만 만져도 작업을 날리는 사고 대부분을 예방할 수 있어요.",
+    "targets": [
+      "blender-preferences"
+    ]
+  },
+  "poly-circle": {
+    "title": "3D의 원은 사실 다각형이에요",
+    "analogy": {
+      "headline": "동전을 확대하면 톱니가 보이는 것과 같아요",
+      "body": "Blender의 Circle과 Cylinder는 진짜 곡선이 아니라 짧은 직선을 이어 붙인 다각형이에요. Vertices 수가 많을수록 매끈해 보이고, 적을수록 각져 보여요."
+    },
+    "before_after": {
+      "before": "실린더가 각져 보여서 고장 났다고 생각하거나, 반대로 버텍스를 무조건 최대로 올려 씬이 무거워진다.",
+      "after": "화면에서 차지하는 크기에 맞춰 Vertices 수를 고르면, 가볍고도 충분히 매끈한 원을 만들 수 있다."
+    },
+    "confusion": [
+      {
+        "symptom": "Cylinder를 추가했는데 옆면이 각져 보여요.",
+        "reason": "기본 32각형이라 가까이서 보면 직선 면이 드러나기 때문이에요.",
+        "fix": "추가 직후 좌하단 옵션(F9)에서 Vertices를 올리세요. 멀리 있는 부품이면 오히려 줄여서 가볍게 유지하세요."
+      }
+    ],
+    "takeaway": "원의 품질은 Vertices 수와 화면 크기의 균형이에요. 클로즈업 부품만 촘촘하게, 배경 부품은 가볍게.",
+    "targets": [
+      "poly-circle"
+    ]
+  },
+  "box-rounding": {
+    "title": "모서리만 둥글릴지, 전체를 부드럽게 할지 먼저 정하세요",
+    "analogy": {
+      "headline": "각진 비누를 깎는 두 가지 방법이에요",
+      "body": "Bevel은 모서리 부분만 칼로 다듬는 것이고, Subdivision은 비누 전체를 물에 불려 둥글게 만드는 거예요. 어디까지 둥글어져야 하는지에 따라 도구가 달라져요."
+    },
+    "before_after": {
+      "before": "박스를 부드럽게 하려고 Subdivision부터 걸면 전체가 풍선처럼 부풀어 원래 실루엣이 사라진다.",
+      "after": "날카로운 실루엣을 유지하며 모서리만 둥글리고 싶을 때 Bevel을 쓰면, 제품 디자인 특유의 라운드 처리가 나온다."
+    },
+    "confusion": [
+      {
+        "symptom": "Subdivision을 걸었더니 박스가 공처럼 변해요.",
+        "reason": "Subdivision은 지지선이 없으면 전체를 균등하게 부풀리기 때문이에요.",
+        "fix": "유지하고 싶은 모서리 근처에 Loop Cut을 추가해 지지선을 만들거나, 처음부터 Bevel로 모서리만 깎으세요."
+      }
+    ],
+    "takeaway": "실루엣을 지키려면 Bevel, 전체 곡면을 원하면 Subdivision + 지지선. 목적부터 정하면 도구는 따라와요.",
+    "targets": [
+      "box-rounding"
+    ]
   }
 };
 if (typeof window !== "undefined") window.SHOWME_SUPPLEMENTS = SHOWME_SUPPLEMENTS;
