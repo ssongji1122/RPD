@@ -355,7 +355,7 @@
 ### 공식 문서
 
 - [Blender Manual: Rendering](https://docs.blender.org/manual/en/latest/render/index.html)
-- [Blender 단축키 모음](../../resources/blender-shortcuts.md)
+- [Blender 단축키 모음](shortcuts.html)
 <!-- AUTO:CURRICULUM-SYNC:END -->
 
 ## 참고 자료

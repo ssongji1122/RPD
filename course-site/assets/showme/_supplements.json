@@ -18,7 +18,9 @@
       }
     ],
     "takeaway": "화면 조작은 모델링이 아니라 카메라 잡기예요. 모델은 두고, 시점만 바꾼다고 생각하면 쉬워져요.",
-    "targets": ["viewport-navigation"]
+    "targets": [
+      "viewport-navigation"
+    ]
   },
   "edit-mode": {
     "title": "같은 큐브인데 왜 다르게 잡힐까요?",
@@ -39,7 +41,10 @@
       }
     ],
     "takeaway": "Mode는 조작 단위를 바꾸는 스위치예요. 전체를 만질지, 부품을 만질지 먼저 정하는 단계라고 보면 돼요.",
-    "targets": ["edit-mode", "edit-mode-tools"]
+    "targets": [
+      "edit-mode",
+      "edit-mode-tools"
+    ]
   },
   "extrude": {
     "title": "아직 헷갈린다면?",
@@ -65,7 +70,9 @@
       }
     ],
     "takeaway": "Extrude는 기존 메시에서 새 부분을 연결된 채로 뽑아내는 작업이라, 같은 오브젝트 안에서 형태를 계속 늘려나갈 수 있다.",
-    "targets": ["extrude"]
+    "targets": [
+      "extrude"
+    ]
   },
   "transform-apply": {
     "title": "눈에 보이는 값과 실제 값은 달라요",
@@ -86,7 +93,9 @@
       }
     ],
     "takeaway": "Apply는 겉으로만 변한 상태를 내부 데이터에도 반영해서, 다음 작업의 기준을 바로잡는 과정이에요.",
-    "targets": ["transform-apply"]
+    "targets": [
+      "transform-apply"
+    ]
   },
   "transform-core": {
     "title": "움직임, 방향, 기준점을 따로 보면 쉬워져요",
@@ -112,7 +121,11 @@
       }
     ],
     "takeaway": "G/R/S는 행동, Orientation은 방향 기준, Pivot은 중심 기준이에요. 세 가지를 분리해서 생각하면 변형 도구가 훨씬 안정적으로 느껴집니다.",
-    "targets": ["transform-grs", "transform-orientation", "pivot-point"]
+    "targets": [
+      "transform-grs",
+      "transform-orientation",
+      "pivot-point"
+    ]
   },
   "precision-modeling-core": {
     "title": "정확히 붙일지, 부드럽게 퍼뜨릴지 먼저 정하세요",
@@ -138,7 +151,10 @@
       }
     ],
     "takeaway": "정확한 정렬은 Snap, 자연스러운 흐름 조정은 Proportional Editing이에요. 둘을 같은 '이동 보조'로 보지 말고 목적별로 나누면 덜 헷갈립니다.",
-    "targets": ["snap", "proportional-editing"]
+    "targets": [
+      "snap",
+      "proportional-editing"
+    ]
   },
   "mirror-core": {
     "title": "Mirror가 어긋나는 건 보통 기준점 문제예요",
@@ -159,7 +175,11 @@
       }
     ],
     "takeaway": "Mirror에서 제일 중요한 건 메시보다 기준점이에요. 원점이 거울의 위치라고 생각하면 이해가 쉬워져요.",
-    "targets": ["mirror-modifier", "mirror-workflow", "mirror-origin-mode"]
+    "targets": [
+      "mirror-modifier",
+      "mirror-workflow",
+      "mirror-origin-mode"
+    ]
   },
   "origin-vs-3dcursor": {
     "title": "Origin과 3D Cursor는 역할이 달라요",
@@ -180,7 +200,9 @@
       }
     ],
     "takeaway": "Origin은 오브젝트의 기준점, 3D Cursor는 장면의 기준점이에요. 같은 점처럼 보여도 역할이 다릅니다.",
-    "targets": ["origin-vs-3dcursor"]
+    "targets": [
+      "origin-vs-3dcursor"
+    ]
   },
   "reference-image-core": {
     "title": "Reference는 따라 그리는 가이드지, 최종 오브젝트가 아니에요",
@@ -206,7 +228,9 @@
       }
     ],
     "takeaway": "Image Reference는 모델링 눈금을 맞추는 가이드예요. 렌더 결과물이나 실제 메시와는 역할이 다릅니다.",
-    "targets": ["image-reference"]
+    "targets": [
+      "image-reference"
+    ]
   },
   "subdivision-surface": {
     "title": "부드럽게 나누면 모서리도 같이 퍼져요",
@@ -227,7 +251,9 @@
       }
     ],
     "takeaway": "Subdivision은 부드럽게 만드는 기능이지, 모서리를 지켜주는 기능은 아니에요. 형태를 유지하려면 support loop가 같이 가야 해요.",
-    "targets": ["subdivision-surface"]
+    "targets": [
+      "subdivision-surface"
+    ]
   },
   "surface-detail-core": {
     "title": "Inset, Loop Cut, Bevel은 디테일을 여는 세 단계예요",
@@ -258,7 +284,11 @@
       }
     ],
     "takeaway": "Inset은 경계 만들기, Loop Cut은 제어선 추가, Bevel은 모서리 마감이에요. 셋을 구분하면 하드서피스 디테일 설계가 쉬워집니다.",
-    "targets": ["inset", "loop-cut", "bevel-tool"]
+    "targets": [
+      "inset",
+      "loop-cut",
+      "bevel-tool"
+    ]
   },
   "viewport-visibility-core": {
     "title": "같은 모델이라도 지금 보고 싶은 정보가 다르면 모드도 달라져요",
@@ -284,7 +314,10 @@
       }
     ],
     "takeaway": "Viewport Shading은 '무엇을 볼지', X-Ray는 '얼마나 관통해서 볼지'를 정하는 도구예요. 화면을 고정하지 말고 목적에 맞춰 바꾸는 습관이 중요합니다.",
-    "targets": ["viewport-shading", "xray-opacity"]
+    "targets": [
+      "viewport-shading",
+      "xray-opacity"
+    ]
   },
   "uv-core": {
     "title": "UV는 3D 표면을 2D로 번역하는 과정이에요",
@@ -305,7 +338,10 @@
       }
     ],
     "takeaway": "UV는 텍스처를 그리는 단계가 아니라, 텍스처가 들어갈 좌표계를 만드는 단계예요.",
-    "targets": ["uv-unwrapping", "uv-editor"]
+    "targets": [
+      "uv-unwrapping",
+      "uv-editor"
+    ]
   },
   "animation-core": {
     "title": "애니메이션은 움직임을 그리는 게 아니라 상태를 찍는 거예요",
@@ -326,7 +362,10 @@
       }
     ],
     "takeaway": "Keyframe은 상태 기록, Graph Editor는 그 상태 사이의 속도 조절이라고 나눠 생각하면 쉬워집니다.",
-    "targets": ["keyframe-basics", "graph-editor"]
+    "targets": [
+      "keyframe-basics",
+      "graph-editor"
+    ]
   },
   "rigging-core": {
     "title": "Bone과 Weight는 역할이 달라요",
@@ -347,7 +386,10 @@
       }
     ],
     "takeaway": "Armature는 구조, Weight Paint는 영향 범위예요. 둘을 따로 이해해야 리깅이 풀려요.",
-    "targets": ["armature-basics", "weight-paint"]
+    "targets": [
+      "armature-basics",
+      "weight-paint"
+    ]
   },
   "boolean-modifier": {
     "title": "Boolean이 꼬였다면?",
@@ -373,7 +415,9 @@
       }
     ],
     "takeaway": "Boolean은 오브젝트끼리 형태를 더하거나 빼는 도구예요. 커터는 숨기되 삭제하지 않는 게 핵심이에요.",
-    "targets": ["boolean-modifier"]
+    "targets": [
+      "boolean-modifier"
+    ]
   },
   "bevel-modifier": {
     "title": "Bevel이 이상하다면?",
@@ -399,7 +443,9 @@
       }
     ],
     "takeaway": "Bevel Modifier는 비파괴적으로 모서리를 다듬는 도구예요. Weight + Weighted Normal 조합이 실전 표준이에요.",
-    "targets": ["bevel-modifier"]
+    "targets": [
+      "bevel-modifier"
+    ]
   },
   "weighted-normal": {
     "title": "음영이 이상하다면?",
@@ -425,7 +471,9 @@
       }
     ],
     "takeaway": "Weighted Normal은 면 크기 기반으로 노말을 재계산해서 하드서페이스 음영을 정리하는 마무리 도구예요.",
-    "targets": ["weighted-normal"]
+    "targets": [
+      "weighted-normal"
+    ]
   },
   "join-separate": {
     "title": "합치기·나누기가 꼬였다면?",
@@ -451,7 +499,9 @@
       }
     ],
     "takeaway": "Join은 합치기, Separate는 나누기. Active Object가 결과의 이름·Origin·머티리얼 순서를 결정해요.",
-    "targets": ["join-separate"]
+    "targets": [
+      "join-separate"
+    ]
   },
   "edge-split-modifier": {
     "title": "엣지가 날카롭지 않다면?",
@@ -472,7 +522,9 @@
       }
     ],
     "takeaway": "Edge Split은 날카로운 엣지를 강제로 만드는 도구예요. Auto Smooth로 해결 안 될 때만 사용하세요.",
-    "targets": ["edge-split-modifier"]
+    "targets": [
+      "edge-split-modifier"
+    ]
   },
   "triangulate-modifier": {
     "title": "삼각형으로 바꿔야 하나요?",
@@ -493,7 +545,9 @@
       }
     ],
     "takeaway": "Triangulate는 내보내기 직전에 적용하는 호환성 도구예요. 모델링 중에는 사용하지 마세요.",
-    "targets": ["triangulate-modifier"]
+    "targets": [
+      "triangulate-modifier"
+    ]
   },
   "weld-modifier": {
     "title": "버텍스가 겹쳐 있다면?",
@@ -514,7 +568,9 @@
       }
     ],
     "takeaway": "Weld는 중복 버텍스를 자동 정리하는 비파괴적 도구예요. Boolean·Array 후 정리용으로 사용하세요.",
-    "targets": ["weld-modifier"]
+    "targets": [
+      "weld-modifier"
+    ]
   },
   "build-modifier": {
     "title": "Build가 안 보인다면?",
@@ -535,7 +591,9 @@
       }
     ],
     "takeaway": "Build는 면을 순서대로 나타나게 하는 애니메이션 Modifier예요. 타임라인 재생이 필수예요.",
-    "targets": ["build-modifier"]
+    "targets": [
+      "build-modifier"
+    ]
   },
   "decimate-modifier": {
     "title": "폴리곤을 줄이고 싶다면?",
@@ -556,7 +614,9 @@
       }
     ],
     "takeaway": "Decimate는 폴리곤 수를 줄이는 최적화 도구예요. Ratio를 점진적으로 조절하는 게 핵심이에요.",
-    "targets": ["decimate-modifier"]
+    "targets": [
+      "decimate-modifier"
+    ]
   },
   "remesh-modifier": {
     "title": "토폴로지가 엉망이라면?",
@@ -577,7 +637,9 @@
       }
     ],
     "takeaway": "Remesh는 불규칙한 토폴로지를 균일한 격자로 재구성하는 도구예요. Voxel Size 조절이 핵심이에요.",
-    "targets": ["remesh-modifier"]
+    "targets": [
+      "remesh-modifier"
+    ]
   },
   "screw-modifier": {
     "title": "회전체가 안 만들어진다면?",
@@ -598,7 +660,9 @@
       }
     ],
     "takeaway": "Screw는 단면을 축 중심으로 회전시켜 3D 형태를 만드는 도구예요. Origin 위치가 핵심이에요.",
-    "targets": ["screw-modifier"]
+    "targets": [
+      "screw-modifier"
+    ]
   },
   "skin-modifier": {
     "title": "뼈대에 살을 입히고 싶다면?",
@@ -619,7 +683,9 @@
       }
     ],
     "takeaway": "Skin은 뼈대에 메시 표면을 자동 생성하는 도구예요. 버텍스별 Ctrl+A 두께 조절이 핵심이에요.",
-    "targets": ["skin-modifier"]
+    "targets": [
+      "skin-modifier"
+    ]
   },
   "wireframe-modifier": {
     "title": "와이어프레임을 만들고 싶다면?",
@@ -640,7 +706,9 @@
       }
     ],
     "takeaway": "Wireframe은 엣지를 따라 와이어프레임 메시를 생성하는 도구예요. Replace Original 옵션에 주의하세요.",
-    "targets": ["wireframe-modifier"]
+    "targets": [
+      "wireframe-modifier"
+    ]
   },
   "mask-modifier": {
     "title": "일부만 숨기고 싶다면?",
@@ -661,7 +729,9 @@
       }
     ],
     "takeaway": "Mask는 Vertex Group 기반으로 메시 일부를 숨기는 도구예요. Vertex Group 설정이 선행되어야 해요.",
-    "targets": ["mask-modifier"]
+    "targets": [
+      "mask-modifier"
+    ]
   },
   "multiresolution-modifier": {
     "title": "스컬프팅 해상도를 조절하고 싶다면?",
@@ -682,7 +752,9 @@
       }
     ],
     "takeaway": "Multiresolution은 해상도 레벨별로 독립 스컬프팅이 가능한 도구예요. SubSurf와 달리 각 레벨을 따로 편집할 수 있어요.",
-    "targets": ["multiresolution-modifier"]
+    "targets": [
+      "multiresolution-modifier"
+    ]
   },
   "volume-to-mesh": {
     "title": "볼륨을 메시로 바꾸고 싶다면?",
@@ -703,7 +775,9 @@
       }
     ],
     "takeaway": "Volume to Mesh는 볼륨 데이터를 편집 가능한 메시로 변환하는 도구예요. 볼륨 오브젝트가 선행되어야 해요.",
-    "targets": ["volume-to-mesh"]
+    "targets": [
+      "volume-to-mesh"
+    ]
   },
   "curve-to-tube": {
     "title": "커브로 파이프를 만들고 싶다면?",
@@ -724,7 +798,9 @@
       }
     ],
     "takeaway": "Curve to Tube는 커브 경로에 Bevel Depth를 줘서 파이프를 만드는 기법이에요. Depth 설정이 핵심이에요.",
-    "targets": ["curve-to-tube"]
+    "targets": [
+      "curve-to-tube"
+    ]
   },
   "scatter-on-surface": {
     "title": "표면에 오브젝트를 뿌리고 싶다면?",
@@ -745,7 +821,9 @@
       }
     ],
     "takeaway": "Scatter는 Geometry Nodes 기반 분산 배치 도구예요. Distribute + Instance on Points 조합이 기본이에요.",
-    "targets": ["scatter-on-surface"]
+    "targets": [
+      "scatter-on-surface"
+    ]
   },
   "sculpt-basics": {
     "title": "Sculpt Mode, 어렵게 생각 말아요",
@@ -772,7 +850,9 @@
         "label": "Blender Studio — Introduction to Sculpting"
       }
     ],
-    "targets": ["sculpt-basics"]
+    "targets": [
+      "sculpt-basics"
+    ]
   },
   "sculpt-brushes": {
     "title": "어떤 브러시를 써야 할지 모르겠다면?",
@@ -799,7 +879,9 @@
         "label": "Blender 공식 — Sculpt Brushes 전체 목록"
       }
     ],
-    "targets": ["sculpt-brushes"]
+    "targets": [
+      "sculpt-brushes"
+    ]
   },
   "ai-prompt-design": {
     "title": "AI한테 어떻게 설명해야 원하는 게 나올까요?",
@@ -826,7 +908,9 @@
         "label": "Meshy AI — 공식 문서 (프롬프트 가이드 포함)"
       }
     ],
-    "targets": ["ai-prompt-design"]
+    "targets": [
+      "ai-prompt-design"
+    ]
   },
   "ai-3d-generation": {
     "title": "AI가 만든 3D, 그냥 써도 될까요?",
@@ -862,6 +946,221 @@
         "label": "Tripo AI — 공식 사이트"
       }
     ],
-    "targets": ["ai-3d-generation"]
+    "targets": [
+      "ai-3d-generation"
+    ]
+  },
+  "material-core": {
+    "title": "재질을 바꿨는데 회색 그대로라면, 보는 모드부터 확인하세요",
+    "analogy": {
+      "headline": "재질은 물체가 입는 옷이에요",
+      "body": "Principled BSDF는 한 벌로 플라스틱·금속·고무까지 소화하는 만능 원단이고, Shader Editor는 그 원단을 마름질하는 재봉대예요. Material Properties 패널과 Shader Editor는 같은 옷을 다른 각도에서 보는 것뿐이에요."
+    },
+    "before_after": {
+      "before": "Base Color와 Roughness를 아무리 바꿔도 뷰포트가 회색이라, 재질이 고장 났다고 생각하고 같은 값을 계속 다시 만진다.",
+      "after": "Z 키로 Material Preview나 Rendered 모드로 바꾸면 값 하나하나가 바로 보이고, Metallic·Roughness 두 값만으로도 재질 대부분을 구분해 만들 수 있다."
+    },
+    "confusion": [
+      {
+        "symptom": "Base Color를 바꿨는데 뷰포트에선 아무 변화가 없어요.",
+        "reason": "기본 Solid 모드는 작업용 음영만 보여주고 재질을 계산하지 않기 때문이에요.",
+        "fix": "Z 키를 눌러 Material Preview로 전환한 뒤 재질을 조정하세요. 최종 확인은 Rendered 모드에서 하세요."
+      },
+      {
+        "symptom": "금속처럼 만들었는데 그냥 어두운 플라스틱처럼 보여요.",
+        "reason": "Metallic 1.0은 주변에 비칠 환경이 있어야 금속답게 보여요. 빈 씬에서는 반사할 것이 없어서 검게 가라앉아요.",
+        "fix": "Material Preview의 기본 HDRI에서 확인하거나, 씬에 라이트·환경을 먼저 깔고 판단하세요."
+      }
+    ],
+    "takeaway": "재질 작업의 절반은 보는 모드예요. Metallic과 Roughness 두 슬라이더를 먼저 손에 익히면 나머지는 응용이에요.",
+    "targets": [
+      "material-basics",
+      "principled-bsdf",
+      "shader-editor"
+    ]
+  },
+  "lighting-core": {
+    "title": "조명이 밋밋하면 개수보다 역할을 먼저 점검하세요",
+    "analogy": {
+      "headline": "사진 스튜디오의 조명 배치와 같아요",
+      "body": "Key는 주인공을 비추는 메인 조명, Fill은 그림자를 살짝 풀어주는 보조, Rim은 뒤에서 윤곽을 살리는 라인이에요. HDRI는 조명 여러 개 대신 촬영 장소를 통째로 바꿔서 빛을 깔아주는 배경 세트예요."
+    },
+    "before_after": {
+      "before": "라이트를 여러 개 놓아도 전부 앞에서만 비추니 그림자가 겹치고, 형태가 평평하게 눌린 렌더가 나온다.",
+      "after": "Key 하나로 방향을 정하고 Fill·Rim으로 역할을 나누면, 같은 모델도 입체감과 분위기가 살아 있는 렌더가 나온다."
+    },
+    "confusion": [
+      {
+        "symptom": "렌더가 너무 어둡거나, 반대로 하얗게 날아가요.",
+        "reason": "라이트의 Power와 거리 문제일 때가 많아요. 라이트는 거리가 멀어지면 급격히 어두워져요.",
+        "fix": "라이트를 하나만 남기고 Power와 거리를 먼저 잡은 뒤, 나머지를 추가하세요. HDRI를 쓰면 기본 밝기가 확보돼요."
+      },
+      {
+        "symptom": "HDRI를 넣었더니 배경 이미지가 렌더에 그대로 나와요.",
+        "reason": "HDRI는 조명이자 배경이라 기본값으로는 카메라에도 보여요.",
+        "fix": "Render Properties > Film > Transparent를 켜면 빛은 유지하고 배경만 투명하게 만들 수 있어요."
+      }
+    ],
+    "takeaway": "조명은 개수가 아니라 역할 분담이에요. Key부터 하나씩, 각 라이트가 무슨 일을 하는지 말할 수 있으면 성공이에요.",
+    "targets": [
+      "light-types",
+      "three-point-light",
+      "hdri-lighting",
+      "mood-lighting"
+    ]
+  },
+  "array-modifier": {
+    "title": "Array 간격이 이상하면 Scale부터 정리하세요",
+    "analogy": {
+      "headline": "복사기의 연속 출력 버튼이에요",
+      "body": "부품 하나를 원본으로 두고 Count만큼 줄지어 찍어내요. 원본을 고치면 복사본 전체가 한 번에 따라 바뀌는 게 복사-붙여넣기와 다른 점이에요."
+    },
+    "before_after": {
+      "before": "볼트 여덟 개를 하나씩 복사해 배치하면, 디자인이 바뀔 때마다 여덟 개를 전부 다시 만진다.",
+      "after": "Array 하나로 반복을 만들면 원본 하나만 수정해도 전체가 갱신되고, Count 값으로 개수를 바로 조절할 수 있다."
+    },
+    "confusion": [
+      {
+        "symptom": "Relative Offset을 1로 줬는데 간격이 벌어지거나 겹쳐요.",
+        "reason": "Relative Offset은 오브젝트의 크기 기준이라, Scale이 적용되지 않은 상태면 계산이 어긋나요.",
+        "fix": "Object Mode에서 Ctrl+A > Scale로 먼저 정리한 뒤 Offset을 조절하세요."
+      }
+    ],
+    "takeaway": "Array는 반복을 원본 하나로 관리하는 도구예요. 간격이 이상하면 십중팔구 Scale 문제예요.",
+    "targets": [
+      "array-modifier"
+    ]
+  },
+  "bevel-tool-vs-modifier": {
+    "title": "하나만 다듬을 땐 Ctrl+B, 전체를 관리할 땐 Modifier예요",
+    "analogy": {
+      "headline": "수동 사포질과 연마 기계의 차이예요",
+      "body": "Ctrl+B는 원하는 모서리만 골라 손으로 사포질하는 것이고, Bevel Modifier는 전체 모서리를 규칙에 따라 한 번에 연마하는 기계예요. 기계는 설정을 바꾸면 언제든 결과가 다시 계산돼요."
+    },
+    "before_after": {
+      "before": "모든 모서리를 Ctrl+B로 하나씩 깎다가, 두께를 바꾸고 싶어지면 처음부터 다시 깎는다.",
+      "after": "전체 라운딩은 Modifier에 맡기고 특별한 모서리만 Ctrl+B로 손보면, Amount 값 하나로 전체 느낌을 계속 조절할 수 있다."
+    },
+    "confusion": [
+      {
+        "symptom": "Bevel Modifier를 켰더니 원하지 않는 모서리까지 전부 둥글어져요.",
+        "reason": "Modifier는 기본적으로 모든 모서리에 적용되기 때문이에요.",
+        "fix": "Limit Method를 Angle로 두고 각도를 조절하거나, Weight로 바꾸고 원하는 모서리에만 Bevel Weight를 주세요."
+      }
+    ],
+    "takeaway": "부분은 Tool, 전체는 Modifier. 되돌릴 가능성이 있는 작업일수록 Modifier 쪽이 유리해요.",
+    "targets": [
+      "bevel-tool-vs-modifier"
+    ]
+  },
+  "solidify-modifier": {
+    "title": "Solidify 두께가 한쪽으로만 자라는 건 Offset 때문이에요",
+    "analogy": {
+      "headline": "색종이를 판지로 바꿔주는 기능이에요",
+      "body": "두께가 없는 면에 Thickness만큼 살을 붙여요. Offset은 그 살을 어느 쪽으로 붙일지 정하는 값이라, -1은 안쪽, 1은 바깥쪽, 0은 양쪽 균등이에요."
+    },
+    "before_after": {
+      "before": "로봇 외장 패널을 Plane으로 만들면 옆에서 볼 때 종이처럼 얇아 존재감이 없다.",
+      "after": "Solidify로 두께를 주면 패널이 실제 부품처럼 보이고, Thickness 값으로 판의 무게감을 조절할 수 있다."
+    },
+    "confusion": [
+      {
+        "symptom": "두께를 줬더니 표면이 원래 위치에서 밀려났어요.",
+        "reason": "Offset 값에 따라 원래 면을 기준으로 어느 방향에 살을 붙일지가 달라지기 때문이에요.",
+        "fix": "표면 위치를 유지하려면 Offset을 -1 또는 1로 조절해 붙는 방향을 바꿔보세요."
+      }
+    ],
+    "takeaway": "Solidify는 Thickness와 Offset 두 값이 전부예요. 두께의 양과 방향을 따로 생각하세요.",
+    "targets": [
+      "solidify-modifier"
+    ]
+  },
+  "simple-deform": {
+    "title": "휘는 방향이 이상하면 축과 기준점을 확인하세요",
+    "analogy": {
+      "headline": "빨대를 손으로 다루는 네 가지 방법이에요",
+      "body": "Bend는 구부리기, Twist는 비틀기, Taper는 한쪽 끝 좁히기, Stretch는 잡아 늘이기예요. 어느 손으로 어디를 잡고 도는지가 Axis와 Origin이에요."
+    },
+    "before_after": {
+      "before": "안테나를 곡선으로 만들려고 버텍스를 하나씩 옮기면, 곡률이 고르지 않고 수정도 어렵다.",
+      "after": "Simple Deform의 Bend에 각도만 주면 균일한 곡선이 나오고, Angle 값으로 휘는 정도를 언제든 다시 조절할 수 있다."
+    },
+    "confusion": [
+      {
+        "symptom": "Bend를 줬는데 엉뚱한 방향으로 꺾이거나 형태가 뭉개져요.",
+        "reason": "변형의 기준이 되는 Axis와 Origin이 의도한 방향과 다르기 때문이에요.",
+        "fix": "Axis를 X/Y/Z로 바꿔 보고, 필요하면 Empty를 추가해 Origin으로 지정한 뒤 Empty를 회전해 기준을 잡으세요. 세그먼트가 부족해도 뭉개지니 Loop Cut을 먼저 넣으세요."
+      }
+    ],
+    "takeaway": "Simple Deform은 값보다 기준이 중요해요. 축·기준점·세그먼트 세 가지를 세트로 점검하세요.",
+    "targets": [
+      "simple-deform"
+    ]
+  },
+  "blender-preferences": {
+    "title": "처음 10분의 설정이 한 학기 사고를 줄여줘요",
+    "analogy": {
+      "headline": "새 폰을 개통하면 제일 먼저 하는 초기 설정이에요",
+      "body": "한 번 맞춰두면 계속 따라오는 값들이에요. Auto Save는 자동 백업, Undo Steps는 되돌리기 한도, Emulate 3 Button Mouse는 입력 장치 보정이라고 생각하면 돼요."
+    },
+    "before_after": {
+      "before": "기본 설정 그대로 쓰다가 프로그램이 꺼지면 수십 분의 작업이 사라지고, Ctrl+Z 한도에 막혀 실수 이전으로 돌아가지 못한다.",
+      "after": "Auto Save 주기를 짧게, Undo Steps를 64 이상으로 올려두면 사고가 나도 잃는 작업이 몇 분 단위로 줄어든다."
+    },
+    "confusion": [
+      {
+        "symptom": "노트북 트랙패드라 화면 회전(Orbit)이 안 돼요.",
+        "reason": "Blender의 화면 조작은 가운데 버튼(휠 클릭) 중심으로 설계되어 있기 때문이에요.",
+        "fix": "Preferences > Input에서 Emulate 3 Button Mouse를 켜면 Alt+클릭으로 가운데 버튼을 대신할 수 있어요."
+      }
+    ],
+    "takeaway": "Auto Save와 Undo Steps 두 가지만 만져도 작업을 날리는 사고 대부분을 예방할 수 있어요.",
+    "targets": [
+      "blender-preferences"
+    ]
+  },
+  "poly-circle": {
+    "title": "3D의 원은 사실 다각형이에요",
+    "analogy": {
+      "headline": "동전을 확대하면 톱니가 보이는 것과 같아요",
+      "body": "Blender의 Circle과 Cylinder는 진짜 곡선이 아니라 짧은 직선을 이어 붙인 다각형이에요. Vertices 수가 많을수록 매끈해 보이고, 적을수록 각져 보여요."
+    },
+    "before_after": {
+      "before": "실린더가 각져 보여서 고장 났다고 생각하거나, 반대로 버텍스를 무조건 최대로 올려 씬이 무거워진다.",
+      "after": "화면에서 차지하는 크기에 맞춰 Vertices 수를 고르면, 가볍고도 충분히 매끈한 원을 만들 수 있다."
+    },
+    "confusion": [
+      {
+        "symptom": "Cylinder를 추가했는데 옆면이 각져 보여요.",
+        "reason": "기본 32각형이라 가까이서 보면 직선 면이 드러나기 때문이에요.",
+        "fix": "추가 직후 좌하단 옵션(F9)에서 Vertices를 올리세요. 멀리 있는 부품이면 오히려 줄여서 가볍게 유지하세요."
+      }
+    ],
+    "takeaway": "원의 품질은 Vertices 수와 화면 크기의 균형이에요. 클로즈업 부품만 촘촘하게, 배경 부품은 가볍게.",
+    "targets": [
+      "poly-circle"
+    ]
+  },
+  "box-rounding": {
+    "title": "모서리만 둥글릴지, 전체를 부드럽게 할지 먼저 정하세요",
+    "analogy": {
+      "headline": "각진 비누를 깎는 두 가지 방법이에요",
+      "body": "Bevel은 모서리 부분만 칼로 다듬는 것이고, Subdivision은 비누 전체를 물에 불려 둥글게 만드는 거예요. 어디까지 둥글어져야 하는지에 따라 도구가 달라져요."
+    },
+    "before_after": {
+      "before": "박스를 부드럽게 하려고 Subdivision부터 걸면 전체가 풍선처럼 부풀어 원래 실루엣이 사라진다.",
+      "after": "날카로운 실루엣을 유지하며 모서리만 둥글리고 싶을 때 Bevel을 쓰면, 제품 디자인 특유의 라운드 처리가 나온다."
+    },
+    "confusion": [
+      {
+        "symptom": "Subdivision을 걸었더니 박스가 공처럼 변해요.",
+        "reason": "Subdivision은 지지선이 없으면 전체를 균등하게 부풀리기 때문이에요.",
+        "fix": "유지하고 싶은 모서리 근처에 Loop Cut을 추가해 지지선을 만들거나, 처음부터 Bevel로 모서리만 깎으세요."
+      }
+    ],
+    "takeaway": "실루엣을 지키려면 Bevel, 전체 곡면을 원하면 Subdivision + 지지선. 목적부터 정하면 도구는 따라와요.",
+    "targets": [
+      "box-rounding"
+    ]
   }
 }

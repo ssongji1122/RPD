@@ -2808,7 +2808,7 @@ const CURRICULUM = [
       },
       {
         "title": "Blender 단축키 모음",
-        "url": "../../resources/blender-shortcuts.md"
+        "url": "shortcuts.html"
       }
     ],
     "summary": "Week 01~07에서 배운 모델링·재질·텍스처를 활용한 개인 프로젝트를 발표합니다."
