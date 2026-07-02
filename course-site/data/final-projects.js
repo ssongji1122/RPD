@@ -250,7 +250,7 @@ window.RPDFinalProjects = {
           "kind": "Website"
         }
       ],
-      "coverSrc": "assets/final-projects/project-03/frame-04.webp",
+      "coverSrc": "assets/final-projects/project-03/cover.webp",
       "frames": [
         "assets/final-projects/project-03/frame-01.webp",
         "assets/final-projects/project-03/frame-02.webp",

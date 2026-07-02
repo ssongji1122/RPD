@@ -3,7 +3,10 @@
   "type": "module",
   "version": "0.1.0",
   "scripts": {
+    "sync-final-assets": "node scripts/sync-final-assets.mjs",
+    "predev": "npm run sync-final-assets",
     "dev": "astro dev",
+    "prebuild": "npm run sync-final-assets",
     "build": "astro build",
     "preview": "astro preview"
   },

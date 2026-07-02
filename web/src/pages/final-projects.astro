@@ -2,9 +2,75 @@
 import Layout from '../layouts/Layout.astro';
 import FinalFilmstrip from '../components/FinalFilmstrip.astro';
 import { finalProjects, finalProjectsMeta } from '../data/finalProjects';
-import type { FPMedia, FPProject } from '../data/finalProjects';
+import type { FPLink, FPMedia, FPProject } from '../data/finalProjects';
 
 const { stats } = finalProjectsMeta;
+
+// 데이터의 링크 kind 는 영어("Website" 등)로 저장된다 — 화면 의미로 정규화.
+// course-site/assets/final-projects.js 의 linkKind 와 같은 매핑을 유지한다.
+const KIND_ALIASES: Record<string, string> = {
+  website: '웹페이지',
+  '웹페이지': '웹페이지',
+  'project page': '작품 페이지',
+  '작품 페이지': '작품 페이지',
+  presentation: '발표 자료',
+  '발표 자료': '발표 자료',
+  behance: 'Behance',
+  board: 'Board',
+  reference: 'Reference',
+};
+const kindOf = (l: FPLink) => KIND_ALIASES[(l.kind ?? '').trim().toLowerCase()] ?? l.kind;
+
+const SITE_BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
+// iframe 이 차단되는 호스트(Notion, Mixboard 등)는 일반 링크로 남긴다.
+const EMBED_BLOCKED = /notion\.(so|site)|mixboard\.google\.com|canva\.link|21st\.dev|godly\.website/;
+
+interface EmbedInfo {
+  src: string;
+  openUrl: string;
+  provider: string;
+  label: string;
+}
+
+// 발표 자료·웹 작품을 페이지 안에서 볼 수 있게 임베드 URL 을 계산한다.
+// Canva 는 빌드 데이터에 미리 해석된 embedUrl(view?embed)을 쓴다.
+function embedFor(l: FPLink): EmbedInfo | null {
+  const url = (l.url ?? '').trim();
+  const label = l.label || kindOf(l);
+  if (l.embedUrl) return { src: l.embedUrl, openUrl: url, provider: 'Canva', label };
+  const slides = url.match(/docs\.google\.com\/presentation\/d\/([A-Za-z0-9_-]+)/);
+  if (slides) {
+    return {
+      src: `https://docs.google.com/presentation/d/${slides[1]}/embed?start=false&loop=false&delayms=3000`,
+      openUrl: url,
+      provider: 'Google Slides',
+      label,
+    };
+  }
+  const behance = url.match(/behance\.net\/gallery\/(\d+)/i);
+  if (behance) {
+    return {
+      src: `https://www.behance.net/embed/project/${behance[1]}?ilo0=1`,
+      openUrl: url,
+      provider: 'Behance',
+      label,
+    };
+  }
+  if (url.startsWith('assets/')) {
+    const local = `${SITE_BASE}/${url}`;
+    return { src: local, openUrl: local, provider: 'Website', label };
+  }
+  const kind = kindOf(l);
+  if (
+    (kind === '웹페이지' || kind === '작품 페이지') &&
+    /^https?:\/\//.test(url) &&
+    !EMBED_BLOCKED.test(url)
+  ) {
+    const https = url.replace(/^http:/, 'https:');
+    return { src: https, openUrl: https, provider: 'Website', label };
+  }
+  return null;
+}
 
 // course-site final-projects.js 의 bestCover 로직 이식.
 function bestCover(p: FPProject): FPMedia | null {
@@ -57,8 +123,12 @@ const PRESENTATION = '발표 자료';
       const cover = bestCover(p);
       const groups = mediaGroups(p, cover);
       const counts = projectCounts(p);
-      const presentations = p.links.filter((l) => l.kind === PRESENTATION);
-      const otherLinks = p.links.filter((l) => l.kind !== PRESENTATION);
+      const presentations = p.links.filter((l) => kindOf(l) === PRESENTATION);
+      const otherLinks = p.links.filter((l) => kindOf(l) !== PRESENTATION);
+      const embeds = p.links.flatMap((l) => {
+        const e = embedFor(l);
+        return e ? [e] : [];
+      });
       return (
         <article class="fp-project" id={p.id}>
           <div class="fp-grid">
@@ -80,7 +150,7 @@ const PRESENTATION = '발표 자료';
                   {otherLinks.map((l) => (
                     <li>
                       <a href={l.url} target="_blank" rel="noopener">
-                        <span class="fp-link-tag meta">{l.kind}</span>{l.label}
+                        <span class="fp-link-tag meta">{kindOf(l)}</span>{l.label}
                       </a>
                     </li>
                   ))}
@@ -114,6 +184,28 @@ const PRESENTATION = '발표 자료';
                 ) : (
                   <img src={m.src} alt={`${p.code} 장면 ${i + 1}`} loading="lazy" />
                 )}
+              </div>
+            ))}
+
+            {embeds.length > 0 && (
+              <div class="fp-section-label is-span-4">
+                <span>발표 자료 · 웹</span>
+              </div>
+            )}
+            {embeds.map((e) => (
+              <div class="fp-cell fp-embed is-span-4">
+                <div class="fp-embed-head">
+                  <span class="meta">{e.provider}</span>
+                  <a href={e.openUrl} target="_blank" rel="noopener">새 탭에서 열기 →</a>
+                </div>
+                <iframe
+                  src={e.src}
+                  title={`${p.code} ${e.provider} — ${e.label}`}
+                  loading="lazy"
+                  allow="autoplay; fullscreen"
+                  allowfullscreen
+                  referrerpolicy="no-referrer-when-downgrade"
+                ></iframe>
               </div>
             ))}
 
@@ -193,6 +285,31 @@ const PRESENTATION = '발표 자료';
     color: var(--c-accent);
   }
   .fp-copy .fp-pres-link:hover { background: color-mix(in srgb, var(--c-accent) 12%, transparent); opacity: 1; }
+
+  .fp-embed { display: grid; grid-template-rows: auto 1fr; }
+  .fp-embed-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--s-3);
+    padding: var(--s-2) var(--s-4);
+    border-bottom: var(--border);
+  }
+  .fp-embed-head .meta {
+    font-family: var(--f-mono);
+    font-size: var(--fs-2xs);
+    color: var(--c-ink-3);
+    letter-spacing: var(--ls-mono);
+    text-transform: uppercase;
+  }
+  .fp-embed-head a { font-size: var(--fs-sm); color: var(--c-accent); }
+  .fp-embed iframe {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    border: 0;
+    background: var(--c-bg-2);
+  }
 
   .fp-media { display: block; }
   .fp-media img, .fp-media video {
