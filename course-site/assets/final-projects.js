@@ -57,6 +57,36 @@
     return node;
   }
 
+  var LINK_KIND_ALIASES = {
+    "website": "웹페이지",
+    "웹페이지": "웹페이지",
+    "project page": "작품 페이지",
+    "작품 페이지": "작품 페이지",
+    "presentation": "발표 자료",
+    "발표 자료": "발표 자료",
+    "behance": "Behance",
+    "board": "Board",
+    "reference": "Reference"
+  };
+
+  function linkKind(link) {
+    var raw = String((link && link.kind) || "").trim();
+    if (!raw) return "";
+    return LINK_KIND_ALIASES[raw.toLowerCase()] || raw;
+  }
+
+  // 데이터의 링크 URL을 화면에서 쓸 수 있는 href로 해석한다.
+  // http(s)는 그대로, 사이트 상대 경로(로컬 HTML 등)는 루트 기준으로 통과,
+  // 그 외 스킴(javascript: 등)은 차단한다.
+  function resolveProjectLinkUrl(url) {
+    var trimmed = String(url || "").trim();
+    if (!trimmed) return "";
+    if (/^https?:\/\//i.test(trimmed)) return trimmed;
+    if (/^[a-z][a-z0-9+.-]*:/i.test(trimmed)) return "";
+    if (trimmed.charAt(0) === "#") return "";
+    return trimmed.replace(/^\.?\//, "");
+  }
+
   function projectNumber(project) {
     return parseInt(String(project.id).replace("project-", ""), 10) || 0;
   }
@@ -81,9 +111,7 @@
       return [item.label, item.url, item.kind].join(" ");
     }).join(" ").toLowerCase();
 
-    if (links.some(function (item) {
-      return item.kind === "웹페이지" || item.kind === "작품 페이지";
-    })) {
+    if (links.some(isWebsiteLink)) {
       return "web";
     }
     if (/tesla|vehicle|car|automotive|차량/.test(linkText)) {
@@ -106,15 +134,13 @@
 
     if (imageCount) tags.push("Render");
     if (videoCount) tags.push("MP4");
-    if (links.some(function (item) {
-      return item.kind === "웹페이지" || item.kind === "작품 페이지";
-    })) {
+    if (links.some(isWebsiteLink)) {
       tags.push("Web");
     }
-    if (links.some(function (item) { return item.kind === "Behance"; })) {
+    if (links.some(function (item) { return linkKind(item) === "Behance"; })) {
       tags.push("Behance");
     }
-    if (links.some(function (item) { return item.kind === "발표 자료"; })) {
+    if (links.some(function (item) { return linkKind(item) === "발표 자료"; })) {
       tags.push("Deck");
     }
     if (!tags.length) tags.push("Archive");
@@ -292,6 +318,58 @@
     }
   }
 
+  var FILMSTRIP_INTERVAL_MS = 420;
+
+  function prefersReducedMotion() {
+    return Boolean(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  }
+
+  // 갤러리 패널 hover 시 frame-01~05를 순환 재생하는 filmstrip.
+  // reduced-motion, hover 불가 기기에서는 정지 커버만 보여준다.
+  function bindGalleryFilmstrip(panel, project, coverSrc) {
+    var frames = Array.isArray(project.frames) ? project.frames : [];
+    if (frames.length < 2 || !coverSrc) return;
+    if (window.matchMedia && window.matchMedia("(hover: none)").matches) return;
+
+    var img = panel.querySelector("img");
+    if (!img) return;
+    var timer = null;
+    var frameIndex = 0;
+    var preloaded = false;
+
+    function preloadFrames() {
+      if (preloaded) return;
+      preloaded = true;
+      frames.forEach(function (src) {
+        var pre = new Image();
+        pre.src = src;
+      });
+    }
+
+    function startFilmstrip() {
+      if (timer || prefersReducedMotion()) return;
+      preloadFrames();
+      frameIndex = 0;
+      timer = window.setInterval(function () {
+        img.src = frames[frameIndex % frames.length];
+        frameIndex += 1;
+      }, FILMSTRIP_INTERVAL_MS);
+    }
+
+    function stopFilmstrip() {
+      if (timer) {
+        window.clearInterval(timer);
+        timer = null;
+      }
+      img.src = coverSrc;
+    }
+
+    panel.addEventListener("mouseenter", startFilmstrip);
+    panel.addEventListener("focus", startFilmstrip);
+    panel.addEventListener("mouseleave", stopFilmstrip);
+    panel.addEventListener("blur", stopFilmstrip);
+  }
+
   function bindGalleryPanelMeta(panel, project, index) {
     function showMeta() {
       setGalleryActivePanel(panel, project, index);
@@ -375,6 +453,7 @@
       }
       panel.appendChild(frame);
       bindGalleryPanelMeta(panel, project, index);
+      bindGalleryFilmstrip(panel, project, cover ? cover.src : "");
       els.galleryRail.appendChild(panel);
     });
 
@@ -533,7 +612,7 @@
 
   function getPresentationLinks(project) {
     return (project.links || []).filter(function (link) {
-      return link.kind === "발표 자료";
+      return linkKind(link) === "발표 자료";
     });
   }
 
@@ -577,6 +656,7 @@
   }
 
   function getPresentationEmbed(link) {
+    if (link.embedUrl) return { mode: "iframe", url: link.embedUrl };
     var url = normalizeEmbedUrl(link.url) || link.url || "";
     var slidesEmbed = getGoogleSlidesEmbedUrl(url);
     if (slidesEmbed) return { mode: "iframe", url: slidesEmbed };
@@ -735,12 +815,23 @@
 
   function getExternalLinks(project) {
     return (project.links || []).filter(function (link) {
-      return !isEmbeddableLink(link) && link.kind !== "발표 자료";
+      return !isEmbeddableLink(link) && linkKind(link) !== "발표 자료";
     });
   }
 
+  function isWebsiteLink(link) {
+    var kind = linkKind(link);
+    return kind === "웹페이지" || kind === "작품 페이지";
+  }
+
   function isEmbeddableLink(link) {
-    return link.kind === "웹페이지" || link.kind === "작품 페이지";
+    return isWebsiteLink(link) || linkKind(link) === "Behance";
+  }
+
+  function getBehanceEmbedUrl(url) {
+    var match = String(url || "").match(/behance\.net\/gallery\/(\d+)/i);
+    if (!match) return "";
+    return "https://www.behance.net/embed/project/" + match[1] + "?ilo0=1";
   }
 
   function normalizeEmbedUrl(url) {
@@ -759,7 +850,17 @@
 
   function getEmbedMode(url) {
     var normalized = normalizeEmbedUrl(url);
-    if (!normalized) return { mode: "external", url: url || "" };
+    if (!normalized) {
+      var local = resolveProjectLinkUrl(url);
+      if (local && /\.html?($|[?#])/i.test(local)) {
+        return { mode: "iframe", url: local, openUrl: local };
+      }
+      return { mode: "external", url: local || "", openUrl: local || "" };
+    }
+    var behanceEmbed = getBehanceEmbedUrl(normalized);
+    if (behanceEmbed) {
+      return { mode: "iframe", url: behanceEmbed, openUrl: normalized };
+    }
     var host = new URL(normalized).hostname.toLowerCase();
     var blocked = /(^|\.)notion\.(so|site)$/.test(host)
       || host === "docs.google.com"
@@ -768,8 +869,8 @@
       || host.endsWith("mixboard.google.com")
       || host.endsWith("21st.dev")
       || host.endsWith("google.com");
-    if (blocked) return { mode: "external", url: normalized };
-    return { mode: "iframe", url: normalized };
+    if (blocked) return { mode: "external", url: normalized, openUrl: normalized };
+    return { mode: "iframe", url: normalized, openUrl: normalized };
   }
 
   function createWebIframe(url, title) {
@@ -929,10 +1030,11 @@
   function renderWebEmbedCell(link, project, index) {
     var policy = getEmbedMode(link.url);
     var embedUrl = policy.url;
+    var openUrl = policy.openUrl || policy.url;
     if (!embedUrl) return null;
 
     if (policy.mode === "external") {
-      return renderWebLaunchCell(link, project, embedUrl);
+      return renderWebLaunchCell(link, project, openUrl);
     }
 
     var title = project.code + " 미리보기 " + (index + 1);
@@ -948,7 +1050,7 @@
       }),
       el("a", {
         className: "final-web-embed-open",
-        href: embedUrl,
+        href: openUrl,
         target: "_blank",
         rel: "noopener",
         textContent: "새 탭에서 열기"
