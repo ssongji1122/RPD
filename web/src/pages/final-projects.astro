@@ -117,8 +117,13 @@ const PRESENTATION = '발표 자료';
   <!-- 필름스트립 (공유 컴포넌트) -->
   <FinalFilmstrip />
 
-  <!-- 작품 상세 (editorial 그리드) -->
-  <section class="wrap section fp-projects">
+  <!-- 작품 상세 (editorial 그리드). 기본은 전부 접힌 목록, 필름스트립/링크 클릭이나
+       #project-id 해시가 있으면 그 작품 하나만 펼쳐서 보여준다(course-site 원본의
+       list/detail 라우팅과 동일한 UX — 24개 작품이 한 화면에 이어붙어 보이던 문제 해소). -->
+  <section class="wrap section fp-projects" id="fpProjects">
+    <div class="fp-projects-toolbar" id="fpToolbar" hidden>
+      <button type="button" class="fp-back-to-list" id="fpBackToList">← 전체 목록으로</button>
+    </div>
     {finalProjects.map((p) => {
       const cover = bestCover(p);
       const groups = mediaGroups(p, cover);
@@ -232,12 +237,108 @@ const PRESENTATION = '발표 자료';
   </section>
 </Layout>
 
+<script>
+  // 목록/상세 토글: #project-id 해시가 있으면 그 작품 하나만 보이고 나머지는 숨긴다.
+  // 필름스트립 "OO 보기" 클릭·상세 링크는 전부 in-page 해시라 hashchange 로 반응한다.
+  const list = document.getElementById('fpProjects');
+  const toolbar = document.getElementById('fpToolbar');
+  const backBtn = document.getElementById('fpBackToList');
+  const projects = Array.from(document.querySelectorAll<HTMLElement>('.fp-project'));
+  const filmSection = document.querySelector<HTMLElement>('.fp-film');
+
+  function currentId() {
+    return location.hash ? decodeURIComponent(location.hash.slice(1)) : '';
+  }
+
+  function applyView() {
+    const id = currentId();
+    const match = projects.find((p) => p.id === id);
+    const isDetail = Boolean(match);
+
+    projects.forEach((p) => {
+      p.hidden = isDetail && p !== match;
+    });
+    if (toolbar) toolbar.hidden = !isDetail;
+    if (filmSection) filmSection.hidden = isDetail;
+    list?.classList.toggle('is-detail-view', isDetail);
+
+    if (isDetail && match) {
+      // 페이지 리로드/직접 진입 시 위치 보정 (뒤로가기에서는 스크롤 방해 안 함)
+      requestAnimationFrame(() => match.scrollIntoView({ block: 'start' }));
+    }
+  }
+
+  // 목록 뷰의 커버 클릭 → 그 작품 상세로 진입.
+  projects.forEach((p) => {
+    const hero = p.querySelector<HTMLElement>('.fp-media.is-hero');
+    hero?.addEventListener('click', (e) => {
+      if (list?.classList.contains('is-detail-view')) return;
+      if ((e.target as HTMLElement).closest('a, button')) return;
+      location.hash = p.id;
+    });
+  });
+
+  backBtn?.addEventListener('click', () => {
+    history.pushState('', document.title, location.pathname + location.search);
+    applyView();
+    window.scrollTo({ top: filmSection?.offsetTop ?? 0, behavior: 'smooth' });
+  });
+
+  window.addEventListener('hashchange', applyView);
+  applyView();
+</script>
+
 <style>
   .fp-hero { padding-bottom: var(--s-4); }
   .fp-hero .eyebrow { color: var(--c-ink-3); }
   h1 { margin: var(--s-2) 0; }
   .lead { color: var(--c-ink-2); }
   .fp-empty { display: grid; place-items: center; width: 100%; height: 100%; color: var(--c-ink-3); }
+
+  /* ── 목록/상세 토글 ── */
+  .fp-projects-toolbar {
+    display: flex;
+    padding-bottom: var(--s-4);
+    border-bottom: var(--border);
+    margin-bottom: var(--s-6);
+  }
+  .fp-back-to-list {
+    font-family: var(--f-mono);
+    font-size: var(--fs-sm);
+    letter-spacing: var(--ls-mono);
+    color: var(--c-ink-2);
+    background: none;
+    border: var(--border);
+    border-radius: var(--r-pill);
+    padding: var(--s-2) var(--s-4);
+    cursor: pointer;
+  }
+  .fp-back-to-list:hover { color: var(--c-ink); border-color: var(--c-accent); }
+  /* 목록 뷰(기본): 커버 + 제목만 보이는 압축 카드. 전체 미디어 그리드(과정 기록·
+     발표 자료 임베드 등)는 상세 뷰(#project-id 진입)에서만 편다 — 24개 작품의
+     이미지가 한 화면에 계속 이어지며 뒤섞여 보이던 문제의 근본 해결책. */
+  .fp-projects:not(.is-detail-view) .fp-project { margin-top: var(--s-9, 96px); }
+  .fp-projects:not(.is-detail-view) .fp-project:first-child { margin-top: 0; }
+  .fp-projects:not(.is-detail-view) .fp-copy { position: relative; }
+  .fp-projects:not(.is-detail-view) .fp-copy::before {
+    content: '';
+    position: absolute;
+    top: calc(-1 * var(--s-4));
+    left: 0;
+    width: 40px;
+    height: 3px;
+    background: var(--c-accent);
+  }
+  .fp-projects:not(.is-detail-view) .fp-grid { grid-template-rows: auto; }
+  .fp-projects:not(.is-detail-view) .fp-cell.fp-media.is-hero {
+    cursor: pointer;
+  }
+  .fp-projects:not(.is-detail-view) .fp-cell.fp-media:not(.is-hero),
+  .fp-projects:not(.is-detail-view) .fp-embed,
+  .fp-projects:not(.is-detail-view) .fp-section-label {
+    display: none;
+  }
+  .fp-projects:not(.is-detail-view) .fp-media.is-hero video { pointer-events: none; }
 
   /* ── 작품 상세 (editorial) ── */
   .fp-projects { padding-top: var(--s-6); }
