@@ -14,6 +14,7 @@
     .app-tab:hover { color: var(--text); background: var(--overlay-white-hover); }
     .app-tab.is-active { color: var(--text); font-weight: var(--fw-semi); }
 
+    .app,
     .page-shell {
       --course-shell-radius: var(--radius-xl);
       --course-card-radius: var(--radius);
@@ -189,7 +190,7 @@
       line-height: 1.55;
     }
     .course-sidebar-summary-line + .course-sidebar-summary-line {
-      border-top: 1px solid var(--rpd-page-rail-divider-soft);
+      border-top: 1px solid var(--line);
     }
     .hero {
       display: grid;
@@ -523,6 +524,7 @@
       }
     }
     @media (max-width: 720px) {
+      .app,
       .page-shell {
         --course-panel-pad-x: 18px;
       }
@@ -870,3 +872,70 @@
       margin: 0;
     }
     .timeline-item.is-milestone .timeline-title { color: var(--key-soft); }
+
+    /* ── Hero typography primitives (migrated from chrome.css, 2026-06-28) ──
+       inha/week dropped chrome.css; these .rpd-hero-* rules previously lived
+       there and style the editorial hero title/copy/meta. ── */
+    :root {
+      --rpd-hero-gap: 16px;
+      --rpd-hero-padding-y: var(--sp-16);
+      --rpd-hero-padding-x: 0;
+      --rpd-hero-title-size: clamp(2.45rem, 5.2vw, 4.6rem);
+      --rpd-hero-title-line-height: .98;
+      --rpd-hero-title-tracking: 0;
+      --rpd-hero-body-size: clamp(.96rem, .35vw + .9rem, 1.05rem);
+      --rpd-hero-body-line-height: 1.72;
+      --rpd-hero-body-max: 52ch;
+      --rpd-hero-meta-gap: 10px;
+      --rpd-hero-meta-padding-y: 12px;
+      --rpd-hero-meta-padding-x: 14px;
+    }
+    .rpd-hero-card {
+      display: grid;
+      gap: var(--rpd-hero-gap);
+      padding: var(--rpd-hero-padding-y) var(--rpd-hero-padding-x);
+    }
+    .rpd-hero-copy {
+      display: grid;
+      gap: 8px;
+      align-content: start;
+    }
+    .rpd-hero-title {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: var(--rpd-hero-title-size);
+      font-weight: var(--fw-normal);
+      letter-spacing: var(--rpd-hero-title-tracking);
+      line-height: var(--rpd-hero-title-line-height);
+      word-break: keep-all;
+      line-break: strict;
+      overflow-wrap: normal;
+    }
+    .rpd-hero-description {
+      max-width: var(--rpd-hero-body-max);
+      margin: 0;
+      color: var(--muted-strong);
+      font-size: var(--rpd-hero-body-size);
+      line-height: var(--rpd-hero-body-line-height);
+      word-break: keep-all;
+      line-break: strict;
+      overflow-wrap: normal;
+    }
+    .rpd-hero-meta-wrap {
+      display: grid;
+      gap: var(--rpd-hero-meta-gap);
+      align-content: start;
+      align-self: start;
+      padding: var(--rpd-hero-meta-padding-y) var(--rpd-hero-meta-padding-x);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--modal-panel-soft-bg);
+      box-shadow: var(--modal-card-shadow);
+    }
+    .rpd-hero-meta-label {
+      font-size: .75rem;
+      font-weight: var(--fw-bold);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
