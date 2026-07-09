@@ -426,8 +426,6 @@ Blender 5.0에서는 리깅 워크플로우에 몇 가지 개선이 있습니다
 
 피규어 관절을 돌리듯 본을 하나씩 회전시켜서 포즈를 만들어요. 팔을 들거나, 고개를 숙이거나, 다리를 벌리거나.
 
-![Pose Mode로 포즈 잡기](../../course-site/assets/images/week11/pose-mode.png)
-
 배울 것
 
 - Pose Mode에서 본을 조작한다
@@ -442,8 +440,6 @@ Blender 5.0에서는 리깅 워크플로우에 몇 가지 개선이 있습니다
 #### 4. Weight Paint 수정
 
 자동 Weight가 완벽하지 않을 때가 있어요. 팔을 올렸는데 몸통이 같이 딸려온다면 Weight를 직접 수정해줘야 해요. 빨강이 강한 영향, 파랑이 약한 영향이에요.
-
-![Weight Paint 수정](../../course-site/assets/images/week11/weight-paint.png)
 
 배울 것
 

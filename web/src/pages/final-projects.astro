@@ -22,6 +22,12 @@ const KIND_ALIASES: Record<string, string> = {
 const kindOf = (l: FPLink) => KIND_ALIASES[(l.kind ?? '').trim().toLowerCase()] ?? l.kind;
 
 const SITE_BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
+// 사이트 내부 자산 링크(assets/…)는 base 를 붙여 절대 경로로 해석한다.
+// 상대 그대로 두면 /final-projects/ 하위로 풀려 404 (project-18 로컬 HTML 사례).
+const linkHref = (l: FPLink) => {
+  const u = (l.url ?? '').trim();
+  return u.startsWith('assets/') ? `${SITE_BASE}/${u}` : u;
+};
 // iframe 이 차단되는 호스트(Notion, Mixboard 등)는 일반 링크로 남긴다.
 const EMBED_BLOCKED = /notion\.(so|site)|mixboard\.google\.com|canva\.link|21st\.dev|godly\.website/;
 
@@ -146,7 +152,7 @@ const PRESENTATION = '발표 자료';
               {presentations.length > 0 && (
                 <ul class="fp-links">
                   {presentations.map((l) => (
-                    <li><a href={l.url} target="_blank" rel="noopener" class="fp-pres-link">{l.label} →</a></li>
+                    <li><a href={linkHref(l)} target="_blank" rel="noopener" class="fp-pres-link">{l.label} →</a></li>
                   ))}
                 </ul>
               )}
@@ -154,7 +160,7 @@ const PRESENTATION = '발표 자료';
                 <ul class="fp-links">
                   {otherLinks.map((l) => (
                     <li>
-                      <a href={l.url} target="_blank" rel="noopener">
+                      <a href={linkHref(l)} target="_blank" rel="noopener">
                         <span class="fp-link-tag meta">{kindOf(l)}</span>{l.label}
                       </a>
                     </li>

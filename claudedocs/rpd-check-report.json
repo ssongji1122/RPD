@@ -1,596 +1,65 @@
 {
-  "timestamp": "2026-07-02T01:49:55.583Z",
-  "mode": "all",
+  "timestamp": "2026-07-07T01:00:00Z",
+  "mode": "all (live-verified: ssongji1122.github.io/RPD, deploy sha e9821136)",
   "issues": [
     {
-      "sev": "warning",
-      "cat": "image",
-      "msg": "이미지 누락 (fallback 전용 — notion-blocks 렌더로 화면 영향 없음): assets/images/week05/mesh-cleanup.png ← week 5 step \"AI 메쉬 정리\""
+      "severity": "critical",
+      "category": "주차 페이지 깨진 이미지",
+      "message": "step 이미지 12건이 canonical에서 참조되나 원본 파일이 repo 어디에도 없음 — 라이브 404 실측. W05 mesh-cleanup / W06 texture-node, shading-modes / W07 smart-uv, texture-paint / W10 rotation-scale, graph-editor, loop-animation / W11 pose-mode, weight-paint / W12 export-prep, nla-editor"
     },
     {
-      "sev": "warning",
-      "cat": "image",
-      "msg": "이미지 누락 (fallback 전용 — notion-blocks 렌더로 화면 영향 없음): assets/images/week06/texture-node.png ← week 6 step \"Texture 노드로 질감 추가\""
+      "severity": "critical",
+      "category": "showme 위젯 스크립트 라이브 404",
+      "message": "web/public/showme/widgets/에 modifier-stack-order.js, shade-smooth-auto-smooth.js 미복사 → /library 카드 2개의 인터랙션 탭이 빈 패널(320px). web/public showme·images는 수동 스냅샷(sync-final-assets.mjs는 final-projects만 커버) — PR #114 계열 드리프트",
+      "status": "fixed 2026-07-07",
+      "fix": "sync-final-assets.mjs를 showme·images까지 확장, 수동 복사본 174개 untrack (git)"
     },
     {
-      "sev": "warning",
-      "cat": "image",
-      "msg": "이미지 누락 (fallback 전용 — notion-blocks 렌더로 화면 영향 없음): assets/images/week06/shading-modes.png ← week 6 step \"Viewport Shading 비교\""
+      "severity": "warning",
+      "category": "기말 페이지 project-18 링크 404",
+      "message": "Website 1 a href가 base 프리픽스 없는 상대경로 → /RPD/final-projects/assets/...로 해석돼 404. 동일 파일 iframe 임베드는 정상(200) — 클릭 시에만 404",
+      "status": "fixed 2026-07-07",
+      "fix": "final-projects.astro linkHref 헬퍼로 assets/ 링크에 SITE_BASE 적용"
     },
     {
-      "sev": "warning",
-      "cat": "image",
-      "msg": "이미지 누락 (fallback 전용 — notion-blocks 렌더로 화면 영향 없음): assets/images/week07/smart-uv.png ← week 7 step \"Smart UV Project로 빠른 펼침\""
+      "severity": "warning",
+      "category": "footer 죽은 링크",
+      "message": "전 페이지 footer의 https://soluta.studio — DNS 미등록(NXDOMAIN)",
+      "status": "fixed 2026-07-07",
+      "fix": "Footer.astro 앵커 제거, 텍스트 유지"
     },
     {
-      "sev": "warning",
-      "cat": "image",
-      "msg": "이미지 누락 (fallback 전용 — notion-blocks 렌더로 화면 영향 없음): assets/images/week07/texture-paint.png ← week 7 step \"Texture Painting 맛보기\""
+      "severity": "info",
+      "category": "canva.link 원본 링크",
+      "message": "3건이 Canva /edit URL로 리다이렉트 → 비소유자 클릭 시 권한 화면 가능. 임베드(/view?embed)는 3건 모두 200"
     },
     {
-      "sev": "warning",
-      "cat": "image",
-      "msg": "이미지 누락 (fallback 전용 — notion-blocks 렌더로 화면 영향 없음): assets/images/week10/rotation-scale.png ← week 10 step \"회전·크기 애니메이션\""
+      "severity": "info",
+      "category": "task ID 형식",
+      "message": "27건이 w{N}-t{N} 규칙 위반이나 전체 유니크, 코드 어디도 패턴 파싱 안 함 — 런타임 무해"
     },
     {
-      "sev": "warning",
-      "cat": "image",
-      "msg": "이미지 누락 (fallback 전용 — notion-blocks 렌더로 화면 영향 없음): assets/images/week10/graph-editor.png ← week 10 step \"Graph Editor 커브\""
+      "severity": "info",
+      "category": "orphan 자산",
+      "message": "미참조 이미지 19건, orphan showme html 6건, FP source-*/image-* 97건(의도 보관), catalog 미분류 — 사용자 비노출"
     },
     {
-      "sev": "warning",
-      "cat": "image",
-      "msg": "이미지 누락 (fallback 전용 — notion-blocks 렌더로 화면 영향 없음): assets/images/week10/loop-animation.png ← week 10 step \"루프 애니메이션\""
-    },
-    {
-      "sev": "warning",
-      "cat": "image",
-      "msg": "이미지 누락 (fallback 전용 — notion-blocks 렌더로 화면 영향 없음): assets/images/week11/pose-mode.png ← week 11 step \"Pose Mode로 포즈 잡기\""
-    },
-    {
-      "sev": "warning",
-      "cat": "image",
-      "msg": "이미지 누락 (fallback 전용 — notion-blocks 렌더로 화면 영향 없음): assets/images/week11/weight-paint.png ← week 11 step \"Weight Paint 수정\""
-    },
-    {
-      "sev": "warning",
-      "cat": "image",
-      "msg": "이미지 누락 (fallback 전용 — notion-blocks 렌더로 화면 영향 없음): assets/images/week12/export-prep.png ← week 12 step \"익스포트 준비\""
-    },
-    {
-      "sev": "warning",
-      "cat": "image",
-      "msg": "이미지 누락 (fallback 전용 — notion-blocks 렌더로 화면 영향 없음): assets/images/week12/nla-editor.png ← week 12 step \"NLA Editor로 애니메이션 관리\""
-    },
-    {
-      "sev": "info",
-      "cat": "showme",
-      "msg": "catalog 미분류: collection-outliner"
-    },
-    {
-      "sev": "info",
-      "cat": "showme",
-      "msg": "catalog 미분류: modifier-stack-order"
-    },
-    {
-      "sev": "info",
-      "cat": "showme",
-      "msg": "catalog 미분류: shade-smooth-auto-smooth"
-    },
-    {
-      "sev": "info",
-      "cat": "showme",
-      "msg": "catalog 미분류: merge-by-distance"
-    },
-    {
-      "sev": "info",
-      "cat": "showme",
-      "msg": "catalog 미분류: bridge-edge-loops"
-    },
-    {
-      "sev": "info",
-      "cat": "showme",
-      "msg": "catalog 미분류: duplicate-vs-linked-duplicate"
-    },
-    {
-      "sev": "info",
-      "cat": "showme",
-      "msg": "catalog 미분류: face-orientation-normals"
-    },
-    {
-      "sev": "info",
-      "cat": "showme",
-      "msg": "catalog 미분류: apply-modifier-vs-keep-procedural"
-    },
-    {
-      "sev": "info",
-      "cat": "showme",
-      "msg": "catalog 미분류: texture-painting"
-    },
-    {
-      "sev": "info",
-      "cat": "showme",
-      "msg": "catalog 미분류: camera-setup"
-    },
-    {
-      "sev": "info",
-      "cat": "showme",
-      "msg": "catalog 미분류: depth-of-field"
-    },
-    {
-      "sev": "info",
-      "cat": "showme",
-      "msg": "catalog 미분류: dope-sheet"
-    },
-    {
-      "sev": "info",
-      "cat": "showme",
-      "msg": "catalog 미분류: nla-editor"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "Orphan 이미지: assets/images/week03/array-modifier.png"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "Orphan 이미지: assets/images/week03/decimate.png"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "Orphan 이미지: assets/images/week03/inset-faces.png"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "Orphan 이미지: assets/images/week03/loop-cut.png"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "Orphan 이미지: assets/images/week03/simple-deform.png"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "Orphan 이미지: assets/images/week03/solidify-modifier.png"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "Orphan 이미지: assets/images/week05/blender-decimate-official.png"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "Orphan 이미지: assets/images/week05/blender-remesh-official.png"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "Orphan 이미지: assets/images/week05/cwf-remesher-github.png"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "Orphan 이미지: assets/images/week05/instant-meshes-github.png"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "Orphan 이미지: assets/images/week05/localremesher-github.png"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "Orphan 이미지: assets/images/week05/qremeshify-github.png"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "Orphan 이미지: assets/images/week05/sculpt-clay-strips.png"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "Orphan 이미지: assets/images/week05/sculpt-crease.png"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "Orphan 이미지: assets/images/week05/sculpt-draw.png"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "Orphan 이미지: assets/images/week05/sculpt-grab.png"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "Orphan 이미지: assets/images/week05/sculpt-inflate.png"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "Orphan 이미지: assets/images/week05/sculpt-smooth.png"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "Orphan 이미지: assets/images/week05/sculpt-snake-hook.png"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "registry에 없는 showme html: _template.v2.html"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "registry에 없는 showme html: blender-mcp.html"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "registry에 없는 showme html: bsdf.html"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "registry에 없는 showme html: mcp-concept.html"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "registry에 없는 showme html: remesh-decimate.html"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "registry에 없는 showme html: texture-nodes.html"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "registry에 없는 supplement 키: transform-core"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "registry에 없는 supplement 키: precision-modeling-core"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "registry에 없는 supplement 키: mirror-core"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "registry에 없는 supplement 키: reference-image-core"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "registry에 없는 supplement 키: surface-detail-core"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "registry에 없는 supplement 키: viewport-visibility-core"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "registry에 없는 supplement 키: uv-core"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "registry에 없는 supplement 키: animation-core"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "registry에 없는 supplement 키: rigging-core"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "registry에 없는 supplement 키: material-core"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "registry에 없는 supplement 키: lighting-core"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "curriculum 미참조 showme: collection-outliner"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "curriculum 미참조 showme: modifier-stack-order"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "curriculum 미참조 showme: shade-smooth-auto-smooth"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "curriculum 미참조 showme: merge-by-distance"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "curriculum 미참조 showme: bridge-edge-loops"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "curriculum 미참조 showme: duplicate-vs-linked-duplicate"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "curriculum 미참조 showme: face-orientation-normals"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "curriculum 미참조 showme: apply-modifier-vs-keep-procedural"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "curriculum 미참조 showme: transform-orientation"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "curriculum 미참조 showme: pivot-point"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "curriculum 미참조 showme: snap"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "curriculum 미참조 showme: inset"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "curriculum 미참조 showme: triangulate-modifier"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "curriculum 미참조 showme: volume-to-mesh"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "curriculum 미참조 showme: weld-modifier"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "curriculum 미참조 showme: proportional-editing"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "curriculum 미참조 showme: sculpt-brushes"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "curriculum 미참조 showme: ai-prompt-design"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "curriculum 미참조 showme: ai-3d-generation"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "curriculum 미참조 showme: color-ramp"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "curriculum 미참조 showme: noise-texture"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "curriculum 미참조 showme: texture-types"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "curriculum 미참조 showme: image-texture-pbr"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "curriculum 미참조 showme: texture-painting"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "curriculum 미참조 showme: camera-setup"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "curriculum 미참조 showme: depth-of-field"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "curriculum 미참조 showme: dope-sheet"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "curriculum 미참조 showme: nla-editor"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "curriculum 미참조 showme: render-settings"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "curriculum 미참조 showme: compositing-basics"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "final-projects 미참조 파일: assets/final-projects/project-01/image-01.webp"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "final-projects 미참조 파일: assets/final-projects/project-07/image-01.webp"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "final-projects 미참조 파일: assets/final-projects/project-07/image-03.webp"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "final-projects 미참조 파일: assets/final-projects/project-07/image-08.webp"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "final-projects 미참조 파일: assets/final-projects/project-10/image-01.webp"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "final-projects 미참조 파일: assets/final-projects/project-10/image-02.webp"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "final-projects 미참조 파일: assets/final-projects/project-10/image-03.webp"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "final-projects 미참조 파일: assets/final-projects/project-10/image-04.webp"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "final-projects 미참조 파일: assets/final-projects/project-10/image-05.webp"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "final-projects 미참조 파일: assets/final-projects/project-10/image-06.webp"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "final-projects 미참조 파일: assets/final-projects/project-10/image-07.webp"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "final-projects 미참조 파일: assets/final-projects/project-13/image-03.webp"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "final-projects 미참조 파일: assets/final-projects/project-13/image-04.webp"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "final-projects 미참조 파일: assets/final-projects/project-13/image-05.webp"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "final-projects 미참조 파일: assets/final-projects/project-13/image-07.webp"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "final-projects 미참조 파일: assets/final-projects/project-14/image-01.webp"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "final-projects 미참조 파일: assets/final-projects/project-14/image-04.webp"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "final-projects 미참조 파일: assets/final-projects/project-17/image-02.webp"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "final-projects 미참조 파일: assets/final-projects/project-17/image-05.webp"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "final-projects 미참조 파일: assets/final-projects/project-18/image-02.webp"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "final-projects 미참조 파일: assets/final-projects/project-18/image-09.webp"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "final-projects 미참조 파일: assets/final-projects/project-21/image-01.webp"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "final-projects 미참조 파일: assets/final-projects/project-21/image-02.webp"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "final-projects 미참조 파일: assets/final-projects/project-21/image-03.webp"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "final-projects 미참조 파일: assets/final-projects/project-21/image-04.webp"
-    },
-    {
-      "sev": "info",
-      "cat": "orphan",
-      "msg": "final-projects 미참조 파일: assets/final-projects/project-21/image-05.webp"
+      "severity": "info",
+      "category": "http 링크",
+      "message": "http://shingeonu.netlify.app 1건(https 리다이렉트 동작), Mixboard는 Google 로그인 필요 가능"
     }
   ],
+  "verified_clean": {
+    "final_projects": "24작품 서버렌더, 미디어 334개 라이브 200 전수, 깨진 이미지 0, alt 누락 0, 콘솔 에러 0, 캐러셀 동작, 모바일 오버플로 없음",
+    "external_links": "netlify 11·Behance 2·Canva 임베드 3·Slides·Notion 전부 200",
+    "pages": "주차 15개(W01~W15) + 주요 8개 전부 200",
+    "showme": "카드 82개 전부 200, _helpers.js 정상",
+    "pipeline": "content_pipeline.py check 통과, 배포=HEAD 동일 sha"
+  },
   "summary": {
-    "critical": 0,
-    "warning": 12,
-    "info": 105
-  }
+    "critical": 2,
+    "warning": 2,
+    "info": 4
+  },
+  "verdict": "critical 1건(showme 위젯)·warning 2건 수정 완료(머지 대기). 잔여: 주차 이미지 12건(콘텐츠 결정 필요)"
 }

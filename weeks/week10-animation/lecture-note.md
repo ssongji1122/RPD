@@ -707,8 +707,6 @@ MCP는 강력하지만 **이번 주 핵심 학습목표(Keyframe, Timeline, Grap
 
 이동만 되는 게 아니에요. 회전, 크기 변화도 키프레임으로 기록할 수 있어요. 로봇 팔이 돌아가거나, 안테나가 쭉 올라오는 움직임을 만들 수 있어요.
 
-![회전·크기 애니메이션](../../course-site/assets/images/week10/rotation-scale.png)
-
 배울 것
 
 - Rotation과 Scale 키프레임을 찍는다
@@ -740,8 +738,6 @@ MCP는 강력하지만 **이번 주 핵심 학습목표(Keyframe, Timeline, Grap
 
 Graph Editor는 움직임의 속도 곡선을 보여줘요. 직선이면 일정 속도, S자 커브면 천천히 시작해서 빨라졌다 다시 느려지는 자연스러운 움직임이에요.
 
-![Graph Editor 커브](../../course-site/assets/images/week10/graph-editor.png)
-
 배울 것
 
 - Graph Editor에서 보간 커브를 이해한다
@@ -756,8 +752,6 @@ Graph Editor는 움직임의 속도 곡선을 보여줘요. 직선이면 일정 
 #### 5. 루프 애니메이션
 
 끝나면 처음으로 돌아가서 무한 반복되는 움직임이에요. 로봇 눈이 깜빡이거나, 안테나가 흔들리는 걸 만들 때 써요.
-
-![루프 애니메이션](../../course-site/assets/images/week10/loop-animation.png)
 
 배울 것
 
