@@ -236,8 +236,6 @@ Blender 5.0에서는 **SDF(Signed Distance Field)** 기반 스컬프팅이 도�
 
 AI가 만든 메쉬는 대부분 폴리곤이 지나치게 많아요. 마치 해상도가 너무 높은 사진처럼요. Decimate로 적당히 줄여야 이후 작업이 편해져요.
 
-![AI 메쉬 정리](../../course-site/assets/images/week05/mesh-cleanup.png)
-
 배울 것
 
 - AI 메쉬의 폴리곤 문제를 이해한다

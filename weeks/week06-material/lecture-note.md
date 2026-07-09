@@ -320,8 +320,6 @@ Blender의 기본 셰이더. 현실적인 재질 대부분을 하나의 노드�
 
 Noise Texture를 연결하면 표면에 얼룩이나 먼지 같은 질감이 생겨요. 실제 물건은 완전히 깨끗한 법이 없으니까, 이 한 단계가 리얼함을 크게 올려줘요.
 
-![Texture 노드로 질감 추가](../../course-site/assets/images/week06/texture-node.png)
-
 배울 것
 
 - Noise/Musgrave 등 텍스처 노드를 연결한다
@@ -335,8 +333,6 @@ Noise Texture를 연결하면 표면에 얼룩이나 먼지 같은 질감이 생
 #### 5. Viewport Shading 비교
 
 Z 키 하나로 와이어프레임/솔리드/미리보기/렌더를 오가요. 작업 중에는 Material Preview로, 최종 확인은 Rendered로 보는 습관을 들이면 편해요.
-
-![Viewport Shading 비교](../../course-site/assets/images/week06/shading-modes.png)
 
 배울 것
 

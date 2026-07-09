@@ -375,8 +375,6 @@ Mixamo에 업로드하기 위한 FBX Export 설정:
 
 Mixamo에 올리기 전에 메쉬를 깔끔하게 정리해야 해요. Modifier를 Apply하고, 파츠를 하나로 합치고, Transform을 정리하는 거예요.
 
-![익스포트 준비](../../course-site/assets/images/week12/export-prep.png)
-
 배울 것
 
 - Mixamo 업로드용 메쉬를 준비한다
@@ -423,8 +421,6 @@ Mixamo에서 걷기, 달리기, 춤추기 등 수백 가지 무료 애니메이�
 #### 4. NLA Editor로 애니메이션 관리
 
 NLA Editor는 애니메이션 클립을 레이어처럼 쌓고 이어 붙이는 곳이에요. 걷기 → 달리기 → 정지를 순서대로 이어 붙이면 하나의 긴 애니메이션이 돼요.
-
-![NLA Editor로 애니메이션 관리](../../course-site/assets/images/week12/nla-editor.png)
 
 배울 것
 

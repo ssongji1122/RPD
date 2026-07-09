@@ -234,8 +234,6 @@ Seam을 그은 경계선대로 메쉬가 펼쳐져서 UV Editor에 2D로 나와�
 
 Seam을 하나하나 그리기 귀찮을 때가 있어요. Smart UV Project는 자동으로 적당히 잘라서 펼쳐줘요. 정밀하진 않지만 초안으로 충분해요.
 
-![Smart UV Project로 빠른 펼침](../../course-site/assets/images/week07/smart-uv.png)
-
 배울 것
 
 - 수동 Unwrap과 자동 Unwrap을 비교한다
@@ -266,8 +264,6 @@ AI가 만든 이미지를 메쉬 표면에 붙이는 거예요. UV가 제대로 
 #### 5. Texture Painting 맛보기
 
 UV가 펼쳐진 위에 직접 색을 칠할 수도 있어요. 3D 뷰에서 바로 칠하면 UV 위치가 자동으로 맞아서 편해요.
-
-![Texture Painting 맛보기](../../course-site/assets/images/week07/texture-paint.png)
 
 배울 것
 
