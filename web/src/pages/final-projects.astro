@@ -104,7 +104,8 @@ function mediaGroups(p: FPProject, cover: FPMedia | null) {
 
 function projectCounts(p: FPProject) {
   return {
-    images: p.media.filter((m) => m.type === 'image').length,
+    // 이미지는 완성 컷만 센다 — 과정 캡처는 별도 항목이라 중복 집계 방지.
+    images: p.media.filter((m) => m.type === 'image' && m.role !== 'process').length,
     videos: p.videos.length || p.media.filter((m) => m.type === 'video').length,
     process: p.media.filter((m) => m.role === 'process').length,
   };
@@ -140,6 +141,16 @@ const PRESENTATION = '발표 자료';
         const e = embedFor(l);
         return e ? [e] : [];
       });
+      // 상세 섹션은 제작 흐름 순서(과정 → 완성 → 발표·웹)로 배치하고,
+      // 실제로 존재하는 섹션만 이어 붙여 번호를 매긴다.
+      const secOrder = [
+        ['process', groups.process.length > 0],
+        ['outcome', groups.outcome.length > 0],
+        ['embeds', embeds.length > 0],
+      ]
+        .filter(([, has]) => has)
+        .map(([key]) => key);
+      const secNo = (key: string) => String(secOrder.indexOf(key) + 1).padStart(2, '0');
       return (
         <article class="fp-project" id={p.id}>
           <div class="fp-grid">
@@ -181,9 +192,26 @@ const PRESENTATION = '발표 자료';
               )}
             </div>
 
+            {groups.process.length > 0 && (
+              <div class="fp-section-label is-span-4">
+                <span>{secNo('process')} — AI 활용 과정</span>
+              </div>
+            )}
+            {groups.process.map((m, i) => (
+              <div class:list={['fp-cell', 'fp-media', 'is-process', 'is-span-2']}>
+                {m.type === 'video' && m.videoSrc ? (
+                  <video controls playsinline preload="none" poster={m.src}>
+                    <source src={m.videoSrc} type="video/mp4" />
+                  </video>
+                ) : (
+                  <img src={m.src} alt={`${p.code} 과정 ${i + 1}`} loading="lazy" />
+                )}
+              </div>
+            ))}
+
             {groups.outcome.length > 0 && (
               <div class="fp-section-label is-span-4">
-                <span>완성 결과</span>
+                <span>{secNo('outcome')} — 완성 결과</span>
               </div>
             )}
             {groups.outcome.map((m, i) => (
@@ -200,7 +228,7 @@ const PRESENTATION = '발표 자료';
 
             {embeds.length > 0 && (
               <div class="fp-section-label is-span-4">
-                <span>발표 자료 · 웹</span>
+                <span>{secNo('embeds')} — 발표 자료 · 웹</span>
               </div>
             )}
             {embeds.map((e) => (
@@ -220,22 +248,6 @@ const PRESENTATION = '발표 자료';
               </div>
             ))}
 
-            {groups.process.length > 0 && (
-              <div class="fp-section-label is-span-4">
-                <span>과정 기록</span>
-              </div>
-            )}
-            {groups.process.map((m, i) => (
-              <div class:list={['fp-cell', 'fp-media', `is-span-${editorialSpan(i, m)}`]}>
-                {m.type === 'video' && m.videoSrc ? (
-                  <video controls playsinline preload="none" poster={m.src}>
-                    <source src={m.videoSrc} type="video/mp4" />
-                  </video>
-                ) : (
-                  <img src={m.src} alt={`${p.code} 과정 ${i + 1}`} loading="lazy" />
-                )}
-              </div>
-            ))}
           </div>
         </article>
       );
@@ -358,6 +370,7 @@ const PRESENTATION = '발표 자료';
   }
   .fp-cell { min-width: 0; border-right: var(--border); border-bottom: var(--border); }
   .fp-cell.is-span-2 { grid-column: span 2; }
+  .fp-cell.is-span-4 { grid-column: 1 / -1; }
   .fp-section-label {
     grid-column: 1 / -1;
     min-width: 0;
@@ -427,6 +440,8 @@ const PRESENTATION = '발표 자료';
     background: var(--c-bg-2);
   }
   .fp-media.is-hero img, .fp-media.is-hero video { aspect-ratio: 16 / 10; object-fit: contain; }
+  /* 과정 캡처는 도구 화면·텍스트가 많아 크롭 없이 통째로 보여준다 */
+  .fp-media.is-process img { object-fit: contain; }
 
   @media (max-width: 700px) {
     .fp-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }

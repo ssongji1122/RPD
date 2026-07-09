@@ -1,13 +1,13 @@
 window.RPDFinalProjects = {
-  "generatedAt": "2026-07-02",
-  "source": "Week 15 final-project visual archive, anonymized web-preview subset; completed with direct Week 15 uploads",
+  "generatedAt": "2026-07-10",
+  "source": "Week 15 final-project visual archive, anonymized web-preview subset; completed with direct Week 15 uploads; unreferenced source/image stills classified & registered 2026-07-10",
   "stats": {
     "works": 24,
-    "previewAssets": 89,
+    "previewAssets": 135,
     "videos": 49,
     "links": 21,
     "format": "Interactive filmstrip + Final Project detail pages",
-    "aiRecords": 124
+    "aiRecords": 146
   },
   "featuredIds": [
     "project-01",
@@ -43,6 +43,11 @@ window.RPDFinalProjects = {
           "src": "assets/final-projects/project-01/video-02.webp",
           "videoSrc": "assets/final-projects/project-01/video-02.mp4",
           "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-01/image-01.webp",
+          "role": "process"
         }
       ],
       "videos": [
@@ -483,6 +488,51 @@ window.RPDFinalProjects = {
           "src": "assets/final-projects/project-07/video-03.webp",
           "videoSrc": "assets/final-projects/project-07/video-03.mp4",
           "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-07/image-01.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-07/image-03.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-07/image-08.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-07/source-01.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-07/source-02.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-07/source-03.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-07/source-07.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-07/source-09.webp",
+          "role": "process"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-07/source-10.webp",
+          "role": "process"
         }
       ],
       "videos": [
@@ -537,6 +587,21 @@ window.RPDFinalProjects = {
           "type": "video",
           "src": "assets/final-projects/project-08/video-02.webp",
           "videoSrc": "assets/final-projects/project-08/video-02.mp4",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-08/source-02.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-08/source-03.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-08/source-04.webp",
           "role": "render"
         }
       ],
@@ -610,6 +675,41 @@ window.RPDFinalProjects = {
           "src": "assets/final-projects/project-10/video-03.webp",
           "videoSrc": "assets/final-projects/project-10/video-03.mp4",
           "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-10/image-01.webp",
+          "role": "process"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-10/image-02.webp",
+          "role": "process"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-10/image-03.webp",
+          "role": "process"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-10/image-04.webp",
+          "role": "process"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-10/image-05.webp",
+          "role": "process"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-10/image-06.webp",
+          "role": "process"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-10/image-07.webp",
+          "role": "process"
         }
       ],
       "videos": [
@@ -807,6 +907,51 @@ window.RPDFinalProjects = {
           "src": "assets/final-projects/project-13/video-05.webp",
           "videoSrc": "assets/final-projects/project-13/video-05.mp4",
           "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-13/image-03.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-13/image-04.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-13/image-05.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-13/image-07.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-13/source-01.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-13/source-02.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-13/source-03.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-13/source-05.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-13/source-06.webp",
+          "role": "render"
         }
       ],
       "videos": [
@@ -937,6 +1082,21 @@ window.RPDFinalProjects = {
         {
           "type": "image",
           "src": "assets/final-projects/project-14/process-12.webp",
+          "role": "process"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-14/source-01.webp",
+          "role": "process"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-14/source-02.webp",
+          "role": "process"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-14/source-04.webp",
           "role": "process"
         }
       ],
@@ -1087,6 +1247,41 @@ window.RPDFinalProjects = {
           "src": "assets/final-projects/project-16/video-02.webp",
           "videoSrc": "assets/final-projects/project-16/video-02.mp4",
           "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-16/source-02.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-16/source-04.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-16/source-05.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-16/source-06.webp",
+          "role": "process"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-16/source-07.webp",
+          "role": "process"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-16/source-08.webp",
+          "role": "process"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-16/source-09.webp",
+          "role": "process"
         }
       ],
       "videos": [
@@ -1138,6 +1333,26 @@ window.RPDFinalProjects = {
           "type": "video",
           "src": "assets/final-projects/project-17/video-02.webp",
           "videoSrc": "assets/final-projects/project-17/video-02.mp4",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-17/image-02.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-17/source-02.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-17/source-03.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-17/source-05.webp",
           "role": "render"
         }
       ],
@@ -1270,6 +1485,56 @@ window.RPDFinalProjects = {
         {
           "type": "image",
           "src": "assets/final-projects/project-18/process-12.webp",
+          "role": "process"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-18/image-02.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-18/image-09.webp",
+          "role": "process"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-18/source-01.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-18/source-02.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-18/source-03.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-18/source-04.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-18/source-07.webp",
+          "role": "process"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-18/source-08.webp",
+          "role": "process"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-18/source-09.webp",
+          "role": "process"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-18/source-10.webp",
           "role": "process"
         }
       ],
@@ -1496,6 +1761,31 @@ window.RPDFinalProjects = {
           "type": "image",
           "src": "assets/final-projects/project-20/process-12.webp",
           "role": "process"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-20/source-01.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-20/source-02.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-20/source-03.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-20/source-04.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-20/source-05.webp",
+          "role": "render"
         }
       ],
       "videos": [
@@ -1587,6 +1877,31 @@ window.RPDFinalProjects = {
           "type": "image",
           "src": "assets/final-projects/project-21/process-12.webp",
           "role": "process"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-21/image-01.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-21/image-02.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-21/image-03.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-21/image-04.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-21/image-05.webp",
+          "role": "render"
         }
       ],
       "videos": [
@@ -1730,6 +2045,31 @@ window.RPDFinalProjects = {
           "type": "image",
           "src": "assets/final-projects/project-23/process-12.webp",
           "role": "process"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-23/source-01.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-23/source-02.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-23/source-03.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-23/source-05.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-23/source-06.webp",
+          "role": "render"
         }
       ],
       "videos": [
