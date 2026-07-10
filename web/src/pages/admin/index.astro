@@ -1,0 +1,679 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { url } from '../../lib/url';
+
+const dashboardUrl = url('/admin/dashboard.enc.json');
+---
+
+<Layout
+  title="RPD 강사 대시보드"
+  description="RPD 강사용 제출 현황 및 성적 요약 대시보드"
+>
+  <Fragment slot="head">
+    <meta name="robots" content="noindex, nofollow" />
+  </Fragment>
+
+  <section class="admin-shell" data-dashboard-url={dashboardUrl}>
+    <header class="admin-header">
+      <p class="eyebrow">Instructor dashboard</p>
+      <div class="admin-title-row">
+        <div>
+          <h1>RPD 강사 대시보드</h1>
+          <p class="admin-subtitle">제출 현황과 성적 요약은 브라우저에서만 복호화됩니다.</p>
+        </div>
+        <div class="admin-meta" aria-live="polite">
+          <span id="generatedAt">집계 전</span>
+          <span id="currentWeek">Week --</span>
+        </div>
+      </div>
+    </header>
+
+    <section id="unlockPanel" class="unlock-panel" aria-labelledby="unlockTitle">
+      <div>
+        <h2 id="unlockTitle">패스프레이즈 입력</h2>
+        <p>강사용 패스프레이즈를 입력하면 이 탭에서만 대시보드가 열립니다.</p>
+      </div>
+      <form id="unlockForm" class="unlock-form">
+        <label for="passphrase">패스프레이즈</label>
+        <div class="unlock-controls">
+          <input id="passphrase" name="passphrase" type="password" autocomplete="current-password" required />
+          <button type="submit">열기</button>
+        </div>
+        <p id="statusMessage" class="status-message" role="status" aria-live="polite">암호화된 집계 파일을 확인하는 중입니다.</p>
+      </form>
+    </section>
+
+    <section id="dashboardContent" class="dashboard-content" hidden>
+      <section class="section-block" aria-labelledby="riskTitle">
+        <div class="section-heading">
+          <p class="eyebrow">Risk briefing</p>
+          <h2 id="riskTitle">이번 주 위험 학생</h2>
+        </div>
+        <div id="riskStudents" class="risk-grid"></div>
+      </section>
+
+      <section class="section-block" aria-labelledby="matrixTitle">
+        <div class="section-heading">
+          <p class="eyebrow">Submission matrix</p>
+          <h2 id="matrixTitle">반별 제출 매트릭스</h2>
+        </div>
+        <div id="submissionMatrices" class="class-stack"></div>
+      </section>
+
+      <section class="section-block" aria-labelledby="gradesTitle">
+        <div class="section-heading">
+          <p class="eyebrow">Grades</p>
+          <h2 id="gradesTitle">반별 성적 테이블</h2>
+        </div>
+        <div id="gradeTables" class="class-stack"></div>
+      </section>
+    </section>
+  </section>
+</Layout>
+
+<script>
+  const shell = document.querySelector('.admin-shell');
+  const dashboardUrl = shell?.getAttribute('data-dashboard-url') || '';
+  const unlockPanel = document.getElementById('unlockPanel');
+  const unlockForm = document.getElementById('unlockForm');
+  const passphraseInput = document.getElementById('passphrase');
+  const statusMessage = document.getElementById('statusMessage');
+  const dashboardContent = document.getElementById('dashboardContent');
+  const generatedAt = document.getElementById('generatedAt');
+  const currentWeek = document.getElementById('currentWeek');
+  const riskStudents = document.getElementById('riskStudents');
+  const submissionMatrices = document.getElementById('submissionMatrices');
+  const gradeTables = document.getElementById('gradeTables');
+  const sessionKey = 'rpd-admin-dashboard-passphrase';
+  const totalWeeks = 15;
+
+  let encryptedFile = null;
+
+  function setStatus(message, tone = 'muted') {
+    if (!statusMessage) return;
+    statusMessage.textContent = message;
+    statusMessage.dataset.tone = tone;
+  }
+
+  function base64ToBytes(value) {
+    const raw = atob(value);
+    const bytes = new Uint8Array(raw.length);
+    for (let i = 0; i < raw.length; i += 1) {
+      bytes[i] = raw.charCodeAt(i);
+    }
+    return bytes;
+  }
+
+  async function deriveAesKey(passphrase, salt, iterations) {
+    const encoded = new TextEncoder().encode(passphrase);
+    const baseKey = await crypto.subtle.importKey('raw', encoded, 'PBKDF2', false, ['deriveKey']);
+    return crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt, iterations, hash: 'SHA-256' },
+      baseKey,
+      { name: 'AES-GCM', length: 256 },
+      false,
+      ['decrypt'],
+    );
+  }
+
+  async function decryptDashboard(file, passphrase) {
+    if (file.v !== 1 || file.kdf !== 'PBKDF2-SHA256') {
+      throw new Error('지원하지 않는 대시보드 파일 형식입니다.');
+    }
+    const salt = base64ToBytes(file.salt);
+    const iv = base64ToBytes(file.iv);
+    const ciphertext = base64ToBytes(file.ciphertext);
+    const key = await deriveAesKey(passphrase, salt, file.iterations);
+    const plaintext = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, ciphertext);
+    return JSON.parse(new TextDecoder().decode(plaintext));
+  }
+
+  function clearNode(node) {
+    if (!node) return;
+    while (node.firstChild) node.removeChild(node.firstChild);
+  }
+
+  function text(tagName, value, className) {
+    const element = document.createElement(tagName);
+    element.textContent = value;
+    if (className) element.className = className;
+    return element;
+  }
+
+  function formatKst(isoString) {
+    return new Intl.DateTimeFormat('ko-KR', {
+      timeZone: 'Asia/Seoul',
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    }).format(new Date(isoString));
+  }
+
+  function groupByClass(items) {
+    return items.reduce((acc, item) => {
+      const key = item.class_num || '미지정';
+      if (!acc.has(key)) acc.set(key, []);
+      acc.get(key).push(item);
+      return acc;
+    }, new Map());
+  }
+
+  function renderRiskStudents(data) {
+    clearNode(riskStudents);
+    if (!riskStudents) return;
+
+    if (!data.risk_students.length) {
+      const empty = document.createElement('div');
+      empty.className = 'empty-state';
+      empty.textContent = '위험 학생 없음';
+      riskStudents.appendChild(empty);
+      return;
+    }
+
+    const byClass = groupByClass(data.risk_students);
+    for (const [classNum, students] of byClass) {
+      const card = document.createElement('article');
+      card.className = 'risk-card';
+      card.appendChild(text('h3', `${classNum}반`, 'risk-class'));
+
+      const list = document.createElement('ul');
+      for (const student of students) {
+        const item = document.createElement('li');
+        const name = text('span', `${student.name} (${student.student_id})`, 'risk-name');
+        const reason = text('span', student.reason, 'risk-reason');
+        const weeks = text('span', `미제출 주차: ${student.missing_weeks.join(', ') || '-'}`, 'risk-weeks');
+        item.append(name, reason, weeks);
+        list.appendChild(item);
+      }
+      card.appendChild(list);
+      riskStudents.appendChild(card);
+    }
+  }
+
+  function renderScanErrors(data) {
+    const errors = data.scan_errors || [];
+    if (!errors.length || !riskStudents) return;
+    const note = document.createElement('div');
+    note.className = 'empty-state';
+    const names = errors.map((s) => `${s.class_num}반 ${s.name} (${s.student_id})`).join(', ');
+    note.textContent = `페이지 스캔 실패 ${errors.length}명: ${names} — Notion 페이지 삭제·아카이브 여부를 확인하세요.`;
+    riskStudents.appendChild(note);
+  }
+
+  function makeClassPanel(classInfo, title) {
+    const panel = document.createElement('article');
+    panel.className = 'class-panel';
+    const heading = document.createElement('header');
+    heading.className = 'class-panel-head';
+    heading.appendChild(text('h3', classInfo.title || `${classInfo.class_num}반`, 'class-title'));
+    heading.appendChild(text('span', `${classInfo.students.length}명`, 'class-count'));
+    panel.appendChild(heading);
+    panel.setAttribute('aria-label', title);
+    return panel;
+  }
+
+  function renderSubmissionMatrices(data) {
+    clearNode(submissionMatrices);
+    if (!submissionMatrices) return;
+
+    for (const classInfo of data.classes) {
+      const panel = makeClassPanel(classInfo, '제출 매트릭스');
+      const scroller = document.createElement('div');
+      scroller.className = 'table-scroll';
+      const table = document.createElement('table');
+      table.className = 'matrix-table';
+
+      const thead = document.createElement('thead');
+      const headRow = document.createElement('tr');
+      headRow.appendChild(text('th', '학생', 'student-head'));
+      for (let week = 1; week <= totalWeeks; week += 1) {
+        const th = text('th', `W${String(week).padStart(2, '0')}`);
+        if (week > data.current_week) th.className = 'future-week';
+        headRow.appendChild(th);
+      }
+      thead.appendChild(headRow);
+
+      const tbody = document.createElement('tbody');
+      for (const student of classInfo.students) {
+        const row = document.createElement('tr');
+        row.appendChild(text('th', `${student.name} (${student.student_id})`, 'student-cell'));
+        for (let week = 1; week <= totalWeeks; week += 1) {
+          const key = String(week).padStart(2, '0');
+          const cell = document.createElement('td');
+          const isFuture = week > data.current_week;
+          const submitted = Boolean(student.weeks[key]);
+          if (student.scan_error) {
+            cell.className = 'week-cell is-future';
+            cell.textContent = '확인불가';
+          } else {
+            cell.className = isFuture ? 'week-cell is-future' : submitted ? 'week-cell is-submitted' : 'week-cell is-missing';
+            cell.textContent = isFuture ? '예정' : submitted ? '제출' : '미제출';
+          }
+          cell.setAttribute('aria-label', `Week ${key} ${cell.textContent}`);
+          row.appendChild(cell);
+        }
+        tbody.appendChild(row);
+      }
+
+      table.append(thead, tbody);
+      scroller.appendChild(table);
+      panel.appendChild(scroller);
+      submissionMatrices.appendChild(panel);
+    }
+  }
+
+  function formatScore(value) {
+    return value === null || value === undefined ? '-' : String(value);
+  }
+
+  function renderGradeTables(data) {
+    clearNode(gradeTables);
+    if (!gradeTables) return;
+
+    for (const classInfo of data.classes) {
+      const panel = makeClassPanel(classInfo, '성적 테이블');
+      const scroller = document.createElement('div');
+      scroller.className = 'table-scroll';
+      const table = document.createElement('table');
+      table.className = 'grade-table';
+      const headers = ['학생', '출석', '과제제출수', '중간', '기말'];
+
+      const thead = document.createElement('thead');
+      const headRow = document.createElement('tr');
+      for (const header of headers) headRow.appendChild(text('th', header));
+      thead.appendChild(headRow);
+
+      const tbody = document.createElement('tbody');
+      for (const student of classInfo.students) {
+        const row = document.createElement('tr');
+        row.appendChild(text('th', `${student.name} (${student.student_id})`, 'student-cell'));
+        row.appendChild(text('td', formatScore(student.attendance)));
+        row.appendChild(text('td', formatScore(student.submissions_db_count)));
+        row.appendChild(text('td', formatScore(student.midterm)));
+        row.appendChild(text('td', formatScore(student.final)));
+        tbody.appendChild(row);
+      }
+
+      table.append(thead, tbody);
+      scroller.appendChild(table);
+      panel.appendChild(scroller);
+      gradeTables.appendChild(panel);
+    }
+  }
+
+  function renderDashboard(data) {
+    if (generatedAt) generatedAt.textContent = `집계: ${formatKst(data.generated_at)}`;
+    if (currentWeek) currentWeek.textContent = `Week ${String(data.current_week).padStart(2, '0')}`;
+    renderRiskStudents(data);
+    renderScanErrors(data);
+    renderSubmissionMatrices(data);
+    renderGradeTables(data);
+    if (unlockPanel) unlockPanel.hidden = true;
+    if (dashboardContent) dashboardContent.hidden = false;
+  }
+
+  async function unlock(passphrase, remember) {
+    if (!encryptedFile) return;
+    try {
+      setStatus('복호화 중입니다.');
+      const data = await decryptDashboard(encryptedFile, passphrase);
+      if (remember) sessionStorage.setItem(sessionKey, passphrase);
+      renderDashboard(data);
+    } catch (error) {
+      sessionStorage.removeItem(sessionKey);
+      setStatus('패스프레이즈가 올바르지 않습니다.', 'error');
+      if (passphraseInput) passphraseInput.focus();
+    }
+  }
+
+  async function loadEncryptedFile() {
+    try {
+      const response = await fetch(dashboardUrl, { cache: 'no-store' });
+      if (response.status === 404) {
+        setStatus('아직 집계 데이터가 없습니다.', 'warn');
+        return;
+      }
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      encryptedFile = await response.json();
+      setStatus('패스프레이즈를 입력해 주세요.');
+      const savedPassphrase = sessionStorage.getItem(sessionKey);
+      if (savedPassphrase) {
+        if (passphraseInput) passphraseInput.value = savedPassphrase;
+        await unlock(savedPassphrase, false);
+      }
+    } catch (error) {
+      setStatus('집계 파일을 불러오지 못했습니다.', 'error');
+    }
+  }
+
+  unlockForm?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const formData = new FormData(unlockForm);
+    const passphrase = String(formData.get('passphrase') || '');
+    await unlock(passphrase, true);
+  });
+
+  loadEncryptedFile();
+</script>
+
+<style is:global>
+  .admin-shell {
+    --admin-key: #00bfa5;
+    --admin-key-soft: rgba(0, 191, 165, 0.14);
+    --admin-line-strong: rgba(26, 26, 24, 0.22);
+    width: min(1280px, calc(100% - 48px));
+    margin: 0 auto;
+    padding: var(--s-7) 0;
+  }
+
+  .admin-header {
+    margin-bottom: var(--s-5);
+  }
+
+  .admin-title-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--s-4);
+    margin-top: var(--s-2);
+  }
+
+  .admin-title-row h1 {
+    font-size: var(--fs-display);
+  }
+
+  .admin-subtitle {
+    max-width: 48em;
+    margin-top: var(--s-2);
+    color: var(--c-ink-2);
+  }
+
+  .admin-meta {
+    display: flex;
+    gap: var(--s-2);
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    font-family: var(--f-mono);
+    font-size: var(--fs-xs);
+    color: var(--c-ink-2);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .admin-meta span,
+  .class-count {
+    border: var(--border);
+    border-radius: var(--r-pill);
+    padding: 6px 10px;
+    background: var(--c-bg-2);
+  }
+
+  .unlock-panel,
+  .section-block,
+  .class-panel,
+  .risk-card,
+  .empty-state {
+    border: var(--border);
+    border-radius: var(--r-lg);
+    background: var(--c-bg);
+  }
+
+  .unlock-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(280px, 0.6fr);
+    gap: var(--s-4);
+    padding: var(--s-4);
+  }
+
+  .unlock-panel h2 {
+    font-size: var(--fs-xl);
+  }
+
+  .unlock-panel p {
+    margin-top: var(--s-2);
+    color: var(--c-ink-2);
+  }
+
+  .unlock-form {
+    display: grid;
+    gap: var(--s-2);
+  }
+
+  .unlock-form label {
+    font-family: var(--f-mono);
+    font-size: var(--fs-xs);
+    color: var(--c-ink-2);
+  }
+
+  .unlock-controls {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--s-2);
+  }
+
+  .unlock-controls input,
+  .unlock-controls button {
+    min-height: 44px;
+    border-radius: var(--r-md);
+  }
+
+  .unlock-controls input {
+    width: 100%;
+    border: var(--border-input);
+    background: var(--c-bg-2);
+    padding: 0 var(--s-3);
+  }
+
+  .unlock-controls button {
+    border: 1px solid var(--admin-key);
+    background: var(--admin-key);
+    color: #0f0f0e;
+    padding: 0 var(--s-4);
+    font-weight: var(--w-semibold);
+  }
+
+  .status-message {
+    min-height: 1.7em;
+    font-family: var(--f-mono);
+    font-size: var(--fs-xs);
+  }
+
+  .status-message[data-tone="error"] {
+    color: var(--c-error);
+  }
+
+  .status-message[data-tone="warn"] {
+    color: var(--c-warn);
+  }
+
+  .dashboard-content {
+    display: grid;
+    gap: var(--s-5);
+  }
+
+  .admin-shell [hidden] {
+    display: none !important;
+  }
+
+  .section-block {
+    padding: var(--s-4);
+  }
+
+  .section-heading {
+    margin-bottom: var(--s-4);
+  }
+
+  .section-heading h2 {
+    margin-top: var(--s-1);
+    font-size: var(--fs-2xl);
+  }
+
+  .risk-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--s-3);
+  }
+
+  .risk-card,
+  .empty-state {
+    padding: var(--s-3);
+  }
+
+  .risk-class,
+  .class-title {
+    font-size: var(--fs-lg);
+  }
+
+  .risk-card ul {
+    display: grid;
+    gap: var(--s-2);
+    margin-top: var(--s-3);
+  }
+
+  .risk-card li {
+    display: grid;
+    gap: 2px;
+    padding-top: var(--s-2);
+    border-top: var(--border);
+  }
+
+  .risk-name {
+    font-weight: var(--w-semibold);
+  }
+
+  .risk-reason {
+    color: var(--c-error);
+  }
+
+  .risk-weeks {
+    font-family: var(--f-mono);
+    font-size: var(--fs-xs);
+    color: var(--c-ink-2);
+  }
+
+  .class-stack {
+    display: grid;
+    gap: var(--s-4);
+  }
+
+  .class-panel {
+    overflow: hidden;
+  }
+
+  .class-panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-3);
+    padding: var(--s-3);
+    border-bottom: var(--border);
+  }
+
+  .table-scroll {
+    overflow-x: auto;
+  }
+
+  .admin-shell table {
+    width: 100%;
+    min-width: 920px;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .admin-shell th,
+  .admin-shell td {
+    border-bottom: var(--border);
+    border-right: var(--border);
+    padding: 9px 10px;
+    text-align: center;
+    vertical-align: middle;
+    font-size: var(--fs-xs);
+  }
+
+  .admin-shell th:last-child,
+  .admin-shell td:last-child {
+    border-right: 0;
+  }
+
+  .admin-shell tbody tr:last-child th,
+  .admin-shell tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .admin-shell thead th {
+    position: sticky;
+    top: 0;
+    background: var(--c-bg-2);
+    color: var(--c-ink-2);
+    font-family: var(--f-mono);
+    font-weight: var(--w-medium);
+  }
+
+  .student-head,
+  .student-cell {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    min-width: 190px;
+    max-width: 240px;
+    background: var(--c-bg);
+    text-align: left;
+  }
+
+  thead .student-head {
+    z-index: 2;
+    background: var(--c-bg-2);
+  }
+
+  .week-cell {
+    width: 72px;
+    white-space: nowrap;
+    font-family: var(--f-mono);
+  }
+
+  .is-submitted {
+    background: var(--admin-key-soft);
+    color: var(--c-ink);
+  }
+
+  .is-missing {
+    color: var(--c-error);
+  }
+
+  .is-future,
+  .future-week {
+    color: var(--c-ink-3);
+    opacity: 0.58;
+  }
+
+  .grade-table td {
+    font-family: var(--f-mono);
+  }
+
+  .empty-state {
+    color: var(--c-ink-2);
+  }
+
+  @media (max-width: 760px) {
+    .admin-shell {
+      width: min(100% - 32px, 1280px);
+      padding: var(--s-5) 0;
+    }
+
+    .admin-title-row,
+    .unlock-panel {
+      grid-template-columns: 1fr;
+      align-items: flex-start;
+    }
+
+    .admin-title-row {
+      display: grid;
+    }
+
+    .admin-meta {
+      justify-content: flex-start;
+    }
+
+    .unlock-controls {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
