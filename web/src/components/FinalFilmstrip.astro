@@ -57,7 +57,7 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
             data-idx={di}
             data-real={real}
             data-code={p.code}
-            data-title={p.title}
+            data-title={p.workTitle ?? p.title}
             data-detail={`${detailBase}#${p.id}`}
             data-pres-url={pres?.url ?? ''}
             aria-label={`${p.code} 보기`}

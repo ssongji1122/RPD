@@ -28,6 +28,10 @@ export interface FPLink {
   /** 빌드 데이터에 미리 해석해 둔 임베드 URL (예: Canva view?embed) */
   embedUrl?: string;
 }
+export interface FPNote {
+  section: string | null;
+  text: string;
+}
 export interface FPProject {
   id: string;
   code: string;
@@ -36,6 +40,10 @@ export interface FPProject {
   videos: FPVideo[];
   links: FPLink[];
   coverSrc?: string;
+  /** 학생 발표 사이트·Behance에서 수집한 작품명 (없으면 익명 코드 유지) */
+  workTitle?: string;
+  /** 학생이 노션 제출 페이지에 남긴 제작 노트 (원문) */
+  notes?: FPNote[];
 }
 export interface FinalProjects {
   generatedAt: string;
