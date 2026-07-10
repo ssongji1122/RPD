@@ -7,7 +7,8 @@ window.RPDFinalProjects = {
     "videos": 49,
     "links": 21,
     "format": "Interactive filmstrip + Final Project detail pages",
-    "aiRecords": 146
+    "aiRecords": 146,
+    "notes": 84
   },
   "featuredIds": [
     "project-01",
@@ -74,7 +75,26 @@ window.RPDFinalProjects = {
         "assets/final-projects/project-01/frame-03.webp",
         "assets/final-projects/project-01/frame-04.webp",
         "assets/final-projects/project-01/frame-05.webp"
-      ]
+      ],
+      "notes": [
+        {
+          "section": "발표자료",
+          "text": "구글스티치로 원하는 페이지 디자인 생성."
+        },
+        {
+          "section": "발표자료",
+          "text": "구글스티치로 나온 시안을 바탕으로 코덱스로 만든 웹페이지 포토폴리오"
+        },
+        {
+          "section": "발표자료",
+          "text": "netlify이용해 링크로 전환시킨 포토폴리오 웹페이지"
+        },
+        {
+          "section": "MP4",
+          "text": "KlingAI 로 제작. 렌더링된 사진을 주고 프롬포트를 작성하여 배경음과 함께 생성"
+        }
+      ],
+      "workTitle": "RPD ECO"
     },
     {
       "id": "project-02",
@@ -168,7 +188,8 @@ window.RPDFinalProjects = {
         "assets/final-projects/project-02/frame-03.webp",
         "assets/final-projects/project-02/frame-04.webp",
         "assets/final-projects/project-02/frame-05.webp"
-      ]
+      ],
+      "workTitle": "Tesla x"
     },
     {
       "id": "project-03",
@@ -262,7 +283,8 @@ window.RPDFinalProjects = {
         "assets/final-projects/project-03/frame-03.webp",
         "assets/final-projects/project-03/frame-04.webp",
         "assets/final-projects/project-03/frame-05.webp"
-      ]
+      ],
+      "workTitle": "HOPE"
     },
     {
       "id": "project-04",
@@ -439,6 +461,12 @@ window.RPDFinalProjects = {
         "assets/final-projects/project-06/frame-03.webp",
         "assets/final-projects/project-06/frame-04.webp",
         "assets/final-projects/project-06/frame-05.webp"
+      ],
+      "notes": [
+        {
+          "section": "MP4",
+          "text": "다른 버전의 AI 프로모션 영상"
+        }
       ]
     },
     {
@@ -550,7 +578,42 @@ window.RPDFinalProjects = {
         }
       ],
       "links": [],
-      "coverSrc": "assets/final-projects/project-07/image-02.webp"
+      "coverSrc": "assets/final-projects/project-07/image-02.webp",
+      "notes": [
+        {
+          "section": "발표자료",
+          "text": "홈페이지 제작 과정"
+        },
+        {
+          "section": "발표자료",
+          "text": "비비봇 프로젝트를 더 효과적으로 보여주기 위해 발표자료를 웹페이지 형태의 포트폴리오로 제작했다. 먼저 ChatGPT와의 대화를 통해 비비봇의 콘셉트, 제작 과정, 색감, 섹션 구성 등을 정리했고, 이를 바탕으로 웹페이지 제작에 사용할 프롬프트를 추출했다."
+        },
+        {
+          "section": "발표자료",
+          "text": "이후 추출한 프롬프트를 v0에 입력하여 전체 웹페이지의 기본 구조를 생성했다. 메인페이지는 비비봇의 캐릭터 이미지가 돋보이도록 어두운 보라색 배경과 네온 민트, 핑크·보라색 포인트 컬러를 중심으로 구성했다. 또한 컨셉 소개, 제작 과정, AI 도구 활용, 최종 결과, 느낀 점 섹션이 순서대로 보이도록 페이지 흐름을 설계했다."
+        },
+        {
+          "section": "발표자료",
+          "text": "초기 생성된 웹페이지에서 부족한 부분은 v0의 편집 기능을 활용해 추가 요청을 하며 수정했다. 예를 들어 메인 캐릭터 이미지 배치, 제작 과정 카드, 이미지 placeholder, 버튼, 섹션 간 간격 등을 조정했고, 발표 포트폴리오에 적합하도록 화면 구성을 다듬었다."
+        },
+        {
+          "section": "발표자료",
+          "text": "마지막으로 홈페이지 안의 텍스트와 이미지는 직접 편집했다. 비비봇의 컨셉 설명, 모델링 과정, 재질 과정, 리깅과 애니메이션 설명을 실제 작업 내용에 맞게 수정했고, 렌더 이미지와 제작 과정 스크린샷을 추가하여 결과물뿐만 아니라 작업 과정이 잘 드러나도록 구성했다."
+        },
+        {
+          "section": "발표자료",
+          "text": "v0에서 웹페이지를 제작한 뒤 편집 기능을 활용해 텍스트와 이미지를 직접 수정했다. 그러나 최종 저장 전에 크레딧이 만료되어 수정본이 저장되지 않는 문제가 발생했고, 수정 전 버전으로 내보내질 가능성이 있었다. 이를 해결하기 위해 개발자도구에서 현재 화면의 HTML을 복사해 백업하고, 기존 작업 내용을 바탕으로 복구용 웹페이지를 다시 구성했다."
+        },
+        {
+          "section": "MP4",
+          "text": "애니메이션 mp4파일"
+        },
+        {
+          "section": "MP4",
+          "text": "애니메이션을 기반으로 제작한 ai 비디오 mp4파일"
+        }
+      ],
+      "workTitle": "비비봇 Bibi Bot"
     },
     {
       "id": "project-08",
@@ -616,7 +679,13 @@ window.RPDFinalProjects = {
         }
       ],
       "links": [],
-      "coverSrc": "assets/final-projects/project-08/image-01.webp"
+      "coverSrc": "assets/final-projects/project-08/image-01.webp",
+      "notes": [
+        {
+          "section": "발표자료",
+          "text": "file:///C:/Users/ty656/Downloads/index_4.html"
+        }
+      ]
     },
     {
       "id": "project-09",
@@ -733,7 +802,42 @@ window.RPDFinalProjects = {
           "kind": "Website"
         }
       ],
-      "coverSrc": "assets/final-projects/project-10/video-01.webp"
+      "coverSrc": "assets/final-projects/project-10/video-01.webp",
+      "notes": [
+        {
+          "section": "발표자료",
+          "text": "홈페이지 제작 과정"
+        },
+        {
+          "section": "발표자료",
+          "text": "제미나이와 함께 클로드에 넣을 프롬포트 생성."
+        },
+        {
+          "section": "발표자료",
+          "text": "컬러는 화이트, 블랙이 메인이고, 포인트 컬러로 네온 그린을 사용할 것."
+        },
+        {
+          "section": "발표자료",
+          "text": "필요한 페이지는 1. 표지, 2. 캐릭터 프로필, 3. 레퍼런스 페이지(무드보드), 4. 상세 페이지 1, 5. 상세 페이지 2, 6. 비디오.\n설명은 거의 2~3줄 /  이미지 위주의 홈페이지 제작."
+        },
+        {
+          "section": "발표자료",
+          "text": "클로드에게 사진 / 동영상 / 수정사항 등을 전달하며 홈페이지 수정"
+        },
+        {
+          "section": "발표자료",
+          "text": "이후 완성된 html 파일을 게시. netlify 사용. - 홈페이지 이름 변경"
+        },
+        {
+          "section": "BLEND",
+          "text": "블렌더 리깅"
+        },
+        {
+          "section": "MP4",
+          "text": "final video"
+        }
+      ],
+      "workTitle": "PANDI — 판디"
     },
     {
       "id": "project-11",
@@ -983,7 +1087,46 @@ window.RPDFinalProjects = {
           "kind": "Website"
         }
       ],
-      "coverSrc": "assets/final-projects/project-13/image-01.webp"
+      "coverSrc": "assets/final-projects/project-13/image-01.webp",
+      "notes": [
+        {
+          "section": "MP4",
+          "text": "턴테이블"
+        },
+        {
+          "section": "MP4",
+          "text": "키프레임 애니메이션"
+        },
+        {
+          "section": "MP4",
+          "text": "프로모션 영상"
+        },
+        {
+          "section": "MP4",
+          "text": "(Gemini 영상)"
+        },
+        {
+          "section": "MP4",
+          "text": "(Gemini 이미지 + kling 영상 + suno 음악)"
+        },
+        {
+          "section": "AI",
+          "text": "캐릭터 시트 & 컨셉 이미지 (gemini)"
+        },
+        {
+          "section": "AI",
+          "text": "프로모션 영상 (Gemini 이미지 + kling 영상 + suno 음악)"
+        },
+        {
+          "section": "AI",
+          "text": "kling 프롬포트"
+        },
+        {
+          "section": "AI",
+          "text": "suno 프롬포트"
+        }
+      ],
+      "workTitle": "BOMULI"
     },
     {
       "id": "project-14",
@@ -1130,7 +1273,41 @@ window.RPDFinalProjects = {
           "kind": "Reference"
         }
       ],
-      "coverSrc": "assets/final-projects/project-14/image-02.webp"
+      "coverSrc": "assets/final-projects/project-14/image-02.webp",
+      "notes": [
+        {
+          "section": "MP4",
+          "text": "Animation Video"
+        },
+        {
+          "section": "MP4",
+          "text": "Promition Video"
+        },
+        {
+          "section": "MP4",
+          "text": "샘플 이미지, 기능"
+        },
+        {
+          "section": "MP4",
+          "text": "레퍼런스: 발표자료 pdf를 보내고, 웹으로 구현하고 싶다고 요청"
+        },
+        {
+          "section": "MP4",
+          "text": "프롬프트 Claude 이용, 제작 Claude Design 이용"
+        },
+        {
+          "section": "MP4",
+          "text": "배경 요소 - 21st 사이트 이용"
+        },
+        {
+          "section": "MP4",
+          "text": "다운로드 후 클로드 디자인에서 색상 변경 및 커서 인터랙션, 사진 인터랙션 추가"
+        },
+        {
+          "section": "MP4",
+          "text": "로컬 이미지까지 한 번에 패킹 후 netlify에서 배포"
+        }
+      ]
     },
     {
       "id": "project-15",
@@ -1189,7 +1366,30 @@ window.RPDFinalProjects = {
         "assets/final-projects/project-15/frame-03.webp",
         "assets/final-projects/project-15/frame-04.webp",
         "assets/final-projects/project-15/frame-05.webp"
-      ]
+      ],
+      "notes": [
+        {
+          "section": null,
+          "text": "1차: incandescent-empanada-ba4297.netlify.app"
+        },
+        {
+          "section": null,
+          "text": "파일 제공+2차 수정"
+        },
+        {
+          "section": null,
+          "text": "2차: incredible-moxie-54ed49.netlify.app"
+        },
+        {
+          "section": null,
+          "text": "웹사이트 컨셉 구체화+여러 차례의 수정"
+        },
+        {
+          "section": "MP4",
+          "text": "turnaround 영상"
+        }
+      ],
+      "workTitle": "MATI-42"
     },
     {
       "id": "project-16",
@@ -1301,7 +1501,8 @@ window.RPDFinalProjects = {
           "kind": "Website"
         }
       ],
-      "coverSrc": "assets/final-projects/project-16/image-01.webp"
+      "coverSrc": "assets/final-projects/project-16/image-01.webp",
+      "workTitle": "ROBO:KUN"
     },
     {
       "id": "project-17",
@@ -1373,7 +1574,22 @@ window.RPDFinalProjects = {
           "kind": "Website"
         }
       ],
-      "coverSrc": "assets/final-projects/project-17/image-01.webp"
+      "coverSrc": "assets/final-projects/project-17/image-01.webp",
+      "notes": [
+        {
+          "section": "MP4",
+          "text": "Animation"
+        },
+        {
+          "section": "MP4",
+          "text": "Promo"
+        },
+        {
+          "section": "MP4",
+          "text": "Render Image"
+        }
+      ],
+      "workTitle": "STIMO WORLD"
     },
     {
       "id": "project-18",
@@ -1555,7 +1771,34 @@ window.RPDFinalProjects = {
           "kind": "Website"
         }
       ],
-      "coverSrc": "assets/final-projects/project-18/image-01.webp"
+      "coverSrc": "assets/final-projects/project-18/image-01.webp",
+      "notes": [
+        {
+          "section": "포트폴리오",
+          "text": "HTML"
+        },
+        {
+          "section": "포트폴리오",
+          "text": "시행착오 :"
+        },
+        {
+          "section": "포트폴리오",
+          "text": "Stich"
+        },
+        {
+          "section": "포트폴리오",
+          "text": "Claude"
+        },
+        {
+          "section": "포트폴리오",
+          "text": "프롬포트"
+        },
+        {
+          "section": "MP4",
+          "text": "렌더 이미지"
+        }
+      ],
+      "workTitle": "Kku-ing"
     },
     {
       "id": "project-19",
@@ -1799,7 +2042,21 @@ window.RPDFinalProjects = {
         }
       ],
       "links": [],
-      "coverSrc": "assets/final-projects/project-20/image-01.webp"
+      "coverSrc": "assets/final-projects/project-20/image-01.webp",
+      "notes": [
+        {
+          "section": "MP4",
+          "text": "blender 작업"
+        },
+        {
+          "section": "MP4",
+          "text": "Kling AI 활용"
+        },
+        {
+          "section": "MP4",
+          "text": "웹페이지 링크(포트 폴리오)"
+        }
+      ]
     },
     {
       "id": "project-21",
@@ -1961,7 +2218,110 @@ window.RPDFinalProjects = {
         "assets/final-projects/project-22/frame-03.webp",
         "assets/final-projects/project-22/frame-04.webp",
         "assets/final-projects/project-22/frame-05.webp"
-      ]
+      ],
+      "notes": [
+        {
+          "section": "발표자료",
+          "text": "[레퍼런스 웹사이트 분석 및 디자인 반영 요소]"
+        },
+        {
+          "section": "발표자료",
+          "text": "1. 색상과 분위기"
+        },
+        {
+          "section": "발표자료",
+          "text": "어두운 배경: 참고한 사이트처럼 공간감 있는 느낌을 주기 위해 배경과 카드 색상을 검은색과 어두운 회색으로 겹쳐서 사용했습니다."
+        },
+        {
+          "section": "발표자료",
+          "text": "대비감 있는 포인트 컬러: 원래 참고 사이트는 오렌지색을 메인으로 썼는데, 뚜니의 귀여운 느낌에 맞춰 쨍한 핑크색으로 바꿨습니다."
+        },
+        {
+          "section": "발표자료",
+          "text": "2. 타이포그래피"
+        },
+        {
+          "section": "발표자료",
+          "text": "화면을 꽉 채우는 큰 타이포그래피: 참고 사이트의 가장 큰 특징인 큰 타이포 디자인을 가져왔습니다. 글자 사이의 간격을 일부러 좁혀서 디자인적으로 더 눈에 띄고 세련돼 보이게 만들었습니다."
+        },
+        {
+          "section": "발표자료",
+          "text": "대문자와 인덱싱: 영문 제목이나 메뉴는 다 대문자로 적고, 각 구역 위에는 1단계, 2단계처럼 작게 번호를 매겼습니다. ."
+        },
+        {
+          "section": "발표자료",
+          "text": "3. 레이아웃 및 UI 요소"
+        },
+        {
+          "section": "발표자료",
+          "text": "글래스모피즘 네비게이션: 화면 위에 고정된 메뉴바는 배경이 살짝 비치면서 흐리게 보이도록 만들었습니다. 마우스로 화면을 내릴 때 밑에 있는 사진들이 메뉴바 뒤로 은은하게 지나가는 효과로 디자인 요소를 더했습니다."
+        },
+        {
+          "section": "발표자료",
+          "text": "카드형 UI: 글이랑 사진을 그냥 나열하기보다, 얇고 투명한 하얀색 테두리가 있는 어두운 카드 상자 안에 깔끔하게 모아두었습니다."
+        },
+        {
+          "section": "발표자료",
+          "text": "4. 인터랙션 및 애니메이션"
+        },
+        {
+          "section": "발표자료",
+          "text": "스크롤 할 때 나타나는 효과: 화면을 아래로 내리면 글이나 사진들이 아래에서 위로 부드럽게 떠오르면서 나타나도록 만들었습니다."
+        },
+        {
+          "section": "발표자료",
+          "text": "마우스 올릴 때 반응하는 효과: 마우스를 카드 위에 올리면 카드가 살짝 위로 올라가면서 테두리가 핑크색으로 변합니다. 안쪽에 있는 사진도 아주 살짝 커져서 클릭해 보고 싶은 마음이 들게 했습니다."
+        },
+        {
+          "section": "발표자료",
+          "text": "둥둥 떠다니는 애니메이션: 첫 화면에 나오는 뚜니 사진은 우주에 있는 것처럼 위아래로 천천히 둥둥 떠다니게 만들어서, 캐릭터가 진짜 살아있는 것 같은 느낌을 줬습니다."
+        },
+        {
+          "section": "발표자료",
+          "text": "[프롬프트]"
+        },
+        {
+          "section": "발표자료",
+          "text": "바로 만들지 말고, 전체적인 흐름을 나한테 먼저 검사받아줘."
+        },
+        {
+          "section": "발표자료",
+          "text": "발표자료에 꼭 들어갈 섹션"
+        },
+        {
+          "section": "발표자료",
+          "text": "Title / Hero — 캐릭터 이름, 한 줄 소개, 대표 이미지\n-이름: 뚜니 DDONI\n-한줄 소개: 사람들의 심신 안정을 도와주는 반려 말랑이 로봇"
+        },
+        {
+          "section": "발표자료",
+          "text": "Ideation — 주제, 콘셉트 키워드, 레퍼런스/무드보드\n-주제: 반려로봇\n-콘셉트 키워드 #위로 #안정 #말랑말랑 #반려로봇\n-무드보드 링크:"
+        },
+        {
+          "section": "발표자료",
+          "text": "AI Image Generation — 이미지 생성 프롬프트\n-이미지 생성 프롬프트: small companion robot pet with round ears, round body, soft glowing eyes, warm pastel pink and mint color scheme, 3/4 view, product photography"
+        },
+        {
+          "section": "발표자료",
+          "text": "Modeling — 3D 모델링 과정, 주요 파츠, 형태 변화\n-이용 modifier: mirror, subdivision"
+        },
+        {
+          "section": "발표자료",
+          "text": "Material / Texture — 재질·텍스처 적용, AI 텍스처 활용 여부\n-텍스쳐: 파란 실리콘 몸체, 분홍 실리콘 배 (sss 활용해서 젤리처럼 연출)\n-나노바나나를 이용하여 실리콘 재질 텍스쳐 이미지 생성"
+        },
+        {
+          "section": "발표자료",
+          "text": "Rigging / Animation — 리깅 방식, Mixamo 또는 Keyframe 활용, 최종 애니메이션\n-rigify 활용하여 아마추어 생성\n-keyframe 활용하여 요즘 유행하는 릴스인 '꿍싯꿍싯 챌린지' 제작\n-애니메이션 영상 파일 재생"
+        },
+        {
+          "section": "발표자료",
+          "text": "Final Output — 최종 렌더 이미지, 애니메이션 MP4, 결과물 특징"
+        },
+        {
+          "section": "발표자료",
+          "text": "최종 프리젠테이션 페이지 — 발표용 페이지 구성, 디자인/레이아웃, 공개 URL 또는 배포 방식\n-웹페이지 제작 프롬포트 첨부 (내가 지금 쓰고있는거)\n-웹페이지 레퍼런스 링크 첨부:"
+        }
+      ],
+      "workTitle": "뚜니 DDONI"
     },
     {
       "id": "project-23",
@@ -2093,7 +2453,21 @@ window.RPDFinalProjects = {
           "kind": "Presentation"
         }
       ],
-      "coverSrc": "assets/final-projects/project-23/video-01.webp"
+      "coverSrc": "assets/final-projects/project-23/video-01.webp",
+      "notes": [
+        {
+          "section": "MP4",
+          "text": "-ai 제작 영상"
+        },
+        {
+          "section": "MP4",
+          "text": "-키프레임 애니메이션"
+        },
+        {
+          "section": "MP4",
+          "text": "-인터렉션 사이트 테스트"
+        }
+      ]
     },
     {
       "id": "project-24",
