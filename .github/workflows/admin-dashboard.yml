@@ -1,0 +1,83 @@
+name: Admin Dashboard Export
+
+on:
+  schedule:
+    - cron: '0 22 * * 1'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: '학기 기간 밖에도 강제 실행'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install cryptography
+
+      - name: Export encrypted dashboard
+        id: dashboard
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          DASHBOARD_PASSPHRASE: ${{ secrets.DASHBOARD_PASSPHRASE }}
+          GRADING_DB_IDS: ${{ secrets.GRADING_DB_IDS }}
+        run: |
+          set +e
+          args=""
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.force }}" = "true" ]; then
+            args="--force"
+          fi
+          python3 tools/export_admin_dashboard.py $args
+          status=$?
+          set -e
+          if [ "$status" -eq 3 ]; then
+            echo "skipped=true" >> "$GITHUB_OUTPUT"
+            echo "exit_code=$status" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if [ "$status" -ne 0 ]; then
+            exit "$status"
+          fi
+          echo "skipped=false" >> "$GITHUB_OUTPUT"
+          echo "exit_code=$status" >> "$GITHUB_OUTPUT"
+
+      - name: Check for changes
+        id: check
+        if: steps.dashboard.outputs.skipped != 'true'
+        run: |
+          if git diff --quiet -- web/public/admin/dashboard.enc.json && \
+             ! git ls-files --others --exclude-standard -- web/public/admin/dashboard.enc.json | grep -q .; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit and push
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add web/public/admin/dashboard.enc.json
+          git commit -m "chore(admin): 대시보드 집계 갱신 $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git push
+
+      - name: Trigger deploy
+        if: steps.check.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run deploy-pages.yml --ref main
