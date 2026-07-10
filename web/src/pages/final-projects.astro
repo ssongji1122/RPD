@@ -119,6 +119,12 @@ const PRESENTATION = '발표 자료';
     <p class="eyebrow">(01) — Final Projects</p>
     <h1>기말 작품</h1>
     <p class="lead">Week 15 최종 프로젝트 아카이브 · 작품 {stats.works}점</p>
+    <p class="fp-intro">
+      로봇·캐릭터 컨셉 설정부터 모델링, 재질, 리깅, 애니메이션, 발표 웹페이지 제작까지 한 학기
+      전 과정을 담은 최종 프로젝트 아카이브입니다. Meshy, 나노바나나, Kling, Suno, Mixamo,
+      MCP 등 AI 도구를 제작 파이프라인에 결합했고, 작품별로 AI 활용 기록과 학생이 남긴 제작
+      노트를 함께 수록했습니다.
+    </p>
   </section>
 
   <!-- 필름스트립 (공유 컴포넌트) -->
@@ -141,10 +147,11 @@ const PRESENTATION = '발표 자료';
         const e = embedFor(l);
         return e ? [e] : [];
       });
+      const notes = p.notes ?? [];
       // 상세 섹션은 제작 흐름 순서(과정 → 완성 → 발표·웹)로 배치하고,
       // 실제로 존재하는 섹션만 이어 붙여 번호를 매긴다.
       const secOrder = [
-        ['process', groups.process.length > 0],
+        ['process', groups.process.length > 0 || notes.length > 0],
         ['outcome', groups.outcome.length > 0],
         ['embeds', embeds.length > 0],
       ]
@@ -156,7 +163,7 @@ const PRESENTATION = '발표 자료';
           <div class="fp-grid">
             <div class="fp-cell fp-copy is-span-2">
               <p class="fp-kicker meta">{p.code}</p>
-              <h2 class="fp-title">{p.title}</h2>
+              <h2 class="fp-title">{p.workTitle ?? p.title}</h2>
               <p class="fp-counts meta">
                 이미지 {counts.images}장 · 영상 {counts.videos}개 · 과정 {counts.process}개
               </p>
@@ -192,9 +199,22 @@ const PRESENTATION = '발표 자료';
               )}
             </div>
 
-            {groups.process.length > 0 && (
+            {(groups.process.length > 0 || notes.length > 0) && (
               <div class="fp-section-label is-span-4">
                 <span>{secNo('process')} — AI 활용 과정</span>
+              </div>
+            )}
+            {notes.length > 0 && (
+              <div class="fp-cell fp-notes is-span-4">
+                <p class="fp-notes-head meta">학생 제작 노트 — 노션 제출 페이지 원문</p>
+                <ul>
+                  {notes.map((n) => (
+                    <li>
+                      {n.section && <span class="fp-note-tag meta">{n.section}</span>}
+                      <span class="fp-note-text">{n.text}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
             {groups.process.map((m, i) => (
@@ -405,6 +425,51 @@ const PRESENTATION = '발표 자료';
     color: var(--c-accent);
   }
   .fp-copy .fp-pres-link:hover { background: color-mix(in srgb, var(--c-accent) 12%, transparent); opacity: 1; }
+
+  .fp-intro {
+    max-width: 62ch;
+    margin-top: var(--s-3);
+    font-size: var(--fs-sm);
+    color: var(--c-ink-2);
+    line-height: 1.7;
+    word-break: keep-all;
+  }
+
+  .fp-notes { padding: var(--s-4); }
+  .fp-notes-head {
+    margin: 0 0 var(--s-3);
+    font-family: var(--f-mono);
+    font-size: var(--fs-2xs);
+    color: var(--c-ink-3);
+    letter-spacing: var(--ls-mono);
+  }
+  .fp-notes ul {
+    display: grid;
+    gap: var(--s-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .fp-notes li {
+    display: flex;
+    gap: var(--s-3);
+    align-items: baseline;
+  }
+  .fp-note-tag {
+    flex-shrink: 0;
+    min-width: 5.5em;
+    font-family: var(--f-mono);
+    font-size: var(--fs-2xs);
+    color: var(--c-ink-3);
+    letter-spacing: var(--ls-mono);
+  }
+  .fp-note-text {
+    font-size: var(--fs-sm);
+    color: var(--c-ink-2);
+    line-height: 1.7;
+    word-break: keep-all;
+    white-space: pre-line;
+  }
 
   .fp-embed { display: grid; grid-template-rows: auto 1fr; }
   .fp-embed-head {
