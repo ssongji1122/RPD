@@ -67,14 +67,14 @@ MOCK_MAPPING = {
 
 
 def _make_fake_mapping_path(exists: bool):
-    """Return a fake Path-like object for mocking NOTION_MAPPING."""
+    """Return a fake Path-like object for mocking ROSTER_PATH."""
 
     class _FakePath:
         def exists(self_):  # noqa: N805
             return exists
 
         def __str__(self_):  # noqa: N805
-            return "fake-notion-mapping.json"
+            return "fake-student-roster.json"
 
     return _FakePath()
 
@@ -85,7 +85,7 @@ class TestLoadStudentRoster(unittest.TestCase):
         fake_path = _make_fake_mapping_path(exists=True)
         m = mock_open(read_data=mapping_json)
         with patch("builtins.open", m):
-            with patch.object(grading_db, "NOTION_MAPPING", fake_path):
+            with patch.object(grading_db, "ROSTER_PATH", fake_path):
                 result = grading_db.load_student_roster()
 
         self.assertEqual(len(result), 3)
@@ -106,7 +106,7 @@ class TestLoadStudentRoster(unittest.TestCase):
         fake_path = _make_fake_mapping_path(exists=True)
         m = mock_open(read_data=mapping_json)
         with patch("builtins.open", m):
-            with patch.object(grading_db, "NOTION_MAPPING", fake_path):
+            with patch.object(grading_db, "ROSTER_PATH", fake_path):
                 result = grading_db.load_student_roster(class_num="1")
 
         self.assertEqual(len(result), 2)
@@ -115,7 +115,7 @@ class TestLoadStudentRoster(unittest.TestCase):
 
     def test_load_student_roster_returns_empty_when_no_file(self):
         fake_path = _make_fake_mapping_path(exists=False)
-        with patch.object(grading_db, "NOTION_MAPPING", fake_path):
+        with patch.object(grading_db, "ROSTER_PATH", fake_path):
             result = grading_db.load_student_roster()
         self.assertEqual(result, [])
 

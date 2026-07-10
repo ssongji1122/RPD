@@ -16,8 +16,8 @@ def _sample_mapping():
                 "page_id": "class1-page-id",
                 "title": "1반",
                 "students": [
-                    {"name": "학생○○", "student_id": "00000000", "page_id": "page-1"},
-                    {"name": "학생○○", "student_id": "00000000", "page_id": "page-2"},
+                    {"name": "홍길동", "student_id": "11111111", "page_id": "page-1"},
+                    {"name": "이순신", "student_id": "22222222", "page_id": "page-2"},
                 ],
             }
         }
@@ -27,7 +27,7 @@ def _sample_mapping():
 def test_load_student_roster():
     from grading_db import load_student_roster
 
-    with patch("grading_db.NOTION_MAPPING") as mock_path:
+    with patch("grading_db.ROSTER_PATH") as mock_path:
         mock_path.exists.return_value = True
         mock_path.__str__ = lambda self: "/fake/path.json"
         with patch("builtins.open", create=True) as mock_open:
@@ -37,14 +37,14 @@ def test_load_student_roster():
             with patch("json.load", return_value=_sample_mapping()):
                 roster = load_student_roster()
                 assert len(roster) == 2
-                assert roster[0]["name"] == "학생○○"
+                assert roster[0]["name"] == "홍길동"
                 assert roster[0]["class_num"] == "1"
 
 
 def test_load_student_roster_filters_by_class():
     from grading_db import load_student_roster
 
-    with patch("grading_db.NOTION_MAPPING") as mock_path:
+    with patch("grading_db.ROSTER_PATH") as mock_path:
         mock_path.exists.return_value = True
         with patch("builtins.open", create=True):
             with patch("json.load", return_value=_sample_mapping()):

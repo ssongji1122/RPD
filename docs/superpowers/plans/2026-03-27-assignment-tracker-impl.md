@@ -74,7 +74,7 @@ Add a `students` section to the existing JSON. The page IDs come from the Notion
         {"name": "학생○○", "student_id": "00000000", "page_id": "31354d6549718152866ec1038ca8c070"},
         {"name": "학생○○", "student_id": "00000000", "page_id": "31354d654971818a968ad1df0cb1cd46"},
         {"name": "학생○○", "student_id": "00000000", "page_id": "31354d65497181178ee4d4e5eef35704"},
-        {"name": "정효린", "student_id": "00000000", "page_id": "31354d6549718179965fe34bf266d874"},
+        {"name": "학생○○", "student_id": "00000000", "page_id": "31354d6549718179965fe34bf266d874"},
         {"name": "학생○○", "student_id": "00000000", "page_id": "31354d6549718124b9f2fcac976fe727"},
         {"name": "학생○○", "student_id": "00000000", "page_id": "31354d6549718131be1afc28806b2952"},
         {"name": "학생○○", "student_id": "00000000", "page_id": "31354d65497181b6ab29d55d5f31b670"},

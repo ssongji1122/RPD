@@ -70,3 +70,9 @@ course-site/assets/notion-images/**/*.pdf
 # 압축 변환된 Notion 영상 미러는 커밋 허용 (download_block_assets가 ffmpeg로 mp4 변환)
 !course-site/assets/notion-images/**/*.mp4
 tools/showme_db_ids.json
+
+# PII / local-only
+tools/student-roster.local.json
+
+# accidental venv/tmp
+.tmp/

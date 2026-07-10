@@ -18,17 +18,27 @@ Usage:
 from __future__ import annotations
 
 import json
+import os
 import re
 from pathlib import Path
 
 from notion_api import (
-    NOTION_MAPPING,
     extract_text,
     get_notion_token,
     notion_request,
     _get_page_blocks,
 )
 from runtime_paths import ROOT
+
+# ---------------------------------------------------------------------------
+# Student roster location — PII이므로 git 추적 파일에 두지 않는다.
+# 기본: tools/student-roster.local.json (gitignored), env로 오버라이드 가능.
+# ---------------------------------------------------------------------------
+ROSTER_PATH = Path(
+    os.environ.get(
+        "RPD_STUDENT_ROSTER_JSON", str(ROOT / "tools" / "student-roster.local.json")
+    )
+).expanduser()
 
 # ---------------------------------------------------------------------------
 # Known placeholders that indicate "not submitted"
@@ -63,13 +73,13 @@ def _save_grading_ids(data: dict) -> None:
 # Student roster
 # ---------------------------------------------------------------------------
 def load_student_roster(class_num: str | None = None) -> list[dict]:
-    """Load student roster from notion-mapping.json.
+    """Load student roster from the local (non-tracked) roster file.
 
     Returns list of dicts: {name, student_id, page_id, class_num, class_title}
     """
-    if not NOTION_MAPPING.exists():
+    if not ROSTER_PATH.exists():
         return []
-    with open(NOTION_MAPPING, encoding="utf-8") as f:
+    with open(ROSTER_PATH, encoding="utf-8") as f:
         data = json.load(f)
 
     classes = data.get("classes", {})
