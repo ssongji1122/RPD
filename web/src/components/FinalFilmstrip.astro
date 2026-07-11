@@ -97,20 +97,28 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
   const detailEl = document.getElementById('fpDetail') as HTMLAnchorElement | null;
   const presEl = document.getElementById('fpPres') as HTMLAnchorElement | null;
   const realTotal = Number(track?.dataset.realTotal || slides.length) || slides.length;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // 슬라이드 폭/높이 grow 애니메이션과 맞춘 추종 시간(약간의 tail 포함).
+  const FOLLOW_MS = reduceMotion ? 0 : 620;
+
   // 중앙 세트(real 0)에서 시작 — 좌우가 항상 클론으로 채워진다.
   let pos = realTotal;
+  let followRaf = 0;
 
-  function setTransition(on: boolean) {
-    if (track) track.style.transition = on ? '' : 'none';
-  }
+  const inBand = (p: number) => p >= realTotal && p < 2 * realTotal;
 
-  function paint() {
+  // transform 을 히어로(활성 슬라이드) 중심에 맞춘다. track 자체엔 transition 이 없고
+  // 슬라이드 폭이 CSS 로 커지는 동안 매 프레임 이 값을 다시 써 정중앙을 유지한다.
+  function centerNow() {
     if (!track || !stage || !slides[pos]) return;
-    slides.forEach((el, i) => el.classList.toggle('is-active', i === pos));
     const s = slides[pos];
     const target = s.offsetLeft + s.offsetWidth / 2;
     track.style.transform = `translateX(${stage.clientWidth / 2 - target}px)`;
+  }
 
+  function updateInfo() {
+    const s = slides[pos];
+    if (!s) return;
     const real = ((pos % realTotal) + realTotal) % realTotal;
     if (idxEl) idxEl.textContent = `(${String(real + 1).padStart(2, '0')} / ${realTotal})`;
     if (titleEl) titleEl.textContent = s.dataset.title || s.dataset.code || '';
@@ -122,21 +130,44 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
     }
   }
 
-  // 경계를 벗어나면(첫/세번째 세트) 동일하게 보이는 중앙 세트 슬라이드로 무애니메이션 스냅.
-  function normalize() {
-    if (pos >= realTotal && pos < 2 * realTotal) return;
-    setTransition(false);
-    pos = realTotal + (((pos % realTotal) + realTotal) % realTotal);
-    paint();
-    void track?.offsetWidth; // reflow 강제 후 트랜지션 복구
-    setTransition(true);
+  function setActive() {
+    slides.forEach((el, i) => el.classList.toggle('is-active', i === pos));
   }
 
-  function go(delta: number) { pos += delta; paint(); }
+  // 경계를 벗어나면(첫/세번째 세트) 동일하게 보이는 중앙 세트 슬라이드로 스냅.
+  // transform 은 즉시 재계산되지만 화면상 위치는 동일해 튀지 않는다.
+  function normalize() {
+    if (inBand(pos)) return;
+    pos = realTotal + (((pos % realTotal) + realTotal) % realTotal);
+    setActive();
+    centerNow();
+  }
 
-  // 호버: 커서가 가리키는 썸네일을 가운데로 이동(브라우징).
-  // mouseenter 가 아니라 실제 pointermove 에만 반응한다 — 가운데 이동으로 레이아웃이
-  // 밀려 커서 밑 슬라이드가 바뀌어도 커서가 안 움직였으면 재발동 안 해 "지글거림"이 없다.
+  // 폭이 커지는 애니메이션 내내 transform 이 히어로 중심을 따라붙게 한다.
+  function follow() {
+    cancelAnimationFrame(followRaf);
+    if (reduceMotion) { centerNow(); normalize(); return; }
+    const start = performance.now();
+    const step = (t: number) => {
+      centerNow();
+      if (t - start < FOLLOW_MS) followRaf = requestAnimationFrame(step);
+      else normalize();
+    };
+    followRaf = requestAnimationFrame(step);
+  }
+
+  function moveTo(target: number) {
+    if (!inBand(pos)) normalize();   // 버스트 중 클론 세트 밖으로 달아나지 않게 밴드 유지
+    pos = target;
+    setActive();
+    updateInfo();
+    follow();
+  }
+
+  function go(delta: number) { moveTo(pos + delta); }
+
+  // 호버: 커서가 가리키는 썸네일을 가운데로. mouseenter 가 아니라 pointermove 에만
+  // 반응해, 가운데 이동으로 커서 밑 슬라이드가 바뀌어도 커서가 안 움직였으면 재발동 안 한다.
   let hoverTimer = 0;
   stage?.addEventListener('pointermove', (e) => {
     if ((e as PointerEvent).pointerType === 'touch') return;
@@ -145,40 +176,43 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
     const i = slides.indexOf(slide);
     if (i === -1 || i === pos) return;
     clearTimeout(hoverTimer);
-    hoverTimer = window.setTimeout(() => { pos = i; paint(); }, 70);
+    hoverTimer = window.setTimeout(() => moveTo(i), 60);
   });
   stage?.addEventListener('pointerleave', () => clearTimeout(hoverTimer));
 
-  // 클릭: 해당 작품 상세 페이지로 이동.
-  slides.forEach((s) => {
+  // 클릭: 옆 썸네일이면 가운데로 이동, 이미 가운데(활성)면 상세로 이동.
+  // "누르면 무조건 그 자리서 이동"이 아니라 한 번 중앙에 세운 뒤 열게 해 오클릭을 없앤다.
+  slides.forEach((s, i) => {
     s.addEventListener('click', () => {
-      const href = s.dataset.detail;
-      if (href) window.location.href = href;
+      clearTimeout(hoverTimer);
+      if (i === pos) {
+        const href = s.dataset.detail;
+        if (href) window.location.href = href;
+      } else {
+        moveTo(i);
+      }
     });
   });
+
   document.getElementById('fpPrev')?.addEventListener('click', () => go(-1));
   document.getElementById('fpNext')?.addEventListener('click', () => go(1));
   stage?.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
     if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
   });
-  track?.addEventListener('transitionend', (e) => {
-    if (e.propertyName === 'transform') normalize();
-  });
 
-  let raf = 0;
+  // 리사이즈·이미지 로드로 폭이 바뀌면 애니메이션 없이 즉시 재정렬.
+  let resizeRaf = 0;
   window.addEventListener('resize', () => {
-    cancelAnimationFrame(raf);
-    raf = requestAnimationFrame(() => { setTransition(false); paint(); void track?.offsetWidth; setTransition(true); });
+    cancelAnimationFrame(resizeRaf);
+    resizeRaf = requestAnimationFrame(centerNow);
   });
-  // 이미지 로드로 폭이 바뀌면 재정렬(애니메이션 없이)
-  slides.forEach((s) => s.querySelector('img')?.addEventListener('load', () => { setTransition(false); paint(); void track?.offsetWidth; setTransition(true); }));
+  slides.forEach((s) => s.querySelector('img')?.addEventListener('load', centerNow));
 
-  // 초기 배치는 애니메이션 없이
-  setTransition(false);
-  paint();
-  void track?.offsetWidth;
-  setTransition(true);
+  // 초기 배치.
+  setActive();
+  updateInfo();
+  centerNow();
 </script>
 
 <style>
@@ -196,7 +230,7 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
     gap: var(--s-3);
     height: 360px;
     will-change: transform;
-    transition: transform 0.55s var(--ease);
+    /* transform 은 JS 가 매 프레임 히어로 중심에 맞춰 구동한다(CSS transition 없음). */
   }
   .fp-slide {
     flex: 0 0 auto;
@@ -308,5 +342,11 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
 
   @media (max-width: 700px) {
     .fp-slide.is-active { width: min(240px, calc(100vw - 120px)); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fp-slide,
+    .fp-slide-frame,
+    .fp-slide-caption { transition: none; }
   }
 </style>
