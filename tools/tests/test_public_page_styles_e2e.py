@@ -204,14 +204,10 @@ class PublicPageStyleE2ETest(PlaywrightFailureArtifactsMixin, unittest.TestCase)
         self.assertNotIn(style["backgroundColor"], {"rgba(0, 0, 0, 0)", "transparent"})
         self.assertNotEqual(style["borderTopWidth"], "0px")
 
-    def test_week_sidebar_active_link_uses_text_priority_state(self) -> None:
-        self._artifact_suffix = "week-sidebar"
-        page = self._new_page()
-        page.goto(f"{self.base_url}/week.html", wait_until="load")
-        page.locator(".sidebar-nav li.is-active a").first.wait_for(state="visible")
-        active_style = self._read_style(page, ".sidebar-nav li.is-active a")
-        inactive_style = self._read_style(page, ".sidebar-nav li:not(.is-active) a")
-        self._assert_text_priority_active(active_style, inactive_style, expect_aria_current=False)
+    # Removed: test_week_sidebar_active_link_uses_text_priority_state.
+    # week.html was converted to the data-shell architecture, which drops the
+    # per-week TOC sidebar (.sidebar-nav) in favor of shell.js's rail. The
+    # element this test asserted on no longer exists.
 
 
 if __name__ == "__main__":

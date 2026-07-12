@@ -13,63 +13,18 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
   <link rel="stylesheet" href="assets/tokens.css" />
   <link rel="stylesheet" href="assets/components.css" />
+  <link rel="stylesheet" href="assets/layout.css" />
   <script>/* FOUC prevention */ (function(){var t=localStorage.getItem('rpd-theme');if(t)document.documentElement.setAttribute('data-theme',t);var l=localStorage.getItem('rpd-lang');if(l){document.documentElement.lang=l;document.documentElement.setAttribute('data-lang',l);}})()</script>
   <link rel="stylesheet" href="assets/page-week.css" />
-  <link rel="stylesheet" href="assets/surface.css?v=20260318a" />
-  <link rel="stylesheet" href="assets/meta.css?v=20260318a" />
-  <link rel="stylesheet" href="assets/chrome.css?v=20260318a" />
   <link rel="stylesheet" href="assets/notion-blocks.css">
 </head>
 <body data-tab="class">
   <a href="#pageContent" class="skip-link">본문으로 건너뛰기</a>
-  <div class="page-shell" id="pageShell">
+  <div class="app" data-shell>
+    <main class="main" id="main-content">
 
-    <!-- Topbar — centered tabs + theme toggle -->
-    <header class="topbar">
-      <div class="topbar-inner">
-        <!-- Hidden from view but accessible to JS -->
-        <div class="brand-left" style="display:none;">
-          <button class="sidebar-toggle" id="sidebarToggle" aria-label="목차 열기" type="button"></button>
-          <a class="brand" id="brandLink" href="index.html" style="text-decoration:none;color:inherit;">
-            <div class="brand-badge" id="brandBadge">—</div>
-            <div class="brand-copy">
-              <strong id="brandTitle"></strong>
-              <span id="brandMeta"></span>
-            </div>
-          </a>
-        </div>
-        <div class="app-tabs">
-          <a href="index.html" class="app-tab" data-tab-target="archive">Archive</a>
-          <a href="inha.html" class="app-tab" data-tab-target="class">Class</a>
-          <a href="studio.html" class="app-tab" data-tab-target="studio">My Studio</a>
-        </div>
-        <div class="topbar-right">
-          <div class="topbar-actions rpd-topbar-actions" style="display:none;">
-            <div id="langSwitcher"></div>
-            <span class="student-badge" id="studentBadge"><span id="studentBadgeName"></span></span>
-          </div>
-          <div class="progress-widget" style="display:none;">
-            <div class="progress-label" id="progressLabel"></div>
-            <div class="progress-track" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
-            <div class="progress-count" id="progressCount"></div>
-            <button class="btn btn-ghost" id="resetBtn" type="button"></button>
-          </div>
-          <button class="theme-toggle" id="themeToggle" type="button" aria-label="테마 전환">
-            <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-            <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-          </button>
-        </div>
-      </div>
-    </header>
-
-    <!-- Page content = populated by JS -->
-    <div class="content-layout rpd-page-layout">
-      <nav class="sidebar" id="sidebar" aria-hidden="true">
-        <ul class="sidebar-nav" id="sidebarNav"></ul>
-      </nav>
-      <div class="sidebar-overlay" id="sidebarOverlay"></div>
-      <main class="main-content rpd-page-main" id="pageContent"></main>
-    </div>
+    <!-- Page content = populated by JS (shell.js injects topbar + rail) -->
+    <div class="main-inner" id="pageContent"></div>
 
     <footer class="page-footer">
       <div>
@@ -78,8 +33,10 @@
         · <a href="library.html" id="footerLibraryLink" style="color:var(--key-soft)">도구 라이브러리</a>
       </div>
     </footer>
+    </main>
+  </div><!-- /.app -->
 
-    <!-- Show Me Modal -->
+    <!-- Show Me Modal (outside .app so shell.js won't wipe it) -->
     <div class="showme-overlay" id="showmeOverlay" aria-hidden="true">
       <div class="showme-modal" role="dialog" aria-modal="true" aria-labelledby="showmeTitle">
         <div class="showme-modal-header">
@@ -151,17 +108,17 @@
         <button class="guest-btn" id="guestBrowseBtn" type="button" onclick="loginAsGuest()">바로 둘러보기</button>
       </div>
     </div>
-    <div class="rail-overlay" id="railOverlay" onclick="toggleMobileRail()"></div>
-  </div>
 
   <script src="assets/config.js"></script>
+  <script src="assets/nav-config.js"></script>
+  <script src="assets/shell.js"></script>
   <script src="assets/tab-system.js"></script>
   <script src="assets/user-profile.js"></script>
+  <script src="assets/site-shell.js?v=20260318a"></script>
+  <script src="assets/layout.js"></script>
+  <script src="assets/topbar-search.js"></script>
   <script src="data/i18n-content.js?v=20260318e"></script>
   <script src="assets/i18n.js?v=20260318t"></script>
-  <script src="assets/site-shell.js?v=20260318a"></script>
-  <script src="assets/nav-config.js"></script>
-  <script src="assets/topbar-sync.js"></script>
   <script src="assets/week-ui.js?v=20260318a"></script>
   <script src="assets/showme/_registry.js?v=20260318f"></script>
   <script src="assets/showme/_catalog.js?v=20260318c"></script>
@@ -565,10 +522,7 @@
 
     function applyWeekChrome() {
       var text = getWeekText();
-      document.getElementById("sidebarToggle").setAttribute("aria-label", text.sidebarToggleAria);
-      document.getElementById("brandMeta").textContent = text.brandMeta;
       document.getElementById("themeToggle").setAttribute("aria-label", text.themeToggleAria);
-      document.getElementById("brandLink").setAttribute("href", withPresetHref("inha.html"));
       document.getElementById("footerHomeLink").textContent = text.footerHome;
       document.getElementById("footerHomeLink").setAttribute("href", withPresetHref("inha.html?panel=weeks"));
       document.getElementById("footerLibraryLink").textContent = text.footerLibrary;
@@ -593,8 +547,6 @@
     function renderMissingWeek() {
       var text = getWeekText();
       document.title = text.pageTitlePrefix + " - RPD";
-      document.getElementById("brandBadge").textContent = "—";
-      document.getElementById("brandTitle").textContent = text.brandLoading;
       document.getElementById("pageContent").innerHTML = `
         <section style="padding:80px 0;text-align:center;color:var(--muted)">
           <p>${text.notFound} <a href="${withPresetHref("inha.html?panel=weeks")}" style="color:var(--key-soft)">${text.notFoundBack}</a></p>
@@ -754,8 +706,6 @@
       var topicSectionLabel = localizeWeekUiLabel((preset.labels || {}).summaryTitle, isKo ? "이번 주" : "This week");
       var taskSummaryLabel = isKo ? "체크리스트" : "Checklist";
       document.title = `Week ${w.week} — ${w.title} | Blender Archive`;
-      document.getElementById("brandBadge").textContent = String(w.week).padStart(2, "0");
-      document.getElementById("brandTitle").textContent = w.title;
 
       var prev = CURRICULUM.find(function(item) { return item.week === w.week - 1; });
       var next = CURRICULUM.find(function(item) { return item.week === w.week + 1; });
