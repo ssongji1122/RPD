@@ -440,7 +440,7 @@ const PRESENTATION = '발표 자료';
   .fp-copy .fp-pres-link:hover { background: color-mix(in srgb, var(--c-accent) 12%, transparent); opacity: 1; }
 
   .fp-intro {
-    max-width: 62ch;
+    max-width: var(--max); /* 880px — 컨테이너 관례 폭. 62ch 는 한글 기준 ~470px 라 너무 좁았다 */
     margin-top: var(--s-3);
     font-size: var(--fs-sm);
     color: var(--c-ink-2);
