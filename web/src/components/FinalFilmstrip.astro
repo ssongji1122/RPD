@@ -56,7 +56,6 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
             type="button"
             data-idx={di}
             data-real={real}
-            data-side={di === realTotal ? 'center' : di < realTotal ? 'left' : 'right'}
             data-code={p.code}
             data-title={p.workTitle ?? p.title}
             data-detail={`${detailBase}#${p.id}`}
@@ -118,8 +117,32 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
   }
 
   let currentX = 0;
+
+  // 커버 플로우: 기울기를 "스테이지 중앙에서의 거리"의 연속 함수로 매 프레임 계산.
+  // 클래스 토글(이산 전환)이 아니라 이동과 같은 루프에서 구동하므로, 슬라이드가
+  // 중앙을 지날 때 기울기가 0을 거쳐 부드럽게 반대편으로 넘어간다(깜박임 없음).
+  const TILT_MAX = 26; // deg
+  const TILT_SPACING = 260; // 정규화 간격(px) — 이웃 한 칸 ≈ 1
+  const frames = slides.map((s) => s.querySelector<HTMLElement>('.fp-slide-frame'));
+
+  function updateTilt(x: number) {
+    if (!stage) return;
+    const centerX = stage.clientWidth / 2;
+    for (let i = 0; i < slides.length; i++) {
+      const s = slides[i];
+      const f = frames[i];
+      if (!f) continue;
+      const c = s.offsetLeft + s.offsetWidth / 2 + x;
+      const t = Math.tanh((c - centerX) / TILT_SPACING);
+      const deg = -(t * TILT_MAX);
+      const sc = 1 - Math.abs(t) * 0.03;
+      f.style.transform = `perspective(950px) rotateY(${deg.toFixed(2)}deg) scale(${sc.toFixed(3)})`;
+    }
+  }
+
   function apply(x: number) {
     if (track) track.style.transform = `translate3d(${x.toFixed(2)}px,0,0)`;
+    updateTilt(x);
   }
 
   function updateInfo() {
@@ -137,11 +160,7 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
   }
 
   function setActive() {
-    slides.forEach((el, i) => {
-      el.classList.toggle('is-active', i === pos);
-      // 커버 플로우: 활성 기준 좌/우를 표시해 CSS 가 양옆을 원근 기울임 처리.
-      el.dataset.side = i === pos ? 'center' : i < pos ? 'left' : 'right';
-    });
+    slides.forEach((el, i) => el.classList.toggle('is-active', i === pos));
   }
 
   // 경계 밖(첫/세번째 세트)이면 동일하게 보이는 중앙 세트 슬라이드로 스왑.
@@ -296,8 +315,6 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
     height: 360px;
     will-change: transform;
     /* transform 은 JS 가 매 프레임 히어로 중심에 맞춰 구동한다(CSS transition 없음). */
-    /* 커버 플로우: 자식 rotateY 가 공유 소실점을 갖게 한다. */
-    perspective: 1100px;
   }
   .fp-slide {
     flex: 0 0 auto;
@@ -329,12 +346,10 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
     border: var(--border);
     border-radius: var(--r-lg);
     background: var(--c-bg-2);
-    transition: height 0.55s var(--ease), transform 0.45s var(--ease), border-color var(--t) var(--ease);
+    /* transform(커버 플로우 기울기)은 JS 가 매 프레임 연속값으로 구동한다 —
+       CSS transition 을 걸면 프레임 구동과 겹쳐 깜박이므로 제외. */
+    transition: height 0.55s var(--ease), border-color var(--t) var(--ease);
   }
-  /* 커버 플로우: 양옆 썸네일을 안쪽으로 기울인다. 활성(히어로)만 정면. */
-  .fp-slide[data-side='left'] .fp-slide-frame { transform: rotateY(26deg) scale(0.97); }
-  .fp-slide[data-side='right'] .fp-slide-frame { transform: rotateY(-26deg) scale(0.97); }
-  .fp-slide.is-active .fp-slide-frame { transform: none; }
   .fp-slide-frame img { width: 100%; height: 100%; object-fit: cover; }
   .fp-slide-caption {
     position: absolute;
