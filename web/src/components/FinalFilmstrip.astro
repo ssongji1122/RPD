@@ -98,22 +98,26 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
   const presEl = document.getElementById('fpPres') as HTMLAnchorElement | null;
   const realTotal = Number(track?.dataset.realTotal || slides.length) || slides.length;
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  // 슬라이드 폭/높이 grow 애니메이션과 맞춘 추종 시간(약간의 tail 포함).
-  const FOLLOW_MS = reduceMotion ? 0 : 620;
+  // 지수 감쇠 시정수. 매 프레임 목표와의 거리를 (1 - e^(-dt/τ)) 만큼 좁힌다 —
+  // 목표(활성 슬라이드 중심)가 폭 애니메이션으로 계속 움직여도 한 곡선으로 따라붙는다.
+  const TAU_MS = 130;
 
   // 중앙 세트(real 0)에서 시작 — 좌우가 항상 클론으로 채워진다.
   let pos = realTotal;
-  let followRaf = 0;
 
   const inBand = (p: number) => p >= realTotal && p < 2 * realTotal;
+  const modReal = (p: number) => ((p % realTotal) + realTotal) % realTotal;
 
-  // transform 을 히어로(활성 슬라이드) 중심에 맞춘다. track 자체엔 transition 이 없고
-  // 슬라이드 폭이 CSS 로 커지는 동안 매 프레임 이 값을 다시 써 정중앙을 유지한다.
-  function centerNow() {
-    if (!track || !stage || !slides[pos]) return;
+  // 활성 슬라이드를 스테이지 정중앙에 두는 translateX 목표값(현재 레이아웃 기준).
+  function goalX(): number {
     const s = slides[pos];
-    const target = s.offsetLeft + s.offsetWidth / 2;
-    track.style.transform = `translateX(${stage.clientWidth / 2 - target}px)`;
+    if (!track || !stage || !s) return 0;
+    return stage.clientWidth / 2 - (s.offsetLeft + s.offsetWidth / 2);
+  }
+
+  let currentX = 0;
+  function apply(x: number) {
+    if (track) track.style.transform = `translate3d(${x.toFixed(2)}px,0,0)`;
   }
 
   function updateInfo() {
@@ -134,34 +138,72 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
     slides.forEach((el, i) => el.classList.toggle('is-active', i === pos));
   }
 
-  // 경계를 벗어나면(첫/세번째 세트) 동일하게 보이는 중앙 세트 슬라이드로 스냅.
-  // transform 은 즉시 재계산되지만 화면상 위치는 동일해 튀지 않는다.
+  // 경계 밖(첫/세번째 세트)이면 동일하게 보이는 중앙 세트 슬라이드로 스왑.
+  // 폭/높이 transition 을 잠시 꺼(no-anim) 클래스 이동이 즉시 반영되게 하고,
+  // 스왑 전후 목표값 차이만큼 currentX 를 함께 밀어 화면상 1px 도 안 튀게 한다.
   function normalize() {
-    if (inBand(pos)) return;
-    pos = realTotal + (((pos % realTotal) + realTotal) % realTotal);
+    if (!track || inBand(pos)) return;
+    const before = goalX();
+    track.classList.add('no-anim');
+    pos = realTotal + modReal(pos);
     setActive();
-    centerNow();
+    void track.offsetWidth; // 억제된 상태로 최종 레이아웃 확정
+    const after = goalX();
+    track.classList.remove('no-anim');
+    currentX += after - before;
+    apply(currentX);
   }
 
-  // 폭이 커지는 애니메이션 내내 transform 이 히어로 중심을 따라붙게 한다.
-  function follow() {
-    cancelAnimationFrame(followRaf);
-    if (reduceMotion) { centerNow(); normalize(); return; }
-    const start = performance.now();
-    const step = (t: number) => {
-      centerNow();
-      if (t - start < FOLLOW_MS) followRaf = requestAnimationFrame(step);
-      else normalize();
-    };
-    followRaf = requestAnimationFrame(step);
+  // ── 스무딩 루프 ──
+  // 목표가 움직여도(폭 grow, 연타, 호버 재타깃) 항상 현재 위치에서 이어지는 한 곡선.
+  // 목표 도달 + 목표 정지(폭 애니메이션 종료)가 몇 프레임 지속되면 스냅 후 정지.
+  let rafId = 0;
+  let lastT = 0;
+  let prevGoal = 0;
+  let settled = 0;
+
+  function tick(t: number) {
+    const dt = Math.min(48, lastT ? t - lastT : 16);
+    lastT = t;
+    const goal = goalX();
+    currentX += (goal - currentX) * (1 - Math.exp(-dt / TAU_MS));
+    apply(currentX);
+    const still = Math.abs(goal - currentX) < 0.4 && Math.abs(goal - prevGoal) < 0.1;
+    prevGoal = goal;
+    settled = still ? settled + 1 : 0;
+    if (settled >= 6) {
+      currentX = goal;
+      apply(currentX);
+      normalize();
+      rafId = 0;
+      lastT = 0;
+      return;
+    }
+    rafId = requestAnimationFrame(tick);
+  }
+
+  function startLoop() {
+    settled = 0;
+    if (!rafId) { lastT = 0; rafId = requestAnimationFrame(tick); }
   }
 
   function moveTo(target: number) {
-    if (!inBand(pos)) normalize();   // 버스트 중 클론 세트 밖으로 달아나지 않게 밴드 유지
-    pos = target;
+    // 클론 세트 깊숙이 달아나면(빠른 연타) 남은 여유가 없어지기 전에 미리 스왑.
+    if (target < realTotal / 2 || target >= realTotal * 2.5) {
+      pos = target;
+      normalize();
+    } else {
+      pos = target;
+    }
     setActive();
     updateInfo();
-    follow();
+    if (reduceMotion) {
+      currentX = goalX();
+      apply(currentX);
+      normalize();
+      return;
+    }
+    startLoop();
   }
 
   function go(delta: number) { moveTo(pos + delta); }
@@ -201,18 +243,27 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
     if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
   });
 
-  // 리사이즈·이미지 로드로 폭이 바뀌면 애니메이션 없이 즉시 재정렬.
+  // 리사이즈·이미지 로드로 폭이 바뀌면 재정렬 — 이동 중이면 루프가 알아서 따라가고,
+  // 정지 상태면 애니메이션 없이 즉시 스냅.
+  function reflowSnap() {
+    if (rafId) return; // 루프가 새 목표를 자연스럽게 추적
+    currentX = goalX();
+    apply(currentX);
+  }
   let resizeRaf = 0;
   window.addEventListener('resize', () => {
     cancelAnimationFrame(resizeRaf);
-    resizeRaf = requestAnimationFrame(centerNow);
+    resizeRaf = requestAnimationFrame(reflowSnap);
   });
-  slides.forEach((s) => s.querySelector('img')?.addEventListener('load', centerNow));
+  slides.forEach((s) => s.querySelector('img')?.addEventListener('load', reflowSnap));
 
-  // 초기 배치.
+  // 초기 배치 — 스냅 후 루프를 걸어, 히어로가 132→340px 로 자라는 동안의
+  // 중심 이동까지 추적해 정중앙에 정착시킨다(일회성 스냅만 하면 성장분만큼 어긋난다).
   setActive();
   updateInfo();
-  centerNow();
+  currentX = goalX();
+  apply(currentX);
+  if (!reduceMotion) startLoop();
 </script>
 
 <style>
@@ -240,6 +291,18 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
     border: none;
     cursor: pointer;
     transition: width 0.55s var(--ease);
+  }
+  /* 무한 루프 경계 스왑 순간: 클래스 이동을 즉시 반영해 화면이 튀지 않게 한다(JS normalize). */
+  .fp-track.no-anim .fp-slide,
+  .fp-track.no-anim .fp-slide-frame {
+    transition: none !important;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .fp-slide,
+    .fp-slide-frame,
+    .fp-slide-caption {
+      transition: none !important;
+    }
   }
   .fp-slide-frame {
     display: block;
