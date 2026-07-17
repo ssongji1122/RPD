@@ -98,9 +98,10 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
   const presEl = document.getElementById('fpPres') as HTMLAnchorElement | null;
   const realTotal = Number(track?.dataset.realTotal || slides.length) || slides.length;
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  // 지수 감쇠 시정수. 매 프레임 목표와의 거리를 (1 - e^(-dt/τ)) 만큼 좁힌다 —
-  // 목표(활성 슬라이드 중심)가 폭 애니메이션으로 계속 움직여도 한 곡선으로 따라붙는다.
-  const TAU_MS = 130;
+  // 임계 감쇠 스프링 강성(rad/s). 지수 감쇠와 달리 속도가 0에서 이어져
+  // 출발이 급하지 않고(가속→감속 S-곡선), 연타·호버로 목표가 바뀌어도
+  // 진행 중 속도를 그대로 물려받아 오버슈트 없이 액체처럼 따라붙는다.
+  const OMEGA = 8;
 
   // 중앙 세트(real 0)에서 시작 — 좌우가 항상 클론으로 채워진다.
   let pos = realTotal;
@@ -161,18 +162,26 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
   let lastT = 0;
   let prevGoal = 0;
   let settled = 0;
+  let vx = 0; // 스프링 속도(px/s) — 재타깃 간에도 이어진다
 
   function tick(t: number) {
-    const dt = Math.min(48, lastT ? t - lastT : 16);
+    const dt = Math.min(0.048, lastT ? (t - lastT) / 1000 : 0.016);
     lastT = t;
     const goal = goalX();
-    currentX += (goal - currentX) * (1 - Math.exp(-dt / TAU_MS));
+    // 임계 감쇠 스프링의 닫힌형 해 — 프레임레이트와 무관하게 안정.
+    const e = Math.exp(-OMEGA * dt);
+    const dx = currentX - goal;
+    const tmp = (vx + OMEGA * dx) * dt;
+    currentX = goal + (dx + tmp) * e;
+    vx = (vx - OMEGA * tmp) * e;
     apply(currentX);
-    const still = Math.abs(goal - currentX) < 0.4 && Math.abs(goal - prevGoal) < 0.1;
+    const still =
+      Math.abs(goal - currentX) < 0.4 && Math.abs(vx) < 15 && Math.abs(goal - prevGoal) < 0.1;
     prevGoal = goal;
     settled = still ? settled + 1 : 0;
     if (settled >= 6) {
       currentX = goal;
+      vx = 0;
       apply(currentX);
       normalize();
       rafId = 0;
