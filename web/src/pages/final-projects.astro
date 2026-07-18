@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import FinalFilmstrip from '../components/FinalFilmstrip.astro';
 import { finalProjects, finalProjectsMeta } from '../data/finalProjects';
 import type { FPLink, FPMedia, FPProject } from '../data/finalProjects';
+import { FP_EXCLUDE, FP_DISPLAY } from '../data/fpCuration';
 
 const { stats } = finalProjectsMeta;
 
@@ -91,11 +92,32 @@ function bestCover(p: FPProject): FPMedia | null {
   return p.media[0] ?? null;
 }
 
-const editorialSpan = (i: number, item: FPMedia) =>
-  item.type === 'video' ? 2 : i % 3 === 1 ? 2 : 1;
+// 완성 결과 미디어 스팬: 영상·전폭 시각물(FP_DISPLAY full)은 전폭(4),
+// 나머지 이미지는 반폭(2)씩 두 장 짝. 반폭이 홀수로 남으면 마지막 장을
+// 전폭으로 승격해 빈 칸을 없앤다.
+// 로더(toPublic)가 src 에 배포 base(/RPD/)를 붙이므로, 큐레이션 키는
+// 데이터 원형(assets/...)으로 되돌려 대조한다.
+const curKey = (src: string) => src.slice(src.indexOf('assets/final-projects/'));
+const isExcluded = (m: FPMedia) => FP_EXCLUDE.has(curKey(m.src));
+const wantsFull = (m: FPMedia) => m.type === 'video' || FP_DISPLAY[curKey(m.src)] === 'full';
+
+function mediaSpans(list: FPMedia[]): number[] {
+  const spans = list.map((m) => (wantsFull(m) ? 4 : 2));
+  let runStart = -1;
+  for (let i = 0; i <= list.length; i++) {
+    const isHalf = i < list.length && !wantsFull(list[i]);
+    if (isHalf && runStart === -1) runStart = i;
+    if (!isHalf && runStart !== -1) {
+      if ((i - runStart) % 2 === 1) spans[i - 1] = 4;
+      runStart = -1;
+    }
+  }
+  return spans;
+}
 
 function mediaGroups(p: FPProject, cover: FPMedia | null) {
-  const rest = p.media.filter((m) => m !== cover);
+  // 큐레이션 제외(의례 슬라이드·중복·개인정보)를 렌더에서 거른다. 커버는 유지.
+  const rest = p.media.filter((m) => m !== cover && !isExcluded(m));
   return {
     outcome: rest.filter((m) => m.role !== 'process'),
     process: rest.filter((m) => m.role === 'process'),
@@ -103,11 +125,13 @@ function mediaGroups(p: FPProject, cover: FPMedia | null) {
 }
 
 function projectCounts(p: FPProject) {
+  // 큐레이션 제외분은 세지 않는다 — 화면에 있는 것만.
+  const shown = p.media.filter((m) => !isExcluded(m));
   return {
     // 이미지는 완성 컷만 센다 — 과정 캡처는 별도 항목이라 중복 집계 방지.
-    images: p.media.filter((m) => m.type === 'image' && m.role !== 'process').length,
-    videos: p.videos.length || p.media.filter((m) => m.type === 'video').length,
-    process: p.media.filter((m) => m.role === 'process').length,
+    images: shown.filter((m) => m.type === 'image' && m.role !== 'process').length,
+    videos: p.videos.length || shown.filter((m) => m.type === 'video').length,
+    process: shown.filter((m) => m.role === 'process').length,
   };
 }
 
@@ -218,7 +242,7 @@ const PRESENTATION = '발표 자료';
               </div>
             )}
             {groups.process.map((m, i) => (
-              <div class:list={['fp-cell', 'fp-media', 'is-process', 'is-span-2']}>
+              <div class:list={['fp-cell', 'fp-media', 'is-process', `is-span-${mediaSpans(groups.process)[i]}`]}>
                 {m.type === 'video' && m.videoSrc ? (
                   <video controls playsinline preload="none" poster={m.src}>
                     <source src={m.videoSrc} type="video/mp4" />
@@ -235,7 +259,7 @@ const PRESENTATION = '발표 자료';
               </div>
             )}
             {groups.outcome.map((m, i) => (
-              <div class:list={['fp-cell', 'fp-media', `is-span-${editorialSpan(i, m)}`]}>
+              <div class:list={['fp-cell', 'fp-media', `is-span-${mediaSpans(groups.outcome)[i]}`]}>
                 {m.type === 'video' && m.videoSrc ? (
                   <video controls playsinline preload="none" poster={m.src}>
                     <source src={m.videoSrc} type="video/mp4" />
@@ -427,7 +451,7 @@ const PRESENTATION = '발표 자료';
   .fp-copy .fp-pres-link:hover { background: color-mix(in srgb, var(--c-accent) 12%, transparent); opacity: 1; }
 
   .fp-intro {
-    max-width: 62ch;
+    max-width: var(--max); /* 880px — 컨테이너 관례 폭. 62ch 는 한글 기준 ~470px 라 너무 좁았다 */
     margin-top: var(--s-3);
     font-size: var(--fs-sm);
     color: var(--c-ink-2);
@@ -507,6 +531,22 @@ const PRESENTATION = '발표 자료';
   .fp-media.is-hero img, .fp-media.is-hero video { aspect-ratio: 16 / 10; object-fit: contain; }
   /* 과정 캡처는 도구 화면·텍스트가 많아 크롭 없이 통째로 보여준다 */
   .fp-media.is-process img { object-fit: contain; }
+  /* 전폭 미디어(영상·홀수 승격 이미지): 크롭 없이 크게, 화면을 넘지 않게 */
+  .fp-media.is-span-4 img, .fp-media.is-span-4 video {
+    aspect-ratio: 16 / 9;
+    object-fit: contain;
+    max-height: min(72vh, 760px);
+  }
+
+  /* ── 상세 뷰: 헤더·대표 미디어를 전폭으로 키운다 (목록 카드엔 영향 없음) ── */
+  .fp-projects.is-detail-view .fp-cell.fp-copy,
+  .fp-projects.is-detail-view .fp-cell.fp-media.is-hero { grid-column: 1 / -1; }
+  .fp-projects.is-detail-view .fp-media.is-hero img,
+  .fp-projects.is-detail-view .fp-media.is-hero video {
+    aspect-ratio: 16 / 9;
+    max-height: min(78vh, 820px);
+    object-fit: contain;
+  }
 
   @media (max-width: 700px) {
     .fp-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
