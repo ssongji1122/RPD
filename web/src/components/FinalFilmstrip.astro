@@ -33,7 +33,7 @@ const projectSummary = (p: FPProject) => {
 };
 
 // 무한 루프: 슬라이드를 3벌 렌더해 양옆(특히 왼쪽)이 항상 채워지게 한다.
-// 중앙 세트를 기준으로 순환하고, 경계를 넘으면 무애니메이션으로 스냅(아래 스크립트).
+// 중앙 세트를 기준으로 순환하고, 경계를 넘으면 좌표계 전체를 한 세트만큼 평행이동(아래 스크립트).
 const realTotal = finalProjects.length;
 const COPIES = 3;
 const looped = Array.from({ length: COPIES * realTotal }, (_, di) => ({ p: finalProjects[di % realTotal], di, real: di % realTotal }));
@@ -41,7 +41,7 @@ const looped = Array.from({ length: COPIES * realTotal }, (_, di) => ({ p: final
 const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
 ---
 
-<!-- 필름스트립: 가운데 큰 히어로 + 양옆 썸네일, 좌우로 탐색 -->
+<!-- 필름스트립: Apple Cover Flow — 균일 크기 커버, 중앙 정면·양옆 원근 겹침 -->
 <section class="fp-film" aria-label="작품 필름스트립">
   <button class="fp-nav fp-prev" id="fpPrev" type="button" aria-label="이전 작품">←</button>
   <div class="fp-stage">
@@ -98,57 +98,52 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
   const presEl = document.getElementById('fpPres') as HTMLAnchorElement | null;
   const realTotal = Number(track?.dataset.realTotal || slides.length) || slides.length;
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  // 임계 감쇠 스프링 강성(rad/s). 지수 감쇠와 달리 속도가 0에서 이어져
-  // 출발이 급하지 않고(가속→감속 S-곡선), 연타·호버로 목표가 바뀌어도
-  // 진행 중 속도를 그대로 물려받아 오버슈트 없이 액체처럼 따라붙는다.
-  const OMEGA = 8;
 
-  // 중앙 세트(real 0)에서 시작 — 좌우가 항상 클론으로 채워진다.
-  let pos = realTotal;
+  // ── Apple Cover Flow 원칙 ──
+  // 레이아웃은 절대 애니메이션하지 않는다. 모든 커버가 같은 크기이고,
+  // 위치·기울기·깊이·크기 전부가 연속 위치값 pf(단위: 칸) 하나에서 파생된
+  // GPU 트랜스폼이다 — 리플로우 0, 타이밍 곡선 1개.
+  let pos = realTotal; // 목표 인덱스 (중앙 세트에서 시작)
+  let pf = pos;        // 연속 위치 (스프링이 pos 를 추적)
+  let vf = 0;          // 스프링 속도 (칸/s)
+  const OMEGA = 6.2;   // 임계 감쇠 스프링 강성(rad/s) — 애플 특유의 느긋한 정착
 
   const inBand = (p: number) => p >= realTotal && p < 2 * realTotal;
   const modReal = (p: number) => ((p % realTotal) + realTotal) % realTotal;
 
-  // 활성 슬라이드를 스테이지 정중앙에 두는 translateX 목표값(현재 레이아웃 기준).
-  function goalX(): number {
-    const s = slides[pos];
-    if (!track || !stage || !s) return 0;
-    return stage.clientWidth / 2 - (s.offsetLeft + s.offsetWidth / 2);
+  // 커버 폭 기준 기하 — 리사이즈 때만 재측정.
+  let G = { spread: 200, side: 84, tilt: 55, sideScale: 0.82, frontZ: 130, cull: 13 };
+  function measure() {
+    const w = slides[0]?.offsetWidth || 280;
+    G = { spread: w * 0.72, side: w * 0.3, tilt: 55, sideScale: 0.82, frontZ: Math.round(w * 0.46), cull: 13 };
   }
 
-  let currentX = 0;
-
-  // 커버 플로우: 기울기를 "스테이지 중앙에서의 거리"의 연속 함수로 매 프레임 계산.
-  // 클래스 토글(이산 전환)이 아니라 이동과 같은 루프에서 구동하므로, 슬라이드가
-  // 중앙을 지날 때 기울기가 0을 거쳐 부드럽게 반대편으로 넘어간다(깜박임 없음).
-  const TILT_MAX = 26; // deg
-  const TILT_SPACING = 260; // 정규화 간격(px) — 이웃 한 칸 ≈ 1
-  const frames = slides.map((s) => s.querySelector<HTMLElement>('.fp-slide-frame'));
-
-  function updateTilt(x: number) {
-    if (!stage) return;
-    const centerX = stage.clientWidth / 2;
+  // d = (슬라이드 인덱스 - pf). |d|<=1 구간에서 정면↔측면으로 연속 보간.
+  function render() {
     for (let i = 0; i < slides.length; i++) {
-      const s = slides[i];
-      const f = frames[i];
-      if (!f) continue;
-      const c = s.offsetLeft + s.offsetWidth / 2 + x;
-      const t = Math.tanh((c - centerX) / TILT_SPACING);
-      const deg = -(t * TILT_MAX);
-      const sc = 1 - Math.abs(t) * 0.03;
-      f.style.transform = `perspective(950px) rotateY(${deg.toFixed(2)}deg) scale(${sc.toFixed(3)})`;
+      const el = slides[i];
+      const d = i - pf;
+      const ad = Math.abs(d);
+      if (ad > G.cull) {
+        if (el.style.visibility !== 'hidden') el.style.visibility = 'hidden';
+        continue;
+      }
+      if (el.style.visibility) el.style.visibility = '';
+      const a = Math.max(-1, Math.min(1, d));
+      const x = ad <= 1 ? d * G.spread : Math.sign(d) * (G.spread + (ad - 1) * G.side);
+      const rot = -a * G.tilt;
+      const z = (1 - Math.abs(a)) * G.frontZ;
+      const s = 1 - Math.abs(a) * (1 - G.sideScale);
+      el.style.transform =
+        `translate(-50%,-50%) translate3d(${x.toFixed(2)}px,0,${z.toFixed(1)}px) rotateY(${rot.toFixed(2)}deg) scale(${s.toFixed(4)})`;
+      el.style.zIndex = String(600 - Math.round(Math.min(ad, 50) * 10));
     }
-  }
-
-  function apply(x: number) {
-    if (track) track.style.transform = `translate3d(${x.toFixed(2)}px,0,0)`;
-    updateTilt(x);
   }
 
   function updateInfo() {
     const s = slides[pos];
     if (!s) return;
-    const real = ((pos % realTotal) + realTotal) % realTotal;
+    const real = modReal(pos);
     if (idxEl) idxEl.textContent = `(${String(real + 1).padStart(2, '0')} / ${realTotal})`;
     if (titleEl) titleEl.textContent = s.dataset.title || s.dataset.code || '';
     if (detailEl) detailEl.setAttribute('href', s.dataset.detail || '#');
@@ -163,51 +158,33 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
     slides.forEach((el, i) => el.classList.toggle('is-active', i === pos));
   }
 
-  // 경계 밖(첫/세번째 세트)이면 동일하게 보이는 중앙 세트 슬라이드로 스왑.
-  // 폭/높이 transition 을 잠시 꺼(no-anim) 클래스 이동이 즉시 반영되게 하고,
-  // 스왑 전후 목표값 차이만큼 currentX 를 함께 밀어 화면상 1px 도 안 튀게 한다.
+  // 경계 밖이면 좌표계 전체(pos·pf)를 한 세트만큼 평행이동. 모든 시각 상태가
+  // (i - pf)의 함수이고 클론 세트는 동일하므로 화면상 변화가 정확히 0이다.
   function normalize() {
-    if (!track || inBand(pos)) return;
-    const before = goalX();
-    track.classList.add('no-anim');
-    pos = realTotal + modReal(pos);
+    if (inBand(pos)) return;
+    const shift = pos < realTotal ? realTotal : -realTotal;
+    pos += shift;
+    pf += shift;
     setActive();
-    void track.offsetWidth; // 억제된 상태로 최종 레이아웃 확정
-    const after = goalX();
-    track.classList.remove('no-anim');
-    currentX += after - before;
-    apply(currentX);
   }
 
-  // ── 스무딩 루프 ──
-  // 목표가 움직여도(폭 grow, 연타, 호버 재타깃) 항상 현재 위치에서 이어지는 한 곡선.
-  // 목표 도달 + 목표 정지(폭 애니메이션 종료)가 몇 프레임 지속되면 스냅 후 정지.
+  // ── 스프링 루프: pf 가 pos 를 임계 감쇠로 추적 ──
   let rafId = 0;
   let lastT = 0;
-  let prevGoal = 0;
-  let settled = 0;
-  let vx = 0; // 스프링 속도(px/s) — 재타깃 간에도 이어진다
 
   function tick(t: number) {
     const dt = Math.min(0.048, lastT ? (t - lastT) / 1000 : 0.016);
     lastT = t;
-    const goal = goalX();
-    // 임계 감쇠 스프링의 닫힌형 해 — 프레임레이트와 무관하게 안정.
     const e = Math.exp(-OMEGA * dt);
-    const dx = currentX - goal;
-    const tmp = (vx + OMEGA * dx) * dt;
-    currentX = goal + (dx + tmp) * e;
-    vx = (vx - OMEGA * tmp) * e;
-    apply(currentX);
-    const still =
-      Math.abs(goal - currentX) < 0.4 && Math.abs(vx) < 15 && Math.abs(goal - prevGoal) < 0.1;
-    prevGoal = goal;
-    settled = still ? settled + 1 : 0;
-    if (settled >= 6) {
-      currentX = goal;
-      vx = 0;
-      apply(currentX);
-      normalize();
+    const dx = pf - pos;
+    const tmp = (vf + OMEGA * dx) * dt;
+    pf = pos + (dx + tmp) * e;
+    vf = (vf - OMEGA * tmp) * e;
+    render();
+    if (Math.abs(pf - pos) < 0.0006 && Math.abs(vf) < 0.004) {
+      pf = pos;
+      vf = 0;
+      render();
       rafId = 0;
       lastT = 0;
       return;
@@ -216,24 +193,18 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
   }
 
   function startLoop() {
-    settled = 0;
     if (!rafId) { lastT = 0; rafId = requestAnimationFrame(tick); }
   }
 
   function moveTo(target: number) {
-    // 클론 세트 깊숙이 달아나면(빠른 연타) 남은 여유가 없어지기 전에 미리 스왑.
-    if (target < realTotal / 2 || target >= realTotal * 2.5) {
-      pos = target;
-      normalize();
-    } else {
-      pos = target;
-    }
+    pos = target;
+    normalize(); // 밖이면 pos·pf 동시 평행이동이라 진행 중 모션도 안 끊긴다
     setActive();
     updateInfo();
     if (reduceMotion) {
-      currentX = goalX();
-      apply(currentX);
-      normalize();
+      pf = pos;
+      vf = 0;
+      render();
       return;
     }
     startLoop();
@@ -241,25 +212,9 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
 
   function go(delta: number) { moveTo(pos + delta); }
 
-  // 호버: 커서가 가리키는 썸네일을 가운데로. mouseenter 가 아니라 pointermove 에만
-  // 반응해, 가운데 이동으로 커서 밑 슬라이드가 바뀌어도 커서가 안 움직였으면 재발동 안 한다.
-  let hoverTimer = 0;
-  stage?.addEventListener('pointermove', (e) => {
-    if ((e as PointerEvent).pointerType === 'touch') return;
-    const slide = (e.target as HTMLElement).closest('.fp-slide') as HTMLButtonElement | null;
-    if (!slide) return;
-    const i = slides.indexOf(slide);
-    if (i === -1 || i === pos) return;
-    clearTimeout(hoverTimer);
-    hoverTimer = window.setTimeout(() => moveTo(i), 60);
-  });
-  stage?.addEventListener('pointerleave', () => clearTimeout(hoverTimer));
-
-  // 클릭: 옆 썸네일이면 가운데로 이동, 이미 가운데(활성)면 상세로 이동.
-  // "누르면 무조건 그 자리서 이동"이 아니라 한 번 중앙에 세운 뒤 열게 해 오클릭을 없앤다.
+  // 클릭: 옆 커버면 가운데로 이동, 이미 가운데(활성)면 상세로 이동.
   slides.forEach((s, i) => {
     s.addEventListener('click', () => {
-      clearTimeout(hoverTimer);
       if (i === pos) {
         const href = s.dataset.detail;
         if (href) window.location.href = href;
@@ -276,79 +231,66 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
     if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
   });
 
-  // 리사이즈·이미지 로드로 폭이 바뀌면 재정렬 — 이동 중이면 루프가 알아서 따라가고,
-  // 정지 상태면 애니메이션 없이 즉시 스냅.
-  function reflowSnap() {
-    if (rafId) return; // 루프가 새 목표를 자연스럽게 추적
-    currentX = goalX();
-    apply(currentX);
-  }
+  // 리사이즈: 기하만 재측정해 즉시 재렌더 (레이아웃 애니메이션 없음).
   let resizeRaf = 0;
   window.addEventListener('resize', () => {
     cancelAnimationFrame(resizeRaf);
-    resizeRaf = requestAnimationFrame(reflowSnap);
+    resizeRaf = requestAnimationFrame(() => { measure(); render(); });
   });
-  slides.forEach((s) => s.querySelector('img')?.addEventListener('load', reflowSnap));
 
-  // 초기 배치 — 스냅 후 루프를 걸어, 히어로가 132→340px 로 자라는 동안의
-  // 중심 이동까지 추적해 정중앙에 정착시킨다(일회성 스냅만 하면 성장분만큼 어긋난다).
+  // 초기 배치 — 첫 render 후 공개(스타일 미적용 슬라이드 무더기 FOUC 방지).
+  measure();
   setActive();
   updateInfo();
-  currentX = goalX();
-  apply(currentX);
-  if (!reduceMotion) startLoop();
+  render();
+  track?.classList.add('is-ready');
 </script>
 
 <style>
-  /* ── 필름스트립 ── */
+  /* ── 필름스트립 (Cover Flow) ── */
   .fp-film {
     position: relative;
     padding: var(--s-5) 0 var(--s-6);
     border-block: var(--border);
     overflow: hidden;
   }
-  .fp-stage { overflow: hidden; width: 100%; }
-  .fp-track {
-    display: flex;
-    align-items: center;
-    gap: var(--s-3);
-    height: 360px;
-    will-change: transform;
-    /* transform 은 JS 가 매 프레임 히어로 중심에 맞춰 구동한다(CSS transition 없음). */
+  .fp-stage {
+    position: relative;
+    width: 100%;
+    height: 420px;
+    overflow: hidden;
+    perspective: 1200px;
+    perspective-origin: 50% 46%;
   }
+  .fp-track {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+  }
+  .fp-track:not(.is-ready) .fp-slide { visibility: hidden; }
   .fp-slide {
-    flex: 0 0 auto;
-    width: 132px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: clamp(230px, 24vw, 320px);
+    height: 360px;
     padding: 0;
     background: none;
     border: none;
     cursor: pointer;
-    transition: width 0.55s var(--ease);
-  }
-  /* 무한 루프 경계 스왑 순간: 클래스 이동을 즉시 반영해 화면이 튀지 않게 한다(JS normalize). */
-  .fp-track.no-anim .fp-slide,
-  .fp-track.no-anim .fp-slide-frame {
-    transition: none !important;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .fp-slide,
-    .fp-slide-frame,
-    .fp-slide-caption {
-      transition: none !important;
-    }
+    will-change: transform;
   }
   .fp-slide-frame {
     display: block;
     position: relative;
     width: 100%;
-    height: 180px;
+    height: 100%;
     overflow: hidden;
     border: var(--border);
     border-radius: var(--r-lg);
     background: var(--c-bg-2);
-    /* transform(커버 플로우 기울기)은 JS 가 매 프레임 연속값으로 구동한다 —
-       CSS transition 을 걸면 프레임 구동과 겹쳐 깜박이므로 제외. */
-    transition: height 0.55s var(--ease), border-color var(--t) var(--ease);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.16);
+    transition: border-color var(--t) var(--ease);
   }
   .fp-slide-frame img { width: 100%; height: 100%; object-fit: cover; }
   .fp-slide-caption {
@@ -384,28 +326,24 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
     letter-spacing: var(--ls-mono);
   }
 
-  /* 호버하면 그 썸네일이 가운데로 이동(JS)해 히어로로 커진다. 살짝 강조만. */
   .fp-slide:not(.is-active):hover .fp-slide-frame { border-color: var(--c-ink-2); }
-
-  /* 가운데(활성) 슬라이드 = 히어로 */
-  .fp-slide.is-active { width: clamp(300px, 22vw, 340px); }
-  .fp-slide.is-active .fp-slide-frame {
-    height: 360px;
-    border-color: var(--c-accent);
-  }
-  .fp-slide:hover .fp-slide-caption,
-  .fp-slide:focus-visible .fp-slide-caption,
-  .fp-slide.is-active .fp-slide-caption {
+  .fp-slide.is-active .fp-slide-frame { border-color: var(--c-accent); }
+  .fp-slide.is-active .fp-slide-caption,
+  .fp-slide:focus-visible .fp-slide-caption {
     opacity: 1;
     transform: translateY(0);
   }
   .fp-empty { display: grid; place-items: center; width: 100%; height: 100%; color: var(--c-ink-3); }
 
+  @media (prefers-reduced-motion: reduce) {
+    .fp-slide-caption { transition: none !important; }
+  }
+
   .fp-nav {
     position: absolute;
-    top: calc(var(--s-5) + 180px);
+    top: calc(var(--s-5) + 210px);
     transform: translateY(-50%);
-    z-index: 2;
+    z-index: 700;
     width: 40px; height: 40px;
     display: grid; place-items: center;
     font-family: var(--f-mono); font-size: var(--fs-md);
@@ -436,15 +374,10 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
     letter-spacing: var(--ls-mono);
   }
   .fp-detail-link { color: var(--c-ink-2); }
-  .fp-detail-link:hover { color: var(--c-ink); }
 
   @media (max-width: 700px) {
-    .fp-slide.is-active { width: min(240px, calc(100vw - 120px)); }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .fp-slide,
-    .fp-slide-frame,
-    .fp-slide-caption { transition: none; }
+    .fp-stage { height: 320px; }
+    .fp-slide { width: clamp(190px, 56vw, 240px); height: 260px; }
+    .fp-nav { top: calc(var(--s-5) + 160px); }
   }
 </style>
