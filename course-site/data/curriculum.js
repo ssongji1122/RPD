@@ -1894,8 +1894,7 @@ const CURRICULUM = [
             "label": ".glb 파일 Blender에서 Import",
             "detail": "File → Import → glTF (.glb/.gltf)"
           }
-        ],
-        "image": "assets/images/week05/ai-3d-generation.png"
+        ]
       },
       {
         "title": "AI 메쉬 정리",
@@ -1970,7 +1969,6 @@ const CURRICULUM = [
             "detail": "Shift 누른 채로도 임시 Smooth"
           }
         ],
-        "image": "assets/images/week05/sculpt-mode.png",
         "showme": "sculpt-basics"
       },
       {
@@ -1998,8 +1996,7 @@ const CURRICULUM = [
             "label": "Inflate로 볼록하게 부풀려보기",
             "detail": "볼이나 근육 강조에 유용"
           }
-        ],
-        "image": "assets/images/week05/sculpt-brushes.png"
+        ]
       },
       {
         "title": "Remesh와 마무리",
@@ -2029,7 +2026,6 @@ const CURRICULUM = [
             "detail": ""
           }
         ],
-        "image": "assets/images/week05/remesh.png",
         "showme": "remesh-modifier",
         "widgets": [
           {
