@@ -198,7 +198,7 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
     word-break: keep-all;
     line-height: var(--lh-tight);
   }
-  .lead { color: var(--c-ink-2); word-break: keep-all; max-width: var(--read-ko); }
+  .lead { color: var(--c-ink-2); word-break: keep-all; }
 
   .block { margin-bottom: var(--s-6); }
   .block h2 {
@@ -212,7 +212,6 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
 
   .topic-list, .mini-list, .done-list, .check-list, .mistake-list {
     display: flex; flex-direction: column; gap: var(--s-1);
-    max-width: var(--read-ko);
   }
   .topic-list li { font-size: var(--fs-base); color: var(--c-ink); }
 
@@ -227,13 +226,13 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
     line-height: var(--lh-normal);
     word-break: keep-all;
     margin-bottom: var(--s-2);
-    max-width: var(--read-ko);
   }
   .step-copy:last-of-type { margin-bottom: 0; }
 
   .step-shots {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    /* auto-fit: 이미지 1장이면 콘텐츠 폭(880) 전체, 여러 장이면 균등 분할 */
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
     gap: var(--s-2);
     margin: var(--s-2) 0;
   }
@@ -246,7 +245,7 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
   }
 
   /* 프롬프트 (복붙) */
-  .prompt-note { color: var(--c-ink-2); font-size: var(--fs-base); max-width: var(--read-ko); margin-bottom: var(--s-3); }
+  .prompt-note { color: var(--c-ink-2); font-size: var(--fs-base); margin-bottom: var(--s-3); }
   .prompt-list { display: flex; flex-direction: column; gap: var(--s-2); }
   .prompt { position: relative; }
   .prompt-text {
@@ -320,7 +319,7 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
   }
   .assignment h2 { border-bottom: 0; margin-bottom: var(--s-2); }
   .assign-title { font-size: var(--fs-md); display: block; margin-bottom: var(--s-2); }
-  .assign-desc { font-size: var(--fs-base); color: var(--c-ink-2); margin-bottom: var(--s-2); word-break: keep-all; max-width: var(--read-ko); }
+  .assign-desc { font-size: var(--fs-base); color: var(--c-ink-2); margin-bottom: var(--s-2); word-break: keep-all; }
 
   /* checklist: CSS 보더로 그린 빈 박스 (글리프 미사용) */
   .check-list li {
