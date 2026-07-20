@@ -115,8 +115,8 @@
 
 5. **Mask**
    - 특정 영역을 보호 (마스크된 부분은 브러시 영향 없음)
-   - M 키로 마스크 해제 (Mask Clear)
-   - Alt+M으로 마스크 반전
+   - Alt+M으로 마스크 해제 (Clear Mask)
+   - Ctrl+I로 마스크 반전 (Invert Mask)
    - 부분적으로 수정할 때 필수
 
 #### Dyntopo vs Multires
@@ -131,18 +131,6 @@ Sculpt에서 디테일을 추가할 때 두 가지 방식이 있습니다:
 - AI 모델 수정에는 **Dyntopo**가 편리 (불균일한 토폴로지에서도 작동)
 - Sculpt Mode 상단 Header에서 Dyntopo 체크박스로 활성화
 - **Dyntopo 활성화 시:** Detail Size를 낮게 유지 (Constant Detail 권장). 브러시가 닿는 순간 그 자리에만 폴리곤이 자동으로 생성됨
-
-### 🆕 Blender 5.0: SDF 기반 스컬프팅
-
-Blender 5.0에서는 **SDF(Signed Distance Field)** 기반 스컬프팅이 도입되었습니다.
-
-- **SDF란?** 공간의 각 지점에서 표면까지의 거리를 저장하는 데이터 구조
-- **장점:**
-  - 메쉬 간 자연스러운 **블렌딩(Blending)** 가능 — 두 형태가 녹아드는 효과
-  - **카빙(Carving)** 연산이 안정적 — 한 메쉬로 다른 메쉬를 깎아내는 효과
-  - 기존 Sculpt에서 발생하던 메쉬 관통 문제 감소
-- **활용:** AI 모델의 파츠를 합치거나 형태를 대폭 수정할 때 유용
-- Sculpt Mode > Brush Settings에서 SDF 관련 옵션 확인
 
 #### AI 생성 모델 Sculpt 수정
 
@@ -192,7 +180,6 @@ Blender 5.0에서는 **SDF(Signed Distance Field)** 기반 스컬프팅이 도�
 | Sculpt Mode | 브러시로 메쉬 표면을 직접 조각. Draw, Clay Strips, Smooth, Grab, Mask가 핵심 |
 | Dyntopo vs Multires | 자유 형태는 Dyntopo, 세밀 디테일은 Multires. AI 모델은 Dyntopo 추천 |
 | Remesh 심화 | Week 6 Step 1에서 Voxel/Quad Remesh, QRemeshify, Mesh Cleaner 2 학습 |
-| Blender 5.0 SDF | SDF 기반 스컬프팅으로 메쉬 블렌딩/카빙이 가능 |
 | Blender MCP | Claude와 연동하여 씬 셋업(조명, 카메라) 자동화 |
 
 ## 과제
@@ -218,8 +205,6 @@ Blender 5.0에서는 **SDF(Signed Distance Field)** 기반 스컬프팅이 도�
 #### 1. AI 3D 생성 체험
 
 텍스트 몇 글자 입력하면 3D 메쉬가 뚝딱 나와요. AI가 초벌을 해주면 우리는 거기서 다듬기만 하면 돼요. 점토 조각으로 치면 AI가 큰 덩어리를 잡아준 셈이에요.
-
-![AI 3D 생성 체험](../../course-site/assets/images/week05/ai-3d-generation.png)
 
 배울 것
 
@@ -251,8 +236,6 @@ AI가 만든 메쉬는 대부분 폴리곤이 지나치게 많아요. 마치 해
 
 브러시로 메쉬를 직접 주무르는 모드예요. 마우스로 칠하듯이 형태를 만들어요. 점토 조각과 가장 비슷한 방식이에요.
 
-![Sculpt Mode 기초](../../course-site/assets/images/week05/sculpt-mode.png)
-
 배울 것
 
 - Sculpt Mode 진입 방법을 안다
@@ -270,8 +253,6 @@ AI가 만든 메쉬는 대부분 폴리곤이 지나치게 많아요. 마치 해
 
 기본 3개로 큰 흐름을 잡았으면, 이제 세부 표현용 브러시를 익혀요. Clay는 점토를 덧붙이는 느낌, Crease는 주름이나 홈을 파는 느낌이에요.
 
-![Sculpt 브러시 심화](../../course-site/assets/images/week05/sculpt-brushes.png)
-
 배울 것
 
 - 용도별 브러시를 구분해 쓴다
@@ -285,8 +266,6 @@ AI가 만든 메쉬는 대부분 폴리곤이 지나치게 많아요. 마치 해
 #### 5. Remesh와 마무리
 
 Sculpt를 하다 보면 메쉬가 늘어나서 찌그러지는 곳이 생겨요. Remesh는 메쉬를 다시 고르게 나눠주는 리셋 버튼 같은 거예요.
-
-![Remesh와 마무리](../../course-site/assets/images/week05/remesh.png)
 
 배울 것
 
