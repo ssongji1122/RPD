@@ -2101,7 +2101,7 @@ const CURRICULUM = [
       "checklist": [
         "내 무드보드에서 추출한 프롬프트 키워드 +  무드보드에서 선택한 이미지",
         "3D AI 로 생성/테스트 해본 스크린샷",
-        "Blender 로 다운받은 경우( hyper 3d GEN 1.5 버전은 다운로드 가능)  임포트 한 이미지 샷"
+        "Blender 로 다운받은 경우 (Hyper3D Rodin — 현행 Gen-2.5, 무료 플랜은 생성 무료·다운로드 시 크레딧 차감) 임포트 한 이미지 샷"
       ]
     },
     "mistakes": [
@@ -2118,7 +2118,7 @@ const CURRICULUM = [
     ],
     "videos": [
       {
-        "title": "Blender Studio - Introduction to Sculpting",
+        "title": "Blender Studio - Introduction to Sculpting (Blender 4.5 LTS 기준)",
         "url": "https://studio.blender.org/training/blender-fundamentals-45-lts/sculpting_introduction/"
       }
     ],

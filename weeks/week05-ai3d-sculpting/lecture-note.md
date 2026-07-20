@@ -29,11 +29,13 @@
 
 ### AI 3D 도구 비교
 
-| 도구 | 특징 | 무료 크레딧 |
+| 도구 | 특징 | 무료 크레딧 (2026-07 기준) |
 |------|------|------------|
-| Meshy AI | 가장 빠른 생성 속도, 안정적인 결과물 | 월 200 크레딧 |
-| Tripo AI | 클린 토폴로지, 넉넉한 무료 크레딧 | 월 500 크레딧 |
-| Luma Genie | 좋은 형태 이해도, 복잡한 형태에 강점 | 제한적 무료 |
+| Meshy AI | 가장 빠른 생성 속도, 안정적인 결과물 | 월 100 크레딧. 무료 플랜은 최신 엔진 생성물 한정, 월 다운로드 개수 제한 |
+| Tripo AI | 클린 토폴로지 | 월 200 크레딧, 다운로드는 월 15회 제한 |
+| Hyper3D (Rodin) | 디테일 표현에 강점, 현행 Gen-2.5 | 생성 무료, 다운로드 시 크레딧 차감 (가입 시 10크레딧) |
+
+> 크레딧 정책은 자주 바뀝니다. 수업 직전 각 서비스 요금 페이지에서 재확인하세요.
 
 ## 실습 (100분)
 
@@ -298,7 +300,7 @@ Sculpt를 하다 보면 메쉬가 늘어나서 찌그러지는 곳이 생겨요.
 - 제출 체크:
   - 내 무드보드에서 추출한 프롬프트 키워드 +  무드보드에서 선택한 이미지
   - 3D AI 로 생성/테스트 해본 스크린샷
-  - Blender 로 다운받은 경우( hyper 3d GEN 1.5 버전은 다운로드 가능)  임포트 한 이미지 샷
+  - Blender 로 다운받은 경우 (Hyper3D Rodin — 현행 Gen-2.5, 무료 플랜은 생성 무료·다운로드 시 크레딧 차감) 임포트 한 이미지 샷
 
 ### 자주 막히는 지점
 
@@ -315,7 +317,7 @@ Sculpt를 하다 보면 메쉬가 늘어나서 찌그러지는 곳이 생겨요.
 
 ### 공식 영상 튜토리얼
 
-- [Blender Studio - Introduction to Sculpting](https://studio.blender.org/training/blender-fundamentals-45-lts/sculpting_introduction/)
+- [Blender Studio - Introduction to Sculpting (Blender 4.5 LTS 기준)](https://studio.blender.org/training/blender-fundamentals-45-lts/sculpting_introduction/)
 
 ### 공식 문서
 

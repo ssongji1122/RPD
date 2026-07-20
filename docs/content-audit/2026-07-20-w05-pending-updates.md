@@ -1,7 +1,7 @@
 ---
 title: W05 콘텐츠 감사 — 결재 대기열
 last_updated: 2026-07-20
-status: pending
+status: applied (8번 제외)
 ---
 
 # Week 05 콘텐츠 감사 — 결재 대기
@@ -32,3 +32,12 @@ status: pending
 | 9 | 참고 자료 "Blender Studio - Introduction to Sculpting" | 출처 링크만 존재 | 해당 코스는 Blender 4.5 LTS 기준 | 수업 실제 사용 Blender 버전 표기와 일치 여부 확인 | [studio.blender.org](https://studio.blender.org/training/blender-fundamentals-45-lts/sculpting_introduction/) |
 
 반영 절차: 결재 후 lecture-note 수정 → notion-push 워크플로우(weeks: 5)로 Notion 반영.
+
+
+## 결재 결과 (2026-07-20 "다 반영" 승인)
+
+- 1·2·3·5·6: 도구 비교표 재작성 — Meshy 월 100 크레딧(+무료 다운로드 제한 병기), Tripo 월 200 크레딧(다운로드 월 15회), Luma Genie 행 삭제 후 Hyper3D(Rodin, Gen-2.5) 행으로 교체. "크레딧 정책은 수업 직전 재확인" 각주 추가.
+- 4: 과제 체크리스트 "GEN 1.5" → "Hyper3D Rodin — 현행 Gen-2.5, 생성 무료·다운로드 시 크레딧 차감" — Notion 정본 블록(c94dc85e…) 직접 수정 + repo 동기 레이어(site-data·curriculum-notion·notion-blocks) 동일 반영.
+- 7: Ctrl+Tab은 모드 전환 파이 메뉴 경유로 유효 — 유지.
+- 9: Blender Studio 링크 제목에 "(Blender 4.5 LTS 기준)" 표기 (overrides.json + site-data.json).
+- 8 (미결·유일 잔여): W05 실캡처 4장 — Blender 실행 상태에서 Blender MCP 뷰포트 캡처가 정공법. Blender를 켜 둔 세션에서 /fact-audit 후속으로 제작. (공식 매뉴얼 해당 페이지엔 재사용할 도판 없음 확인, Meshy는 로그인 월.)
