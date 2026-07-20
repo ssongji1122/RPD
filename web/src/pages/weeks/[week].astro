@@ -83,7 +83,7 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
     {prompts.length > 0 && (
       <section class="block">
         <h2>프롬프트 ({prompts.length})</h2>
-        <p class="prompt-note meta">아래 프롬프트를 복사해 AI 도구에 붙여넣어 사용하세요.</p>
+        <p class="prompt-note">아래 프롬프트를 복사해 AI 도구에 붙여넣어 사용하세요.</p>
         <ul class="prompt-list">
           {prompts.map((p) => (
             <li class="prompt">
@@ -198,7 +198,7 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
     word-break: keep-all;
     line-height: var(--lh-tight);
   }
-  .lead { color: var(--c-ink-2); word-break: keep-all; }
+  .lead { color: var(--c-ink-2); word-break: keep-all; max-width: var(--read-ko); }
 
   .block { margin-bottom: var(--s-6); }
   .block h2 {
@@ -212,20 +212,22 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
 
   .topic-list, .mini-list, .done-list, .check-list, .mistake-list {
     display: flex; flex-direction: column; gap: var(--s-1);
+    max-width: var(--read-ko);
   }
-  .topic-list li { font-size: var(--fs-sm); color: var(--c-ink); }
+  .topic-list li { font-size: var(--fs-base); color: var(--c-ink); }
 
   .step-list { display: flex; flex-direction: column; gap: var(--s-4); }
   .step { padding-left: var(--s-1); }
   .step-head { display: flex; align-items: baseline; gap: var(--s-3); margin-bottom: var(--s-2); }
-  .step-no { font-family: var(--f-mono); color: var(--c-accent); }
-  .step-title { font-size: var(--fs-base); font-weight: var(--w-medium); }
+  .step-no { font-family: var(--f-mono); color: var(--c-accent-text); }
+  .step-title { font-size: var(--fs-md); font-weight: var(--w-medium); }
   .step-copy {
-    font-size: var(--fs-sm);
+    font-size: var(--fs-base);
     color: var(--c-ink-2);
     line-height: var(--lh-normal);
     word-break: keep-all;
     margin-bottom: var(--s-2);
+    max-width: var(--read-ko);
   }
   .step-copy:last-of-type { margin-bottom: 0; }
 
@@ -244,7 +246,7 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
   }
 
   /* 프롬프트 (복붙) */
-  .prompt-note { color: var(--c-ink-3); margin-bottom: var(--s-3); }
+  .prompt-note { color: var(--c-ink-2); font-size: var(--fs-base); max-width: var(--read-ko); margin-bottom: var(--s-3); }
   .prompt-list { display: flex; flex-direction: column; gap: var(--s-2); }
   .prompt { position: relative; }
   .prompt-text {
@@ -278,9 +280,9 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
     transition: color var(--t) var(--ease), border-color var(--t) var(--ease);
   }
   .prompt-copy:hover { color: var(--c-ink); border-color: var(--c-ink-2); }
-  .prompt-copy.copied { color: var(--c-accent); border-color: var(--c-accent); }
+  .prompt-copy.copied { color: var(--c-accent-text); border-color: var(--c-accent); }
   .mini-list li, .mistake-list li {
-    font-size: var(--fs-sm); color: var(--c-ink-2);
+    font-size: var(--fs-base); color: var(--c-ink-2);
     padding-left: var(--s-3); position: relative;
   }
   .mini-list li::before, .mistake-list li::before {
@@ -290,7 +292,7 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
   /* done: CSS 보더로 그린 체크 표시 (글리프 미사용) */
   .done-list { margin-top: var(--s-2); }
   .done-list li {
-    font-size: var(--fs-sm); color: var(--c-success);
+    font-size: var(--fs-base); color: var(--c-success);
     padding-left: var(--s-4); position: relative;
   }
   .done-list li::before {
@@ -309,7 +311,7 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
     background: var(--c-bg-2); color: var(--c-ink);
     min-width: 3rem; text-align: center; white-space: nowrap;
   }
-  .shortcut-list span { font-size: var(--fs-sm); color: var(--c-ink-2); }
+  .shortcut-list span { font-size: var(--fs-base); color: var(--c-ink-2); }
 
   .assignment {
     padding: var(--s-4);
@@ -317,12 +319,12 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
     background: color-mix(in srgb, var(--c-accent) 6%, transparent);
   }
   .assignment h2 { border-bottom: 0; margin-bottom: var(--s-2); }
-  .assign-title { font-size: var(--fs-base); display: block; margin-bottom: var(--s-2); }
-  .assign-desc { font-size: var(--fs-sm); color: var(--c-ink-2); margin-bottom: var(--s-2); word-break: keep-all; }
+  .assign-title { font-size: var(--fs-md); display: block; margin-bottom: var(--s-2); }
+  .assign-desc { font-size: var(--fs-base); color: var(--c-ink-2); margin-bottom: var(--s-2); word-break: keep-all; max-width: var(--read-ko); }
 
   /* checklist: CSS 보더로 그린 빈 박스 (글리프 미사용) */
   .check-list li {
-    font-size: var(--fs-sm); color: var(--c-ink-2);
+    font-size: var(--fs-base); color: var(--c-ink-2);
     padding-left: var(--s-4); position: relative;
   }
   .check-list li::before {
@@ -334,7 +336,7 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
   .ref-list { display: flex; flex-direction: column; gap: var(--s-2); }
   .ref-list li { display: flex; align-items: baseline; gap: var(--s-3); }
   .ref-tag { min-width: 2.5rem; color: var(--c-ink-3); }
-  .ref-list a { font-size: var(--fs-sm); color: var(--c-accent); }
+  .ref-list a { font-size: var(--fs-base); color: var(--c-accent-text); }
 
   .week-nav {
     display: flex; justify-content: space-between; gap: var(--s-3);
@@ -344,5 +346,5 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
   .nav-link { display: flex; flex-direction: column; gap: 2px; max-width: 48%; }
   .nav-link.next { text-align: right; margin-left: auto; }
   .nav-link span:last-child { font-size: var(--fs-sm); color: var(--c-ink); word-break: keep-all; }
-  .nav-link:hover span:last-child { color: var(--c-accent); }
+  .nav-link:hover span:last-child { color: var(--c-accent-text); }
 </style>

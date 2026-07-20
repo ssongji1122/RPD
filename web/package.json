@@ -4,9 +4,10 @@
   "version": "0.1.0",
   "scripts": {
     "sync-final-assets": "node scripts/sync-final-assets.mjs",
+    "audit:contrast": "bash scripts/audit-contrast.sh",
     "predev": "npm run sync-final-assets",
     "dev": "astro dev",
-    "prebuild": "npm run sync-final-assets",
+    "prebuild": "npm run sync-final-assets && npm run audit:contrast",
     "build": "astro build",
     "preview": "astro preview"
   },

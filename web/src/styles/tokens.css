@@ -21,9 +21,10 @@
   --c-bg-dark:   #181816;   /* dark inverse (never #000) */
   --c-ink:       #1A1A18;   /* primary text */
   --c-ink-2:     #5C5A55;   /* secondary text */
-  --c-ink-3:     #9A9890;   /* meta / hint / caption */
+  --c-ink-3:     #6B6963;   /* meta / hint / caption — 2026-07-18 대비 교정 (bg 5.08:1, bg-2 4.61:1) */
   --c-line:      #E5E1D8;   /* borders, hr, dividers */
   --c-accent:    #B85C38;   /* warm rust — links + CTAs ONLY */
+  --c-accent-text: #A8502D; /* 링크·소형 텍스트 전용 액센트 (bg 5.04:1, bg-2 4.54:1) — 그래픽·보더·포커스링은 --c-accent 유지 */
 
   /* Status (paper-toned, low-saturation) */
   --c-success:   #5C7A3E;
@@ -158,9 +159,10 @@
     --c-bg-dark:   #0F0F0E;
     --c-ink:       #EDEAE0;
     --c-ink-2:     #A8A59C;
-    --c-ink-3:     #6E6C66;
+    --c-ink-3:     #8A8880;   /* 2026-07-18 대비 교정 (다크 bg #181816 위 5.0:1) */
     --c-line:      #2E2D29;
     --c-accent:    #D87A56;   /* lifted for AA on dark bg */
+    --c-accent-text: #D87A56; /* 다크 bg 5.78:1, 기존 다크 액센트와 동일값 */
 
     --c-success:   #8FB36F;
     --c-warn:      #D9AC4F;
@@ -181,12 +183,15 @@
 [data-theme="dark"] {
   color-scheme: dark;
   --c-bg: #181816; --c-bg-2: #22221F; --c-bg-dark: #0F0F0E;
-  --c-ink: #EDEAE0; --c-ink-2: #A8A59C; --c-ink-3: #6E6C66;
-  --c-line: #2E2D29; --c-accent: #D87A56;
+  --c-ink: #EDEAE0; --c-ink-2: #A8A59C; --c-ink-3: #8A8880;
+  --c-line: #2E2D29; --c-accent: #D87A56; --c-accent-text: #D87A56;
+  /* status도 테마와 함께 강제 — OS 스킴과 강제 테마가 엇갈릴 때 누수 방지 */
+  --c-success: #8FB36F; --c-warn: #D9AC4F; --c-error: #D17157; --c-info: #7B9CB3;
 }
 [data-theme="light"] {
   color-scheme: light;
   --c-bg: #F8F6F0; --c-bg-2: #EEEAE0; --c-bg-dark: #181816;
-  --c-ink: #1A1A18; --c-ink-2: #5C5A55; --c-ink-3: #9A9890;
-  --c-line: #E5E1D8; --c-accent: #B85C38;
+  --c-ink: #1A1A18; --c-ink-2: #5C5A55; --c-ink-3: #6B6963;
+  --c-line: #E5E1D8; --c-accent: #B85C38; --c-accent-text: #A8502D;
+  --c-success: #5C7A3E; --c-warn: #B8862B; --c-error: #A8412C; --c-info: #4A6B82;
 }
