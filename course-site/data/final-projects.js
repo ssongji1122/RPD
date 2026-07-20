@@ -1824,6 +1824,18 @@ window.RPDFinalProjects = {
       "title": "Project 20",
       "media": [
         {
+          "type": "video",
+          "src": "assets/final-projects/project-20/video-01.webp",
+          "videoSrc": "assets/final-projects/project-20/video-01.mp4",
+          "role": "render"
+        },
+        {
+          "type": "video",
+          "src": "assets/final-projects/project-20/video-02.webp",
+          "videoSrc": "assets/final-projects/project-20/video-02.mp4",
+          "role": "render"
+        },
+        {
           "type": "image",
           "src": "assets/final-projects/project-20/image-01.webp",
           "role": "render"
@@ -1846,23 +1858,6 @@ window.RPDFinalProjects = {
         {
           "type": "image",
           "src": "assets/final-projects/project-20/image-05.webp",
-          "role": "render"
-        },
-        {
-          "type": "image",
-          "src": "assets/final-projects/project-20/image-06.webp",
-          "role": "render"
-        },
-        {
-          "type": "video",
-          "src": "assets/final-projects/project-20/video-01.webp",
-          "videoSrc": "assets/final-projects/project-20/video-01.mp4",
-          "role": "render"
-        },
-        {
-          "type": "video",
-          "src": "assets/final-projects/project-20/video-02.webp",
-          "videoSrc": "assets/final-projects/project-20/video-02.mp4",
           "role": "render"
         },
         {
@@ -1919,31 +1914,6 @@ window.RPDFinalProjects = {
           "type": "image",
           "src": "assets/final-projects/project-20/process-12.webp",
           "role": "process"
-        },
-        {
-          "type": "image",
-          "src": "assets/final-projects/project-20/source-01.webp",
-          "role": "render"
-        },
-        {
-          "type": "image",
-          "src": "assets/final-projects/project-20/source-02.webp",
-          "role": "render"
-        },
-        {
-          "type": "image",
-          "src": "assets/final-projects/project-20/source-03.webp",
-          "role": "render"
-        },
-        {
-          "type": "image",
-          "src": "assets/final-projects/project-20/source-04.webp",
-          "role": "render"
-        },
-        {
-          "type": "image",
-          "src": "assets/final-projects/project-20/source-05.webp",
-          "role": "render"
         }
       ],
       "videos": [
@@ -1957,7 +1927,7 @@ window.RPDFinalProjects = {
         }
       ],
       "links": [],
-      "coverSrc": "assets/final-projects/project-20/image-01.webp",
+      "coverSrc": "assets/final-projects/project-20/frame-04.webp",
       "notes": [
         {
           "section": "MP4",
@@ -1971,6 +1941,13 @@ window.RPDFinalProjects = {
           "section": "MP4",
           "text": "웹페이지 링크(포트 폴리오)"
         }
+      ],
+      "frames": [
+        "assets/final-projects/project-20/frame-01.webp",
+        "assets/final-projects/project-20/frame-02.webp",
+        "assets/final-projects/project-20/frame-03.webp",
+        "assets/final-projects/project-20/frame-04.webp",
+        "assets/final-projects/project-20/frame-05.webp"
       ]
     },
     {
@@ -1988,6 +1965,37 @@ window.RPDFinalProjects = {
           "type": "video",
           "src": "assets/final-projects/project-21/video-02.webp",
           "videoSrc": "assets/final-projects/project-21/video-02.mp4",
+          "role": "render"
+        },
+        {
+          "type": "video",
+          "src": "assets/final-projects/project-21/video-03.webp",
+          "videoSrc": "assets/final-projects/project-21/video-03.mp4",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-21/source-01.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-21/source-02.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-21/source-03.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-21/source-05.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-21/source-06.webp",
           "role": "render"
         },
         {
@@ -2044,31 +2052,6 @@ window.RPDFinalProjects = {
           "type": "image",
           "src": "assets/final-projects/project-21/process-12.webp",
           "role": "process"
-        },
-        {
-          "type": "image",
-          "src": "assets/final-projects/project-21/image-01.webp",
-          "role": "render"
-        },
-        {
-          "type": "image",
-          "src": "assets/final-projects/project-21/image-02.webp",
-          "role": "render"
-        },
-        {
-          "type": "image",
-          "src": "assets/final-projects/project-21/image-03.webp",
-          "role": "render"
-        },
-        {
-          "type": "image",
-          "src": "assets/final-projects/project-21/image-04.webp",
-          "role": "render"
-        },
-        {
-          "type": "image",
-          "src": "assets/final-projects/project-21/image-05.webp",
-          "role": "render"
         }
       ],
       "videos": [
@@ -2079,17 +2062,15 @@ window.RPDFinalProjects = {
         {
           "src": "assets/final-projects/project-21/video-02.mp4",
           "poster": "assets/final-projects/project-21/video-02.webp"
+        },
+        {
+          "src": "assets/final-projects/project-21/video-03.mp4",
+          "poster": "assets/final-projects/project-21/video-03.webp"
         }
       ],
       "links": [],
-      "coverSrc": "assets/final-projects/project-21/frame-04.webp",
-      "frames": [
-        "assets/final-projects/project-21/frame-01.webp",
-        "assets/final-projects/project-21/frame-02.webp",
-        "assets/final-projects/project-21/frame-03.webp",
-        "assets/final-projects/project-21/frame-04.webp",
-        "assets/final-projects/project-21/frame-05.webp"
-      ]
+      "coverSrc": "assets/final-projects/project-21/video-01.webp",
+      "frames": []
     },
     {
       "id": "project-22",
@@ -2239,6 +2220,36 @@ window.RPDFinalProjects = {
       "title": "Project 23",
       "media": [
         {
+          "type": "image",
+          "src": "assets/final-projects/project-23/image-01.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-23/image-02.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-23/image-03.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-23/image-04.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-23/image-05.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-23/image-06.webp",
+          "role": "render"
+        },
+        {
           "type": "video",
           "src": "assets/final-projects/project-23/video-01.webp",
           "videoSrc": "assets/final-projects/project-23/video-01.mp4",
@@ -2251,9 +2262,28 @@ window.RPDFinalProjects = {
           "role": "render"
         },
         {
-          "type": "video",
-          "src": "assets/final-projects/project-23/video-03.webp",
-          "videoSrc": "assets/final-projects/project-23/video-03.mp4",
+          "type": "image",
+          "src": "assets/final-projects/project-23/source-01.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-23/source-02.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-23/source-03.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-23/source-04.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-23/source-05.webp",
           "role": "render"
         },
         {
@@ -2310,31 +2340,6 @@ window.RPDFinalProjects = {
           "type": "image",
           "src": "assets/final-projects/project-23/process-12.webp",
           "role": "process"
-        },
-        {
-          "type": "image",
-          "src": "assets/final-projects/project-23/source-01.webp",
-          "role": "render"
-        },
-        {
-          "type": "image",
-          "src": "assets/final-projects/project-23/source-02.webp",
-          "role": "render"
-        },
-        {
-          "type": "image",
-          "src": "assets/final-projects/project-23/source-03.webp",
-          "role": "render"
-        },
-        {
-          "type": "image",
-          "src": "assets/final-projects/project-23/source-05.webp",
-          "role": "render"
-        },
-        {
-          "type": "image",
-          "src": "assets/final-projects/project-23/source-06.webp",
-          "role": "render"
         }
       ],
       "videos": [
@@ -2345,10 +2350,6 @@ window.RPDFinalProjects = {
         {
           "src": "assets/final-projects/project-23/video-02.mp4",
           "poster": "assets/final-projects/project-23/video-02.webp"
-        },
-        {
-          "src": "assets/final-projects/project-23/video-03.mp4",
-          "poster": "assets/final-projects/project-23/video-03.webp"
         }
       ],
       "links": [
@@ -2358,7 +2359,7 @@ window.RPDFinalProjects = {
           "kind": "Presentation"
         }
       ],
-      "coverSrc": "assets/final-projects/project-23/video-01.webp",
+      "coverSrc": "assets/final-projects/project-23/image-01.webp",
       "notes": [
         {
           "section": "MP4",
@@ -2372,7 +2373,8 @@ window.RPDFinalProjects = {
           "section": "MP4",
           "text": "-인터렉션 사이트 테스트"
         }
-      ]
+      ],
+      "frames": []
     },
     {
       "id": "project-24",
