@@ -439,14 +439,14 @@ const PRESENTATION = '발표 자료';
   }
   .fp-title { margin: 0; font-family: var(--f-mono); font-size: var(--fs-lg); font-weight: var(--w-medium); }
   .fp-links { display: flex; flex-direction: column; gap: var(--s-2); }
-  .fp-links a { display: inline-flex; align-items: baseline; gap: var(--s-2); font-size: var(--fs-sm); color: var(--c-accent); }
+  .fp-links a { display: inline-flex; align-items: baseline; gap: var(--s-2); font-size: var(--fs-sm); color: var(--c-accent-text); }
   .fp-link-tag { font-family: var(--f-mono); font-size: var(--fs-2xs); color: var(--c-ink-3); letter-spacing: var(--ls-mono); }
   .fp-copy .fp-pres-link {
     align-self: start;
     padding: var(--s-1) var(--s-3);
     border: 1px solid var(--c-accent);
     border-radius: var(--r-pill);
-    color: var(--c-accent);
+    color: var(--c-accent-text);
   }
   .fp-copy .fp-pres-link:hover { background: color-mix(in srgb, var(--c-accent) 12%, transparent); opacity: 1; }
 
@@ -511,7 +511,7 @@ const PRESENTATION = '발표 자료';
     letter-spacing: var(--ls-mono);
     text-transform: uppercase;
   }
-  .fp-embed-head a { font-size: var(--fs-sm); color: var(--c-accent); }
+  .fp-embed-head a { font-size: var(--fs-sm); color: var(--c-accent-text); }
   .fp-embed iframe {
     display: block;
     width: 100%;

@@ -92,19 +92,23 @@ const menuActive = menu.some((l) => isActive(l.href));
     color: var(--c-ink-3);
     letter-spacing: var(--ls-mono);
   }
-  nav { display: flex; align-items: center; gap: var(--s-4); }
-  nav a {
+  nav { display: flex; align-items: stretch; align-self: stretch; gap: var(--s-4); }
+  nav > a {
+    display: inline-flex;
+    align-items: center;
     font-family: var(--f-mono);
     font-size: 12px;
     letter-spacing: 0.02em;
     color: var(--c-ink-2);
+    padding-inline: var(--s-2);
+    margin-inline: calc(var(--s-2) * -1);
     transition: color var(--t) var(--ease);
   }
   nav > a:hover { color: var(--c-ink); opacity: 1; }
   nav > a.active { color: var(--c-ink); }
 
   /* ── 수업 드롭다운 ── */
-  .nav-menu { position: relative; }
+  .nav-menu { position: relative; display: flex; align-items: stretch; }
   .nav-summary {
     display: inline-flex;
     align-items: center;
@@ -115,6 +119,8 @@ const menuActive = menu.some((l) => isActive(l.href));
     color: var(--c-ink-2);
     cursor: pointer;
     list-style: none;
+    padding-inline: var(--s-2);
+    margin-inline: calc(var(--s-2) * -1);
     transition: color var(--t) var(--ease);
   }
   .nav-summary::-webkit-details-marker { display: none; }
@@ -128,7 +134,7 @@ const menuActive = menu.some((l) => isActive(l.href));
     right: 0;
     display: flex;
     flex-direction: column;
-    gap: var(--s-3);
+    gap: 0;
     min-width: 8rem;
     padding: var(--s-3) var(--s-4);
     background: var(--c-bg);
@@ -142,6 +148,7 @@ const menuActive = menu.some((l) => isActive(l.href));
     letter-spacing: 0.02em;
     color: var(--c-ink-2);
     white-space: nowrap;
+    padding-block: 20px;
     transition: color var(--t) var(--ease);
   }
   .nav-dropdown a:hover { color: var(--c-ink); opacity: 1; }
@@ -153,6 +160,7 @@ const menuActive = menu.some((l) => isActive(l.href));
     width: 28px;
     height: 28px;
     padding: 0;
+    position: relative;
     color: var(--c-ink-2);
     background: none;
     border: var(--border);
@@ -160,6 +168,7 @@ const menuActive = menu.some((l) => isActive(l.href));
     cursor: pointer;
     transition: color var(--t) var(--ease), border-color var(--t) var(--ease);
   }
+  .theme-toggle::after { content: ''; position: absolute; inset: -14px; }
   .theme-toggle:hover { color: var(--c-ink); border-color: var(--c-ink-2); }
   .theme-toggle svg { display: block; }
   /* 현재 테마 표시: 라이트면 해, 다크면 달 */
