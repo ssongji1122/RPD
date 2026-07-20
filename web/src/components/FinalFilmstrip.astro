@@ -107,6 +107,14 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
   let pf = pos;        // 연속 위치 (스프링이 pos 를 추적)
   let vf = 0;          // 스프링 속도 (칸/s)
   const OMEGA = 6.2;   // 임계 감쇠 스프링 강성(rad/s) — 애플 특유의 느긋한 정착
+  // 커서 추종: 스테이지 위 마우스 X 에 비례해 스트립이 흐른다(브라우징).
+  // 스프링 목표는 실수(target) — 커버 포즈가 (i - pf) 연속 함수라 소수
+  // 위치도 그대로 부드럽다. 진입 순간 점프가 없도록 진입점 기준 상대 매핑.
+  let target = pos;    // 스프링이 추적하는 실수 목표
+  const FOLLOW_RANGE = 3.2; // 스테이지 반폭 이동 시 흐르는 칸 수
+  let followAnchor = 0;
+  let lastNx = 0;
+  let following = false;
 
   const inBand = (p: number) => p >= realTotal && p < 2 * realTotal;
   const modReal = (p: number) => ((p % realTotal) + realTotal) % realTotal;
@@ -158,17 +166,29 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
     slides.forEach((el, i) => el.classList.toggle('is-active', i === pos));
   }
 
-  // 경계 밖이면 좌표계 전체(pos·pf)를 한 세트만큼 평행이동. 모든 시각 상태가
-  // (i - pf)의 함수이고 클론 세트는 동일하므로 화면상 변화가 정확히 0이다.
+  // 경계 밖이면 좌표계 전체(pos·pf·target·anchor)를 한 세트만큼 평행이동.
+  // 모든 시각 상태가 (i - pf)의 함수이고 클론 세트는 동일하므로 화면상 변화가 0이다.
   function normalize() {
     if (inBand(pos)) return;
     const shift = pos < realTotal ? realTotal : -realTotal;
     pos += shift;
     pf += shift;
+    target += shift;
+    followAnchor += shift;
     setActive();
   }
 
-  // ── 스프링 루프: pf 가 pos 를 임계 감쇠로 추적 ──
+  // pos = 현재 목표에 가장 가까운 커버 — 활성 테두리·캡션·인덱스 텍스트 담당.
+  function commitNearest() {
+    const next = Math.round(target);
+    if (next === pos) return;
+    pos = next;
+    normalize();
+    setActive();
+    updateInfo();
+  }
+
+  // ── 스프링 루프: pf 가 target(실수) 을 임계 감쇠로 추적 ──
   let rafId = 0;
   let lastT = 0;
 
@@ -176,13 +196,13 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
     const dt = Math.min(0.048, lastT ? (t - lastT) / 1000 : 0.016);
     lastT = t;
     const e = Math.exp(-OMEGA * dt);
-    const dx = pf - pos;
+    const dx = pf - target;
     const tmp = (vf + OMEGA * dx) * dt;
-    pf = pos + (dx + tmp) * e;
+    pf = target + (dx + tmp) * e;
     vf = (vf - OMEGA * tmp) * e;
     render();
-    if (Math.abs(pf - pos) < 0.0006 && Math.abs(vf) < 0.004) {
-      pf = pos;
+    if (Math.abs(pf - target) < 0.0006 && Math.abs(vf) < 0.004) {
+      pf = target;
       vf = 0;
       render();
       rafId = 0;
@@ -196,13 +216,16 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
     if (!rafId) { lastT = 0; rafId = requestAnimationFrame(tick); }
   }
 
-  function moveTo(target: number) {
-    pos = target;
-    normalize(); // 밖이면 pos·pf 동시 평행이동이라 진행 중 모션도 안 끊긴다
+  function moveTo(next: number) {
+    pos = next;
+    target = next;
+    // 커서 추종 중 클릭·이동해도 현재 커서 위치에서 목표가 그대로 서 있게 재앵커.
+    followAnchor = next - lastNx * FOLLOW_RANGE;
+    normalize();
     setActive();
     updateInfo();
     if (reduceMotion) {
-      pf = pos;
+      pf = target;
       vf = 0;
       render();
       return;
@@ -210,12 +233,49 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
     startLoop();
   }
 
-  function go(delta: number) { moveTo(pos + delta); }
+  function go(delta: number) { moveTo(Math.round(target) + delta); }
+
+  // ── 커서 추종 (마우스 전용) ──
+  // 스테이지 진입점을 기준으로 커서 X 이동량에 비례해 target 이 흐른다.
+  // 진입 순간 target 변화가 0이 되도록 앵커를 잡아 점프가 없다.
+  function stageNx(e: PointerEvent): number {
+    if (!stage) return 0;
+    const r = stage.getBoundingClientRect();
+    return Math.max(-1, Math.min(1, ((e.clientX - r.left) - r.width / 2) / (r.width / 2)));
+  }
+
+  stage?.addEventListener('pointerenter', (e) => {
+    if (reduceMotion || (e as PointerEvent).pointerType !== 'mouse') return;
+    following = true;
+    lastNx = stageNx(e as PointerEvent);
+    followAnchor = target - lastNx * FOLLOW_RANGE;
+  });
+
+  stage?.addEventListener('pointermove', (e) => {
+    if (!following || (e as PointerEvent).pointerType !== 'mouse') return;
+    lastNx = stageNx(e as PointerEvent);
+    target = followAnchor + lastNx * FOLLOW_RANGE;
+    commitNearest();
+    startLoop();
+  });
+
+  stage?.addEventListener('pointerleave', (e) => {
+    if (!following) return;
+    following = false;
+    if ((e as PointerEvent).pointerType !== 'mouse') return;
+    // 가장 가까운 커버에 정착.
+    pos = Math.round(target);
+    target = pos;
+    normalize();
+    setActive();
+    updateInfo();
+    startLoop();
+  });
 
   // 클릭: 옆 커버면 가운데로 이동, 이미 가운데(활성)면 상세로 이동.
   slides.forEach((s, i) => {
     s.addEventListener('click', () => {
-      if (i === pos) {
+      if (i === pos && Math.abs(pf - i) < 0.35) {
         const href = s.dataset.detail;
         if (href) window.location.href = href;
       } else {
