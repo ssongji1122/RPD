@@ -3,7 +3,7 @@ window.RPDFinalProjects = {
   "source": "Week 15 final-project visual archive, anonymized web-preview subset; completed with direct Week 15 uploads; unreferenced source/image stills classified & registered 2026-07-10",
   "stats": {
     "works": 24,
-    "previewAssets": 135,
+    "previewAssets": 115,
     "videos": 49,
     "links": 21,
     "format": "Interactive filmstrip + Final Project detail pages",
@@ -115,11 +115,6 @@ window.RPDFinalProjects = {
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-02/process-01.webp",
-          "role": "process"
-        },
-        {
-          "type": "image",
           "src": "assets/final-projects/project-02/process-02.webp",
           "role": "process"
         },
@@ -201,11 +196,6 @@ window.RPDFinalProjects = {
           "src": "assets/final-projects/project-03/video-01.webp",
           "videoSrc": "assets/final-projects/project-03/video-01.mp4",
           "role": "render"
-        },
-        {
-          "type": "image",
-          "src": "assets/final-projects/project-03/process-01.webp",
-          "role": "process"
         },
         {
           "type": "image",
@@ -377,11 +367,6 @@ window.RPDFinalProjects = {
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-06/process-01.webp",
-          "role": "process"
-        },
-        {
-          "type": "image",
           "src": "assets/final-projects/project-06/process-02.webp",
           "role": "process"
         },
@@ -529,11 +514,6 @@ window.RPDFinalProjects = {
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-07/image-08.webp",
-          "role": "render"
-        },
-        {
-          "type": "image",
           "src": "assets/final-projects/project-07/source-01.webp",
           "role": "render"
         },
@@ -555,11 +535,6 @@ window.RPDFinalProjects = {
         {
           "type": "image",
           "src": "assets/final-projects/project-07/source-09.webp",
-          "role": "process"
-        },
-        {
-          "type": "image",
-          "src": "assets/final-projects/project-07/source-10.webp",
           "role": "process"
         }
       ],
@@ -752,11 +727,6 @@ window.RPDFinalProjects = {
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-10/image-02.webp",
-          "role": "process"
-        },
-        {
-          "type": "image",
           "src": "assets/final-projects/project-10/image-03.webp",
           "role": "process"
         },
@@ -855,11 +825,6 @@ window.RPDFinalProjects = {
           "src": "assets/final-projects/project-11/video-02.webp",
           "videoSrc": "assets/final-projects/project-11/video-02.mp4",
           "role": "render"
-        },
-        {
-          "type": "image",
-          "src": "assets/final-projects/project-11/process-01.webp",
-          "role": "process"
         },
         {
           "type": "image",
@@ -1169,11 +1134,6 @@ window.RPDFinalProjects = {
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-14/process-01.webp",
-          "role": "process"
-        },
-        {
-          "type": "image",
           "src": "assets/final-projects/project-14/process-02.webp",
           "role": "process"
         },
@@ -1225,16 +1185,6 @@ window.RPDFinalProjects = {
         {
           "type": "image",
           "src": "assets/final-projects/project-14/process-12.webp",
-          "role": "process"
-        },
-        {
-          "type": "image",
-          "src": "assets/final-projects/project-14/source-01.webp",
-          "role": "process"
-        },
-        {
-          "type": "image",
-          "src": "assets/final-projects/project-14/source-02.webp",
           "role": "process"
         },
         {
@@ -1618,16 +1568,6 @@ window.RPDFinalProjects = {
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-18/image-06.webp",
-          "role": "render"
-        },
-        {
-          "type": "image",
-          "src": "assets/final-projects/project-18/image-07.webp",
-          "role": "render"
-        },
-        {
-          "type": "image",
           "src": "assets/final-projects/project-18/image-08.webp",
           "role": "render"
         },
@@ -1642,11 +1582,6 @@ window.RPDFinalProjects = {
           "src": "assets/final-projects/project-18/video-02.webp",
           "videoSrc": "assets/final-projects/project-18/video-02.mp4",
           "role": "render"
-        },
-        {
-          "type": "image",
-          "src": "assets/final-projects/project-18/process-01.webp",
-          "role": "process"
         },
         {
           "type": "image",
@@ -1742,16 +1677,6 @@ window.RPDFinalProjects = {
           "type": "image",
           "src": "assets/final-projects/project-18/source-08.webp",
           "role": "process"
-        },
-        {
-          "type": "image",
-          "src": "assets/final-projects/project-18/source-09.webp",
-          "role": "process"
-        },
-        {
-          "type": "image",
-          "src": "assets/final-projects/project-18/source-10.webp",
-          "role": "process"
         }
       ],
       "videos": [
@@ -1816,11 +1741,6 @@ window.RPDFinalProjects = {
           "src": "assets/final-projects/project-19/video-02.webp",
           "videoSrc": "assets/final-projects/project-19/video-02.mp4",
           "role": "render"
-        },
-        {
-          "type": "image",
-          "src": "assets/final-projects/project-19/process-01.webp",
-          "role": "process"
         },
         {
           "type": "image",
@@ -1947,11 +1867,6 @@ window.RPDFinalProjects = {
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-20/process-01.webp",
-          "role": "process"
-        },
-        {
-          "type": "image",
           "src": "assets/final-projects/project-20/process-02.webp",
           "role": "process"
         },
@@ -2074,11 +1989,6 @@ window.RPDFinalProjects = {
           "src": "assets/final-projects/project-21/video-02.webp",
           "videoSrc": "assets/final-projects/project-21/video-02.mp4",
           "role": "render"
-        },
-        {
-          "type": "image",
-          "src": "assets/final-projects/project-21/process-01.webp",
-          "role": "process"
         },
         {
           "type": "image",
@@ -2348,11 +2258,6 @@ window.RPDFinalProjects = {
         },
         {
           "type": "image",
-          "src": "assets/final-projects/project-23/process-01.webp",
-          "role": "process"
-        },
-        {
-          "type": "image",
           "src": "assets/final-projects/project-23/process-02.webp",
           "role": "process"
         },
@@ -2478,11 +2383,6 @@ window.RPDFinalProjects = {
           "type": "image",
           "src": "assets/final-projects/project-24/video-01.webp",
           "role": "render"
-        },
-        {
-          "type": "image",
-          "src": "assets/final-projects/project-24/process-01.webp",
-          "role": "process"
         },
         {
           "type": "image",
