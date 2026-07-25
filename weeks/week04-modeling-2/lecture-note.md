@@ -395,7 +395,7 @@ Mirror Modifier는 Apply 전에 확인! Mirror Modifier가 남아 있으면 Appl
 
 ### 공식 영상 튜토리얼
 
-- [Blender Studio - Modifiers](https://studio.blender.org/training/blender-2-8-fundamentals/modifiers/)
+- [Blender Studio - Modifiers](https://studio.blender.org/training/blender-fundamentals-45-lts/blender_4-5_lts_modifiers/)
 
 ### 공식 문서
 

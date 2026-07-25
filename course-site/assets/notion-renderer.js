@@ -233,13 +233,23 @@
   }
 
   function renderVideo(block) {
+    var data = block.video || {};
     var src = resolveBlockMediaSrc(block, 'video');
     if (!src) return '<!-- notion-block: video (no src) -->';
+    var caption = data.caption || [];
+    var originalUrl = caption.reduce(function (found, rich) {
+      return found || (rich.href || (rich.text && rich.text.link && rich.text.link.url) || '');
+    }, '') || src;
     var ytMatch = src.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([A-Za-z0-9_-]{11})/);
+    var media;
     if (ytMatch) {
-      return '<div class="nb-video-wrap"><iframe src="https://www.youtube.com/embed/' + ytMatch[1] + '" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen title="video"></iframe></div>';
+      media = '<iframe src="https://www.youtube-nocookie.com/embed/' + ytMatch[1] + '?rel=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen title="video" tabindex="-1" aria-hidden="true"></iframe>';
+    } else {
+      media = '<video preload="metadata" muted playsinline tabindex="-1" aria-hidden="true"><source src="' + escapeAttr(src) + '"></video>';
     }
-    return '<div class="nb-video-wrap"><video controls preload="metadata"><source src="' + escapeAttr(src) + '"></video></div>';
+    return '<div class="nb-video-wrap">' + media +
+      '<a class="nb-video-hit" href="' + escapeAttr(originalUrl) + '" target="_blank" rel="noopener noreferrer" aria-label="원본 영상 열기"></a>' +
+      '</div>';
   }
 
   function renderFile(block) {
