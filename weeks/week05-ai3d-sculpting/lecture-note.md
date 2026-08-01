@@ -238,6 +238,8 @@ AI가 만든 메쉬는 대부분 폴리곤이 지나치게 많아요. 마치 해
 
 브러시로 메쉬를 직접 주무르는 모드예요. 마우스로 칠하듯이 형태를 만들어요. 점토 조각과 가장 비슷한 방식이에요.
 
+![Sculpt Mode 기초](../../course-site/assets/images/week05/sculpt-mode.png)
+
 배울 것
 
 - Sculpt Mode 진입 방법을 안다
@@ -255,6 +257,8 @@ AI가 만든 메쉬는 대부분 폴리곤이 지나치게 많아요. 마치 해
 
 기본 3개로 큰 흐름을 잡았으면, 이제 세부 표현용 브러시를 익혀요. Clay는 점토를 덧붙이는 느낌, Crease는 주름이나 홈을 파는 느낌이에요.
 
+![Sculpt 브러시 심화](../../course-site/assets/images/week05/sculpt-brushes.png)
+
 배울 것
 
 - 용도별 브러시를 구분해 쓴다
@@ -268,6 +272,8 @@ AI가 만든 메쉬는 대부분 폴리곤이 지나치게 많아요. 마치 해
 #### 5. Remesh와 마무리
 
 Sculpt를 하다 보면 메쉬가 늘어나서 찌그러지는 곳이 생겨요. Remesh는 메쉬를 다시 고르게 나눠주는 리셋 버튼 같은 거예요.
+
+![Remesh와 마무리](../../course-site/assets/images/week05/remesh.png)
 
 배울 것
 
