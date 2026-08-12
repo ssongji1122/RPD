@@ -2,6 +2,7 @@
 
 ## 학습 목표
 
+- [ ] `Array`와 `Boolean` Modifier로 반복 구조와 구멍을 만들 수 있다
 - [ ] `Ctrl + B`와 `Bevel Modifier`의 차이를 설명할 수 있다
 - [ ] `Weighted Normal`이 어떤 문제를 해결하는지 이해한다
 - [ ] `Apply Transform`과 `Modifier Apply`의 시점을 구분할 수 있다
@@ -62,7 +63,85 @@
 4. 구멍이나 소켓이 필요하면 `Boolean Difference`를 사용한다
 5. 디테일을 넣은 뒤 정면, 측면, 투시 뷰에서 다시 확인한다
 
-### Step 3: Bevel 두 가지 비교하기 (20분)
+### Step 3: Array + Boolean (20분)
+
+![Array 반복 구조와 Boolean Difference 구멍 낸 결과 비교](images/array_boolean_detail.png)
+
+> 위 스크린샷: 왼쪽은 Array Count 5 + Relative Offset X 1.5 설정, 오른쪽은 Boolean Difference로 바디에 구멍을 낸 결과.
+
+#### Array — 같은 형태를 규칙적으로 반복하기
+
+![Array Modifier - Count와 Relative Offset 설정 화면](images/array_modifier.png)
+
+> 📷 캡처 가이드: Object Mode에서 Cube에 Array Modifier 추가 → Count 5, Relative Offset X 1.5 설정 → Modifier Properties 패널이 보이는 뷰포트 스크린샷
+
+손가락 마디, 척추, 볼트 패턴, 환기구 격자, 계단 구조처럼 **같은 파츠가 규칙적으로 반복되는 형태**에 씁니다.
+
+#### 핵심 파라미터
+
+| 파라미터 | 의미 | 처음 써볼 값 |
+|----------|------|--------------|
+| **Fit Type: Fixed Count** | 개수를 직접 지정 | Count `3 ~ 6` |
+| **Fit Type: Fit Length** | 전체 길이를 지정하면 개수가 자동으로 맞춰짐 | 원하는 전체 길이 |
+| **Relative Offset** | 오브젝트 크기 기준 간격 (`1.0` = 딱 붙음, `1.5` = 조금 떨어짐) | X: `1.1 ~ 1.5` |
+| **Constant Offset** | Blender 단위 기준 고정 간격 | 정밀 작업에 유용 |
+
+```plain text
+[간격 계산 예시]
+오브젝트 X 크기가 1m일 때
+  Relative Offset X = 1.0  →  오브젝트 끝과 다음 오브젝트 시작이 딱 붙음
+  Relative Offset X = 1.5  →  오브젝트 1개 간격(0.5m) 떨어짐
+  Relative Offset X = 2.0  →  오브젝트 1개 크기만큼 떨어짐
+```
+
+**실습 흐름**
+
+1. Cube에 Array를 추가합니다
+2. Count를 `5`로 바꿉니다
+3. Relative Offset X를 `1.5`로 바꿉니다 (약간의 간격)
+4. Y나 Z 방향으로도 바꿔서 가로·세로·높이 반복을 비교합니다
+
+> 💡 **Array를 2개 쌓으면?** Array(X축) + Array(Y축)을 같이 올리면 격자(Grid) 형태가 됩니다. 볼트 배열, 환기구 패턴에 자주 씁니다.
+
+> ⚠️ **간격이 의도한 것과 다르게 나오면** Scale이 정리되지 않은 것입니다. `Ctrl + A > All Transforms` 후 Offset 값을 다시 확인합니다.
+
+---
+
+#### Boolean — 블록을 합치거나 잘라내기
+
+![Boolean Difference - 바디에 커터 오브젝트로 구멍을 낸 결과](images/boolean_difference.png)
+
+> 📷 캡처 가이드: 바디 Cube + 커터 Cylinder 겹친 상태 → Boolean Difference 적용 후 → 커터를 H로 숨긴 뷰. 좌측에 Modifier Properties의 Object 필드에 커터 이름이 표시된 상태
+
+두 오브젝트를 **합치거나**, **빼거나**, **겹치는 부분만 남기는** 세 가지 연산을 제공합니다. 구멍, 소켓, 패널 홈처럼 직접 만들기 어려운 형태에 특히 유용합니다.
+
+#### 세 가지 연산 비교
+
+| 연산 | 수식 | 결과 | 자주 쓰는 상황 |
+|------|------|------|----------------|
+| **Union** | A + B | 두 오브젝트를 합친 전체 형태 | 파츠를 하나의 덩어리로 합칠 때 |
+| **Difference** | A − B | A에서 B 형태를 잘라낸 결과 | 구멍, 소켓, 홈, 눈 구멍 만들기 |
+| **Intersect** | A ∩ B | 두 오브젝트가 겹치는 부분만 | 특정 교차 형태만 추출할 때 |
+
+#### Boolean Difference 실습 흐름 (가장 자주 씀)
+
+```plain text
+1. 바디 오브젝트(A)를 선택
+2. Modifier Properties → Add Modifier → Boolean
+3. Operation: Difference 선택
+4. Object: 커터 오브젝트(B) 지정
+5. 커터 오브젝트는 뷰포트에서 숨기기 (눈 아이콘 또는 H키)
+→ 바디에 커터 형태의 구멍이 생김
+```
+
+> ⚠️ **Boolean이 이상할 때 체크할 것:**
+> - 커터가 실제로 바디 안쪽까지 충분히 겹쳐있는가? (표면만 닿으면 오작동)
+> - 바디 오브젝트에 `Ctrl + A > All Transforms`가 적용됐는가?
+> - 메쉬에 Non-Manifold(열린 면, 중복 버텍스)가 없는가? (`Mesh > Clean Up > Merge by Distance` 먼저 적용)
+
+> 💡 커터 오브젝트는 Apply 전까지 숨겨만 두고 삭제하지 않습니다. 나중에 구멍 위치나 크기를 수정하고 싶을 때 커터를 이동하면 됩니다.
+
+### Step 4: Bevel 두 가지 비교하기 (20분)
 
 #### `Ctrl + B`
 
@@ -80,7 +159,7 @@
 2. 다른 파츠 하나는 `Bevel Modifier`를 넣어 비교한다
 3. Width와 Segments를 바꾸며 차이를 확인한다
 
-### Step 4: Weighted Normal로 음영 정리하기 (15분)
+### Step 5: Weighted Normal로 음영 정리하기 (15분)
 
 1. `Shade Smooth`를 먼저 적용한다
 2. `Bevel Modifier` 아래에 `Weighted Normal`을 추가한다
@@ -89,7 +168,7 @@
 
 > 💡 `Weighted Normal`은 모양을 바꾸는 도구라기보다 **빛이 닿는 느낌을 정리하는 도구**라고 이해하면 쉽다.
 
-### Step 5: 최종 점검과 Apply 시점 이해하기 (15분)
+### Step 6: 최종 점검과 Apply 시점 이해하기 (15분)
 
 1. Modifier Stack 순서를 다시 확인한다
 2. 수정할 가능성이 남아 있으면 Apply하지 않는다
@@ -120,6 +199,8 @@
 
 | 개념 | 핵심 내용 |
 |------|-----------|
+| Array | 같은 오브젝트를 규칙적으로 반복 |
+| Boolean | 합치기, 빼기, 교차로 디테일 생성 |
 | `Ctrl + B` | 특정 모서리를 직접 깎는 수동 Bevel |
 | Bevel Modifier | 전체 외장 모서리를 비파괴로 정리 |
 | Weighted Normal | 하드서피스 음영을 깔끔하게 정리 |
@@ -130,6 +211,7 @@
 ## 📋 프로젝트 진행 체크리스트
 
 - [ ] 얼굴, 패널, 관절 중 한 곳 이상 디테일을 추가했다
+- [ ] Array 또는 Boolean 중 1개 이상 사용했다
 - [ ] `Ctrl + B` 또는 `Bevel Modifier`를 사용했다
 - [ ] `Weighted Normal`을 확인했다
 - [ ] `Ctrl + A`로 Transform을 점검했다
@@ -315,7 +397,38 @@ Array vs 수동 복제: Array Modifier는 간격이 균일해서 깔끔하지만
 - Inset → Extrude → 꺾기를 반복해 손가락 제작 (마디마다 E로 뽑고 R로 꺾기)
 - 발 파츠: Cube → Extrude로 부츠 형태 잡기 (밑면이 평평해야 바닥에 안정적으로 서요)
 
-#### 7. Bevel로 모서리 마감
+#### 7. 반복과 구멍
+
+복사기로 같은 부품을 줄줄이 찍어내는 게 Array, 쿠키 틀로 반죽에서 모양을 빼내는 게 Boolean이에요. 디테일을 빠르게 늘릴 때 유용해요.
+
+![반복과 구멍](../../course-site/assets/images/week03/array-boolean-detail.png)
+
+배울 것
+
+- Array와 Boolean을 구분해 쓴다
+
+체크해볼 것
+
+- Array로 같은 부품 5개 반복하기 (Count와 Offset 바꿔보기)
+- Boolean Difference로 홈 하나 만들기 (커터 오브젝트를 겹치게 두기)
+- Solidify나 Array를 기존 형태에 추가해보기 (반복이나 패널 중 하나 더 실험)
+
+#### 8. Boolean
+
+두 오브젝트가 겹치는 부분을 기준으로 자르거나 합쳐요. Difference는 구멍을 뚫고, Union은 합치고, Intersect는 겹치는 부분만 남겨요.
+
+![Boolean](../../course-site/assets/images/week03/array-boolean-detail.png)
+
+배울 것
+
+- Boolean Difference로 구멍을 뚫는다
+
+체크해볼 것
+
+- 커터 오브젝트를 겹치게 두고 Boolean Difference 추가하기 (Solver: Exact 선택)
+- 커터를 이동해서 구멍 위치 조절하기 (커터가 완전히 관통해야 깔끔하게 잘림)
+
+#### 9. Bevel로 모서리 마감
 
 파츠를 다 만들었으면 모서리를 정리해서 완성도를 높여요. 얼굴 화면 테두리나 몸통 이음새에 Bevel을 넣으면 금속 느낌이 살아나요. 직접 깎는 Ctrl+B와 전체 적용 Modifier를 비교해보세요.
 
@@ -338,7 +451,7 @@ Array vs 수동 복제: Array Modifier는 간격이 균일해서 깔끔하지만
 - 몸통 파츠에 Bevel Modifier 적용 (Width를 아주 작게 시작 (0.01~0.02))
 - 두 방식의 결과를 나란히 비교하기 (부분 수정 vs 전체 정리, 어떤 게 편한지 느끼기)
 
-#### 8. 파츠 정리 & Apply
+#### 10. 파츠 정리 & Apply
 
 모든 파츠가 만들어졌으면 구조를 정리해요. 움직여야 할 파츠(팔, 다리, 머리)는 따로 두고, 고정 파츠끼리는 Join으로 합쳐요. Transform을 Apply해서 수치를 깔끔하게 만들면 완성이에요.
 
@@ -382,6 +495,7 @@ Mirror Modifier는 Apply 전에 확인! Mirror Modifier가 남아 있으면 Appl
 - 제출 체크:
   - 디테일 1곳 이상 추가
   - Bevel 계열 1회 이상 사용
+  - Array 또는 Boolean 1회 이상 사용
   - Weighted Normal 확인
   - Modifier Stack 또는 Transform 확인 스크린샷
 
@@ -399,6 +513,7 @@ Mirror Modifier는 Apply 전에 확인! Mirror Modifier가 남아 있으면 Appl
 
 ### 공식 문서
 
+- [Array](https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/array.html)
 - [Bevel Tool](https://docs.blender.org/manual/en/latest/modeling/meshes/tools/bevel.html)
 - [Bevel Modifier](https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/bevel.html)
 - [Weighted Normal](https://docs.blender.org/manual/en/latest/modeling/modifiers/modify/weighted_normal.html)
