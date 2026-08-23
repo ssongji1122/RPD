@@ -411,7 +411,7 @@ def week_to_notion_blocks(week: dict) -> list[dict]:
     """Convert a curriculum week object to Notion block children."""
     blocks: list[dict] = []
 
-    def append_link_section(title: str, items: list[dict]) -> None:
+    def append_link_section(title: str, items: list[dict], include_video_blocks: bool = False) -> None:
         if not items:
             return
         blocks.append({
@@ -426,6 +426,31 @@ def week_to_notion_blocks(week: dict) -> list[dict]:
             link_url = item.get("url", "").strip()
             if not link_title or not link_url:
                 continue
+            preview_url = item.get("preview_url", "").strip() or link_url
+            is_embeddable = bool(item.get("preview_url")) or bool(
+                re.search(
+                    r"(?:youtu\.be/[A-Za-z0-9_-]{11}|youtube\.com/(?:watch\?v=|embed/|shorts/|live/)[A-Za-z0-9_-]{11}|"
+                    r"\.(?:mp4|webm|mov|m4v)(?:$|[?#]))",
+                    preview_url,
+                    flags=re.IGNORECASE,
+                )
+            )
+            if include_video_blocks and is_embeddable:
+                blocks.append({
+                    "object": "block",
+                    "type": "video",
+                    "video": {
+                        "type": "external",
+                        "external": {"url": preview_url},
+                        "caption": [{
+                            "type": "text",
+                            "text": {
+                                "content": link_title,
+                                "link": {"url": link_url},
+                            },
+                        }],
+                    },
+                })
             blocks.append({
                 "object": "block",
                 "type": "bulleted_list_item",
@@ -568,7 +593,7 @@ def week_to_notion_blocks(week: dict) -> list[dict]:
                     },
                 })
 
-    append_link_section("공식 영상 튜토리얼", week.get("videos", []))
+    append_link_section("공식 영상 튜토리얼", week.get("videos", []), include_video_blocks=True)
     append_link_section("공식 문서", week.get("docs", []))
 
     # Shortcuts section
@@ -724,6 +749,7 @@ def parse_blocks_to_curriculum(
     docs: list[dict] = []
     current_section = ""
     seen_sections: set[str] = set()
+    pending_video_preview = ""
 
     task_counter = 0  # global per-week task counter (preserves w{N}-t{n} uniqueness)
 
@@ -852,10 +878,22 @@ def parse_blocks_to_curriculum(
             if text:
                 mistakes.append(text)
 
+        elif btype == "video" and current_section == "videos":
+            video_data = block.get("video", {})
+            video_type = video_data.get("type", "")
+            pending_video_preview = (
+                video_data.get(video_type, {}).get("url", "")
+                if video_type in ("external", "file")
+                else ""
+            )
+
         elif btype == "bulleted_list_item" and current_section in ("videos", "docs"):
             link = _extract_link(block["bulleted_list_item"].get("rich_text", []))
             if link:
                 if current_section == "videos":
+                    if pending_video_preview:
+                        link["preview_url"] = pending_video_preview
+                        pending_video_preview = ""
                     videos.append(link)
                 else:
                     docs.append(link)
