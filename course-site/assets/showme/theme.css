@@ -1,0 +1,248 @@
+/* Show Me shared theme — paper + mint (DESIGN.md / tokens.css) */
+:root {
+  color-scheme: light;
+  --bg: #F6F3EE;
+  --bg-soft: #ECE6DC;
+  --surface: #FFFDF8;
+  --surface-strong: #ECE6DC;
+  --line: #E3DCD2;
+  --line-strong: rgba(27, 23, 24, .18);
+  --key: #00bfa5;
+  --key-rgb: 0, 191, 165;
+  --key-strong: #009e8a;
+  --key-soft: #14a894;
+  --key-border: rgba(0, 191, 165, .24);
+  --success: #3F706D;
+  --success-rgb: 63, 112, 109;
+  --success-soft: #3F706D;
+  --warn: #A66629;
+  --warn-rgb: 166, 102, 41;
+  --warn-soft: #A66629;
+  --warn-medium: #8E5520;
+  --danger: #B64A4A;
+  --danger-rgb: 182, 74, 74;
+  --danger-soft: #B64A4A;
+  --accent-soft: #C8873D;
+  --secondary-soft: #7EA9A6;
+  --secondary-mid: #5D8885;
+  --text: #1B1718;
+  --muted: #8F8982;
+  --muted-strong: #514B47;
+  --muted-mid: #6F6963;
+  --muted-soft: #5E5853;
+  --muted-dim: #9C948C;
+  --info-soft: #4E8E89;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --font: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif;
+  --showme-tint: rgba(27, 23, 24, .035);
+  --showme-tint-hover: rgba(27, 23, 24, .07);
+  --showme-key-tint: rgba(var(--key-rgb), .09);
+  --showme-key-tint-strong: rgba(var(--key-rgb), .15);
+  --showme-success-tint: rgba(var(--success-rgb), .10);
+  --showme-warn-tint: rgba(var(--warn-rgb), .10);
+  --showme-danger-tint: rgba(var(--danger-rgb), .10);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+}
+
+.tabs {
+  background: var(--bg-soft);
+  border-bottom-color: var(--line);
+}
+
+.tab {
+  color: var(--muted);
+}
+
+.tab:hover {
+  color: var(--muted-strong);
+}
+
+.tab.is-active,
+.tab.active {
+  color: var(--key-soft);
+  border-bottom-color: var(--key);
+}
+
+.concept-card,
+.usage-card,
+.combo-card,
+.shortcut-list,
+.step-item,
+.video-item,
+.modifier-panel,
+.mini-note-card,
+.demo-wrap,
+.tip-box,
+.doc-ref,
+.quiz-card,
+.quiz-question,
+.quiz-option,
+.result-card,
+.comparison-card,
+.practice-card,
+.concept-more,
+.scenario-row,
+.modifier-toggle {
+  border-color: var(--line);
+  background: var(--surface);
+}
+
+.modifier-panel,
+.mini-note-card,
+.concept-more,
+.modifier-toggle {
+  background: var(--surface);
+}
+
+.concept-card p,
+.concept-card ul,
+.usage-card ul,
+.combo-card .combo-desc,
+.shortcut-row,
+.step-menu,
+.step-note,
+.video-meta,
+.tip-box,
+.doc-ref {
+  color: var(--muted-strong);
+}
+
+.card-concept strong,
+.card-usage strong,
+.card-pitfall strong,
+.usage-card h4,
+.combo-card .combo-name,
+.video-item a,
+.tip-box strong,
+.step-n,
+.concept-more summary {
+  color: var(--key-soft);
+}
+
+.card-pitfall h3 {
+  color: var(--warn);
+}
+
+.badge-blue {
+  background: var(--showme-key-tint);
+  color: var(--key-soft);
+}
+
+.badge-green {
+  background: var(--showme-success-tint);
+  color: var(--success);
+}
+
+.badge-amber {
+  background: var(--showme-warn-tint);
+  color: var(--warn);
+}
+
+.badge-red {
+  background: var(--showme-danger-tint);
+  color: var(--danger);
+}
+
+.kbd,
+kbd {
+  background: var(--bg-soft);
+  border-color: var(--line-strong);
+  color: var(--key-soft);
+}
+
+.demo-controls,
+.shortcut-row + .shortcut-row,
+.card-usage,
+.card-pitfall {
+  border-color: var(--line);
+}
+
+.demo-btn,
+.quiz-retry,
+.control-row input[type="number"],
+.modifier-toggle,
+.quiz-option {
+  background: var(--showme-tint);
+  border-color: var(--line);
+  color: var(--muted-strong);
+}
+
+.demo-btn:hover,
+.quiz-retry:hover,
+.quiz-option:hover {
+  background: var(--showme-tint-hover);
+  color: var(--text);
+}
+
+.demo-btn.is-active,
+.quiz-retry {
+  background: var(--showme-key-tint);
+  border-color: var(--key-border);
+  color: var(--key-soft);
+}
+
+.control-row input[type="range"] {
+  accent-color: var(--key);
+}
+
+.quiz-option.correct,
+.result-a,
+.result-ok {
+  background: var(--showme-success-tint);
+  border-color: rgba(var(--success-rgb), .28);
+  color: var(--success);
+}
+
+.quiz-option.wrong,
+.result-c,
+.result-wrong {
+  background: var(--showme-danger-tint);
+  border-color: rgba(var(--danger-rgb), .28);
+  color: var(--danger);
+}
+
+.result-b,
+.result-warn,
+.tip-box.warn {
+  background: var(--showme-warn-tint);
+  border-color: rgba(var(--warn-rgb), .28);
+  color: var(--warn);
+}
+
+.quiz-feedback.correct-fb {
+  background: rgba(var(--success-rgb), .08);
+  color: var(--success);
+}
+
+.quiz-feedback.wrong-fb {
+  background: rgba(var(--danger-rgb), .08);
+  color: var(--danger);
+}
+
+.tip-box {
+  border-color: var(--key-border);
+  background: var(--showme-key-tint);
+}
+
+.doc-ref {
+  border-color: var(--key-border);
+  background: rgba(var(--key-rgb), .04);
+}
+
+.compare-table th {
+  background: var(--surface-strong);
+  color: var(--muted-strong);
+  border-bottom-color: var(--line-strong);
+}
+
+.compare-table td {
+  border-bottom-color: var(--line);
+  color: var(--muted-strong);
+}
