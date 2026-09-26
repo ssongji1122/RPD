@@ -482,7 +482,7 @@ Blender 5.0에서는 리깅 워크플로우에 몇 가지 개선이 있습니다
 
 ### 공식 영상 튜토리얼
 
-- [Blender Studio - Armature and Rigging](https://studio.blender.org/training/blender-2-8-fundamentals/armature-and-rigging/)
+- [Blender Studio - Armature and Rigging](https://studio.blender.org/training/blender-2-8-fundamentals/rigging-intro/)
 
 ### 공식 문서
 

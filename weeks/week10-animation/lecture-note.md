@@ -802,7 +802,7 @@ Graph Editor는 움직임의 속도 곡선을 보여줘요. 직선이면 일정 
 
 ### 공식 영상 튜토리얼
 
-- [Blender Studio - Animation Fundamentals](https://studio.blender.org/training/blender-2-8-fundamentals/animation/)
+- [Blender Studio - Animation Fundamentals](https://studio.blender.org/training/blender-2-8-fundamentals/keyframes/)
 
 ### 공식 문서
 
