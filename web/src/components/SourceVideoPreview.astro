@@ -1,0 +1,116 @@
+---
+interface Props {
+  url: string;
+  previewUrl?: string;
+  title: string;
+  description?: string;
+}
+
+const { url, previewUrl, title, description } = Astro.props;
+
+function resolvePreview(source: string, override?: string) {
+  const candidate = override || source;
+  let parsed: URL;
+  try {
+    parsed = new URL(candidate);
+  } catch {
+    return null;
+  }
+
+  const host = parsed.hostname.replace(/^www\./, '');
+  let youtubeId = '';
+  if (host === 'youtu.be') {
+    youtubeId = parsed.pathname.split('/').filter(Boolean)[0] || '';
+  } else if (['youtube.com', 'm.youtube.com', 'youtube-nocookie.com'].includes(host)) {
+    if (parsed.pathname === '/watch') youtubeId = parsed.searchParams.get('v') || '';
+    else youtubeId = parsed.pathname.match(/^\/(?:embed|shorts|live)\/([^/]+)/)?.[1] || '';
+  }
+  if (/^[A-Za-z0-9_-]{11}$/.test(youtubeId)) {
+    return { kind: 'iframe', src: `https://www.youtube-nocookie.com/embed/${youtubeId}?rel=0`, provider: 'YouTube' };
+  }
+  if (/\.(?:mp4|webm|mov|m4v)(?:$|[?#])/i.test(parsed.toString())) {
+    return { kind: 'video', src: parsed.toString(), provider: 'Video' };
+  }
+  return null;
+}
+
+const preview = resolvePreview(url, previewUrl);
+---
+
+{preview ? (
+  <article class="video-preview">
+    <div class="video-preview-media">
+      {preview.kind === 'iframe' ? (
+        <iframe
+          src={preview.src}
+          title={`${title} 영상 미리보기`}
+          loading="lazy"
+          tabindex="-1"
+          aria-hidden="true"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+      ) : (
+        <video src={preview.src} preload="metadata" muted playsinline tabindex="-1" aria-hidden="true"></video>
+      )}
+      <a class="video-preview-hit" href={url} target="_blank" rel="noopener noreferrer" aria-label={`${title} 원본 영상 열기`}></a>
+    </div>
+    <div class="video-preview-meta">
+      <a href={url} target="_blank" rel="noopener noreferrer">{title}</a>
+      {description && <p>{description}</p>}
+      <span>{preview.provider} · 미리보기 선택 시 원본 영상 열기</span>
+    </div>
+  </article>
+) : (
+  <p class="video-preview-fallback"><a href={url} target="_blank" rel="noopener noreferrer">{title}</a></p>
+)}
+
+<style>
+  .video-preview {
+    overflow: hidden;
+    border: var(--border);
+    border-radius: var(--r-md);
+    background: var(--c-bg-2);
+  }
+  .video-preview-media {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--c-ink);
+  }
+  .video-preview-media iframe,
+  .video-preview-media video {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    object-fit: cover;
+    pointer-events: none;
+  }
+  .video-preview-hit { position: absolute; inset: 0; z-index: 1; }
+  .video-preview-hit::after {
+    position: absolute;
+    right: var(--s-2);
+    bottom: var(--s-2);
+    padding: 0.35rem 0.55rem;
+    border: 1px solid rgb(255 255 255 / 0.6);
+    border-radius: 999px;
+    background: rgb(24 24 22 / 0.78);
+    color: #fff;
+    content: "원본 열기 ↗";
+    font-family: var(--f-mono);
+    font-size: var(--fs-2xs);
+  }
+  .video-preview-hit:hover,
+  .video-preview-hit:focus-visible { opacity: 1; box-shadow: inset 0 0 0 2px var(--c-accent); }
+  .video-preview-meta { padding: var(--s-3); }
+  .video-preview-meta > a { display: block; font-weight: var(--w-semibold); line-height: 1.45; word-break: keep-all; }
+  .video-preview-meta p { margin-top: var(--s-1); color: var(--c-ink-2); font-size: var(--fs-sm); word-break: keep-all; }
+  .video-preview-meta span {
+    display: block;
+    margin-top: var(--s-2);
+    color: var(--c-ink-3);
+    font-family: var(--f-mono);
+    font-size: var(--fs-2xs);
+  }
+  .video-preview-fallback a { color: var(--c-accent-text); }
+</style>

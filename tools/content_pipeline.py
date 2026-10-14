@@ -132,7 +132,14 @@ def _normalize_resource_list(values: Any) -> list[dict[str, str]]:
         title = _string(item.get("title")).strip()
         url = _string(item.get("url")).strip()
         if title or url:
-            normalized.append({"title": title, "url": url})
+            resource = {"title": title, "url": url}
+            preview_url = _string(item.get("preview_url")).strip()
+            description = _string(item.get("description")).strip()
+            if preview_url:
+                resource["preview_url"] = preview_url
+            if description:
+                resource["description"] = description
+            normalized.append(resource)
     return normalized
 
 

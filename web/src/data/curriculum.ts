@@ -48,6 +48,8 @@ export interface Step {
 export interface LinkRef {
   title: string;
   url: string;
+  preview_url?: string;
+  description?: string;
 }
 
 export interface Assignment {

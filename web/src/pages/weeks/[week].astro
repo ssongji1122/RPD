@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import SourceVideoPreview from '../../components/SourceVideoPreview.astro';
 import { weeks, getWeek } from '../../data/curriculum';
 import { loadPrompts } from '../../data/prompts';
 import { url } from '../../lib/url';
@@ -134,13 +135,19 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
     {(w.videos.length > 0 || w.docs.length > 0) && (
       <section class="block">
         <h2>참고 자료</h2>
+        {w.videos.length > 0 && (
+          <div class="video-preview-grid">
+            {w.videos.map((v) => (
+              <SourceVideoPreview
+                url={refHref(v.url)}
+                previewUrl={v.preview_url}
+                title={v.title}
+                description={v.description}
+              />
+            ))}
+          </div>
+        )}
         <ul class="ref-list">
-          {w.videos.map((v) => (
-            <li>
-              <span class="ref-tag meta">영상</span>
-              <a href={refHref(v.url)} target="_blank" rel="noopener">{v.title}</a>
-            </li>
-          ))}
           {w.docs.map((d) => (
             <li>
               <span class="ref-tag meta">문서</span>
@@ -336,6 +343,12 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
   .ref-list li { display: flex; align-items: baseline; gap: var(--s-3); }
   .ref-tag { min-width: 2.5rem; color: var(--c-ink-3); }
   .ref-list a { font-size: var(--fs-base); color: var(--c-accent-text); }
+  .video-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+    gap: var(--s-3);
+    margin-bottom: var(--s-4);
+  }
 
   .week-nav {
     display: flex; justify-content: space-between; gap: var(--s-3);
