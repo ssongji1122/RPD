@@ -591,7 +591,7 @@ Set render engine to Eevee with bloom enabled and render each camera view.
 
 ### 공식 영상 튜토리얼
 
-- [Blender Studio - Rendering](https://studio.blender.org/training/blender-2-8-fundamentals/rendering/)
+- [Blender Studio - Rendering](https://studio.blender.org/training/blender-2-8-fundamentals/render-settings-introduction/)
 - [Blender 공식 YouTube 채널](https://www.youtube.com/@BlenderOfficial)
 
 ### 공식 문서

@@ -372,7 +372,7 @@ Z 키 하나로 와이어프레임/솔리드/미리보기/렌더를 오가요. �
 
 ### 공식 영상 튜토리얼
 
-- [Blender Studio - Materials and Shading](https://studio.blender.org/training/blender-2-8-fundamentals/materials-and-shading/)
+- [Blender Studio - Materials and Shading](https://studio.blender.org/training/blender-2-8-fundamentals/intro-shading/)
 
 ### 공식 문서
 

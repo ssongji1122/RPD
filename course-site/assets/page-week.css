@@ -1123,6 +1123,72 @@
       display: grid;
       gap: 10px;
     }
+    .source-video-preview {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--modal-panel-soft-strong-bg);
+    }
+    .source-video-preview-media {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      background: #181816;
+    }
+    .source-video-preview-media iframe,
+    .source-video-preview-media video {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      object-fit: cover;
+      pointer-events: none;
+    }
+    .source-video-preview-hit {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+    .source-video-preview-hit::after {
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+      padding: 5px 8px;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      border-radius: var(--radius-pill);
+      background: rgba(24, 24, 22, 0.78);
+      color: #fff;
+      content: "원본 열기 ↗";
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+    .source-video-preview-hit:hover,
+    .source-video-preview-hit:focus-visible {
+      opacity: 1;
+      box-shadow: inset 0 0 0 2px var(--key);
+    }
+    .source-video-preview-meta {
+      padding: 12px;
+    }
+    .source-video-preview-meta > a {
+      display: block;
+      color: var(--text);
+      font-weight: var(--fw-semi);
+      line-height: 1.45;
+      word-break: keep-all;
+    }
+    .source-video-preview-meta p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: .76rem;
+      line-height: 1.55;
+    }
+    .source-video-preview-meta span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-family: var(--font-mono);
+      font-size: .68rem;
+    }
     .ref-video-item {
       display: grid;
       gap: 4px;
