@@ -108,14 +108,26 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
   let pf = pos;        // 연속 위치 (스프링이 pos 를 추적)
   let vf = 0;          // 스프링 속도 (칸/s)
   const OMEGA = 6.2;   // 임계 감쇠 스프링 강성(rad/s) — 애플 특유의 느긋한 정착
-  // 커서 추종: 스테이지 위 마우스 X 에 비례해 스트립이 흐른다(브라우징).
   // 스프링 목표는 실수(target) — 커버 포즈가 (i - pf) 연속 함수라 소수
-  // 위치도 그대로 부드럽다. 진입 순간 점프가 없도록 진입점 기준 상대 매핑.
+  // 위치도 그대로 부드럽다.
   let target = pos;    // 스프링이 추적하는 실수 목표
-  const FOLLOW_RANGE = 3.2; // 스테이지 반폭 이동 시 흐르는 칸 수
-  let followAnchor = 0;
-  let lastNx = 0;
-  let following = false;
+
+  // ── 움직임 두 가지 ──
+  // 1) 자동 재생: 아무 조작이 없으면 AUTO_INTERVAL_MS 마다 한 칸씩 넘어간다.
+  //    커서가 스테이지 위에 있거나, 화면 밖이거나, 탭이 숨겨졌거나,
+  //    방금 사용자가 조작했으면(RESUME_AFTER_MS 동안) 쉰다.
+  // 2) 가장자리 스크롤(마우스 전용): 가운데 DEAD_ZONE 은 멈춤, 바깥으로 갈수록
+  //    그 방향으로 빨라지며 계속 흐른다. target 을 drift(칸/s)로 밀고 스프링이 따라간다.
+  // 「동작 줄이기」(prefers-reduced-motion) 사용자에게는 요청하지 않은 움직임인 자동 재생만
+  // 끈다. 가장자리 스크롤은 커서로 직접 조작하고 가운데로 옮기면 멈추므로 유지한다.
+  const AUTO_INTERVAL_MS = 3500;
+  const RESUME_AFTER_MS = 6000;
+  const DEAD_ZONE = 0.4;        // 스테이지 반폭 대비 멈춤 구간(가운데 40%)
+  const EDGE_MAX_SPEED = 2.5;   // 양 끝에서의 최대 속도(칸/s)
+  let drift = 0;
+  let hovering = false;
+  let inView = true;
+  let lastInteract = 0;
 
   const inBand = (p: number) => p >= realTotal && p < 2 * realTotal;
   const modReal = (p: number) => ((p % realTotal) + realTotal) % realTotal;
@@ -175,7 +187,6 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
     pos += shift;
     pf += shift;
     target += shift;
-    followAnchor += shift;
     setActive();
   }
 
@@ -194,15 +205,21 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
   let lastT = 0;
 
   function tick(t: number) {
-    const dt = Math.min(0.048, lastT ? (t - lastT) / 1000 : 0.016);
+    const elapsed = lastT ? (t - lastT) / 1000 : 0.016;
+    const dt = Math.min(0.048, elapsed); // 스프링 안정용 상한
     lastT = t;
+    if (drift) {
+      // 흐름은 실제 경과 시간으로 적분해, 프레임이 떨어져도 속도가 일정하다.
+      target += drift * Math.min(0.25, elapsed);
+      commitNearest();
+    }
     const e = Math.exp(-OMEGA * dt);
     const dx = pf - target;
     const tmp = (vf + OMEGA * dx) * dt;
     pf = target + (dx + tmp) * e;
     vf = (vf - OMEGA * tmp) * e;
     render();
-    if (Math.abs(pf - target) < 0.0006 && Math.abs(vf) < 0.004) {
+    if (drift === 0 && Math.abs(pf - target) < 0.0006 && Math.abs(vf) < 0.004) {
       pf = target;
       vf = 0;
       render();
@@ -220,8 +237,6 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
   function moveTo(next: number) {
     pos = next;
     target = next;
-    // 커서 추종 중 클릭·이동해도 현재 커서 위치에서 목표가 그대로 서 있게 재앵커.
-    followAnchor = next - lastNx * FOLLOW_RANGE;
     normalize();
     setActive();
     updateInfo();
@@ -236,46 +251,68 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
 
   function go(delta: number) { moveTo(Math.round(target) + delta); }
 
-  // ── 커서 추종 (마우스 전용) ──
-  // 스테이지 진입점을 기준으로 커서 X 이동량에 비례해 target 이 흐른다.
-  // 진입 순간 target 변화가 0이 되도록 앵커를 잡아 점프가 없다.
+  // ── 가장자리 스크롤 (마우스 전용) ──
   function stageNx(e: PointerEvent): number {
     if (!stage) return 0;
     const r = stage.getBoundingClientRect();
     return Math.max(-1, Math.min(1, ((e.clientX - r.left) - r.width / 2) / (r.width / 2)));
   }
 
-  stage?.addEventListener('pointerenter', (e) => {
-    if (reduceMotion || (e as PointerEvent).pointerType !== 'mouse') return;
-    following = true;
-    lastNx = stageNx(e as PointerEvent);
-    followAnchor = target - lastNx * FOLLOW_RANGE;
-  });
+  // 멈춤 구간 밖에서는 거리의 제곱으로 빨라져, 끝에 닿기 전까지는 느긋하게 흐른다.
+  function edgeSpeed(nx: number): number {
+    const a = Math.abs(nx);
+    if (a <= DEAD_ZONE) return 0;
+    const k = (a - DEAD_ZONE) / (1 - DEAD_ZONE);
+    return Math.sign(nx) * EDGE_MAX_SPEED * k * k;
+  }
 
-  stage?.addEventListener('pointermove', (e) => {
-    if (!following || (e as PointerEvent).pointerType !== 'mouse') return;
-    lastNx = stageNx(e as PointerEvent);
-    target = followAnchor + lastNx * FOLLOW_RANGE;
-    commitNearest();
-    startLoop();
-  });
-
-  stage?.addEventListener('pointerleave', (e) => {
-    if (!following) return;
-    following = false;
-    if ((e as PointerEvent).pointerType !== 'mouse') return;
-    // 가장 가까운 커버에 정착.
+  // 흐름이 멈추면 가장 가까운 커버에 정착.
+  function settle() {
     pos = Math.round(target);
     target = pos;
     normalize();
     setActive();
     updateInfo();
     startLoop();
+  }
+
+  function setDrift(v: number) {
+    const was = drift;
+    drift = v;
+    if (v !== 0) startLoop();
+    else if (was !== 0) settle();
+  }
+
+  const markInteract = () => { lastInteract = Date.now(); };
+
+  stage?.addEventListener('pointerenter', (e) => {
+    if ((e as PointerEvent).pointerType !== 'mouse') return;
+    hovering = true;
+    setDrift(edgeSpeed(stageNx(e as PointerEvent)));
+  });
+
+  stage?.addEventListener('pointermove', (e) => {
+    if (!hovering || (e as PointerEvent).pointerType !== 'mouse') return;
+    setDrift(edgeSpeed(stageNx(e as PointerEvent)));
+  });
+
+  stage?.addEventListener('pointerleave', (e) => {
+    if ((e as PointerEvent).pointerType !== 'mouse') return;
+    hovering = false;
+    markInteract();
+    setDrift(0);
+  });
+
+  // 터치·펜으로 누르면 자동 재생을 잠시 쉰다.
+  stage?.addEventListener('pointerdown', (e) => {
+    if ((e as PointerEvent).pointerType !== 'mouse') markInteract();
   });
 
   // 클릭: 옆 커버면 가운데로 이동, 이미 가운데(활성)면 상세로 이동.
   slides.forEach((s, i) => {
     s.addEventListener('click', () => {
+      markInteract();
+      setDrift(0);
       if (i === pos && Math.abs(pf - i) < 0.35) {
         const href = s.dataset.detail;
         if (href) window.location.href = href;
@@ -285,12 +322,24 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
     });
   });
 
-  document.getElementById('fpPrev')?.addEventListener('click', () => go(-1));
-  document.getElementById('fpNext')?.addEventListener('click', () => go(1));
+  document.getElementById('fpPrev')?.addEventListener('click', () => { markInteract(); go(-1); });
+  document.getElementById('fpNext')?.addEventListener('click', () => { markInteract(); go(1); });
   stage?.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
-    if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); markInteract(); go(-1); }
+    if (e.key === 'ArrowRight') { e.preventDefault(); markInteract(); go(1); }
   });
+
+  // ── 자동 재생 ──
+  if (stage && 'IntersectionObserver' in window) {
+    new IntersectionObserver(([entry]) => { inView = entry.isIntersecting; }, { threshold: 0.4 }).observe(stage);
+  }
+  if (!reduceMotion) {
+    window.setInterval(() => {
+      if (hovering || drift !== 0 || !inView || document.hidden) return;
+      if (Date.now() - lastInteract < RESUME_AFTER_MS) return;
+      go(1);
+    }, AUTO_INTERVAL_MS);
+  }
 
   // 리사이즈: 기하만 재측정해 즉시 재렌더 (레이아웃 애니메이션 없음).
   let resizeRaf = 0;
