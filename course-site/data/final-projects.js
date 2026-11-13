@@ -308,7 +308,8 @@ window.RPDFinalProjects = {
         "assets/final-projects/project-04/frame-03.webp",
         "assets/final-projects/project-04/frame-04.webp",
         "assets/final-projects/project-04/frame-05.webp"
-      ]
+      ],
+      "workTitle": "NERA"
     },
     {
       "id": "project-05",
@@ -452,7 +453,8 @@ window.RPDFinalProjects = {
           "section": "MP4",
           "text": "다른 버전의 AI 프로모션 영상"
         }
-      ]
+      ],
+      "workTitle": "삐타 PITA"
     },
     {
       "id": "project-07",
@@ -695,7 +697,8 @@ window.RPDFinalProjects = {
         "assets/final-projects/project-09/frame-03.webp",
         "assets/final-projects/project-09/frame-04.webp",
         "assets/final-projects/project-09/frame-05.webp"
-      ]
+      ],
+      "workTitle": "AQUA GUARDIAN"
     },
     {
       "id": "project-10",
@@ -920,7 +923,8 @@ window.RPDFinalProjects = {
         "assets/final-projects/project-12/frame-03.webp",
         "assets/final-projects/project-12/frame-04.webp",
         "assets/final-projects/project-12/frame-05.webp"
-      ]
+      ],
+      "workTitle": "OTTO"
     },
     {
       "id": "project-13",
@@ -1091,7 +1095,7 @@ window.RPDFinalProjects = {
           "text": "suno 프롬포트"
         }
       ],
-      "workTitle": "BOMULI"
+      "workTitle": "포용 Poyong"
     },
     {
       "id": "project-14",
@@ -1257,7 +1261,8 @@ window.RPDFinalProjects = {
           "section": "MP4",
           "text": "로컬 이미지까지 한 번에 패킹 후 netlify에서 배포"
         }
-      ]
+      ],
+      "workTitle": "테비 Tebi"
     },
     {
       "id": "project-15",
@@ -1452,7 +1457,7 @@ window.RPDFinalProjects = {
         }
       ],
       "coverSrc": "assets/final-projects/project-16/image-01.webp",
-      "workTitle": "ROBO:KUN"
+      "workTitle": "LUMI:BOT"
     },
     {
       "id": "project-17",
@@ -1816,7 +1821,8 @@ window.RPDFinalProjects = {
         "assets/final-projects/project-19/frame-03.webp",
         "assets/final-projects/project-19/frame-04.webp",
         "assets/final-projects/project-19/frame-05.webp"
-      ]
+      ],
+      "workTitle": "보물이"
     },
     {
       "id": "project-20",
@@ -2070,7 +2076,8 @@ window.RPDFinalProjects = {
       ],
       "links": [],
       "coverSrc": "assets/final-projects/project-21/video-01.webp",
-      "frames": []
+      "frames": [],
+      "workTitle": "ME-O"
     },
     {
       "id": "project-22",
@@ -2374,7 +2381,8 @@ window.RPDFinalProjects = {
           "text": "-인터렉션 사이트 테스트"
         }
       ],
-      "frames": []
+      "frames": [],
+      "workTitle": "묘한"
     },
     {
       "id": "project-24",
@@ -2436,7 +2444,8 @@ window.RPDFinalProjects = {
         "assets/final-projects/project-24/frame-03.webp",
         "assets/final-projects/project-24/frame-04.webp",
         "assets/final-projects/project-24/frame-05.webp"
-      ]
+      ],
+      "workTitle": "WALL-E"
     }
   ]
 };
