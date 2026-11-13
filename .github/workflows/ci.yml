@@ -37,6 +37,10 @@ jobs:
           python3 tools/content_pipeline.py build
           python3 tools/content_pipeline.py build-public --output dist/public-site
 
+      - name: Check final-project assets are committed
+        run: |
+          python3 tools/check_final_project_assets.py
+
       - name: Run public page smoke checks
         run: |
           bash tools/run-public-page-checks.sh
@@ -46,6 +50,7 @@ jobs:
           python3 -m pytest \
             tools/tests/test_content_pipeline.py \
             tools/tests/test_markdown_import.py \
+            tools/tests/test_final_project_assets.py \
             tools/tests/test_admin_server.py \
             tools/tests/test_showme_widget_e2e.py \
             tools/tests/test_admin_e2e.py \
