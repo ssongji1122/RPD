@@ -1,6 +1,7 @@
 ---
 import { finalProjects, finalProjectsMeta } from '../data/finalProjects';
 import type { FPMedia, FPProject } from '../data/finalProjects';
+import { displayTitle, projectCounts, publicLinkUrl } from '../data/fpDisplay';
 
 interface Props {
   // 작품 상세 앵커 prefix. 같은 페이지(final-projects)면 '' (in-page 앵커),
@@ -26,9 +27,9 @@ function bestCover(p: FPProject): FPMedia | null {
 
 const PRESENTATION = '발표 자료';
 const firstPres = (p: FPProject) => p.links.find((l) => l.kind === PRESENTATION);
+// 개수는 작품 상세와 같은 규칙(fpDisplay)으로 센다.
 const projectSummary = (p: FPProject) => {
-  const images = p.media.filter((m) => m.type === 'image').length;
-  const videos = p.videos.length || p.media.filter((m) => m.type === 'video').length;
+  const { images, videos } = projectCounts(p);
   return `이미지 ${images} · 영상 ${videos}`;
 };
 
@@ -57,17 +58,17 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
             data-idx={di}
             data-real={real}
             data-code={p.code}
-            data-title={p.workTitle ?? p.title}
+            data-title={displayTitle(p)}
             data-detail={`${detailBase}#${p.id}`}
-            data-pres-url={pres?.url ?? ''}
-            aria-label={`${p.code} 보기`}
+            data-pres-url={pres ? publicLinkUrl(pres) : ''}
+            aria-label={`${displayTitle(p)} 보기`}
             aria-hidden={isClone ? 'true' : undefined}
             tabindex={isClone ? -1 : undefined}
           >
             <span class="fp-slide-frame">
               {cover ? <img src={cover.src} alt={p.code} loading={eager(di) ? 'eager' : 'lazy'} draggable="false" /> : <span class="fp-empty">—</span>}
               <span class="fp-slide-caption" aria-hidden="true">
-                <strong>{p.code}</strong>
+                <strong>{displayTitle(p)}</strong>
                 <span>{projectSummary(p)}</span>
               </span>
             </span>
