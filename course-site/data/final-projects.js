@@ -266,7 +266,7 @@ window.RPDFinalProjects = {
           "kind": "Website"
         }
       ],
-      "coverSrc": "assets/final-projects/project-03/cover.webp",
+      "coverSrc": "assets/final-projects/project-03/frame-04.webp",
       "frames": [
         "assets/final-projects/project-03/frame-01.webp",
         "assets/final-projects/project-03/frame-02.webp",
@@ -440,7 +440,7 @@ window.RPDFinalProjects = {
           "embedUrl": "https://www.canva.com/design/DAHMsJz81nQ/Js1kq7aOY6IXHUIho7f35w/view?embed"
         }
       ],
-      "coverSrc": "assets/final-projects/project-06/video-01.webp",
+      "coverSrc": "assets/final-projects/project-06/frame-01.webp",
       "frames": [
         "assets/final-projects/project-06/frame-01.webp",
         "assets/final-projects/project-06/frame-02.webp",
@@ -656,7 +656,7 @@ window.RPDFinalProjects = {
         }
       ],
       "links": [],
-      "coverSrc": "assets/final-projects/project-08/image-01.webp",
+      "coverSrc": "assets/final-projects/project-08/image-02.webp",
       "notes": [
         {
           "section": "발표자료",
@@ -916,7 +916,7 @@ window.RPDFinalProjects = {
           "embedUrl": "https://www.canva.com/design/DAHMsD7vOSk/O7YhhwaCIMX3zJzMBujgUw/view?embed"
         }
       ],
-      "coverSrc": "assets/final-projects/project-12/frame-02.webp",
+      "coverSrc": "assets/final-projects/project-12/frame-05.webp",
       "frames": [
         "assets/final-projects/project-12/frame-01.webp",
         "assets/final-projects/project-12/frame-02.webp",
@@ -1105,12 +1105,12 @@ window.RPDFinalProjects = {
         {
           "type": "image",
           "src": "assets/final-projects/project-14/image-02.webp",
-          "role": "render"
+          "role": "process"
         },
         {
           "type": "image",
           "src": "assets/final-projects/project-14/image-03.webp",
-          "role": "render"
+          "role": "process"
         },
         {
           "type": "video",
@@ -1227,7 +1227,7 @@ window.RPDFinalProjects = {
           "kind": "Reference"
         }
       ],
-      "coverSrc": "assets/final-projects/project-14/image-02.webp",
+      "coverSrc": "assets/final-projects/project-14/video-04.webp",
       "notes": [
         {
           "section": "MP4",
@@ -1933,7 +1933,7 @@ window.RPDFinalProjects = {
         }
       ],
       "links": [],
-      "coverSrc": "assets/final-projects/project-20/frame-04.webp",
+      "coverSrc": "assets/final-projects/project-20/image-01.webp",
       "notes": [
         {
           "section": "MP4",
@@ -2109,7 +2109,7 @@ window.RPDFinalProjects = {
           "kind": "Reference"
         }
       ],
-      "coverSrc": "assets/final-projects/project-22/video-01.webp",
+      "coverSrc": "assets/final-projects/project-22/frame-01.webp",
       "frames": [
         "assets/final-projects/project-22/frame-01.webp",
         "assets/final-projects/project-22/frame-02.webp",
