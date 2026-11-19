@@ -66,7 +66,24 @@ function introOf(notes: { text: string }[]) {
 const PRIMARY_KINDS = new Set(['웹페이지', '작품 페이지', '발표 자료', 'Behance']);
 const isPrimaryLink = (l: FPLink) => PRIMARY_KINDS.has(kindOf(l));
 const primaryHref = linkHref;
-const primaryLabel = (l: FPLink) => (kindOf(l) === '발표 자료' ? '발표 자료 바로 가기' : '웹사이트 바로 가기');
+const primaryLabel = (l: FPLink) => {
+  const k = kindOf(l);
+  if (k === '발표 자료') return '발표 자료 바로 가기';
+  if (k === 'Behance') return 'Behance 바로 가기';
+  return '웹사이트 바로 가기';
+};
+// 같은 문구의 버튼이 2개 이상일 때만 그 문구 안에서 1, 2…를 붙인다.
+function numberedLabels(links: FPLink[]): string[] {
+  const total = new Map<string, number>();
+  links.forEach((l) => total.set(primaryLabel(l), (total.get(primaryLabel(l)) ?? 0) + 1));
+  const seen = new Map<string, number>();
+  return links.map((l) => {
+    const base = primaryLabel(l);
+    const n = (seen.get(base) ?? 0) + 1;
+    seen.set(base, n);
+    return (total.get(base) ?? 0) > 1 ? `${base} ${n}` : base;
+  });
+}
 ---
 
 <Layout title="기말 작품 — rpd" description="RPD 기말 프로젝트 작품 아카이브">
@@ -102,6 +119,7 @@ const primaryLabel = (l: FPLink) => (kindOf(l) === '발표 자료' ? '발표 자
       // 학생 사이트로 바로 가는 버튼을 맨 위에 둔다.
       const primary = p.links.filter(isPrimaryLink);
       const secondary = p.links.filter((l) => !isPrimaryLink(l));
+      const labels = numberedLabels(primary);
       return (
         <article class="fp-project" id={p.id}>
           <div class="fp-grid">
@@ -122,9 +140,10 @@ const primaryLabel = (l: FPLink) => (kindOf(l) === '발표 자료' ? '발표 자
               {primary.length > 0 && (
                 <div class="fp-cta">
                   {primary.map((l, i) => (
-                    <a class="fp-cta-btn" href={primaryHref(l)}>
-                      {primaryLabel(l)}{primary.length > 1 ? ` ${i + 1}` : ''} →
-                    </a>
+                    <div class="fp-cta-item">
+                      {l.note && <p class="fp-cta-note">{l.note}</p>}
+                      <a class="fp-cta-btn" href={primaryHref(l)}>{labels[i]} →</a>
+                    </div>
                   ))}
                 </div>
               )}
@@ -180,18 +199,6 @@ const primaryLabel = (l: FPLink) => (kindOf(l) === '발표 자료' ? '발표 자
                 </>
               ))}
 
-            {primary.length > 0 && (groups.process.length > 0 || groups.outcome.length > 0) && (
-              <div class="fp-cell fp-cta-foot is-span-4">
-                <p class="meta">작품 설명과 제작 과정은 학생 웹페이지에 정리돼 있습니다.</p>
-                <div class="fp-cta">
-                  {primary.map((l, i) => (
-                    <a class="fp-cta-btn" href={primaryHref(l)}>
-                      {primaryLabel(l)}{primary.length > 1 ? ` ${i + 1}` : ''} →
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
         </article>
       );
@@ -297,7 +304,6 @@ const primaryLabel = (l: FPLink) => (kindOf(l) === '발표 자료' ? '발표 자
   }
   .fp-projects:not(.is-detail-view) .fp-cell.fp-media:not(.is-hero),
   .fp-projects:not(.is-detail-view) .fp-gallery,
-  .fp-projects:not(.is-detail-view) .fp-cta-foot,
   .fp-projects:not(.is-detail-view) .fp-section-label {
     display: none;
   }
@@ -354,8 +360,10 @@ const primaryLabel = (l: FPLink) => (kindOf(l) === '발표 자료' ? '발표 자
     word-break: keep-all;
   }
 
-  /* 학생 사이트로 가는 버튼: 상세 맨 위와 맨 아래에 같은 모양으로 둔다 */
-  .fp-cta { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+  /* 학생 사이트로 가는 버튼: 소개 칸 한 곳에만 둔다. 설명 한 줄 아래에 버튼을 붙여 한 묶음으로 보이게 한다 */
+  .fp-cta { display: grid; gap: var(--s-4); }
+  .fp-cta-item { display: grid; justify-items: start; gap: var(--s-2); }
+  .fp-cta-note { margin: 0; color: var(--c-ink-2); font-size: var(--fs-sm); line-height: 1.6; word-break: keep-all; max-width: 60ch; }
   .fp-cta-btn {
     display: inline-flex;
     align-items: center;
@@ -368,15 +376,6 @@ const primaryLabel = (l: FPLink) => (kindOf(l) === '발표 자료' ? '발표 자
     font-weight: var(--w-medium);
   }
   .fp-cta-btn:hover { background: var(--c-accent); color: var(--c-bg); opacity: 1; }
-  .fp-cta-foot {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--s-3);
-    padding: var(--s-4);
-  }
-  .fp-cta-foot p { margin: 0; color: var(--c-ink-2); }
 
   /* 진행 과정 · 완성 결과: 같은 크기 칸에 통째로 보여 주는 격자. 영상만 한 줄 전체를 쓴다 */
   .fp-gallery {
