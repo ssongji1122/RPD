@@ -2085,10 +2085,60 @@ window.RPDFinalProjects = {
       "title": "Project 22",
       "media": [
         {
+          "type": "image",
+          "src": "assets/final-projects/project-22/render-01.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-22/render-02.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-22/render-03.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-22/render-04.webp",
+          "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-22/render-05.webp",
+          "role": "render"
+        },
+        {
           "type": "video",
           "src": "assets/final-projects/project-22/video-01.webp",
           "videoSrc": "assets/final-projects/project-22/video-01.mp4",
           "role": "render"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-22/process-01.webp",
+          "role": "process"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-22/process-02.webp",
+          "role": "process"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-22/process-03.webp",
+          "role": "process"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-22/process-04.webp",
+          "role": "process"
+        },
+        {
+          "type": "image",
+          "src": "assets/final-projects/project-22/process-05.webp",
+          "role": "process"
         }
       ],
       "videos": [
@@ -2098,6 +2148,11 @@ window.RPDFinalProjects = {
         }
       ],
       "links": [
+        {
+          "label": "발표 웹페이지",
+          "url": "assets/final-projects/project-22/presentation.html",
+          "kind": "Website"
+        },
         {
           "label": "Board 1",
           "url": "https://mixboard.google.com/projects/e0a32f66397d405eb29238128e45b5a3",
@@ -2109,7 +2164,7 @@ window.RPDFinalProjects = {
           "kind": "Reference"
         }
       ],
-      "coverSrc": "assets/final-projects/project-22/frame-01.webp",
+      "coverSrc": "assets/final-projects/project-22/render-01.webp",
       "frames": [
         "assets/final-projects/project-22/frame-01.webp",
         "assets/final-projects/project-22/frame-02.webp",

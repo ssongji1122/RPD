@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DDONI | 3D Interactive Portfolio Presentation</title>
+  
+  <!-- Premium Modern Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/variable/pretendardvariable.css" />
+  
+  <style>
+    /* Chirpley Inspired Luxury Dark & Neon Pink Aesthetic */
+    :root {
+      --bg-color: #000000;
+      --surface-color: #0D0D0D;
+      --surface-card: #141414;
+      --text-main: #FFFFFF;
+      --text-muted: #7F7F7F;
+      --accent-pink: #FF1493; /* High-contrast Vivid Neon Pink */
+      --accent-pink-rgb: 255, 20, 147;
+      --border-color: rgba(255, 255, 255, 0.08);
+    }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    html { scroll-behavior: smooth; }
+    
+    body {
+      font-family: 'Pretendard Variable', Pretendard, -apple-system, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      line-height: 1.6;
+      overflow-x: hidden;
+      word-break: keep-all;
+    }
+
+    /* Fixed Navigation Bar */
+    nav {
+      position: fixed; top: 0; left: 0; width: 100%;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(20px);
+      padding: 25px 6%;
+      display: flex; justify-content: space-between; align-items: center;
+      z-index: 1000;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .nav-logo {
+      font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800;
+      color: var(--text-main); text-decoration: none; letter-spacing: -1.5px;
+    }
+    .nav-logo span { color: var(--accent-pink); }
+    
+    .nav-info {
+      font-size: 0.95rem; font-weight: 500; color: var(--text-muted);
+      letter-spacing: -0.3px; display: flex; align-items: center; gap: 15px;
+    }
+    .nav-info .presenter { color: var(--text-main); font-weight: 600; }
+
+    .nav-links { display: flex; gap: 25px; margin-left: 20px; }
+    .nav-links a {
+      text-decoration: none; color: var(--text-muted);
+      font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;
+      transition: color 0.3s ease; position: relative; padding: 5px 0;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--text-main); }
+    .nav-links a.active::after {
+      content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px;
+      background-color: var(--accent-pink);
+    }
+
+    /* Print / PDF Controls */
+    .print-btn {
+      position: fixed; bottom: 40px; right: 40px;
+      width: 65px; height: 65px;
+      background-color: var(--accent-pink);
+      color: white; border: none; border-radius: 50%;
+      font-family: 'Syne', sans-serif; font-size: 0.8rem; font-weight: 800;
+      cursor: pointer; z-index: 1000;
+      box-shadow: 0 12px 35px rgba(255, 20, 147, 0.4);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s;
+    }
+    .print-btn:hover { transform: scale(1.08); background-color: #e0067c; }
+
+    /* Layout Sections */
+    .section {
+      min-height: 100vh;
+      padding: 160px 8% 100px 8%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    /* Big Typography & Headings */
+    .huge-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(3.5rem, 11vw, 9.5rem);
+      font-weight: 800;
+      line-height: 0.85;
+      text-transform: uppercase;
+      letter-spacing: -4px;
+      margin-bottom: 25px;
+    }
+    .huge-title span { color: var(--accent-pink); }
+    
+    .section-num {
+      font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700;
+      color: var(--accent-pink); margin-bottom: 15px; display: block; letter-spacing: 2px;
+    }
+
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2rem, 4.5vw, 3.8rem);
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-bottom: 45px;
+      letter-spacing: -1.5px;
+    }
+
+    .desc { font-size: 1.25rem; color: var(--text-muted); max-width: 680px; margin-bottom: 40px; font-weight: 300; }
+    .desc strong { color: var(--text-main); font-weight: 600; }
+
+    /* Grid layouts */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+    .grid-wrap { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 35px; }
+
+    /* Section Specific Styles */
+    /* 01. Hero */
+    #hero { position: relative; overflow: hidden; padding-top: 200px; }
+    .hero-container { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+    .hero-text { max-width: 55%; z-index: 5; }
+    .hero-img-box { width: 42%; position: relative; z-index: 4; }
+    .hero-img-box img {
+      width: 100%; max-width: 580px; display: block;
+      filter: drop-shadow(0 25px 60px rgba(255, 20, 147, 0.25));
+      animation: smoothFloat 6s ease-in-out infinite;
+      cursor: pointer;
+    }
+    @keyframes smoothFloat {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-25px) rotate(1.5deg); }
+    }
+
+    /* Keywords Tag Wrap */
+    .tag-container { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+    .tag {
+      background: var(--surface-color); border: 1px solid var(--border-color);
+      color: var(--text-main); padding: 8px 18px; border-radius: 50px;
+      font-size: 0.95rem; font-weight: 600; transition: all 0.3s;
+    }
+    .tag:hover { border-color: var(--accent-pink); color: var(--accent-pink); }
+
+    /* AI Prompt Block */
+    .prompt-box {
+      background: var(--surface-color); border-left: 3px solid var(--accent-pink);
+      padding: 30px; border-radius: 4px 12px 12px 4px; margin-top: 25px;
+      font-family: monospace; font-size: 1.05rem; color: #E5E5E5; line-height: 1.5;
+    }
+    .prompt-label { font-family: 'Syne', sans-serif; font-size: 0.75rem; color: var(--accent-pink); font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+
+    /* Cards Layout */
+    .content-card {
+      background: var(--surface-color); border: 1px solid var(--border-color);
+      border-radius: 16px; padding: 35px; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .content-card:hover { border-color: rgba(255, 20, 147, 0.4); transform: translateY(-8px); }
+    .card-media { width: 100%; border-radius: 10px; margin-bottom: 25px; overflow: hidden; background: #000; }
+    .card-media img { width: 100%; display: block; filter: contrast(1.05); cursor: pointer; transition: transform 0.5s; }
+    .content-card:hover .card-media img { transform: scale(1.03); }
+    .card-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 12px; color: var(--text-main); }
+    .card-desc { color: var(--text-muted); font-size: 0.98rem; font-weight: 300; }
+    .card-highlight { color: var(--accent-pink); font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; block; }
+
+    /* Before & After Interactive Slider */
+    .ba-slider-wrapper { width: 100%; max-width: 960px; margin: 40px auto 0 auto; position: relative; border-radius: 16px; overflow: hidden; border: 1px solid var(--border-color); }
+    .ba-img-base { width: 100%; display: block; object-fit: cover; }
+    .ba-overlay-panel { position: absolute; top: 0; left: 0; width: 50%; height: 100%; overflow: hidden; border-right: 2px solid var(--accent-pink); }
+    .ba-slider-bar { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; z-index: 30; }
+    .ba-tag-label { position: absolute; bottom: 25px; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem; background: rgba(0,0,0,0.85); padding: 6px 16px; border-radius: 30px; letter-spacing: 1px; pointer-events: none; }
+    .ba-left-label { left: 25px; color: var(--text-main); }
+    .ba-right-label { right: 25px; color: var(--accent-pink); }
+
+    /* Video Container Style */
+    .video-showcase { width: 100%; max-width: 480px; border-radius: 20px; overflow: hidden; border: 1px solid var(--border-color); background: #0F0F0F; margin: 0 auto; box-shadow: 0 30px 70px rgba(0,0,0,0.5); }
+    .video-showcase video { width: 100%; display: block; }
+
+    /* Final Output Masonry/Gallery Grid */
+    .gallery-container { display: grid; grid-template-columns: repeat(6, 1fr); gap: 20px; margin-top: 20px; }
+    .gallery-item { grid-column: span 2; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); transition: all 0.4s; }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; cursor: pointer; transition: transform 0.4s; }
+    .gallery-item:hover { border-color: var(--accent-pink); }
+    .gallery-item:hover img { transform: scale(1.04); }
+    .gallery-item.wide { grid-column: span 3; }
+    .gallery-item.tall { grid-row: span 2; }
+
+    /* Buttons / Links */
+    .btn-action {
+      display: inline-flex; align-items: center; gap: 12px; padding: 18px 38px;
+      background-color: var(--accent-pink); color: white; text-decoration: none;
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.05rem;
+      border-radius: 50px; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      margin-top: 15px; border: 1px solid transparent;
+    }
+    .btn-action:hover { background-color: transparent; border-color: var(--accent-pink); color: var(--accent-pink); transform: translateY(-2px); }
+
+    /* Scroll Animations (Reveal) */
+    .reveal-el { opacity: 0; transform: translateY(50px); transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
+    .reveal-el.active { opacity: 1; transform: translateY(0); }
+
+    /* Lightbox Modal System */
+    .lightbox-modal {
+      display: none; position: fixed; z-index: 3000;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background-color: rgba(0, 0, 0, 0.96); backdrop-filter: blur(15px);
+      justify-content: center; align-items: center;
+    }
+    .lightbox-content { max-width: 85%; max-height: 85%; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); animation: lightboxZoom 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+    .lightbox-close { position: absolute; top: 35px; right: 45px; color: var(--text-muted); font-size: 45px; font-weight: 200; cursor: pointer; transition: color 0.2s; }
+    .lightbox-close:hover { color: white; }
+    @keyframes lightboxZoom { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    /* Responsive Scaling */
+    @media (max-width: 1024px) {
+      .grid-2 { grid-template-columns: 1fr; gap: 50px; }
+      .hero-container { flex-direction: column; text-align: center; justify-content: center; }
+      .hero-text { max-width: 100%; order: 2; margin-top: 40px; }
+      .hero-img-box { width: 75%; max-width: 420px; order: 1; margin: 0 auto; }
+      .gallery-container { grid-template-columns: repeat(4, 1fr); }
+      .gallery-item { grid-column: span 2; }
+      .gallery-item.wide { grid-column: span 2; }
+    }
+    
+    @media (max-width: 768px) {
+      nav { padding: 15px 4%; flex-direction: column; gap: 12px; text-align: center; }
+      .nav-links { margin-left: 0; gap: 15px; }
+      .section { padding: 140px 5% 80px 5%; }
+      .gallery-container { grid-template-columns: 1fr; }
+      .gallery-item, .gallery-item.wide { grid-column: span 1; }
+    }
+
+    /* Professional Print/PDF Export Engine Rules Styling */
+    @media print {
+      body { background: #FFFFFF !important; color: #000000 !important; font-size: 11pt; }
+      nav, .print-btn, .ba-slider-bar { display: none !important; }
+      .section { padding: 45px 0 !important; min-height: auto !important; page-break-after: always !important; border: none !important; }
+      .huge-title, .section-title, .card-title, h1, h2, h3 { color: #000000 !important; page-break-after: avoid; }
+      .huge-title span, .section-title span, .nav-logo span, .section-num, .card-highlight { color: #FF1493 !important; }
+      .desc, .card-desc, p { color: #333333 !important; }
+      .content-card, .prompt-box, .ba-slider-wrapper, .gallery-item { background: #FFFFFF !important; border: 1px solid #BBBBBB !important; box-shadow: none !important; page-break-inside: avoid !important; }
+      .ba-overlay-panel { width: 50% !important; border-right: 2px solid #FF1493 !important; }
+      .reveal-el { opacity: 1 !important; transform: none !important; }
+      .gallery-container { display: block !important; }
+      .gallery-item { display: inline-block !important; width: 48% !important; margin: 1% !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Premium Glassmorphism Navigation -->
+  <nav>
+    <a href="#hero" class="nav-logo">DDONI<span>.</span></a>
+    <div class="nav-info">
+      <span class="nav-links">
+        <a href="#hero" class="nav-link active">Intro</a>
+        <a href="#ideation" class="nav-link">Concept</a>
+        <a href="#modeling" class="nav-link">3D Asset</a>
+        <a href="#animation" class="nav-link">Motion</a>
+        <a href="#output" class="nav-link">Gallery</a>
+        <a href="#meta" class="nav-link">Meta</a>
+      </span>
+    </div>
+  </nav>
+
+  <!-- Floating Print Presentation Trigger -->
+  <button class="print-btn" onclick="window.print()">EXPORT<br>PDF</button>
+
+  <!-- 01. Hero / Title Section -->
+  <section id="hero" class="section">
+    <div class="hero-container">
+      <div class="hero-text reveal-el">
+        <span class="section-num">PRESENTATION LOG</span>
+        <h1 class="huge-title">DDONI<br><span>PROJECT</span></h1>
+        <p class="desc" style="color: var(--text-main); font-weight: 600; font-size: 1.45rem; margin-bottom: 15px;">
+          사람들의 심신 안정을 도와주는 반려 말랑이 로봇
+        </p>
+        <p class="desc">
+          인하대학교 디자인테크놀로지학과 3D 그래픽스 파이프라인 디자인 과정 발표자료. 차가운 디지털 매시 위에 따뜻한 유기적 질감과 생명력을 불어넣는 캐릭터 메이킹 아카이브입니다.
+        </p>
+      </div>
+      <div class="hero-img-box reveal-el">
+        <!-- Main Hero Image (render4) -->
+        <img src="render-04.webp" alt="Dooni Hero Pose" class="lightbox-trigger">
+      </div>
+    </div>
+  </section>
+
+  <!-- 02. Ideation Section -->
+  <section id="ideation" class="section">
+    <div class="reveal-el">
+      <span class="section-num">PHASE 01</span>
+      <h2 class="section-title">IDEATION & CONCEPTUALIZATION</h2>
+      <div class="grid-2">
+        <div>
+          <p class="desc">
+            본 프로젝트는 바쁜 현대인들의 스트레스 완화와 정서적 교감을 목적으로 하는 <strong>'반려형 로봇(Companion Robot)'</strong> 디자인에서 출발했습니다.
+          </p>
+          <p class="desc" style="font-size: 1.15rem;">
+            시각적, 촉각적으로 심리적 안정감을 제공하기 위해 날카로운 요소를 전면 배제하고, 동글동글하면서도 친근한 비례를 연구하여 컨셉의 완성도를 높였습니다.
+          </p>
+          <div class="tag-container">
+            <span class="tag">#위로</span>
+            <span class="tag">#안정</span>
+            <span class="tag">#말랑말랑</span>
+            <span class="tag">#반려로봇</span>
+          </div>
+        </div>
+        <div>
+          <div class="content-card" style="background: var(--surface-color);">
+            <span class="card-highlight">Inspiration Matrix</span>
+            <h3 class="card-title">초기 무드보드 및 레퍼런스</h3>
+            <p class="card-desc" style="margin-bottom: 25px;">
+              컨셉 구체화 과정에서 수집한 시각적 레퍼런스, 유기적 비례, 파스텔톤 무드 매트릭스가 집약된 디지털 보드 링크입니다.
+            </p>
+            <a href="https://mixboard.google.com/projects/e0a32f66397d405eb29238128e45b5a3" target="_blank" class="btn-action">VIEW MOODBOARD ↗</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03. AI Image Generation Section -->
+  <section id="ai" class="section">
+    <div class="reveal-el">
+      <span class="section-num">PHASE 02</span>
+      <h2 class="section-title">AI IMAGE GENERATION</h2>
+      <div class="grid-2">
+        <div class="content-card" style="padding: 10px; background: transparent; border: none;">
+          <div class="card-media" style="margin-bottom: 0;">
+            <img src="process-01.webp" alt="AI Generated Concept Image" class="lightbox-trigger">
+          </div>
+        </div>
+        <div>
+          <p class="desc">
+            3D 공간 제작에 돌입하기 전, <strong>정교한 이미지 생성 프롬프트 엔지니어링</strong>을 거쳐 캐릭터의 인상과 볼륨감, 조명 무드를 선행 시각화하였습니다.
+          </p>
+          <div class="prompt-box">
+            <div class="prompt-label">Engine Prompt Settings</div>
+            small companion robot pet with round ears, round body, soft glowing eyes, warm pastel pink and mint color scheme, 3/4 view, product photography
+          </div>
+          <p class="card-desc" style="margin-top: 15px; font-style: italic;">
+            * 생성된 컨셉 모델의 부드러운 눈빛과 파스텔톤 배치를 기준점 삼아 메인 3D 매시 스케일링을 수립했습니다.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04. Modeling Section -->
+  <section id="modeling" class="section">
+    <div class="reveal-el">
+      <span class="section-num">PHASE 03</span>
+      <h2 class="section-title">3D TOPOLOGY & MODELING</h2>
+      <p class="desc">
+        Blender 3D 환경에서 완벽한 기하학적 대칭과 유기적인 곡면률을 얻기 위해 효율적인 로우폴리곤 구조 위에 비파괴 방식의 모디파이어 파이프라인을 구축했습니다.
+      </p>
+      
+      <div class="grid-wrap">
+        <div class="content-card">
+          <div class="card-media">
+            <img src="process-02.webp" alt="Wireframe Topology" class="lightbox-trigger">
+          </div>
+          <span class="card-highlight">Modifier 01</span>
+          <h3 class="card-title">Mirror & Symmetry</h3>
+          <p class="card-desc">중심축을 기반으로 한 오차 없는 대칭 토폴로지 제어 기법을 통해 로봇 바디 및 주요 결합 부속품들의 대칭 메시 분배 완료.</p>
+        </div>
+        
+        <div class="content-card">
+          <div class="card-media">
+            <img src="process-03.webp" alt="Solid Subdiv View" class="lightbox-trigger">
+          </div>
+          <span class="card-highlight">Modifier 02</span>
+          <h3 class="card-title">Subdivision Surface</h3>
+          <p class="card-desc">Catmull-Clark 알고리즘의 Subdivision 제어를 활용해 로우폴리 매시의 최적화 상태를 유지하며 최종 렌더 단에서의 매끄러운 볼륨감 연출.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05. Material / Texture Section -->
+  <section id="material" class="section">
+    <div class="reveal-el">
+      <span class="section-num">PHASE 04</span>
+      <h2 class="section-title">MATERIAL & SHADING ADVANCED</h2>
+      <div class="grid-2">
+        <div>
+          <p class="desc">
+            만지고 싶은 반려 로봇의 특성을 극대화하기 위해 재질감 표현에 가장 공을 들였습니다. 딱딱한 플라스틱 느낌을 탈피하고 촉촉하고 말랑말랑한 <strong>실리콘 및 젤리 질감</strong>을 연출하는 데 초점을 맞추었습니다.
+          </p>
+          <p class="desc" style="font-size: 1.1rem; color: var(--text-main);">
+            • <strong>파란 실리콘 몸체 & 분홍 배 파츠:</strong><br>
+            피부층 안쪽으로 빛이 스며들어 확산되는 현상인 <strong>SSS (Subsurface Scattering)</strong> 데이터 값을 정밀 제어하여 몽글몽글한 입체감을 시각화했습니다.
+          </p>
+          <p class="desc" style="font-size: 1.1rem;">
+            • <strong>AI Texture Synthesis:</strong><br>
+            <strong>나노바나나(NanoBanana)</strong> 인공지능 툴킷을 연계 활용하여 미세한 실리콘 재질 고유의 무광 범프 및 미세 돌기 텍스처 소스를 커스텀 생성해 셰이더 매핑 퀄리티를 대폭 올렸습니다.
+          </p>
+        </div>
+        <div class="content-card" style="padding: 15px;">
+          <div class="card-media" style="margin-bottom: 0;">
+            <img src="process-04.webp" alt="Texture Shader Detail" class="lightbox-trigger">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06. Rigging / Animation Section -->
+  <section id="animation" class="section">
+    <div class="reveal-el">
+      <span class="section-num">PHASE 05</span>
+      <h2 class="section-title">RIGGING & CORE MOTION INTERACTION</h2>
+      <div class="grid-2">
+        <div class="content-card" style="padding: 15px;">
+          <div class="card-media" style="margin-bottom: 15px;">
+            <img src="process-05.webp" alt="Rigify Bone Rig Setup" class="lightbox-trigger">
+          </div>
+          <p class="card-desc" style="text-align: center; color: var(--text-main);">Rigify Armature 기반 골격 본 구조 설계</p>
+        </div>
+        <div>
+          <p class="desc">
+            정적인 매시에 생동감 넘치는 연출을 추가하는 모션 메이킹 단계입니다. 캐릭터 특유의 통통 튀는 무게중심 감각을 살리기 위해 기계적 제어와 매뉴얼 키프레임을 혼합했습니다.
+          </p>
+          <p class="desc" style="font-size: 1.1rem;">
+            • <strong>Rigify 파이프라인:</strong> Blender 내장 Rigify 시스템을 커스텀 빌드하여 인간형/반려형 구조에 유연하게 대응하는 골격 본 및 컨트롤러 리그 세팅을 마쳤습니다.
+          </p>
+          <p class="desc" style="font-size: 1.1rem; color: var(--text-main);">
+            • <strong>키프레임 기반 '꿍싯꿍싯 챌린지':</strong> 요즘 숏폼 릴스/트렌드 숏츠 플랫폼에서 선풍적인 인기를 끌고 있는 댄스 모션을 수작업 키프레임 인터폴레이션으로 제작하여 최신 트렌디한 MZ 감성을 부여했습니다.
+          </p>
+        </div>
+      </div>
+      
+      <!-- Video Player Showcase Row -->
+      <div style="margin-top: 50px; text-align: center;">
+        <h3 style="font-family:'Syne',sans-serif; font-size: 1.4rem; margin-bottom: 25px;">LIVE MOTION RENDER (.MP4)</h3>
+        <div class="video-showcase">
+          <video src="video-01.mp4" controls autoplay loop muted playsinline></video>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07. Final Output Section -->
+  <section id="output" class="section">
+    <div class="reveal-el">
+      <span class="section-num">PHASE 06</span>
+      <h2 class="section-title">FINAL OUTPUT ARCHIVE</h2>
+      <p class="desc">
+        스튜디오 급 글로벌 라이팅 셋업(Lighting Suite) 환경에서 완성된 뚜니의 상황별 고해상도 렌더링 자산입니다. 다양한 카메라 인과 포징 컷을 감상할 수 있습니다.
+      </p>
+      
+      <div class="gallery-container">
+        <div class="gallery-item tall"><img src="render-01.webp" alt="Render Cut 1" class="lightbox-trigger"></div>
+        <div class="gallery-item wide"><img src="render-02.webp" alt="Render Cut 2" class="lightbox-trigger"></div>
+        <div class="gallery-item"><img src="render-03.webp" alt="Render Cut 3" class="lightbox-trigger"></div>
+        <div class="gallery-item wide"><img src="render-04.webp" alt="Render Cut 4" class="lightbox-trigger"></div>
+        <div class="gallery-item"><img src="render-05.webp" alt="Render Cut 5" class="lightbox-trigger"></div>
+      </div>
+
+      <!-- Before & After Comparison Slider Block -->
+      <div style="margin-top: 80px;">
+        <h3 style="font-family: 'Syne', sans-serif; font-size: 1.6rem; text-align: center; margin-bottom: 15px;">INTERACTIVE TOPOLOGY VS FINAL RENDER</h3>
+        <p class="card-desc" style="text-align: center; margin-bottom: 30px;">슬라이더 바를 좌우로 움직여 로우 폴리곤 메시와 최종 라이팅 스튜디오 스킨 레이어를 인터랙티브하게 비교할 수 있습니다.</p>
+        <div class="ba-slider-wrapper">
+          <img src="render-01.webp" alt="After Render Layer" class="ba-img-base">
+          <div class="ba-tag-label ba-right-label">FINAL RENDERING</div>
+          
+          <div class="ba-overlay-panel" id="baOverlay">
+            <img src="process-03.webp" alt="Before Topology Layer" class="ba-img-base" id="baTargetImg">
+            <div class="ba-tag-label ba-left-label">RAW POLY MESH</div>
+          </div>
+          <input type="range" min="0" max="100" value="50" class="ba-slider-bar" id="baHandler">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08. Presentation Meta Section -->
+  <section id="meta" class="section" style="border-bottom: none;">
+    <div class="reveal-el">
+      <span class="section-num">APPENDIX</span>
+      <h2 class="section-title">ENGINE ARCHITECTURE & REFERENCES</h2>
+      <div class="grid-wrap">
+        <div class="content-card">
+          <span class="card-highlight">Engineering Prompt</span>
+          <h3 class="card-title">웹페이지 생성 소스 코드</h3>
+          <p class="card-desc">사용자와 거대 언어 모델(LLM) 간의 정밀 조율을 통해 빌드된 Chirpley 감성 이식 전용 코딩 프롬프트 구조체 아카이브 및 단일 문서 패키징 설계 적용.</p>
+        </div>
+        <div class="content-card">
+          <span class="card-highlight">Inspirations Reference</span>
+          <h3 class="card-title">Chirpley Curation Design</h3>
+          <p class="card-desc" style="margin-bottom: 25px;">Chirpley 고유의 파괴적인 다크 그리드 레이아웃과 볼드 타이포그래피의 시각 가치를 계승하여 미학 연구 모델로 채택.</p>
+          <a href="https://godly.website/website/chirpley-731" target="_blank" class="btn-action" style="padding: 12px 25px; font-size: 0.9rem;">GODLY REF SITE ↗</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lightbox Modal Container -->
+  <div id="lightboxModal" class="lightbox-modal">
+    <span class="lightbox-close" id="lightboxClose">&times;</span>
+    <img class="lightbox-content" id="lightboxTargetImg">
+  </div>
+
+  <script>
+    // 1. Scroll Reveal Engine
+    const revealElements = document.querySelectorAll('.reveal-el');
+    const elementObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
+      });
+    }, { threshold: 0.12 });
+    revealElements.forEach(element => elementObserver.observe(element));
+
+    // 2. Navigation Active State Scroll Sync
+    const sections = document.querySelectorAll('.section');
+    const navLinks = document.querySelectorAll('.nav-link');
+    window.addEventListener('scroll', () => {
+      let activeSectionId = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (window.pageYOffset >= (sectionTop - sectionHeight / 3)) {
+          activeSectionId = section.getAttribute('id');
+        }
+      });
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href').includes(activeSectionId)) {
+          link.classList.add('active');
+        }
+      });
+    });
+
+    // 3. Before / After Interactive Slider Calculation Engine
+    const baHandler = document.getElementById('baHandler');
+    const baOverlay = document.getElementById('baOverlay');
+    const baSliderWrapper = document.querySelector('.ba-slider-wrapper');
+    const baTargetImg = document.getElementById('baTargetImg');
+    
+    function synchronizeSliderWidth() {
+      baTargetImg.style.width = baSliderWrapper.offsetWidth + 'px';
+    }
+    window.addEventListener('resize', synchronizeSliderWidth);
+    setTimeout(synchronizeSliderWidth, 200); // Trigger initial delay rendering calculation
+
+    baHandler.addEventListener('input', (event) => {
+      baOverlay.style.width = event.target.value + '%';
+    });
+
+    // 4. Lightbox Click-to-Zoom Modal System
+    const modalWindow = document.getElementById('lightboxModal');
+    const modalImage = document.getElementById('lightboxTargetImg');
+    const closeTrigger = document.getElementById('lightboxClose');
+    const clickTriggers = document.querySelectorAll('.lightbox-trigger');
+
+    clickTriggers.forEach(img => {
+      img.addEventListener('click', function() {
+        modalWindow.style.display = 'flex';
+        modalImage.src = this.src;
+      });
+    });
+
+    closeTrigger.addEventListener('click', () => { modalWindow.style.display = 'none'; });
+    modalWindow.addEventListener('click', (event) => {
+      if (event.target === modalWindow) modalWindow.style.display = 'none';
+    });
+  </script>
+</body>
+</html>
