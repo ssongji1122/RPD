@@ -94,7 +94,8 @@ window.RPDFinalProjects = {
           "text": "KlingAI 로 제작. 렌더링된 사진을 주고 프롬포트를 작성하여 배경음과 함께 생성"
         }
       ],
-      "workTitle": "RPD ECO"
+      "workTitle": "RPD ECO",
+      "description": "스피커를 사람 모양 로봇으로 바꾸는 아이디어에서 출발한 사이버네틱 캐릭터입니다. 스피커를 개조한 듯한 기계 날개와 전선 같은 양갈래 머리를 AI 이미지로 먼저 실험한 뒤, Blender 모델링과 텍스처 페인팅, 리깅으로 완성했습니다."
     },
     {
       "id": "project-02",
@@ -353,7 +354,9 @@ window.RPDFinalProjects = {
         "assets/final-projects/project-05/frame-03.webp",
         "assets/final-projects/project-05/frame-04.webp",
         "assets/final-projects/project-05/frame-05.webp"
-      ]
+      ],
+      "workTitle": "MOMO",
+      "description": "사용자의 감정에 반응하며 함께 자라는 반려로봇 비서입니다. 귀와 꼬리로 감정을 표현하고 햇살과 나뭇잎을 좋아하는 온순한 성격으로 설정했으며, 데이지 들판 장면은 Kling AI로 영상까지 만들었습니다."
     },
     {
       "id": "project-06",
@@ -602,7 +605,8 @@ window.RPDFinalProjects = {
           "text": "애니메이션을 기반으로 제작한 ai 비디오 mp4파일"
         }
       ],
-      "workTitle": "비비봇 Bibi Bot"
+      "workTitle": "비비봇 Bibi Bot",
+      "description": "벌의 형태와 미래적인 로봇 이미지를 합친 감정 표현형 캐릭터입니다. 더듬이로 사람의 기분을 감지하면 네온 라인과 전기 에너지 효과가 반응하고, 벌이 꿀을 나누듯 사람들이 감정을 나누도록 돕는다는 설정입니다."
     },
     {
       "id": "project-08",
@@ -680,7 +684,9 @@ window.RPDFinalProjects = {
           "section": "발표자료",
           "text": "file:///C:/Users/ty656/Downloads/index_4.html"
         }
-      ]
+      ],
+      "workTitle": "설록 Seorok",
+      "description": "산속 동물들이 겨울잠에 드는 계절에 깨어나 숲을 가꾸는 겨울 산 생태계 관리 로봇입니다. 등의 작은 날개로 눈밭 위를 떠다녀 발자국을 남기지 않는다는 설정으로, 눈 덮인 숲 장면에서 렌더했습니다."
     },
     {
       "id": "project-09",
@@ -828,7 +834,8 @@ window.RPDFinalProjects = {
           "text": "final video"
         }
       ],
-      "workTitle": "PANDI — 판디"
+      "workTitle": "PANDI — 판디",
+      "description": "연구실에서 탐사와 엔지니어 작업을 돕는 판다형 메카 로봇입니다. 백팩에 달린 세 손가락 로봇 팔로 도구를 건네주고, 초록 도트 화면 얼굴과 황동색 금속 질감으로 마스코트 같은 인상을 만들었습니다."
     },
     {
       "id": "project-11",
@@ -1113,7 +1120,8 @@ window.RPDFinalProjects = {
           "text": "suno 프롬포트"
         }
       ],
-      "workTitle": "포용 Poyong"
+      "workTitle": "포용 Poyong",
+      "description": "아이와 정서적으로 교감하며 놀이와 스마트 비서 기능을 하는 미래형 AI 반려 로봇입니다. 말랑한 실리콘 소재로 설정하고, 그 질감이 움직일 때도 살아 있도록 골격 구조와 웨이트 페인팅을 다듬었습니다."
     },
     {
       "id": "project-14",
@@ -1362,7 +1370,8 @@ window.RPDFinalProjects = {
           "text": "turnaround 영상"
         }
       ],
-      "workTitle": "MATI-42"
+      "workTitle": "MATI-42",
+      "description": "사람들이 조용히 사라진 세계에서 버려진 물건을 꿰매어 다시 잇는 작은 수선 로봇입니다. 작업대 위에 남은 공구와 바느질하다 만 자국이 있는 세계관을 먼저 세운 뒤 캐릭터와 아카이브 북 형식의 발표를 만들었습니다."
     },
     {
       "id": "project-16",
@@ -1475,7 +1484,8 @@ window.RPDFinalProjects = {
         }
       ],
       "coverSrc": "assets/final-projects/project-16/image-01.webp",
-      "workTitle": "LUMI:BOT"
+      "workTitle": "LUMI:BOT",
+      "description": "디지털 얼굴을 가진 장난감형 미래 로봇 캐릭터입니다. 부드러운 실루엣과 밝은 색감으로 장난감 같은 친근함을 주고, LED 디지털 스크린 얼굴로 로봇의 개성을 표현했습니다."
     },
     {
       "id": "project-17",
@@ -1562,7 +1572,8 @@ window.RPDFinalProjects = {
           "text": "Render Image"
         }
       ],
-      "workTitle": "STIMO WORLD"
+      "workTitle": "STIMO WORLD",
+      "description": "별 패치를 트레이드마크로 단 고양이형 로봇입니다. 중간고사 때 만든 로봇 구조를 이어 쓰면서 지퍼와 날개를 패치 텍스처와 별 모양 파츠로 바꿨고, 광고 연출 컷에는 보색 조명을, 콘셉트 컷에는 단일 조명을 썼습니다."
     },
     {
       "id": "project-18",
@@ -1746,7 +1757,8 @@ window.RPDFinalProjects = {
           "text": "렌더 이미지"
         }
       ],
-      "workTitle": "Kku-ing"
+      "workTitle": "Kku-ing",
+      "description": "기니피그의 둥근 형태와 젤리처럼 말랑하고 반짝이는 이미지를 합친 로봇 캐릭터입니다. 디지털 공간에서도 만질 수 있을 것 같은 물성을 목표로 재질을 연구하고, 리깅과 애니메이션까지 이어 갔습니다."
     },
     {
       "id": "project-19",
@@ -2303,7 +2315,8 @@ window.RPDFinalProjects = {
           "text": "최종 프리젠테이션 페이지 — 발표용 페이지 구성, 디자인/레이아웃, 공개 URL 또는 배포 방식\n-웹페이지 제작 프롬포트 첨부 (내가 지금 쓰고있는거)\n-웹페이지 레퍼런스 링크 첨부:"
         }
       ],
-      "workTitle": "뚜니 DDONI"
+      "workTitle": "뚜니 DDONI",
+      "description": "사람들의 심신 안정을 돕는 반려 말랑이 로봇입니다. 파란 실리콘 몸체와 분홍 배에 SSS를 써 젤리 같은 질감을 냈고, Rigify 리깅과 키프레임으로 「꿍싯꿍싯 챌린지」 춤 동작을 만들었습니다."
     },
     {
       "id": "project-23",
@@ -2471,7 +2484,8 @@ window.RPDFinalProjects = {
         }
       ],
       "frames": [],
-      "workTitle": "묘한"
+      "workTitle": "묘한",
+      "description": "고양이 묘(猫)와 한국의 한(韓)을 합친 이름처럼, 조선의 도포와 갓을 입은 고양이 안드로이드입니다. Blender와 Rodin AI, Kling으로 작업해 감나무가 있는 한옥 마당에서 춤추는 장면을 만들었습니다."
     },
     {
       "id": "project-24",
