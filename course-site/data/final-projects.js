@@ -175,6 +175,11 @@ window.RPDFinalProjects = {
           "label": "Behance 1",
           "url": "https://www.behance.net/gallery/251170535/Tesla_x",
           "kind": "Behance"
+        },
+        {
+          "label": "발표 자료",
+          "url": "assets/final-projects/project-02/presentation.pdf",
+          "kind": "Presentation"
         }
       ],
       "coverSrc": "assets/final-projects/project-02/video-01.webp",
@@ -185,7 +190,8 @@ window.RPDFinalProjects = {
         "assets/final-projects/project-02/frame-04.webp",
         "assets/final-projects/project-02/frame-05.webp"
       ],
-      "workTitle": "Tesla x"
+      "workTitle": "Tesla x",
+      "description": "화성 정착 시대의 이동 수단을 주제로, 거친 지형과 낮은 중력에서 달릴 수 있는 탐사 차량을 디자인했습니다. Tesla 사이버 시리즈에 내려 끼우는 모듈형 파워팩에 궤도 바퀴와 가변 서스펜션을 달아, 화성에 내린 정착민이 바로 쓸 수 있도록 구상했습니다."
     },
     {
       "id": "project-03",
@@ -265,6 +271,11 @@ window.RPDFinalProjects = {
           "label": "Website 1",
           "url": "http://shingeonu.netlify.app/",
           "kind": "Website"
+        },
+        {
+          "label": "발표 자료",
+          "url": "assets/final-projects/project-03/presentation.pdf",
+          "kind": "Presentation"
         }
       ],
       "coverSrc": "assets/final-projects/project-03/frame-04.webp",
@@ -275,7 +286,8 @@ window.RPDFinalProjects = {
         "assets/final-projects/project-03/frame-04.webp",
         "assets/final-projects/project-03/frame-05.webp"
       ],
-      "workTitle": "HOPE"
+      "workTitle": "HOPE",
+      "description": "인간이 사라진 2087년의 세상에서 깨어난 가사 로봇입니다. 처음에는 파스텔 톤의 귀여운 가사 로봇으로 모델링했다가, 콘셉트를 바꾸며 녹슨 텍스처와 낮은 채도로 아포칼립스 분위기를 냈습니다. 관절마다 아마추어를 두어 움직임을 만들고, 얼굴 화면에 지직거리는 노이즈를 더했습니다."
     },
     {
       "id": "project-04",
@@ -310,7 +322,8 @@ window.RPDFinalProjects = {
         "assets/final-projects/project-04/frame-04.webp",
         "assets/final-projects/project-04/frame-05.webp"
       ],
-      "workTitle": "NERA"
+      "workTitle": "NERA",
+      "description": "도시를 지키기 위해 만들어진 전투 안드로이드 「네라」입니다. 플래티넘 블론드 단발과 청색 광학안, 양팔 일체형 에너지 캐논을 갖춘 슬림한 휴머노이드로 설정했고, 3D 모델링부터 UV · 텍스처, 리깅 · 애니메이션, AI 영상까지 이어서 만들었습니다."
     },
     {
       "id": "project-05",
@@ -447,6 +460,11 @@ window.RPDFinalProjects = {
           "url": "https://canva.link/t98vdzg894eidmv",
           "kind": "Presentation",
           "embedUrl": "https://www.canva.com/design/DAHMsJz81nQ/Js1kq7aOY6IXHUIho7f35w/view?embed"
+        },
+        {
+          "label": "발표 자료",
+          "url": "assets/final-projects/project-06/presentation.pdf",
+          "kind": "Presentation"
         }
       ],
       "coverSrc": "assets/final-projects/project-06/frame-01.webp",
@@ -463,7 +481,8 @@ window.RPDFinalProjects = {
           "text": "다른 버전의 AI 프로모션 영상"
         }
       ],
-      "workTitle": "삐타 PITA"
+      "workTitle": "삐타 PITA",
+      "description": "베타 물고기에서 영감을 받아, 사이버펑크 도시의 밤하늘을 부드럽게 유영하는 공중 탐사 로봇 「삐타」입니다. AI로 만든 모델을 Blender에서 다듬은 뒤 텍스처 페인팅으로 디테일을 살렸고, 지오메트리 노드로 몸에서 멀어질수록 물결이 커지는 지느러미 움직임을 만들었습니다."
     },
     {
       "id": "project-07",
@@ -722,7 +741,8 @@ window.RPDFinalProjects = {
         "assets/final-projects/project-09/frame-04.webp",
         "assets/final-projects/project-09/frame-05.webp"
       ],
-      "workTitle": "AQUA GUARDIAN"
+      "workTitle": "AQUA GUARDIAN",
+      "description": "물의 푸른 색감과 빛에서 영감을 받은 미래형 수호 로봇입니다. 흰 몸체에 하늘색의 긴 귀와 장식을 달아, 물 위에 선 장면으로 완성했습니다."
     },
     {
       "id": "project-10",
@@ -905,7 +925,13 @@ window.RPDFinalProjects = {
           "poster": "assets/final-projects/project-11/video-02.webp"
         }
       ],
-      "links": [],
+      "links": [
+        {
+          "label": "발표 자료",
+          "url": "assets/final-projects/project-11/presentation.pdf",
+          "kind": "Presentation"
+        }
+      ],
       "coverSrc": "assets/final-projects/project-11/video-01.webp",
       "frames": [
         "assets/final-projects/project-11/frame-01.webp",
@@ -913,7 +939,9 @@ window.RPDFinalProjects = {
         "assets/final-projects/project-11/frame-03.webp",
         "assets/final-projects/project-11/frame-04.webp",
         "assets/final-projects/project-11/frame-05.webp"
-      ]
+      ],
+      "description": "Audi 로고를 단 콘셉트카 「AUDI PHYTOSPHERE」입니다. 여러 장의 차량 스케치로 아이디어를 넓힌 뒤 AI 렌더링으로 형태를 정하고, 각진 면을 다듬어 앞 · 뒤 · 옆 · 위 모습까지 모델링했습니다.",
+      "workTitle": "AUDI PHYTOSPHERE"
     },
     {
       "id": "project-12",
@@ -949,7 +977,8 @@ window.RPDFinalProjects = {
         "assets/final-projects/project-12/frame-04.webp",
         "assets/final-projects/project-12/frame-05.webp"
       ],
-      "workTitle": "OTTO"
+      "workTitle": "OTTO",
+      "description": "옥토끼를 모티브로, 빛을 잃은 달에 달빛을 되돌리는 달빛 탐사 로봇 「OTTO」입니다. 옥과 진주, 한지의 질감을 재질로 옮겨 전통 달토끼 설화를 미래적인 형태로 풀었고, 빛을 향해 걷고 손을 뻗고 고개를 돌리는 장면을 애니메이션으로 만들었습니다."
     },
     {
       "id": "project-13",
@@ -1251,6 +1280,11 @@ window.RPDFinalProjects = {
           "label": "Reference 1",
           "url": "https://21st.dev/community/components/s/background",
           "kind": "Reference"
+        },
+        {
+          "label": "발표 자료",
+          "url": "assets/final-projects/project-14/presentation.pdf",
+          "kind": "Presentation"
         }
       ],
       "coverSrc": "assets/final-projects/project-14/video-04.webp",
@@ -1288,7 +1322,8 @@ window.RPDFinalProjects = {
           "text": "로컬 이미지까지 한 번에 패킹 후 netlify에서 배포"
         }
       ],
-      "workTitle": "테비 Tebi"
+      "workTitle": "테비 Tebi",
+      "description": "옛날 텔레비전의 따뜻한 디자인을 빌려 온, 책상 위에서 마음을 달래 주는 피젯 토이 반려 로봇입니다. 배에 달린 레트로 키보드와 다이얼을 만지면 화면에 픽셀 아트 표정이 뜨도록 설정했고, 드라마 「기묘한 이야기」의 아날로그 소품에서 방향을 잡았습니다."
     },
     {
       "id": "project-15",
@@ -1555,6 +1590,11 @@ window.RPDFinalProjects = {
           "label": "Website 1",
           "url": "https://lighthearted-frangollo-77c27d.netlify.app/",
           "kind": "Website"
+        },
+        {
+          "label": "발표 자료",
+          "url": "assets/final-projects/project-17/presentation.pdf",
+          "kind": "Presentation"
         }
       ],
       "coverSrc": "assets/final-projects/project-17/image-01.webp",
@@ -1728,6 +1768,11 @@ window.RPDFinalProjects = {
           "label": "Website 1",
           "url": "assets/final-projects/project-18/kkuing_portfolio_scroll_fixed.html",
           "kind": "Website"
+        },
+        {
+          "label": "발표 자료",
+          "url": "assets/final-projects/project-18/presentation.pdf",
+          "kind": "Presentation"
         }
       ],
       "coverSrc": "assets/final-projects/project-18/image-01.webp",
@@ -1843,7 +1888,13 @@ window.RPDFinalProjects = {
           "poster": "assets/final-projects/project-19/video-02.webp"
         }
       ],
-      "links": [],
+      "links": [
+        {
+          "label": "발표 자료",
+          "url": "assets/final-projects/project-19/presentation.pdf",
+          "kind": "Presentation"
+        }
+      ],
       "coverSrc": "assets/final-projects/project-19/video-01.webp",
       "frames": [
         "assets/final-projects/project-19/frame-01.webp",
@@ -1852,7 +1903,8 @@ window.RPDFinalProjects = {
         "assets/final-projects/project-19/frame-04.webp",
         "assets/final-projects/project-19/frame-05.webp"
       ],
-      "workTitle": "보물이"
+      "workTitle": "보물이",
+      "description": "삼성화재 「보험 선물하기」 서비스를 대표할 캐릭터로 기획한 수호천사 「보물이」입니다. 선물 상자를 깨고 나온 아기 천사라는 이야기를 붙였고, 흰색 안에서 레이스 · 실크 · 퍼 같은 재질을 나눠 쓰며 의상 주름과 손목 · 발목 스트랩까지 모델링했습니다."
     },
     {
       "id": "project-20",
@@ -1962,7 +2014,13 @@ window.RPDFinalProjects = {
           "poster": "assets/final-projects/project-20/video-02.webp"
         }
       ],
-      "links": [],
+      "links": [
+        {
+          "label": "발표 자료",
+          "url": "assets/final-projects/project-20/presentation.pdf",
+          "kind": "Presentation"
+        }
+      ],
       "coverSrc": "assets/final-projects/project-20/image-01.webp",
       "notes": [
         {
@@ -1984,7 +2042,8 @@ window.RPDFinalProjects = {
         "assets/final-projects/project-20/frame-03.webp",
         "assets/final-projects/project-20/frame-04.webp",
         "assets/final-projects/project-20/frame-05.webp"
-      ]
+      ],
+      "description": "AI 이미지 도구가 만든 단순한 노란 로봇에서 출발해, 쓸모를 하나씩 붙여 나간 작품입니다. 1990~2000년대 초반의 위험한 장난감을 떠올리며 망치를 무기로 바꾸고, 무기를 갈아 끼워 커스터마이징할 수 있게 만들었습니다."
     },
     {
       "id": "project-21",
@@ -2104,10 +2163,17 @@ window.RPDFinalProjects = {
           "poster": "assets/final-projects/project-21/video-03.webp"
         }
       ],
-      "links": [],
+      "links": [
+        {
+          "label": "발표 자료",
+          "url": "assets/final-projects/project-21/presentation.pdf",
+          "kind": "Presentation"
+        }
+      ],
       "coverSrc": "assets/final-projects/project-21/video-01.webp",
       "frames": [],
-      "workTitle": "ME-O"
+      "workTitle": "ME-O",
+      "description": "게임 속 가상 환경에서 살며 환경을 관리하는 NPC 고양이형 로봇입니다. 2000년대 「프루티거 에어로」 스타일을 따라 유리 · 플라스틱 · 금속 · 스크린 재질로 광택을 냈고, 대기 · 인사 · 음악 듣기 · 잠자기 네 가지 동작을 이어지는 루프 애니메이션으로 만들었습니다."
     },
     {
       "id": "project-22",
@@ -2465,6 +2531,11 @@ window.RPDFinalProjects = {
         {
           "label": "Presentation 1",
           "url": "https://docs.google.com/presentation/d/1usCytyhA4J2npyg-wIWuTAmlaapNyWu6_4LO9iqMhxo/edit?usp=sharing",
+          "kind": "Presentation"
+        },
+        {
+          "label": "발표 자료",
+          "url": "assets/final-projects/project-23/presentation.pdf",
           "kind": "Presentation"
         }
       ],
