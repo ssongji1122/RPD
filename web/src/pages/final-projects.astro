@@ -108,7 +108,11 @@ const primaryLabel = (l: FPLink) => (kindOf(l) === '발표 자료' ? '발표 자
             <div class="fp-cell fp-copy is-span-2">
               <p class="fp-kicker meta">{p.code}</p>
               <h2 class="fp-title">{displayTitle(p)}</h2>
-              {intro.oneLiner && <p class="fp-oneliner">{intro.oneLiner}</p>}
+              {p.description ? (
+                <p class="fp-desc">{p.description}</p>
+              ) : (
+                intro.oneLiner && <p class="fp-oneliner">{intro.oneLiner}</p>
+              )}
               {intro.keywords.length > 0 && (
                 <p class="fp-keywords meta">{intro.keywords.join(' ')}</p>
               )}
@@ -320,6 +324,8 @@ const primaryLabel = (l: FPLink) => (kindOf(l) === '발표 자료' ? '발표 자
     border-bottom: var(--border);
     background: var(--c-bg-2);
   }
+  .fp-desc { margin: 0; font-size: var(--fs-sm); color: var(--c-ink-2); line-height: 1.75; word-break: keep-all; max-width: 60ch; }
+  .fp-projects:not(.is-detail-view) .fp-desc { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .fp-oneliner { margin: 0; font-size: var(--fs-md); color: var(--c-ink); line-height: 1.5; word-break: keep-all; }
   .fp-keywords { margin: 0; color: var(--c-accent-text); }
   .fp-section-label span {

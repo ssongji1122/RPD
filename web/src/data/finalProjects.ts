@@ -44,6 +44,8 @@ export interface FPProject {
   coverSrc?: string;
   /** 학생 발표 사이트·Behance에서 수집한 작품명 (없으면 익명 코드 유지) */
   workTitle?: string;
+  /** 작품 설명 2~3문장. 학생 웹페이지 · 발표 자료에 적힌 내용만 근거로 쓴다. */
+  description?: string;
   /** 학생이 노션 제출 페이지에 남긴 제작 노트 (원문) */
   notes?: FPNote[];
 }
