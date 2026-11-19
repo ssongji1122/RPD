@@ -40,7 +40,7 @@ status: active
 | sub-16.pdf | project-03 HOPE | |
 | sub-19.pdf | project-11 | 차량, 작품명 없음 |
 
-- sub-03.pdf는 끊긴 원본으로 만든 빈 파일이라 쓰지 않는다. 원본 재다운로드 중(`subs/sub-03/00.pdf`, `subs/sub-20/00.pptx`).
+- `pdfout/sub-03.pdf`는 끊긴 원본으로 만든 빈 파일이라 쓰지 않는다. 원본은 다시 받아 두었다(`subs/sub-03/00.pdf` 203MB, `subs/sub-20/00.pptx` 62MB, 둘 다 온전함). `redact_pdf.py ... sub-03 sub-20`으로 변환하면 된다(sub-20은 PPTX라 먼저 PDF로 바뀐다).
 - 변환 도구: `redact_pdf.py`(쪽을 긴 변 1600px 이미지로 다시 그리고, 글자 층 검색 + macOS Vision OCR(`ocr`)로 찾은 실명 · 학번 · 이메일 자리를 칠함), `verify_pdf.py`(결과를 다시 OCR로 읽어 남은 항목 확인). 실행은 `scratchpad/venv/bin/python`. 위 9개 모두 남은 항목 0건.
 - PPTX가 LibreOffice에서 안 열리면 Keynote AppleScript로 PDF로 바꾼다(sub-11 사례).
 - 학생 실명 · 학번 대응표는 `redact_pdf.py`의 `PEOPLE`에만 있다. 저장소 · 커밋 · PR에 실명을 쓰지 않는다.
