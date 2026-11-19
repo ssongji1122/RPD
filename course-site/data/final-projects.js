@@ -1950,13 +1950,7 @@ window.RPDFinalProjects = {
           "poster": "assets/final-projects/project-20/video-02.webp"
         }
       ],
-      "links": [
-        {
-          "label": "발표 웹페이지",
-          "url": "assets/final-projects/project-20/presentation.html",
-          "kind": "Website"
-        }
-      ],
+      "links": [],
       "coverSrc": "assets/final-projects/project-20/image-01.webp",
       "notes": [
         {
@@ -2450,6 +2444,11 @@ window.RPDFinalProjects = {
         }
       ],
       "links": [
+        {
+          "label": "발표 웹페이지",
+          "url": "assets/final-projects/project-23/presentation.html",
+          "kind": "Website"
+        },
         {
           "label": "Presentation 1",
           "url": "https://docs.google.com/presentation/d/1usCytyhA4J2npyg-wIWuTAmlaapNyWu6_4LO9iqMhxo/edit?usp=sharing",
