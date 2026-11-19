@@ -339,7 +339,13 @@ window.RPDFinalProjects = {
           "poster": "assets/final-projects/project-05/video-02.webp"
         }
       ],
-      "links": [],
+      "links": [
+        {
+          "label": "발표 웹페이지",
+          "url": "assets/final-projects/project-05/presentation.html",
+          "kind": "Website"
+        }
+      ],
       "coverSrc": "assets/final-projects/project-05/video-01.webp",
       "frames": [
         "assets/final-projects/project-05/frame-01.webp",
@@ -554,7 +560,13 @@ window.RPDFinalProjects = {
           "poster": "assets/final-projects/project-07/video-03.webp"
         }
       ],
-      "links": [],
+      "links": [
+        {
+          "label": "발표 웹페이지",
+          "url": "assets/final-projects/project-07/presentation.html",
+          "kind": "Website"
+        }
+      ],
       "coverSrc": "assets/final-projects/project-07/image-02.webp",
       "notes": [
         {
@@ -655,7 +667,13 @@ window.RPDFinalProjects = {
           "poster": "assets/final-projects/project-08/video-02.webp"
         }
       ],
-      "links": [],
+      "links": [
+        {
+          "label": "발표 웹페이지",
+          "url": "assets/final-projects/project-08/presentation.html",
+          "kind": "Website"
+        }
+      ],
       "coverSrc": "assets/final-projects/project-08/image-02.webp",
       "notes": [
         {
@@ -1932,7 +1950,13 @@ window.RPDFinalProjects = {
           "poster": "assets/final-projects/project-20/video-02.webp"
         }
       ],
-      "links": [],
+      "links": [
+        {
+          "label": "발표 웹페이지",
+          "url": "assets/final-projects/project-20/presentation.html",
+          "kind": "Website"
+        }
+      ],
       "coverSrc": "assets/final-projects/project-20/image-01.webp",
       "notes": [
         {
