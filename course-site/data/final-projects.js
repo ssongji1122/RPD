@@ -176,7 +176,7 @@ window.RPDFinalProjects = {
           "label": "Behance 1",
           "url": "https://www.behance.net/gallery/251170535/Tesla_x",
           "kind": "Behance",
-          "note": "학생이 Behance에 올린 작품 페이지입니다"
+          "note": "학생이 Behance에 올린 작품 보드 — 화성 정착 배경 조사, 스케치, 렌더링 장면을 한 페이지에 이어 정리했습니다"
         },
         {
           "label": "발표 자료",
@@ -1385,7 +1385,7 @@ window.RPDFinalProjects = {
           "label": "Behance 1",
           "url": "https://www.behance.net/gallery/250915905/MATI-42ARCHIVE",
           "kind": "Behance",
-          "note": "학생이 Behance에 올린 아카이브 작품 페이지입니다"
+          "note": "학생이 Behance에 올린 아카이브 작품 보드 — 캐릭터 설정, 콘셉트 아트와 실루엣, 3D 턴어라운드, 렌더 장면"
         }
       ],
       "coverSrc": "assets/final-projects/project-15/video-01.webp",
