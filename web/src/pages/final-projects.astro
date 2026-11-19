@@ -3,8 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import FinalFilmstrip from '../components/FinalFilmstrip.astro';
 import { finalProjects, finalProjectsMeta } from '../data/finalProjects';
 import type { FPLink, FPMedia, FPProject } from '../data/finalProjects';
-import { FP_DISPLAY } from '../data/fpCuration';
-import { canvaViewUrl, curationKey, displayTitle, isExcluded, isPublicNote, projectCounts, publicLinkUrl } from '../data/fpDisplay';
+import { displayTitle, isExcluded, isPublicNote, projectCounts, publicLinkUrl } from '../data/fpDisplay';
 
 const { stats } = finalProjectsMeta;
 
@@ -30,62 +29,6 @@ const linkHref = (l: FPLink) => {
   const u = publicLinkUrl(l);
   return u.startsWith('assets/') ? `${SITE_BASE}/${u}` : u;
 };
-// iframe 이 차단되는 호스트(Notion, Mixboard 등)는 일반 링크로 남긴다.
-const EMBED_BLOCKED = /notion\.(so|site)|mixboard\.google\.com|canva\.link|21st\.dev|godly\.website/;
-
-interface EmbedInfo {
-  src: string;
-  openUrl: string;
-  provider: string;
-  label: string;
-  /** 페이지 안에 iframe 으로 띄울지. 이 사이트에 올린 자산만 true. */
-  inline: boolean;
-}
-
-// 발표 자료·웹 작품의 열기 주소를 계산한다.
-// 학생 외부 사이트·Canva·Slides·Behance 는 표지와 본문에 학번·실명·이메일이 있는
-// 경우가 있고 내용을 이쪽에서 통제할 수 없으므로 iframe 으로 띄우지 않고 링크로만
-// 연결한다(2026-11-13). 이 사이트에 올려 개인정보를 확인한 자산만 페이지 안에 띄운다.
-function embedFor(l: FPLink): EmbedInfo | null {
-  const url = (l.url ?? '').trim();
-  const label = l.label || kindOf(l);
-  if (l.embedUrl) return { src: l.embedUrl, openUrl: canvaViewUrl(l) ?? url, provider: 'Canva', label, inline: false };
-  const slides = url.match(/docs\.google\.com\/presentation\/d\/([A-Za-z0-9_-]+)/);
-  if (slides) {
-    return {
-      src: `https://docs.google.com/presentation/d/${slides[1]}/embed?start=false&loop=false&delayms=3000`,
-      openUrl: url,
-      provider: 'Google Slides',
-      label,
-      inline: false,
-    };
-  }
-  const behance = url.match(/behance\.net\/gallery\/(\d+)/i);
-  if (behance) {
-    return {
-      src: `https://www.behance.net/embed/project/${behance[1]}?ilo0=1`,
-      openUrl: url,
-      provider: 'Behance',
-      label,
-      inline: false,
-    };
-  }
-  if (url.startsWith('assets/')) {
-    const local = `${SITE_BASE}/${url}`;
-    return { src: local, openUrl: local, provider: 'Website', label, inline: true };
-  }
-  const kind = kindOf(l);
-  if (
-    (kind === '웹페이지' || kind === '작품 페이지') &&
-    /^https?:\/\//.test(url) &&
-    !EMBED_BLOCKED.test(url)
-  ) {
-    const https = url.replace(/^http:/, 'https:');
-    return { src: https, openUrl: https, provider: 'Website', label, inline: false };
-  }
-  return null;
-}
-
 // course-site final-projects.js 의 bestCover 로직 이식.
 function bestCover(p: FPProject): FPMedia | null {
   if (p.coverSrc) {
@@ -99,27 +42,6 @@ function bestCover(p: FPProject): FPMedia | null {
   return p.media[0] ?? null;
 }
 
-// 완성 결과 미디어 스팬: 영상·전폭 시각물(FP_DISPLAY full)은 전폭(4),
-// 나머지 이미지는 반폭(2)씩 두 장 짝. 반폭이 홀수로 남으면 마지막 장을
-// 전폭으로 승격해 빈 칸을 없앤다.
-// 로더(toPublic)가 src 에 배포 base(/RPD/)를 붙이므로, 큐레이션 키는
-// 데이터 원형(assets/...)으로 되돌려 대조한다.
-const wantsFull = (m: FPMedia) => m.type === 'video' || FP_DISPLAY[curationKey(m.src)] === 'full';
-
-function mediaSpans(list: FPMedia[]): number[] {
-  const spans = list.map((m) => (wantsFull(m) ? 4 : 2));
-  let runStart = -1;
-  for (let i = 0; i <= list.length; i++) {
-    const isHalf = i < list.length && !wantsFull(list[i]);
-    if (isHalf && runStart === -1) runStart = i;
-    if (!isHalf && runStart !== -1) {
-      if ((i - runStart) % 2 === 1) spans[i - 1] = 4;
-      runStart = -1;
-    }
-  }
-  return spans;
-}
-
 function mediaGroups(p: FPProject, cover: FPMedia | null) {
   // 큐레이션 제외(의례 슬라이드·중복·개인정보)를 렌더에서 거른다. 커버는 유지.
   const rest = p.media.filter((m) => m !== cover && !isExcluded(m));
@@ -128,41 +50,6 @@ function mediaGroups(p: FPProject, cover: FPMedia | null) {
     process: rest.filter((m) => m.role === 'process'),
   };
 }
-
-const PRESENTATION = '발표 자료';
-
-// 학생 노트는 노션 제출 페이지의 칸(발표자료·MP4·AI 등) 이름을 줄마다 달고 온다.
-// 줄마다 칸 이름을 반복하면 발표 원고가 낱줄로 흩어져 보이므로, 이어지는 같은 칸을
-// 한 묶음으로 모아 칸 이름은 한 번만 쓰고 원고의 소제목은 소제목으로 보여 준다.
-type NoteLine = { kind: 'heading' | 'item' | 'text'; label?: string; text: string };
-// "[제목]" 또는 "1. 제목"처럼 짧은 줄은 원고의 소제목이다.
-const NOTE_HEADING = /^(\[[^\]]+\]|\d+\.\s+\S.{0,40})$/;
-// "라벨: 설명" 줄은 라벨을 굵게 나눈다. 라벨이 짧을 때만(긴 문장 속 콜론 제외).
-const NOTE_LABELED = /^([^:：]{2,24})[:：]\s*(.+)$/s;
-
-function noteLine(text: string): NoteLine {
-  const t = text.trim();
-  if (NOTE_HEADING.test(t)) return { kind: 'heading', text: t.replace(/^\[|\]$/g, '') };
-  const m = t.match(NOTE_LABELED);
-  if (m && !/https?$/i.test(m[1])) return { kind: 'item', label: m[1].trim(), text: m[2].trim() };
-  return { kind: 'text', text: t };
-}
-
-function noteGroups(notes: { section: string | null; text: string }[]) {
-  const groups: { section: string | null; lines: NoteLine[] }[] = [];
-  for (const n of notes) {
-    const last = groups[groups.length - 1];
-    if (last && last.section === n.section) last.lines.push(noteLine(n.text));
-    else groups.push({ section: n.section, lines: [noteLine(n.text)] });
-  }
-  return groups;
-}
-
-const SECTIONS = [
-  { key: 'intro', label: '기본 소개' },
-  { key: 'process', label: '진행 과정' },
-  { key: 'final', label: '최종 발표' },
-] as const;
 
 // 학생 노트에서 기본 소개에 쓸 한 줄 소개와 콘셉트 키워드를 찾는다. 학생이 적은 문구만
 // 쓰고, 없으면 비워 둔다(지어내지 않는다).
@@ -175,7 +62,11 @@ function introOf(notes: { text: string }[]) {
   return { oneLiner: one, keywords: kw };
 }
 
-const openLabel = (e: EmbedInfo) => (e.provider === 'Website' ? '웹사이트 바로 가기 →' : '발표 자료 바로 가기 →');
+// 학생 웹페이지 · 발표 자료 링크는 맨 위 버튼으로 올린다. 무드보드 · 레퍼런스는 작은 링크로 둔다.
+const PRIMARY_KINDS = new Set(['웹페이지', '작품 페이지', '발표 자료', 'Behance']);
+const isPrimaryLink = (l: FPLink) => PRIMARY_KINDS.has(kindOf(l));
+const primaryHref = linkHref;
+const primaryLabel = (l: FPLink) => (kindOf(l) === '발표 자료' ? '발표 자료 바로 가기' : '웹사이트 바로 가기');
 ---
 
 <Layout title="기말 작품 — rpd" description="RPD 기말 프로젝트 작품 아카이브">
@@ -205,41 +96,15 @@ const openLabel = (e: EmbedInfo) => (e.provider === 'Website' ? '웹사이트 �
       const cover = bestCover(p);
       const groups = mediaGroups(p, cover);
       const counts = projectCounts(p);
-      const presentations = p.links.filter((l) => kindOf(l) === PRESENTATION);
-      const otherLinks = p.links.filter((l) => kindOf(l) !== PRESENTATION);
-      const embeds = p.links.flatMap((l) => {
-        const e = embedFor(l);
-        return e ? [e] : [];
-      });
       const notes = (p.notes ?? []).filter(isPublicNote);
       const intro = introOf(notes);
-      // 상세는 기본 소개 → 진행 과정 → 최종 발표 세 구역으로 나누고,
-      // 자료가 있는 구역만 이어 붙여 번호와 바로 가기를 만든다(탭처럼 숨기지 않는다).
-      const sections = SECTIONS.filter((s) =>
-        s.key === 'intro'
-          ? true
-          : s.key === 'process'
-            ? groups.process.length > 0 || notes.length > 0
-            : groups.outcome.length > 0 || embeds.length > 0
-      );
-      const secNo = (key: string) => String(sections.findIndex((s) => s.key === key) + 1).padStart(2, '0');
-      const has = (key: string) => sections.some((s) => s.key === key);
-      const secId = (key: string) => `${p.id}-${key}`;
+      // 작품 내용은 학생 웹페이지 · 발표 자료에 다 있으므로, 이 페이지는 소개와 이미지만 두고
+      // 학생 사이트로 바로 가는 버튼을 맨 위에 둔다.
+      const primary = p.links.filter(isPrimaryLink);
+      const secondary = p.links.filter((l) => !isPrimaryLink(l));
       return (
         <article class="fp-project" id={p.id}>
           <div class="fp-grid">
-            {sections.length > 1 && (
-              <nav class="fp-jump is-span-4" aria-label={`${p.code} 구역 바로 가기`}>
-                {sections.map((s) => (
-                  <button type="button" class="fp-jump-btn" data-target={secId(s.key)}>
-                    <span class="meta">{secNo(s.key)}</span>{s.label}
-                  </button>
-                ))}
-              </nav>
-            )}
-            <div class="fp-section-label is-span-4" id={secId('intro')}>
-              <span>{secNo('intro')} — 기본 소개</span>
-            </div>
             <div class="fp-cell fp-copy is-span-2">
               <p class="fp-kicker meta">{p.code}</p>
               <h2 class="fp-title">{displayTitle(p)}</h2>
@@ -250,16 +115,18 @@ const openLabel = (e: EmbedInfo) => (e.provider === 'Website' ? '웹사이트 �
               <p class="fp-counts meta">
                 이미지 {counts.images}장 · 영상 {counts.videos}개 · 과정 {counts.process}개
               </p>
-              {presentations.length > 0 && (
-                <ul class="fp-links">
-                  {presentations.map((l) => (
-                    <li><a href={linkHref(l)} target="_blank" rel="noopener" class="fp-pres-link">{l.label} →</a></li>
+              {primary.length > 0 && (
+                <div class="fp-cta">
+                  {primary.map((l, i) => (
+                    <a class="fp-cta-btn" href={primaryHref(l)}>
+                      {primaryLabel(l)}{primary.length > 1 ? ` ${i + 1}` : ''} →
+                    </a>
                   ))}
-                </ul>
+                </div>
               )}
-              {otherLinks.length > 0 && (
+              {secondary.length > 0 && (
                 <ul class="fp-links">
-                  {otherLinks.map((l) => (
+                  {secondary.map((l) => (
                     <li>
                       <a href={linkHref(l)} target="_blank" rel="noopener">
                         <span class="fp-link-tag meta">{kindOf(l)}</span>{l.label}
@@ -276,93 +143,51 @@ const openLabel = (e: EmbedInfo) => (e.provider === 'Website' ? '웹사이트 �
                   <source src={cover.videoSrc} type="video/mp4" />
                 </video>
               ) : cover ? (
-                <img src={cover.src} alt={`${p.code} 대표 이미지`} loading="lazy" />
+                <img src={cover.src} alt={cover.caption ?? `${p.code} 대표 이미지`} loading="lazy" />
               ) : (
                 <span class="fp-empty">—</span>
               )}
-              {cover?.caption && <p class="fp-caption">{cover.caption}</p>}
             </div>
 
-            {has('process') && (
-              <div class="fp-section-label is-span-4" id={secId('process')}>
-                <span>{secNo('process')} — 진행 과정</span>
-              </div>
-            )}
-            {notes.length > 0 && (
-              <div class="fp-cell fp-notes is-span-4">
-                <p class="fp-notes-head meta">학생 제작 노트 — 노션 제출 페이지 원문</p>
-                {noteGroups(notes).map((g) => (
-                  <div class="fp-note-group">
-                    {g.section && <p class="fp-note-tag meta">{g.section}</p>}
-                    <div class="fp-note-body">
-                      {g.lines.map((l) =>
-                        l.kind === 'heading' ? (
-                          <p class="fp-note-heading">{l.text}</p>
-                        ) : l.kind === 'item' ? (
-                          <p class="fp-note-text"><strong>{l.label}</strong> {l.text}</p>
-                        ) : (
-                          <p class="fp-note-text">{l.text}</p>
-                        )
-                      )}
-                    </div>
+            {[
+              { key: 'process', label: '진행 과정', list: groups.process },
+              { key: 'outcome', label: '완성 결과', list: groups.outcome },
+            ]
+              .filter((g) => g.list.length > 0)
+              .map((g) => (
+                <>
+                  <div class="fp-section-label is-span-4">
+                    <span>{g.label}</span>
                   </div>
-                ))}
-              </div>
-            )}
-            {groups.process.map((m, i) => (
-              <div class:list={['fp-cell', 'fp-media', 'is-process', `is-span-${mediaSpans(groups.process)[i]}`]}>
-                {m.type === 'video' && m.videoSrc ? (
-                  <video controls playsinline preload="none" poster={m.src}>
-                    <source src={m.videoSrc} type="video/mp4" />
-                  </video>
-                ) : (
-                  <img src={m.src} alt={m.caption ?? `${p.code} 과정 ${i + 1}`} loading="lazy" />
-                )}
-                {m.caption && <p class="fp-caption">{m.caption}</p>}
-              </div>
-            ))}
+                  <div class:list={['fp-cell', 'fp-gallery', 'is-span-4', `is-${g.key}`]}>
+                    {g.list.map((m, i) => (
+                      <figure class:list={[{ 'is-wide': m.type === 'video' }]}>
+                        {m.type === 'video' && m.videoSrc ? (
+                          <video controls playsinline preload="none" poster={m.src}>
+                            <source src={m.videoSrc} type="video/mp4" />
+                          </video>
+                        ) : (
+                          <img src={m.src} alt={m.caption ?? `${p.code} ${g.label} ${i + 1}`} loading="lazy" />
+                        )}
+                        {m.caption && <figcaption class="fp-caption">{m.caption}</figcaption>}
+                      </figure>
+                    ))}
+                  </div>
+                </>
+              ))}
 
-            {has('final') && (
-              <div class="fp-section-label is-span-4" id={secId('final')}>
-                <span>{secNo('final')} — 최종 발표</span>
-              </div>
-            )}
-            {groups.outcome.map((m, i) => (
-              <div class:list={['fp-cell', 'fp-media', `is-span-${mediaSpans(groups.outcome)[i]}`]}>
-                {m.type === 'video' && m.videoSrc ? (
-                  <video controls playsinline preload="none" poster={m.src}>
-                    <source src={m.videoSrc} type="video/mp4" />
-                  </video>
-                ) : (
-                  <img src={m.src} alt={m.caption ?? `${p.code} 장면 ${i + 1}`} loading="lazy" />
-                )}
-                {m.caption && <p class="fp-caption">{m.caption}</p>}
-              </div>
-            ))}
-
-            {embeds.length > 0 && groups.outcome.length > 0 && (
-              <p class="fp-sub-label is-span-4 meta">발표 자료 · 웹</p>
-            )}
-            {embeds.map((e) => (
-              <div class:list={['fp-cell', 'fp-embed', 'is-span-4', { 'is-link-only': !e.inline }]}>
-                <div class="fp-embed-head">
-                  <span class="meta">{e.provider}</span>
-                  {!e.inline && <span class="fp-embed-label">{e.label}</span>}
-                  <a href={e.openUrl}>{openLabel(e)}</a>
+            {primary.length > 0 && (groups.process.length > 0 || groups.outcome.length > 0) && (
+              <div class="fp-cell fp-cta-foot is-span-4">
+                <p class="meta">작품 설명과 제작 과정은 학생 웹페이지에 정리돼 있습니다.</p>
+                <div class="fp-cta">
+                  {primary.map((l, i) => (
+                    <a class="fp-cta-btn" href={primaryHref(l)}>
+                      {primaryLabel(l)}{primary.length > 1 ? ` ${i + 1}` : ''} →
+                    </a>
+                  ))}
                 </div>
-                {e.inline && (
-                  <iframe
-                    src={e.src}
-                    title={`${p.code} ${e.provider} — ${e.label}`}
-                    loading="lazy"
-                    allow="autoplay; fullscreen"
-                    allowfullscreen
-                    referrerpolicy="no-referrer-when-downgrade"
-                  ></iframe>
-                )}
               </div>
-            ))}
-
+            )}
           </div>
         </article>
       );
@@ -417,13 +242,6 @@ const openLabel = (e: EmbedInfo) => (e.provider === 'Website' ? '웹사이트 �
     window.scrollTo({ top: filmSection?.offsetTop ?? 0, behavior: 'smooth' });
   });
 
-  // 구역 바로 가기: 주소의 해시는 작품 선택에 쓰므로 바꾸지 않고 스크롤만 옮긴다.
-  document.querySelectorAll<HTMLButtonElement>('.fp-jump-btn').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      document.getElementById(btn.dataset.target ?? '')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-  });
-
   window.addEventListener('hashchange', applyView);
   applyView();
 </script>
@@ -474,10 +292,8 @@ const openLabel = (e: EmbedInfo) => (e.provider === 'Website' ? '웹사이트 �
     cursor: pointer;
   }
   .fp-projects:not(.is-detail-view) .fp-cell.fp-media:not(.is-hero),
-  .fp-projects:not(.is-detail-view) .fp-embed,
-  .fp-projects:not(.is-detail-view) .fp-notes,
-  .fp-projects:not(.is-detail-view) .fp-jump,
-  .fp-projects:not(.is-detail-view) .fp-sub-label,
+  .fp-projects:not(.is-detail-view) .fp-gallery,
+  .fp-projects:not(.is-detail-view) .fp-cta-foot,
   .fp-projects:not(.is-detail-view) .fp-section-label {
     display: none;
   }
@@ -504,45 +320,6 @@ const openLabel = (e: EmbedInfo) => (e.provider === 'Website' ? '웹사이트 �
     border-bottom: var(--border);
     background: var(--c-bg-2);
   }
-  .fp-section-label { scroll-margin-top: calc(var(--s-6) + 48px); }
-  .fp-jump {
-    position: sticky;
-    top: 56px;
-    z-index: 2;
-    grid-column: 1 / -1;
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--s-2);
-    padding: var(--s-2) var(--s-4);
-    border-right: var(--border);
-    border-bottom: var(--border);
-    background: var(--c-bg);
-  }
-  .fp-jump-btn {
-    display: inline-flex;
-    align-items: baseline;
-    gap: var(--s-2);
-    padding: var(--s-1) var(--s-3);
-    font-size: var(--fs-sm);
-    color: var(--c-ink-2);
-    background: none;
-    border: var(--border);
-    border-radius: var(--r-pill);
-    cursor: pointer;
-  }
-  .fp-jump-btn:hover { color: var(--c-ink); border-color: var(--c-accent); }
-  .fp-jump-btn .meta { font-family: var(--f-mono); font-size: var(--fs-2xs); color: var(--c-ink-3); }
-  .fp-sub-label {
-    grid-column: 1 / -1;
-    margin: 0;
-    padding: var(--s-2) var(--s-4);
-    border-right: var(--border);
-    border-bottom: var(--border);
-    font-family: var(--f-mono);
-    font-size: var(--fs-2xs);
-    color: var(--c-ink-3);
-    letter-spacing: var(--ls-mono);
-  }
   .fp-oneliner { margin: 0; font-size: var(--fs-md); color: var(--c-ink); line-height: 1.5; word-break: keep-all; }
   .fp-keywords { margin: 0; color: var(--c-accent-text); }
   .fp-section-label span {
@@ -563,15 +340,6 @@ const openLabel = (e: EmbedInfo) => (e.provider === 'Website' ? '웹사이트 �
   .fp-links { display: flex; flex-direction: column; gap: var(--s-2); }
   .fp-links a { display: inline-flex; align-items: baseline; gap: var(--s-2); font-size: var(--fs-sm); color: var(--c-accent-text); }
   .fp-link-tag { font-family: var(--f-mono); font-size: var(--fs-2xs); color: var(--c-ink-3); letter-spacing: var(--ls-mono); }
-  .fp-copy .fp-pres-link {
-    align-self: start;
-    padding: var(--s-1) var(--s-3);
-    border: 1px solid var(--c-accent);
-    border-radius: var(--r-pill);
-    color: var(--c-accent-text);
-  }
-  .fp-copy .fp-pres-link:hover { background: color-mix(in srgb, var(--c-accent) 12%, transparent); opacity: 1; }
-
   .fp-intro {
     max-width: var(--max); /* 880px — 컨테이너 관례 폭. 62ch 는 한글 기준 ~470px 라 너무 좁았다 */
     margin-top: var(--s-3);
@@ -581,94 +349,60 @@ const openLabel = (e: EmbedInfo) => (e.provider === 'Website' ? '웹사이트 �
     word-break: keep-all;
   }
 
-  .fp-notes { padding: var(--s-4); }
-  .fp-notes-head {
-    margin: 0 0 var(--s-3);
-    font-family: var(--f-mono);
-    font-size: var(--fs-2xs);
-    color: var(--c-ink-3);
-    letter-spacing: var(--ls-mono);
-  }
-  .fp-note-group {
-    display: grid;
-    grid-template-columns: 5.5em 1fr;
-    gap: var(--s-3);
-    align-items: baseline;
-  }
-  .fp-note-group + .fp-note-group {
-    margin-top: var(--s-4);
-    padding-top: var(--s-4);
-    border-top: 1px solid var(--c-line);
-  }
-  .fp-note-body { display: grid; gap: var(--s-2); grid-column: 2; }
-  .fp-note-body p { margin: 0; }
-  .fp-note-heading {
-    font-size: var(--fs-md);
-    font-weight: 600;
-    color: var(--c-ink);
-    line-height: 1.5;
-    word-break: keep-all;
-  }
-  .fp-note-heading:not(:first-child) { margin-top: var(--s-3); }
-  .fp-note-text strong { font-weight: 600; color: var(--c-ink); }
-  @media (max-width: 640px) {
-    .fp-note-group { grid-template-columns: 1fr; gap: var(--s-2); }
-    .fp-note-body { grid-column: 1; }
-  }
-  .fp-note-tag {
-    margin: 0;
-    font-family: var(--f-mono);
-    font-size: var(--fs-2xs);
-    color: var(--c-ink-3);
-    letter-spacing: var(--ls-mono);
-  }
-  .fp-note-text {
+  /* 학생 사이트로 가는 버튼: 상세 맨 위와 맨 아래에 같은 모양으로 둔다 */
+  .fp-cta { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+  .fp-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 var(--s-4);
+    border-radius: var(--r-pill);
+    background: var(--c-ink);
+    color: var(--c-bg);
     font-size: var(--fs-sm);
-    color: var(--c-ink-2);
-    line-height: 1.7;
-    word-break: keep-all;
-    white-space: pre-line;
+    font-weight: var(--w-medium);
   }
-
-  .fp-embed { display: grid; grid-template-rows: auto 1fr; }
-  .fp-embed-head {
+  .fp-cta-btn:hover { background: var(--c-accent); color: var(--c-bg); opacity: 1; }
+  .fp-cta-foot {
     display: flex;
-    align-items: baseline;
+    flex-wrap: wrap;
+    align-items: center;
     justify-content: space-between;
     gap: var(--s-3);
-    padding: var(--s-2) var(--s-4);
-    border-bottom: var(--border);
+    padding: var(--s-4);
   }
-  .fp-embed-head .meta {
-    font-family: var(--f-mono);
-    font-size: var(--fs-2xs);
-    color: var(--c-ink-3);
-    letter-spacing: var(--ls-mono);
-    text-transform: uppercase;
+  .fp-cta-foot p { margin: 0; color: var(--c-ink-2); }
+
+  /* 진행 과정 · 완성 결과: 같은 크기 칸에 통째로 보여 주는 격자. 영상만 한 줄 전체를 쓴다 */
+  .fp-gallery {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--s-3);
+    padding: var(--s-4);
   }
-  .fp-embed-head a { font-size: var(--fs-sm); color: var(--c-accent-text); }
-  .fp-embed.is-link-only { grid-template-rows: auto; }
-  .fp-embed.is-link-only .fp-embed-head { border-bottom: 0; padding-block: var(--s-3); }
-  .fp-embed-label { flex: 1; font-size: var(--fs-sm); color: var(--c-ink-2); }
-  .fp-embed iframe {
+  .fp-gallery.is-process { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .fp-gallery figure { margin: 0; min-width: 0; }
+  .fp-gallery figure.is-wide { grid-column: 1 / -1; }
+  .fp-gallery img, .fp-gallery video {
     display: block;
     width: 100%;
-    aspect-ratio: 16 / 10;
-    border: 0;
+    aspect-ratio: 4 / 3;
+    object-fit: contain;
     background: var(--c-bg-2);
   }
-
-  .fp-media { display: block; }
+  .fp-gallery figure.is-wide video { aspect-ratio: 16 / 9; max-height: min(72vh, 720px); }
   .fp-caption {
-    margin: 0;
-    padding: var(--s-2) var(--s-4) var(--s-3);
-    border-top: var(--border);
-    font-size: var(--fs-sm);
+    margin: var(--s-1) 0 0;
+    font-size: var(--fs-2xs);
     color: var(--c-ink-2);
     line-height: 1.6;
     word-break: keep-all;
   }
-  .fp-projects:not(.is-detail-view) .fp-caption { display: none; }
+  @media (max-width: 700px) {
+    .fp-gallery, .fp-gallery.is-process { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  .fp-media { display: block; }
   .fp-media img, .fp-media video {
     width: 100%; height: 100%;
     aspect-ratio: 4 / 3;
@@ -677,23 +411,15 @@ const openLabel = (e: EmbedInfo) => (e.provider === 'Website' ? '웹사이트 �
     background: var(--c-bg-2);
   }
   .fp-media.is-hero img, .fp-media.is-hero video { aspect-ratio: 16 / 10; object-fit: contain; }
-  /* 과정 캡처는 도구 화면·텍스트가 많아 크롭 없이 통째로 보여준다 */
-  .fp-media.is-process img { object-fit: contain; }
-  /* 전폭 미디어(영상·홀수 승격 이미지): 크롭 없이 크게, 화면을 넘지 않게 */
-  .fp-media.is-span-4 img, .fp-media.is-span-4 video {
-    aspect-ratio: 16 / 9;
-    object-fit: contain;
-    max-height: min(72vh, 760px);
-  }
-
-  /* ── 상세 뷰: 헤더·대표 미디어를 전폭으로 키운다 (목록 카드엔 영향 없음) ── */
-  .fp-projects.is-detail-view .fp-cell.fp-copy,
-  .fp-projects.is-detail-view .fp-cell.fp-media.is-hero { grid-column: 1 / -1; }
+  /* ── 상세 뷰: 소개와 대표 이미지를 나란히 두어 버튼이 첫 화면에 보이게 한다 ── */
   .fp-projects.is-detail-view .fp-media.is-hero img,
   .fp-projects.is-detail-view .fp-media.is-hero video {
-    aspect-ratio: 16 / 9;
-    max-height: min(78vh, 820px);
+    aspect-ratio: 4 / 3;
     object-fit: contain;
+  }
+  @media (max-width: 700px) {
+    .fp-projects.is-detail-view .fp-cell.fp-copy,
+    .fp-projects.is-detail-view .fp-cell.fp-media.is-hero { grid-column: 1 / -1; }
   }
 
   @media (max-width: 700px) {
