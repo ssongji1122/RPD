@@ -280,6 +280,7 @@ const openLabel = (e: EmbedInfo) => (e.provider === 'Website' ? '웹사이트 �
               ) : (
                 <span class="fp-empty">—</span>
               )}
+              {cover?.caption && <p class="fp-caption">{cover.caption}</p>}
             </div>
 
             {has('process') && (
@@ -315,8 +316,9 @@ const openLabel = (e: EmbedInfo) => (e.provider === 'Website' ? '웹사이트 �
                     <source src={m.videoSrc} type="video/mp4" />
                   </video>
                 ) : (
-                  <img src={m.src} alt={`${p.code} 과정 ${i + 1}`} loading="lazy" />
+                  <img src={m.src} alt={m.caption ?? `${p.code} 과정 ${i + 1}`} loading="lazy" />
                 )}
+                {m.caption && <p class="fp-caption">{m.caption}</p>}
               </div>
             ))}
 
@@ -332,8 +334,9 @@ const openLabel = (e: EmbedInfo) => (e.provider === 'Website' ? '웹사이트 �
                     <source src={m.videoSrc} type="video/mp4" />
                   </video>
                 ) : (
-                  <img src={m.src} alt={`${p.code} 장면 ${i + 1}`} loading="lazy" />
+                  <img src={m.src} alt={m.caption ?? `${p.code} 장면 ${i + 1}`} loading="lazy" />
                 )}
+                {m.caption && <p class="fp-caption">{m.caption}</p>}
               </div>
             ))}
 
@@ -656,6 +659,16 @@ const openLabel = (e: EmbedInfo) => (e.provider === 'Website' ? '웹사이트 �
   }
 
   .fp-media { display: block; }
+  .fp-caption {
+    margin: 0;
+    padding: var(--s-2) var(--s-4) var(--s-3);
+    border-top: var(--border);
+    font-size: var(--fs-sm);
+    color: var(--c-ink-2);
+    line-height: 1.6;
+    word-break: keep-all;
+  }
+  .fp-projects:not(.is-detail-view) .fp-caption { display: none; }
   .fp-media img, .fp-media video {
     width: 100%; height: 100%;
     aspect-ratio: 4 / 3;

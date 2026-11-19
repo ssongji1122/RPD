@@ -2087,58 +2087,69 @@ window.RPDFinalProjects = {
         {
           "type": "image",
           "src": "assets/final-projects/project-22/render-01.webp",
-          "role": "render"
+          "role": "render",
+          "caption": "최종 렌더 · 정면 전신. 파란 실리콘 몸체와 분홍 배를 스튜디오 조명 아래에서 보여 줍니다."
         },
         {
           "type": "image",
           "src": "assets/final-projects/project-22/render-02.webp",
-          "role": "render"
+          "role": "render",
+          "caption": "최종 렌더 · 손을 흔드는 포즈. 리깅한 팔로 인사하는 동작을 잡았습니다."
         },
         {
           "type": "image",
           "src": "assets/final-projects/project-22/render-03.webp",
-          "role": "render"
+          "role": "render",
+          "caption": "최종 렌더 · 세로 근접 컷. 두 팔을 든 모습으로 얼굴과 배의 볼륨을 가까이 보여 줍니다."
         },
         {
           "type": "image",
           "src": "assets/final-projects/project-22/render-04.webp",
-          "role": "render"
+          "role": "render",
+          "caption": "최종 렌더 · 뛰어오르는 포즈. 통통 튀는 무게중심 느낌을 살린 컷입니다."
         },
         {
           "type": "image",
           "src": "assets/final-projects/project-22/render-05.webp",
-          "role": "render"
+          "role": "render",
+          "caption": "최종 렌더 · 세로로 손을 흔드는 컷. 배의 실리콘 반사와 말랑한 질감이 드러납니다."
         },
         {
           "type": "video",
           "src": "assets/final-projects/project-22/video-01.webp",
           "videoSrc": "assets/final-projects/project-22/video-01.mp4",
-          "role": "render"
+          "role": "render",
+          "caption": "키프레임 애니메이션 「꿍싯꿍싯 챌린지」. 숏폼에서 유행한 춤 동작을 직접 키프레임으로 옮겼습니다."
         },
         {
           "type": "image",
           "src": "assets/final-projects/project-22/process-01.webp",
-          "role": "process"
+          "role": "process",
+          "caption": "AI 이미지 생성. 「small companion robot pet, round ears, round body, soft glowing eyes, pastel pink and mint」 프롬프트로 만든 컨셉 이미지를 3D 모델링의 기준으로 삼았습니다."
         },
         {
           "type": "image",
           "src": "assets/final-projects/project-22/process-02.webp",
-          "role": "process"
+          "role": "process",
+          "caption": "모델링 1단계. Mirror 모디파이어로 몸체 · 팔 · 다리 · 귀를 좌우 대칭으로 나눠 만들었습니다."
         },
         {
           "type": "image",
           "src": "assets/final-projects/project-22/process-03.webp",
-          "role": "process"
+          "role": "process",
+          "caption": "모델링 2단계. Subdivision Surface로 로우폴리 메시를 매끄러운 곡면으로 다듬은 모델입니다."
         },
         {
           "type": "image",
           "src": "assets/final-projects/project-22/process-04.webp",
-          "role": "process"
+          "role": "process",
+          "caption": "재질. SSS(빛이 표면 안쪽으로 스며드는 효과)로 젤리 같은 실리콘 질감을 냈고, 나노바나나로 만든 실리콘 텍스처를 함께 썼습니다."
         },
         {
           "type": "image",
           "src": "assets/final-projects/project-22/process-05.webp",
-          "role": "process"
+          "role": "process",
+          "caption": "리깅. Rigify로 골격을 만들고, 키프레임으로 「꿍싯꿍싯 챌린지」 춤 동작을 넣었습니다."
         }
       ],
       "videos": [
