@@ -16,6 +16,8 @@ export interface FPMedia {
   src: string;
   videoSrc?: string;
   role: string;
+  /** 이미지 아래에 보이는 설명. 학생 제출 자료(발표 원고 · 웹페이지)에 근거해 적는다. */
+  caption?: string;
 }
 export interface FPVideo {
   src: string;

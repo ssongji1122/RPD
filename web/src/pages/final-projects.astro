@@ -130,6 +130,52 @@ function mediaGroups(p: FPProject, cover: FPMedia | null) {
 }
 
 const PRESENTATION = '발표 자료';
+
+// 학생 노트는 노션 제출 페이지의 칸(발표자료·MP4·AI 등) 이름을 줄마다 달고 온다.
+// 줄마다 칸 이름을 반복하면 발표 원고가 낱줄로 흩어져 보이므로, 이어지는 같은 칸을
+// 한 묶음으로 모아 칸 이름은 한 번만 쓰고 원고의 소제목은 소제목으로 보여 준다.
+type NoteLine = { kind: 'heading' | 'item' | 'text'; label?: string; text: string };
+// "[제목]" 또는 "1. 제목"처럼 짧은 줄은 원고의 소제목이다.
+const NOTE_HEADING = /^(\[[^\]]+\]|\d+\.\s+\S.{0,40})$/;
+// "라벨: 설명" 줄은 라벨을 굵게 나눈다. 라벨이 짧을 때만(긴 문장 속 콜론 제외).
+const NOTE_LABELED = /^([^:：]{2,24})[:：]\s*(.+)$/s;
+
+function noteLine(text: string): NoteLine {
+  const t = text.trim();
+  if (NOTE_HEADING.test(t)) return { kind: 'heading', text: t.replace(/^\[|\]$/g, '') };
+  const m = t.match(NOTE_LABELED);
+  if (m && !/https?$/i.test(m[1])) return { kind: 'item', label: m[1].trim(), text: m[2].trim() };
+  return { kind: 'text', text: t };
+}
+
+function noteGroups(notes: { section: string | null; text: string }[]) {
+  const groups: { section: string | null; lines: NoteLine[] }[] = [];
+  for (const n of notes) {
+    const last = groups[groups.length - 1];
+    if (last && last.section === n.section) last.lines.push(noteLine(n.text));
+    else groups.push({ section: n.section, lines: [noteLine(n.text)] });
+  }
+  return groups;
+}
+
+const SECTIONS = [
+  { key: 'intro', label: '기본 소개' },
+  { key: 'process', label: '진행 과정' },
+  { key: 'final', label: '최종 발표' },
+] as const;
+
+// 학생 노트에서 기본 소개에 쓸 한 줄 소개와 콘셉트 키워드를 찾는다. 학생이 적은 문구만
+// 쓰고, 없으면 비워 둔다(지어내지 않는다).
+const ONE_LINER = /한\s?줄\s?소개\s*[:：]\s*([^\n]+)/;
+const KEYWORDS = /키워드[^\n#]*((?:#[^\s#]+\s*)+)/;
+function introOf(notes: { text: string }[]) {
+  const all = notes.map((n) => n.text).join('\n');
+  const one = all.match(ONE_LINER)?.[1]?.trim();
+  const kw = all.match(KEYWORDS)?.[1]?.trim().split(/\s+/).filter(Boolean) ?? [];
+  return { oneLiner: one, keywords: kw };
+}
+
+const openLabel = (e: EmbedInfo) => (e.provider === 'Website' ? '웹사이트 바로 가기 →' : '발표 자료 바로 가기 →');
 ---
 
 <Layout title="기말 작품 — rpd" description="RPD 기말 프로젝트 작품 아카이브">
@@ -166,22 +212,41 @@ const PRESENTATION = '발표 자료';
         return e ? [e] : [];
       });
       const notes = (p.notes ?? []).filter(isPublicNote);
-      // 상세 섹션은 제작 흐름 순서(과정 → 완성 → 발표·웹)로 배치하고,
-      // 실제로 존재하는 섹션만 이어 붙여 번호를 매긴다.
-      const secOrder = [
-        ['process', groups.process.length > 0 || notes.length > 0],
-        ['outcome', groups.outcome.length > 0],
-        ['embeds', embeds.length > 0],
-      ]
-        .filter(([, has]) => has)
-        .map(([key]) => key);
-      const secNo = (key: string) => String(secOrder.indexOf(key) + 1).padStart(2, '0');
+      const intro = introOf(notes);
+      // 상세는 기본 소개 → 진행 과정 → 최종 발표 세 구역으로 나누고,
+      // 자료가 있는 구역만 이어 붙여 번호와 바로 가기를 만든다(탭처럼 숨기지 않는다).
+      const sections = SECTIONS.filter((s) =>
+        s.key === 'intro'
+          ? true
+          : s.key === 'process'
+            ? groups.process.length > 0 || notes.length > 0
+            : groups.outcome.length > 0 || embeds.length > 0
+      );
+      const secNo = (key: string) => String(sections.findIndex((s) => s.key === key) + 1).padStart(2, '0');
+      const has = (key: string) => sections.some((s) => s.key === key);
+      const secId = (key: string) => `${p.id}-${key}`;
       return (
         <article class="fp-project" id={p.id}>
           <div class="fp-grid">
+            {sections.length > 1 && (
+              <nav class="fp-jump is-span-4" aria-label={`${p.code} 구역 바로 가기`}>
+                {sections.map((s) => (
+                  <button type="button" class="fp-jump-btn" data-target={secId(s.key)}>
+                    <span class="meta">{secNo(s.key)}</span>{s.label}
+                  </button>
+                ))}
+              </nav>
+            )}
+            <div class="fp-section-label is-span-4" id={secId('intro')}>
+              <span>{secNo('intro')} — 기본 소개</span>
+            </div>
             <div class="fp-cell fp-copy is-span-2">
               <p class="fp-kicker meta">{p.code}</p>
               <h2 class="fp-title">{displayTitle(p)}</h2>
+              {intro.oneLiner && <p class="fp-oneliner">{intro.oneLiner}</p>}
+              {intro.keywords.length > 0 && (
+                <p class="fp-keywords meta">{intro.keywords.join(' ')}</p>
+              )}
               <p class="fp-counts meta">
                 이미지 {counts.images}장 · 영상 {counts.videos}개 · 과정 {counts.process}개
               </p>
@@ -215,24 +280,33 @@ const PRESENTATION = '발표 자료';
               ) : (
                 <span class="fp-empty">—</span>
               )}
+              {cover?.caption && <p class="fp-caption">{cover.caption}</p>}
             </div>
 
-            {(groups.process.length > 0 || notes.length > 0) && (
-              <div class="fp-section-label is-span-4">
-                <span>{secNo('process')} — AI 활용 과정</span>
+            {has('process') && (
+              <div class="fp-section-label is-span-4" id={secId('process')}>
+                <span>{secNo('process')} — 진행 과정</span>
               </div>
             )}
             {notes.length > 0 && (
               <div class="fp-cell fp-notes is-span-4">
                 <p class="fp-notes-head meta">학생 제작 노트 — 노션 제출 페이지 원문</p>
-                <ul>
-                  {notes.map((n) => (
-                    <li>
-                      {n.section && <span class="fp-note-tag meta">{n.section}</span>}
-                      <span class="fp-note-text">{n.text}</span>
-                    </li>
-                  ))}
-                </ul>
+                {noteGroups(notes).map((g) => (
+                  <div class="fp-note-group">
+                    {g.section && <p class="fp-note-tag meta">{g.section}</p>}
+                    <div class="fp-note-body">
+                      {g.lines.map((l) =>
+                        l.kind === 'heading' ? (
+                          <p class="fp-note-heading">{l.text}</p>
+                        ) : l.kind === 'item' ? (
+                          <p class="fp-note-text"><strong>{l.label}</strong> {l.text}</p>
+                        ) : (
+                          <p class="fp-note-text">{l.text}</p>
+                        )
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
             {groups.process.map((m, i) => (
@@ -242,14 +316,15 @@ const PRESENTATION = '발표 자료';
                     <source src={m.videoSrc} type="video/mp4" />
                   </video>
                 ) : (
-                  <img src={m.src} alt={`${p.code} 과정 ${i + 1}`} loading="lazy" />
+                  <img src={m.src} alt={m.caption ?? `${p.code} 과정 ${i + 1}`} loading="lazy" />
                 )}
+                {m.caption && <p class="fp-caption">{m.caption}</p>}
               </div>
             ))}
 
-            {groups.outcome.length > 0 && (
-              <div class="fp-section-label is-span-4">
-                <span>{secNo('outcome')} — 완성 결과</span>
+            {has('final') && (
+              <div class="fp-section-label is-span-4" id={secId('final')}>
+                <span>{secNo('final')} — 최종 발표</span>
               </div>
             )}
             {groups.outcome.map((m, i) => (
@@ -259,22 +334,21 @@ const PRESENTATION = '발표 자료';
                     <source src={m.videoSrc} type="video/mp4" />
                   </video>
                 ) : (
-                  <img src={m.src} alt={`${p.code} 장면 ${i + 1}`} loading="lazy" />
+                  <img src={m.src} alt={m.caption ?? `${p.code} 장면 ${i + 1}`} loading="lazy" />
                 )}
+                {m.caption && <p class="fp-caption">{m.caption}</p>}
               </div>
             ))}
 
-            {embeds.length > 0 && (
-              <div class="fp-section-label is-span-4">
-                <span>{secNo('embeds')} — 발표 자료 · 웹</span>
-              </div>
+            {embeds.length > 0 && groups.outcome.length > 0 && (
+              <p class="fp-sub-label is-span-4 meta">발표 자료 · 웹</p>
             )}
             {embeds.map((e) => (
               <div class:list={['fp-cell', 'fp-embed', 'is-span-4', { 'is-link-only': !e.inline }]}>
                 <div class="fp-embed-head">
                   <span class="meta">{e.provider}</span>
                   {!e.inline && <span class="fp-embed-label">{e.label}</span>}
-                  <a href={e.openUrl} target="_blank" rel="noopener">새 탭에서 열기 →</a>
+                  <a href={e.openUrl}>{openLabel(e)}</a>
                 </div>
                 {e.inline && (
                   <iframe
@@ -343,6 +417,13 @@ const PRESENTATION = '발표 자료';
     window.scrollTo({ top: filmSection?.offsetTop ?? 0, behavior: 'smooth' });
   });
 
+  // 구역 바로 가기: 주소의 해시는 작품 선택에 쓰므로 바꾸지 않고 스크롤만 옮긴다.
+  document.querySelectorAll<HTMLButtonElement>('.fp-jump-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.getElementById(btn.dataset.target ?? '')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
   window.addEventListener('hashchange', applyView);
   applyView();
 </script>
@@ -394,6 +475,9 @@ const PRESENTATION = '발표 자료';
   }
   .fp-projects:not(.is-detail-view) .fp-cell.fp-media:not(.is-hero),
   .fp-projects:not(.is-detail-view) .fp-embed,
+  .fp-projects:not(.is-detail-view) .fp-notes,
+  .fp-projects:not(.is-detail-view) .fp-jump,
+  .fp-projects:not(.is-detail-view) .fp-sub-label,
   .fp-projects:not(.is-detail-view) .fp-section-label {
     display: none;
   }
@@ -420,6 +504,47 @@ const PRESENTATION = '발표 자료';
     border-bottom: var(--border);
     background: var(--c-bg-2);
   }
+  .fp-section-label { scroll-margin-top: calc(var(--s-6) + 48px); }
+  .fp-jump {
+    position: sticky;
+    top: 56px;
+    z-index: 2;
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+    padding: var(--s-2) var(--s-4);
+    border-right: var(--border);
+    border-bottom: var(--border);
+    background: var(--c-bg);
+  }
+  .fp-jump-btn {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--s-2);
+    padding: var(--s-1) var(--s-3);
+    font-size: var(--fs-sm);
+    color: var(--c-ink-2);
+    background: none;
+    border: var(--border);
+    border-radius: var(--r-pill);
+    cursor: pointer;
+  }
+  .fp-jump-btn:hover { color: var(--c-ink); border-color: var(--c-accent); }
+  .fp-jump-btn .meta { font-family: var(--f-mono); font-size: var(--fs-2xs); color: var(--c-ink-3); }
+  .fp-sub-label {
+    grid-column: 1 / -1;
+    margin: 0;
+    padding: var(--s-2) var(--s-4);
+    border-right: var(--border);
+    border-bottom: var(--border);
+    font-family: var(--f-mono);
+    font-size: var(--fs-2xs);
+    color: var(--c-ink-3);
+    letter-spacing: var(--ls-mono);
+  }
+  .fp-oneliner { margin: 0; font-size: var(--fs-md); color: var(--c-ink); line-height: 1.5; word-break: keep-all; }
+  .fp-keywords { margin: 0; color: var(--c-accent-text); }
   .fp-section-label span {
     font-family: var(--f-mono);
     font-size: var(--fs-2xs);
@@ -464,21 +589,34 @@ const PRESENTATION = '발표 자료';
     color: var(--c-ink-3);
     letter-spacing: var(--ls-mono);
   }
-  .fp-notes ul {
+  .fp-note-group {
     display: grid;
-    gap: var(--s-2);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .fp-notes li {
-    display: flex;
+    grid-template-columns: 5.5em 1fr;
     gap: var(--s-3);
     align-items: baseline;
   }
+  .fp-note-group + .fp-note-group {
+    margin-top: var(--s-4);
+    padding-top: var(--s-4);
+    border-top: 1px solid var(--c-line);
+  }
+  .fp-note-body { display: grid; gap: var(--s-2); grid-column: 2; }
+  .fp-note-body p { margin: 0; }
+  .fp-note-heading {
+    font-size: var(--fs-md);
+    font-weight: 600;
+    color: var(--c-ink);
+    line-height: 1.5;
+    word-break: keep-all;
+  }
+  .fp-note-heading:not(:first-child) { margin-top: var(--s-3); }
+  .fp-note-text strong { font-weight: 600; color: var(--c-ink); }
+  @media (max-width: 640px) {
+    .fp-note-group { grid-template-columns: 1fr; gap: var(--s-2); }
+    .fp-note-body { grid-column: 1; }
+  }
   .fp-note-tag {
-    flex-shrink: 0;
-    min-width: 5.5em;
+    margin: 0;
     font-family: var(--f-mono);
     font-size: var(--fs-2xs);
     color: var(--c-ink-3);
@@ -521,6 +659,16 @@ const PRESENTATION = '발표 자료';
   }
 
   .fp-media { display: block; }
+  .fp-caption {
+    margin: 0;
+    padding: var(--s-2) var(--s-4) var(--s-3);
+    border-top: var(--border);
+    font-size: var(--fs-sm);
+    color: var(--c-ink-2);
+    line-height: 1.6;
+    word-break: keep-all;
+  }
+  .fp-projects:not(.is-detail-view) .fp-caption { display: none; }
   .fp-media img, .fp-media video {
     width: 100%; height: 100%;
     aspect-ratio: 4 / 3;
