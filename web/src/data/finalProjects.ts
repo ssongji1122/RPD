@@ -29,6 +29,8 @@ export interface FPLink {
   kind: string;
   /** 빌드 데이터에 미리 해석해 둔 임베드 URL (예: Canva view?embed) */
   embedUrl?: string;
+  /** 버튼 앞에 보이는 한 줄 설명. 링크 속 실제 내용(웹페이지 구성 · PDF 쪽수)을 확인해 적는다. */
+  note?: string;
 }
 export interface FPNote {
   section: string | null;

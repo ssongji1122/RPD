@@ -65,7 +65,8 @@ window.RPDFinalProjects = {
         {
           "label": "Website 1",
           "url": "https://rpdfinalproject.netlify.app/",
-          "kind": "Website"
+          "kind": "Website",
+          "note": "학생이 만든 발표 웹페이지 — 무드보드, Blender 모델링, AI 이미지 생성, 재질, 최종 렌더까지 게임 캐릭터 포트폴리오처럼 정리했습니다"
         }
       ],
       "coverSrc": "assets/final-projects/project-01/video-01.webp",
@@ -174,12 +175,14 @@ window.RPDFinalProjects = {
         {
           "label": "Behance 1",
           "url": "https://www.behance.net/gallery/251170535/Tesla_x",
-          "kind": "Behance"
+          "kind": "Behance",
+          "note": "학생이 Behance에 올린 작품 페이지입니다"
         },
         {
           "label": "발표 자료",
           "url": "assets/final-projects/project-02/presentation.pdf",
-          "kind": "Presentation"
+          "kind": "Presentation",
+          "note": "발표 슬라이드 PDF 10쪽 — 화성 정착 배경 조사, 스케치, 모델링, 렌더링 장면"
         }
       ],
       "coverSrc": "assets/final-projects/project-02/video-01.webp",
@@ -270,12 +273,14 @@ window.RPDFinalProjects = {
         {
           "label": "Website 1",
           "url": "http://shingeonu.netlify.app/",
-          "kind": "Website"
+          "kind": "Website",
+          "note": "학생이 만든 작품 웹사이트 — 2087년을 배경으로 한 「HOPE」 아카이브 첫 화면과 작품 소개"
         },
         {
           "label": "발표 자료",
           "url": "assets/final-projects/project-03/presentation.pdf",
-          "kind": "Presentation"
+          "kind": "Presentation",
+          "note": "발표 슬라이드 PDF 16쪽 — 아이디에이션, 모델링, 재질 · 텍스처, 리깅 · 애니메이션, 최종 결과, 소감"
         }
       ],
       "coverSrc": "assets/final-projects/project-03/frame-04.webp",
@@ -311,7 +316,8 @@ window.RPDFinalProjects = {
         {
           "label": "발표 자료",
           "url": "assets/final-projects/project-04/presentation.pdf",
-          "kind": "Presentation"
+          "kind": "Presentation",
+          "note": "노션 발표 페이지를 옮긴 PDF 9쪽 — 캐릭터 프로필, 3D 모델링, 턴어라운드 · 걷기 장면, AI 영상"
         }
       ],
       "coverSrc": "assets/final-projects/project-04/video-01.webp",
@@ -357,7 +363,8 @@ window.RPDFinalProjects = {
         {
           "label": "발표 웹페이지",
           "url": "assets/final-projects/project-05/presentation.html",
-          "kind": "Website"
+          "kind": "Website",
+          "note": "학생이 만든 발표 웹페이지 — 렌더 갤러리, 모션 클립, 캐릭터 설정, 색 팔레트, 디자인 디테일, 만든 과정"
         }
       ],
       "coverSrc": "assets/final-projects/project-05/video-01.webp",
@@ -458,7 +465,8 @@ window.RPDFinalProjects = {
         {
           "label": "발표 자료",
           "url": "assets/final-projects/project-06/presentation.pdf",
-          "kind": "Presentation"
+          "kind": "Presentation",
+          "note": "발표 슬라이드 PDF 14쪽 — 캐릭터 소개, 아이디에이션, AI 이미지 생성, 모델링, 재질 · 텍스처, 리깅 · 애니메이션, 최종 결과"
         }
       ],
       "coverSrc": "assets/final-projects/project-06/frame-01.webp",
@@ -580,7 +588,8 @@ window.RPDFinalProjects = {
         {
           "label": "발표 웹페이지",
           "url": "assets/final-projects/project-07/presentation.html",
-          "kind": "Website"
+          "kind": "Website",
+          "note": "학생이 만든 발표 웹페이지 — 콘셉트와 스토리, 무드보드, 모델링, 재질, 리깅, 애니메이션, 사용한 AI 도구, 최종 결과"
         }
       ],
       "coverSrc": "assets/final-projects/project-07/image-02.webp",
@@ -688,7 +697,8 @@ window.RPDFinalProjects = {
         {
           "label": "발표 웹페이지",
           "url": "assets/final-projects/project-08/presentation.html",
-          "kind": "Website"
+          "kind": "Website",
+          "note": "학생이 만든 발표 웹페이지 — 핵심 기능 소개와 아이디에이션부터 리깅까지의 단계별 제작 과정"
         }
       ],
       "coverSrc": "assets/final-projects/project-08/image-02.webp",
@@ -723,7 +733,8 @@ window.RPDFinalProjects = {
         {
           "label": "발표 자료",
           "url": "assets/final-projects/project-09/presentation.pdf",
-          "kind": "Presentation"
+          "kind": "Presentation",
+          "note": "Canva 발표 자료를 옮긴 PDF 14쪽 — 레퍼런스, AI 이미지 생성, 모델링, 재질 · 텍스처, 리깅 · 애니메이션, 최종 결과, 문제 해결 과정"
         }
       ],
       "coverSrc": "assets/final-projects/project-09/video-01.webp",
@@ -809,7 +820,8 @@ window.RPDFinalProjects = {
         {
           "label": "Website 1",
           "url": "https://pandi-robot.netlify.app/",
-          "kind": "Website"
+          "kind": "Website",
+          "note": "학생이 만든 발표 웹페이지 — 프로필, 무드보드, 모델링 턴어라운드, 리깅 · 포즈, 모션 릴 영상 3편"
         }
       ],
       "coverSrc": "assets/final-projects/project-10/video-01.webp",
@@ -922,7 +934,8 @@ window.RPDFinalProjects = {
         {
           "label": "발표 자료",
           "url": "assets/final-projects/project-11/presentation.pdf",
-          "kind": "Presentation"
+          "kind": "Presentation",
+          "note": "발표 슬라이드 PDF 9쪽 — 아이디어 스케치, AI 렌더링, 모델링 과정, 앞 · 뒤 · 옆 · 위 모습"
         }
       ],
       "coverSrc": "assets/final-projects/project-11/video-01.webp",
@@ -958,7 +971,8 @@ window.RPDFinalProjects = {
         {
           "label": "발표 자료",
           "url": "assets/final-projects/project-12/presentation.pdf",
-          "kind": "Presentation"
+          "kind": "Presentation",
+          "note": "Canva 발표 자료를 옮긴 PDF 20쪽 — 목표, 아이디에이션, 모델링, 텍스처, 리깅, 로봇 · 빛 · 카메라 애니메이션, 사용한 AI 도구, 최종 결과"
         }
       ],
       "coverSrc": "assets/final-projects/project-12/frame-05.webp",
@@ -1099,7 +1113,8 @@ window.RPDFinalProjects = {
         {
           "label": "Website 1",
           "url": "https://c7fc4448-minimalist-senior-portfolio.netlify.app/",
-          "kind": "Website"
+          "kind": "Website",
+          "note": "학생이 만든 발표 웹페이지 — 아이디에이션, AI 이미지 생성, 리깅, 애니메이션, 최종 결과, 회고"
         }
       ],
       "coverSrc": "assets/final-projects/project-13/image-01.webp",
@@ -1266,7 +1281,8 @@ window.RPDFinalProjects = {
         {
           "label": "Website 1",
           "url": "https://2026robotproductdesign.netlify.app/",
-          "kind": "Website"
+          "kind": "Website",
+          "note": "학생이 만든 발표 웹페이지 — 제품 소개, 아이디에이션, 모델링, 재질, 리깅, 렌더, 최종 결과"
         },
         {
           "label": "Reference 1",
@@ -1276,7 +1292,8 @@ window.RPDFinalProjects = {
         {
           "label": "발표 자료",
           "url": "assets/final-projects/project-14/presentation.pdf",
-          "kind": "Presentation"
+          "kind": "Presentation",
+          "note": "발표 슬라이드 PDF 67쪽 — 아이디에이션부터 최종 결과와 느낀 점까지 단계마다 작업 화면을 자세히 담았습니다"
         }
       ],
       "coverSrc": "assets/final-projects/project-14/video-04.webp",
@@ -1349,22 +1366,26 @@ window.RPDFinalProjects = {
         {
           "label": "Website 1",
           "url": "https://coruscating-cocada-15607a.netlify.app/",
-          "kind": "Website"
+          "kind": "Website",
+          "note": "아카이브 북 웹페이지 — 표지에서 수선 기록을 골라 들어가는 시작 화면입니다"
         },
         {
           "label": "Website 2",
           "url": "https://incandescent-empanada-ba4297.netlify.app/",
-          "kind": "Website"
+          "kind": "Website",
+          "note": "아카이브 웹페이지 — 기원, AI 실험 기록, 디자인 변화, 모델링, 표면, 움직임, 최종 결과를 기록 형식으로 정리했습니다"
         },
         {
           "label": "Website 3",
           "url": "https://incredible-moxie-54ed49.netlify.app/",
-          "kind": "Website"
+          "kind": "Website",
+          "note": "아카이브 북 웹페이지의 다른 판 — 같은 표지에서 기록으로 들어갑니다"
         },
         {
           "label": "Behance 1",
           "url": "https://www.behance.net/gallery/250915905/MATI-42ARCHIVE",
-          "kind": "Behance"
+          "kind": "Behance",
+          "note": "학생이 Behance에 올린 아카이브 작품 페이지입니다"
         }
       ],
       "coverSrc": "assets/final-projects/project-15/video-01.webp",
@@ -1507,7 +1528,8 @@ window.RPDFinalProjects = {
         {
           "label": "Website 1",
           "url": "https://127ae18c-digital-toy-robot-showcase.netlify.app/",
-          "kind": "Website"
+          "kind": "Website",
+          "note": "학생이 만든 발표 웹페이지 — 아이디에이션, AI 이미지 생성, 모델링, UV · 재질 · 텍스처 페인팅, 리깅, 애니메이션, AI 사운드"
         }
       ],
       "coverSrc": "assets/final-projects/project-16/image-01.webp",
@@ -1581,12 +1603,14 @@ window.RPDFinalProjects = {
         {
           "label": "Website 1",
           "url": "https://lighthearted-frangollo-77c27d.netlify.app/",
-          "kind": "Website"
+          "kind": "Website",
+          "note": "학생이 만든 발표 웹페이지 — 캐릭터 시트, 모델링 · UV, 텍스처, 조명, 리깅 · 애니메이션, AI 작업 흐름을 데스크톱 창 형식으로 정리했습니다"
         },
         {
           "label": "발표 자료",
           "url": "assets/final-projects/project-17/presentation.pdf",
-          "kind": "Presentation"
+          "kind": "Presentation",
+          "note": "발표 슬라이드 PDF 22쪽 — 턴어라운드, 렌더 이미지, 콘셉트 보드, 모델링부터 애니메이션까지의 과정, AI 작업 흐름, 홍보 영상"
         }
       ],
       "coverSrc": "assets/final-projects/project-17/image-01.webp",
@@ -1759,12 +1783,14 @@ window.RPDFinalProjects = {
         {
           "label": "Website 1",
           "url": "assets/final-projects/project-18/kkuing_portfolio_scroll_fixed.html",
-          "kind": "Website"
+          "kind": "Website",
+          "note": "학생이 만든 발표 웹페이지 — 콘셉트, AI 이미지, 3D 제작, 텍스처 · 조명, 애니메이션, 최종 결과, 회고"
         },
         {
           "label": "발표 자료",
           "url": "assets/final-projects/project-18/presentation.pdf",
-          "kind": "Presentation"
+          "kind": "Presentation",
+          "note": "발표 슬라이드 PDF 28쪽 — AI 이미지 생성, 모델링, 재질 · 텍스처, 리깅 · 애니메이션, AI 활용법, 최종 결과"
         }
       ],
       "coverSrc": "assets/final-projects/project-18/image-01.webp",
@@ -1884,7 +1910,8 @@ window.RPDFinalProjects = {
         {
           "label": "발표 자료",
           "url": "assets/final-projects/project-19/presentation.pdf",
-          "kind": "Presentation"
+          "kind": "Presentation",
+          "note": "발표 슬라이드 PDF 31쪽 — 캐릭터 콘셉트와 무드보드, 모델링, 재질, 리깅, 애니메이션, 사용한 AI 도구, 렌더 이미지"
         }
       ],
       "coverSrc": "assets/final-projects/project-19/video-01.webp",
@@ -2010,7 +2037,8 @@ window.RPDFinalProjects = {
         {
           "label": "발표 자료",
           "url": "assets/final-projects/project-20/presentation.pdf",
-          "kind": "Presentation"
+          "kind": "Presentation",
+          "note": "발표 슬라이드 PDF 16쪽 — 디자인을 정하기까지의 과정, Kling AI 영상과 이미지 생성 프롬프트, 포트폴리오 사이트, 소감"
         }
       ],
       "coverSrc": "assets/final-projects/project-20/image-01.webp",
@@ -2159,7 +2187,8 @@ window.RPDFinalProjects = {
         {
           "label": "발표 자료",
           "url": "assets/final-projects/project-21/presentation.pdf",
-          "kind": "Presentation"
+          "kind": "Presentation",
+          "note": "발표 슬라이드 PDF 15쪽 — 목표, 레퍼런스, 캐릭터 디자인, 모델링, 리깅, 애니메이션, AI 활용, 최종 결과"
         }
       ],
       "coverSrc": "assets/final-projects/project-21/video-01.webp",
@@ -2250,7 +2279,8 @@ window.RPDFinalProjects = {
         {
           "label": "발표 웹페이지",
           "url": "assets/final-projects/project-22/presentation.html",
-          "kind": "Website"
+          "kind": "Website",
+          "note": "학생이 만든 발표 웹페이지 — 콘셉트, 3D 모델링, 재질, 리깅 · 모션, 렌더 영상, 최종 결과 갤러리"
         },
         {
           "label": "Board 1",
@@ -2518,17 +2548,14 @@ window.RPDFinalProjects = {
         {
           "label": "발표 웹페이지",
           "url": "assets/final-projects/project-23/presentation.html",
-          "kind": "Website"
-        },
-        {
-          "label": "Presentation 1",
-          "url": "https://docs.google.com/presentation/d/1usCytyhA4J2npyg-wIWuTAmlaapNyWu6_4LO9iqMhxo/edit?usp=sharing",
-          "kind": "Presentation"
+          "kind": "Website",
+          "note": "학생이 만든 발표 웹페이지 — 개요, 기획 · 무드보드, 모델링, AI 3D 생성, 재질, 조명, 리깅 · 렌더 · 사운드, 회고"
         },
         {
           "label": "발표 자료",
           "url": "assets/final-projects/project-23/presentation.pdf",
-          "kind": "Presentation"
+          "kind": "Presentation",
+          "note": "발표 슬라이드 PDF 24쪽 — 이미지 레퍼런스, 콘셉트 변경 과정, 3D 생성형 AI 모델링, 재질 · 텍스처, 리깅 문제 해결"
         }
       ],
       "coverSrc": "assets/final-projects/project-23/image-01.webp",
