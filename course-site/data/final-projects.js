@@ -309,9 +309,9 @@ window.RPDFinalProjects = {
       ],
       "links": [
         {
-          "label": "Project Page 1",
-          "url": "https://www.notion.so/A-02-NERA-37af8cd09f8f8080b64ec536b958ce38?source=copy_link",
-          "kind": "Project Page"
+          "label": "발표 자료",
+          "url": "assets/final-projects/project-04/presentation.pdf",
+          "kind": "Presentation"
         }
       ],
       "coverSrc": "assets/final-projects/project-04/video-01.webp",
@@ -455,12 +455,6 @@ window.RPDFinalProjects = {
         }
       ],
       "links": [
-        {
-          "label": "Presentation 1",
-          "url": "https://canva.link/t98vdzg894eidmv",
-          "kind": "Presentation",
-          "embedUrl": "https://www.canva.com/design/DAHMsJz81nQ/Js1kq7aOY6IXHUIho7f35w/view?embed"
-        },
         {
           "label": "발표 자료",
           "url": "assets/final-projects/project-06/presentation.pdf",
@@ -727,10 +721,9 @@ window.RPDFinalProjects = {
       ],
       "links": [
         {
-          "label": "Presentation 1",
-          "url": "https://canva.link/c0vz3ymf35cr9pv",
-          "kind": "Presentation",
-          "embedUrl": "https://www.canva.com/design/DAHMs0mOqP0/8Shp_6BRG2at5fARAv7B7A/view?embed"
+          "label": "발표 자료",
+          "url": "assets/final-projects/project-09/presentation.pdf",
+          "kind": "Presentation"
         }
       ],
       "coverSrc": "assets/final-projects/project-09/video-01.webp",
@@ -963,10 +956,9 @@ window.RPDFinalProjects = {
       ],
       "links": [
         {
-          "label": "Presentation 1",
-          "url": "https://canva.link/68dl9nqx2qt6twy",
-          "kind": "Presentation",
-          "embedUrl": "https://www.canva.com/design/DAHMsD7vOSk/O7YhhwaCIMX3zJzMBujgUw/view?embed"
+          "label": "발표 자료",
+          "url": "assets/final-projects/project-12/presentation.pdf",
+          "kind": "Presentation"
         }
       ],
       "coverSrc": "assets/final-projects/project-12/frame-05.webp",
