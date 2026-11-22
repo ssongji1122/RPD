@@ -8,7 +8,6 @@
 
 ## 0. 먼저 샘플부터 만져보기
 
-- **사다리타기 샘플**: https://ssongji1122.github.io/RPD/ladder-sample.html — "프롬프트 → 작동 페이지"가 뭔지 1분이면 감이 와요.
 - **학생 데이터로 만든 포트폴리오 샘플**: https://hyorin.vercel.app — Claude Code로 학생 노션 페이지 데이터 + 레퍼런스 이미지를 주고 생성.
 
 ---
