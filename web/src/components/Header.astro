@@ -25,10 +25,10 @@ const menuActive = menu.some((l) => isActive(l.href));
 
 <header>
   <div class="wrap header-inner">
-    <a href={url('/')} class="brand">
-      <span class="brand-main">rpd</span>
-      <span class="brand-sub">a studio.soluta series</span>
-    </a>
+    <div class="brand">
+      <a href={url('/')} class="brand-main" aria-label="rpd 홈">rpd</a>
+      <span class="brand-sub">a <a href="https://studiosoluta.com/" class="brand-soluta">studio.soluta</a> series</span>
+    </div>
     <nav>
       {primary.map((l) => (
         <a href={url(l.href)} class:list={[{ active: isActive(l.href) }]}>
@@ -92,6 +92,10 @@ const menuActive = menu.some((l) => isActive(l.href));
     color: var(--c-ink-3);
     letter-spacing: var(--ls-mono);
   }
+  /* 로고 두 링크: rpd 는 RPD 홈, studio.soluta 는 공식 홈페이지 */
+  .brand-main { text-decoration: none; }
+  .brand-soluta { color: inherit; text-decoration: underline; text-underline-offset: 0.2em; }
+  .brand-soluta:hover { color: var(--c-accent-text); }
   nav { display: flex; align-items: stretch; align-self: stretch; gap: var(--s-4); }
   nav > a {
     display: inline-flex;
