@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const PAIRS = [
+  ['../../course-site/assets/notion-images', '../public/assets/notion-images'],
   ['../../course-site/assets/final-projects', '../public/assets/final-projects'],
   ['../../course-site/assets/showme', '../public/showme'],
   ['../../course-site/assets/images', '../public/assets/images'],
