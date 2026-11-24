@@ -1,7 +1,7 @@
 ---
 import { finalProjects, finalProjectsMeta } from '../data/finalProjects';
 import type { FPMedia, FPProject } from '../data/finalProjects';
-import { displayTitle, projectCounts, publicLinkUrl } from '../data/fpDisplay';
+import { displayTitle, publicLinkUrl } from '../data/fpDisplay';
 
 interface Props {
   // 작품 상세 앵커 prefix. 같은 페이지(final-projects)면 '' (in-page 앵커),
@@ -27,11 +27,6 @@ function bestCover(p: FPProject): FPMedia | null {
 
 const PRESENTATION = '발표 자료';
 const firstPres = (p: FPProject) => p.links.find((l) => l.kind === PRESENTATION);
-// 개수는 작품 상세와 같은 규칙(fpDisplay)으로 센다.
-const projectSummary = (p: FPProject) => {
-  const { images, videos } = projectCounts(p);
-  return `이미지 ${images} · 영상 ${videos}`;
-};
 
 // 무한 루프: 슬라이드를 3벌 렌더해 양옆(특히 왼쪽)이 항상 채워지게 한다.
 // 중앙 세트를 기준으로 순환하고, 경계를 넘으면 좌표계 전체를 한 세트만큼 평행이동(아래 스크립트).
@@ -69,7 +64,6 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
               {cover ? <img src={cover.src} alt={p.code} loading={eager(di) ? 'eager' : 'lazy'} draggable="false" /> : <span class="fp-empty">—</span>}
               <span class="fp-slide-caption" aria-hidden="true">
                 <strong>{displayTitle(p)}</strong>
-                <span>{projectSummary(p)}</span>
               </span>
             </span>
           </button>
@@ -328,6 +322,29 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
     if (e.key === 'ArrowLeft') { e.preventDefault(); markInteract(); go(-1); }
     if (e.key === 'ArrowRight') { e.preventDefault(); markInteract(); go(1); }
   });
+
+  // ── 터치패드 가로 스크롤 ──
+  // 두 손가락으로 옆으로 밀면 그만큼 커버가 따라 움직이고, 손을 떼면 가장 가까운 커버에 멈춘다.
+  // 세로 스크롤이 더 크면 페이지 스크롤로 두어 아래로 내려가는 동작을 막지 않는다.
+  const WHEEL_PX_PER_SLIDE = 140;   // 이만큼 밀면 한 칸
+  const WHEEL_SETTLE_MS = 160;      // 이 시간 동안 입력이 없으면 정착
+  const WHEEL_LINE_PX = 16;         // deltaMode 가 줄 단위일 때 픽셀 환산
+  let wheelTimer = 0;
+  stage?.addEventListener('wheel', (e) => {
+    if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+    e.preventDefault();
+    markInteract();
+    drift = 0;
+    const dx = e.deltaMode === 1 ? e.deltaX * WHEEL_LINE_PX : e.deltaX;
+    target += dx / WHEEL_PX_PER_SLIDE;
+    commitNearest();
+    if (reduceMotion) { pf = target; vf = 0; render(); } else startLoop();
+    window.clearTimeout(wheelTimer);
+    wheelTimer = window.setTimeout(() => {
+      settle();
+      if (reduceMotion) { pf = target; vf = 0; render(); }
+    }, WHEEL_SETTLE_MS);
+  }, { passive: false });
 
   // ── 자동 재생 ──
   if (stage && 'IntersectionObserver' in window) {

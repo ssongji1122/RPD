@@ -6,11 +6,11 @@ const year = new Date().getFullYear();
   <div class="wrap footer-inner">
     <div>
       <p class="brand">rpd</p>
-      <p class="tagline">Robot Product Design × AI — a studio.soluta series</p>
+      <p class="tagline">Robot Product Design × AI — a <a href="https://studiosoluta.com/">studio.soluta</a> series</p>
     </div>
     <div>
       <p class="meta">© {year} studio.soluta</p>
-      <p class="meta">soluta.studio</p>
+      <p class="meta"><a href="https://studiosoluta.com/">studiosoluta.com</a></p>
     </div>
   </div>
 </footer>
@@ -45,5 +45,5 @@ const year = new Date().getFullYear();
     letter-spacing: var(--ls-mono);
   }
   .meta + .meta { margin-top: var(--s-1); }
-  .meta a { color: var(--c-accent-text); }
+  .meta a, .tagline a { color: var(--c-accent-text); }
 </style>

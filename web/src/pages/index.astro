@@ -10,7 +10,7 @@ const preview = weeks.slice(0, 6);
 
 <Layout title="rpd — a studio.soluta series">
   <section class="wrap section hero">
-    <p class="eyebrow">a studio.soluta series</p>
+    <p class="eyebrow">a <a href="https://studiosoluta.com/" class="eyebrow-link">studio.soluta</a> series</p>
     <h1>Robot Product Design × AI</h1>
     <p class="lead">
       Blender와 AI 도구를 활용해 각자가 구현하고 싶은 작품을 구상하고,
@@ -54,6 +54,8 @@ const preview = weeks.slice(0, 6);
 </Layout>
 
 <style>
+  .eyebrow-link { color: inherit; text-decoration: underline; text-underline-offset: 0.2em; }
+  .eyebrow-link:hover { color: var(--c-accent-text); }
   .hero { padding-bottom: 0; }
   .hero h1 {
     font-size: var(--fs-display);
