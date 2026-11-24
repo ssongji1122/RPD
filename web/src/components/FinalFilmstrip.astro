@@ -33,8 +33,6 @@ const firstPres = (p: FPProject) => p.links.find((l) => l.kind === PRESENTATION)
 const realTotal = finalProjects.length;
 const COPIES = 3;
 const looped = Array.from({ length: COPIES * realTotal }, (_, di) => ({ p: finalProjects[di % realTotal], di, real: di % realTotal }));
-// 초기 중앙(real 0, 중앙 세트) 주변만 eager 로드.
-const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
 ---
 
 <!-- 필름스트립: Apple Cover Flow — 균일 크기 커버, 중앙 정면·양옆 원근 겹침 -->
@@ -61,7 +59,7 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
             tabindex={isClone ? -1 : undefined}
           >
             <span class="fp-slide-frame">
-              {cover ? <img src={cover.src} alt={p.code} loading={eager(di) ? 'eager' : 'lazy'} draggable="false" /> : <span class="fp-empty">—</span>}
+              {cover ? <img src={cover.src} alt={p.code} loading="lazy" draggable="false" /> : <span class="fp-empty">—</span>}
               <span class="fp-slide-caption" aria-hidden="true">
                 <strong>{displayTitle(p)}</strong>
               </span>
@@ -98,7 +96,16 @@ const eager = (di: number) => di >= realTotal - 4 && di <= realTotal + 6;
   // 레이아웃은 절대 애니메이션하지 않는다. 모든 커버가 같은 크기이고,
   // 위치·기울기·깊이·크기 전부가 연속 위치값 pf(단위: 칸) 하나에서 파생된
   // GPU 트랜스폼이다 — 리플로우 0, 타이밍 곡선 1개.
-  let pos = realTotal; // 목표 인덱스 (중앙 세트에서 시작)
+  // 첫 작품은 들어올 때마다 무작위로 고른다. 고정 순서가 등수처럼 읽히지 않게 하려는 것이다.
+  // 작품 순서(01~24)는 그대로 두고, 중앙 세트 안에서 시작 위치만 바꾼다.
+  let pos = realTotal + Math.floor(Math.random() * realTotal); // 목표 인덱스
+  // 시작 커버 주변은 지연 로드하지 않아 첫 화면이 비어 보이지 않게 한다.
+  const START_EAGER_RANGE = 5;
+  slides.forEach((s, i) => {
+    if (Math.abs(i - pos) > START_EAGER_RANGE) return;
+    const img = s.querySelector('img');
+    if (img) img.loading = 'eager';
+  });
   let pf = pos;        // 연속 위치 (스프링이 pos 를 추적)
   let vf = 0;          // 스프링 속도 (칸/s)
   const OMEGA = 6.2;   // 임계 감쇠 스프링 강성(rad/s) — 애플 특유의 느긋한 정착
