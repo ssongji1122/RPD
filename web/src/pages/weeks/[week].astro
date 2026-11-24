@@ -4,7 +4,7 @@ import { weeks, getWeek } from '../../data/curriculum';
 import { loadPrompts } from '../../data/prompts';
 import { url } from '../../lib/url';
 import NotionBlocks from '../../components/NotionBlocks.astro';
-import { loadNotionBlocks } from '../../data/notionBlocks';
+import { loadNotionWeek } from '../../data/notionBlocks';
 import { cards } from '../../data/showme';
 
 export function getStaticPaths() {
@@ -19,7 +19,7 @@ const idx = weeks.findIndex((x) => x.id === w.id);
 const prev = weeks[idx - 1];
 const next = weeks[idx + 1];
 
-const blocks = loadNotionBlocks(w.week);
+const { blocks, pageId } = loadNotionWeek(w.week);
 const prompts = blocks.length ? [] : loadPrompts(w.week);
 const weekCards = cards.filter((card) => Array.isArray(card.week) ? card.week.includes(w.week) : card.week === w.week);
 const imgSrc = (img: string) => url(img.startsWith('/') ? img : `/${img}`);
@@ -40,7 +40,7 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
       {w.subtitle && <p class="lead">{w.subtitle}</p>}
     </header>
 
-    {blocks.length > 0 && <NotionBlocks blocks={blocks} />}
+    {blocks.length > 0 && <NotionBlocks blocks={blocks} pageId={pageId} />}
 
     {blocks.length === 0 && w.topics.length > 0 && (
       <section class="block">
