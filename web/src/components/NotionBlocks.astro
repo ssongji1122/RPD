@@ -1,0 +1,51 @@
+---
+import { renderBlocks, type NotionBlock } from '../data/notionBlocks';
+interface Props { blocks: NotionBlock[] }
+const { blocks } = Astro.props;
+---
+<div class="notion-body" set:html={renderBlocks(blocks)} />
+
+<style is:global>
+  .notion-body { min-width: 0; margin-bottom: var(--s-6); line-height: var(--lh-normal); overflow-wrap: anywhere; word-break: keep-all; }
+  .notion-body p, .notion-body figure, .notion-body .nb-list { margin: var(--s-3) 0; }
+  .notion-body h1, .notion-body h2, .notion-body h3, .notion-body h4 { margin: var(--s-5) 0 var(--s-3); line-height: var(--lh-tight); }
+  .notion-body .nb-h1 { font-size: var(--fs-2xl); }
+  .notion-body .nb-h2 { font-size: var(--fs-xl); }
+  .notion-body .nb-h3 { font-size: var(--fs-lg); }
+  .notion-body .nb-h4 { font-size: var(--fs-md); }
+  .notion-body a { color: var(--c-accent-text); text-decoration: underline; }
+  .notion-body ul { list-style: disc; padding-left: var(--s-4); }
+  .notion-body ol { list-style: decimal; padding-left: var(--s-4); }
+  .notion-body li + li { margin-top: var(--s-2); }
+  .notion-body li > .nb-list { margin: var(--s-2) 0; }
+  .notion-body .nb-callout, .notion-body .nb-toggle { border: var(--border); border-radius: var(--r-md); padding: var(--s-3); margin: var(--s-3) 0; }
+  .notion-body .nb-callout { display: flex; align-items: baseline; gap: var(--s-2); background: var(--c-bg-2); }
+  .notion-body .nb-callout > div { min-width: 0; flex: 1; }
+  .notion-body .nb-callout p:first-child { margin-top: 0; }
+  .notion-body .nb-callout p:last-child { margin-bottom: 0; }
+  .notion-body summary { cursor: pointer; font-weight: var(--w-medium); }
+  .notion-body .nb-toggle-body { margin-top: var(--s-3); }
+  .notion-body blockquote { border-left: var(--border-strong); margin: var(--s-3) 0; padding-left: var(--s-3); color: var(--c-ink-2); font-family: var(--f-mono); font-size: var(--fs-sm); font-style: normal; line-height: 1.6; }
+  /* 노션 아이콘(이모지)은 사이트 규칙에 따라 그리지 않는다 */
+  .notion-body hr { border: 0; border-top: var(--border); margin: var(--s-5) 0; }
+  .notion-body .nb-todo label { display: flex; align-items: baseline; gap: var(--s-2); }
+  .notion-body .nb-todo input:checked + span { text-decoration: line-through; }
+  .notion-body .nb-table-wrap { max-width: 100%; overflow-x: auto; margin: var(--s-3) 0; }
+  .notion-body table { width: 100%; border-collapse: collapse; }
+  .notion-body th, .notion-body td { border: var(--border); padding: var(--s-2) var(--s-3); text-align: left; min-width: 8rem; }
+  .notion-body th { background: var(--c-bg-2); font-weight: var(--w-semibold); }
+  .notion-body img, .notion-body video { max-width: 100%; height: auto; display: block; }
+  .notion-body figcaption, .notion-body .nb-code-lang { color: var(--c-ink-2); font-size: var(--fs-sm); }
+  .notion-body iframe { display: block; border: var(--border); width: 100%; aspect-ratio: 16 / 9; }
+  .notion-body .nb-embed-showme iframe { min-height: 32rem; }
+  .notion-body .nb-columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: var(--s-3); }
+  .notion-body .nb-column { min-width: 0; }
+  .notion-body code { font-family: var(--f-mono); font-size: var(--fs-sm); }
+  .notion-body .nb-code-wrap { position: relative; padding: var(--s-3); margin: var(--s-3) 0; background: var(--c-bg-2); border: var(--border); border-radius: var(--r-md); }
+  .notion-body .nb-code-lang { display: block; padding-right: var(--s-7); margin-bottom: var(--s-3); }
+  .notion-body pre { max-width: 100%; overflow-x: auto; margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .notion-body .prompt-copy { position: absolute; top: var(--s-2); right: var(--s-2); padding: var(--s-2); min-width: 44px; min-height: 44px; color: var(--c-ink-2); background: var(--c-bg); border: var(--border); border-radius: var(--r-sm); cursor: pointer; }
+  .notion-body .copy-status { display: block; color: var(--c-ink-2); font-size: var(--fs-sm); }
+  .notion-body .prompt-copy:hover { color: var(--c-ink); border-color: var(--c-ink-2); }
+  .notion-body .prompt-copy.copied { color: var(--c-accent-text); }
+</style>

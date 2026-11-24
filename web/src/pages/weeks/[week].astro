@@ -3,6 +3,9 @@ import Layout from '../../layouts/Layout.astro';
 import { weeks, getWeek } from '../../data/curriculum';
 import { loadPrompts } from '../../data/prompts';
 import { url } from '../../lib/url';
+import NotionBlocks from '../../components/NotionBlocks.astro';
+import { loadNotionBlocks } from '../../data/notionBlocks';
+import { cards } from '../../data/showme';
 
 export function getStaticPaths() {
   return weeks.map((w) => ({ params: { week: w.id } }));
@@ -16,7 +19,9 @@ const idx = weeks.findIndex((x) => x.id === w.id);
 const prev = weeks[idx - 1];
 const next = weeks[idx + 1];
 
-const prompts = loadPrompts(w.week);
+const blocks = loadNotionBlocks(w.week);
+const prompts = blocks.length ? [] : loadPrompts(w.week);
+const weekCards = cards.filter((card) => Array.isArray(card.week) ? card.week.includes(w.week) : card.week === w.week);
 const imgSrc = (img: string) => url(img.startsWith('/') ? img : `/${img}`);
 // 참고 자료의 사이트 내부 링크(예: shortcuts.html)는 Astro 라우트로 해석한다.
 // 외부 http(s) URL 은 그대로 통과.
@@ -35,7 +40,9 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
       {w.subtitle && <p class="lead">{w.subtitle}</p>}
     </header>
 
-    {w.topics.length > 0 && (
+    {blocks.length > 0 && <NotionBlocks blocks={blocks} />}
+
+    {blocks.length === 0 && w.topics.length > 0 && (
       <section class="block">
         <h2>다루는 내용</h2>
         <ul class="topic-list">
@@ -44,7 +51,7 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
       </section>
     )}
 
-    {w.steps.length > 0 && (
+    {blocks.length === 0 && w.steps.length > 0 && (
       <section class="block">
         <h2>수업 단계</h2>
         <ol class="step-list">
@@ -87,7 +94,7 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
         <ul class="prompt-list">
           {prompts.map((p) => (
             <li class="prompt">
-              <button class="prompt-copy" type="button" data-copy aria-label="프롬프트 복사">복사</button>
+              <button class="prompt-copy" type="button" data-copy aria-label="프롬프트 복사" title="프롬프트 복사"><svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="8" y="8" width="12" height="12" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg></button><span class="copy-status" role="status"></span>
               <pre class="prompt-text"><code>{p.text}</code></pre>
             </li>
           ))}
@@ -95,7 +102,7 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
       </section>
     )}
 
-    {w.shortcuts.length > 0 && (
+    {blocks.length === 0 && w.shortcuts.length > 0 && (
       <section class="block">
         <h2>단축키</h2>
         <ul class="shortcut-list">
@@ -109,7 +116,7 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
       </section>
     )}
 
-    {w.assignment && (
+    {blocks.length === 0 && w.assignment && (
       <section class="block assignment">
         <h2>과제</h2>
         <strong class="assign-title">{w.assignment.title}</strong>
@@ -122,7 +129,7 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
       </section>
     )}
 
-    {w.mistakes.length > 0 && (
+    {blocks.length === 0 && w.mistakes.length > 0 && (
       <section class="block">
         <h2>자주 하는 실수</h2>
         <ul class="mistake-list">
@@ -131,7 +138,7 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
       </section>
     )}
 
-    {(w.videos.length > 0 || w.docs.length > 0) && (
+    {blocks.length === 0 && (w.videos.length > 0 || w.docs.length > 0) && (
       <section class="block">
         <h2>참고 자료</h2>
         <ul class="ref-list">
@@ -147,6 +154,16 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
               <a href={refHref(d.url)} target="_blank" rel="noopener">{d.title}</a>
             </li>
           ))}
+        </ul>
+      </section>
+    )}
+
+    {weekCards.length > 0 && (
+      <section class="block">
+        <h2>직접 살펴보기</h2>
+        <p class="showme-note">관련 개념을 그림과 움직임으로 살펴보세요.</p>
+        <ul class="showme-list">
+          {weekCards.map((card) => <li><a href={url(`/showme/${card.id}.html`)}>{card.label} <span aria-hidden="true">↗</span></a></li>)}
         </ul>
       </section>
     )}
@@ -174,16 +191,13 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
       const text = btn.parentElement?.querySelector('code')?.textContent ?? '';
       try {
         await navigator.clipboard.writeText(text);
-        const prev = btn.textContent;
-        btn.textContent = '복사됨';
+        const status = btn.parentElement?.querySelector<HTMLElement>('.copy-status');
+        if (status) status.textContent = '복사했습니다.';
         btn.classList.add('copied');
-        setTimeout(() => {
-          btn.textContent = prev;
-          btn.classList.remove('copied');
-        }, 1500);
+        setTimeout(() => { if (status) status.textContent = ''; btn.classList.remove('copied'); }, 2000);
       } catch {
-        btn.textContent = '복사 실패';
-        setTimeout(() => (btn.textContent = '복사'), 1500);
+        const status = btn.parentElement?.querySelector<HTMLElement>('.copy-status');
+        if (status) status.textContent = '복사하지 못했습니다. 내용을 직접 선택해 복사해 주세요.';
       }
     });
   });
@@ -270,7 +284,8 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
     right: var(--s-2);
     font-family: var(--f-mono);
     font-size: var(--fs-2xs);
-    padding: 2px var(--s-2);
+    padding: var(--s-2);
+    min-width: 44px; min-height: 44px;
     color: var(--c-ink-2);
     background: var(--c-bg);
     border: var(--border);
@@ -278,6 +293,7 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
     cursor: pointer;
     transition: color var(--t) var(--ease), border-color var(--t) var(--ease);
   }
+  .copy-status { display: block; color: var(--c-ink-2); font-size: var(--fs-sm); }
   .prompt-copy:hover { color: var(--c-ink); border-color: var(--c-ink-2); }
   .prompt-copy.copied { color: var(--c-accent-text); border-color: var(--c-accent); }
   .mini-list li, .mistake-list li {
@@ -336,6 +352,11 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
   .ref-list li { display: flex; align-items: baseline; gap: var(--s-3); }
   .ref-tag { min-width: 2.5rem; color: var(--c-ink-3); }
   .ref-list a { font-size: var(--fs-base); color: var(--c-accent-text); }
+
+  .showme-note { color: var(--c-ink-2); margin-bottom: var(--s-3); }
+  .showme-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: var(--s-2); }
+  .showme-list a { display: flex; justify-content: space-between; gap: var(--s-2); padding: var(--s-3); border: var(--border); border-radius: var(--r-md); color: var(--c-accent-text); }
+  .showme-list a:hover { border-color: var(--c-accent); }
 
   .week-nav {
     display: flex; justify-content: space-between; gap: var(--s-3);
