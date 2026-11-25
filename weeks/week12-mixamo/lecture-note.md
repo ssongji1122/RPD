@@ -473,7 +473,7 @@ NLA Editor는 애니메이션 클립을 레이어처럼 쌓고 이어 붙이는 
 
 ### 공식 영상 튜토리얼
 
-- [Blender Studio - Importing Animations](https://studio.blender.org/training/blender-2-8-fundamentals/importing/)
+- [Blender Studio - Importing Animations](https://studio.blender.org/training/character-animation/5ce4067c75e1fd8da56e0933/)
 
 ### 공식 문서
 

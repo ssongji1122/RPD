@@ -78,6 +78,58 @@ def test_transcode_produces_mp4():
     assert target.exists() and target.stat().st_size > 0
 
 
+def test_curriculum_video_keeps_preview_and_original_links():
+    week = {
+        "week": 1,
+        "title": "Week 1",
+        "steps": [],
+        "videos": [{
+            "title": "Blender Studio - First Steps",
+            "url": "https://studio.blender.org/training/example/",
+            "preview_url": "https://studio.blender.org/download-source/files/example.mp4",
+        }],
+        "docs": [],
+    }
+    blocks = notion_api.week_to_notion_blocks(week)
+    video = next(block for block in blocks if block["type"] == "video")
+    assert video["video"]["external"]["url"].endswith("example.mp4")
+    assert video["video"]["caption"][0]["text"]["link"]["url"].endswith("/training/example/")
+
+
+def test_notion_video_roundtrip_restores_preview_url():
+    blocks = [
+        {
+            "type": "heading_2",
+            "heading_2": {
+                "rich_text": [{"type": "text", "plain_text": "공식 영상 튜토리얼"}],
+            },
+        },
+        {
+            "type": "video",
+            "video": {
+                "type": "external",
+                "external": {"url": "https://cdn.example.com/preview.mp4"},
+            },
+        },
+        {
+            "type": "bulleted_list_item",
+            "bulleted_list_item": {
+                "rich_text": [{
+                    "type": "text",
+                    "plain_text": "원본 영상",
+                    "href": "https://example.com/source",
+                }],
+            },
+        },
+    ]
+    parsed = notion_api.parse_blocks_to_curriculum(blocks, 1, {"week": 1})
+    assert parsed["videos"] == [{
+        "title": "원본 영상",
+        "url": "https://example.com/source",
+        "preview_url": "https://cdn.example.com/preview.mp4",
+    }]
+
+
 if __name__ == "__main__":
     tests = [
         test_cached_image_keeps_local_url,
@@ -85,6 +137,8 @@ if __name__ == "__main__":
         test_external_video_no_local_url,
         test_failed_download_no_dangling_local_url,
         test_transcode_produces_mp4,
+        test_curriculum_video_keeps_preview_and_original_links,
+        test_notion_video_roundtrip_restores_preview_url,
     ]
     passed = failed = 0
     for fn in tests:

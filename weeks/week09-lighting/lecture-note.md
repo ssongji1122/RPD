@@ -587,7 +587,7 @@ Claude에게 텍스트로 명령하면 Blender가 직접 움직여요. 조명, �
 
 ### 공식 영상 튜토리얼
 
-- [Blender Studio - Lighting Fundamentals](https://studio.blender.org/training/blender-2-8-fundamentals/lighting/)
+- [Blender Studio - Lighting Fundamentals](https://studio.blender.org/training/blender-2-8-fundamentals/light-types/)
 - [Poly Haven Add-on 사용법 (HDRI 드래그 앤 드롭)](https://docs.polyhaven.com/en/guides/blender-addon)
 
 ### 공식 문서
