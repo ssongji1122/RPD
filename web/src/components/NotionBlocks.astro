@@ -1,9 +1,9 @@
 ---
 import { renderBlocks, type NotionBlock } from '../data/notionBlocks';
-interface Props { blocks: NotionBlock[]; pageId: string }
-const { blocks, pageId } = Astro.props;
+interface Props { blocks: NotionBlock[]; pageId: string; outline?: ReadonlyMap<string, string> }
+const { blocks, pageId, outline } = Astro.props;
 ---
-<div class="notion-body" set:html={renderBlocks(blocks, pageId)} />
+<div class="notion-body" set:html={renderBlocks(blocks, pageId, outline)} />
 
 <style is:global>
   .notion-body { min-width: 0; margin-bottom: var(--s-6); line-height: var(--lh-normal); overflow-wrap: anywhere; word-break: keep-all; }

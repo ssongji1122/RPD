@@ -183,7 +183,7 @@ function courseVideoLink(pageId: string, blockId: string): string {
 }
 
 /** Recursive build-time renderer. All source text and attributes are escaped. */
-export function renderBlocks(blocks: NotionBlock[], pageId: string): string {
+export function renderBlocks(blocks: NotionBlock[], pageId: string, outline?: ReadonlyMap<string, string>): string {
   let html = '';
   for (let i = 0; i < blocks.length; i++) {
     const block = blocks[i];
@@ -197,20 +197,25 @@ export function renderBlocks(blocks: NotionBlock[], pageId: string): string {
       } while (i < blocks.length && blocks[i].type === block.type);
       i--;
       html += `<${tag} class="nb-list">${items}</${tag}>`;
-    } else html += renderBlock(block, pageId);
+    } else html += renderBlock(block, pageId, outline?.get(block.id));
   }
   return html;
 }
-function renderBlock(block: NotionBlock, pageId: string): string {
+export function notionHeadingTitle(block: NotionBlock): string {
+  return block.id === modifiersReferenceHeadingBlock ? '모디파이어 참고 영상과 문서' : plainText(blockData(block).rich_text);
+}
+
+function renderBlock(block: NotionBlock, pageId: string, sectionNumber?: string): string {
   const data = blockData(block);
   const text = block.id === modifiersReferenceHeadingBlock ? '모디파이어 참고 영상과 문서' : richText(data.rich_text);
   const children = () => renderBlocks(block.children ?? [], pageId);
   const caption = richText(data.caption);
   if (/^heading_[1-4]$/.test(block.type)) {
     const level = block.type.slice(-1);
+    const sectionAttrs = sectionNumber ? ` id="lesson-${escape(block.id)}" data-section-number="${escape(sectionNumber)}" tabindex="-1"` : '';
     return data.is_toggleable
-      ? `<details class="nb-toggle"><summary class="nb-h${level}">${text}</summary>${children()}</details>`
-      : `<h${level} class="nb-h${level}">${text}</h${level}>${children()}`;
+      ? `<details class="nb-toggle"${sectionAttrs}><summary class="nb-h${level}">${text}</summary>${children()}</details>`
+      : `<h${level} class="nb-h${level}"${sectionAttrs}>${text}</h${level}>${children()}`;
   }
   switch (block.type) {
     case 'paragraph': return `<p>${text || '<br>'}</p>${children()}`;

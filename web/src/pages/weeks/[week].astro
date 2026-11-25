@@ -1,10 +1,11 @@
 ---
-import Layout from '../../layouts/Layout.astro';
+import WorkbookLayout from '../../layouts/WorkbookLayout.astro';
 import { weeks, getWeek } from '../../data/curriculum';
 import { loadPrompts } from '../../data/prompts';
 import { url } from '../../lib/url';
 import NotionBlocks from '../../components/NotionBlocks.astro';
-import { loadNotionWeek } from '../../data/notionBlocks';
+import WorkbookCubePractice from '../../components/WorkbookCubePractice.astro';
+import { loadNotionWeek, notionHeadingTitle } from '../../data/notionBlocks';
 import { cards } from '../../data/showme';
 
 export function getStaticPaths() {
@@ -22,6 +23,28 @@ const next = weeks[idx + 1];
 const { blocks, pageId } = loadNotionWeek(w.week);
 const prompts = blocks.length ? [] : loadPrompts(w.week);
 const weekCards = cards.filter((card) => Array.isArray(card.week) ? card.week.includes(w.week) : card.week === w.week);
+const cubePractice = w.id === 'W02';
+const practiceOutline = [
+  { id: 'prepare', label: '실습 준비', number: '00' },
+  { id: 'move', label: '큐브 이동', number: '01' },
+  { id: 'check', label: '위치 확인', number: '02' },
+  { id: 'repeat', label: '원래 높이로 돌아가기', number: '03' },
+  { id: 'week-course', label: '2주차 전체 교재' },
+];
+const courseHeadings = blocks
+  .filter((block) => block.type === 'heading_2')
+  .map((block) => ({
+    blockId: block.id,
+    id: `lesson-${block.id}`,
+    label: notionHeadingTitle(block).replace(/^[\uFE0F\p{Extended_Pictographic}\s]+/u, '').trim(),
+  }))
+  .filter((heading) => heading.label)
+  .map((heading, index) => ({ ...heading, number: String(index + 1).padStart(2, '0') }));
+const sectionNumbers = new Map(courseHeadings.map(({ blockId, number }) => [blockId, number]));
+const outline = [
+  ...courseHeadings,
+  ...(weekCards.length ? [{ id: 'week-showme', label: '직접 살펴보기' }] : []),
+];
 const imgSrc = (img: string) => url(img.startsWith('/') ? img : `/${img}`);
 // 참고 자료의 사이트 내부 링크(예: shortcuts.html)는 Astro 라우트로 해석한다.
 // 외부 http(s) URL 은 그대로 통과.
@@ -31,16 +54,30 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
   s.image == null ? [] : Array.isArray(s.image) ? s.image : [s.image];
 ---
 
-<Layout title={`${w.id} — ${w.title} · rpd`} description={w.summary || w.subtitle}>
-  <article class="wrap section">
-    <header class="week-header">
-      <a href={url('/weeks')} class="back meta">← 주차 목록</a>
-      <p class="eyebrow">{w.id}{w.phaseLabel && ` · ${w.phaseLabel}`}{w.duration && ` · ${w.duration}`}</p>
-      <h1>{w.title}</h1>
-      {w.subtitle && <p class="lead">{w.subtitle}</p>}
+<WorkbookLayout title={`${w.id} — ${w.title} · rpd`} description={w.summary || w.subtitle} {outline} practiceOutline={cubePractice ? practiceOutline : undefined}>
+  {cubePractice ? <WorkbookCubePractice /> : (
+    <header class="wb-hero">
+      <div class="wb-hero-inner">
+        <p class="wb-eyebrow">RPD · BLENDER · WEEK {w.id.slice(1)}</p>
+        <h1 class="wb-title-ko">{w.title}</h1>
+        {w.subtitle && <p class="wb-hero-lede">{w.subtitle}</p>}
+        <dl class="wb-hero-meta">
+          {w.phaseLabel && <div><dt>수업 단계</dt><dd>{w.phaseLabel}</dd></div>}
+          {w.duration && <div><dt>수업 시간</dt><dd>{w.duration}</dd></div>}
+          {w.assignment?.title && <div><dt>과제</dt><dd>{w.assignment.title}</dd></div>}
+        </dl>
+      </div>
     </header>
-
-    {blocks.length > 0 && <NotionBlocks blocks={blocks} pageId={pageId} />}
+  )}
+  <div class="wb-reference wb-content" id="week-course" tabindex="-1">
+    {cubePractice && (
+      <header class="wb-reference-title">
+        <h2>2주차 전체 교재</h2>
+        <p>{w.title}{w.subtitle && ` · ${w.subtitle}`}</p>
+        <p>{[w.phaseLabel, w.duration].filter(Boolean).join(' · ')}</p>
+      </header>
+    )}
+    {blocks.length > 0 && <NotionBlocks blocks={blocks} pageId={pageId} outline={sectionNumbers} />}
 
     {blocks.length === 0 && w.topics.length > 0 && (
       <section class="block">
@@ -159,7 +196,7 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
     )}
 
     {weekCards.length > 0 && (
-      <section class="block">
+      <section class="block" id="week-showme" tabindex="-1">
         <h2>직접 살펴보기</h2>
         <p class="showme-note">관련 개념을 그림과 움직임으로 살펴보세요.</p>
         <ul class="showme-list">
@@ -182,8 +219,8 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
         </a>
       )}
     </nav>
-  </article>
-</Layout>
+  </div>
+</WorkbookLayout>
 
 <script>
   document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((btn) => {
@@ -204,16 +241,6 @@ const stepImages = (s: { image?: string | string[] }): string[] =>
 </script>
 
 <style>
-  .week-header { margin-bottom: var(--s-6); }
-  .back { display: inline-block; margin-bottom: var(--s-3); color: var(--c-ink-2); }
-  .week-header h1 {
-    font-size: var(--fs-2xl);
-    margin: var(--s-2) 0 var(--s-2);
-    word-break: keep-all;
-    line-height: var(--lh-tight);
-  }
-  .lead { color: var(--c-ink-2); word-break: keep-all; }
-
   .block { margin-bottom: var(--s-6); }
   .block h2 {
     font-family: var(--f-mono);
