@@ -1,0 +1,227 @@
+---
+import Layout from './Layout.astro';
+import { url } from '../lib/url';
+import '../styles/workbook.css';
+
+interface Props {
+  title: string;
+  description: string;
+  outline: { id: string; label: string; number?: string }[];
+  practiceOutline?: Props['outline'];
+}
+
+const { title, description, outline, practiceOutline } = Astro.props;
+const tocGroups = practiceOutline
+  ? [{ items: practiceOutline, folded: false }, { items: outline, folded: true }]
+  : [{ items: outline, folded: false }];
+const courseLinks = [
+  ['/weeks', '주차 목록'],
+  ['/', 'RPD 홈'],
+  ['/library', '자료 모음'],
+  ['/final-projects', '최종 작품'],
+  ['/syllabus', '강의계획서'],
+  ['/shortcuts', '단축키'],
+  ['/resources', '참고 자료'],
+  ['/inha', '수업 안내'],
+];
+---
+
+<Layout {title} {description} workbook>
+  <Fragment slot="head">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" />
+  </Fragment>
+  <Fragment slot="header">
+    <a class="skip-link" href="#workbook-main">본문으로 건너뛰기</a>
+    <header class="wb-topbar">
+      <button class="wb-toggle" type="button" aria-controls="workbook-sidebar" aria-expanded="true" aria-label="목차 접기">
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round">
+          <path d="M4.75 3.75h10.5a2 2 0 0 1 2 2v8.5a2 2 0 0 1-2 2H4.75a2 2 0 0 1-2-2v-8.5a2 2 0 0 1 2-2Z"></path>
+          <path d="M7.75 3.75v12.5"></path>
+        </svg>
+      </button>
+      <a class="wb-wordmark" aria-label="studio.soluta" href="#workbook-main">studio<span aria-hidden="true"></span>soluta</a>
+    </header>
+  </Fragment>
+  <div class="wb-shell" data-workbook>
+    <aside class="wb-sidebar" id="workbook-sidebar">
+      <nav aria-label="수업 목차">
+        <h2>수업 순서</h2>
+        {tocGroups.map(({ items, folded }) => {
+          const Group = folded ? 'details' : 'div';
+          return (
+            <Group class:list={[{ 'wb-toc-details': folded }]}>
+              {folded && <summary>교재 소제목</summary>}
+              <div class="wb-toc">
+                {items.map(({ id, label, number }) => (
+                  <a href={`#${id}`} class:list={[{ 'wb-toc-group': !number }]}>
+                    {number && <span class="wb-toc-number" aria-hidden="true">{number}</span>}
+                    <span>{label}</span>
+                  </a>
+                ))}
+              </div>
+            </Group>
+          );
+        })}
+        <div class="wb-toc wb-course-index">
+          <a href={url('/weeks')} class="wb-toc-group"><span>주차 목록</span></a>
+        </div>
+      </nav>
+    </aside>
+    <div class="wb-resizer" role="separator" aria-controls="workbook-sidebar" aria-label="목차 폭 조절" aria-orientation="vertical" aria-valuemin="180" aria-valuemax="480" aria-valuenow="280" tabindex="0"></div>
+    <article class:list={['wb-article', { 'wb-has-practice': practiceOutline }]} id="workbook-main" tabindex="-1">
+      <slot />
+      <nav class="wb-site-links wb-content" aria-label="RPD 사이트 메뉴">
+        {courseLinks.map(([href, label]) => <a href={url(href)}>{label}</a>)}
+        <button class="wb-theme" type="button" aria-pressed="false">어두운 화면</button>
+      </nav>
+    </article>
+  </div>
+</Layout>
+
+<script>
+  const shell = document.querySelector<HTMLElement>('[data-workbook]');
+  const sidebar = document.getElementById('workbook-sidebar');
+  const toggle = document.querySelector<HTMLButtonElement>('.wb-toggle');
+  const resizer = document.querySelector<HTMLElement>('.wb-resizer');
+  const theme = document.querySelector<HTMLButtonElement>('.wb-theme');
+  const article = document.getElementById('workbook-main');
+
+  if (shell && sidebar && toggle && resizer && theme && article) {
+    const mobile = window.matchMedia('(max-width: 560px)');
+    const sidebarMin = 180;
+    const sidebarMax = 480;
+    const sidebarDefault = 280;
+    const sidebarViewportRatio = 0.45;
+    const resizeStep = 16;
+    const widthKey = 'rpd-workbook-sidebar-width';
+    const collapsedKey = 'rpd-workbook-sidebar-collapsed';
+
+    function readPreference(key: string) {
+      try { return localStorage.getItem(key); } catch { return null; }
+    }
+    function savePreference(key: string, value: string) {
+      try { localStorage.setItem(key, value); } catch { /* Storage can be disabled. */ }
+    }
+
+    let width = Number(readPreference(widthKey)) || sidebarDefault;
+    let collapsed = readPreference(collapsedKey) === 'true';
+    let mobileOpen = false;
+
+    function maxWidth() {
+      return Math.min(sidebarMax, Math.floor(window.innerWidth * sidebarViewportRatio));
+    }
+
+    function applyWidth(candidate: number, remember = false) {
+      const maximum = Math.max(sidebarMin, maxWidth());
+      const shown = Math.min(maximum, Math.max(sidebarMin, Math.round(candidate)));
+      shell!.style.setProperty('--wb-sidebar-width', `${shown}px`);
+      resizer!.setAttribute('aria-valuenow', String(shown));
+      resizer!.setAttribute('aria-valuemax', String(maximum));
+      if (remember) width = shown;
+    }
+
+    function syncSidebar() {
+      const expanded = mobile.matches ? mobileOpen : !collapsed;
+      shell!.classList.toggle('wb-sidebar-hidden', !expanded);
+      shell!.classList.add('wb-ready');
+      toggle!.setAttribute('aria-expanded', String(expanded));
+      toggle!.setAttribute('aria-label', expanded ? '목차 접기' : '목차 펼치기');
+    }
+
+    toggle.addEventListener('click', () => {
+      if (mobile.matches) mobileOpen = !mobileOpen;
+      else {
+        collapsed = !collapsed;
+        savePreference(collapsedKey, String(collapsed));
+      }
+      syncSidebar();
+    });
+    mobile.addEventListener('change', () => {
+      mobileOpen = false;
+      syncSidebar();
+    });
+    window.addEventListener('resize', () => applyWidth(width));
+    document.addEventListener('click', (event) => {
+      if (mobileOpen && event.target instanceof Node && !sidebar.contains(event.target) && !toggle.contains(event.target)) {
+        mobileOpen = false;
+        syncSidebar();
+        if (sidebar.contains(document.activeElement)) toggle.focus();
+      }
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && mobileOpen) {
+        mobileOpen = false;
+        syncSidebar();
+        toggle.focus();
+      }
+    });
+
+    const tocLinks = sidebar.querySelectorAll<HTMLAnchorElement>('.wb-toc a[href^="#"]');
+    function updateCurrent() {
+      tocLinks.forEach((link) => {
+        if (link.hash === location.hash) {
+          link.setAttribute('aria-current', 'location');
+          const group = link.closest('details');
+          if (group) group.open = true;
+        } else link.removeAttribute('aria-current');
+      });
+    }
+    tocLinks.forEach((link) => link.addEventListener('click', (event) => {
+      if (event.metaKey || event.ctrlKey || event.altKey || event.shiftKey) return;
+      const target = document.getElementById(link.hash.slice(1));
+      if (!target) return;
+      event.preventDefault();
+      if (mobileOpen) {
+        mobileOpen = false;
+        syncSidebar();
+      }
+      if (location.hash !== link.hash) history.pushState(null, '', link.hash);
+      target.focus({ preventScroll: true });
+      target.scrollIntoView({ block: 'start' });
+      updateCurrent();
+    }));
+    window.addEventListener('hashchange', updateCurrent);
+    window.addEventListener('popstate', updateCurrent);
+
+    resizer.addEventListener('pointerdown', (event) => {
+      if (event.button !== 0) return;
+      resizer.setPointerCapture(event.pointerId);
+      shell.classList.add('wb-resizing');
+    });
+    resizer.addEventListener('pointermove', (event) => {
+      if (resizer.hasPointerCapture(event.pointerId)) applyWidth(event.clientX, true);
+    });
+    resizer.addEventListener('lostpointercapture', () => {
+      shell.classList.remove('wb-resizing');
+      savePreference(widthKey, String(width));
+    });
+    resizer.addEventListener('keydown', (event) => {
+      const shown = Number(resizer.getAttribute('aria-valuenow'));
+      const widths: Record<string, number> = {
+        ArrowLeft: shown - resizeStep,
+        ArrowRight: shown + resizeStep,
+        Home: sidebarMin,
+        End: maxWidth(),
+      };
+      if (!Object.hasOwn(widths, event.key)) return;
+      event.preventDefault();
+      applyWidth(widths[event.key], true);
+      savePreference(widthKey, String(width));
+    });
+
+    const root = document.documentElement;
+    theme.setAttribute('aria-pressed', String(root.dataset.theme === 'dark'));
+    theme.addEventListener('click', () => {
+      const dark = root.dataset.theme !== 'dark';
+      root.dataset.theme = dark ? 'dark' : 'light';
+      theme.setAttribute('aria-pressed', String(dark));
+      savePreference('theme', root.dataset.theme);
+    });
+
+    applyWidth(width);
+    syncSidebar();
+    updateCurrent();
+  }
+</script>

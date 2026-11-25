@@ -7,16 +7,18 @@ import '../styles/global.css';
 interface Props {
   title?: string;
   description?: string;
+  workbook?: boolean;
 }
 
 const {
   title = 'rpd — a studio.soluta series',
   description = 'Robot Product Design × AI. Blender와 AI 도구로 각자의 작품을 구상하고 결과물로 완성하는 수업.',
+  workbook = false,
 } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="ko">
+<html lang="ko" class={workbook ? 'has-workbook' : undefined}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -43,7 +45,7 @@ const {
     <slot name="head" />
   </head>
   <body>
-    <Header />
+    <slot name="header"><Header /></slot>
     <main id="main">
       <slot />
     </main>
